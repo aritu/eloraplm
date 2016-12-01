@@ -1,4 +1,5 @@
 # EloraPLM
+EloraPLM is a Product Lifecycle Management solution based on Nuxeo Platform. It is composed of a set of bundles that extend Nuxeo to create a PLM integrated with the business processes.
 
 ## Nuxeo
 
