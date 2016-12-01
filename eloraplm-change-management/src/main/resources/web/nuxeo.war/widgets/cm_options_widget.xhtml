@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:a4j="http://richfaces.org/a4j">
+  
+  <h:panelGroup layout="block" id="#{widget.id}" rendered="#{nxd:hasPermission(currentDocument, 'Write')}">
+  
+    <a4j:commandButton
+        actionListener="#{cmModifiedItemsTreeBean.markModifiedNodeAsRemoved(node)}"
+        render="#{treeWidgetId}"
+        execute="@this" 
+        image="/icons/delete_red.png"
+        title="#{messages['eloraplm.command.remove']}"
+        rendered="#{not nodeData.isRemoved}"
+    />
+    
+    <a4j:commandButton
+        actionListener="#{cmModifiedItemsTreeBean.unmarkModifiedNodeAsRemoved(node)}"
+        render="#{treeWidgetId}"
+        execute="@this" 
+        image="/icons/action_undo_16.png"
+        title="#{messages['eloraplm.command.undoRemove']}"
+        rendered="#{nodeData.isRemoved}"
+    />
+    
+  </h:panelGroup>
+  
+</ui:composition>

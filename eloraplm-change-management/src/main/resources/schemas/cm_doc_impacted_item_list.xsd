@@ -1,0 +1,12 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cm_doc_imp" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_doc_imp">
+
+  <xs:include schemaLocation="cm_impacted_item.xsd" />
+  
+  
+  <xs:element name="docImpactedItemList" type="nxs:impactedItemListType"/>
+  
+
+
+</xs:schema>

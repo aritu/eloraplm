@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.relations.SQLDirectoryFactory.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+
+    <directory name="elora_cad_predicates">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_relation_predicates</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_relation_predicates.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_cad_inverse_predicates">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_relation_inverse_predicates</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_relation_inverse_predicates.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_relations_config">
+      <schema>eloraRelationsConfig</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_relations_config</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_relations_config.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+  </extension>
+
+</component>

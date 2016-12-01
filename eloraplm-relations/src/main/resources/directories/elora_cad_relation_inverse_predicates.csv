@@ -1,0 +1,9 @@
+id, label, obsolete
+http://eloraplm.aritu.com/relations/CadInContextWith,label.relation.predicate.inverse.CadInContextWith,0
+http://eloraplm.aritu.com/relations/CadInstancedBy,label.relation.predicate.inverse.CadInstancedBy,0
+http://eloraplm.aritu.com/relations/CadHasDesignTable,label.relation.predicate.inverse.CadHasDesignTable,0
+http://eloraplm.aritu.com/relations/CadDrawingOf,label.relation.predicate.inverse.CadDrawingOf,0
+http://eloraplm.aritu.com/relations/CadComposedOf,label.relation.predicate.inverse.CadComposedOf,0
+http://eloraplm.aritu.com/relations/CadBasedOn,label.relation.predicate.inverse.CadBasedOn,0
+http://eloraplm.aritu.com/relations/CadHasSuppressed,label.relation.predicate.inverse.CadHasSuppressed,0
+http://eloraplm.aritu.com/relations/CadHasDocument,label.relation.predicate.inverse.CadHasDocument,0

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.bom.LifeCycleService.contrib">
+
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
+        <types>
+          <type name="BomPart">eloraBomLifeCycle</type>
+          <type name="BomManufacturerPart">eloraBomLifeCycle</type>
+          <type name="BomTool">eloraBomLifeCycle</type>
+          <type name="BomPackaging">eloraBomLifeCycle</type>
+          <type name="BomSpecification">eloraBomLifeCycle</type>
+          <type name="BomProduct">eloraBomLifeCycle</type>
+          <type name="BomCustomerProduct">eloraBomLifeCycle</type>
+          
+          <type name="StructEbom">default</type>
+          <type name="FolderBomPart">default</type>
+          <type name="FolderBomManufacturerPart">default</type>
+          <type name="FolderBomTool">default</type>
+          <type name="FolderBomPackaging">default</type>
+          <type name="FolderBomSpecification">default</type>
+          <type name="FolderBomProduct">default</type>
+          <type name="FolderBomCustomerProduct">default</type>
+        </types>
+    </extension>
+
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="lifecycle">
+
+        <lifecycle defaultInitial="preliminary" name="eloraBomLifeCycle">
+          <transitions>
+            <transition destinationState="preliminary" name="create">
+              <description>Create the real document</description>
+            </transition>
+            <transition destinationState="approved" name="approve">
+              <description>Approve the content</description>
+            </transition>
+            <transition destinationState="obsolete" name="obsolete">
+              <description>Content becomes obsolete</description>
+            </transition>
+            <transition destinationState="deleted" name="delete">
+              <description>Move document to trash (temporary delete)</description>
+            </transition>
+            <transition destinationState="preliminary" name="undelete">
+              <description>Recover the document from trash</description>
+            </transition>
+            <transition destinationState="preliminary" name="backToPreliminary">
+              <description>demote a preliminary</description>
+            </transition>
+            <transition destinationState="approved" name="backToApproved">
+              <description>demote a approved</description>
+            </transition>
+          </transitions>
+          <states>
+            <state description="Default state" initial="true" name="preliminary">
+              <transitions>
+                <transition>approve</transition>
+                <transition>delete</transition>
+              </transitions>
+            </state>
+            <state description="Content has been validated" initial="true" name="approved">
+              <transitions>
+                <transition>delete</transition>
+                <transition>obsolete</transition>
+                <transition>backToPreliminary</transition>
+              </transitions>
+            </state>
+            <state description="Content is obsolete" initial="true" name="obsolete">
+              <transitions>
+                <transition>delete</transition>
+                <transition>backToApproved</transition>
+              </transitions>
+            </state>
+            <state description="Document is deleted" name="deleted">
+              <transitions>
+                <transition>undelete</transition>
+              </transitions>
+            </state>
+          </states>
+        </lifecycle>
+      
+    </extension>
+
+</component>

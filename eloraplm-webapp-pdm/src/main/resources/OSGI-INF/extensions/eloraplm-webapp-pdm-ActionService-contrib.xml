@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.webapp.pdm.ActionService.contrib">
+  
+  <require>org.nuxeo.ecm.webapp.seam.debug.action</require>
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    <!-- default actions on upper buttons -->
+    
+    <!-- TODO: Decidir cual va a ser el filtro para mostrar esta accion. Poner bien los labels y el link  -->
+    <action id="checkinAction" order="10" label="command.checkin" link="#{pdmAction.checkIn}" icon="/icons/action_check_in_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter-id>versionable</filter-id>
+      <filter-id>isLocked</filter-id>
+      <properties>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
+    
+    <action id="undoCheckoutAction" order="0" label="command.undoCheckout" link="#{pdmAction.undoCheckout}" icon="/icons/action_undo_checkout_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter-id>versionable</filter-id>
+      <filter-id>isCheckedOut</filter-id>
+      <properties>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
+    
+    <action id="addToCollectionAction" order="100" />
+    <action id="addToFavoritesAction" order="100" />
+    
+    <!-- end of default actions on upper buttons -->
+    
+    
+    <!-- Lock actions -->
+    
+    <action id="documentLock" enabled="false" />
+    <action id="documentUnlock" enabled="false" />
+    
+    <action icon="/icons/contextual_menu/unlocked.png" id="eloraDocumentLock" label="command.lock" link="#{lockActions.lockCurrentDocument}" order="30" type="link">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter-id>can_lock</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
+
+    <action icon="/icons/contextual_menu/locked.png" id="eloraDocumentUnlock" label="command.unlock" link="#{lockActions.unlockCurrentDocument}" order="30" type="link">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter-id>can_unlock</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
+    
+  </extension>
+  
+</component> 

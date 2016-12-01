@@ -1,0 +1,19 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/related_supplier" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/related_supplier"
+xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+
+
+  <xs:simpleType name="supplierList" >
+    <xs:list>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_erpSuppliers" />
+      </xs:simpleType>
+    </xs:list>
+  </xs:simpleType>  
+
+  <xs:element name="suppliers" type="nxs:supplierList"/>
+
+
+</xs:schema>

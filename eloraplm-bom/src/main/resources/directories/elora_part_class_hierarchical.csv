@@ -1,0 +1,24 @@
+id,label,parent,obsolete
+id_icl1_1,Mechanical,,0
+id_icl2_1000,Cases,id_icl1_1,0
+id_icl2_2000,Screws,id_icl1_1,0
+id_icl2_3000,Nuts,id_icl1_1,0
+id_icl2_4000,Rods,id_icl1_1,0
+id_icl2_5000,Pipes,id_icl1_1,0
+id_icl2_6000,Rings,id_icl1_1,0
+id_icl1_2,Electrical,,0
+id_icl2_7000,Electronics,id_icl1_2,0
+id_icl3_1000,Digital circuits,id_icl2_7000,0
+id_icl3_2000,Linear circuits,id_icl2_7000,0
+id_icl3_3000,Memory,id_icl2_7000,0
+id_icl3_4000,Hybrid,id_icl2_7000,0
+id_icl3_5000,Resistor,id_icl2_7000,0
+id_icl3_6000,Capacitor,id_icl2_7000,0
+id_icl3_7000,Inductor,id_icl2_7000,0
+id_icl3_8000,Batterie,id_icl2_7000,0
+id_icl3_9000,Connector,id_icl2_7000,0
+id_icl3_10000,Switch,id_icl2_7000,0
+id_icl2_8000,Electrics,id_icl1_2,0
+id_icl1_3,Software,,0
+id_icl2_9000,Application,id_icl1_3,0
+id_icl2_10000,App Module,id_icl1_3,0

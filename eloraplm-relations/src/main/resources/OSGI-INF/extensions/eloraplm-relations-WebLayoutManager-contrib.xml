@@ -1,0 +1,477 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.relations.WebLayoutManager.contrib">
+
+    <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+    
+        <layout name="elora_relations_config">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_relations_config_id</widget>
+            </row>
+            <row>
+              <widget>elora_relations_config_type</widget>
+            </row>
+            <row>
+              <widget>elora_relations_config_subtype</widget>
+            </row>
+            <row>
+              <widget>elora_relations_config_isSpecial</widget>
+            </row>
+            <row>
+              <widget>elora_relations_config_isIconOnly</widget>
+            </row>
+            <row>
+              <widget>elora_relations_config_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_relations_config_order</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        
+        <!-- treetable layouts -->
+        
+        <layout name="cad_composition_treetable">
+          <templates>
+            <template mode="any">/layouts/layout_treetable_template.xhtml
+            </template>
+          </templates>
+          <columns>
+            <column name="icon_reference_title">
+              <properties mode="any">
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">label.content.header.title</property>
+              </properties>
+              <widget>listing_based_on_relation</widget>
+              <widget>treewidget_cad_icon_reference_title</widget>
+            </column>
+            <column name="download_link">
+              <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+              </properties>
+              <widget>listing_main_file_download_link</widget>
+            </column>
+            <column name="icon_only_relations">
+              <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+              </properties>
+              <widget>cad_composition_icon_only_relations</widget>
+            </column>
+            <column name="lock">
+              <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+              </properties>
+              <widget>treewidget_lock_icon</widget>
+            </column>
+            <column name="version">
+                <properties mode="any">
+                    <property name="columnStyle">width: 7em;</property>
+                    <property name="columnHeading">label.version</property>
+                </properties>
+                <widget>treewidget_version_wc_av</widget>
+            </column>
+            <column name="lifecycle_state">
+                <properties mode="any">
+                    <property name="columnStyle">width: 9em;</property>
+                    <property name="columnHeading">label.lifecycle</property>
+                </properties>
+                <widget>listing_colored_lifecycle_state</widget>
+            </column>
+            <column name="quantity">
+                <properties mode="any">
+                    <property name="columnStyle">width: 6em;</property>
+                    <property name="columnHeading">label.content.header.quantity</property>
+                </properties>
+                <widget>listing_quantity</widget>
+            </column>
+            <column name="related_boms">
+                <properties mode="any">
+                    <property name="columnStyle">width: 20%;</property>
+                    <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                    <property name="columnHeading">eloraplm.label.relatedBoms</property>
+                </properties>
+                <widget>listing_related_boms</widget>
+            </column>
+
+<!-- Oraingoz kendu egingo da edizioa, checkin leihoa sortu arte -->
+<!--             <column name="remove"> -->
+<!--                 <properties mode="any"> -->
+<!--                     <property name="columnStyle">width: 40px;</property> -->
+<!--                     <property name="columnStyleClass">alignCenter</property> -->
+<!--                 </properties> -->
+<!--                 <widget>cad_composition_remove_relation</widget> -->
+<!--             </column> -->
+
+          </columns>
+          <properties mode="any">
+            <property name="tableTitle">title.treetable.cadComposition</property>
+            <property name="showButtons">false</property>
+            <property name="headerFiltersTemplate">/incl/cad_relation_header_filters.xhtml</property>
+          </properties>
+        </layout>
+        
+        <layout name="cad_where_used_treetable">
+          <templates>
+            <template mode="any">/layouts/layout_treetable_template.xhtml
+            </template>
+          </templates>
+          <columns>
+            <column name="icon_reference_title">
+              <properties mode="any">
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">label.content.header.title</property>
+              </properties>
+              <widget>treewidget_cad_icon_reference_title</widget>
+            </column>
+            <column name="download_link">
+              <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+              </properties>
+              <widget>listing_main_file_download_link</widget>
+            </column>
+            <column name="lock">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 40px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>treewidget_lock_icon</widget>
+            </column>
+            <column name="version">
+                <properties mode="any">
+                    <property name="columnStyle">width: 7em;</property>
+                    <property name="columnHeading">label.version</property>
+                </properties>
+                <widget>treewidget_version_wc_av</widget>
+            </column>
+            <column name="lifecycle_state">
+                <properties mode="any">
+                    <property name="columnStyle">width: 9em;</property>
+                    <property name="columnHeading">label.lifecycle</property>
+                </properties>
+                <widget>listing_colored_lifecycle_state</widget>
+            </column>
+            <column name="quantity">
+                <properties mode="any">
+                    <property name="columnStyle">width: 6em;</property>
+                    <property name="columnHeading">label.content.header.quantity</property>
+                </properties>
+                <widget>listing_quantity</widget>
+            </column>
+            <column name="related_boms">
+                <properties mode="any">
+                    <property name="columnStyle">width: 20%;</property>
+                    <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                    <property name="columnHeading">eloraplm.label.relatedBoms</property>
+                </properties>
+                <widget>listing_related_boms</widget>
+            </column>
+          </columns>
+          <properties mode="any">
+            <property name="tableTitle">title.treetable.cadWhereUsed</property>
+            <property name="showButtons">false</property>
+            <property name="headerFiltersTemplate">/incl/cad_relation_header_filters.xhtml</property>
+          </properties>
+        </layout>
+        
+        <!-- end of treetable layouts -->
+        
+    </extension>
+    
+    <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <!-- elora_relations_config widgets -->
+        
+        <widget name="elora_relations_config_id" type="text">
+          <labels>
+            <label mode="any">label.widget.relationsConfig.entry.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationsConfig:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relations_config_type" type="text">
+          <labels>
+            <label mode="any">label.widget.relationsConfig.entry.type</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationsConfig:type</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relations_config_subtype" type="text">
+          <labels>
+            <label mode="any">label.widget.relationsConfig.entry.subtype</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationsConfig:subtype</field>
+          </fields>
+        </widget>
+        
+        <widget name="elora_relations_config_isSpecial" type="template">
+          <labels>
+            <label mode="any">label.widget.relationsConfig.entry.isSpecial</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationsConfig:isSpecial</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relations_config_isIconOnly" type="template">
+          <labels>
+            <label mode="any">label.widget.relationsConfig.entry.isIconOnly</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationsConfig:isIconOnly</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relations_config_obsolete" type="template">
+          <labels>
+            <label mode="any">label.widget.relationsConfig.entry.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationsConfig:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_relations_config_order" type="int">
+          <labels>
+            <label mode="any">label.widget.relationsConfig.entry.order</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationsConfig:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        <!-- end of elora_relations_config widgets -->
+        
+        
+        <!-- treetable widgets -->
+        <widget name="cad_composition_treetable" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.cad.composition</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cad_composition_treetable</property>
+            </properties>
+        </widget>
+        
+        <widget name="cad_where_used_treetable" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.cad.whereUsed</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cad_where_used_treetable</property>
+            </properties>
+        </widget>
+        
+        <!-- end of treetable widgets -->
+        
+        <widget name="cad_composition_icon_only_relations" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>iconOnlyRelations</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="template">
+                    /widgets/cad_composition_icon_only_relations_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        
+        <widget name="icon_only_relations" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>iconOnlyRelations</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="template">
+                    /widgets/icon_only_relations_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_related_boms" type="template">
+            <labels>
+                <label mode="any">eloraplm.label.relatedBoms</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>relatedBoms</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="template">
+                    /widgets/listing_related_boms_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        
+        <widget name="related_boms" type="template">
+            <labels>
+                <label mode="any">eloraplm.label.relatedBoms</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field></field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="template">
+                    /widgets/listing_related_boms_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        
+        <widget name="cad_composition_remove_relation" type="template">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>level</field>
+            <field>isSpecial</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+                  /widgets/cad_composition_remove_relation_widget.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        
+        <widget name="listing_based_on_relation" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>predicateUri</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="template">
+                    /widgets/listing_based_on_relation_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgettypes">
+    
+	    <widgetType name="summary_related_documents">
+	      <configuration>
+	        <title>label.widgetType.summary.related.documents</title>
+	        <description>
+	          <p>
+	            This widget type displays a list of documents that pointed by current document.
+	          </p>
+	          <p>
+	            It requires the following variables to be present in the EL context:
+	            <ul>
+	              <li>currentDocument: the current document</li>
+	            </ul>
+	          </p>
+	        </description>
+	        <handlingLabels>true</handlingLabels>
+	        <categories>
+	          <category>summary</category>
+	        </categories>
+	        <supportedModes>
+	          <mode>view</mode>
+	        </supportedModes>
+	      </configuration>
+	      <handler-class>
+	        org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+	      </handler-class>
+	      <property name="template">
+	        /widgets/summary/related_documents_widget_template.xhtml
+	      </property>
+	    </widgetType>
+	    
+	    <widgetType name="summary_related_inverse_documents">
+        <configuration>
+          <title>label.widgetType.summary.related.documents</title>
+          <description>
+            <p>
+              This widget type displays a list of documents pointing to current document.
+            </p>
+            <p>
+              It requires the following variables to be present in the EL context:
+              <ul>
+                <li>currentDocument: the current document</li>
+              </ul>
+            </p>
+          </description>
+          <handlingLabels>true</handlingLabels>
+          <categories>
+            <category>summary</category>
+          </categories>
+          <supportedModes>
+            <mode>view</mode>
+          </supportedModes>
+        </configuration>
+        <handler-class>
+          org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+        </handler-class>
+        <property name="template">
+          /widgets/summary/related_inverse_documents_widget_template.xhtml
+        </property>
+      </widgetType>
+	    
+    </extension>
+    
+</component>

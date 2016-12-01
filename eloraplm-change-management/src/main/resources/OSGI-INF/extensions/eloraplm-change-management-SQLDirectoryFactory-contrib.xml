@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.change.management.SQLDirectoryFactory.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+
+    <directory name="elora_cm_predicates">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_relation_predicates</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_relation_predicates.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_cm_inverse_predicates">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_relation_inverse_predicates</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_relation_inverse_predicates.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_cmPriority">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_priority</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_priority.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_cmEcrType">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_ecr_type</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_ecr_type.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_cmEcoType">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_eco_type</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_eco_type.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_cmActionModified">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_action_modified</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_action_modified.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_cmActionImpacted">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_action_impacted</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_action_impacted.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+  </extension>
+  
+</component>

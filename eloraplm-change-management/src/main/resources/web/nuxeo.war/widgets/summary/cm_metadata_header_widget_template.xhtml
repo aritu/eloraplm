@@ -1,0 +1,129 @@
+<div id="descriptionBlock"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxd="http://nuxeo.org/nxweb/document"
+  xmlns:p="http://primefaces.org/ui"
+  >
+
+
+<c:if test="#{currentDocument.hasSchema('dublincore')}">
+
+        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} workingCopy">
+        
+            <p:panelGrid styleClass="fullWidth">
+            
+            
+                <p:row>
+                  <!-- State -->
+                    <p:column styleClass="textAlignC">
+                        <h:outputText value="#{messages[currentDocument.currentLifeCycleState]}"
+                            styleClass="lifeCycleStateLabel filled" style="background-color: #{lifecycleActions.getLifeCycleStateColor(currentDocument.currentLifeCycleState)}"/>
+                    </p:column>
+                    
+                    <p:column></p:column>
+                    
+                    <!-- Separator -->
+                    <p:column rowspan="3" styleClass="headerSeparator"></p:column>
+                    
+                    <p:column colspan="4"></p:column>
+                    
+                     <!-- Separator -->
+                    <p:column rowspan="3" styleClass="headerSeparator"></p:column>
+                    
+                    <p:column></p:column>
+                    
+                    <!-- last column -->
+                    <p:column rowspan="3" styleClass="headerThumbnail">  </p:column>
+                </p:row>
+
+
+                <p:row>
+                    <!-- Priority -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.widget.CM.GenPriority']}" for="headerResponsible" />
+                    </p:column>
+                    <p:column>
+                        <nxl:widget id="headerResponsible" name="GenPriority" value="#{currentDocument}" mode="view" />
+                    </p:column>
+                    
+                    <!-- Creation info -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.summary.createdBy']}" for="creator" />
+                    </p:column>
+                    <p:column styleClass="textAlignC">
+                        <h:panelGroup styleClass="user creator">
+                            <h:outputLink id="creator" value="#{baseURL}user/#{currentDocument.dc.creator}">
+                                #{nxu:userFullName(currentDocument.dc.creator)}
+                            </h:outputLink>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column styleClass="textAlignC">
+                        <h:outputLabel value="#{messages['eloraplm.label.header.at']}" for="created" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText id="created" value="#{currentDocument.dc.created}">
+                            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
+                        </h:outputText>
+                    </p:column>
+                   
+                    <!-- Comments -->
+                    <p:column style="width: 40px;" styleClass="textAlignC">
+                        <h:panelGroup>
+                            <c:if test="#{fieldOrValue.hasFacet('Commentable')}">
+                                <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
+                                    <c:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" />
+                                    <c:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" />
+                                    <h:panelGroup layout="block" title="#{tooltip}" styleClass="tipsyShow tipsyGravityS" style="white-space: nowrap;">
+                                        <h:graphicImage value="/icons/comments.png" />
+                                        <h:outputText value="#{commentsCount}" />
+                                    </h:panelGroup>
+                                </nxu:set>
+                            </c:if>
+                        </h:panelGroup>
+                    </p:column>
+                </p:row>
+                
+                
+                <p:row>
+                    <!-- Responsible -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.widget.CM.GenResponsible']}" for="headerResponsible" />
+                    </p:column>
+                    <p:column>
+                        <nxl:widget id="headerResponsible" name="GenResponsible" value="#{currentDocument}" mode="view" />
+                    </p:column>
+                    
+                    <!-- Last Contribution info -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.dublincore.lastContributor']}" for="lastContributor" />
+                    </p:column>
+                    <p:column styleClass="textAlignC">
+                        <h:panelGroup styleClass="user lastContributor">
+                            <h:outputLink id="lastContributor" value="#{baseURL}user/#{currentDocument.dc.lastContributor}">
+                                #{nxu:userFullName(currentDocument.dc.lastContributor)}
+                            </h:outputLink>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column styleClass="textAlignC">
+                        <h:outputLabel value="#{messages['eloraplm.label.header.at']}" for="modified" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText id="modified" value="#{currentDocument.dc.modified}">
+                            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column></p:column>
+                </p:row>
+                
+            </p:panelGrid>
+            
+        </h:panelGroup>
+
+      
+  </c:if>
+  
+</div>

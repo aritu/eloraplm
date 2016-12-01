@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.doctypes.EventServiceComponent.contrib">
+
+    <require>filemanager.core.listener.icon</require>
+    <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
+        <listener async="false" class="com.aritu.eloraplm.thumbnails.CheckViewerBlobUpdateListener" name="checkViewerBlobUpdate" postCommit="false" priority="999">
+            <event>beforeDocumentModification</event>
+        </listener>
+        
+        <!-- Mimetype icon updater -->
+        <listener name="mimetypeIconUpdater" async="false" postCommit="false" class="com.aritu.eloraplm.doctypes.EloraMimetypeIconUpdater" priority="120">
+            <event>aboutToCreate</event>
+            <event>beforeDocumentModification</event>
+        </listener>
+    
+    </extension>
+
+</component>

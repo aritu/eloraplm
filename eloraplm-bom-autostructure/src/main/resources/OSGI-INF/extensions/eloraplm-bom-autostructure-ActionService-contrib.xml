@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.bom.autostructure.ActionService.contrib">
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    <action id="createStructureAction" order="10" label="command.create.structure" link="#{bomStructureAction.createStructure}" icon="/icons/action_create_structure_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter-id>isEditable</filter-id>
+      <filter-id>isBomDocument</filter-id>
+      <properties>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
+  </extension>
+  
+</component>

@@ -1,0 +1,62 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxdir="http://nuxeo.org/nxdirectory"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+  
+  <h:panelGrid styleClass="summary" style="margin-bottom: 1em;" columns="2" >
+      <h:panelGroup layout="block">
+          <h:outputLabel value="#{messages['label.content.header.description']}" styleClass="labelColumn" />
+      </h:panelGroup>
+      <h:panelGroup layout="block">
+          <h:outputText value="#{bomList.description}" styleClass="fieldColumn" />
+      </h:panelGroup>
+      
+      <h:panelGroup layout="block">
+          <h:outputLabel value="#{messages['label.content.header.type']}" styleClass="labelColumn" />
+      </h:panelGroup>
+      <h:panelGroup layout="block">
+          <nxu:set var="bomListTypeVoc" value="#{nxdir:directoryEntry('elora_bom_list_types', bomList.type)}">
+            <h:outputText value="#{messages[bomListTypeVoc.vocabulary.label]}" styleClass="fieldColumn" />
+          </nxu:set>
+      </h:panelGroup>
+  </h:panelGrid>
+  
+  <h:form>
+  
+    <c:if test="#{not bomList.isListCreated}">
+        <h:panelGroup styleClass="bubbleBox">
+        
+            <h3 class="bubbleHeader">#{messages['eloraplm.title.bom.list.notCreated']}</h3>
+            
+            <h:panelGroup styleClass="boxBody">
+            
+                <h:outputFormat value="#{messages['eloraplm.label.bom.list.notCreated']} ">
+                    <f:param value="#{bomList.label}" />
+                </h:outputFormat>
+                <h:outputText value="#{messages['eloraplm.label.bom.list.confirmCreate']} " />
+                
+                <h:commandButton value="#{messages['command.create']}"
+                    styleClass="button"
+                    action="#{bomList.createList}">
+                    <f:ajax execute="@form"
+                        render="@form" />
+                </h:commandButton>
+                
+            </h:panelGroup>
+            
+        </h:panelGroup>
+    </c:if>
+    
+    <c:if test="#{bomList.isListCreated}">
+        <nxl:widget name="bom_composition_list_treetable" mode="view" value="#{bomCompositionListTreeBean}" />
+    </c:if>
+    
+  </h:form>
+
+</ui:composition>

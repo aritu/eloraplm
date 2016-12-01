@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+
+  <ui:include src="add_basic_relation_template.xhtml">
+    <ui:param name="basicRelationBean" value="#{basicRelationBean}" />
+    <ui:param name="isEditableOrdering" value="false" />
+    <ui:param name="isEditableDirectorOrdering" value="true" />
+    <ui:param name="isEditableViewerOrdering" value="false" />
+    
+    <ui:param name="subjectDocument" value="#{currentDocument}" />
+  </ui:include>
+
+</ui:composition>

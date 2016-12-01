@@ -1,0 +1,90 @@
+<f:subview id="#{widget.id}"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+<ui:include src="/widgets/listing/listing_version_widget_template.xhtml" />
+
+<nxu:set var="isVersionable" value="#{field_0.isVersionable()}">
+<nxu:set var="isProxy" value="#{field_0.isProxy()}">
+<nxu:set var="isVersion" value="#{field_0.isVersion()}">
+<nxu:set var="wcDoc" value="#{documentManager.getWorkingCopy(field_0.getRef())}">
+
+<c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+    <h:panelGroup styleClass="visualizedTypeProxy" rendered="#{isVersionable and isProxy}">
+    
+        <nxu:set var="docRef" value="#{field_0.getRef()}">
+        <nxu:set var="sourceDoc" value="#{documentManager.getSourceDocument(docRef)}">
+    
+            <h:outputText value="AV" title="#{messages['label.title.proxyToArchivedVersion']}"
+                styleClass="tipsyShow" style="cursor: default;"
+                rendered ="#{not empty sourceDoc and sourceDoc.isVersion()}"/>
+            <h:outputText value="WC" title="#{messages['label.title.proxyToWorkingCopy']}"
+                styleClass="tipsyShow" style="cursor: default;"
+                rendered ="#{not empty sourceDoc and not sourceDoc.isVersion()}"/>
+            
+            <h:graphicImage url="/icons/wc_newer_10.png" title="#{messages['eloraplm.message.wcIsNewer']}: #{wcDoc.versionLabel}"
+                style="margin-left: 2px;"
+                styleClass="tipsyShow"
+                rendered="#{sourceDoc.isVersion()
+                and (sourceDoc.uid.major_version ne wcDoc.uid.major_version
+                or sourceDoc.uid.minor_version ne wcDoc.uid.minor_version)}" />
+                
+            <h:graphicImage url="/icons/wc_checked_out_10.png" title="#{messages['eloraplm.message.wcIsCheckedOut']}"
+                style="margin-left: 2px;"
+                styleClass="tipsyShow"
+                rendered="#{sourceDoc.isVersion()
+                and sourceDoc.uid.major_version eq wcDoc.uid.major_version
+                and sourceDoc.uid.minor_version eq wcDoc.uid.minor_version
+                and sourceDoc.versionLabel ne wcDoc.versionLabel}" />
+    
+        </nxu:set>
+        </nxu:set>
+    
+    </h:panelGroup>
+    
+    <h:panelGroup styleClass="visualizedType" rendered="#{isVersionable and not isProxy}">
+    
+        <h:outputText value="AV" title="#{messages['label.title.archivedVersion']}"
+            styleClass="tipsyShow" style="cursor: default;"
+            rendered ="#{isVersion}"/>
+        <h:outputText value="WC" title="#{messages['label.title.workingCopy']}"
+            styleClass="tipsyShow" style="cursor: default;"
+            rendered ="#{not isVersion}"/>
+        
+        <h:graphicImage url="/icons/wc_newer_10.png" title="#{messages['eloraplm.message.wcIsNewer']}: #{wcDoc.versionLabel}"
+            style="margin-left: 2px;"
+            styleClass="tipsyShow"
+            rendered="#{isVersion
+            and (field_0.uid.major_version ne wcDoc.uid.major_version
+            or field_0.uid.minor_version ne wcDoc.uid.minor_version)}" />
+            
+        <h:graphicImage url="/icons/wc_checked_out_10.png" title="#{messages['eloraplm.message.wcIsCheckedOut']}"
+            style="margin-left: 2px;"
+            styleClass="tipsyShow"
+            rendered="#{isVersion
+            and field_0.uid.major_version eq wcDoc.uid.major_version
+            and field_0.uid.minor_version eq wcDoc.uid.minor_version
+            and field_0.versionLabel ne wcDoc.versionLabel}" />
+    
+    </h:panelGroup>
+</c:if>
+
+<c:if test="#{widget.mode == 'csv'}">
+    <h:outputText value=" AV" rendered="#{isVersion}" />
+    <h:outputText value=" WC" rendered="#{not isVersion and not isProxy}" />
+    <h:outputText value=" Proxy to AV" rendered="#{isProxy and documentManager.getSourceDocument(field_0.getRef()).isVersion()}" />
+    <h:outputText value=" Proxy to WC" rendered="#{isProxy and not documentManager.getSourceDocument(field_0.getRef()).isVersion()}" />
+</c:if>
+
+
+</nxu:set>
+</nxu:set>
+</nxu:set>
+</nxu:set>
+
+</f:subview>

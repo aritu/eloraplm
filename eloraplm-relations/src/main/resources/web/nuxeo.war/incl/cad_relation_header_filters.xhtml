@@ -1,0 +1,18 @@
+<f:subview
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html">
+ 
+    <h:selectBooleanCheckbox id="showDrawings" value="#{value.showDrawings}">
+        <f:ajax render="@form" execute="@this" listener="#{value.reloadTree}" />
+    </h:selectBooleanCheckbox>
+    
+    <h:outputLabel for="showDrawings" value="#{messages['eloraplm.label.relations.showDrawings']}" />
+    
+    
+    <h:selectBooleanCheckbox id="showUniqueVersionsPerDocument" value="#{value.showUniqueVersionsPerDocument}">
+        <f:ajax render="@form" execute="@this" listener="#{value.reloadTree}" />
+    </h:selectBooleanCheckbox>
+    
+    <h:outputLabel for="showUniqueVersionsPerDocument" value="#{messages['eloraplm.label.relations.showUniqueVersionsPerDocument']}" />
+</f:subview>

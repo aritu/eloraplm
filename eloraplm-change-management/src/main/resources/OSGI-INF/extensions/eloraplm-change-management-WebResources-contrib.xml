@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.change.management.WebResources.contrib">
+
+    <require>org.nuxeo.theme.nuxeo.webapp</require>
+
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
+        <bundle name="nuxeo_includes">
+            <resources append="true">
+                <resource>elora.change.management.css</resource>
+            </resources>
+        </bundle>
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+        <resource name="elora.change.management.css" type="css">
+            <uri>/css/elora-change-management.css</uri>
+        </resource>
+    </extension>
+
+</component>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+<fragment version="1">
+    
+    <require>org.nuxeo.ecm.webapp.ui</require>
+    <require>com.aritu.eloraplm.l10n</require>
+  
+    <install>
+        <unzip from="${bundle.fileName}" to="/" prefix="web">
+          <include>web/nuxeo.war/**</include>
+        </unzip>
+        
+        <!-- Translation files -->
+        <delete path="${bundle.fileName}.tmp" />
+        <mkdir path="${bundle.fileName}.tmp" />
+        <unzip from="${bundle.fileName}" to="${bundle.fileName}.tmp" prefix="OSGI-INF/l10n">
+            <include>OSGI-INF/l10n/*.properties</include>
+        </unzip>
+        
+        <append from="${bundle.fileName}.tmp" pattern="*_en_US.properties"
+          to="nuxeo.war/WEB-INF/classes/messages.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_en_US.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_en.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_en_US.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_en_US.properties" addNewLine="true" />
+          
+        <append from="${bundle.fileName}.tmp" pattern="*_eu_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_eu_ES.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_eu_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_eu_FR.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_eu_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_eu.properties" addNewLine="true" />
+          
+        <append from="${bundle.fileName}.tmp" pattern="*_es_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_es_ES.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_es_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_es.properties" addNewLine="true" />
+        
+        <delete path="${bundle.fileName}.tmp" />
+    </install>
+
+</fragment>

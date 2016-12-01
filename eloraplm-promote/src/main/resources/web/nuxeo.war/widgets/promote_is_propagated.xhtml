@@ -1,0 +1,11 @@
+<div  xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+  
+  <h:selectBooleanCheckbox rendered="#{not value.isEnforced}" value="#{field_0}">
+    <f:ajax listener="#{promoteTreeBean.refreshNodePropagation}" render="#{treeWidgetId}" />
+    <f:attribute value="#{node}" name="node" />
+  </h:selectBooleanCheckbox>
+
+  <h:outputText rendered="#{value.isEnforced}" value="#{field_0 ? messages['label.yes'] : messages['label.no']}" />
+  
+</div>

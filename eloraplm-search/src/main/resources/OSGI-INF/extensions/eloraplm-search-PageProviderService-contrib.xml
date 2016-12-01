@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.search.PageProviderService.contrib">
+    <require>org.nuxeo.ecm.platform.suggestbox.core.pageproviders</require>
+    
+    <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService"
+    point="providers">
+      
+      <!-- Override DEFAULT_DOCUMENT_SUGGESTION page provider in order to modify executed SQL. -->
+       <!-- 
+          Original query:
+          SELECT * FROM Document WHERE ecm:fulltext.dc:title LIKE '?' AND ecm:mixinType !=
+          'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+          ecm:currentLifeCycleState != 'deleted'
+        -->
+      <coreQueryPageProvider name="DEFAULT_DOCUMENT_SUGGESTION">
+        <property name="maxResults">PAGE_SIZE</property>
+        <pattern escapeParameters="true" quoteParameters="false">
+          SELECT * FROM Document WHERE (ecm:fulltext.elo:reference LIKE '?' OR ecm:fulltext.dc:title LIKE '?') 
+          AND ecm:mixinType != 'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND 
+          ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+        </pattern>
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      
+    </extension>
+</component>

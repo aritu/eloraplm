@@ -1,0 +1,24 @@
+<f:subview id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core">
+    
+    <nxu:set var="wcDoc" value="#{documentManager.getWorkingCopy(field.getRef())}">
+
+        <h:graphicImage value="#{not empty wcDoc.lockInfo and wcDoc.lockInfo.owner ne currentUser ? '/icons/locked_by_other_16.gif' : '/icons/locked_by_me_16.gif'}"
+            style="vertical-align: middle;"
+             rendered="#{field != null and wcDoc.locked}">
+            
+            <nxu:set var="owner" value="#{not empty wcDoc.lockInfo ? nxu:userFullName(wcDoc.lockInfo.owner) : ''}">
+            <nxu:set var="createdTime" value="#{not empty wcDoc.lockInfo ? wcDoc.lockInfo.created.time : ''}">
+                <f:attribute name="title" value="#{messages['label.summary.by']} #{owner}, #{messages['label.summary.the']} #{createdTime}" />
+                <f:attribute name="styleClass" value="tipsyShow" />
+            </nxu:set>
+            </nxu:set>
+            
+        </h:graphicImage>
+
+  </nxu:set>
+</f:subview>

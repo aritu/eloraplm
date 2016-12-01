@@ -1,0 +1,19 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cm_eco" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_eco">
+
+ <!--  <xs:include schemaLocation="cm_impacted_item.xsd" /> -->
+
+  <xs:element name="ecoType" >
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cmEcoType" />
+    </xs:simpleType>
+  </xs:element>  
+  
+  <!-- <xs:element name="docsImpactedItemList" type="nxs:impactedItemListType"/>
+  <xs:element name="bomsImpactedItemList" type="nxs:impactedItemListType"/> -->
+  
+
+
+</xs:schema>

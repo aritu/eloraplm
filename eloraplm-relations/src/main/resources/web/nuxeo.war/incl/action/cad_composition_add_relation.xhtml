@@ -1,0 +1,14 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  >
+
+  <ui:include src="add_relation_template.xhtml">
+    <ui:param name="treeBean" value="#{cadCompositionTreeBean}" />
+    <ui:param name="pageProviderName" value="cad_composition_document_suggestion" />
+    <ui:param name="isEditablePredicate" value="true" />
+    <ui:param name="isEditableOrdering" value="false" />
+    <ui:param name="subjectDocument" value="#{currentDocument}" />
+</ui:include>
+
+</ui:composition>

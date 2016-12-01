@@ -1,0 +1,163 @@
+/*
+ * Treetable style modifications for EloraPlm
+ */
+
+.ui-treetable .ui-treetable-toggler
+{
+    margin: 4px 2px 0 0;
+}
+
+.ui-treetable-toggler.ui-icon.ui-icon-triangle-1-s
+{
+    background-image: url(/nuxeo/icons/collapse.png);
+    background-position: center center;
+}
+.ui-treetable-toggler.ui-icon.ui-icon-triangle-1-e
+{
+    background-image: url(/nuxeo/icons/expand.png);
+    background-position: center center;
+}
+
+.ui-treetable table,
+.ui-treetable table tbody,
+.ui-treetable table tbody tr
+{
+    border: 1px solid #e6e9ef;
+}
+
+.ui-treetable table tbody td
+{
+    border-width: 1px 0;
+    border-color: #e6e9ef;
+    border-style: solid;
+    white-space: normal;
+}
+
+.nx-page .ui-treetable button
+{
+    height: auto;
+    padding: 0;
+}
+
+.ui-treetable
+{
+    font-size: 0.9em;
+}
+
+.treetableButtonsPanel .widgetPanel.actionsWidgetPanel
+{
+    padding: 0;
+}
+
+.ui-treetable .ui-treetable-header {
+    overflow: hidden;
+}
+
+.ui-treetable .ui-treetable-header .treeHeaderTitle
+{
+    display: inline-block;
+    float: left;
+    text-align: left;
+    padding-top: 0.6em;
+    font-size: 1.1em;
+    color: #000;
+}
+
+.ui-treetable .ui-treetable-header .treeHeaderButtons
+{
+    display: inline-block;
+    float: right;
+    text-align: right;
+    padding-top: 0.6em;
+}
+
+.ui-treetable .ui-treetable-header .treeHeaderButtons > *
+{
+    vertical-align: middle;
+}
+
+.headerFilters
+{
+    margin-right: 2em;
+    font-weight: normal;
+}
+
+.headerFilters input[type=checkbox]
+{
+    vertical-align: middle;
+    margin-left: 1em;
+    position: relative;
+    top: -3px;
+}
+
+.ui-treetable tr.rowIsNormal
+{
+    background-color: transparent;
+}
+
+.ui-treetable tr.rowIsNew
+{
+    background-color: #faffcb;
+    box-shadow: inset 4px 0 0 #aabb55;
+}
+
+.ui-treetable tr.rowIsRemoved
+{
+    background-color: #fff0ee;
+    box-shadow: inset 4px 0 0 #cc5555; 
+}
+
+.ui-treetable tr.rowIsModified
+{
+    background-color: #ffedcc;
+    box-shadow: inset 4px 0 0 #ffc04d; 
+}
+
+.ui-treetable .ui-widget-header.ui-treetable-header
+{
+    background-image: none;
+    background-color: #f8f9fb;
+    border: 1px solid #e6e9ef;
+    border-bottom: none;
+}
+
+.ui-treetable .ui-state-default
+{
+    background-image: none;
+    background-color: #f8f9fb;
+    border: 1px solid #e6e9ef;
+    color: #000;
+}
+
+.ui-treetable thead th
+{
+    text-align: left;
+}
+
+
+td.treetableColumn.alignCenter
+{
+    text-align: center;
+}
+
+td.treetableColumn.alignRight
+{
+    text-align: right;
+}
+
+
+/* 7.10erako???
+
+.ui-treetable .ui-state-hover
+{
+    background: #F5F2FB linear-gradient(top, rgba(255,255,255,0.6), rgba(255,255,255,0));
+    border: none;
+    box-shadow: 0px 0px 4px #D5D2DB;
+}
+
+.ui-treetable .ui-state-highlight
+{
+    background: #EEE linear-gradient(top, rgba(255,255,255,0.6), rgba(255,255,255,0));
+    border: none;
+}
+*/

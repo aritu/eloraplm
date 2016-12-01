@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-bom-lists
+Bundle-Name: eloraplm-bom-lists
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-bomLists-DirectoryUIMana
+ ger-contrib.xml,OSGI-INF/extensions/eloraplm-bomLists-SQLDirectoryFac
+ tory-contrib.xml,OSGI-INF/extensions/eloraplm-bomLists-TypeService-co
+ ntrib.xml,OSGI-INF/extensions/eloraplm-bomLists-WebLayoutManager-cont
+ rib.xml,OSGI-INF/extensions/eloraplm-bomLists-ActionService-contrib.x
+ ml,OSGI-INF/extensions/eloraplm-bomLists-WebResources-contrib.xml,OSG
+ I-INF/extensions/eloraplm-bomLists-EventServiceComponent-contrib.xml
+

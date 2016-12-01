@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.webapp.base.ActionService.contrib">
+
+<extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+  
+    <filter id="isBomDocument">
+      <rule grant="true">
+        <facet>BomDocument</facet>
+      </rule>
+    </filter>
+    
+    <filter id="isNotBomDocument">
+      <rule grant="false">
+        <facet>BomDocument</facet>
+      </rule>
+    </filter>
+    
+    <filter id="isCadOrBomDocument">
+      <rule grant="true">
+        <facet>CadDocument</facet>
+        <facet>BomDocument</facet>
+      </rule>
+    </filter>
+    
+    <filter id="isEditable">
+        <rule grant="true">
+            <permission>Write</permission>
+        </rule>
+        <rule grant="false">
+            <condition>#{currentDocument.isVersion()}</condition>
+            <condition>#{!currentDocument.isLocked()}</condition>
+            <condition>#{currentDocumentLockDetails['document.locker'] ne currentUser}</condition>
+        </rule>
+    </filter>
+    
+  </extension>
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    <!-- New default widget in summary panel left for displaying document type, CAD part type and description -->
+    <action id="summary_current_document_types_and_description" order="10" type="widget" enabled="true">
+      <category>SUMMARY_PANEL_LEFT</category>
+      <properties>
+        <property name="widgetName">summary_current_document_types_and_description</property>
+      </properties>
+      <filter-id>isNotBomDocument</filter-id>
+    </action>
+    
+    
+    <!-- default widgets on top panel -->
+    
+<!--     <action id="summary_current_document_heading" type="widget" order="100"> -->
+<!--       <category>SUMMARY_PANEL_TOP</category> -->
+<!--       <properties> -->
+<!--         <property name="widgetName">summary_current_document_heading</property> -->
+<!--       </properties> -->
+<!--       <filter-id>hasDublincore</filter-id> -->
+<!--     </action> -->
+    
+    <!-- end of default widgets on top panel -->
+    
+    <!-- disable document description from right panel -->
+    <action id="summary_current_document_description" enabled="false"/>
+    
+    <!-- disable document indicators from right panel -->
+    <action id="summary_current_document_indicators" enabled="false"/>
+    
+    <!-- disable document state from right panel -->
+    <action id="summary_current_document_states" enabled="false"/>
+    
+    <!-- disable document relations from right panel. We choose what relations to show -->
+    <action id="summary_current_document_relations" enabled="false"/>
+    
+    
+    <!-- Action to create WS proxy -->
+    <action id="createWorkspaceProxyFromButton" order="40" label="eloraplm.command.wsProxy.create" type="fancybox" icon="/icons/action_create_ws_proxy_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="filter@createWorkspaceProxyButton">
+        <rule grant="false">
+          <facet>Folderish</facet>
+          <condition>#{not currentDocument.isVersion() and not currentDocument.isProxy()}</condition>
+        </rule>
+      </filter>
+      <properties>
+        <property name="include">/incl/action/create_ws_proxy.xhtml</property>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
+
+    
+    <!-- Disable publish tab -->
+    <action id="TAB_PUBLISH" enabled="false" />
+    
+    <!-- Disable Restore button in History tab -->
+    <action id="RESTORE_VERSION" enabled="false" />
+    
+    
+    <!-- Changes to preview button -->
+   <action id="showFancyBoxPreview" enabled="false" />
+   
+   <action icon="/icons/contextual_menu/preview.png" id="headerShowPreview" label="label.document.preview" order="0" type="fancybox">
+      <category>HEADER_THUMBNAIL_BUTTON</category>
+      <filter-id>view_preview</filter-id>
+      <filter-id>not_folder</filter-id>
+      <filter-id>not_anonymous</filter-id>
+      
+      <properties>
+        <property name="iframe">
+          #{previewActions.getCurrentDocumentPreviewPopupURL()}
+        </property>
+        <property name="ajaxSupport">true</property>
+      </properties>
+    </action>
+    
+    
+    
+    <!-- Disable POPUP_RENAME action -->
+    <action id="POPUP_RENAME" enabled="false" />
+    
+    <!-- Disable POPUP_WORKFLOW action -->
+    <action id="POPUP_WORKFLOW" enabled="false" />
+    
+    <!-- Disable POPUP_sendEmail action -->
+    <action id="POPUP_sendEmail" enabled="false" />
+    
+    <!-- Add some general tabs and reorder default tabs -->
+    
+    <action id="TAB_FILES_EDIT" link="/incl/tabs/document_files_edit.xhtml"
+      order="60" label="action.view.files" accessKey="f" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>edit</filter-id>
+      <filter-id>mutable_document</filter-id>
+      <filter-id>hasAttachedFiles</filter-id>
+      <filter-id>denyFilesTab</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+      </properties>
+    </action>
+    
+    <action id="TAB_LINKS" link="/incl/tabs/links.xhtml"
+      order="100" label="eloraplm.label.links" type="rest_document_link">
+      <filter-id>isCadOrBomDocument</filter-id>
+      <category>VIEW_ACTION_LIST</category>
+    </action>
+    
+    <action id="TAB_CONTENT_HISTORY" link="/incl/tabs/document_history.xhtml"
+       order="110" enabled="true" label="action.view.history" icon="/icons/file.gif"
+      type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>TAB_CONTENT_HISTORY_has_subtabs</filter-id>
+    </action>
+    
+    <action id="view_comments" link="/incl/tabs/document_comments.xhtml"
+      order="120" enabled="true" label="action.view.comments" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>commentable</filter-id>
+      <filter-id>mutable_document</filter-id>
+      <filter-id>not_anonymous</filter-id>
+    </action>
+    
+    <action id="TAB_PERMISSIONS" link="/permissions/document_permissions.xhtml"
+      order="130" label="action.view.permissions" icon="/icons/file.gif">
+      <category>VIEW_ACTION_LIST</category>
+      <properties>
+        <!-- NXP-18320: disable ajax support on Polymer tabs -->
+        <property name="ajaxSupport">false</property>
+      </properties>
+    </action>
+    
+    <!-- End of add some general tabs and reorder default tabs -->
+    
+    <!-- Change actions visibility by default -->
+    <action id="addToFavoritesAction">
+      <properties>
+        <property name="visibleByDefault">#{currentDocument.isFolder() ? true : false}</property>
+      </properties>
+    </action>
+    <action id="removeFromFavoritesAction">
+      <properties>
+        <property name="visibleByDefault">#{currentDocument.isFolder() ? true : false}</property>
+      </properties>
+    </action>
+    
+    <action id="subscribesAllDocNotifications">
+      <properties>
+        <property name="visibleByDefault">#{currentDocument.isFolder() ? true : false}</property>
+      </properties>
+    </action>
+    <action id="unsubscribesAllDocNotifications">
+      <properties>
+        <property name="visibleByDefault">#{currentDocument.isFolder() ? true : false}</property>
+      </properties>
+    </action>
+    
+    
+  </extension>
+  
+</component> 

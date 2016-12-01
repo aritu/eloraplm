@@ -1,0 +1,324 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.SQLDirectoryFactory.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+
+    <directory name="elora_bom_predicates">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_relation_predicates</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_bom_relation_predicates.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bom_inverse_predicates">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_relation_inverse_predicates</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_bom_relation_inverse_predicates.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomItemTypes">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_item_types</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_bom_item_types.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomSource">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_source</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_bom_source.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomStandard">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_standard</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_bom_standard.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomPartClassLevel1">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_part_class_level1</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_part_class_level1.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomPartClassLevel2">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_part_class_level2</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_part_class_level2.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomPartClassLevel1</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomPartClassLevel1</dependency>
+      </init-dependencies>   
+    </directory>
+    
+    <directory name="elora_bomPartClassLevel3">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_part_class_level3</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_part_class_level3.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomPartClassLevel2</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomPartClassLevel2</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomPartClassHierarchical">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_part_class_hierarchical</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_part_class_hierarchical.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomProductClassLevel1">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_product_class_level1</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_product_class_level1.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomProductClassLevel2">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_product_class_level2</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_product_class_level2.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomProductClassLevel1</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomProductClassLevel1</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomProductClassLevel3">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_product_class_level3</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_product_class_level3.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomProductClassLevel2</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomProductClassLevel2</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomProductClassHierarchical">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_product_class_hierarchical</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_product_class_hierarchical.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_bomToolClassLevel1">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_tool_class_level1</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_tool_class_level1.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomToolClassLevel2">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_tool_class_level2</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_tool_class_level2.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomToolClassLevel1</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomToolClassLevel1</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomToolClassLevel3">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_tool_class_level3</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_tool_class_level3.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomToolClassLevel2</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomToolClassLevel2</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomToolClassHierarchical">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_tool_class_hierarchical</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_tool_class_hierarchical.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomPackagingClassLevel1">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_packaging_class_level1</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_packaging_class_level1.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomPackagingClassLevel2">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_packaging_class_level2</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_packaging_class_level2.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomPackagingClassLevel1</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomPackagingClassLevel1</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomPackagingClassLevel3">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_packaging_class_level3</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_packaging_class_level3.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomPackagingClassLevel2</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomPackagingClassLevel2</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomPackagingClassHierarchical">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_packaging_class_hierarchical</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_packaging_class_hierarchical.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>        
+
+    <directory name="elora_bomSpecificationClassLevel1">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_specification_class_level1</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_specification_class_level1.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_bomSpecificationClassLevel2">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_specification_class_level2</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_specification_class_level2.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomSpecificationClassLevel1</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomSpecificationClassLevel1</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomSpecificationClassLevel3">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_specification_class_level3</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_specification_class_level3.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_bomSpecificationClassLevel2</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_bomSpecificationClassLevel2</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_bomSpecificationClassHierarchical">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_specification_class_hierarchical</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_specification_class_hierarchical.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+  </extension>
+    
+</component>

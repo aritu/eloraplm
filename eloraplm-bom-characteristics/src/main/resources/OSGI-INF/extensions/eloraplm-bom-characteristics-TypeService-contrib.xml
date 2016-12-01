@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.characteristics.TypeService.contrib">
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+  
+       <schema name="bom_characteristic" prefix="bomcharc" 
+               src="schemas/bom_characteristic.xsd"/>
+       
+  </extension>
+
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+  
+    <!-- Facets -->
+    <facet name="BomCharacteristic" />
+    
+    <!-- Doc types -->
+  
+    <!--  Folder for BomCharacteristics -->
+    <doctype extends="Folder" name="BomCharacteristicsFolder">
+      <facet name="SystemDocument"/>
+      <subtypes>
+        <type>Folder</type>
+      </subtypes>
+    </doctype>
+  
+    <!-- Bom Characteristics documents -->
+    <doctype extends="Document" name="BomPartCharacteristic">
+      <facet name="BomCharacteristic"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="dublincore"/>
+      <schema name="bom_characteristic"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    
+    <doctype extends="Document" name="BomProductCharacteristic">
+      <facet name="BomCharacteristic"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="dublincore"/>
+      <schema name="bom_characteristic"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    
+    <doctype extends="Document" name="BomToolCharacteristic">
+      <facet name="BomCharacteristic"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="dublincore"/>
+      <schema name="bom_characteristic"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    
+    <doctype extends="Document" name="BomPackagingCharacteristic">
+      <facet name="BomCharacteristic"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="dublincore"/>
+      <schema name="bom_characteristic"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    
+    <doctype extends="Document" name="BomSpecificationCharacteristic">
+      <facet name="BomCharacteristic"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="dublincore"/>
+      <schema name="bom_characteristic"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+
+  </extension>
+
+  
+  <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
+  
+    <type id="BomCharacteristicsFolder">
+      <default-view>view_documents</default-view>
+      <label>BomCharacteristicsFolder</label>
+      <icon>/icons/folder.gif</icon>
+      <subtypes>
+        <type>Folder</type>
+      </subtypes>
+    </type>
+
+    <type id="BomPartCharacteristic">
+      <label>BomPartCharacteristic</label>
+      <icon>/icons/bom_part_charac_16.gif</icon>
+      <bigIcon>/icons/bom_part_charac_100.png</bigIcon>
+      <category>BomCharacteristic</category>
+      <description>BomPartCharacteristic.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>bom_part_characteristic_classification</layout>
+        <layout>bom_characteristic</layout>
+      </layouts>
+   </type>
+   
+   <type id="BomProductCharacteristic">
+      <label>BomProductCharacteristic</label>
+      <icon>/icons/bom_product_charac_16.gif</icon>
+      <bigIcon>/icons/bom_product_charac_100.png</bigIcon>
+      <category>BomCharacteristic</category>
+      <description>BomProductCharacteristic.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>bom_product_characteristic_classification</layout>
+        <layout>bom_characteristic</layout>
+      </layouts>
+   </type>
+   
+   <type id="BomToolCharacteristic">
+      <label>BomToolCharacteristic</label>
+      <icon>/icons/bom_tool_charac_16.gif</icon>
+      <bigIcon>/icons/bom_tool_charac_100.png</bigIcon>
+      <category>BomCharacteristic</category>
+      <description>BomToolCharacteristic.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>bom_tool_characteristic_classification</layout>
+        <layout>bom_characteristic</layout>
+      </layouts>
+   </type>
+   
+   <type id="BomPackagingCharacteristic">
+      <label>BomPackagingCharacteristic</label>
+      <icon>/icons/bom_packaging_charac_16.gif</icon>
+      <bigIcon>/icons/bom_packaging_charac_100.png</bigIcon>
+      <category>BomCharacteristic</category>
+      <description>BomPackagingCharacteristic.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>bom_packaging_characteristic_classification</layout>
+        <layout>bom_characteristic</layout>
+      </layouts>
+   </type>
+   
+   <type id="BomSpecificationCharacteristic">
+      <label>BomSpecificationCharacteristic</label>
+      <icon>/icons/bom_specification_charac_16.gif</icon>
+      <bigIcon>/icons/bom_specification_charac_100.png</bigIcon>
+      <category>BomCharacteristic</category>
+      <description>BomSpecificationCharacteristic.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>bom_specification_characteristic_classification</layout>
+        <layout>bom_characteristic</layout>
+      </layouts>
+   </type>
+ 
+  </extension>
+  
+</component>

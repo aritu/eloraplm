@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+
+<script type="text/javascript">
+  function toggleLayers(more_block, more_items) {
+    var objMoreBlock = document.getElementById(more_block).style;
+    var objMoreItems = document.getElementById(more_items).style;
+    if(objMoreBlock.display == "block")
+      objMoreBlock.display = "none";
+    if(objMoreItems.display == "none")
+      objMoreItems.display = "block";
+  }
+</script>
+
+<ui:include src="/cad_document_inverse_bom_relations.xhtml">
+  <ui:param name="formId" value="cad_item_relations" />
+  <ui:param name="documentRelations" value="#{incomingBomDocumentRelations}" />
+  <ui:param name="message" value="#{messages['title.bom.related.item']}" />
+</ui:include>
+
+</ui:composition>

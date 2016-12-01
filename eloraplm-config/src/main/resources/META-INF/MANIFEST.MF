@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-config
+Bundle-Name: eloraplm-config
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-config-ResourcePublisher
+ -contrib.xml,OSGI-INF/extensions/eloraplm-config-DirectoryUIManager-c
+ ontrib.xml,OSGI-INF/extensions/eloraplm-config-SQLDirectoryFactory-co
+ ntrib.xml,OSGI-INF/extensions/eloraplm-config-TypeService-contrib.xml
+ ,OSGI-INF/extensions/eloraplm-config-WebLayoutManager-contrib.xml,OSG
+ I-INF/extensions/eloraplm-config-OperationServiceComponent-contrib.xm
+ l
+

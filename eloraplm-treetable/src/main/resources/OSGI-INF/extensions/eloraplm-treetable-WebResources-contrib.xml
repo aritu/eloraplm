@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.treetable.WebResources.contrib">
+
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+    
+        <resource name="elora.treetable.css" type="css">
+            <uri>/css/elora-treetable.css</uri>
+        </resource>
+        
+    </extension>
+
+</component>

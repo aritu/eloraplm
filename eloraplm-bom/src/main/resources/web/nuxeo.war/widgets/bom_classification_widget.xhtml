@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:nxdir="http://nuxeo.org/nxdirectory"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  >
+  
+    <nxu:set var="classification" value="#{
+        field_0.getType() eq 'BomPart' ? field_0.bompart.partClassification :
+        ( field_0.getType() eq 'BomTool' ? field_0.bomtool.toolClassification :
+        ( field_0.getType() eq 'BomPackaging' ? field_0.bompack.packagingClassification :
+        ( field_0.getType() eq 'BomSpecification' ? field_0.bomspec.specificationClassification :
+        ( field_0.getType() eq 'BomProduct' ? field_0.bomprod.productClassification : '' ))))
+    }">
+    
+    <nxu:set var="directoryNameList" value="#{
+        field_0.getType() eq 'BomPart' ? 'elora_bomPartClassLevel1,elora_bomPartClassLevel2,elora_bomPartClassLevel3' :
+        ( field_0.getType() eq 'BomTool' ? 'elora_bomToolClassLevel1,elora_bomToolClassLevel2,elora_bomToolClassLevel3' :
+        ( field_0.getType() eq 'BomPackaging' ? 'elora_bomPackagingClassLevel1,elora_bomPackagingClassLevel2,elora_bomPackagingClassLevel3' :
+        ( field_0.getType() eq 'BomSpecification' ? 'elora_bomSpecificationClassLevel1,elora_bomSpecificationClassLevel2,elora_bomSpecificationClassLevel3' :
+        ( field_0.getType() eq 'BomProduct' ? 'elora_bomProductClassLevel1,elora_bomProductClassLevel2,elora_bomProductClassLevel3' : '' ))))
+    }">
+
+        <nxdir:chainSelectOutput directoryNameList="#{directoryNameList}"
+            value="#{classification}" localize="true" display="label"
+            keySeparator="/" entrySeparator="" handleMultipleValues="false" />
+
+    </nxu:set>
+
+    </nxu:set>
+
+</ui:composition>

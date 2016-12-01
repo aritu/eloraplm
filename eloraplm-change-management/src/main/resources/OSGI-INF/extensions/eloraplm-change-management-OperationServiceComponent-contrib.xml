@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.change.management.OperationServiceComponent.contrib">
+
+  <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="chains">
+
+    <chain id="ch_CmPr_Review">
+      <operation id="Context.FetchDocument"/>    
+      <operation id="Document.SetLifeCycle">
+        <param type="string" name="value">review</param>
+      </operation>
+    </chain>
+
+    <chain id="ch_CmPr_Validate">
+      <operation id="Context.FetchDocument"/>    
+      <operation id="Document.SetLifeCycle">
+        <param type="string" name="value">validate</param>
+      </operation>
+    </chain>
+    
+    <chain id="ch_CmPr_Reject">
+      <operation id="Context.FetchDocument"/>    
+      <operation id="Document.SetLifeCycle">
+        <param type="string" name="value">reject</param>
+      </operation>
+    </chain>
+
+    <chain id="ch_CmPr_Complete">
+      <operation id="Context.FetchDocument"/>    
+      <operation id="Document.SetLifeCycle">
+        <param type="string" name="value">complete</param>
+      </operation>
+    </chain>
+
+    <chain id="ch_CmPr_Manage">
+      <operation id="Context.FetchDocument"/>    
+      <operation id="Document.SetLifeCycle">
+        <param type="string" name="value">manage</param>
+      </operation>
+    </chain>
+
+  </extension>
+ 
+</component>

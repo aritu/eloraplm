@@ -1,0 +1,38 @@
+<ui:composition
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxdir="http://nuxeo.org/nxdirectory"
+  xmlns:c="http://java.sun.com/jstl/core">
+
+<c:if test="#{!empty widgetProperty_documentRelations}">
+
+  <c:if test="#{widget.handlingLabels}">
+    <c:if test="#{!empty widget.label}">
+      <ui:include src="/widgets/incl/widget_label_template.xhtml">
+        <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+      </ui:include>
+    </c:if>
+    <c:if test="#{empty widget.label}">
+      <ui:include src="/widgets/incl/label_template.xhtml">
+        <ui:param name="label" value="label.widgetBlock.title.relations" />
+        <ui:param name="helpLabel" value="#{widget.helpLabel}" />
+        <ui:param name="translated" value="true" />
+        <ui:param name="required" value="#{widget.required}" />
+        <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+      </ui:include>
+    </c:if>
+  </c:if>
+
+  <nxu:dataTable value="#{widgetProperty_documentRelations}"
+    var="statement" styleClass="dataTableLine smallTable">
+    <nxu:column styleClass="fieldColumn">
+      <ui:include src="/relation_node_template.xhtml">
+        <ui:param name="statement" value="#{statement}" />
+        <ui:param name="node" value="#{statement.objectInfo}" />
+      </ui:include>
+    </nxu:column>
+  </nxu:dataTable>
+
+</c:if>
+</ui:composition>

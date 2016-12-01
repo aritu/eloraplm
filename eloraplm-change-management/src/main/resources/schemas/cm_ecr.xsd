@@ -1,0 +1,53 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cm_ecr" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_ecr">
+
+  <!-- <xs:include schemaLocation="cm_impacted_item.xsd" /> -->
+  
+  <xs:complexType name="comiteItemType">
+    <xs:sequence>
+      <xs:element name="comiteUser">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="comiteListType">
+    <xs:sequence>
+      <xs:element name="item" type="nxs:comiteItemType" minOccurs="0"
+        maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="costType">
+    <xs:sequence>
+      <xs:element name="cost" type="xs:string"/>
+      <xs:element name="comment" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="requestedBy">
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="reason" type="xs:string"/>
+  <xs:element name="ecrType" >
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cmEcrType" />
+    </xs:simpleType>
+  </xs:element>  
+  <xs:element name="cause" type="xs:string"/>
+  <xs:element name="proposedSolution" type="xs:string"/>
+  <xs:element name="economicalComiteList" type="nxs:comiteListType"/>
+  <xs:element name="nonRecurringCost" type="nxs:costType"/>
+  <xs:element name="recurringCost" type="nxs:costType"/>
+  <xs:element name="stockCost" type="nxs:costType"/>
+  <xs:element name="proposedEcoType" type="xs:string"/>
+  
+ <!--  <xs:element name="docsImpactedItemList" type="nxs:impactedItemListType"/>
+  <xs:element name="bomsImpactedItemList" type="nxs:impactedItemListType"/> -->
+
+</xs:schema>

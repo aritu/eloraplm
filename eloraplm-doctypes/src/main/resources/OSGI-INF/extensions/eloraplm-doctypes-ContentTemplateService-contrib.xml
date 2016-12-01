@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.doctypes.ContentTemplateService.contrib">
+<!-- <require>eloraplm-change-management</require> -->
+  <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
+  
+    <factoryBinding name="DomainFactory" factoryName="SimpleTemplateFactory" targetType="Domain">
+    </factoryBinding>
+    
+    <factoryBinding name="StructureRootFactory" factoryName="SimpleTemplateFactory" targetType="StructureRoot">
+      <template>
+        <templateItem typeName="StructArchivedWS" id="archivedWS" title="Archived workspaces" description="Archived Workspaces."/>
+        <templateItem typeName="StructCadDoc" id="documents" title="Documents" description="CAD documents."/>
+        <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering BOMs."/>
+        <templateItem typeName="StructChangeManagement" id="changeManagement" title="Change Management" description="Change Management."/>
+        <templateItem typeName="StructProject" id="projects" title="Projects" description="Projects."/>
+        <templateItem typeName="WorkspaceRoot" id="workspaces" title="Workspaces" description="Workspaces."/>
+        <templateItem typeName="TempFolder" id="temp" title="Temp folder" description="Temporary files."/>
+      </template>
+    </factoryBinding>
+
+    <factoryBinding name="CollaborationRootFactory" factoryName="SimpleTemplateFactory" targetType="CollaborationRoot">
+      <template>
+        <templateItem typeName="StructArchivedWS" id="archivedWS" title="Archived workspaces" description="Archived Workspaces."/>
+        <templateItem typeName="StructCadDoc" id="documents" title="Documents" description="CAD documents."/>
+        <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering BOMs."/>
+        <templateItem typeName="StructProject" id="projects" title="Projects" description="Projects."/>
+        <templateItem typeName="WorkspaceRoot" id="workspaces" title="Workspaces" description="Workspaces."/>
+        <templateItem typeName="TempFolder" id="temp" title="Temp folder" description="Temporary files."/>
+      </template>
+    </factoryBinding>
+
+    <factoryBinding name="LibraryRootFactory" factoryName="SimpleTemplateFactory" targetType="LibraryRoot">
+      <template>
+        <templateItem typeName="StructCadDoc" id="documents" title="Documents" description="CAD documents."/>
+        <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering BOMs."/>
+        <templateItem typeName="TempFolder" id="temp" title="Temp folder" description="Temporary files."/>
+      </template>
+    </factoryBinding>
+
+    <factoryBinding name="StructCadDocFactory" factoryName="SimpleTemplateFactory" targetType="StructCadDoc">
+      <template>
+        <templateItem typeName="FolderCadPart" id="cadParts" title="CAD Parts" description="CAD parts."/>
+        <templateItem typeName="FolderCadAssembly" id="cadAssemblies" title="CAD Assemblies" description="CAD assemblies."/>
+        <templateItem typeName="FolderCadDrawing" id="cadDrawings" title="CAD Drawings" description="CAD drawings."/>
+        <templateItem typeName="FolderOtherDoc" id="otherDocs" title="Other Documents" description="Other documents."/>
+      </template>
+    </factoryBinding>
+       
+  </extension>
+  
+</component>  

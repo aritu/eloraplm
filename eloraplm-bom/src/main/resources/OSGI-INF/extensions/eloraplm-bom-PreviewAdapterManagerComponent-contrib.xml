@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.PreviewAdapterManagerComponent.contrib">
+    
+    <extension point="AdapterFactory" target="org.nuxeo.ecm.platform.preview.adapter.PreviewAdapterManagerComponent">
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>BomPart</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>BomManufacturerPart</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>BomTool</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>BomPackaging</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>BomSpecification</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>BomProduct</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>BomCustomerProduct</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+    </extension>
+    
+</component>

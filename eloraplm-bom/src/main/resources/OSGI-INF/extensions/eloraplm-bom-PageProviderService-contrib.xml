@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.bom.PageProviderService.contrib">
+    <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService"
+        point="providers">
+        
+        <!-- Document Suggestion for BOM tabs -->
+        <coreQueryPageProvider name="bom_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM BomPart,BomManufacturerPart,BomTool,BomPackaging,BomSpecification,BomProduct,BomCustomerProduct
+            WHERE ecm:fulltext LIKE '?*' AND ecm:mixinType !=
+            'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+            ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <!-- Document Suggestion for BOM_HAS_BOM relations in Tool -->
+        <coreQueryPageProvider name="tool_objects_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document
+            WHERE ecm:fulltext LIKE '?*'
+            AND ecm:isCheckedInVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:isProxy = 0
+            AND ecm:mixinType NOT IN ('HiddenInNavigation')
+            AND ecm:primaryType IN ('BomPart','BomProduct')
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <!-- Document Suggestion for BOM_HAS_BOM relations in Packaging -->
+        <coreQueryPageProvider name="packaging_objects_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document
+            WHERE ecm:fulltext LIKE '?*'
+            AND ecm:isCheckedInVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:isProxy = 0
+            AND ecm:mixinType NOT IN ('HiddenInNavigation')
+            AND ecm:primaryType IN ('BomProduct')
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <!-- Document Suggestion for BOM_HAS_BOM relations in Specification -->
+        <coreQueryPageProvider name="specification_objects_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document
+            WHERE ecm:fulltext LIKE '?*'
+            AND ecm:isCheckedInVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:isProxy = 0
+            AND ecm:mixinType NOT IN ('HiddenInNavigation')
+            AND ecm:primaryType IN ('BomPart','BomProduct','BomTool','BomPackaging')
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <!-- Document Suggestion for BOM_HAS_SPECIFICATION relations in boms -->
+        <coreQueryPageProvider name="specification_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document
+            WHERE ecm:fulltext LIKE '?*'
+            AND ecm:isCheckedInVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:isProxy = 0
+            AND ecm:mixinType NOT IN ('HiddenInNavigation')
+            AND ecm:primaryType IN ('BomSpecification')
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <!-- Document Suggestion for Documents tab in BOMs -->
+        <coreQueryPageProvider name="cad_doc_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document
+            WHERE ecm:fulltext LIKE '?*'
+            AND ecm:isCheckedInVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:isProxy = 0
+            AND ecm:mixinType NOT IN ('HiddenInNavigation')
+            AND ecm:mixinType IN ('CadDocument')
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="other_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document
+            WHERE ecm:fulltext LIKE '?*'
+            AND ecm:isCheckedInVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:isProxy = 0
+            AND ecm:mixinType NOT IN ('HiddenInNavigation','Folderish','BomDocument', 'CadDocument')
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+    </extension>
+</component>

@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.treetable
+Bundle-Name: eloraplm-treetable
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-treetable-WebLayoutManag
+ er-contrib.xml,OSGI-INF/extensions/eloraplm-treetable-WebResources-co
+ ntrib.xml
+

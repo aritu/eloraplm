@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.doctypes.WebLayoutManager.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+
+    <layout name="elora_object">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>reference_not_required</widget>
+        </row>
+      </rows>
+    </layout>
+
+    <layout name="elora_object_reference_required">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>reference_required</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_object_reference_automatic">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>reference_automatic</widget>
+        </row>
+      </rows>
+    </layout>
+
+    <layout name="elora_viewer">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>viewerFile</widget>
+        </row>
+      </rows>
+    </layout> 
+
+
+    <layout name="cad_document">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>authoringTool</widget>
+          <widget>authoringToolVersion</widget>
+        </row>
+      </rows>
+    </layout> 
+
+    <layout name="cad_part">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>activeConfiguration</widget>
+        </row>
+        <row>
+          <widget>cadClassification</widget>
+        </row>
+        <row>
+          <widget>cadMaterial</widget>
+        </row>
+        <row>
+          <widget>mass</widget>
+        </row>
+        <row>
+          <widget>volume</widget>
+        </row>
+        <!-- <row>
+          <widget>surface</widget>
+        </row> -->
+      </rows>
+    </layout> 
+    
+    <layout name="summary_cad_part">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>activeConfiguration</widget>
+        </row>
+        <row>
+          <widget>cadMaterial</widget>
+        </row>
+        <row>
+          <widget>mass</widget>
+        </row>
+        <row>
+          <widget>volume</widget>
+        </row>
+         <!-- <row>
+          <widget>surface</widget>
+        </row> -->
+      </rows>
+    </layout> 
+
+    <layout name="cad_assembly">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>activeConfiguration</widget>
+        </row>
+        <row>
+          <widget>cadClassification</widget>
+        </row>
+        <row>
+          <widget>mass</widget>
+        </row>
+        <row>
+          <widget>volume</widget>
+        </row>
+       <!--  <row>
+          <widget>surface</widget>
+        </row> -->
+      </rows>
+    </layout>
+    
+    <layout name="summary_cad_assembly">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>activeConfiguration</widget>
+        </row>
+        <row>
+          <widget>mass</widget>
+        </row>
+        <row>
+          <widget>volume</widget>
+        </row>
+       <!--  <row>
+          <widget>surface</widget>
+        </row> -->
+      </rows>
+    </layout>  
+
+    <layout name="cad_drawing">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>sheetFormat</widget>
+          <widget>scale</widget>
+          <widget>numberOfSheets</widget>
+        </row>
+        <row>
+          <widget>templateName</widget>
+        </row>
+      </rows>
+    </layout> 
+
+    <layout name="cad_design_table">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>sourceDT</widget>
+        </row>
+        <row>
+          <widget>allowUpdateFromModel</widget>
+        </row>
+      </rows>
+    </layout> 
+
+    <layout name="partaker">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column>
+          <widget>partaker</widget>
+        </column>
+        <column>
+          <widget>customers</widget>
+        </column>
+        <column>
+          <widget>manufacturers</widget>
+        </column>
+      </columns>
+    </layout>
+        
+    <layout name="project">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>projectPreviewDate</widget>
+          <widget>projectRealDate</widget>
+        </row>
+      </rows>
+    </layout>
+
+    <layout name="projectPhase">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+	    <row>
+          <widget>projectPhaseList</widget>
+        </row>
+      </rows>
+    </layout>
+
+    <layout name="cad_dublincore">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>subjects</widget>
+        </row>
+        <row>
+          <widget>rights</widget>
+        </row>
+        <row>
+          <widget>expired</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="related_partaker">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>partaker</widget>
+        </row>
+      </rows>
+    </layout> 
+
+    <layout name="related_customer">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>customers</widget>
+        </row>
+      </rows>
+    </layout> 
+
+    <layout name="related_manufacturer">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>manufacturers</widget>
+        </row>
+      </rows>
+    </layout> 
+      
+  </extension>
+
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+
+    <widget name="viewerFile" type="template">
+      <labels>
+        <label mode="any">label.widget.elovwr.file</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>elovwr:file</field>
+        <field>elovwr:filename</field>
+      </fields>
+      <properties mode="any">
+        <property name="template">/widgets/extended_file_widget.xhtml</property>
+      </properties>
+    </widget>
+    
+
+    <widget name="reference_not_required" type="text">
+      <labels>
+        <label mode="any">label.widget.elo.reference</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>elo:reference</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="required">false</property>
+      </properties>
+    </widget>
+    
+    <widget name="reference_required" type="text">
+      <labels>
+        <label mode="any">label.widget.elo.reference</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>elo:reference</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="required">true</property>
+      </properties>
+    </widget>
+    
+    <widget name="reference_automatic" type="text">
+      <labels>
+        <label mode="any">label.widget.elo.reference</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>elo:reference</field>
+      </fields>
+      <widgetModes>
+        <mode value="create">hidden</mode>
+        <mode value="edit">view</mode>
+      </widgetModes>
+    </widget>
+
+    <widget name="authoringTool" type="suggestOneDirectory">
+      <labels>
+        <label mode="any">label.widget.cad.authoringTool</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>cad:authoringTool</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_authoring_tools</property>
+        <property name="required">true</property>
+      </properties>
+    </widget>
+
+    <widget name="authoringToolVersion" type="text">
+      <labels>
+        <label mode="any">label.widget.cad.authoringToolVersion</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>cad:authoringToolVersion</field>
+      </fields>
+<!--       <widgetModes> -->
+<!--         <mode value="view_summary">#{empty layoutValue.cad.weight?'hidden':'view'}</mode> -->
+<!--         <mode value="view_summary">#{empty layoutValue.cad.weight?'hidden':'view'}</mode> -->
+<!--       </widgetModes> -->
+      <properties widgetMode="edit">
+        <property name="required">true</property>
+        <property name="styleClass">dataInputText</property>
+      </properties>
+    </widget>
+
+    <widget name="activeConfiguration" type="text">
+      <labels>
+        <label mode="any">label.widget.cad.activeConfiguration</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>cad:activeConfiguration</field>
+      </fields>
+<!--       <properties widgetMode="edit"> -->
+<!--         <property name="styleClass">dataInputText</property> -->
+<!--       </properties> -->
+    </widget>
+
+    <widget name="cadClassification" type="suggestOneDirectory">
+      <labels>
+        <label mode="any">label.widget.cad.cadClassification</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>cad:cadClassification</field>
+      </fields>
+      <widgetModes>
+        <mode value="view_summary">#{currentDocument.hasFacet('CadDocument')?'view':'hidden'}</mode>
+      </widgetModes>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_cadClassHierarchical</property>
+        <property name="required">false</property>
+      </properties>
+    </widget>
+
+    <widget name="cadMaterial" type="text">
+      <labels>
+        <label mode="any">label.widget.cad.cadMaterial</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>cad:cadMaterial</field>
+      </fields>
+    </widget>
+
+    <widget name="mass" type="measure_value_and_unit">
+      <labels>
+        <label mode="any">label.widget.cad.mass</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>cad:mass</field>
+        <field>cad:massUnit</field>
+      </fields>
+    </widget>
+
+    <widget name="volume" type="measure_value_and_unit">
+      <labels>
+        <label mode="any">label.widget.cad.volume</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>cad:volume</field>
+        <field>cad:volumeUnit</field>
+      </fields>
+    </widget>
+    
+    <!-- <widget name="surface" type="measure_value_and_unit">
+      <labels>
+        <label mode="any">label.widget.cad.surface</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>cad:surface</field>
+        <field>cad:surfaceUnit</field>
+      </fields>
+    </widget> -->
+
+    
+    <widget name="sheetFormat" type="text">
+      <labels>
+        <label mode="any">label.widget.cadDrawing.sheetFormat</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>caddrw:sheetFormat</field>
+      </fields>
+    </widget>  
+    
+    <widget name="scale" type="text">
+      <labels>
+        <label mode="any">label.widget.cadDrawing.scale</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>caddrw:scale</field>
+      </fields>
+    </widget> 
+
+    <widget name="numberOfSheets" type="double">
+      <labels>
+        <label mode="any">label.widget.cadDrawing.numberOfSheets</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>caddrw:numberOfSheets</field>
+      </fields>
+    </widget> 
+
+    <widget name="templateName" type="text">
+      <labels>
+        <label mode="any">label.widget.cadDrawing.templateName</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>caddrw:templateName</field>
+      </fields>
+    </widget> 
+
+    <widget name="sourceDT" type="text">
+      <labels>
+        <label mode="any">label.widget.cadDesignTable.source</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>caddtb:sourceDT</field>
+      </fields>
+    </widget> 
+    
+    <widget name="allowUpdateFromModel" type="text">
+      <labels>
+        <label mode="any">label.widget.cadDesignTable.allowUpdateFromModel</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>caddtb:allowUpdateFromModel</field>
+      </fields>
+    </widget>     
+
+    <widget name="projectPreviewDate" type="datetime">
+      <labels>
+        <label mode="any">label.widget.project.projectPreviewDate</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>prj:projectPreviewDate</field>
+      </fields>
+    </widget>
+
+    <widget name="projectRealDate" type="datetime">
+      <labels>
+        <label mode="any">label.widget.project.projectRealDate</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>prj:projectRealDate</field>
+      </fields>
+    </widget>
+
+    <widget name="projectPhaseList" type="list">
+      <labels>
+        <label mode="any">label.widget.project.projectPhaseList</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>prj:projectPhaseList</field>
+      </fields>
+      <properties widgetMode="any">
+          <property name="display">table</property>
+      </properties>
+      <subWidgets>
+          <widget name="phaseDescription" type="text">
+            <labels>
+              <label mode="any">label.widget.project.phaseDescription</label>
+            </labels>
+            <fields>
+              <field>phaseDescription</field>
+            </fields>
+            <properties mode="edit">
+              <property name="styleClass">dataInputText</property>
+            </properties>
+          </widget>
+          <widget name="phaseManager" type="singleUserSuggestion">
+            <labels>
+              <label mode="any">label.widget.project.phaseManager</label>
+            </labels>
+            <fields>
+              <field>phaseManager</field>
+            </fields>
+            <properties mode="any">
+              <property name="userSuggestionSearchType">USER_TYPE</property>
+              <property name="minChars">1</property>
+            </properties>            
+          </widget>
+          <widget name="phasePreviewDate" type="datetime">
+            <labels>
+              <label mode="any">label.widget.project.phasePreviewDate</label>
+            </labels>
+            <fields>
+              <field>phasePreviewDate</field>
+            </fields>
+            <properties mode="edit">
+              <property name="styleClass">dataInputText</property>
+            </properties>
+          </widget>
+          <widget name="phaseRealDate" type="datetime">
+            <labels>
+              <label mode="any">label.widget.project.phaseRealDate</label>
+            </labels>
+            <fields>
+              <field>phaseRealDate</field>
+            </fields>
+            <properties mode="edit">
+              <property name="styleClass">dataInputText</property>
+            </properties>
+          </widget>
+      </subWidgets>
+    </widget>
+
+    <widget name="partaker" type="suggestOneDirectory">
+      <labels>
+        <label mode="any">label.widget.ptk.partaker</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>ptk:partaker</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_partaker</property>
+        <property name="required">false</property>
+      </properties>      
+    </widget>
+
+    <widget name="customers" type="suggestManyDirectory">
+      <labels>
+        <label mode="any">label.widget.cust.customer</label>
+      </labels>
+      <helpLabels>
+        <label mode="edit">label.dublincore.subjects.info</label>
+      </helpLabels>
+      <translated>true</translated>
+      <fields>
+        <field>cust:customers</field>
+      </fields>
+      <properties mode="any">
+        <property name="width">100%</property>
+        <property name="minChars">0</property>
+        <property name="hideHelpLabel">true</property>
+        <property name="directoryName">elora_erpCustomers</property>
+      </properties>
+    </widget>
+
+    <widget name="manufacturers" type="suggestManyDirectory">
+      <labels>
+        <label mode="any">label.widget.manu.manufacturer</label>
+      </labels>
+      <helpLabels>
+        <label mode="edit">label.dublincore.subjects.info</label>
+      </helpLabels>
+      <translated>true</translated>
+      <fields>
+        <field>manu:manufacturers</field>
+      </fields>
+      <properties mode="any">
+        <property name="width">100%</property>
+        <property name="minChars">0</property>
+        <property name="hideHelpLabel">true</property>
+        <property name="directoryName">elora_erpManufacturers</property>
+      </properties>
+    </widget>
+
+   
+  </extension>
+
+</component>  

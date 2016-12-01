@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.config.OperationServiceComponent.contrib">
+<!--   Operation -->
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
+        <operation class="com.aritu.eloraplm.config.restoperations.SyncConfigurations" replace="true" />        
+    </extension>
+
+</component>

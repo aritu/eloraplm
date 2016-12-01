@@ -1,0 +1,125 @@
+
+h1
+{
+    /* 1,6 * 0,8 = 1,25em */ 
+    font-size: 1.25em;
+    margin-bottom: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6, .mainTitle
+{
+    color: rgb(77,77,77);
+}
+
+.titleBlock .currentDocumentDescription
+{
+    margin-top: -0.4em;
+    margin-left: 4em;
+    font-style: italic;
+    color: #777;
+}
+
+.copyrights
+{
+    float: none;
+}
+
+.tabsContent
+{
+    border-color: #c6c9cf;
+}
+
+#nxw_documentTabs_panel.tabsBar
+{
+    border: none;
+    background: none;
+    top: 13px;
+    position: relative;
+}
+
+#nxw_documentTabs_panel.tabsBar li
+{
+    border-style: none dotted;
+    border-left-color: transparent;
+}
+
+#nxw_documentTabs_panel.tabsBar li:hover,
+#nxw_documentTabs_panel.tabsBar li.selected
+{
+    border-left: 1px solid #c6c9cf;
+    border-right: 1px solid #c6c9cf;
+}
+
+
+#nxw_documentTabs_panel.tabsBar li a
+{
+    padding: 0.5em 0.8em;
+}
+
+
+#nxw_documentTabs_panel.tabsBar li a:hover,
+#nxw_documentTabs_panel.tabsBar li.selected a,
+#nxw_documentTabs_panel.tabsBar li.selected a:visited
+{
+    border-color: #aaa;
+    border-radius: 0;
+}
+
+.nxMainContainer .column,
+.nxMainContainer .verticalTabsColumn,
+.nxMainContainer .nxSearchForm
+{
+    background-color: rgb(77,77,77);
+}
+
+.nxMainContainer,
+.nxMainContainer .column + .content,
+.nxMainContainer .verticalTabsContent,
+.nxMainContainer .nxSearchResults
+{
+    background-color: #dadcdd;
+}
+
+.nxMainContainer .column + .content,
+.nxMainContainer .verticalTabsContent,
+.nxMainContainer .nxSearchResults
+{
+    background-image: linear-gradient(to bottom, #f6f9fd 50px, #dadcdd);
+}
+
+.nxMainContainer .nxSearchResults .bubbleBox
+{
+    border-color: #ccc;
+}
+
+.nxFooter
+{
+    border-top: 1px solid #cacccd;
+}
+
+.nxHeader .logo img
+{
+    position: relative;
+    top: 5px;
+}
+
+.tipsy
+{
+    font-size: 0.8em;
+}
+
+/*
+.nxMainContainer .documentTitle
+{
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 99%;
+}
+*/

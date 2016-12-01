@@ -1,0 +1,23 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cm_pr" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_pr">
+
+  <xs:complexType name="reportedByType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="email" type="xs:string"/>
+      <xs:element name="telephone" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:element name="reportedBy" type="nxs:reportedByType"/>
+  <xs:element name="interlocutor">
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="reason" type="xs:string"/>
+
+</xs:schema>

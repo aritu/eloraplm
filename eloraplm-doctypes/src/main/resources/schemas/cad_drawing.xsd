@@ -1,0 +1,11 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cad_drawing" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cad_drawing"
+xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+
+  <xs:element name="sheetFormat" type="xs:string" />
+  <xs:element name="scale" type="xs:string" />
+  <xs:element name="numberOfSheets" type="xs:double" />
+  <xs:element name="templateName" type="xs:string" />
+
+</xs:schema>

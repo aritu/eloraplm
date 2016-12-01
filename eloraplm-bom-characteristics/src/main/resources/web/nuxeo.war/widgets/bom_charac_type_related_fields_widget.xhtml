@@ -1,0 +1,281 @@
+<f:subview
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxdir="http://nuxeo.org/nxdirectory"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxp="http://nuxeo.org/nxweb/pdf"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  id="#{widget.id}">
+  
+  
+  
+  <nxu:set var="bomCharacType" value="#{value.bomcharc.type}">
+    
+    <c:choose>
+      <c:when test="#{layout.mode == 'create'}">
+        
+        <tr>
+        <td class="labelColumn">
+          <h:outputText value="#{messages['label.widget.bomcharac.type']}" class="required"/>
+        </td>
+        <td class="fieldColumn">
+          <a4j:region id="bomCharacType_region">
+            <nxl:widget name="bomCharacType" mode="edit" value="#{value}" >
+              <f:ajax event="change"
+                 listener="#{bomCharacteristic.resetTypeRelatedFields(value)}"
+                 render="numberPanelId stringPanelId datePanelId booleanPanelId listPanelId"
+                 execute="@this" />
+            </nxl:widget>
+          </a4j:region>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <h:panelGroup id="numberPanelId" style="#{bomCharacType == 'number' ? '' : 'display:none;'}">
+            <table>
+              <tr>
+                <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.number.maxLength']}" class="required"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacNumberMaxLength" mode="edit" value="#{value}"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.number.maxDecimalPlaces']}" class="required"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacNumberMaxDecimalPlaces" mode="edit" value="#{value}" />
+                </td>
+              </tr>
+              <tr>
+                <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacNumberDefaultValue" mode="edit" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </h:panelGroup>
+          <h:panelGroup id="stringPanelId" style="#{bomCharacType == 'string' ? '' : 'display:none;'}">
+            <table>
+              <tr>
+                 <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.string.maxLength']}" class="required"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacStringMaxLength" mode="edit" value="#{value}"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacStringDefaultValue" mode="edit" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </h:panelGroup>
+          <h:panelGroup id="datePanelId" style="#{bomCharacType == 'date' ? '' : 'display:none;'}">
+            <table>
+              <tr>
+                <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacDateDefaultValue" mode="edit" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </h:panelGroup>
+          <h:panelGroup id="booleanPanelId" style="#{bomCharacType == 'boolean' ? '' : 'display:none;'}">
+            <table>
+              <tr>
+                <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacBooleanDefaultValue" mode="edit" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </h:panelGroup>
+          <h:panelGroup id="listPanelId" style="#{bomCharacType == 'list' ? '' : 'display:none;'}">
+            <table>
+              <tr id="testListId">
+                <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.listContent']}" class="required"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacListContent" mode="edit" value="#{value}"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="labelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacListDefaultValue" mode="edit" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </h:panelGroup>
+        </td>
+      </tr>
+      </c:when>
+     
+      <c:when test="#{layout.mode == 'edit' || nxl:isLikeViewMode(widget.mode)}">
+      
+        <nxu:set var="isEditable" value="#{layout.mode == 'edit' ? 'edit':'view'}">
+        <nxu:set var="class" value="#{layout.mode == 'edit' ? 'required':''}">
+        
+        <tr>
+        <td class="labelColumn">
+          <h:outputText value="#{messages['label.widget.bomcharac.type']}"/>
+        </td>
+        <td class="fieldColumn">
+          <nxl:widget name="bomCharacType" mode="view" value="#{value}"/>
+        </td>
+      </tr>
+      <ui:fragment rendered="#{bomCharacType == 'number'}">
+        <tr>
+          <td></td>
+          <td>
+            <table>
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.number.maxLength']}" class="#{class}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacNumberMaxLength" mode="#{isEditable}" value="#{value}"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.number.maxDecimalPlaces']}" class="#{class}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacNumberMaxDecimalPlaces" mode="#{isEditable}" value="#{value}"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacNumberDefaultValue" mode="#{isEditable}" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </ui:fragment> 
+      <ui:fragment rendered="#{bomCharacType == 'string'}">
+        <tr>
+           <td></td>
+            <td>
+              <table>
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.string.maxLength']}" class="#{class}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacStringMaxLength" mode="#{isEditable}" value="#{value}"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacStringDefaultValue" mode="#{isEditable}" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </ui:fragment>
+      <ui:fragment rendered="#{bomCharacType == 'date'}">
+        <tr>
+          <td></td>
+          <td>
+            <table>
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacDateDefaultValue" mode="#{isEditable}" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </ui:fragment>
+      <ui:fragment rendered="#{bomCharacType == 'boolean'}">
+        <tr>
+          <td></td>
+          <td>
+            <table>
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacBooleanDefaultValue" mode="#{isEditable}" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </ui:fragment>
+      <ui:fragment rendered="#{bomCharacType == 'list'}">
+        <tr>
+          <td></td>
+          <td>
+            <table style="width:100%">
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.listContent']}" class="#{class}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacListContent" mode="#{isEditable}" value="#{value}" id="bomCharacListContentId"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="labelColumn typeRelatedLabelColumn">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacListDefaultValue" mode="#{isEditable}" value="#{value}"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </ui:fragment>
+      
+      </nxu:set>
+      </nxu:set>
+      </c:when>
+    
+    
+    </c:choose>
+    
+    
+    
+    
+  
+   
+  </nxu:set>
+
+</f:subview>

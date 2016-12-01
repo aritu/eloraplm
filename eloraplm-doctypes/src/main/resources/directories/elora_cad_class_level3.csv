@@ -1,0 +1,13 @@
+id,label,parent,obsolete
+id_cadl3_1_1_1,CAD Family 1.1.1,id_cadl2_1_1,0
+id_cadl3_1_1_2,CAD Family 1.1.2,id_cadl2_1_1,0
+id_cadl3_1_2_1,CAD Family 1.2.1,id_cadl2_1_2,0
+id_cadl3_1_2_2,CAD Family 1.2.2,id_cadl2_1_2,0
+id_cadl3_2_1_1,CAD Family 2.1.1,id_cadl2_2_1,0
+id_cadl3_2_1_2,CAD Family 2.1.2,id_cadl2_2_1,0
+id_cadl3_2_2_1,CAD Family 2.2.1,id_cadl2_2_2,0
+id_cadl3_2_2_2,CAD Family 2.2.2,id_cadl2_2_2,0
+id_cadl3_3_1_1,CAD Family 3.1.1,id_cadl2_3_1,0
+id_cadl3_3_1_2,CAD Family 3.1.2,id_cadl2_3_1,0
+id_cadl3_3_2_1,CAD Family 3.2.1,id_cadl2_3_2,0
+id_cadl3_3_2_2,CAD Family 3.2.2,id_cadl2_3_2,0

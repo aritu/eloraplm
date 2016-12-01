@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-bom-characteristics
+Bundle-Name: eloraplm-bom-characteristics
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-bom-characteristics-SQLD
+ irectoryFactory-contrib.xml,OSGI-INF/extensions/eloraplm-bom-characte
+ ristics-DirectoryUIManager-contrib.xml,OSGI-INF/extensions/eloraplm-b
+ om-characteristics-TypeService-contrib.xml,OSGI-INF/extensions/elorap
+ lm-bom-characteristics-ActionService-contrib.xml,OSGI-INF/extensions/
+ eloraplm-bom-characteristics-WebLayoutManager-contrib.xml,OSGI-INF/ex
+ tensions/eloraplm-bom-characteristics-ContentViewService-contrib.xml
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.change.management.ContentTemplateService.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
+  
+    <factoryBinding name="StructChangeManagementFactory" factoryName="SimpleTemplateFactory" targetType="StructChangeManagement">
+      <template>
+        <templateItem typeName="FolderChangeManagementPR" id="changePRs" title="PRs" description="Problem reports."/>
+        <templateItem typeName="FolderChangeManagementECR" id="changeECRs" title="ECRs" description="Engineering change requests."/>
+        <templateItem typeName="FolderChangeManagementECO" id="changeECOs" title="ECOs" description="Engineering change orders."/>
+      </template>
+    </factoryBinding>
+    
+    <!-- Create Required Documents folder each time a ECO is created  -->
+    <factoryBinding name="CmEcoFactory" factoryName="SimpleTemplateFactory" targetType="CmEco">
+      <template>
+          <templateItem description="Required documents for ECOs." id="CmEcoReqDocs" title="Required Documents" typeName="Folder"/>
+      </template>
+    </factoryBinding>
+  
+  </extension>
+
+</component>

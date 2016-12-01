@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.doctypes.NotificationService.contrib">
+
+  <extension point="notifications" target="org.nuxeo.ecm.platform.ec.notification.service.NotificationService">
+
+    <notification autoSubscribed="false" availableIn="*" channel="email" enabled="true" label="label.nuxeo.notifications.modif" name="Modification" subject="${docTitle} has been modified by ${author}" template="modif">
+      <event name="documentModified"/>
+    </notification>
+    
+    <notification autoSubscribed="false" availableIn="*" channel="email" enabled="true" label="label.nuxeo.notifications.create" name="Creation" subject="${docTitle} has been created by ${author}" template="modif">
+      <event name="documentCreated"/>
+    </notification>    
+
+    <notification autoSubscribed="false" availableIn="*" channel="email" enabled="true" label="label.nuxeo.notifications.workflow" name="Workflow Change" subject="Workflow event" template="workflow">
+      <event name="workflowNewProcessStarted"/>
+      <event name="workflowProcessEnded"/>
+      <event name="workflowProcessCanceled"/>
+      <event name="workflowAbandoned"/>
+      <event name="workflowTaskCompleted"/>
+      <event name="workflowTaskRejected"/>
+      <event name="workflowTaskAssigned"/>
+    </notification>
+
+    <notification autoSubscribed="false" availableIn="*" channel="email" enabled="true" label="label.nuxeo.notifications.appReviewStarted" name="Approbation review started" subject="Review started for ${docTitle}" template="aprobationWorkflowStarted">
+      <event name="workflowNewProcessStarted"/>
+    </notification>
+
+  </extension>
+
+</component> 

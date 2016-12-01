@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-Vendor: Nuxeo
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Bundle-Version: 1.0.qualifier
+Bundle-Name: eloraplm-l10n
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: com.aritu.eloraplm.l10n
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+

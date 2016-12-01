@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  >
+  
+    <nxu:graphicImage value="#{typesTool.getType(typeName).getIcon()}"
+        rendered="#{!empty typesTool.getType(typeName).getIcon()}" styleClass="smallIcon" />
+    
+    <h:outputText value="#{messages[typeName]}" />
+
+</ui:composition>

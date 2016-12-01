@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+ 
+    <h:outputScript library="js" name="cm_treetable.js" target="head" />
+ 
+    <nxl:widget name="cm_bom_impacted_items_treetable" mode="view" value="#{cmBomImpactedItemsTreeBean}" />
+    
+</ui:composition>

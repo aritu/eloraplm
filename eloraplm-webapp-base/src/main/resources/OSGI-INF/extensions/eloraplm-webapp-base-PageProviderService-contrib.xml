@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.webapp.base.PageProviderService.contrib">
+    <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService"
+        point="providers">
+        
+        
+        <coreQueryPageProvider name="wc_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document WHERE ecm:fulltext LIKE '?*' AND ecm:mixinType !=
+            'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+            ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="cad_bom_wc_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document WHERE ecm:fulltext LIKE '?*' AND ecm:mixinType !=
+            'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+            ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+            AND ecm:mixinType IN ('CadDocument', 'BomDocument')
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="cad_wc_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document WHERE ecm:fulltext LIKE '?*' AND ecm:mixinType !=
+            'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+            ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+            AND ecm:mixinType = 'CadDocument'
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="bom_wc_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document WHERE ecm:fulltext LIKE '?*' AND ecm:mixinType !=
+            'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+            ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+            AND ecm:mixinType = 'BomDocument'
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="workspace_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Workspace WHERE ecm:fulltext LIKE '?*' AND ecm:mixinType !=
+            'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+            ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="structure_root_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM StructureRoot WHERE ecm:fulltext LIKE '?*' AND ecm:mixinType !=
+            'HiddenInNavigation' AND ecm:currentLifeCycleState != 'deleted'
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        
+    </extension>
+</component>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.webapp.clipboard.ActionService.contrib">
+
+  <!-- Filters -->
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
+  
+    <filter id="canPasteCurrentWorkListAsProxyList">
+      <rule grant="true">
+        <condition>#{clipboardActions.canPasteWorkListAsProxy}</condition>
+      </rule>
+    </filter>
+    
+    <filter id="canPasteFromClipboardAsProxy">
+      <rule grant="true">
+        <condition>#{clipboardActions.canPasteFromClipboardAsProxy}</condition>
+      </rule>
+    </filter>
+    
+    <filter id="canPastePopupAsProxy">
+      <rule grant="true">
+        <condition>
+          #{clipboardActions.getCanPasteFromClipboardInsideAsProxy(document)}
+        </condition>
+      </rule>
+    </filter>
+    
+    <filter id="canPasteFromClipboardAsDuplicate">
+      <rule grant="true">
+        <condition>#{clipboardActions.canPasteFromClipboard}</condition>
+      </rule>
+    </filter>
+      
+    <filter id="canPastePopupAsDuplicate">
+      <rule grant="true">
+        <condition>
+          #{clipboardActions.getCanPasteFromClipboardInside(document)}
+        </condition>
+      </rule>
+    </filter>
+     
+  
+  </extension>
+
+
+  <!-- Actions -->
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    
+    <!-- *********** Actions on WorkLists ***********-->
+    
+    <!-- Disable default WORKLIST_PASTE action -->
+    <action id="WORKLIST_PASTE" enabled="false" />
+      
+    <!-- New "WORKLIST_PASTE_AS_PROXY" action. 
+         This action will create a Proxy to each copied object, instead of pasting them.  
+    -->
+    <action icon="/icons/action_paste_all.gif" id="WORKLIST_PASTE_AS_PROXY" label="eloraplm.command.clipboard.pasteAllProxy" 
+       link="#{clipboardActions.pasteWorkingListAsProxy}">
+      <category>DEFAULT_LIST</category>
+      <category>CLIPBOARD_LIST</category>
+      <filter-id>canPasteCurrentWorkListAsProxyList</filter-id>
+    </action>
+    
+    <!-- New "WORKLIST_PASTE_AS_DUPLICATE" action. !!!FOR THE INSTANCE DISABLED!!! 
+         This action will create a duplicate of each copied object, instead of pasting them.  
+    -->
+    <action icon="/icons/action_paste_all.gif" id="WORKLIST_PASTE_AS_DUPLICATE" label="eloraplm.command.clipboard.pasteAllDuplicate" 
+       link="#{clipboardActions.pasteWorkingListAsDuplicate}" enabled="false">
+      <category>DEFAULT_LIST</category>
+      <category>CLIPBOARD_LIST</category>
+      <filter-id>canPasteCurrentWorkList</filter-id>
+    </action>
+    
+    <!-- Disable default WORKLIST_MOVE action -->
+    <action id="WORKLIST_MOVE" enabled="false" />
+    
+    
+    <!-- *********** Actions for the document selection ***********-->
+    
+	<!-- Disable default CLIPBOARD_PASTE action -->
+	<action id="CLIPBOARD_PASTE" enabled="false" />    
+    
+    <!-- New CLIPBOARD_PASTE_AS_PROXY action. 
+         This action will create a Proxy to each copied object, instead of pasting them.  
+    -->
+    <action id="CLIPBOARD_PASTE_AS_PROXY" link="#{clipboardActions.pasteClipboardAsProxy}"
+      label="eloraplm.command.clipboard.pasteAsProxy" icon="" order="20">
+      <category>CURRENT_SELECTION_LIST</category>
+      <category>ORDERABLE_CURRENT_SELECTION_LIST</category>
+      <filter-id>canPasteFromClipboardAsProxy</filter-id>
+    </action>
+    
+    <!-- New CLIPBOARD_PASTE_AS_DUPLICATE action. !!!FOR THE INSTANCE DISABLED!!!
+         This action will create a duplicate of each copied object, instead of pasting them.  
+    -->
+    <action id="CLIPBOARD_PASTE_AS_DUPLICATE" link="#{clipboardActions.pasteClipboardAsDuplicate}"
+      label="eloraplm.command.clipboard.pasteAsDuplicate" icon="" order="25" enabled="false">
+      <category>CURRENT_SELECTION_LIST</category>
+      <category>ORDERABLE_CURRENT_SELECTION_LIST</category>
+      <filter-id>canPasteFromClipboardAsDuplicate</filter-id>
+    </action>
+    
+    <!-- *********** Popup actions ***********-->
+    
+    <!-- Disable default POPUP_PASTE action -->
+    <action id="POPUP_PASTE" enabled="false" />
+    
+    <!-- New POPUP_PASTE_AS_PROXY action. 
+         This action will create a Proxy to each copied object, instead of pasting them.  
+    -->
+    <action id="POPUP_PASTE_AS_PROXY" link="javascript:doPasteAsProxy" label="eloraplm.command.clipboard.pasteAsProxy"
+      icon="/icons/action_paste_all.gif">
+      <category>POPUP</category>
+      <filter-id>canPastePopupAsProxy</filter-id>
+    </action>
+    
+    <!-- New POPUP_PASTE_AS_DUPLICATE action. !!!FOR THE INSTANCE DISABLED!!!
+         This action will create a duplicate of each copied object, instead of pasting them.  
+    -->
+    <action id="POPUP_PASTE_AS_DUPLICATE" link="javascript:doPasteAsDuplicate" label="eloraplm.command.clipboard.pasteAsDuplicate"
+      icon="/icons/action_paste_all.gif" enabled="false">
+      <category>POPUP</category>
+      <filter-id>canPastePopupAsDuplicate</filter-id>
+    </action>
+    
+    <!-- Disable default POPUP_MOVE action -->
+    <action id="POPUP_MOVE"  enabled="false" />
+      
+    
+  </extension>
+
+
+</component> 

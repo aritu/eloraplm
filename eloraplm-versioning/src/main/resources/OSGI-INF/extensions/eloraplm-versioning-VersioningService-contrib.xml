@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.versioning.VersioningService.contrib">
+ 
+    <extension point="versioningService" target="org.nuxeo.ecm.core.versioning.VersioningService">
+        <service class="com.aritu.eloraplm.versioning.EloraVersioningService" />
+    </extension>
+ 
+<!--  TODO Hau aldatu -->
+    <extension point="versioningRules" target="org.nuxeo.ecm.core.versioning.VersioningService">    
+    	<defaultVersioningRule>
+        <initialState major="0" minor="0"/>
+        <options lifeCycleState="*">
+            <none default="true"/>
+            <minor/>
+            <major/>
+        </options>
+    	</defaultVersioningRule>
+    
+    </extension>
+</component>

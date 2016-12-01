@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<xs:schema
+    targetNamespace="http://eloraplm.aritu.com/schemas/relation_extended/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+
+    <xs:element name="quantity" type="xs:integer" default="1"/>
+    <xs:element name="isObjectWc" type="xs:boolean" default="true"/>
+    <xs:element name="ordering" type="xs:integer" default="0"/>
+    <xs:element name="directorOrdering" type="xs:integer" default="0"/>
+    <xs:element name="viewerOrdering" type="xs:integer" default="0"/>
+    <xs:element name="isManual" type="xs:boolean" default="false"/>
+
+</xs:schema>

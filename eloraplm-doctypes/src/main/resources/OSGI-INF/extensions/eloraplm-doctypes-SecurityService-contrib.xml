@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.doctypes.SecurityService.contrib">
+
+  <extension point="permissions" target="org.nuxeo.ecm.core.security.SecurityService">
+    <permission name="Write">
+      <remove>Remove</remove>
+    </permission>
+    <permission name="ReadWriteAndRemove">
+      <include>Read</include>
+      <include>Write</include>
+      <include>Remove</include>
+    </permission>   
+  </extension>
+
+  <extension point="permissionsVisibility" target="org.nuxeo.ecm.core.security.SecurityService">
+    <visibility>
+      <item order="10" show="true">Read</item>
+      <item denyPermission="Write" order="50" show="true">ReadWrite</item>
+      <item denyPermission="Write" order="55" show="true">ReadWriteAndRemove</item>
+      <item denyPermission="Remove" order="60" show="true">ReadRemove</item>
+      <item order="100" show="true">Everything</item>
+    </visibility>
+  </extension>
+  
+</component>  

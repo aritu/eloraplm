@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.schemas
+Bundle-Name: form_eloraplm-files-schema
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-files-schema-TypeService
+ -contrib.xml
+

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.search.DirectoryUIManager.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
+
+    <directory layout="vocabulary" sortField="ordering" name="eloras_facetType">
+    </directory>
+
+    <directory layout="vocabulary" sortField="ordering" name="eloras_docType">
+    </directory>
+
+    <directory layout="vocabulary" sortField="ordering" name="eloras_lifeCycle">
+    </directory>
+    
+  </extension>
+
+</component>

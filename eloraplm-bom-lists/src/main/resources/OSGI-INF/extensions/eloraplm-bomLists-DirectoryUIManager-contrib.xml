@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.lists.DirectoryUIManager.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
+    
+    <directory layout="vocabulary" sortField="ordering" name="elora_bom_list_types">
+    </directory>
+    
+    <directory layout="elora_bom_lists" sortField="ordering" name="elora_bom_lists">
+    </directory>
+
+  </extension>
+
+</component>

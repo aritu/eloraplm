@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.DirectoryUIManager.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
+
+    <directory name="elora_bom_predicates" layout="vocabulary" sortField="label" />
+    <directory name="elora_bom_inverse_predicates" layout="vocabulary" sortField="label" />
+
+    <directory name="elora_bomItemTypes" layout="vocabulary" sortField="ordering" />
+
+    <directory name="elora_bomSource" layout="vocabulary" sortField="ordering" />
+    
+    <directory name="elora_bomStandard" layout="vocabulary" sortField="ordering" />
+
+    <directory name="elora_bomPartClassLevel1" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_bomPartClassLevel2" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomPartClassLevel3" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomPartClassHierarchical" layout="subtopic_vocabulary" sortField="parent" />
+
+    <directory name="elora_bomToolClassLevel1" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_bomToolClassLevel2" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomToolClassLevel3" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomToolClassHierarchical" layout="subtopic_vocabulary" sortField="parent" />
+
+    <directory name="elora_bomPackagingClassLevel1" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_bomPackagingClassLevel2" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomPackagingClassLevel3" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomPackagingClassHierarchical" layout="subtopic_vocabulary" sortField="parent" />
+
+    <directory name="elora_bomSpecificationClassLevel1" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_bomSpecificationClassLevel2" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomSpecificationClassLevel3" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomSpecificationClassHierarchical" layout="subtopic_vocabulary" sortField="parent" />
+
+    <directory name="elora_bomProductClassLevel1" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_bomProductClassLevel2" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomProductClassLevel3" layout="subtopic_vocabulary" sortField="ordering" />
+    <directory name="elora_bomProductClassHierarchical" layout="subtopic_vocabulary" sortField="parent" />
+    
+    <directory name="elora_bom_list_types" layout="vocabulary" sortField="ordering" />
+
+  </extension>
+
+</component>

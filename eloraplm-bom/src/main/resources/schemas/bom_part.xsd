@@ -1,0 +1,32 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/bom_part" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/bom_part"
+xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+
+  <xs:element name="partClassification" >
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bomPartClassHierarchical" />
+    </xs:simpleType>
+  </xs:element>  
+  <xs:element name="material" type="xs:string" />
+  <xs:element name="unit" type="xs:string" />
+  <xs:element name="source" >
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bomSource" />
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="mass" type="xs:double" />
+  <xs:element name="massUnit" type="xs:string" default="kg"/>
+  <xs:element name="volume" type="xs:double" />
+  <xs:element name="volumeUnit" type="xs:string" default="m3"/>
+  <xs:element name="surface" type="xs:double" />
+  <xs:element name="surfaceUnit" type="xs:string" default="m2"/>
+  <xs:element name="standard" default="id_standard1">
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bomStandard" />
+    </xs:simpleType>
+  </xs:element>  
+  <xs:element name="effectiveDate" type="xs:date" />
+
+</xs:schema>

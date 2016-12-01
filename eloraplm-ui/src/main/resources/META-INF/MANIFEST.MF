@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.ui
+Bundle-Version: 1.0.qualifier
+Bundle-Name: eloraplm-ui
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-ui-StylingService-contri
+ b.xml,OSGI-INF/extensions/eloraplm-ui-PluggableAuthenticationService-
+ contrib.xml,OSGI-INF/extensions/eloraplm-ui-WebResources-contrib.xml,
+ OSGI-INF/extensions/eloraplm-ui-ActionService-contrib.xml
+

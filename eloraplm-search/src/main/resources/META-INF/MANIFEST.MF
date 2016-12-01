@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-search
+Bundle-Name: eloraplm-search
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-search-ActionService-con
+ trib.xml,OSGI-INF/extensions/eloraplm-search-ContentViewService-contr
+ ib.xml,OSGI-INF/extensions/eloraplm-search-WebLayoutManager-contrib.x
+ ml,OSGI-INF/extensions/eloraplm-search-TypeService-contrib.xml,OSGI-I
+ NF/extensions/eloraplm-search-SuggestionService-contrib.xml,OSGI-INF/
+ extensions/eloraplm-search-PageProviderService-contrib.xml,OSGI-INF/e
+ xtensions/eloraplm-search-OperationServiceComponent-contrib.xml,OSGI-
+ INF/extensions/eloraplm-search-SQLDirectoryFactory-contrib.xml,OSGI-I
+ NF/extensions/eloraplm-search-DirectoryUIManager-contrib.xml
+

@@ -1,0 +1,327 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.change.management.TypeService.contrib">
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+    <schema name="cm_gen" prefix="cmgen" src="schemas/cm_gen.xsd"/>
+    <schema name="cm_pr" prefix="cmpr" src="schemas/cm_pr.xsd"/>
+    <schema name="cm_ecr" prefix="cmecr" src="schemas/cm_ecr.xsd"/>
+    <schema name="cm_eco" prefix="cmeco" src="schemas/cm_eco.xsd"/>
+    <schema name="cm_modified_items" prefix="mod" src="schemas/cm_modified_item_list.xsd"/>
+    <schema name="cm_doc_impacted_items" prefix="docimp" src="schemas/cm_doc_impacted_item_list.xsd"/>
+    <schema name="cm_bom_impacted_items" prefix="bomimp" src="schemas/cm_bom_impacted_item_list.xsd"/>
+
+    <schema name="var_CmPr" prefix="var_CmPr" src="schemas/var_CmPr.xsd"/>
+    <schema name="var_CmPr_Task000Start" prefix="var_CmPr_Task000Start" src="schemas/var_CmPr_Task000Start.xsd"/>
+    <schema name="var_CmPr_Task100" prefix="var_CmPr_Task100" src="schemas/var_CmPr_Task100.xsd"/>
+    <schema name="var_CmPr_Task200" prefix="var_CmPr_Task200" src="schemas/var_CmPr_Task200.xsd"/>
+    <schema name="var_CmPr_Task999StopAccepted" prefix="var_CmPr_Task999StopAccepted" src="schemas/var_CmPr_Task999StopAccepted.xsd"/>
+    <schema name="var_CmPr_Task999StopRejected" prefix="var_CmPr_Task999StopRejected" src="schemas/var_CmPr_Task999StopRejected.xsd"/>
+    <schema name="var_CmPr_Task999StopOutManaged" prefix="var_CmPr_Task999StopOutManaged" src="schemas/var_CmPr_Task999StopOutManaged.xsd"/>
+
+    
+  </extension>
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+  
+    <!-- CMProcess -->
+    <facet name="CMProcess" />
+
+    <doctype extends="Folder" name="CmPr">
+        <schema name="elora_object"/>
+        <schema name="cm_gen"/>
+        <schema name="cm_pr"/>
+        <facet name="Commentable"/>
+        <facet name="EloraWorkspace"/>
+        <facet name="CMProcess" />
+    </doctype>
+
+    <doctype extends="Folder" name="CmEcr">
+        <schema name="elora_object"/>
+        <schema name="cm_gen"/>
+        <schema name="cm_ecr"/>
+        <schema name="cm_modified_items"/>
+        <schema name="cm_doc_impacted_items"/>
+        <schema name="cm_bom_impacted_items"/>
+        <facet name="Commentable"/>
+        <facet name="EloraWorkspace"/>
+        <facet name="CMProcess" />
+    </doctype>
+
+    <doctype extends="Folder" name="CmEco">
+        <schema name="elora_object"/>
+        <schema name="cm_gen"/>
+        <schema name="cm_eco"/>
+        <schema name="cm_modified_items"/>
+        <schema name="cm_doc_impacted_items"/>
+        <schema name="cm_bom_impacted_items"/>
+        <facet name="Commentable"/>
+        <facet name="EloraWorkspace"/>
+        <facet name="CMProcess" />
+    </doctype>
+    
+    <doctype extends="Folder" name="StructChangeManagement">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderChangeManagementPR">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderChangeManagementECR">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderChangeManagementECO">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+
+    <facet name="facet-var_CmPr">
+      <schema name="var_CmPr"/>
+    </facet>
+    <facet name="facet-var_CmPr_Task000Start">
+      <schema name="var_CmPr_Task000Start"/>
+    </facet>
+    <facet name="facet-var_CmPr_Task100">
+      <schema name="var_CmPr_Task100"/>
+    </facet>
+    <facet name="facet-var_CmPr_Task200">
+      <schema name="var_CmPr_Task200"/>
+    </facet>
+    <facet name="facet-var_CmPr_Task999StopAccepted">
+      <schema name="var_CmPr_Task999StopAccepted"/>
+    </facet>
+    <facet name="facet-var_CmPr_Task999StopRejected">
+      <schema name="var_CmPr_Task999StopRejected"/>
+    </facet>
+    <facet name="facet-var_CmPr_Task999StopOutManaged">
+      <schema name="var_CmPr_Task999StopOutManaged"/>
+    </facet>
+
+  </extension>
+
+  
+  <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
+
+    <type id="WorkspaceRoot">
+      <subtypes>
+        <type>CmPr</type>
+        <type>CmEcr</type>
+        <type>CmEco</type>
+      </subtypes>
+    </type>
+
+   <type id="StructChangeManagement">
+ <!-- TODO Komentautakoa kendu, doctypesen definituta dau. -->
+<!--       <label>StructChangeManagement</label> -->
+<!--       <icon>/icons/struct_change_management_16.gif</icon> -->
+<!--       <bigIcon>/icons/struct_change_management_100.png</bigIcon> -->
+<!--       <description>StructChangeManagement.description</description> -->
+<!--       <default-view>view_documents</default-view> -->
+<!--       <layouts mode="any"> -->
+<!--         <layout>heading</layout> -->
+<!--       </layouts> -->
+<!--       <layouts mode="edit"> -->
+<!--         <layout>heading</layout> -->
+<!--         <layout>dublincore</layout> -->
+<!--       </layouts> -->
+<!--       <contentViews category="content"> -->
+<!--         <contentView>document_content</contentView> -->
+<!--       </contentViews> -->
+<!--       <contentViews category="trash_content"> -->
+<!--         <contentView showInExportView="false"> -->
+<!--           document_trash_content -->
+<!--         </contentView> -->
+<!--       </contentViews> -->
+      <subtypes>
+        <type>FolderChangeManagementPR</type>
+        <type>FolderChangeManagementECR</type>
+        <type>FolderChangeManagementECO</type>
+      </subtypes>
+   </type>
+
+   <type id="FolderChangeManagementPR">
+      <label>FolderChangeManagementPR</label>
+      <icon>/icons/folder_change_management_pr_16.gif</icon>
+      <bigIcon>/icons/folder_change_management_pr_100.png</bigIcon>
+      <description>FolderChangeManagementPR.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>Folder</type>
+      </subtypes>
+   </type>
+
+   <type id="FolderChangeManagementECR">
+      <label>FolderChangeManagementECR</label>
+      <icon>/icons/folder_change_management_ecr_16.gif</icon>
+      <bigIcon>/icons/folder_change_management_ecr_100.png</bigIcon>
+      <description>FolderChangeManagementECR.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>Folder</type>
+      </subtypes>      
+   </type>
+
+   <type id="FolderChangeManagementECO">
+      <label>FolderChangeManagementECO</label>
+      <icon>/icons/folder_change_management_eco_16.gif</icon>
+      <bigIcon>/icons/folder_change_management_eco_100.png</bigIcon>
+      <description>FolderChangeManagementECO.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>Folder</type>
+      </subtypes>
+   </type>
+
+   <type id="CmPr">
+      <label>CmPr</label>
+      <icon>/icons/cm_pr_16.gif</icon>
+      <bigIcon>/icons/cm_pr_100.png</bigIcon>
+      <category>CMGroup</category>
+      <description>CmPr.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="view">
+        <layout>cm_pr</layout>
+        <layout>summary_cm_gen</layout>
+        <layout>partaker</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object_reference_required</layout>
+        <layout>heading</layout>
+        <layout>cm_pr</layout>
+        <layout>cm_gen</layout>
+        <layout>partaker</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>Folder</type>
+        <type>File</type>
+        <type>Note</type>
+      </subtypes>
+   </type>
+
+   <type id="CmEcr">
+      <label>CmEcr</label>
+      <icon>/icons/cm_ecr_16.gif</icon>
+      <bigIcon>/icons/cm_ecr_100.png</bigIcon>
+      <category>CMGroup</category>
+      <description>CmEcr.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="view">
+        <layout>cm_ecr</layout>
+        <layout>summary_cm_gen</layout>
+        <layout>partaker</layout>
+        <layout>cm_modified</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object_reference_required</layout>
+        <layout>heading</layout>
+        <layout>cm_ecr</layout>
+        <layout>cm_gen</layout>
+        <layout>partaker</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>Folder</type>
+        <type>File</type>
+        <type>Note</type>
+      </subtypes>
+   </type>
+
+   <type id="CmEco">
+      <label>CmEco</label>
+      <icon>/icons/cm_eco_16.gif</icon>
+      <bigIcon>/icons/cm_eco_100.png</bigIcon>
+      <category>CMGroup</category>
+      <description>CmEco.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="view">
+        <layout>cm_eco</layout>
+        <layout>summary_cm_gen</layout>
+        <layout>partaker</layout>
+        <layout>cm_modified</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object_reference_required</layout>
+        <layout>heading</layout>
+        <layout>cm_eco</layout>
+        <layout>cm_gen</layout>
+        <layout>partaker</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>Folder</type>
+        <type>File</type>
+        <type>Note</type>
+      </subtypes>
+   </type>
+    
+  </extension>
+</component>

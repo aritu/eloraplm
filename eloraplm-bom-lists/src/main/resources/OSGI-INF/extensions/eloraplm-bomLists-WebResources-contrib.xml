@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.lists.WebResources.contrib">
+
+    <require>org.nuxeo.theme.nuxeo.webapp</require>
+
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
+        <bundle name="nuxeo_includes">
+            <resources append="true">
+                <resource>elora.bom.lists.css</resource>
+            </resources>
+        </bundle>
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+        <resource name="elora.bom.lists.css" type="css">
+            <uri>/css/elora-bom-lists.css</uri>
+        </resource>
+    </extension>
+
+</component>

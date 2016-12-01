@@ -1,0 +1,544 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.TypeService.contrib">
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+       <schema name="bom_item" prefix="bomitem" src="schemas/bom_item.xsd"/>
+       <schema name="bom_part" prefix="bompart" src="schemas/bom_part.xsd"/>
+       <schema name="bom_manufacturer_part" prefix="bommanpart" src="schemas/bom_manufacturer_part.xsd"/>
+       <schema name="bom_tool" prefix="bomtool" src="schemas/bom_tool.xsd"/>
+       <schema name="bom_packaging" prefix="bompack" src="schemas/bom_packaging.xsd"/>
+       <schema name="bom_specification" prefix="bomspec" src="schemas/bom_specification.xsd"/>
+       <schema name="bom_product" prefix="bomprod" src="schemas/bom_product.xsd"/>
+       <schema name="bom_customer_product" prefix="bomcustprod" src="schemas/bom_customer_product.xsd"/>
+  </extension>
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+  
+    <!-- Facets -->
+    
+    <facet name="BomDocument" />
+    
+    <!-- Doctypes -->
+  
+    <doctype extends="File" name="BomPart">
+      <schema name="elora_viewer"/>
+      <schema name="bom_item"/>
+      <schema name="bom_part"/>
+      <facet name="BomDocument" />
+    </doctype>
+
+    <doctype extends="File" name="BomManufacturerPart">
+      <schema name="elora_viewer"/>
+      <schema name="bom_manufacturer_part"/>
+      <facet name="BomDocument" />
+    </doctype>
+
+    <doctype extends="File" name="BomTool">
+      <schema name="elora_viewer"/>
+      <schema name="bom_item"/>
+      <schema name="bom_tool"/>
+      <schema name="related_partaker"/>
+      <schema name="related_customer"/>
+      <schema name="related_manufacturer"/>
+      <facet name="BomDocument" />
+    </doctype>
+
+    <doctype extends="File" name="BomPackaging">
+      <schema name="elora_viewer"/>
+      <schema name="bom_item"/>
+      <schema name="bom_packaging"/>
+      <schema name="related_partaker"/>
+      <schema name="related_customer"/>
+      <schema name="related_manufacturer"/>
+      <facet name="BomDocument" />
+    </doctype>
+
+    <doctype extends="File" name="BomSpecification">
+      <schema name="elora_viewer"/>
+      <schema name="note"/>
+      <schema name="bom_item"/>
+      <schema name="bom_specification"/>
+      <facet name="BomDocument" />
+    </doctype>
+
+    <doctype extends="File" name="BomProduct">
+      <schema name="elora_viewer"/>
+      <schema name="bom_item"/>
+      <schema name="bom_product"/>
+      <facet name="BomDocument" />
+    </doctype>
+
+    <doctype extends="File" name="BomCustomerProduct">
+      <schema name="elora_viewer"/>
+      <schema name="bom_customer_product"/>
+      <facet name="BomDocument" />
+    </doctype>
+
+    <doctype extends="Folder" name="StructEbom">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderBomPart">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderBomManufacturerPart">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderBomTool">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderBomPackaging">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderBomSpecification">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderBomProduct">
+      <facet name="EloraStruct"/>
+    </doctype>
+
+    <doctype extends="Folder" name="FolderBomCustomerProduct">
+      <facet name="EloraStruct"/>
+    </doctype>
+    
+  </extension>
+
+  
+  <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
+
+    <type id="StructEbom">
+ <!-- TODO Komentautakoa kendu, doctypesen definituta dau. -->
+<!--       <label>StructEbom</label> -->
+<!--       <icon>/icons/struct_ebom_16.gif</icon> -->
+<!--       <bigIcon>/icons/struct_ebom_100.png</bigIcon> -->
+<!--       <description>StructEbom.description</description> -->
+<!--       <default-view>view_documents</default-view> -->
+<!--       <layouts mode="any"> -->
+<!--         <layout>heading</layout> -->
+<!--       </layouts> -->
+<!--       <layouts mode="edit"> -->
+<!--         <layout>heading</layout> -->
+<!--         <layout>dublincore</layout> -->
+<!--       </layouts> -->
+<!--       <contentViews category="content"> -->
+<!--         <contentView>document_content</contentView> -->
+<!--       </contentViews> -->
+<!--       <contentViews category="trash_content"> -->
+<!--         <contentView showInExportView="false"> -->
+<!--           document_trash_content -->
+<!--         </contentView> -->
+<!--       </contentViews> -->
+      <subtypes>
+        <type>FolderBomPart</type>
+        <type>FolderBomManufacturerPart</type>
+        <type>FolderBomTool</type>
+        <type>FolderBomPackaging</type>
+        <type>FolderBomSpecification</type>
+        <type>FolderBomProduct</type>
+        <type>FolderBomCustomerProduct</type>
+      </subtypes>
+   </type>
+
+    <type id="FolderBomPart">
+      <label>FolderBomPart</label>
+      <icon>/icons/folder_bom_part_16.gif</icon>
+      <bigIcon>/icons/folder_bom_part_100.png</bigIcon>
+      <description>FolderBomPart.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>BomPart</type>
+        <type>FolderBomPart</type>
+      </subtypes>      
+   </type>
+
+    <type id="FolderBomManufacturerPart">
+      <label>FolderBomManufacturerPart</label>
+      <icon>/icons/folder_bom_manufacturer_part_16.gif</icon>
+      <bigIcon>/icons/folder_bom_manufacturer_part_100.png</bigIcon>
+      <description>FolderBomManufacturerPart.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>BomManufacturerPart</type>
+        <type>FolderBomManufacturerPart</type>
+      </subtypes>      
+   </type>
+
+    <type id="FolderBomTool">
+      <label>FolderBomTool</label>
+      <icon>/icons/folder_bom_tool_16.gif</icon>
+      <bigIcon>/icons/folder_bom_tool_100.png</bigIcon>
+      <description>FolderBomTool.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>BomTool</type>
+        <type>FolderBomTool</type>
+      </subtypes>
+   </type> 
+   
+    <type id="FolderBomPackaging">
+      <label>FolderBomPackaging</label>
+      <icon>/icons/folder_bom_packaging_16.gif</icon>
+      <bigIcon>/icons/folder_bom_packaging_100.png</bigIcon>
+      <description>FolderBomPackaging.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>BomPackaging</type>
+        <type>FolderBomPackaging</type>
+      </subtypes>
+   </type> 
+
+    <type id="FolderBomSpecification">
+      <label>FolderBomSpecification</label>
+      <icon>/icons/folder_bom_specification_16.gif</icon>
+      <bigIcon>/icons/folder_bom_specification_100.png</bigIcon>
+      <description>FolderBomSpecification.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>BomSpecification</type>
+        <type>FolderBomSpecification</type>
+      </subtypes>
+   </type> 
+      
+    <type id="FolderBomProduct">
+      <label>FolderBomProduct</label>
+      <icon>/icons/folder_bom_product_16.gif</icon>
+      <bigIcon>/icons/folder_bom_product_100.png</bigIcon>
+      <description>FolderBomProduct.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>BomProduct</type>
+        <type>FolderBomProduct</type>
+      </subtypes>      
+   </type>
+
+    <type id="FolderBomCustomerProduct">
+      <label>FolderBomCustomerProduct</label>
+      <icon>/icons/folder_bom_customer_product_16.gif</icon>
+      <bigIcon>/icons/folder_bom_customer_product_100.png</bigIcon>
+      <description>FolderBomCustomerProduct.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">
+          document_trash_content
+        </contentView>
+      </contentViews>
+      <subtypes>
+        <type>BomCustomerProduct</type>
+        <type>FolderBomCustomerProduct</type>
+      </subtypes>
+   </type>
+
+    <type id="BomPart">
+      <label>BomPart</label>
+      <icon>/icons/bom_part_16.gif</icon>
+      <bigIcon>/icons/bom_part_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>BomPart.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="view">
+        <layout>summary_bom_part</layout>
+        <layout>summary_bom_item</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object_reference_required</layout>
+        <layout>heading</layout>
+        <layout>bom_item</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_part</layout>
+        <layout>bom_dublincore</layout>
+      </layouts>
+      <contentViews category="eloraplm_link_content_category">
+        <contentView>eloraplm_link_content</contentView>
+      </contentViews>
+   </type>
+ 
+      <type id="BomManufacturerPart">
+      <label>BomManufacturerPart</label>
+      <icon>/icons/bom_manufacturer_part_16.gif</icon>
+      <bigIcon>/icons/bom_manufacturer_part_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>BomManufacturerPart.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="view">
+        <layout>bom_manufacturer_part</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object</layout>
+        <layout>heading</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_manufacturer_part</layout>
+        <layout>bom_dublincore</layout>
+      </layouts>
+   </type>
+ 
+    <type id="BomTool">
+      <label>BomTool</label>
+      <icon>/icons/bom_tool_16.gif</icon>
+      <bigIcon>/icons/bom_tool_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>BomTool.description</description>
+      <default-view>view_documents</default-view>
+       <layouts mode="view">
+        <!-- <layout>summary_bom_tool</layout>  Nothing to be defined for the instance, since bommToolClassification is already included in the summary section. -->
+        <layout>related_partaker</layout>
+        <layout>related_customer</layout>
+        <layout>related_manufacturer</layout>
+        <layout>summary_bom_item</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object_reference_required</layout>
+        <layout>heading</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_item</layout>
+        <layout>bom_tool</layout>
+        <layout>related_partaker</layout>
+        <layout>related_customer</layout>
+        <layout>related_manufacturer</layout>
+        <layout>bom_dublincore</layout>
+      </layouts>
+      <contentViews category="eloraplm_link_content_category">
+        <contentView>eloraplm_link_content</contentView>
+      </contentViews>
+   </type>
+ 
+    <type id="BomPackaging">
+      <label>BomPackaging</label>
+      <icon>/icons/bom_packaging_16.gif</icon>
+      <bigIcon>/icons/bom_packaging_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>BomPackaging.description</description>
+      <default-view>view_documents</default-view>
+       <layouts mode="view">
+        <!-- <layout>summary_bom_tool</layout>  Nothing to be defined for the instance, since bommToolClassification is already included in the summary section. -->
+        <layout>related_partaker</layout>
+        <layout>related_customer</layout>
+        <layout>related_manufacturer</layout>
+        <layout>summary_bom_item</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object_reference_required</layout>
+        <layout>heading</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_item</layout>
+        <layout>bom_packaging</layout>
+        <layout>related_partaker</layout>
+        <layout>related_customer</layout>
+        <layout>related_manufacturer</layout>
+        <layout>bom_dublincore</layout>
+      </layouts>
+      <contentViews category="eloraplm_link_content_category">
+        <contentView>eloraplm_link_content</contentView>
+      </contentViews>
+   </type>
+
+    <type id="BomSpecification">
+      <label>BomSpecification</label>
+      <icon>/icons/bom_specification_16.gif</icon>
+      <bigIcon>/icons/bom_specification_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>BomSpecification.description</description>
+      <default-view>view_documents</default-view>
+       <layouts mode="view">
+        <!-- <layout>summary_bom_tool</layout>  Nothing to be defined for the instance, since bommToolClassification is already included in the summary section. -->
+        <layout>summary_bom_item</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object_reference_required</layout>
+        <layout>heading</layout>
+        <layout>note</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_item</layout>
+        <layout>bom_specification</layout>
+        <layout>bom_dublincore</layout>
+      </layouts>
+      <contentViews category="eloraplm_link_content_category">
+        <contentView>eloraplm_link_content</contentView>
+      </contentViews>
+   </type>
+  
+     <type id="BomProduct">
+      <label>BomProduct</label>
+      <icon>/icons/bom_product_16.gif</icon>
+      <bigIcon>/icons/bom_product_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>BomProduct.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="view">
+        <layout>summary_bom_product</layout>
+        <layout>summary_bom_item</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object_reference_required</layout>
+        <layout>heading</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_item</layout>
+        <layout>bom_product</layout>
+        <layout>bom_dublincore</layout>
+      </layouts>
+      <contentViews category="eloraplm_link_content_category">
+        <contentView>eloraplm_link_content</contentView>
+      </contentViews>
+   </type>
+
+     <type id="BomCustomerProduct">
+      <label>BomCustomerProduct</label>
+      <icon>/icons/bom_customer_product_16.gif</icon>
+      <bigIcon>/icons/bom_customer_product_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>BomCustomerProduct.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="view">
+        <layout>bom_customer_product</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object</layout>
+        <layout>heading</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_customer_product</layout>
+        <layout>bom_dublincore</layout>
+      </layouts>
+      <contentViews category="eloraplm_link_content_category">
+        <contentView>eloraplm_link_content</contentView>
+      </contentViews>
+   </type>
+   
+   <type id="Workspace">
+      <subtypes>
+        <type>BomPart</type>
+        <type>BomManufacturerPart</type>
+        <type>BomTool</type>
+        <type>BomPackaging</type>
+        <type>BomSpecification</type>
+        <type>BomProduct</type>
+        <type>BomCustomerProduct</type>
+      </subtypes>
+    </type>
+    
+    <type id="Folder">
+      <subtypes>
+        <type>BomPart</type>
+        <type>BomManufacturerPart</type>
+        <type>BomTool</type>
+        <type>BomPackaging</type>
+        <type>BomSpecification</type>
+        <type>BomProduct</type>
+        <type>BomCustomerProduct</type>
+      </subtypes>
+    </type>
+ 
+  </extension>
+  
+</component>

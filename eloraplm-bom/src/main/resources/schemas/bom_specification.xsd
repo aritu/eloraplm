@@ -1,0 +1,13 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/bom_specification" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/bom_specification"
+xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+
+  <xs:element name="specificationClassification" >
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bomSpecificationClassHierarchical" />
+    </xs:simpleType>
+  </xs:element>  
+
+</xs:schema>

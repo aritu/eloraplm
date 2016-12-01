@@ -1,0 +1,10 @@
+id, label, obsolete
+http://eloraplm.aritu.com/relations/BomComposedOf,label.relation.predicate.inverse.BomComposedOf,0
+http://eloraplm.aritu.com/relations/BomHasBom,label.relation.predicate.inverse.BomHasBom,0
+http://eloraplm.aritu.com/relations/BomHasSpecification,label.relation.predicate.inverse.BomHasSpecification,0
+http://eloraplm.aritu.com/relations/BomHasCadDocument,label.relation.predicate.inverse.BomHasCadDocument,0
+http://eloraplm.aritu.com/relations/BomHasDocument,label.relation.predicate.inverse.BomHasDocument,0
+http://eloraplm.aritu.com/relations/BomHasList,label.relation.predicate.inverse.BomHasList,0
+http://eloraplm.aritu.com/relations/BomListHasEntry,label.relation.predicate.inverse.BomListHasEntry,0
+http://eloraplm.aritu.com/relations/BomManufacturerHasPart,label.relation.predicate.inverse.BomManufacturerHasPart,0
+http://eloraplm.aritu.com/relations/BomCustomerHasProduct,label.relation.predicate.inverse.BomCustomerHasProduct,0

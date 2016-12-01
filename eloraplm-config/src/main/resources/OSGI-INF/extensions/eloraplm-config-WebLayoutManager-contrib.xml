@@ -1,0 +1,531 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.config.WebLayoutManager.contrib">
+
+    <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+    
+        <layout name="elora_default_config">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_default_config_id</widget>
+            </row>
+            <row>
+              <widget>elora_default_config_value</widget>
+            </row>
+            <row>
+              <widget>elora_default_config_enforce</widget>
+            </row>
+            <row>
+              <widget>elora_default_config_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_default_config_order</widget>
+            </row>
+          </rows>
+        </layout>
+    
+        <layout name="elora_lifecycle_states">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_lifecycle_states_id</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_states_status</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_states_isLockable</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_states_color</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_states_abbreviation</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_states_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_states_order</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <layout name="elora_relation_propagation">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_relation_propagation_id</widget>
+            </row>
+            <row>
+              <widget>elora_relation_propagation_action</widget>
+            </row>
+            <row>
+              <widget>elora_relation_propagation_relation</widget>
+            </row>
+            <row>
+              <widget>elora_relation_propagation_direction</widget>
+            </row>
+            <row>
+              <widget>elora_relation_propagation_propagate</widget>
+            </row>
+            <row>
+              <widget>elora_relation_propagation_enforce</widget>
+            </row>
+            <row>
+              <widget>elora_relation_propagation_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_relation_propagation_order</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <layout name="elora_unit_conversion_mapping">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_unit_conversion_mapping_id</widget>
+            </row>
+            <row>
+              <widget>elora_unit_conversion_mapping_base_unit</widget>
+            </row>
+            <row>
+              <widget>elora_unit_conversion_mapping_display_unit</widget>
+            </row>
+            <row>
+              <widget>elora_unit_conversion_mapping_conversion_factor</widget>
+            </row>
+            <row>
+              <widget>elora_unit_conversion_mapping_display</widget>
+            </row>
+            <row>
+              <widget>elora_unit_conversion_mapping_decimal_places</widget>
+            </row>
+            <row>
+              <widget>elora_unit_conversion_mapping_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_unit_conversion_mapping_order</widget>
+            </row>
+          </rows>
+        </layout>
+    </extension>
+    
+    <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <!-- elora_default_config widgets -->
+        
+        <widget name="elora_default_config_id" type="text">
+          <labels>
+            <label mode="any">label.widget.defaultConfig.entry.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDefaultConfig:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_default_config_value" type="text">
+          <labels>
+            <label mode="any">label.widget.defaultConfig.entry.value</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDefaultConfig:value</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_default_config_enforce" type="template">
+          <labels>
+            <label mode="any">label.widget.defaultConfig.entry.enforce</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDefaultConfig:enforce</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_default_config_obsolete" type="template">
+          <labels>
+            <label mode="any">label.widget.defaultConfig.entry.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDefaultConfig:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_default_config_order" type="int">
+          <labels>
+            <label mode="any">label.widget.defaultConfig.entry.order</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDefaultConfig:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        
+        <!-- elora_lifecycle_states widgets -->
+        
+        <widget name="elora_lifecycle_states_id" type="text">
+          <labels>
+            <label mode="any">label.widget.lifecycleStates.entry.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleStates:id</field>
+          </fields>
+          <widgetModes>
+            <mode value="edit">view</mode>
+          </widgetModes>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_lifecycle_states_status" type="text">
+          <labels>
+            <label mode="any">label.widget.lifecycleStates.entry.status</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleStates:status</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_lifecycle_states_isLockable" type="template">
+          <labels>
+            <label mode="any">label.widget.lifecycleStates.entry.isLockable</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleStates:isLockable</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_lifecycle_states_color" type="text">
+          <labels>
+            <label mode="any">label.widget.lifecycleStates.entry.color</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleStates:color</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_lifecycle_states_abbreviation" type="text">
+          <labels>
+            <label mode="any">label.widget.lifecycleStates.entry.abbreviation</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleStates:abbreviation</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_lifecycle_states_obsolete" type="template">
+          <labels>
+            <label mode="any">label.widget.lifecycleStates.entry.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleStates:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_lifecycle_states_order" type="int">
+          <labels>
+            <label mode="any">label.widget.lifecycleStates.entry.order</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleStates:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        <!-- elora_relation_propagation widgets -->
+        
+        <widget name="elora_relation_propagation_id" type="int">
+          <labels>
+            <label mode="any">label.widget.relationPropagation.entry.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationPropagation:id</field>
+          </fields>
+          <widgetModes>
+            <mode value="create">hidden</mode>
+            <mode value="edit">view</mode>
+          </widgetModes>
+        </widget>
+        
+        <widget name="elora_relation_propagation_action" type="text">
+          <labels>
+            <label mode="any">label.widget.relationPropagation.entry.action</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationPropagation:action</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relation_propagation_relation" type="text">
+          <labels>
+            <label mode="any">label.widget.relationPropagation.entry.relation</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationPropagation:relation</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relation_propagation_direction" type="template">
+          <labels>
+            <label mode="any">label.widget.relationPropagation.entry.direction</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationPropagation:direction</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_asc_desc_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relation_propagation_propagate" type="template">
+          <labels>
+            <label mode="any">label.widget.relationPropagation.entry.propagate</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationPropagation:propagate</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relation_propagation_enforce" type="template">
+          <labels>
+            <label mode="any">label.widget.relationPropagation.entry.enforce</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationPropagation:enforce</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relation_propagation_obsolete" type="template">
+          <labels>
+            <label mode="any">label.widget.relationPropagation.entry.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationPropagation:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_relation_propagation_order" type="int">
+          <labels>
+            <label mode="any">label.widget.relationPropagation.entry.order</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraRelationPropagation:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_unit_conversion_mapping_id" type="text">
+          <labels>
+            <label mode="any">label.widget.unitConversionMapping.entry.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraUnitConversionMapping:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_unit_conversion_mapping_base_unit" type="text">
+          <labels>
+            <label mode="any">label.widget.unitConversionMapping.entry.baseUnit</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraUnitConversionMapping:base_unit</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_unit_conversion_mapping_display_unit" type="text">
+          <labels>
+            <label mode="any">label.widget.unitConversionMapping.entry.displayUnit</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraUnitConversionMapping:display_unit</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_unit_conversion_mapping_conversion_factor" type="double">
+          <labels>
+            <label mode="any">label.widget.unitConversionMapping.entry.conversionFactor</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraUnitConversionMapping:conversion_factor</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_unit_conversion_mapping_display" type="template">
+          <labels>
+            <label mode="any">label.widget.unitConversionMapping.entry.display</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraUnitConversionMapping:display</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+           <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_unit_conversion_mapping_decimal_places" type="int">
+          <labels>
+            <label mode="any">label.widget.unitConversionMapping.entry.decimalPlaces</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraUnitConversionMapping:decimal_places</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_unit_conversion_mapping_obsolete" type="template">
+          <labels>
+            <label mode="any">label.widget.unitConversionMapping.entry.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraUnitConversionMapping:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_unit_conversion_mapping_order" type="int">
+          <labels>
+            <label mode="any">label.widget.unitConversionMapping.entry.order</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraUnitConversionMapping:ordering</field>
+          </fields>
+        </widget>
+        
+    </extension>
+    
+</component>

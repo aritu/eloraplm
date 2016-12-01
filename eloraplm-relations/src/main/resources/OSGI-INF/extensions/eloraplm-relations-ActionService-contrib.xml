@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.relations.ActionService.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
+
+    <filter id="cadCompositionTreeButtons">
+        <rule grant="true">
+            <permission>Write</permission>
+            <condition>#{webActions.currentTabId eq 'TAB_CAD_COMPOSITION_TREETABLE'}</condition>
+        </rule>
+        <rule grant="false">
+            <condition>#{currentDocument.isVersion()}</condition>
+            <condition>#{currentDocument.isProxy()}</condition>
+            <condition>#{!currentDocument.isLocked()}</condition>
+            <condition>#{currentDocumentLockDetails['document.locker'] ne currentUser}</condition>
+        </rule>
+    </filter>
+
+    <filter id="isNotDraft">
+        <rule grant="false">
+            <facet>EloraDraft</facet>
+        </rule>
+    </filter>
+
+  </extension>
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+
+    <!-- Hide default relations tab -->
+        <action id="TAB_RELATIONS" enabled="false" />
+    
+    <!-- Enable nuxeo relations tab to admin -->
+<!--     <action id="TAB_RELATIONS" link="/incl/tabs/document_relations.xhtml" -->
+<!--       enabled="true" label="action.view.relations" order="55" type="rest_document_link"> -->
+<!--       <category>VIEW_ACTION_LIST</category> -->
+<!--       <filter id="view_relations"> -->
+<!--         <rule grant="false"> -->
+<!--           <condition>#{not currentUser.administrator}</condition> -->
+<!--         </rule> -->
+<!--         <rule grant="false"> -->
+<!--           <facet>Folderish</facet> -->
+<!--         </rule> -->
+<!--         <rule grant="false"> -->
+<!--           <type>Server</type> -->
+<!--         </rule> -->
+<!--       </filter> -->
+<!--     </action> -->
+    
+    
+    
+    <action id="TAB_CAD_COMPOSITION_TREETABLE" link="/incl/tabs/cad_composition_treetable.xhtml"
+      order="30" label="label.com.aritu.eloraplm.relations.tab.cadComposition" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>isCadDocument</filter-id>
+      <filter-id>isNotCadDesignTable</filter-id>
+      <filter-id>isNotDraft</filter-id>
+    </action>
+    
+    
+    
+    <action id="TAB_CAD_WHERE_USED_TREETABLE" link="/incl/tabs/cad_where_used_treetable.xhtml"
+      order="35" label="label.com.aritu.eloraplm.relations.tab.cadWhereUsed" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>isCadDocument</filter-id>
+      <filter-id>isNotSpecial</filter-id>
+      <filter-id>isNotDraft</filter-id>
+    </action>
+
+
+    <!-- Treetable buttons -->
+    <!-- Oraingoz kendu egingo da edizioa, checkin leihoa sortu arte -->
+    <action id="BtnRestoreCadRelations" order="10" label="eloraplm.command.relations.restore" type="link" link="#{cadCompositionTreeBean.restoreRelations}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cadCompositionTreeButtons</filter-id>
+      <filter-id>isCheckedOut</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnAddCadRelation" order="20" label="eloraplm.command.relation.add" type="fancybox" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cadCompositionTreeButtons</filter-id>
+      <properties>
+        <property name="include">/incl/action/cad_composition_add_relation.xhtml</property>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    
+    
+    <!-- Hau kendu egingo da erlazio denak ondo sortzen direnean, baina "Other relations" bat sortu beharko da. -->
+    
+<!--     <action enabled="true" id="TAB_CAD_RELATIONS" label="Relations (KENTZEKO)" link="/incl/tabs/cad_document_relations.xhtml" order="55" type="rest_document_link"> -->
+<!--       <category>VIEW_ACTION_LIST</category> -->
+<!--       <filter-id>isCadDocument</filter-id> -->
+<!--     </action> -->
+
+  </extension>
+
+</component>

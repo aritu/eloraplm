@@ -1,0 +1,51 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"  >
+
+
+  <xs:complexType name="impactedItemType">
+    <xs:sequence>
+      <xs:element name="rowNumber" type="xs:long"/>
+      <xs:element name="modifiedItem">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="parentItem">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="originItem">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+       <xs:element name="originItemWc">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="action" type="xs:string" default="id_change"/>
+      <xs:element name="destinationItem">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="isManaged" type="xs:boolean" default="false"/>
+      <xs:element name="isManual" type="xs:boolean" default="false"/>
+      <xs:element name="type" type="xs:string"/>
+      <xs:element name="messageType" type="xs:string"/>
+      <xs:element name="messageData" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="impactedItemListType">
+    <xs:sequence>
+      <xs:element name="item" type="impactedItemType" minOccurs="0"
+        maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- <xs:element name="impactedItemList" type="nxs:impactedItemListType"/> -->
+
+</xs:schema>

@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.doctypes.SQLDirectoryFactory.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+
+    <directory name="elora_cadClassLevel1">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_class_level1</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_class_level1.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_cadClassLevel2">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_class_level2</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_class_level2.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_cadClassLevel1</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_cadClassLevel1</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_cadClassLevel3">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_class_level3</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_class_level3.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+      <parentDirectory>elora_cadClassLevel2</parentDirectory>
+      <init-dependencies>
+        <dependency>elora_cadClassLevel2</dependency>
+      </init-dependencies>   
+    </directory>
+
+    <directory name="elora_cadClassHierarchical">
+      <schema>xvocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_class_hierarchical</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_class_hierarchical.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>        
+
+
+    <directory name="elora_erpCustomers">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_erp_customer</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_erp_customer.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="elora_erpManufacturers">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_erp_manufacturer</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_erp_manufacturer.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+<!--     <directory name="elora_erpSuppliers"> -->
+<!--       <schema>vocabulary</schema> -->
+<!--       <dataSource>java:/nxsqldirectory</dataSource> -->
+<!--       <table>elora_erp_supplier</table> -->
+<!--       <idField>id</idField> -->
+<!--       <autoincrementIdField>false</autoincrementIdField> -->
+<!--       <readOnly>false</readOnly> -->
+<!--       <dataFile>directories/elora_erp_supplier.csv</dataFile> -->
+<!--       <createTablePolicy>always</createTablePolicy> -->
+<!--     </directory> -->
+
+    <directory name="elora_partaker">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_partaker</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_partaker.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+  </extension>
+  
+</component>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.search.SuggestionService.contrib">
+
+  <require>org.nuxeo.ecm.platform.suggestbox.core.defaultSuggesters</require>
+
+  <extension point="suggesterGroups" target="org.nuxeo.ecm.platform.suggestbox.service.SuggestionService">
+
+    <!-- Override searchbox suggesterGroup -->
+    <suggesterGroup name="searchbox">
+      <suggesters>
+        <suggesterName remove="true">searchByUsersAndGroups</suggesterName>
+        <suggesterName remove="true">documentLookupByTitle</suggesterName>
+        <suggesterName>documentLookupByTitleAndReference</suggesterName>
+      </suggesters>
+    </suggesterGroup>
+
+  </extension>
+
+
+  <extension point="suggesters" target="org.nuxeo.ecm.platform.suggestbox.service.SuggestionService">
+
+    <!-- New suggester named documentLookupByTitleAndReference -->
+    <suggester class="com.aritu.eloraplm.search.suggestbox.service.suggesters.EloraDocumentLookupSuggester" name="documentLookupByTitleAndReference">
+      <parameters>
+        <parameter name="providerName">DEFAULT_DOCUMENT_SUGGESTION</parameter>
+      </parameters>
+    </suggester>
+  
+  </extension>
+
+</component>

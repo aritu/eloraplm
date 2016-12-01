@@ -1,0 +1,1104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.bom.characteristics.WebLayoutManager.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+
+    <layout name="bom_characteristic">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomCharacOrder</widget>
+        </row>
+        <row>
+          <widget>bomCharacTitle</widget>
+        </row>
+        <row>
+          <widget>bomCharacDescription</widget>
+        </row>
+        <row>
+          <widget>bomCharacTypeRelatedFields</widget>
+        </row>
+        <row>
+          <widget>bomCharacDefaultShowInDocument</widget>
+        </row>
+        <row>
+          <widget>bomCharacIsRequired</widget>
+        </row>
+        <row>
+          <widget>bomCharacIsObsolete</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_part_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomPartCharacClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_product_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomProductCharacClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_tool_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomToolCharacClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_packaging_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomPackagingCharacClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_specification_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomSpecificationCharacClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <!--  Content view layout -->
+    <layout name="document_bom_part_characteristics_listing_ajax">
+      <templates>
+        <template mode="any">
+          /layouts/layout_listing_ajax_template.xhtml
+        </template>
+        <template mode="csv">
+          /layouts/layout_listing_csv_template.xhtml
+        </template>
+        <template mode="pdf">
+          /layouts/layout_listing_pdf_template.xhtml
+        </template>
+      </templates>
+      <properties mode="any">
+        <property name="showListingHeader">true</property>
+        <property name="showRowEvenOddClass">true</property>
+        <property name="display">table</property>
+      </properties>
+      <columns>
+        <column>
+          <properties mode="any">
+            <property name="isListingSelectionBoxWithCurrentDocument">true</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <properties mode="csv">
+            <property name="isHidden">true</property>
+          </properties>
+          <properties mode="pdf">
+            <property name="isHidden">true</property>
+          </properties>
+          <widget>listing_ajax_selection_box_with_current_document</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <widget>listing_icon_type</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:title</property>
+          </properties>
+          <widget>listing_title_link_localized</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharc:classification</property>
+          </properties>
+          <widget>listing_bomPartCharacClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:modified</property>
+          </properties>
+          <widget>listing_modification_date</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:lastContributor</property>
+          </properties>
+          <widget>listing_last_contributor</widget>
+        </column>
+      </columns>
+    </layout>
+
+    <layout name="document_bom_product_characteristics_listing_ajax">
+      <templates>
+        <template mode="any">
+          /layouts/layout_listing_ajax_template.xhtml
+        </template>
+        <template mode="csv">
+          /layouts/layout_listing_csv_template.xhtml
+        </template>
+        <template mode="pdf">
+          /layouts/layout_listing_pdf_template.xhtml
+        </template>
+      </templates>
+      <properties mode="any">
+        <property name="showListingHeader">true</property>
+        <property name="showRowEvenOddClass">true</property>
+        <property name="display">table</property>
+      </properties>
+      <columns>
+        <column>
+          <properties mode="any">
+            <property name="isListingSelectionBoxWithCurrentDocument">true</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <properties mode="csv">
+            <property name="isHidden">true</property>
+          </properties>
+          <properties mode="pdf">
+            <property name="isHidden">true</property>
+          </properties>
+          <widget>listing_ajax_selection_box_with_current_document</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <widget>listing_icon_type</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:title</property>
+          </properties>
+          <widget>listing_title_link_localized</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharc:classification</property>
+          </properties>
+          <widget>listing_bomProductCharacClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:modified</property>
+          </properties>
+          <widget>listing_modification_date</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:lastContributor</property>
+          </properties>
+          <widget>listing_last_contributor</widget>
+        </column>
+      </columns>
+    </layout>
+    
+    <layout name="document_bom_tool_characteristics_listing_ajax">
+      <templates>
+        <template mode="any">
+          /layouts/layout_listing_ajax_template.xhtml
+        </template>
+        <template mode="csv">
+          /layouts/layout_listing_csv_template.xhtml
+        </template>
+        <template mode="pdf">
+          /layouts/layout_listing_pdf_template.xhtml
+        </template>
+      </templates>
+      <properties mode="any">
+        <property name="showListingHeader">true</property>
+        <property name="showRowEvenOddClass">true</property>
+        <property name="display">table</property>
+      </properties>
+      <columns>
+        <column>
+          <properties mode="any">
+            <property name="isListingSelectionBoxWithCurrentDocument">true</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <properties mode="csv">
+            <property name="isHidden">true</property>
+          </properties>
+          <properties mode="pdf">
+            <property name="isHidden">true</property>
+          </properties>
+          <widget>listing_ajax_selection_box_with_current_document</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <widget>listing_icon_type</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:title</property>
+          </properties>
+          <widget>listing_title_link_localized</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharc:classification</property>
+          </properties>
+          <widget>listing_bomToolCharacClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:modified</property>
+          </properties>
+          <widget>listing_modification_date</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:lastContributor</property>
+          </properties>
+          <widget>listing_last_contributor</widget>
+        </column>
+      </columns>
+    </layout>
+    
+    <layout name="document_bom_packaging_characteristics_listing_ajax">
+      <templates>
+        <template mode="any">
+          /layouts/layout_listing_ajax_template.xhtml
+        </template>
+        <template mode="csv">
+          /layouts/layout_listing_csv_template.xhtml
+        </template>
+        <template mode="pdf">
+          /layouts/layout_listing_pdf_template.xhtml
+        </template>
+      </templates>
+      <properties mode="any">
+        <property name="showListingHeader">true</property>
+        <property name="showRowEvenOddClass">true</property>
+        <property name="display">table</property>
+      </properties>
+      <columns>
+        <column>
+          <properties mode="any">
+            <property name="isListingSelectionBoxWithCurrentDocument">true</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <properties mode="csv">
+            <property name="isHidden">true</property>
+          </properties>
+          <properties mode="pdf">
+            <property name="isHidden">true</property>
+          </properties>
+          <widget>listing_ajax_selection_box_with_current_document</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <widget>listing_icon_type</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:title</property>
+          </properties>
+          <widget>listing_title_link_localized</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharc:classification</property>
+          </properties>
+          <widget>listing_bomPackagingCharacClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:modified</property>
+          </properties>
+          <widget>listing_modification_date</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:lastContributor</property>
+          </properties>
+          <widget>listing_last_contributor</widget>
+        </column>
+      </columns>
+    </layout>
+    
+    <layout name="document_bom_specification_characteristics_listing_ajax">
+      <templates>
+        <template mode="any">
+          /layouts/layout_listing_ajax_template.xhtml
+        </template>
+        <template mode="csv">
+          /layouts/layout_listing_csv_template.xhtml
+        </template>
+        <template mode="pdf">
+          /layouts/layout_listing_pdf_template.xhtml
+        </template>
+      </templates>
+      <properties mode="any">
+        <property name="showListingHeader">true</property>
+        <property name="showRowEvenOddClass">true</property>
+        <property name="display">table</property>
+      </properties>
+      <columns>
+        <column>
+          <properties mode="any">
+            <property name="isListingSelectionBoxWithCurrentDocument">true</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <properties mode="csv">
+            <property name="isHidden">true</property>
+          </properties>
+          <properties mode="pdf">
+            <property name="isHidden">true</property>
+          </properties>
+          <widget>listing_ajax_selection_box_with_current_document</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <widget>listing_icon_type</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:title</property>
+          </properties>
+          <widget>listing_title_link_localized</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharc:classification</property>
+          </properties>
+          <widget>listing_bomSpecificationCharacClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:modified</property>
+          </properties>
+          <widget>listing_modification_date</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">dc:lastContributor</property>
+          </properties>
+          <widget>listing_last_contributor</widget>
+        </column>
+      </columns>
+    </layout>
+
+  </extension>
+
+
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+
+    <widget name="bomPartCharacAdminActions" type="documentActionsWithForms">
+      <properties mode="view">
+        <property name="category">BOM_PART_CHARAC_ADMIN_ACTIONS</property>
+        <property name="actionsDisplay">links</property>
+        <property name="overallDisplay">horizontal_block</property>
+        <property name="maxActionsNumber">5</property>
+        <property name="styleClass">action_bar</property>
+        <property name="actionStyleClass">button</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomProductCharacAdminActions" type="documentActionsWithForms">
+      <properties mode="view">
+        <property name="category">BOM_PRODUCT_CHARAC_ADMIN_ACTIONS</property>
+        <property name="actionsDisplay">links</property>
+        <property name="overallDisplay">horizontal_block</property>
+        <property name="maxActionsNumber">5</property>
+        <property name="styleClass">action_bar</property>
+        <property name="actionStyleClass">button</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomToolCharacAdminActions" type="documentActionsWithForms">
+      <properties mode="view">
+        <property name="category">BOM_TOOL_CHARAC_ADMIN_ACTIONS</property>
+        <property name="actionsDisplay">links</property>
+        <property name="overallDisplay">horizontal_block</property>
+        <property name="maxActionsNumber">5</property>
+        <property name="styleClass">action_bar</property>
+        <property name="actionStyleClass">button</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomPackagingCharacAdminActions" type="documentActionsWithForms">
+      <properties mode="view">
+        <property name="category">BOM_PACKAGING_CHARAC_ADMIN_ACTIONS</property>
+        <property name="actionsDisplay">links</property>
+        <property name="overallDisplay">horizontal_block</property>
+        <property name="maxActionsNumber">5</property>
+        <property name="styleClass">action_bar</property>
+        <property name="actionStyleClass">button</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomSpecificationCharacAdminActions" type="documentActionsWithForms">
+      <properties mode="view">
+        <property name="category">BOM_SPECIFICATION_CHARAC_ADMIN_ACTIONS</property>
+        <property name="actionsDisplay">links</property>
+        <property name="overallDisplay">horizontal_block</property>
+        <property name="maxActionsNumber">5</property>
+        <property name="styleClass">action_bar</property>
+        <property name="actionStyleClass">button</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacOrder" type="int">
+      <labels>
+        <label mode="any">label.widget.bomcharac.order</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:order</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="required">true</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacTitle" type="text">
+      <labels>
+        <label mode="any">label.widget.bomcharac.title</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>dc:title</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="required">true</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacDescription" type="text">
+      <labels>
+        <label mode="any">label.widget.bomcharac.description</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>dc:description</field>
+      </fields>
+    </widget>
+    
+    <widget name="bomCharacType" type="selectOneDirectory">
+      <labels>
+        <label mode="any">label.widget.bomcharac.type</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:type</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_bom_characteristic_types</property>
+        <property name="localize">true</property>
+        <!-- <property name="notDisplayDefaultOption">true</property> -->
+      </properties>
+      <properties widgetMode="edit">
+        <property name="required">true</property>
+      </properties>
+    </widget>
+    
+    
+    <widget name="bomCharacTypeRelatedFields" type="template">
+      <handlingLabels>true</handlingLabels>
+      <properties widgetMode="any">
+        <property name="template">/widgets/bom_charac_type_related_fields_widget.xhtml</property>
+      </properties>
+    </widget>
+    
+    
+    <widget name="bomCharacNumberMaxLength" type="int">
+      <labels>
+        <label mode="any">label.widget.bomcharac.number.maxLength</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:numberMaxLength</field>
+      </fields>
+      <properties widgetMode="edit">
+        <property name="required">#{layoutValue.bomcharc.type == 'number'?'true':'false'}</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacNumberMaxDecimalPlaces" type="int">
+      <labels>
+        <label mode="any">label.widget.bomcharac.number.maxDecimalPlaces</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:numberMaxDecimalPlaces</field>
+      </fields>
+      <properties widgetMode="edit">
+        <property name="required">#{layoutValue.bomcharc.type == 'number'?'true':'false'}</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacNumberDefaultValue" type="double">
+      <labels>
+        <label mode="any">label.widget.bomcharac.defaultValue</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:numberDefaultValue</field>
+      </fields>
+      <properties widgetMode="edit">
+        <property name="validator">
+          #{bomCharacteristicValidator.validateNumberDefaultValue}
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacStringMaxLength" type="int">
+      <labels>
+        <label mode="any">label.widget.bomcharac.string.maxLength</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:stringMaxLength</field>
+      </fields>
+      <properties widgetMode="edit">
+        <property name="required">#{layoutValue.bomcharc.type == 'string'?'true':'false'}</property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacStringDefaultValue" type="text">
+      <labels>
+        <label mode="any">label.widget.bomcharac.defaultValue</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:stringDefaultValue</field>
+      </fields>
+      <properties widgetMode="edit">
+        <property name="validator">
+          #{bomCharacteristicValidator.validateStringDefaultValue}
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacDateDefaultValue" type="datetime">
+      <labels>
+        <label mode="any">label.widget.bomcharac.defaultValue</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:dateDefaultValue</field>
+      </fields>
+    </widget>
+    
+    
+    <widget name="bomCharacBooleanDefaultValue" type="template">
+      <labels>
+        <label mode="any">label.widget.bomcharac.defaultValue</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:booleanDefaultValue</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="template">/widgets/boolean_true_false_widget_template.xhtml</property>
+      </properties>
+    </widget>
+    
+    
+    
+    <widget name="bomCharacListDefaultValue" type="text">
+      <labels>
+        <label mode="any">label.widget.bomcharac.defaultValue</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:listDefaultValue</field>
+      </fields>
+      <properties widgetMode="edit">
+        <property name="validator">
+          #{bomCharacteristicValidator.validateListDefaultValue}
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="bomCharacListContent" type="list">
+      <labels>
+        <label mode="any">label.widget.bomcharac.listContent</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:listContent</field>
+      </fields>
+      <properties widgetMode="any">
+          <property name="display">table</property>
+      </properties>
+      <properties widgetMode="edit">
+        <property name="required">#{layoutValue.bomcharc.type == 'list'?'true':'false'}</property>
+      </properties>
+      <subWidgets>
+        <widget name="bomCharacListValue" type="text"> 
+          <labels>
+            <label mode="any">label.widget.bomcharac.list.value</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>listValue</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">#{layoutValue.bomcharc.type == 'list'?'true':'false'}</property>
+          </properties>
+        </widget>
+        <widget name="bomCharacListOrder" type="int">
+          <labels>
+            <label mode="any">label.widget.bomcharac.list.order</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>listOrder</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">#{layoutValue.bomcharc.type == 'list'?'true':'false'}</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="bomCharacDefaultShowInDocument" type="checkbox">
+      <labels>
+        <label mode="any">label.widget.bomcharac.defaultShowInDocument</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:defaultShowInDocument</field>
+      </fields>
+    </widget>
+    
+    <widget name="bomCharacIsRequired" type="checkbox">
+      <labels>
+        <label mode="any">label.widget.bomcharac.isRequired</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:isRequired</field>
+      </fields>
+    </widget>
+    
+    <widget name="bomCharacIsObsolete" type="checkbox">
+      <labels>
+        <label mode="any">label.widget.bomcharac.isObsolete</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharc:isObsolete</field>
+      </fields>
+    </widget>
+    
+    <widget name="bomPartCharacClassification" type="bom_part_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <!-- It is not possible to modify the value in edition, only in creation. -->
+        <mode value="edit">view</mode>
+      </widgetModes>
+      <fields>
+        <field>bomcharc:classification</field>
+      </fields>
+    </widget>
+    
+    <widget name="listing_bomPartCharacClassification" type="bom_part_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <fields>
+        <field>data.bomcharc.classification</field>
+      </fields>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+    </widget>
+    
+    <widget name="bomProductCharacClassification" type="bom_product_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <!-- It is not possible to modify the value in edition, only in creation. -->
+        <mode value="edit">view</mode>
+      </widgetModes>
+      <fields>
+        <field>bomcharc:classification</field>
+      </fields>
+    </widget>
+    
+    <widget name="listing_bomProductCharacClassification" type="bom_product_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <fields>
+        <field>data.bomcharc.classification</field>
+      </fields>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+    </widget>
+    
+    <widget name="bomToolCharacClassification" type="bom_tool_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <!-- It is not possible to modify the value in edition, only in creation. -->
+        <mode value="edit">view</mode>
+      </widgetModes>
+      <fields>
+        <field>bomcharc:classification</field>
+      </fields>
+    </widget>
+    
+    <widget name="listing_bomToolCharacClassification" type="bom_tool_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <fields>
+        <field>data.bomcharc.classification</field>
+      </fields>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+    </widget>
+    
+    <widget name="bomPackagingCharacClassification" type="bom_packaging_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <!-- It is not possible to modify the value in edition, only in creation. -->
+        <mode value="edit">view</mode>
+      </widgetModes>
+      <fields>
+        <field>bomcharc:classification</field>
+      </fields>
+    </widget>
+    
+    <widget name="listing_bomPackagingCharacClassification" type="bom_packaging_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <fields>
+        <field>data.bomcharc.classification</field>
+      </fields>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+    </widget>
+    
+    <widget name="bomSpecificationCharacClassification" type="bom_specification_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <!-- It is not possible to modify the value in edition, only in creation. -->
+        <mode value="edit">view</mode>
+      </widgetModes>
+      <fields>
+        <field>bomcharc:classification</field>
+      </fields>
+    </widget>
+    
+    <widget name="listing_bomSpecificationCharacClassification" type="bom_specification_classification_select_widget">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <fields>
+        <field>data.bomcharc.classification</field>
+      </fields>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+    </widget>
+    
+  </extension>
+
+
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgettypes">
+  
+    <!-- New widget type for BOM Part classification multilevel selection -->
+    <widgetType name="bom_part_classification_select_widget">
+      <configuration>
+        <sinceVersion>7.10</sinceVersion>
+        <title>BOM Part classification multilevel select widget</title>
+        <description>
+          <p>This widget type displays the BOM Part classification selection, which is currently a multilevel classification.</p>
+          <p>It requires the following fields configuration:
+            <ul>
+              <li>
+                field: the value holding the multilevel selection
+              </li>
+            </ul>
+          </p>
+        </description>
+        <supportedModes>
+          <mode>edit</mode>
+          <mode>view</mode>
+        </supportedModes>
+        <fields>
+          <list>true</list>
+          <complex>false</complex>
+          <supportedTypes>
+            <type>string</type>
+          </supportedTypes>
+          <defaultTypes>
+            <type>string</type>
+          </defaultTypes>
+        </fields>
+        <categories>
+          <category>document</category>
+        </categories>
+        <properties>
+          <defaultValues mode="any">
+            <property name="directoryNameLevel1">elora_bomPartClassLevel1</property>
+            <property name="directoryNameLevel2">elora_bomPartClassLevel2</property>
+            <property name="directoryNameLevel3">elora_bomPartClassLevel3</property>
+          </defaultValues>
+        </properties>
+      </configuration>
+      <handler-class>org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler</handler-class>
+      <property name="template">/widgets/3_level_select_widget.xhtml</property>
+    </widgetType>
+    
+    <!-- New widget type for BOM Product classification multilevel selection -->
+    <widgetType name="bom_product_classification_select_widget">
+      <configuration>
+        <sinceVersion>7.10</sinceVersion>
+        <title>BOM Product classification multilevel select widget</title>
+        <description>
+          <p>This widget type displays the BOM Product classification selection, which is currently a multilevel classification.</p>
+          <p>It requires the following fields configuration:
+            <ul>
+              <li>
+                field: the value holding the multilevel selection
+              </li>
+            </ul>
+          </p>
+        </description>
+        <supportedModes>
+          <mode>edit</mode>
+          <mode>view</mode>
+        </supportedModes>
+        <fields>
+          <list>true</list>
+          <complex>false</complex>
+          <supportedTypes>
+            <type>string</type>
+          </supportedTypes>
+          <defaultTypes>
+            <type>string</type>
+          </defaultTypes>
+        </fields>
+        <categories>
+          <category>document</category>
+        </categories>
+        <properties>
+          <defaultValues mode="any">
+            <property name="directoryNameLevel1">elora_bomProductClassLevel1</property>
+            <property name="directoryNameLevel2">elora_bomProductClassLevel2</property>
+            <property name="directoryNameLevel3">elora_bomProductClassLevel3</property>
+          </defaultValues>
+        </properties>
+      </configuration>
+      <handler-class>org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler</handler-class>
+      <property name="template">/widgets/3_level_select_widget.xhtml</property>
+    </widgetType>
+    
+    <!-- New widget type for BOM Tool classification multilevel selection -->
+    <widgetType name="bom_tool_classification_select_widget">
+      <configuration>
+        <sinceVersion>7.10</sinceVersion>
+        <title>BOM Tool classification multilevel select widget</title>
+        <description>
+          <p>This widget type displays the BOM Tool classification selection, which is currently a multilevel classification.</p>
+          <p>It requires the following fields configuration:
+            <ul>
+              <li>
+                field: the value holding the multilevel selection
+              </li>
+            </ul>
+          </p>
+        </description>
+        <supportedModes>
+          <mode>edit</mode>
+          <mode>view</mode>
+        </supportedModes>
+        <fields>
+          <list>true</list>
+          <complex>false</complex>
+          <supportedTypes>
+            <type>string</type>
+          </supportedTypes>
+          <defaultTypes>
+            <type>string</type>
+          </defaultTypes>
+        </fields>
+        <categories>
+          <category>document</category>
+        </categories>
+        <properties>
+          <defaultValues mode="any">
+            <property name="directoryNameLevel1">elora_bomToolClassLevel1</property>
+            <property name="directoryNameLevel2">elora_bomToolClassLevel2</property>
+            <property name="directoryNameLevel3">elora_bomToolClassLevel3</property>
+          </defaultValues>
+        </properties>
+      </configuration>
+      <handler-class>org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler</handler-class>
+      <property name="template">/widgets/3_level_select_widget.xhtml</property>
+    </widgetType>
+    
+    <!-- New widget type for BOM Packaging classification multilevel selection -->
+    <widgetType name="bom_packaging_classification_select_widget">
+      <configuration>
+        <sinceVersion>7.10</sinceVersion>
+        <title>BOM Packaging classification multilevel select widget</title>
+        <description>
+          <p>This widget type displays the BOM Packaging classification selection, which is currently a multilevel classification.</p>
+          <p>It requires the following fields configuration:
+            <ul>
+              <li>
+                field: the value holding the multilevel selection
+              </li>
+            </ul>
+          </p>
+        </description>
+        <supportedModes>
+          <mode>edit</mode>
+          <mode>view</mode>
+        </supportedModes>
+        <fields>
+          <list>true</list>
+          <complex>false</complex>
+          <supportedTypes>
+            <type>string</type>
+          </supportedTypes>
+          <defaultTypes>
+            <type>string</type>
+          </defaultTypes>
+        </fields>
+        <categories>
+          <category>document</category>
+        </categories>
+        <properties>
+          <defaultValues mode="any">
+            <property name="directoryNameLevel1">elora_bomPackagingClassLevel1</property>
+            <property name="directoryNameLevel2">elora_bomPackagingClassLevel2</property>
+            <property name="directoryNameLevel3">elora_bomPackagingClassLevel3</property>
+          </defaultValues>
+        </properties>
+      </configuration>
+      <handler-class>org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler</handler-class>
+      <property name="template">/widgets/3_level_select_widget.xhtml</property>
+    </widgetType>
+    
+    <!-- New widget type for BOM Specification classification multilevel selection -->
+    <widgetType name="bom_specification_classification_select_widget">
+      <configuration>
+        <sinceVersion>7.10</sinceVersion>
+        <title>BOM Specification classification multilevel select widget</title>
+        <description>
+          <p>This widget type displays the BOM Specification classification selection, which is currently a multilevel classification.</p>
+          <p>It requires the following fields configuration:
+            <ul>
+              <li>
+                field: the value holding the multilevel selection
+              </li>
+            </ul>
+          </p>
+        </description>
+        <supportedModes>
+          <mode>edit</mode>
+          <mode>view</mode>
+        </supportedModes>
+        <fields>
+          <list>true</list>
+          <complex>false</complex>
+          <supportedTypes>
+            <type>string</type>
+          </supportedTypes>
+          <defaultTypes>
+            <type>string</type>
+          </defaultTypes>
+        </fields>
+        <categories>
+          <category>document</category>
+        </categories>
+        <properties>
+          <defaultValues mode="any">
+            <property name="directoryNameLevel1">elora_bomSpecificationClassLevel1</property>
+            <property name="directoryNameLevel2">elora_bomSpecificationClassLevel2</property>
+            <property name="directoryNameLevel3">elora_bomSpecificationClassLevel3</property>
+          </defaultValues>
+        </properties>
+      </configuration>
+      <handler-class>org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler</handler-class>
+      <property name="template">/widgets/3_level_select_widget.xhtml</property>
+    </widgetType>
+  </extension>
+
+</component>  

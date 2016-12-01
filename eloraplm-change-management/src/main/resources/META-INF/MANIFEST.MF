@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.change.management;singleton:=t
+ rue
+Bundle-Name: eloraplm-change-management
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-change-management-TypeSe
+ rvice-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-Cont
+ entTemplateService-contrib.xml,OSGI-INF/extensions/eloraplm-change-ma
+ nagement-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-ch
+ ange-management-ActionService-contrib.xml,OSGI-INF/extensions/elorapl
+ m-change-management-LifeCycleService-contrib.xml,OSGI-INF/extensions/
+ eloraplm-change-management-OperationServiceComponent-contrib.xml,OSGI
+ -INF/extensions/eloraplm-change-management-RoutingService-contrib.xml
+ ,OSGI-INF/extensions/eloraplm-change-management-SQLDirectoryFactory-c
+ ontrib.xml,OSGI-INF/extensions/eloraplm-change-management-DirectoryUI
+ Manager-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-Pa
+ geProviderService-contrib.xml,OSGI-INF/extensions/eloraplm-change-man
+ agement-WebResources-contrib.xml
+

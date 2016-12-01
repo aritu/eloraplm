@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.promote.ActionService.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    <action id="promoteAction" order="20" label="eloraplm.command.promote" type="fancybox" icon="/icons/action_promote_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <properties>
+        <property name="include">/incl/action/elora_promote_tree.xhtml</property>
+        <property name="width">90%</property>
+        <property name="height">90%</property>
+        <property name="autoDimensions">false</property> 
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+        <property name="visibleByDefault">true</property>
+      </properties>
+      <filter-id>isCadOrBomDocument</filter-id>
+      <filter-id>isNotReleased</filter-id>
+      <filter-id>isNotCheckedOut</filter-id>
+    </action>
+
+  </extension>
+
+</component>

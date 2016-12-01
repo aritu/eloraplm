@@ -1,0 +1,9 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://project.nuxeo.org/sample/schemas/vnav"
+  xmlns:smp="http://project.nuxeo.org/sample/schemas/vnav">
+
+  <xs:element name="bom_partClass" type="xs:string" />
+  <xs:element name="cust_customer" type="xs:string" />
+  <xs:element name="manu_manufacturer" type="xs:string" />
+
+</xs:schema>

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.lifecycles.WebLayoutManager.contrib">
+
+    <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        <layout name="elora_children_supported_states">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_children_supported_states_id</widget>
+            </row>
+            <row>
+              <widget>elora_children_supported_states_parent_state</widget>
+            </row>
+            <row>
+              <widget>elora_children_supported_states_children_state</widget>
+            </row>
+            <row>
+              <widget>elora_children_supported_states_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_children_supported_states_order</widget>
+            </row>
+          </rows>
+        </layout>
+    </extension>
+    
+    <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <!-- elora_children_supported_states widgets -->
+        
+        <widget name="elora_children_supported_states_id" type="int">
+          <labels>
+            <label mode="any">label.widget.childrenSupportedStates.entry.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraChildrenSupportedStates:id</field>
+          </fields>
+          <widgetModes>
+            <mode value="create">hidden</mode>
+            <mode value="edit">view</mode>
+          </widgetModes>
+        </widget>
+        
+        <widget name="elora_children_supported_states_parent_state" type="text">
+          <labels>
+            <label mode="any">label.widget.childrenSupportedStates.entry.parentState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraChildrenSupportedStates:parent_state</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_children_supported_states_children_state" type="text">
+          <labels>
+            <label mode="any">label.widget.childrenSupportedStates.entry.childrenState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraChildrenSupportedStates:children_state</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+       
+        <widget name="elora_children_supported_states_obsolete" type="template">
+          <labels>
+            <label mode="any">label.widget.childrenSupportedStates.entry.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraChildrenSupportedStates:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_children_supported_states_order" type="int">
+          <labels>
+            <label mode="any">label.widget.childrenSupportedStates.entry.order</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraChildrenSupportedStates:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+    </extension>
+    
+</component>

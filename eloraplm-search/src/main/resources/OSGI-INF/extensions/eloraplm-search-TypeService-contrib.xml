@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.search.TypeService.contrib">
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+       <schema name="elora_search" prefix="eloras" src="schemas/elora_search.xsd"/>
+  </extension>
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+    <doctype extends="DefaultSearch" name="EloraSearch">
+      <schema name="elora_search" />
+    </doctype>
+  </extension>
+
+
+</component>

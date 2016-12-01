@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.characteristics.SQLDirectoryFactory.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+
+    <directory name="elora_bom_characteristic_types">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_characteristic_types</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_bom_characteristic_types.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+  </extension>
+  
+</component>

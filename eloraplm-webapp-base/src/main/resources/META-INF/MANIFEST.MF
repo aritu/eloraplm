@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.webapp.base
+Bundle-Name: eloraplm-webapp-base
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-webapp-base-ContentViewS
+ ervice-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-WebLayout
+ Manager-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-ActionSe
+ rvice-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-PageProvid
+ erService-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-Config
+ urationService-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-W
+ ebResources-contrib.xml
+

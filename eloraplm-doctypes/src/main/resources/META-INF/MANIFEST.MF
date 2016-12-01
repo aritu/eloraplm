@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.doctypes;singleton:=true
+Bundle-Name: eloraplm-doctypes
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-doctypes-ActionService-c
+ ontrib.xml,OSGI-INF/extensions/eloraplm-doctypes-ContentTemplateServi
+ ce-contrib.xml,OSGI-INF/extensions/eloraplm-doctypes-DirectoryUIManag
+ er-contrib.xml,OSGI-INF/extensions/eloraplm-doctypes-SQLDirectoryFact
+ ory-contrib.xml,OSGI-INF/extensions/eloraplm-doctypes-TypeService-con
+ trib.xml,OSGI-INF/extensions/eloraplm-doctypes-WebLayoutManager-contr
+ ib.xml,OSGI-INF/extensions/eloraplm-doctypes-EventServiceComponent-co
+ ntrib.xml,OSGI-INF/extensions/eloraplm-doctypes-SecurityService-contr
+ ib.xml,OSGI-INF/extensions/eloraplm-doctypes-NotificationService-cont
+ rib.xml,OSGI-INF/extensions/eloraplm-doctypes-LifeCycleService-contri
+ b.xml
+

@@ -1,0 +1,4 @@
+id,label,obsolete
+ebom,eloraplm.label.bom.type.ebom,0
+mbom,eloraplm.label.bom.type.mbom,0
+sbom,eloraplm.label.bom.type.sbom,0

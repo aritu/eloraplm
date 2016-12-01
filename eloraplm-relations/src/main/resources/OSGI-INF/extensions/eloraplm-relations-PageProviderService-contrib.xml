@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.relations.PageProviderService.contrib">
+    <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService"
+        point="providers">
+        
+        <!-- Document Suggestion for Composition and CadDrawing Where Used tabs -->
+        <coreQueryPageProvider name="cad_composition_document_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM CadAssembly,CadPart,CadDesignTable
+            WHERE ecm:fulltext LIKE '?*' AND ecm:mixinType !=
+            'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+            ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+          </pattern>
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+    </extension>
+</component>

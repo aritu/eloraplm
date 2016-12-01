@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.lifecycles.DirectoryUIManager.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
+    <directory name="elora_children_supported_states" layout="elora_children_supported_states" sortField="id" />
+  </extension>
+
+</component>

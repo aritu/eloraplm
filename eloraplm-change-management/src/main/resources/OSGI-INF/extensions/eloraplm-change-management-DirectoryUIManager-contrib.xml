@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.change.management.DirectoryUIManager.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
+
+    <directory name="elora_cm_predicates" layout="vocabulary" sortField="label" />
+    <directory name="elora_cm_inverse_predicates" layout="vocabulary" sortField="label" />
+
+    <directory layout="vocabulary" sortField="ordering" name="elora_cmPriority">
+    </directory>
+
+    <directory layout="vocabulary" sortField="ordering" name="elora_cmEcrType">
+    </directory>
+
+    <directory layout="vocabulary" sortField="ordering" name="elora_cmEcoType">
+    </directory>
+
+    <directory layout="vocabulary" sortField="ordering" name="elora_cmActionModified">
+    </directory>
+
+   <directory layout="vocabulary" sortField="ordering" name="elora_cmActionImpacted">
+    </directory>
+
+  </extension>
+
+</component>

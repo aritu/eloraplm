@@ -1,0 +1,48 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core">
+  
+ 
+<nxu:set var="actionDirectoryName" value="#{field_1 ? 'elora_cmActionModified' : 'elora_cmActionImpacted'}">
+  
+  <ui:fragment rendered="#{field_2}">
+    <nxl:widgetType name="selectOneDirectory" mode="view" 
+      value="#{field_0}" 
+      directoryName="#{actionDirectoryName}" 
+      localize="true" 
+      displayIdAndLabel="false" 
+      style="min-width: 10em;"
+      notDisplayDefaultOption="true"/>
+  </ui:fragment>
+  
+  <ui:fragment rendered="#{not field_2}">
+    <nxl:widgetType name="selectOneDirectory" mode="edit" 
+      value="#{field_0}" 
+      directoryName="#{actionDirectoryName}" 
+      localize="true" displayIdAndLabel="false" 
+      style="min-width: 10em;"
+      notDisplayDefaultOption="true">
+      
+      <c:if test="#{webActions.currentTabId eq 'TAB_CM_DOC_IMPACTED_ITEMS_TREETABLE'}">
+        <f:ajax
+          event="change" listener="#{cmDocImpactedItemsTreeBean.refreshNode(node, 'action')}"
+          render="#{treeWidgetId}" execute="@this" />
+      </c:if>
+      
+      <c:if test="#{webActions.currentTabId eq 'TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE'}">
+        <f:ajax
+          event="change" listener="#{cmBomImpactedItemsTreeBean.refreshNode(node, 'action')}"
+          render="#{treeWidgetId}" execute="@this" />
+      </c:if>
+
+    </nxl:widgetType>
+  </ui:fragment>
+  
+</nxu:set>
+
+</ui:composition>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.search.OperationServiceComponent.contrib">
+
+	<!--   Operations -->
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
+        
+        <operation class="com.aritu.eloraplm.search.suggestbox.automation.EloraSuggestOperation" replace="true" />
+        
+    </extension>
+    
+</component>
+

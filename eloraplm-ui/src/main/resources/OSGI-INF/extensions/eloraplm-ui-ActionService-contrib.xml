@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.ui.ActionService.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    <!-- Disable Nuxeo Studio banner from the footer -->
+    <action id="connectUpdates" enabled="false" />
+    
+    
+    <!-- Disable Nuxeo Online Services from Admin -->
+    <action id="ConnectClient" enabled="false" />
+    
+    <!-- Disable IMPORT button -->
+    <action id="bulkImportDocuments" enabled="false" />
+    
+    
+     <!-- Disable Nuxeo footer links -->
+    <action id="footer_contact_us" enabled="false" />
+    <action id="footer_blogs"  enabled="false" />
+    <action id="footer_community" enabled="false" />
+    <action id="footer_answers" enabled="false" />
+    <action id="footer_documentation" enabled="false" />
+    <action id="footer_twitter" enabled="false" />
+    <action id="footer_linkedin" enabled="false" />
+    
+    <!-- EloraPlm footer links -->
+    
+    <action id="footer_aritu_website" label="eloraplm.label.footer.website" link="//aritu.com" order="10" type="bare_link">
+      <category>FOOTER</category>
+      <properties>
+        <property name="target">_blank</property>
+      </properties>
+    </action>
+    
+    <action id="footer_aritu_twitter" label="Twitter" link="//twitter.com/aritukoop" order="20" type="bare_link">
+      <category>FOOTER</category>
+      <properties>
+        <property name="styleClass">twitt</property>
+        <property name="labelStyleClass">footerLabel</property>
+        <property name="target">_blank</property>
+      </properties>
+    </action>
+    
+    <action id="footer_aritu_linkedin" label="LinkedIn" link="//www.linkedin.com/company/aritu-kooperatiba" order="30" type="bare_link">
+      <category>FOOTER</category>
+      <properties>
+        <property name="styleClass">linkedin</property>
+        <property name="labelStyleClass">footerLabel</property>
+        <property name="target">_blank</property>
+      </properties>
+    </action>
+    
+    
+  </extension>
+  
+</component> 

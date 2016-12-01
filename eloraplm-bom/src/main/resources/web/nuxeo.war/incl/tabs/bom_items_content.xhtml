@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+
+<script type="text/javascript">
+  function toggleLayers(more_block, more_items) {
+    var objMoreBlock = document.getElementById(more_block).style;
+    var objMoreItems = document.getElementById(more_items).style;
+    if(objMoreBlock.display == "block")
+      objMoreBlock.display = "none";
+    if(objMoreItems.display == "none")
+      objMoreItems.display = "block";
+  }
+</script>
+
+<ui:include src="/incl/tabs/document_locked_warning.xhtml"/>
+
+<ui:include src="/bom_document_relations.xhtml">
+  <ui:param name="formId" value="bom_has_bom_relations" />
+  <ui:param name="documentRelations" value="#{outgoingBomHasBomRelations}" />
+  <ui:param name="relationWidget" value="bomHasBomRelationButton" />
+  <ui:param name="relationBean" value="#{bomHasBomRelationBean}" />
+  <ui:param name="message" value="#{messages['title.bom.related.item']}" />
+  <ui:param name="visibility" value="#{not (currentDocument.type == 'BomPart' || currentDocument.type == 'BomProduct')}" />
+</ui:include>
+
+<ui:include src="/bom_document_relations.xhtml">
+  <ui:param name="formId" value="bom_specification_relations" />
+  <ui:param name="documentRelations" value="#{outgoingSpecificationRelations}" />
+  <ui:param name="relationWidget" value="bomHasSpecificationRelationButton" />
+  <ui:param name="relationBean" value="#{specificationRelationBean}" />
+  <ui:param name="message" value="#{messages['title.bom.related.specification']}" />
+  <ui:param name="visibility" value="#{not (currentDocument.type == 'BomSpecification')}" />
+</ui:include>
+
+
+</ui:composition>

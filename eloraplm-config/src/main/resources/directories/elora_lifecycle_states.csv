@@ -1,0 +1,11 @@
+id,status,isLockable,color,abbreviation,obsolete,ordering
+eloraDraftCreated,notReleased,0,#ccaa22,DC,0,1
+precreated,notReleased,0,#ccaa22,PC,0,10
+preliminary,notReleased,1,#3388aa,PR,0,20
+review,notReleased,1,#55aadd,RE,0,30
+approved,released,1,#88aa33,AP,0,40
+inChange,released,1,#00cc88,IC,0,40
+obsolete,notReleased,0,#aa8833,OB,0,50
+frozen,obsolete,0,#ffaa55,FR,0,60
+dead,obsolete,0,#000000,DD,0,70
+deleted,obsolete,0,#555555,DL,0,10000000

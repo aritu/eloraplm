@@ -1,0 +1,11 @@
+id,label,parent,obsolete
+id_icl2_1000,Cases,id_icl1_1,0
+id_icl2_2000,Screws,id_icl1_1,0
+id_icl2_3000,Nuts,id_icl1_1,0
+id_icl2_4000,Rods,id_icl1_1,0
+id_icl2_5000,Pipes,id_icl1_1,0
+id_icl2_6000,Rings,id_icl1_1,0
+id_icl2_7000,Electronics,id_icl1_2,0
+id_icl2_8000,Electrics,id_icl1_2,0
+id_icl2_9000,Application,id_icl1_3,0
+id_icl2_10000,App Module,id_icl1_3,0

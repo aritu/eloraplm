@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.virtualnavigation.DirectoryTreeService.contrib">
+
+  <extension target="org.nuxeo.ecm.webapp.directory.DirectoryTreeService" point="trees">
+
+<!-- Disable virtual navigation for subjects and coverage -->
+    <directoryTree name="bySubjectsNavigation" enabled="false" />
+    <directoryTree name="byCoverageNavigation" enabled="false" />
+<!--   <directoryTree name="bySubjectsNavigation" isNavigationTree="false" /> -->
+<!--   <directoryTree name="byCoverageNavigation" isNavigationTree="false" /> -->
+
+
+    <directoryTree name="4_byBomPartClass" label="label.vnav.bomPartClass"
+      contentView="byBomPartClassContentView_vnav" field="bom_partClass" schema="vnav"
+      outcome="bomPartClass_virtual_navigation" enabled="true">
+      <directory>elora_bomPartClassLevel1</directory>
+      <directory>elora_bomPartClassLevel2</directory>
+      <directory>elora_bomPartClassLevel3</directory>
+    </directoryTree>
+
+    <directoryTree name="1_byCustomer" label="label.vnav.customer"
+      contentView="byCustomerContentView_vnav" field="cust_customer" schema="vnav"
+      outcome="customer_virtual_navigation" enabled="true">
+      <directory>elora_erpCustomers</directory>
+    </directoryTree>
+
+    <directoryTree name="2_byManufacturer" label="label.vnav.manufacturer"
+      contentView="byManufacturerContentView_vnav" field="manu_manufacturer" schema="vnav"
+      outcome="manufacturer_virtual_navigation" enabled="true">
+      <directory>elora_erpManufacturers</directory>
+    </directoryTree>
+        
+  </extension>
+
+</component>

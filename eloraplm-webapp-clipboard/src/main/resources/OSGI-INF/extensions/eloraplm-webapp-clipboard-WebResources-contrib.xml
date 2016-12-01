@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.webapp.clipboard.WebResources.contrib">
+
+  <require>org.nuxeo.theme.nuxeo.webapp</require>
+  
+  <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+    <resource name="elora-clipboard-contextmenu-actions.js" type="js">
+      <uri>/scripts/elora-clipboard-contextmenu-actions.js</uri>
+    </resource>
+  </extension>
+  
+
+  <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
+    <bundle name="nuxeo_includes">
+      <resources append="true">
+        <resource>elora-clipboard-contextmenu-actions.js</resource>
+      </resources>
+    </bundle>
+  </extension>
+
+</component>

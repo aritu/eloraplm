@@ -1,0 +1,37 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core">
+  
+    <ui:fragment rendered="#{field_1}">
+         <h:outputText value="#{field_0 ? messages['label.yes'] : messages['label.no']}" />
+    </ui:fragment>
+    
+    <ui:fragment rendered="#{not field_1}">
+        <nxl:widgetType mode="edit" name="checkbox" value="#{field_0}">
+        
+        <c:if test="#{webActions.currentTabId eq 'TAB_CM_MODIFIED_ITEMS_TREETABLE'}">
+          <f:ajax
+            event="change" listener="#{cmModifiedItemsTreeBean.refreshNode(node, 'isManaged')}"
+            render="#{treeWidgetId}" execute="@this" />
+        </c:if>
+          
+        <c:if test="#{webActions.currentTabId eq 'TAB_CM_DOC_IMPACTED_ITEMS_TREETABLE'}">
+          <f:ajax
+            event="change" listener="#{cmDocImpactedItemsTreeBean.refreshNode(node, 'isManaged')}"
+            render="#{treeWidgetId}" execute="@this" />
+        </c:if>
+        
+        <c:if test="#{webActions.currentTabId eq 'TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE'}">
+          <f:ajax
+            event="change" listener="#{cmBomImpactedItemsTreeBean.refreshNode(node, 'isManaged')}"
+            render="#{treeWidgetId}" execute="@this" />
+        </c:if>
+        
+        </nxl:widgetType>
+    </ui:fragment>
+    
+</ui:composition>

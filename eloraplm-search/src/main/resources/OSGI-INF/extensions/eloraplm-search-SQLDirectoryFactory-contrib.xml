@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.search.SQLDirectoryFactory.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+
+    <directory name="eloras_facetType">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_facettype</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_facettype.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="eloras_docType">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_doctype</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_doctype.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="eloras_lifeCycle">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_lifecycle</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_lifecycle.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+  </extension>
+  
+</component>

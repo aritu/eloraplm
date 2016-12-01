@@ -1,0 +1,63 @@
+<div xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+    <h3>
+        <h:outputText value="#{messages['eloraplm.title.wsProxy.create']}" />
+    </h3>
+
+    <h:form id="#{fancyboxFormId}">
+
+    <div class="content">
+        
+        <h:panelGroup>
+            <h:selectOneListbox id="sourceVersionUid"
+                styleClass="dataInputText" size="1"
+                value="#{wsProxyActions.sourceVersionUid}">
+                <nxu:selectItems value="#{wsProxyActions.documentVersions}"
+                    var="version" itemValue="#{version.id}"
+                    itemLabel="#{version.label}" />
+            </h:selectOneListbox>
+            <h:message for="sourceVersionUid" class="errorMessage" />
+        </h:panelGroup>
+        
+        <h:panelGroup>
+            <a4j:outputPanel>
+                <h:inputHidden id="targetWorkspaceUid"
+                    value="#{wsProxyActions.targetWorkspaceUid}" size="20"
+                    styleClass="dataInputTextNoSize" />
+                
+                <nxl:widgetType name="singleDocumentSuggestion" mode="edit"
+                  ajaxReRender="targetWorkspaceUid"
+                  value="#{wsProxyActions}" field="targetWorkspaceUid"
+                  translated="true"
+                  width="100%"
+                  placeholder="#{messages['eloraplm.label.suggestion.ws.placeholder']}"
+                  pageProviderName="workspace_suggestion"
+                  documentSchemas="dublincore,common">
+                </nxl:widgetType>
+          </a4j:outputPanel>
+          <h:message for="targetWorkspaceUid" class="errorMessage" />
+        </h:panelGroup>
+        
+    </div>
+
+    <div class="buttonsGadget">
+      <h:commandButton value="#{messages['command.create']}" styleClass="button" action="#{wsProxyActions.createWorkspaceProxy}">
+        <f:ajax render="#{ajaxReRender}"
+          execute="@form"
+          onevent="jQuery.fancybox.close" />
+      </h:commandButton>
+      <h:commandButton value="#{messages['command.cancel']}" styleClass="button">
+        <f:ajax
+          execute="@this"
+          onevent="jQuery.fancybox.close" />
+      </h:commandButton>
+    </div>
+
+  </h:form>
+
+</div>

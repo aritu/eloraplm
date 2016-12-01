@@ -1,0 +1,7 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/elora_object" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/elora_object">
+
+  <xs:element name="reference" type="xs:string" />
+
+</xs:schema>

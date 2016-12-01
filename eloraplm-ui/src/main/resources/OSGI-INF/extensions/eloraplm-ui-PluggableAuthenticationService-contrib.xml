@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<component name="com.aritu.eloraplm.ui.PluggableAuthenticationService.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService" point="loginScreen">
+    <loginScreenConfig>
+      <bodyBackgroundStyle>url("${org.nuxeo.ecm.contextPath}/img/bg_elora_login.jpg") center center no-repeat #000;</bodyBackgroundStyle>
+      <headerStyle>background-color: #FFF;box-shadow: 0 0 4px #000;</headerStyle>
+      <footerStyle>background-color: rgba(0, 0, 0, 0.7);</footerStyle>
+      <logoWidth>318</logoWidth>
+      <logoHeight>39</logoHeight>
+      <logoAlt>EloraPLM</logoAlt>
+      <logoUrl>${org.nuxeo.ecm.contextPath}/img/eloraplm_horizontal_logo.png</logoUrl>
+      <newsIframeUrl />
+      <removeNews>true</removeNews>
+    </loginScreenConfig>
+  </extension>
+
+</component>

@@ -1,0 +1,25 @@
+id,label,parent,obsolete
+id_pcl1_1,Product Line 1,,0
+id_pcl1_2,Product Line 2,,0
+id_pcl1_3,Product Line 3,,0
+id_pcl2_1_1,Product Type 1.1,id_pcl1_1,0
+id_pcl2_1_2,Product Type 1.2,id_pcl1_1,0
+id_pcl2_1_3,Product Type 1.3,id_pcl1_1,0
+id_pcl2_2_1,Product Type 2.1,id_pcl1_2,0
+id_pcl2_2_2,Product Type 2.2,id_pcl1_2,0
+id_pcl2_2_3,Product Type 2.3,id_pcl1_2,0
+id_pcl2_3_1,Product Type 3.1,id_pcl1_3,0
+id_pcl2_3_2,Product Type 3.2,id_pcl1_3,0
+id_pcl2_3_3,Product Type 3.3,id_pcl1_3,0
+id_pcl3_1_1_1,Product Family 1.1.1,id_pcl2_1_1,0
+id_pcl3_1_1_2,Product Family 1.1.2,id_pcl2_1_1,0
+id_pcl3_1_2_1,Product Family 1.2.1,id_pcl2_1_2,0
+id_pcl3_1_2_2,Product Family 1.2.2,id_pcl2_1_2,0
+id_pcl3_2_1_1,Product Family 2.1.1,id_pcl2_2_1,0
+id_pcl3_2_1_2,Product Family 2.1.2,id_pcl2_2_1,0
+id_pcl3_2_2_1,Product Family 2.2.1,id_pcl2_2_2,0
+id_pcl3_2_2_2,Product Family 2.2.2,id_pcl2_2_2,0
+id_pcl3_3_1_1,Product Family 3.1.1,id_pcl2_3_1,0
+id_pcl3_3_1_2,Product Family 3.1.2,id_pcl2_3_1,0
+id_pcl3_3_2_1,Product Family 3.2.1,id_pcl2_3_2,0
+id_pcl3_3_2_2,Product Family 3.2.2,id_pcl2_3_2,0

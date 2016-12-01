@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.doctypes.ActionService.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
+
+    <filter append="true" id="create">
+      <rule grant="true">
+        <permission>AddChildren</permission>
+        <type>Domain</type>
+        <type>WorkspaceRoot</type>
+        <type>FolderCadPart</type>
+        <type>FolderCadAssembly</type>
+        <type>FolderCadDrawing</type>
+        <type>FolderOtherDoc</type>
+        <type>StructProject</type>
+        <type>Project</type>
+      </rule>
+    </filter>
+    
+    <filter id="importFile" append="true">
+      <rule grant="true">
+        <permission>AddChildren</permission>
+        <type>Domain</type>
+        <type>WorkspaceRoot</type>
+        <type>FolderCadPart</type>
+        <type>FolderCadAssembly</type>
+        <type>FolderCadDrawing</type>
+        <type>FolderOtherDoc</type>
+        <type>StructProject</type>
+        <type>Project</type>
+      </rule>
+    </filter>
+    
+    <filter id="isCadDocument">
+        <rule grant="true">
+            <facet>CadDocument</facet>
+        </rule>
+    </filter>
+
+    <filter id="isNotCadDocument">
+        <rule grant="false">
+            <facet>CadDocument</facet>
+        </rule>
+    </filter>
+
+    <filter id="isNotCadDesignTable">
+        <rule grant="false">
+            <type>CadDesignTable</type>
+        </rule>
+    </filter>
+    <filter id="isNotSpecial">
+        <rule grant="false">
+          <type>CadDrawing</type>
+        </rule>
+    </filter>
+    
+    <filter id="isCheckedOut">
+        <rule grant="false">
+            <condition>#{not currentDocument.isCheckedOut()}</condition>
+        </rule>
+    </filter>
+    
+    <filter id="isNotCheckedOut">
+        <rule grant="false">
+            <condition>#{currentDocument.isCheckedOut()}</condition>
+        </rule>
+    </filter>
+    
+    <filter id="isLocked">
+        <rule grant="false">
+            <condition>#{not currentDocument.locked}</condition>
+        </rule>
+    </filter>
+    
+    <filter id="isNotLocked">
+        <rule grant="false">
+            <condition>#{currentDocument.locked}</condition>
+        </rule>
+    </filter>
+    
+  </extension>
+  
+</component> 

@@ -1,0 +1,68 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich">
+    
+    
+    <h:graphicImage id="iconOnlyMarker"
+            url="/icons/icon_only_relations_marker_16.png"
+            title="#{messages['eloraplm.message.relations.clickToViewIconOnlyRelations']}"
+            styleClass="tipsyShow"
+            style="cursor: pointer; vertical-align: middle;"
+            rendered="#{not empty field_0}">
+        <rich:componentControl event="click" operation="show" target="iconOnlyPanel" attachTo="iconOnlyMarker">
+            <a4j:param name="event" value="event" noEscape="true" />
+            <rich:hashParam>
+                <a4j:param noEscape="true" name="top"
+                    value="jQuery(#{rich:element('iconOnlyMarker')}.parentNode).offset().top
+                        + jQuery(#{rich:element('iconOnlyMarker')}.parentNode).height() - 30" />
+                <a4j:param noEscape="true" name="left" value="jQuery(#{rich:element('iconOnlyMarker')}.parentNode).offset().left" />
+            </rich:hashParam>
+        </rich:componentControl>
+    </h:graphicImage>
+    
+    <rich:popupPanel id="iconOnlyPanel" autosized="true" modal="false" moveable="false" resizeable="false" followByScroll="false" zindex="11000">
+        <f:facet name="controls">
+            <h:panelGroup>
+                <h:outputLink value="#" onclick="#{rich:component('iconOnlyPanel')}.hide(); return false;" style="color: inherit">
+                    X
+                </h:outputLink>
+            </h:panelGroup>
+        </f:facet>
+        
+        <br />
+        
+        
+        <ui:repeat value="#{field_0}" var="predicateUri">
+            <h:panelGrid columns="2">
+                <h:panelGrid columns="3">
+                    <nxdir:directoryEntryOutput value="#{predicateUri}" directoryName="elora_cad_predicates" localize="true" />
+                    <h:outputText styleClass="eloraReference" value="#{currentDocument.elo.reference}" />
+                    <h:outputText value="#{currentDocument.dc.title}" />
+                </h:panelGrid>
+                
+                <!-- Oraingoz kendu egingo da edizioa, checkin leihoa sortu arte. Edizioa jartzean kontutan hartu kasu batzuetan treeBean hutsik etorriko dela (adib. promoten ezin editatu) -->
+                <!-- Gainera, orain removeRelation eta treeTableButtonsClientId ez die existitzen -->
+                <ui:remove>
+                <a4j:commandButton
+                    onclick="return confirm('#{messages['eloraplm.message.confirm.relation.remove']}')"
+                    onbeforedomupdate="#{rich:component('iconOnlyPanel')}.hide(); return false;"
+                    actionListener="#{treeBean.removeRelation(node, predicateUri, nodeData.data.id)}"
+                    render="#{treeWidgetId} :eloraMetadataHeading #{treeTableButtonsClientId}"
+                    execute="@this"
+                    image="/icons/delete_red.png"
+                    title="#{messages['eloraplm.command.remove']}"
+                    rendered="#{nxd:hasPermission(currentDocument, 'Write') and not currentDocument.isVersion()
+                        and not currentDocument.isProxy()
+                        and currentDocument.locked and currentDocumentLockDetails['document.locker'] eq currentUser}"
+                />
+                </ui:remove>
+            </h:panelGrid>
+        </ui:repeat>
+        
+    </rich:popupPanel>
+</ui:composition>

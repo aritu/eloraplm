@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.lifecycles.TypeService.contrib">
+
+  <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+        <schema name="eloraChildrenSupportedStates" src="schemas/sch_elora_children_supported_states.xsd"/>
+  </extension>
+
+</component>

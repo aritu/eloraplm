@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-relations
+Bundle-Name: eloraplm-relations
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-relations-ActionService-
+ contrib.xml,OSGI-INF/extensions/eloraplm-relations-DirectoryUIManager
+ -contrib.xml,OSGI-INF/extensions/eloraplm-relations-SQLDirectoryFacto
+ ry-contrib.xml,OSGI-INF/extensions/eloraplm-relations-TypeService-con
+ trib.xml,OSGI-INF/extensions/eloraplm-relations-WebLayoutManager-cont
+ rib.xml,OSGI-INF/extensions/eloraplm-relations-RelationService-contri
+ b.xml,OSGI-INF/extensions/eloraplm-relations-PageProviderService-cont
+ rib.xml
+

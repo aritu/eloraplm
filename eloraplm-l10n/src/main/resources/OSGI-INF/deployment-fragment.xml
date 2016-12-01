@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<fragment version="1">
+
+  <require>org.nuxeo.ecm.platform.lang.ext</require>
+  
+  <extension target="faces-config#APPLICATION_LOCALE">
+    <locale-config>          
+      <supported-locale>eu</supported-locale>
+      <supported-locale>eu_ES</supported-locale>  
+      <supported-locale>eu_FR</supported-locale>
+    </locale-config>
+  </extension>
+  
+  <install>
+  	<unzip from="${bundle.fileName}" to="/" prefix="web">
+      <include>web/nuxeo.war/**</include>
+    </unzip>
+    
+    <!-- Translation files -->
+    <delete path="${bundle.fileName}.tmp" />
+    <mkdir path="${bundle.fileName}.tmp" />
+    <unzip from="${bundle.fileName}" to="${bundle.fileName}.tmp" />
+
+	<copy from="${bundle.fileName}.tmp/OSGI-INF/l10n/messages_eu_ES.properties"
+      to="nuxeo.war/WEB-INF/classes/messages_eu_ES.properties" addNewLine="true" />
+    <copy from="${bundle.fileName}.tmp/OSGI-INF/l10n/messages_eu_ES.properties"
+      to="nuxeo.war/WEB-INF/classes/messages_eu_FR.properties" addNewLine="true" />
+    <copy from="${bundle.fileName}.tmp/OSGI-INF/l10n/messages_eu_ES.properties"
+      to="nuxeo.war/WEB-INF/classes/messages_eu.properties" addNewLine="true" />
+    
+    <copy from="${bundle.fileName}.tmp/OSGI-INF/l10n/messages_es_ES.properties"
+      to="nuxeo.war/WEB-INF/classes/messages_es_ES.properties" addNewLine="true" />
+    <copy from="${bundle.fileName}.tmp/OSGI-INF/l10n/messages_es_ES.properties"
+      to="nuxeo.war/WEB-INF/classes/messages_es.properties" addNewLine="true" />
+    
+    <delete path="${bundle.fileName}.tmp" />
+
+  </install>
+ 
+</fragment>

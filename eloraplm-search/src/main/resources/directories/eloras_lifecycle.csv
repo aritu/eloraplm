@@ -1,0 +1,11 @@
+id,label,obsolete
+preliminary,label.eloras.lifecycle.preliminary,0
+approved,label.eloras.lifecycle.approved,0
+obsolete,label.eloras.lifecycle.obsolete,0
+created,label.eloras.lifecycle.created,0
+reviewed,label.eloras.lifecycle.reviewed,0
+validated,label.eloras.lifecycle.validated,0
+evaluated,label.eloras.lifecycle.evaluated,0
+completed,label.eloras.lifecycle.completed,0
+outmanaged,label.eloras.lifecycle.outmanaged,0
+rejected,label.eloras.lifecycle.rejected,0

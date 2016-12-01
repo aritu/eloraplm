@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.bom.characteristics.ActionService.contrib">
+
+  <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+  
+    <filter id="bomCharacteristicsAdminAccess">
+      <rule grant="true">
+        <condition>#{currentUser.administrator}</condition>
+        <condition>#{currentUser.isMemberOf('powerusers')}</condition>
+      </rule>
+    </filter>
+    
+    <filter id="isBomCharacteristic">
+      <rule grant="true">
+        <facet>BomCharacteristic</facet>
+      </rule>
+    </filter>
+    
+    <filter id="isNotBomCharacteristic">
+      <rule grant="false">
+        <facet>BomCharacteristic</facet>
+      </rule>
+    </filter>
+    
+    <filter id="disableActionInBomCharacteristicsAdminPage">
+      <rule grant="false">
+        <condition>#{adminViews.getCurrentView() eq 'BomCharacteristicsAdmin'}</condition>
+      </rule>
+    </filter>
+  
+  </extension> 
+
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+
+    <!-- BomCharacteristics administration pages -->
+    <action id="BomCharacteristicsAdmin" link="view_admin-fragment.xhtml" label="title.admin.bomcharac.bomCharacteristics"
+      type="admin_rest_document_link" order="200">
+      <category>NUXEO_ADMIN</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+    </action>
+    
+   <action id="BomPartCharacteristicsAdmin" link="/incl/admin/tabs/view_bom_part_characteristics_admin.xhtml" label="label.admin.bomcharac.bomPartCharacteristics"
+      type="admin_rest_document_link" order="10">
+      <category>BomCharacteristicsAdmin_sub_tab</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+    </action>
+    
+    <action id="BomToolCharacteristicsAdmin" link="/incl/admin/tabs/view_bom_tool_characteristics_admin.xhtml" label="label.admin.bomcharac.bomToolCharacteristics"
+      type="admin_rest_document_link" order="20">
+      <category>BomCharacteristicsAdmin_sub_tab</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+    </action>
+    
+    <action id="BomProductCharacteristicsAdmin" link="/incl/admin/tabs/view_bom_product_characteristics_admin.xhtml" label="label.admin.bomcharac.bomProductCharacteristics"
+      type="admin_rest_document_link" order="30">
+      <category>BomCharacteristicsAdmin_sub_tab</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+    </action>
+    
+    <action id="BomPackagingCharacteristicsAdmin" link="/incl/admin/tabs/view_bom_packaging_characteristics_admin.xhtml" label="label.admin.bomcharac.bomPackagingCharacteristics"
+      type="admin_rest_document_link" order="40">
+      <category>BomCharacteristicsAdmin_sub_tab</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+    </action>
+    
+    <action id="BomSpecificationCharacteristicsAdmin" link="/incl/admin/tabs/view_bom_specification_characteristics_admin.xhtml" label="label.admin.bomcharac.bomSpecificationCharacteristics"
+      type="admin_rest_document_link" order="50">
+      <category>BomCharacteristicsAdmin_sub_tab</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+    </action>
+    
+    
+    <!-- BomCharacteristics commands actions -->
+    <action id="createBomPartCharacteristicAction"
+      label="command.create.bomcharac.bomPartCharacteristic" type="fancybox">
+      <category>BOM_PART_CHARAC_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_part_characteristic.xhtml</property>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="createBomProductCharacteristicAction"
+      label="command.create.bomcharac.bomProductCharacteristic" type="fancybox">
+      <category>BOM_PRODUCT_CHARAC_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_product_characteristic.xhtml</property>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="createBomToolCharacteristicAction"
+      label="command.create.bomcharac.bomToolCharacteristic" type="fancybox">
+      <category>BOM_TOOL_CHARAC_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_tool_characteristic.xhtml</property>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="createBomPackagingCharacteristicAction"
+      label="command.create.bomcharac.bomPackagingCharacteristic" type="fancybox">
+      <category>BOM_PACKAGING_CHARAC_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_packaging_characteristic.xhtml</property>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="createBomSpecificationCharacteristicAction"
+      label="command.create.bomcharac.bomSpecificationCharacteristic" type="fancybox">
+      <category>BOM_SPECIFICATION_CHARAC_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_specification_characteristic.xhtml</property>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    
+    <!-- Keep EDIT_CURRENT_DOCUMENT action for NOT BomCharaceristic documents and
+         define new EDIT_BOM_CHARACTERISTIC action for editing BomCharacteristic documents -->
+    <action id="EDIT_CURRENT_DOCUMENT">
+      <filter-id>isNotBomCharacteristic</filter-id>
+    </action>
+    
+    <action id="EDIT_BOM_CHARACTERISTIC" link="#{bomCharacteristic.updateBomCharacteristic}"
+      order="0" label="command.save">
+      <category>EDIT_DOCUMENT_FORM</category>
+      <filter-id>isBomCharacteristic</filter-id>
+      <filter-id>bomCharacteristicsAdminAccess</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+      </properties>
+    </action>
+    
+    
+     <!-- Disable default CURRENT_SELECTION_EDIT, CURRENT_SELECTION_COPY, CURRENT_SELECTION_ADDTOLIST 
+          and addSelectedToCollectionAction actions in BomCharacteristic admin page -->
+    <action id="CURRENT_SELECTION_EDIT">
+      <filter-id>disableActionInBomCharacteristicsAdminPage</filter-id>
+    </action>
+    
+    <action id="CURRENT_SELECTION_COPY">
+      <filter-id>disableActionInBomCharacteristicsAdminPage</filter-id>
+    </action>
+    
+    <action id="CURRENT_SELECTION_ADDTOLIST">
+      <filter-id>disableActionInBomCharacteristicsAdminPage</filter-id>
+    </action>
+    
+    <action id="addSelectedToCollectionAction">
+      <filter-id>disableActionInBomCharacteristicsAdminPage</filter-id>
+    </action>
+
+  </extension>
+
+</component> 

@@ -1,0 +1,18 @@
+<f:subview id="#{widget.id}"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:c="http://java.sun.com/jstl/core"
+  >
+
+
+    <ui:fragment rendered="#{value.data.hasFacet('BomDocument')}">
+        <nxl:widget name="listing_viewer_file_download_link" mode="view" value="#{value}" />
+    </ui:fragment>
+    
+    <ui:fragment rendered="#{not value.data.hasFacet('BomDocument')}">
+        <nxl:widget name="listing_main_file_download_link" mode="view" value="#{value}" />
+    </ui:fragment>
+
+</f:subview>

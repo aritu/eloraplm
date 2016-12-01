@@ -1,0 +1,24 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cad_document" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cad_document"
+xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+
+  <xs:element name="authoringTool" type="xs:string" nillable="false" nxsv:nillable="false" />
+  <xs:element name="authoringToolVersion" type="xs:string" nillable="false" nxsv:nillable="false" />
+  <xs:element name="activeConfiguration" type="xs:string" />
+  <xs:element name="cadClassification" >
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cadClassHierarchical" />
+    </xs:simpleType>
+  </xs:element>  
+  <xs:element name="cadMaterial" type="xs:string" />
+  <xs:element name="mass" type="xs:double" />
+  <xs:element name="massUnit" type="xs:string" default="kg"/>
+  <xs:element name="volume" type="xs:double" />
+  <xs:element name="volumeUnit" type="xs:string" default="m3"/>
+  <xs:element name="surface" type="xs:double" />
+  <xs:element name="surfaceUnit" type="xs:string" default="m2"/>
+  <xs:element name="integrationTool" type="xs:string" />
+
+</xs:schema>

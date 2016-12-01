@@ -1,0 +1,128 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    <h3>
+        <h:outputText value="#{messages['eloraplm.title.relation.add']}" />
+    </h3>
+    
+    <h:form id="#{fancyboxFormId}">
+        <h:panelGroup styleClass="content" layout="block">
+            <h:panelGrid columns="2" styleClass="dataInput"
+                columnClasses="relationCreateLabelColumn, relationCreateFieldColumn">
+
+                <c:if test="#{not isEditablePredicate}">
+                  <h:inputHidden id="predicateUri" value="#{treeBean.predicateUri}" />
+                  <h:message for="predicateUri" class="errorMessage" />
+                </c:if>
+                <c:if test="#{isEditablePredicate}">
+                  <h:outputLabel for="predicateUri"
+	                    value="#{messages['label.relation.predicate']}"
+	                    class="required relationPredicateLabel" />
+	                <h:panelGroup>
+	                    <h:selectOneListbox value="#{treeBean.predicateUri}"
+	                        id="predicateUri" required="true">
+	                        <nxu:selectItems value="#{treeBean.getPredicateList()}" var="predicate"
+	                            itemValue="#{predicate.key}" itemLabel="#{messages[predicate.value]}" />
+	                    </h:selectOneListbox>
+	                  
+	                    <h:message for="predicateUri" class="errorMessage" />
+	                </h:panelGroup>
+                </c:if>
+                
+                <h:outputLabel for="objectDocumentUid"
+                    value="#{messages['label.relation.object']}"
+                    class="required relationObjectLabel" />
+                <h:panelGroup>
+                    <a4j:outputPanel>
+                        <h:inputHidden id="objectDocumentUid"
+                            value="#{treeBean.objectDocumentUid}" required="true" />
+                        <nxl:widgetType
+                            name="eloraSingleDocumentSuggestion"
+                            mode="edit" ajaxReRender="objectDocumentUid"
+                            value="#{treeBean}"
+                            field="objectDocumentUid" translated="true"
+                            width="100%"
+                            placeholder="label.relation.search.popup.title"
+                            pageProviderName="#{pageProviderName}">
+                        </nxl:widgetType>
+                    </a4j:outputPanel>
+                    <h:inputHidden id="objectCheck"
+                        validator="#{eloraRelationCreationBean.validateObject}"
+                        value="needed">
+                        <f:attribute name="objectDocumentUidInputId"
+                            value="objectDocumentUid" />
+                    </h:inputHidden>
+                    <h:message for="objectCheck" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="quantity"
+                    value="#{messages['label.relation.quantity']}"
+                    class="required relationQuantityLabel" />
+                <h:panelGroup>
+                    <h:inputText class="dataInputText" id="quantity"
+                        value="#{treeBean.quantity}" required="true" />
+                    <h:message for="quantity" class="errorMessage" />
+                </h:panelGroup>
+                
+                <c:if test="#{not isEditableOrdering}">
+                  <h:inputHidden id="ordering" value="#{treeBean.ordering}" />
+                  <h:message for="ordering" class="errorMessage" />
+                </c:if>
+                
+                <c:if test="#{isEditableOrdering}">
+                  <h:outputLabel for="ordering"
+                    value="#{messages['eloraplm.label.ordering']}"
+                    class="required relationOrderingLabel" />
+                  <h:panelGroup>
+                    <h:inputText class="dataInputText" id="ordering"
+                        value="#{treeBean.ordering}" required="true" />
+                    <h:message for="ordering" class="errorMessage" />
+                  </h:panelGroup>
+                </c:if>
+                
+                <h:outputLabel for="comment"
+                    value="#{messages['label.relation.comment']}"
+                    class="relationCommentLabel" />
+                <h:panelGroup>
+                    <h:inputTextarea class="dataInputText" id="comment"
+                        value="#{treeBean.comment}"
+                        rows="3" cols="60" />
+                    <h:message for="comment" class="errorMessage" />
+                </h:panelGroup>
+                
+            </h:panelGrid>
+        </h:panelGroup>
+        
+        <h:panelGroup id="global_flag_validation_failed_render">
+            <h:outputScript rendered="#{!empty param.btnAddRelation and !facesContext.validationFailed}">
+               jQuery.fancybox.close();
+            </h:outputScript>
+        </h:panelGroup>
+        
+        <div class="buttonsGadget">
+            <h:commandButton value="#{messages['command.add']}"
+                styleClass="button"
+                actionListener="#{treeBean.addRelationNode(currentDocument)}">
+                <f:param name="btnAddRelation" value="true" />
+                <!-- We don't need to add global_flag_validation_failed_render to render attribute because it is inside the form -->
+                <f:ajax execute="@form"
+                    render="@form
+                    :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:treetableForm:#{treeWidgetId}
+                    :eloraMetadataHeading" />
+            </h:commandButton>
+                
+            <h:commandButton value="#{messages['command.cancel']}"
+                styleClass="button">
+                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
+            </h:commandButton>
+            
+        </div>
+        
+    </h:form>
+</ui:composition>

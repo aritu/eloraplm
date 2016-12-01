@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.treetable.WebLayoutManager.contrib">
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
+        point="widgettypes">
+        <!-- TreeTable widget type -->
+        <widgetType name="treetable">
+            <configuration>
+                <title>TreeTable</title>
+                <description>
+                    <p> This widget type displays a PrimeFaces TreeTable component. </p>
+                    <p> It requires the document model field to work </p>
+                </description>
+                <fields>
+                    <list>false</list>
+                    <complex>false</complex>
+                    <defaultConfiguration>
+                        <field>data</field>
+                    </defaultConfiguration>
+                </fields>
+                <categories>
+                    <category>listing</category>
+                </categories>
+            </configuration>
+            <handler-class>
+                org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+            </handler-class>
+            <property name="template">
+                /widgets/treetable_widget_template.xhtml
+            </property>
+        </widgetType>
+        
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+        <widget name="treetableButtons" type="documentActions">
+          <properties widgetMode="view">
+            <property name="category">TREETABLE_BUTTON</property>
+            <property name="overallDisplay">horizontal_block</property>
+          </properties>
+          <controls mode="any">
+            <control name="requireSurroundingForm">false</control>
+            <control name="gridStyleClass">
+              gridStyle12
+            </control>
+          </controls>
+        </widget>
+    </extension>
+    
+</component>
