@@ -7,43 +7,44 @@
         <!-- Elora Default lifecycle -->
         <lifecycle defaultInitial="preliminary" name="eloraDefaultLifeCycle">
           <transitions>
-            <transition destinationState="approved" name="approve">
+            <transition name="approve" destinationState="approved">
               <description>Approve the content</description>
             </transition>
-            <transition destinationState="obsolete" name="obsolete">
+            <transition name="makeObsolete" destinationState="obsolete">
               <description>Content becomes obsolete</description>
             </transition>
-            <transition destinationState="deleted" name="delete">
+            <transition name="delete" destinationState="deleted">
               <description>Move document to trash (temporary delete)</description>
             </transition>
-            <transition destinationState="preliminary" name="undelete">
+            <transition name="undelete" destinationState="preliminary">
               <description>Recover the document from trash</description>
             </transition>
-            <transition destinationState="preliminary" name="backToPreliminary">
+            <transition name="backToPreliminary" destinationState="preliminary">
               <description>Recover the document from trash</description>
             </transition>
           </transitions>
           <states>
-            <state description="Default state" initial="true" name="preliminary">
+            <state name="preliminary" description="Default state" initial="true">
               <transitions>
                 <transition>approve</transition>
-                <transition>obsolete</transition>
+                <transition>makeObsolete</transition>
                 <transition>delete</transition>
               </transitions>
             </state>
-            <state description="Content has been validated" name="approved">
+            <state name="approved" description="Content has been validated">
+              <transitions>
+                <transition>delete</transition>
+                <transition>makeObsolete</transition>
+                <transition>backToPreliminary</transition>
+              </transitions>
+            </state>
+            <state name="obsolete" description="Content is obsolete">
               <transitions>
                 <transition>delete</transition>
                 <transition>backToPreliminary</transition>
               </transitions>
             </state>
-            <state description="Content is obsolete" name="obsolete">
-              <transitions>
-                <transition>delete</transition>
-                <transition>backToPreliminary</transition>
-              </transitions>
-            </state>
-            <state description="Document is deleted" name="deleted">
+            <state name="deleted" description="Document is deleted">
               <transitions>
                 <transition>undelete</transition>
               </transitions>
@@ -55,60 +56,107 @@
         <!-- CAD lifecycle -->
         <lifecycle defaultInitial="preliminary" name="eloraCadLifeCycle">
           <transitions>
-            <transition destinationState="preliminary" name="create">
+            <transition name="create" destinationState="preliminary">
               <description>Create the real document</description>
             </transition>
-            <transition destinationState="approved" name="approve">
+            <transition name="approve" destinationState="approved">
               <description>Approve the content</description>
             </transition>
-            <transition destinationState="obsolete" name="obsolete">
+            <transition name="makeObsolete" destinationState="obsolete">
               <description>Content becomes obsolete</description>
             </transition>
-            <transition destinationState="deleted" name="delete">
+            <transition name="delete" destinationState="deleted">
               <description>Move document to trash (temporary delete)</description>
             </transition>
-            <transition destinationState="preliminary" name="undelete">
+            <transition name="undelete" destinationState="preliminary">
               <description>Recover the document from trash</description>
             </transition>
-            <transition destinationState="preliminary" name="backToPreliminary">
-              <description>demote a preliminary</description>
-            </transition>
-            <transition destinationState="approved" name="backToApproved">
-              <description>demote a approved</description>
+            <transition name="backToPreliminary" destinationState="preliminary">
+              <description>Demote to preliminary</description>
             </transition>
           </transitions>
           <states>
-            <state description="Provisional document is created" initial="true" name="precreated">
+            <state name="precreated" description="Provisional document is created" initial="true">
               <transitions>
                 <transition>create</transition>
               </transitions>
             </state>          
-            <state description="Default state" initial="true" name="preliminary">
+            <state name="preliminary" description="Default state" initial="true">
               <transitions>
                 <transition>approve</transition>
+                <transition>makeObsolete</transition>
                 <transition>delete</transition>
               </transitions>
             </state>
-            <state description="Content has been validated" initial="true" name="approved">
+            <state name="approved" description="Content has been validated" initial="true">
               <transitions>
-                <transition>delete</transition>
-                <transition>obsolete</transition>
+                <transition>makeObsolete</transition>
                 <transition>backToPreliminary</transition>
-              </transitions>
-            </state>
-            <state description="Content is obsolete" initial="true" name="obsolete">
-              <transitions>
                 <transition>delete</transition>
-                <transition>backToApproved</transition>
               </transitions>
             </state>
-            <state description="Document is deleted" name="deleted">
+            <state name="obsolete" description="Content is obsolete" initial="true">
+              <transitions>
+                <transition>backToPreliminary</transition>
+                <transition>delete</transition>
+              </transitions>
+            </state>
+            <state name="deleted" description="Document is deleted">
               <transitions>
                 <transition>undelete</transition>
               </transitions>
             </state>
           </states>
         </lifecycle>
+        
+        
+        <!-- Elora Workspace lifecycle -->
+        <lifecycle defaultInitial="working" name="eloraWsLifeCycle">
+          <transitions>
+            <transition name="complete" destinationState="completed">
+              <description>Complete the content</description>
+            </transition>
+            <transition name="reject" destinationState="rejected">
+              <description>Reject the content</description>
+            </transition>
+            <transition name="delete" destinationState="deleted">
+              <description>Move document to trash (temporary delete)</description>
+            </transition>
+            <transition name="undelete" destinationState="working">
+              <description>Recover the document from trash</description>
+            </transition>
+            <transition name="backToWorking" destinationState="working">
+              <description>Unarchive the content</description>
+            </transition>
+          </transitions>
+          <states>
+            <state name="working" description="Default state" initial="true">
+              <transitions>
+                <transition>complete</transition>
+                <transition>reject</transition>
+                <transition>delete</transition>
+              </transitions>
+            </state>
+            <state name="completed" description="Content is completed" initial="true">
+              <transitions>
+                <transition>backToWorking</transition>
+                <transition>delete</transition>
+              </transitions>
+            </state>
+            <state name="rejected" description="Content is rejected" initial="true">
+              <transitions>
+                <transition>backToWorking</transition>
+                <transition>delete</transition>
+              </transitions>
+            </state>
+            <state name="deleted" description="Document is deleted">
+              <transitions>
+                <transition>undelete</transition>
+              </transitions>
+            </state>
+          </states>
+        </lifecycle>
+        
       </extension>
 
 </component>

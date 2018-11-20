@@ -13,16 +13,14 @@
  */
 package com.aritu.eloraplm.webapp.base.beans;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
+import static org.jboss.seam.ScopeType.EVENT;
 
 import java.io.Serializable;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -30,34 +28,21 @@ import org.jboss.seam.faces.FacesMessages;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
-import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
-import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextBoundActionBean;
-
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 /**
- * // TODO: write class general comment
+ * Bean for retrieving Elora links.
  *
  * @author aritu
  *
  */
 @Name("eloraLinks")
-@Scope(CONVERSATION)
-@AutomaticDocumentBasedInvalidation
-public class LinksBean extends DocumentContextBoundActionBean
-        implements Serializable {
+@Scope(EVENT)
+public class LinksBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(LinksBean.class);
-
-    // private static final String CHILDREN_PREDICATE_URI =
-    // "http://eloraplm.aritu.com/relations/ComposedOf";
-
-    /*
-    @In(create = true)
-    protected RelationActions relationActions;
-    */
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -68,167 +53,114 @@ public class LinksBean extends DocumentContextBoundActionBean
     @In(create = true, required = false)
     protected FacesMessages facesMessages;
 
-    @In(required = false)
-    protected transient Principal currentUser;
-
-    // statements lists
-    protected List<String> linksWss;
-
-    private static String getWsParentProxy(String uid) {
-
-        String query = "SELECT " + NXQL.ECM_PARENTID + " FROM Document "
-                + " WHERE " + NXQL.ECM_ISPROXY + " = 1 " + " AND "
-                + NXQL.ECM_PROXY_TARGETID + " = '" + uid + "'";
-
-        return query;
-    }
-
-    private String getCMs(String uid) {
-
-        // TODO::: CMMetadataConstants.AFF_AFFECTED_ITEM_LIST is deprecated
-        // The query must be changed.
-        /* String query = "SELECT * FROM Document " + " WHERE "
-                + CMMetadataConstants.AFF_AFFECTED_ITEM_LIST
-                + "/*1/originItem = '" + uid + "' OR "
-                + CMMetadataConstants.AFF_AFFECTED_ITEM_LIST
-                + "/*1/destinationItem = '" + uid + "'";
-        
-        return query;*/
-        return "";
-    }
-
-    public List<String> getLinksWss() {
-        if (linksWss == null || linksWss.isEmpty()) {
-            linksWss = getLinks();
-        }
-        return linksWss;
-    }
-
-    @Create
-    public void create() {
-        linksWss = getLinks();
-    }
-
-    /**
-     * @param docM
-     * @return true if it is a CAD document
-     */
-    public static boolean isWc(DocumentModel docM) {
-
-        boolean isWorkingCopy = false;
-        isWorkingCopy = (!docM.isProxy() && !docM.isVersion());
-        return isWorkingCopy;
-    }
-
-    private List<String> getDocumentsList(String query) {
-        List<String> linksUIList = new ArrayList<String>();
-        DocumentModelList queryResultDocs;
-        String logInitMsg = "[getDocumentsList] " + currentUser.getName();
-
-        queryResultDocs = documentManager.query(query);
-        if (queryResultDocs != null && !queryResultDocs.isEmpty()) {
-            for (DocumentModel doc : queryResultDocs) {
-                log.trace(logInitMsg + "doc = |" + doc.getId() + "|");
-                linksUIList.add(doc.getId());
-            }
-        }
-        if (linksUIList.isEmpty()) {
-            return null;
-        } else {
-            return linksUIList;
-        }
-    }
+    protected List<String> links;
 
     public List<String> getLinks() {
-        DocumentModel currentDoc = getCurrentDocument();
-        DocumentModel realDoc = null;
-        String logInitMsg = "[getParentsWs] " + currentUser.getName();
-        String query = "";
+        /*String logInitMsg = "[getLinks] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");*/
+
+        if (links == null || links.isEmpty()) {
+            links = getLinksUidList();
+        }
+
+        // log.trace(logInitMsg + "--- EXIT ---");
+        return links;
+    }
+
+    protected List<String> getLinksUidList() {
+        String logInitMsg = "[getLinksUidList] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        log.trace(logInitMsg + "--- ENTER --- ");
+
         List<String> linksUIList = new ArrayList<String>();
-        List<String> partialUIList = new ArrayList<String>();
 
-        if (!isWc(currentDoc)) {
-            realDoc = null;
-        } else if (isWc(currentDoc) && !currentDoc.isCheckedOut()) {
-            realDoc = documentManager.getDocument(
-                    documentManager.getBaseVersion(currentDoc.getRef()));
-        } else if (isWc(currentDoc) && currentDoc.isCheckedOut()) {
-            realDoc = null;
-        }
+        try {
 
-        if (realDoc != null) {
-            // WS donde figura la AV como proxy
-            query = getWsParentProxy(realDoc.getId());
-            log.trace(logInitMsg + "query = |" + query + "|");
-            partialUIList = getDocumentsList(query);
-            if (partialUIList != null) {
-                linksUIList.addAll(partialUIList);
+            DocumentModel currentDoc = navigationContext.getCurrentDocument();
+            if (currentDoc.isProxy()) {
+                currentDoc = documentManager.getSourceDocument(
+                        currentDoc.getRef());
             }
-            /* todo
-                        // CM donde figura la AV como afectado o modificado
-                        query = getCMs(realDoc.getId());
-                        log.trace(logInitMsg + "query = |" + query + "|");
-                        partialUIList = getDocumentsList(query);
-                        if (partialUIList != null) {
-                            linksUIList.addAll(partialUIList);
-                        }
 
-            */
-            if (realDoc != currentDoc) {
-                // WS donde figura el WC como proxy
-                query = getWsParentProxy(currentDoc.getId());
-                log.trace(logInitMsg + "query = |" + query + "|");
-                partialUIList = getDocumentsList(query);
-                if (partialUIList != null) {
-                    linksUIList.addAll(partialUIList);
+            String query = "";
+
+            // if current document is a AV
+            if (currentDoc.isImmutable()) {
+                // Retrieve the proxies related to the current document (AV)
+                query = EloraQueryFactory.getDocProxiesQuery(
+                        currentDoc.getId());
+                executeQueryAndAddResultToUidList(query, linksUIList);
+
+            } else {
+                // Retrieve the proxies related to the WC and all its versions
+                List<String> versionsUids = new ArrayList<String>();
+                versionsUids.add(currentDoc.getId());
+
+                List<DocumentModel> versions = documentManager.getVersions(
+                        currentDoc.getRef());
+                if (versions != null && versions.size() > 0) {
+                    for (int i = 0; i < versions.size(); i++) {
+                        DocumentModel versionDoc = versions.get(i);
+                        versionsUids.add(versionDoc.getId());
+                    }
                 }
-                /*todo esperar a la estructra de cm
-                                // CMs donde figura el WC como afectado o modificado
-                                query = getCMs(currentDoc.getId());
-                                log.trace(logInitMsg + "query = |" + query + "|");
-                                partialUIList = getDocumentsList(query);
-                                if (partialUIList != null) {
-                                    linksUIList.addAll(partialUIList);
-                                }
-
-                                */
+                query = EloraQueryFactory.getDocProxiesQuery(versionsUids);
+                executeQueryAndAddResultToUidList(query, linksUIList);
             }
-        } else {
-            query = getWsParentProxy(currentDoc.getId());
-            log.trace(logInitMsg + "query = |" + query + "|");
-            partialUIList = getDocumentsList(query);
-            if (partialUIList != null) {
-                linksUIList.addAll(partialUIList);
-            }
-            /* todo
-                        // CMs donde figura el WC como afectado o modificado
-                        query = getCMs(currentDoc.getId());
-                        log.trace(logInitMsg + "query = |" + query + "|");
-                        partialUIList = getDocumentsList(query);
-                        if (partialUIList != null) {
-                            linksUIList.addAll(partialUIList);
-                        }
 
-                        */
+            // Add current document's parent
+            linksUIList.add(currentDoc.getParentRef().toString());
+
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
         }
 
-        linksUIList.add(currentDoc.getParentRef().toString());
+        log.trace(logInitMsg + "--- EXIT --- with linksUIList.size = |"
+                + linksUIList.size() + "|");
 
         if (linksUIList.isEmpty()) {
             return null;
         } else {
             return linksUIList;
         }
+
     }
 
-    @Override
-    protected void resetBeanCache(DocumentModel newCurrentDocumentModel) {
-        resetList();
+    protected List<String> getUidListFromQuery(String query) {
+        /*String logInitMsg = "[getUidListFromQuery] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        
+        log.trace(logInitMsg + "--- ENTER --- ");*/
+
+        List<String> uidList = new ArrayList<String>();
+
+        DocumentModelList queryResultDocs = documentManager.query(query);
+        if (queryResultDocs != null && !queryResultDocs.isEmpty()) {
+            for (DocumentModel doc : queryResultDocs) {
+                uidList.add(doc.getId());
+            }
+        }
+
+        /*log.trace(logInitMsg + "--- EXIT --- with uidList.size = |"
+                + uidList.size() + "|");*/
+
+        if (uidList.isEmpty()) {
+            return null;
+        } else {
+            return uidList;
+        }
     }
 
-    public void resetList() {
-        linksWss = null;
-        // childrenStatements = null;
+    protected void executeQueryAndAddResultToUidList(String query,
+            List<String> linksUIList) {
+
+        List<String> partialUIList = new ArrayList<String>();
+        partialUIList = getUidListFromQuery(query);
+        if (partialUIList != null) {
+            linksUIList.addAll(partialUIList);
+        }
     }
 
 }

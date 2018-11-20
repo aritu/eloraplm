@@ -36,8 +36,9 @@
                   translated="true"
                   width="100%"
                   placeholder="#{messages['eloraplm.label.suggestion.ws.placeholder']}"
-                  pageProviderName="workspace_suggestion"
-                  documentSchemas="dublincore,common">
+                  pageProviderName="workspace_wc_suggestion"
+                  documentSchemas="dublincore,common,elora_object"
+                  additionalOperationParameters="eloraPassQueryTermsTwice">
                 </nxl:widgetType>
           </a4j:outputPanel>
           <h:message for="targetWorkspaceUid" class="errorMessage" />

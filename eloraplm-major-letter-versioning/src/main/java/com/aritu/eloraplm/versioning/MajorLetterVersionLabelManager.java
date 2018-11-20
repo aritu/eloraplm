@@ -21,7 +21,8 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.model.PropertyNotFoundException;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 
-public class MajorLetterVersionLabelManager implements EloraVersionLabelService {
+public class MajorLetterVersionLabelManager
+        implements EloraVersionLabelService {
 
     protected static final String MAJOR_VERSION_PROP = "major_letter_versioning:major";
 
@@ -101,7 +102,8 @@ public class MajorLetterVersionLabelManager implements EloraVersionLabelService 
         try {
             Object major = doc.getPropertyValue(MAJOR_VERSION_PROP);
             if (major == null || !(major instanceof String)) {
-                Object defaultMajor = doc.getPropertyValue(VersioningService.MAJOR_VERSION_PROP);
+                Object defaultMajor = doc.getPropertyValue(
+                        VersioningService.MAJOR_VERSION_PROP);
                 if (defaultMajor == null || !(defaultMajor instanceof Long)) {
                     // This can really happen when we copy & paste a document
                     return ZERO_MAJOR_CHAR;
@@ -112,14 +114,16 @@ public class MajorLetterVersionLabelManager implements EloraVersionLabelService 
                 return major.toString();
             }
         } catch (PropertyNotFoundException e) {
-            return doc.getPropertyValue(VersioningService.MAJOR_VERSION_PROP).toString();
+            return doc.getPropertyValue(
+                    VersioningService.MAJOR_VERSION_PROP).toString();
         }
 
     }
 
     @Override
     public String getMinor(DocumentModel doc) {
-        Object minor = doc.getPropertyValue(VersioningService.MINOR_VERSION_PROP);
+        Object minor = doc.getPropertyValue(
+                VersioningService.MINOR_VERSION_PROP);
         if (minor == null || !(minor instanceof Long)) {
             // This can really happen when we copy & paste a document
             return "0";
@@ -140,7 +144,7 @@ public class MajorLetterVersionLabelManager implements EloraVersionLabelService 
 
     @Override
     public String getZeroVersion() {
-        return ZERO_MAJOR_CHAR + ".0";
+        return ZERO_MAJOR_CHAR + ".0+";
     }
 
     @Override

@@ -5,11 +5,16 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     >
 
-    <xs:element name="quantity" type="xs:integer" default="1"/>
-    <xs:element name="isObjectWc" type="xs:boolean" default="true"/>
-    <xs:element name="ordering" type="xs:integer" default="0"/>
-    <xs:element name="directorOrdering" type="xs:integer" default="0"/>
-    <xs:element name="viewerOrdering" type="xs:integer" default="0"/>
+    <xs:element name="quantity" default="1">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="ordering" type="xs:integer"/>
+    <xs:element name="directorOrdering" type="xs:integer"/>
+    <xs:element name="viewerOrdering" type="xs:integer"/>
     <xs:element name="isManual" type="xs:boolean" default="false"/>
 
 </xs:schema>

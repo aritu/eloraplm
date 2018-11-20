@@ -1,5 +1,15 @@
-.addModifiedItemTable
+.cmItemTable
 {
     border-collapse: separate;
     border-spacing: 0px 20px;
+}
+
+#fancybox-content .cmItemTable .labelColumn {
+  width: 12em;
+  white-space:nowrap;
+}
+
+.summaryCmItemsTable
+{
+    font-size: 0.9em;
 }

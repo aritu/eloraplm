@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: eloraplm-search
+Bundle-SymbolicName: com.aritu.eloraplm.search
 Bundle-Name: eloraplm-search
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-search-ActionService-con
  trib.xml,OSGI-INF/extensions/eloraplm-search-ContentViewService-contr
  ib.xml,OSGI-INF/extensions/eloraplm-search-WebLayoutManager-contrib.x

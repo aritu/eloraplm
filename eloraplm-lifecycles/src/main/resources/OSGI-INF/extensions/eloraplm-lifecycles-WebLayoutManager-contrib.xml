@@ -23,7 +23,63 @@
               <widget>elora_children_supported_states_obsolete</widget>
             </row>
             <row>
-              <widget>elora_children_supported_states_order</widget>
+              <widget>elora_children_supported_states_ordering</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <layout name="elora_lifecycle_transitions">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_lifecycle_transitions_id</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_transitions_lifecycle</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_transitions_state</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_transitions_demote_transitions</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_transitions_promote_transitions</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_transitions_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_lifecycle_transitions_ordering</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <layout name="elora_transition_config">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_transition_config_id</widget>
+            </row>
+            <row>
+              <widget>elora_transition_config_allowed_by_all_states</widget>
+            </row>
+            <row>
+              <widget>elora_transition_config_allows_all_states</widget>
+            </row>
+            <row>
+              <widget>elora_transition_config_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_transition_config_ordering</widget>
             </row>
           </rows>
         </layout>
@@ -35,16 +91,15 @@
         
         <widget name="elora_children_supported_states_id" type="int">
           <labels>
-            <label mode="any">label.widget.childrenSupportedStates.entry.id</label>
+            <label mode="any">eloraplm.label.vocabulary.id</label>
           </labels>
           <translated>true</translated>
           <fields>
             <field>eloraChildrenSupportedStates:id</field>
           </fields>
-          <widgetModes>
-            <mode value="create">hidden</mode>
-            <mode value="edit">view</mode>
-          </widgetModes>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
         </widget>
         
         <widget name="elora_children_supported_states_parent_state" type="text">
@@ -76,7 +131,7 @@
        
         <widget name="elora_children_supported_states_obsolete" type="template">
           <labels>
-            <label mode="any">label.widget.childrenSupportedStates.entry.obsolete</label>
+            <label mode="any">eloraplm.label.vocabulary.obsolete</label>
           </labels>
           <translated>true</translated>
           <fields>
@@ -89,13 +144,169 @@
           </properties>
         </widget>
     
-        <widget name="elora_children_supported_states_order" type="int">
+        <widget name="elora_children_supported_states_ordering" type="int">
           <labels>
-            <label mode="any">label.widget.childrenSupportedStates.entry.order</label>
+            <label mode="any">eloraplm.label.vocabulary.ordering</label>
           </labels>
           <translated>true</translated>
           <fields>
             <field>eloraChildrenSupportedStates:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        <!-- Start lifecycle transitions widgets -->
+        
+        <widget name="elora_lifecycle_transitions_id" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleTransitions:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_lifecycle_transitions_lifecycle" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.lifecycle</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleTransitions:lifecycle</field>
+          </fields>
+        </widget>
+        
+        <widget name="elora_lifecycle_transitions_state" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.state</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleTransitions:state</field>
+          </fields>
+        </widget>
+        
+        <widget name="elora_lifecycle_transitions_demote_transitions" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.demoteTransitions</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleTransitions:demoteTransitions</field>
+          </fields>
+        </widget>
+        
+        <widget name="elora_lifecycle_transitions_promote_transitions" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.promoteTransitions</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleTransitions:promoteTransitions</field>
+          </fields>
+        </widget>
+        
+        <widget name="elora_lifecycle_transitions_obsolete" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleTransitions:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_lifecycle_transitions_ordering" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraLifecycleTransitions:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        <!-- Start transition config widgets -->
+        
+        <widget name="elora_transition_config_id" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraTransitionConfig:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_transition_config_allowed_by_all_states" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.allowedByAllStates</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraTransitionConfig:allowedByAllStates</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_transition_config_allows_all_states" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.allowsAllStates</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraTransitionConfig:allowsAllStates</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_transition_config_obsolete" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraTransitionConfig:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_transition_config_ordering" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.vocabulary.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraTransitionConfig:ordering</field>
           </fields>
           <properties widgetMode="edit">
             <property name="size">10</property>

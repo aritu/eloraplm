@@ -9,6 +9,11 @@
     '/': '&#x2F;'
   };
 
+  function eloraPassQueryTermsTwice (temp,params,query) {
+	  temp.searchTerm = [query.term, query.term];
+	  return temp;
+}
+  
   function escapeHTML (string) {
     return String(string).replace(/[&<>"'\/]/g, function fromEntityMap (s) {
       return entityMap[s];

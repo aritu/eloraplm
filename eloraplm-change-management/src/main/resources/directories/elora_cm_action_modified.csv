@@ -1,4 +1,5 @@
-id,label,obsolete
-id_change,Change,0
-id_replace,Replace,0
-id_remove,Remove,0
+id,label,obsolete,ordering
+id_change,Change,0,10
+id_remove,Remove,0,20
+id_replace,Replace,0,30
+id_ignore,Ignore,0,40

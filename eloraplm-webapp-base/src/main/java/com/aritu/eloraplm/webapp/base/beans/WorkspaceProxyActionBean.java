@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -35,7 +34,6 @@ import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
-import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 
 /**
@@ -81,7 +79,8 @@ public class WorkspaceProxyActionBean implements Serializable {
     @In(create = true)
     protected Map<String, String> messages;
 
-    protected EloraVersionLabelService versionLabelService = Framework.getService(EloraVersionLabelService.class);
+    protected EloraVersionLabelService versionLabelService = Framework.getService(
+            EloraVersionLabelService.class);
 
     protected List<DocumentVersionInformation> documentVersions;
 
@@ -110,6 +109,10 @@ public class WorkspaceProxyActionBean implements Serializable {
     }
 
     public String getSourceVersionUid() {
+        DocumentModel currentDoc = navigationContext.getCurrentDocument();
+        if (currentDoc != null && currentDoc.isVersion()) {
+            sourceVersionUid = currentDoc.getId();
+        }
         return sourceVersionUid;
     }
 
@@ -127,55 +130,42 @@ public class WorkspaceProxyActionBean implements Serializable {
 
     }
 
-    @Create
-    public void initSourceVersionUid() {
-        DocumentModel currentDoc = navigationContext.getCurrentDocument();
-        if (currentDoc.isVersion()) {
-            // Set the current version as default
-            setSourceVersionUid(currentDoc.getId());
-        }
-    }
-
     private void getVersionsList(DocumentModel currentDoc) {
-
-        try {
-            DocumentRef docRef = currentDoc.getRef();
-            if (currentDoc.isProxy()) {
-                currentDoc = documentManager.getSourceDocument(docRef);
-            }
-            DocumentModel wcDoc = currentDoc;
-            if (currentDoc.isVersion()) {
-                wcDoc = documentManager.getWorkingCopy(docRef);
-            }
-            DocumentRef wcDocRef = wcDoc.getRef();
-
-            List<VersionModel> docVersions = documentManager.getVersionsForDocument(wcDocRef);
-
-            DocumentModel latestVersion = EloraDocumentHelper.getLatestVersion(
-                    wcDoc, documentManager);
-
-            String latestVersionLabel = "";
-            if (latestVersion != null) {
-                latestVersionLabel = latestVersion.getVersionLabel();
-            }
-
-            documentVersions.add(new DocumentVersionInformation(wcDoc.getId(),
-                    messages.get("eloraplm.label.wcVersion")));
-
-            for (VersionModel version : docVersions) {
-                String label = versionLabelService.translateVersionLabel(version.getLabel());
-                if (label.equals(latestVersionLabel)) {
-                    label += " ("
-                            + messages.get("eloraplm.label.latestVersion")
-                            + ")";
-                }
-                documentVersions.add(new DocumentVersionInformation(
-                        version.getId(), label));
-            }
-
-        } catch (EloraException e) {
-            // TODO Hemen zer??
+        DocumentRef docRef = currentDoc.getRef();
+        if (currentDoc.isProxy()) {
+            currentDoc = documentManager.getSourceDocument(docRef);
         }
+        DocumentModel wcDoc = currentDoc;
+        if (currentDoc.isVersion()) {
+            wcDoc = documentManager.getWorkingCopy(docRef);
+        }
+        DocumentRef wcDocRef = wcDoc.getRef();
+
+        List<VersionModel> docVersions = documentManager.getVersionsForDocument(
+                wcDocRef);
+
+        DocumentModel latestVersion = EloraDocumentHelper.getLatestVersion(
+                wcDoc);
+
+        String latestVersionLabel = "";
+        if (latestVersion != null) {
+            latestVersionLabel = latestVersion.getVersionLabel();
+        }
+
+        documentVersions.add(new DocumentVersionInformation(wcDoc.getId(),
+                messages.get("eloraplm.label.wcVersion")));
+
+        for (VersionModel version : docVersions) {
+            String label = versionLabelService.translateVersionLabel(
+                    version.getLabel());
+            if (label.equals(latestVersionLabel)) {
+                label += " (" + messages.get("eloraplm.label.latestVersion")
+                        + ")";
+            }
+            documentVersions.add(
+                    new DocumentVersionInformation(version.getId(), label));
+        }
+
     }
 
     public void createWorkspaceProxy() {
@@ -183,17 +173,15 @@ public class WorkspaceProxyActionBean implements Serializable {
         DocumentRef targetDocRef = new IdRef(targetWorkspaceUid);
 
         if (!documentManager.exists(targetDocRef)) {
-            facesMessages.add(
-                    StatusMessage.Severity.ERROR,
-                    messages.get("eloraplm.message.error.wsProxy.create.targetDocDoesNotExist"));
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.wsProxy.create.targetDocDoesNotExist"));
             return;
         }
 
         DocumentModel targetDoc = documentManager.getDocument(targetDocRef);
         if (!targetDoc.isFolder()) {
-            facesMessages.add(
-                    StatusMessage.Severity.ERROR,
-                    messages.get("eloraplm.message.error.wsProxy.create.targetDocNotAFolder"));
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.wsProxy.create.targetDocNotAFolder"));
             return;
         }
 

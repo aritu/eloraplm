@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.doctypes.NotificationService.contrib">
+  <require>org.nuxeo.ecm.platform.notification.service.NotificationContrib</require>
 
   <extension point="notifications" target="org.nuxeo.ecm.platform.ec.notification.service.NotificationService">
 

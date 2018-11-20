@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <component name="com.aritu.eloraplm.ui.WebResources.contrib">
+    <require>org.nuxeo.theme.nuxeo.webapp</require>
 
     <extension target="org.nuxeo.ecm.platform.WebResources"
         point="resources">

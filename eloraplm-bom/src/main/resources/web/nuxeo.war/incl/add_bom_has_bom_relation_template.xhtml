@@ -48,8 +48,9 @@
                             value="#{relationBean}"
                             field="objectDocumentUid" translated="true"
                             width="100%"
-                            placeholder="label.relation.search.popup.title"
-                            pageProviderName="#{pageProviderName}">
+                            placeholder="#{placeholder}"
+                            pageProviderName="#{pageProviderName}"
+                            additionalOperationParameters="eloraPassQueryTermsTwice">
                         </nxl:widgetType>
                     </a4j:outputPanel>
                     <h:inputHidden id="objectCheck"
@@ -70,11 +71,7 @@
 	                <h:outputLabel for="quantity"
 	                    value="#{messages['label.relation.quantity']}"
 	                    class="required relationQuantityLabel" />
-	                <h:panelGroup>
-                    <h:inputText class="dataInputText" id="quantity"
-                        value="#{relationBean.quantity}" required="true" />
-                    <h:message for="quantity" class="errorMessage" />
-	                </h:panelGroup>
+	                <nxl:widget name="listing_quantity" value="#{relationBean}" mode="edit" required="true" styleClass="dataInputText" />
                 </c:if>
                 <c:if test="#{not isEditableOrdering}">
                   <h:inputHidden id="ordering" value="#{relationBean.ordering}" />
@@ -105,7 +102,17 @@
         </h:panelGroup>
         
         <div class="buttonsGadget">
-            <h:commandButton value="#{messages['command.add']}" styleClass="button" action="#{relationBean.addRelation()}"></h:commandButton>
+            <h:commandButton value="#{messages['command.add']}" 
+              styleClass="button" 
+              actionListener="#{relationBean.addRelationNode(currentDocument)}">
+              <f:param name="btnAddRelation" value="true" />
+                <!-- We don't need to add global_flag_validation_failed_render to render attribute because it is inside the form -->
+              <f:ajax execute="@form"
+                render="@form
+                :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:ttForm:#{treeWidgetId}
+                :eloraMetadataHeading" />
+            </h:commandButton>
+              
             <h:commandButton value="#{messages['command.cancel']}"
                 styleClass="button">
                 <f:ajax execute="@this" onevent="jQuery.fancybox.close" />

@@ -23,7 +23,7 @@
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
       <dataFile>directories/elora_default_config.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
     </directory>
     
     <directory name="elora_general_config">
@@ -34,7 +34,7 @@
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
       <dataFile>directories/elora_general_config.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
     </directory>
 
     <directory name="elora_lifecycle_states">
@@ -84,7 +84,7 @@
     <directory name="elora_link_content_filter_types">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_link_content_filter_types</table>
+      <table>elora_link_filter_types</table>
       <idField>id</idField>
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
@@ -100,7 +100,7 @@
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
       <dataFile>directories/elora_units_of_measure.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
     </directory>
     
     <directory name="elora_currency">
@@ -111,6 +111,17 @@
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
       <dataFile>directories/elora_currency.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_checkout_config">
+      <schema>eloraCheckoutConfig</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_checkout_config</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_checkout_config.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
     

@@ -3,6 +3,7 @@
 
     <require>org.nuxeo.ecm.webapp.ui</require>
     <require>com.aritu.eloraplm.l10n</require>
+    <require>com.aritu.eloraplm.webapp.base</require>
 
     <install>
         <unzip from="${bundle.fileName}" to="/" prefix="web">

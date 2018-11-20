@@ -10,7 +10,7 @@
         ( field_0.getType() eq 'BomTool' ? field_0.bomtool.toolClassification :
         ( field_0.getType() eq 'BomPackaging' ? field_0.bompack.packagingClassification :
         ( field_0.getType() eq 'BomSpecification' ? field_0.bomspec.specificationClassification :
-        ( field_0.getType() eq 'BomProduct' ? field_0.bomprod.productClassification : '' ))))
+        ( field_0.getType() eq 'BomProduct' or field_0.hasFacet('EloraWorkspace') ? field_0.prodclass.productClassification : '' ))))
     }">
     
     <nxu:set var="directoryNameList" value="#{

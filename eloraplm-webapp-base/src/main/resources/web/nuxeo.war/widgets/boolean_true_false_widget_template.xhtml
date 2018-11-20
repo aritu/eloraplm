@@ -9,7 +9,7 @@
   id="#{widget.id}">
 
   <c:if test="#{widget.mode == 'edit'}">
-    <h:selectOneRadio value="#{field}" id="#{widget.id}_checkbox">
+    <h:selectOneRadio value="#{field}" id="#{widget.id}_checkbox" disabled="#{widgetProperty_disabled}">
       <f:selectItem itemValue="#{true}" itemLabel="#{messages['label.true']}" />
       <f:selectItem itemValue="#{false}" itemLabel="#{messages['label.false']}" />
     </h:selectOneRadio>

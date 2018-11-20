@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: eloraplm-webapp-pdm
+Bundle-SymbolicName: com.aritu.eloraplm.webapp.pdm
 Bundle-Name: eloraplm-webapp-pdm
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-webapp-pdm-ActionService
  -contrib.xml
 

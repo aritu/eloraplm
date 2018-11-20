@@ -6,6 +6,7 @@ xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
   <xs:include schemaLocation="core-types.xsd" />
 
   <xs:element name="file" type="nxs:content" />
+  <xs:element name="baseFile" type="nxs:content" />
   <xs:element name="filename" type="xs:string" />
 
 </xs:schema>

@@ -15,5 +15,8 @@
 	<classpathentry kind="con" path="org.nuxeo.ide.SDK_USERLIB_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-relations"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-queries"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-webapp-base"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-promote"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-webapp-pdm"/>
 	<classpathentry kind="output" path="bin/main"/>
 </classpath>

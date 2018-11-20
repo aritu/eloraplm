@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.webapp.base.TrashService.contrib" version="1.0">
+    <require>org.nuxeo.ecm.core.trash.TrashService</require>
+    
+    <implementation class="com.aritu.eloraplm.webapp.base.services.EloraTrashServiceImpl" />
+    
+    <service>
+        <provide interface="org.nuxeo.ecm.core.trash.TrashService" />
+    </service>
+    
+</component>

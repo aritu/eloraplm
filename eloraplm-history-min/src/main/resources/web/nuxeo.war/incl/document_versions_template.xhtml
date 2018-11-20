@@ -7,7 +7,9 @@
   xmlns:a4j="http://richfaces.org/a4j"
   xmlns:nxu="http://nuxeo.org/nxweb/util"
   xmlns:nxh="http://nuxeo.org/nxweb/html"
-  xmlns:nxd="http://nuxeo.org/nxweb/document">
+  xmlns:nxd="http://nuxeo.org/nxweb/document"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout">
 <div id="document_versions">
 
 <c:if test="#{nxd:hasPermission(currentDocument, 'ReadVersion')
@@ -30,26 +32,40 @@
                   <a4j:ajax id="ajax_onclick_#{versionItemSelection.data.id}"
                     event="click"
                     listener="#{documentListingActions.checkCurrentDocAndProcessVersionSelectRow(versionItemSelection, currentDocument.ref)}"
-                    render="version_ajax_selection_buttons" />
+                    render="version_ajax_selection_buttons fancybox_selection_buttons" />
                 </h:selectBooleanCheckbox>
               </h:column>
 
-               <h:column>
+               <h:column pt:style="width:10em;">
                 <f:facet name="header">
                   <h:outputText value="#{messages['eloraplm.label.reference']}" />
                 </f:facet>
-                <nxu:graphicImage value="#{nxd:iconPath(archivedVersionDocument)}" alt="#{archivedVersionDocument.type}" title="#{archivedVersionDocument.type}" />
-                <h:outputText value="#{archivedVersionDocument.hasSchema('elora_object') and not empty archivedVersionDocument.elo.reference ? archivedVersionDocument.elo.reference : '--'}" styleClass="eloraReference" />
+                <h:graphicImage value="#{nxd:iconPath(archivedVersionDocument)}" alt="#{archivedVersionDocument.type}"
+                    title="#{archivedVersionDocument.type}" style="vertical-align: middle" />
+                &#160;
+                <h:outputText value="#{archivedVersionDocument.hasSchema('elora_object') and not empty archivedVersionDocument.elo.reference ? archivedVersionDocument.elo.reference : '--'}"
+                    styleClass="eloraReference"  style="vertical-align: middle" />
               </h:column>
 
               <h:column>
                 <f:facet name="header">
                   <h:outputText value="#{messages['label.version']}" />
                 </f:facet>
-                <h:panelGroup layout="block" title="#{tooltip}" styleClass="tipsyShow tipsyGravityS" style="white-space: nowrap;">
-                   <h:graphicImage value="/icons/comments.png" title="#{archivedVersionDocument.checkinComment}"/>
-                   <h:outputText value="#{versionItemSelection.data.description}" />
-                <h:outputText value=" (#{messages['eloraplm.label.current']})"  rendered="#{eloraPlmVersionHistoryActions.isCurrent(archivedVersionDocument, currentDocument)}" />                     
+                <h:panelGroup layout="block" style="white-space: nowrap;">
+                    <h:outputText value="#{versionItemSelection.data.description}" />
+                    <h:graphicImage value="/icons/badge_current_10.png"
+                        alt="(#{messages['eloraplm.label.current']})" title="#{messages['eloraplm.label.current']}"
+                        style="margin-left: 5px;"
+                        rendered="#{eloraPlmVersionHistoryActions.isCurrent(archivedVersionDocument, currentDocument)}" /> 
+                </h:panelGroup>
+              </h:column>
+              
+              <h:column pt:style="width:25em;">
+                <f:facet name="header">
+                  <h:outputText value="#{messages['label.comment']}" />
+                </f:facet>
+                <h:panelGroup>
+                   <h:outputText value="#{archivedVersionDocument.checkinComment}" />
                 </h:panelGroup>
               </h:column>
 
@@ -126,6 +142,11 @@
             </div>
           </a4j:outputPanel>
         </h:form>
+        
+        <a4j:outputPanel id="fancybox_selection_buttons" layout="block">
+            <nxl:widgetType mode="view" name="documentActionWithForms" actionId="change_checkin_comments" />
+        </a4j:outputPanel>
+        
       </c:if>
 
       <c:if test="#{empty selectedVersionList}">

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.templating.TypeService.contrib">
+  
+  <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
+
+    <type id="AdminRoot">
+      <subtypes>
+        <type>TemplateRoot</type>
+      </subtypes>
+    </type>
+ 
+  </extension>
+
+</component>

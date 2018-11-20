@@ -11,7 +11,7 @@
       <suggesters>
         <suggesterName remove="true">searchByUsersAndGroups</suggesterName>
         <suggesterName remove="true">documentLookupByTitle</suggesterName>
-        <suggesterName>documentLookupByTitleAndReference</suggesterName>
+        <suggesterName>eloraDocumentLookupByTitleAndReference</suggesterName>
       </suggesters>
     </suggesterGroup>
 
@@ -20,8 +20,8 @@
 
   <extension point="suggesters" target="org.nuxeo.ecm.platform.suggestbox.service.SuggestionService">
 
-    <!-- New suggester named documentLookupByTitleAndReference -->
-    <suggester class="com.aritu.eloraplm.search.suggestbox.service.suggesters.EloraDocumentLookupSuggester" name="documentLookupByTitleAndReference">
+    <!-- New suggester named eloraDocumentLookupByTitleAndReference -->
+    <suggester class="com.aritu.eloraplm.search.suggestbox.service.suggesters.EloraDocumentLookupSuggester" name="eloraDocumentLookupByTitleAndReference">
       <parameters>
         <parameter name="providerName">DEFAULT_DOCUMENT_SUGGESTION</parameter>
       </parameters>

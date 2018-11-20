@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.templating.TemplateProcessorComponent.contrib">
+  
+  <extension target="org.nuxeo.template.service.TemplateProcessorComponent" point="contextExtension">
+
+    <contextFactory name="elora" class="com.aritu.eloraplm.templating.EloraFunctionsExtensionFactory">
+     <aliasName>elo</aliasName>
+     <aliasName>Elo</aliasName>
+    </contextFactory>
+
+  </extension>
+  
+</component> 

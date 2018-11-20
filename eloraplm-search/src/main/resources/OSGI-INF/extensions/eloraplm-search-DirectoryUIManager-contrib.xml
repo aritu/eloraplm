@@ -4,14 +4,11 @@
 
   <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
 
-    <directory layout="vocabulary" sortField="ordering" name="eloras_facetType">
-    </directory>
+    <directory layout="vocabulary" sortField="ordering" name="eloras_facetType"/>
 
-    <directory layout="vocabulary" sortField="ordering" name="eloras_docType">
-    </directory>
+    <directory layout="vocabulary" sortField="label" name="eloras_docType"/>
 
-    <directory layout="vocabulary" sortField="ordering" name="eloras_lifeCycle">
-    </directory>
+    <directory layout="vocabulary" sortField="ordering" name="eloras_lifeCycle"/>
     
   </extension>
 

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.lifecycles.factories.TransitionExecuterFactory">
+    
+    <implementation class="com.aritu.eloraplm.lifecycles.factories.impl.TransitionExecuterFactoryImpl"/>
+    
+    <service>
+        <provide interface="com.aritu.eloraplm.lifecycles.factories.TransitionExecuterFactory"/>
+    </service>
+</component>

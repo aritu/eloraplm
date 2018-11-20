@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.templating.ActionService.contrib">
+  <require>org.nuxeo.platform.TemplateSources.actions</require>
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    <!-- disable option to associate template -->
+    <action id="associateTemplate" enabled="false"/>
+  </extension>
+  
+</component> 

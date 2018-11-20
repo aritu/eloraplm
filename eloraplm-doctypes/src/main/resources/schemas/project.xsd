@@ -3,9 +3,13 @@ xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
 xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/project" 
 targetNamespace="http://www.nuxeo.org/ecm/project/schemas/project">
 
-  <xs:element name="projectPreviewDate" type="xs:date"/>
-  <xs:element name="projectRealDate" type="xs:date"/>
 
+  <xs:element name="projectType" >
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_projectType" />
+    </xs:simpleType>
+  </xs:element>
+  
   <xs:complexType name="projectPhaseType">
     <xs:sequence>
       <xs:element name="phaseDescription" type="xs:string"/>

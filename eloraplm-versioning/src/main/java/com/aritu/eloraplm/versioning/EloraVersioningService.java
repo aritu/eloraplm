@@ -3,6 +3,7 @@ package com.aritu.eloraplm.versioning;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.api.model.PropertyNotFoundException;
@@ -17,14 +18,14 @@ public class EloraVersioningService extends StandardVersioningService {
 
     @Override
     public String getVersionLabel(DocumentModel docModel) {
-        EloraVersionLabelService versionLabelService = Framework.getService(
-                EloraVersionLabelService.class);
+        // EloraVersionLabelService versionLabelService = Framework.getService(
+        // EloraVersionLabelService.class);
         String label;
         try {
             label = getMajorToDisplay(docModel) + "."
                     + getMinorToDisplay(docModel);
-            if (docModel.isCheckedOut()
-                    && !versionLabelService.getZeroVersion().equals(label)) {
+            if (docModel.isCheckedOut()) {
+                // && !versionLabelService.getZeroVersion().equals(label)) {
                 label += "+";
             }
         } catch (PropertyNotFoundException e) {
@@ -71,8 +72,9 @@ public class EloraVersioningService extends StandardVersioningService {
     }
 
     @Override
-    public Document doPostSave(Document doc, VersioningOption option,
-            String checkinComment, Map<String, Serializable> options) {
+    public Document doPostSave(CoreSession session, Document doc,
+            VersioningOption option, String checkinComment,
+            Map<String, Serializable> options) {
 
         // ----------------------------------------------------------------------------
         // SECTION ADDED FOR IMPORT PROCESS
@@ -107,14 +109,26 @@ public class EloraVersioningService extends StandardVersioningService {
     }
 
     @Override
-    protected void followTransitionByOption(Document doc,
-            VersioningOption option) {
+    protected void followTransitionByOption(CoreSession session, Document doc,
+            Map<String, Serializable> options) {
+        // TODO Hau alperrik dau? Oin beti checkout egiten da editetan hasi ahal
+        // izateko, eta aldaketa hau zan editatzerakuen Save (no increment)
+        // aukeratzerakuen checkout egiten zalako. Baina suposatzen da kasu hori
+        // ez dala errepikatzen. (Inportazioan???)
         // TODO Hau aldatzen bada, EloraDocumentHelper.checkOut be aldatu behar
         // da.
         String lifecycleState = doc.getLifeCycleState();
-        if (EloraLifeCycleConstants.CAD_APPROVED.equals(lifecycleState)) {
+        // Originally, obsolete is also added
+        // if (EloraLifeCycleConstants.APPROVED.equals(lifecycleState) ||
+        // EloraLifeCycleConstants.OBSOLETE.equals(lifecycleState)) {
+        if (EloraLifeCycleConstants.APPROVED.equals(lifecycleState)) {
             doc.followTransition(
-                    EloraLifeCycleConstants.CAD_TRANS_BACK_TO_PRELIMINARY);
+                    EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY);
+            if (session != null) {
+                // Send an event to notify that the document state has changed
+                sendEvent(session, doc, lifecycleState, options);
+            }
         }
     }
+
 }

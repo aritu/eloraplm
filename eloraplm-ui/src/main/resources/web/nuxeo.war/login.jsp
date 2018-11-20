@@ -113,13 +113,12 @@ body {
 /* Header */
 .topBar {
   width: 100%;
-  height: 40px;
-  border: 0;
+  height: 60px;
   <%=headerStyle%>;
 }
 
 .topBar img {
-  margin-left: 20px;
+  margin-left: 55px;
 }
 /* Login block */
 .login {
@@ -138,24 +137,27 @@ body {
 }
 
 .login_button {
-  border: 1px solid #b72020;
-  border-bottom:4px solid transparent;
-  background-color: #ff452a ;
-  color: white;
-  cursor: pointer;
-  font-size: 115%;
-  font-weight: normal;
-  margin: 0 .9em .9em 0;
-  padding: 0.7em 1.2em;
-  text-decoration: none;
-  box-shadow: 0 1px 2px #FFF, 1px 0 2px #FFF, -1px 0 2px #FFF, 0 -1px 2px #FFF;
+    background-color: #8cd600;
+    border-radius: 50px;
+    text-transform: uppercase;
+    padding: 0.6em 1.2em 0.6em 1.2em;
+    width: initial;
+    box-shadow: 0px 0px 2px 3px rgba(33, 91, 51, 0.5);
+    border: 2px solid #6c9800;
+    color: white;
+    cursor: pointer;
+    font-size: 115%;
+    font-weight: normal;
+    margin: 0 .9em .9em 0;
+    text-decoration: none;
 }
 
 .login_button:hover {
-  border-bottom: 4px solid #b72020;
+    background-color: #215b33;
+    border-color: #215b33;
 }
 
-.login_input, .login_button {
+.login_input {
   width: 220px;
 }
 
@@ -198,12 +200,14 @@ body {
 
 /* Messages */
 .maintenanceModeMessage {
-  color: red;
-  font-size: 12px
+  color: #833;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .warnMessage,.infoMessage {
-  margin: 0 0 10px
+  margin: 0 0 10px;
+  font-weight: bold;
 }
 
 .infoMessage {
@@ -211,19 +215,21 @@ body {
 }
 
 .feedbackMessage {
-  border-bottom: 1px dotted #033;
-  color: #033;
+  color: #366;
+  font-weight: bold;
   font-size: 100%;
   margin: 0.5em 0;
   padding: 0.5em 0;
   width: 220px;
   text-align: center;
-  border-top: 1px dotted #033;
   text-shadow: 0 2px 8px #fff, 2px 0 8px #fff, -2px 0 8px #fff, 0 -2px 8px #fff;
 }
 
 .errorMessage {
-  color: #c40000 }
+  color: #833;
+  font-weight: bold;
+  
+}
 
 .welcome {
   background: none repeat scroll 0 0 #fff;
@@ -288,7 +294,7 @@ body {
       </td>
     </tr>
     <tr>
-      <td align="center">
+      <td align="center" colspan="2">
         <%@ include file="login_welcome.jsp" %>
         <form method="post" action="nxstartup.faces">
           <!-- To prevent caching -->
@@ -354,7 +360,7 @@ body {
                 </td>
               </tr>
               <tr>
-                <td align="left">
+                <td align="center">
                   <% // label.login.logIn %>
                   <% if (selectedLanguage != null) { %>
                   <input type="hidden" name="language"
@@ -390,6 +396,7 @@ body {
           </div>
         </form>
       </td>
+      <!-- 
       <td class="news_container" align="right" valign="middle">
         <% if (showNews && !"Nuxeo-Selenium-Tester".equals(testerName)) { %>
           <iframe class="block_container" style="visibility:hidden"
@@ -397,7 +404,10 @@ body {
             src="<%=iframeUrl%>"></iframe>
         <% } %>
       </td>
+       -->
     </tr>
+    
+    
     <tr class="footer">
       <td align="center" valign="bottom">
       <div class="loginLegal">

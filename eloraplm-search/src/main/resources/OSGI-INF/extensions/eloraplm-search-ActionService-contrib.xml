@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.search.ActionService.contrib">
-
+  <require>org.nuxeo.search.ui.actions</require>
   <require>org.nuxeo.ecm.platform.suggestbox.actions</require>
 
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">  
@@ -17,9 +17,9 @@
         <filter-id>only_for_manager</filter-id>
     </action>
 
-    <action id="simpleSearchContentView">
+    <!-- <action id="simpleSearchContentView">
         <filter-id>only_for_manager</filter-id>
-    </action>
+    </action> -->
 
     <action id="nxqlSearchContentView">
         <filter-id>only_for_manager</filter-id>

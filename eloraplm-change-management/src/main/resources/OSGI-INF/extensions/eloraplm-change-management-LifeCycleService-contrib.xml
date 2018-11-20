@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.change.management.LifeCycleService.contrib">
-
+    <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
+    
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         <types>
           <type name="CmPr">eloraCmPrLifeCycle</type>

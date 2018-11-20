@@ -27,6 +27,7 @@
           <h:commandLink value="" action="#{clipboardActions.selectList}">
             <f:param name="listIdToSelect" value="#{docList.name}" />
             <h:outputText value="#{messages[docList.title]}" />
+            <f:ajax render="@form" />
           </h:commandLink>
           </li>
         </c:forEach>

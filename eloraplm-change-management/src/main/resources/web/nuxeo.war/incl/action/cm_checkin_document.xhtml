@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  >
+
+  <c:choose>
+    <c:when test="#{cmBomModifiedItemsTreeBean.selectedNode == null}">
+      <br/><br/>
+        <p class="errorMessage"><h:outputText value="#{messages['eloraplm.message.error.cm.emptyItemSelection']}" /></p>
+    </c:when>
+    <c:otherwise>
+      <ui:include src="/incl/action/check_in_new.xhtml">
+        <ui:param name="actionBean" value="#{cmBomModifiedItemsTreeBean}" />
+        <ui:param name="document" value="#{cmBomModifiedItemsTreeBean.selectedNode.data.destinationItem}" />
+        <ui:param name="checkinComment" value="#{cmBomModifiedItemsTreeBean.selectedNode.data.comment}" />
+      </ui:include>
+    </c:otherwise>
+  </c:choose>
+  
+</ui:composition>

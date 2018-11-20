@@ -2,7 +2,7 @@
 <component name="com.aritu.eloraplm.relations.RelationService.contrib">
 
   <extension point="graphtypes" target="org.nuxeo.ecm.platform.relations.services.RelationService">
-    <graphtype class="com.aritu.eloraplm.relations.EloraCoreGraphFactory" name="eloraCore"/>
+    <graphtype class="com.aritu.eloraplm.core.relations.EloraCoreGraphFactory" name="eloraCore"/>
   </extension>
   
   <extension point="graphs" target="org.nuxeo.ecm.platform.relations.services.RelationService">

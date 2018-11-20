@@ -2,14 +2,13 @@
   xmlns:h="http://java.sun.com/jsf/html"
   xmlns:c="http://java.sun.com/jstl/core"
   xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
   xmlns:nxl="http://nuxeo.org/nxforms/layout"
   xmlns:nxu="http://nuxeo.org/nxweb/util"
   xmlns:nxd="http://nuxeo.org/nxweb/document"
   xmlns:p="http://primefaces.org/ui"
   >
 
-	<c:if test="#{currentDocument.hasSchema('dublincore')}">
+    <c:if test="#{currentDocument.hasSchema('dublincore')}">
     
     <nxu:set var="wcOrAvStyleClass" value="#{currentDocument.isImmutable() ? 'archivedVersion' : 'workingCopy'}">
     
@@ -21,16 +20,17 @@
                     
                     <!-- Revision -->
                     <p:column>
-                        <h:outputLabel value="#{messages['label.widget.revision']}" for="headerRevision" />
+                        <label for="headerRevision">#{messages['label.widget.revision']}</label>
                     </p:column>
                     <p:column>
-                        <h:outputText id="headerRevision" value="#{eloraDocument.getMajorToDisplay(currentDocument)}" />
+                        <span id="headerRevision">#{eloraDocument.getMajorToDisplay(currentDocument)}</span>
                     </p:column>
                     
                     <!-- State -->
                     <p:column styleClass="textAlignC">
-                        <h:outputText value="#{messages[currentDocument.currentLifeCycleState]}"
-                            styleClass="lifeCycleStateLabel filled" style="background-color: #{lifecycleActions.getLifeCycleStateColor(currentDocument.currentLifeCycleState)}"/>
+                        <span class="lifeCycleStateLabel filled"
+                            style="background-color: #{lifecycleActions.getLifeCycleStateColor(currentDocument.currentLifeCycleState)}"
+                            >#{messages[currentDocument.currentLifeCycleState]}</span>
                     </p:column>
                     <!-- Locked -->
                     <p:column styleClass="textAlignC" style="width: 40px;">
@@ -42,7 +42,7 @@
                     
                     <!-- Creation info -->
                     <p:column>
-                        <h:outputLabel value="#{messages['label.summary.createdBy']}" for="creator" />
+                        <label for="creator">#{messages['label.summary.createdBy']}</label>
                     </p:column>
                     <p:column styleClass="textAlignC">
                         <h:panelGroup styleClass="user creator">
@@ -52,7 +52,7 @@
                         </h:panelGroup>
                     </p:column>
                     <p:column styleClass="textAlignC">
-                        <h:outputLabel value="#{messages['eloraplm.label.header.at']}" for="created" />
+                        <label for="created">#{messages['eloraplm.label.header.at']}</label>
                     </p:column>
                     <p:column>
                         <h:outputText id="created" value="#{currentDocument.dc.created}">
@@ -68,12 +68,13 @@
                         <h:panelGroup>
                             <c:if test="#{fieldOrValue.hasFacet('Commentable')}">
                                 <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
-                                    <c:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" />
-                                    <c:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" />
-                                    <h:panelGroup layout="block" title="#{tooltip}" styleClass="tipsyShow tipsyGravityS" style="white-space: nowrap;">
-                                        <h:graphicImage value="/icons/comments.png" />
-                                        <h:outputText value="#{commentsCount}" />
-                                    </h:panelGroup>
+                                    <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
+                                      <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
+                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
+                                            <h:graphicImage value="/icons/comments.png" />#{commentsCount}
+                                          </div>
+                                      </nxu:set>
+                                    </nxu:set>
                                 </nxu:set>
                             </c:if>
                         </h:panelGroup>
@@ -98,7 +99,7 @@
                 
                     <!-- Version -->
                     <p:column>
-                        <h:outputLabel value="#{messages['label.version']}" for="headerVersion" />
+                        <label for="headerVersion">#{messages['label.version']}</label>
                     </p:column>
                     <p:column>
                         <nxl:widget id="headerVersion" name="version_and_visualized_type" value="#{currentDocument}" mode="view" />
@@ -108,7 +109,7 @@
                     <p:column styleClass="textAlignC">
                         <h:panelGroup>
                             <h:outputText value="#{messages['eloraplm.message.header.checkedOut']}"
-                                styleClass="label label-light"
+                                styleClass="label label-checked-out"
                                 rendered="#{currentDocument.isCheckedOut()}" />
                         </h:panelGroup>
                     </p:column>
@@ -117,7 +118,7 @@
                     
                     <!-- Last Contribution info -->
                     <p:column>
-                        <h:outputLabel value="#{messages['label.dublincore.lastContributor']}" for="lastContributor" />
+                        <label for="lastContributor">#{messages['label.dublincore.lastContributor']}</label>
                     </p:column>
                     <p:column styleClass="textAlignC">
                         <h:panelGroup styleClass="user lastContributor">
@@ -127,7 +128,7 @@
                         </h:panelGroup>
                     </p:column>
                     <p:column styleClass="textAlignC">
-                        <h:outputLabel value="#{messages['eloraplm.label.header.at']}" for="modified" />
+                        <label for="modified">#{messages['eloraplm.label.header.at']}</label>
                     </p:column>
                     <p:column>
                         <h:outputText id="modified" value="#{currentDocument.dc.modified}">
@@ -148,19 +149,18 @@
                     <c:choose>
                       <c:when test="#{currentDocument.hasFacet('BomDocument')}">
                         <p:column>
-                          <!-- <h:outputLabel value="#{messages['eloraplm.label.header.cad']}" /> -->
                         </p:column>
                         <p:column colspan="3"></p:column>
                       </c:when>
                       <c:otherwise>
                         <p:column>
-                          <h:outputLabel value="#{messages['eloraplm.label.header.bom']}" for="related_boms" />
+                          <label for="related_boms">#{messages['eloraplm.label.header.bom']}</label>
                         </p:column>
                         <p:column colspan="3">
                           <nxu:set var="relatedBoms" value="#{eloraRelationActions.getCurrentDocumentRelatedBoms()}" cache="true">
                             <nxl:widget id="related_boms" name="related_boms" mode="view" 
                               value="#{relatedBoms}" />
-                            </nxu:set>
+                          </nxu:set>
                         </p:column>
                       </c:otherwise>
                     </c:choose>
@@ -171,7 +171,7 @@
                         <nxu:set var="createdTime" value="#{not empty currentDocument.lockInfo ? currentDocument.lockInfo.created.time : ''}">
 
                             <p:column>
-                                <h:outputLabel value="#{messages['eloraplm.label.header.lockedBy']}" for="locker" />
+                                <label for="locker">#{messages['eloraplm.label.header.lockedBy']}</label>
                             </p:column>
                             <p:column styleClass="textAlignC">
                                 <h:panelGroup styleClass="user locker">
@@ -181,7 +181,7 @@
                                 </h:panelGroup>
                             </p:column>
                             <p:column styleClass="textAlignC">
-                                <h:outputLabel value="#{messages['eloraplm.label.header.at']}" for="locked" />
+                                <label for="locked">#{messages['eloraplm.label.header.at']}</label>
                             </p:column>
                             <p:column>
                                 <h:outputText id="locked" value="#{createdTime}">

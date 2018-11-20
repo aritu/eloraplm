@@ -8,8 +8,6 @@
     <xs:element name="id" type="xs:string"/>
     <xs:element name="type" type="xs:string"/>
     <xs:element name="subtype" type="xs:string"/>
-    <xs:element name="isSpecial" type="xs:integer" default="0"/>
-    <xs:element name="isIconOnly" type="xs:integer" default="0"/>
     <xs:element name="obsolete" type="xs:integer" default="0"/>
     <xs:element name="ordering" type="xs:integer" default="10000000"/>
 

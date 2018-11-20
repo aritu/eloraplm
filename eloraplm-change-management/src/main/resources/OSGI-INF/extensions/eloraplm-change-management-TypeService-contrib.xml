@@ -1,15 +1,18 @@
 <?xml version="1.0"?>
 
 <component name="com.aritu.eloraplm.change.management.TypeService.contrib">
+  <require>org.nuxeo.ecm.platform.types</require>
+  <require>com.aritu.eloraplm.bom.TypeService.contrib</require>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
-    <schema name="cm_gen" prefix="cmgen" src="schemas/cm_gen.xsd"/>
     <schema name="cm_pr" prefix="cmpr" src="schemas/cm_pr.xsd"/>
     <schema name="cm_ecr" prefix="cmecr" src="schemas/cm_ecr.xsd"/>
     <schema name="cm_eco" prefix="cmeco" src="schemas/cm_eco.xsd"/>
-    <schema name="cm_modified_items" prefix="mod" src="schemas/cm_modified_item_list.xsd"/>
+    <schema name="cm_doc_modified_items" prefix="docmod" src="schemas/cm_doc_modified_item_list.xsd"/>
+    <schema name="cm_bom_modified_items" prefix="bommod" src="schemas/cm_bom_modified_item_list.xsd"/>
     <schema name="cm_doc_impacted_items" prefix="docimp" src="schemas/cm_doc_impacted_item_list.xsd"/>
     <schema name="cm_bom_impacted_items" prefix="bomimp" src="schemas/cm_bom_impacted_item_list.xsd"/>
+    <schema name="eloraCmDoctypeActionsImpact" src="schemas/elora_cm_doctype_actions_impact.xsd"/>
 
     <schema name="var_CmPr" prefix="var_CmPr" src="schemas/var_CmPr.xsd"/>
     <schema name="var_CmPr_Task000Start" prefix="var_CmPr_Task000Start" src="schemas/var_CmPr_Task000Start.xsd"/>
@@ -18,8 +21,6 @@
     <schema name="var_CmPr_Task999StopAccepted" prefix="var_CmPr_Task999StopAccepted" src="schemas/var_CmPr_Task999StopAccepted.xsd"/>
     <schema name="var_CmPr_Task999StopRejected" prefix="var_CmPr_Task999StopRejected" src="schemas/var_CmPr_Task999StopRejected.xsd"/>
     <schema name="var_CmPr_Task999StopOutManaged" prefix="var_CmPr_Task999StopOutManaged" src="schemas/var_CmPr_Task999StopOutManaged.xsd"/>
-
-    
   </extension>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
@@ -29,35 +30,43 @@
 
     <doctype extends="Folder" name="CmPr">
         <schema name="elora_object"/>
-        <schema name="cm_gen"/>
+        <schema name="priority"/>
         <schema name="cm_pr"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
+        <facet name="SuperSpace"/>
         <facet name="CMProcess" />
+        <facet name="LockRequiredToEdit" />
     </doctype>
 
     <doctype extends="Folder" name="CmEcr">
         <schema name="elora_object"/>
-        <schema name="cm_gen"/>
+        <schema name="priority"/>
         <schema name="cm_ecr"/>
-        <schema name="cm_modified_items"/>
+        <schema name="cm_doc_modified_items"/>
+        <schema name="cm_bom_modified_items"/>
         <schema name="cm_doc_impacted_items"/>
         <schema name="cm_bom_impacted_items"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
+        <facet name="SuperSpace"/>
         <facet name="CMProcess" />
+        <facet name="LockRequiredToEdit" />
     </doctype>
 
     <doctype extends="Folder" name="CmEco">
         <schema name="elora_object"/>
-        <schema name="cm_gen"/>
+        <schema name="priority"/>
         <schema name="cm_eco"/>
-        <schema name="cm_modified_items"/>
+        <schema name="cm_doc_modified_items"/>
+        <schema name="cm_bom_modified_items"/>
         <schema name="cm_doc_impacted_items"/>
         <schema name="cm_bom_impacted_items"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
+        <facet name="SuperSpace"/>
         <facet name="CMProcess" />
+        <facet name="LockRequiredToEdit" />
     </doctype>
     
     <doctype extends="Folder" name="StructChangeManagement">
@@ -113,27 +122,6 @@
     </type>
 
    <type id="StructChangeManagement">
- <!-- TODO Komentautakoa kendu, doctypesen definituta dau. -->
-<!--       <label>StructChangeManagement</label> -->
-<!--       <icon>/icons/struct_change_management_16.gif</icon> -->
-<!--       <bigIcon>/icons/struct_change_management_100.png</bigIcon> -->
-<!--       <description>StructChangeManagement.description</description> -->
-<!--       <default-view>view_documents</default-view> -->
-<!--       <layouts mode="any"> -->
-<!--         <layout>heading</layout> -->
-<!--       </layouts> -->
-<!--       <layouts mode="edit"> -->
-<!--         <layout>heading</layout> -->
-<!--         <layout>dublincore</layout> -->
-<!--       </layouts> -->
-<!--       <contentViews category="content"> -->
-<!--         <contentView>document_content</contentView> -->
-<!--       </contentViews> -->
-<!--       <contentViews category="trash_content"> -->
-<!--         <contentView showInExportView="false"> -->
-<!--           document_trash_content -->
-<!--         </contentView> -->
-<!--       </contentViews> -->
       <subtypes>
         <type>FolderChangeManagementPR</type>
         <type>FolderChangeManagementECR</type>
@@ -228,15 +216,18 @@
       <default-view>view_documents</default-view>
       <layouts mode="view">
         <layout>cm_pr</layout>
-        <layout>summary_cm_gen</layout>
+        <layout>summary_priority</layout>
         <layout>partaker</layout>
+        <layout>product_classification</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
+        <layout>elora_object_reference_auto</layout>
         <layout>heading</layout>
         <layout>cm_pr</layout>
-        <layout>cm_gen</layout>
+        <layout>responsible</layout>
+        <layout>priority</layout>
         <layout>partaker</layout>
+        <layout>product_classification</layout>
       </layouts>
       <contentViews category="content">
         <contentView>document_content</contentView>
@@ -262,16 +253,19 @@
       <default-view>view_documents</default-view>
       <layouts mode="view">
         <layout>cm_ecr</layout>
-        <layout>summary_cm_gen</layout>
+        <layout>summary_priority</layout>
         <layout>partaker</layout>
+        <layout>product_classification</layout>
         <layout>cm_modified</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
+        <layout>elora_object_reference_auto</layout>
         <layout>heading</layout>
         <layout>cm_ecr</layout>
-        <layout>cm_gen</layout>
+        <layout>responsible</layout>
+        <layout>priority</layout>
         <layout>partaker</layout>
+        <layout>product_classification</layout>
       </layouts>
       <contentViews category="content">
         <contentView>document_content</contentView>
@@ -297,16 +291,19 @@
       <default-view>view_documents</default-view>
       <layouts mode="view">
         <layout>cm_eco</layout>
-        <layout>summary_cm_gen</layout>
+        <layout>summary_priority</layout>
         <layout>partaker</layout>
+        <layout>product_classification</layout>
         <layout>cm_modified</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
+        <layout>elora_object_reference_auto</layout>
         <layout>heading</layout>
         <layout>cm_eco</layout>
-        <layout>cm_gen</layout>
+        <layout>responsible</layout>
+        <layout>priority</layout>
         <layout>partaker</layout>
+        <layout>product_classification</layout>
       </layouts>
       <contentViews category="content">
         <contentView>document_content</contentView>
@@ -320,6 +317,13 @@
         <type>Folder</type>
         <type>File</type>
         <type>Note</type>
+        <type>Picture</type>
+        <type>Video</type>
+        <type>Audio</type>
+        <type>CadAssembly</type>
+        <type>CadPart</type>
+        <type>CadDrawing</type>
+        <type>CadDesignTable</type>
       </subtypes>
    </type>
     

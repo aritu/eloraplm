@@ -51,6 +51,9 @@ import org.nuxeo.ecm.webapp.edit.lock.LockActions;
 import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 
 /**
@@ -101,10 +104,19 @@ public class EloraLockActionBean implements LockActions {
 
             NuxeoPrincipal userName = (NuxeoPrincipal) documentManager.getPrincipal();
             Lock lock = documentManager.getLockInfo(document.getRef());
-            canLock = lock == null
-                    && (userName.isAdministrator()
-                            || isManagerOnDocument(document.getRef()) || documentManager.hasPermission(
-                            document.getRef(), WRITE_PROPERTIES));
+            try {
+                canLock = lock == null
+                        && (document.hasFacet(
+                                EloraFacetConstants.FACET_ELORA_WORKSPACE)
+                                || EloraDocumentHelper.getIsCurrentStateLockable(
+                                        document))
+                        && (userName.isAdministrator()
+                                || isManagerOnDocument(document.getRef())
+                                || documentManager.hasPermission(
+                                        document.getRef(), WRITE_PROPERTIES));
+            } catch (EloraException e) {
+                canLock = false;
+            }
         }
         return canLock;
     }
@@ -120,7 +132,8 @@ public class EloraLockActionBean implements LockActions {
         return getCanLockDoc(currentDocument);
     }
 
-    @Observer(value = { EventNames.USER_ALL_DOCUMENT_TYPES_SELECTION_CHANGED }, create = false)
+    @Observer(value = {
+            EventNames.USER_ALL_DOCUMENT_TYPES_SELECTION_CHANGED }, create = false)
     @BypassInterceptors
     public void resetEventContext() {
         Context evtCtx = Contexts.getEventContext();
@@ -133,7 +146,8 @@ public class EloraLockActionBean implements LockActions {
 
     @Override
     public Boolean getCanUnlockDoc(DocumentModel document) {
-        EloraVersionLabelService eloraVersionLabelService = Framework.getService(EloraVersionLabelService.class);
+        EloraVersionLabelService eloraVersionLabelService = Framework.getService(
+                EloraVersionLabelService.class);
         boolean canUnlock = false;
         if (document == null) {
             canUnlock = false;
@@ -147,11 +161,20 @@ public class EloraLockActionBean implements LockActions {
             if (lockDetails.isEmpty() || document.isProxy()) {
                 canUnlock = false;
             } else {
-                canUnlock = ((userName.isAdministrator() || documentManager.hasPermission(
-                        document.getRef(), EVERYTHING)) ? true
-                        : (userName.getName().equals(lockDetails.get(LOCKER)) && documentManager.hasPermission(
-                                document.getRef(), WRITE_PROPERTIES)))
-                        && (!document.isCheckedOut() || (document.getVersionLabel().equals(eloraVersionLabelService.getZeroVersion())));
+                canUnlock = userName.isAdministrator()
+                        || userName.isMemberOf("powerusers")
+                        || (((documentManager.hasPermission(document.getRef(),
+                                EVERYTHING))
+                                        ? true
+                                        : (userName.getName().equals(
+                                                lockDetails.get(LOCKER))
+                                                && documentManager.hasPermission(
+                                                        document.getRef(),
+                                                        WRITE_PROPERTIES)))
+                                && (!document.isVersionable()
+                                        || !document.isCheckedOut()
+                                        || (document.getVersionLabel().equals(
+                                                eloraVersionLabelService.getZeroVersion()))));
             }
         }
         return canUnlock;
@@ -240,7 +263,7 @@ public class EloraLockActionBean implements LockActions {
             message = "document.unlock.done";
         } else {
             NuxeoPrincipal userName = (NuxeoPrincipal) documentManager.getPrincipal();
-            if (userName.isAdministrator()
+            if (userName.isAdministrator() || userName.isMemberOf("powerusers")
                     || documentManager.hasPermission(document.getRef(),
                             EVERYTHING)
                     || userName.getName().equals(lockDetails.get(LOCKER))) {
@@ -251,7 +274,8 @@ public class EloraLockActionBean implements LockActions {
                     // we need to grant him this possibility even if it
                     // doesn't have the write permission.
 
-                    new UnrestrictedUnlocker(document.getRef()).runUnrestricted();
+                    new UnrestrictedUnlocker(
+                            document.getRef()).runUnrestricted();
 
                     documentManager.save(); // process invalidations from
                                             // unrestricted session

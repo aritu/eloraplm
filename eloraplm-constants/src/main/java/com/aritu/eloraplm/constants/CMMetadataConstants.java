@@ -29,8 +29,9 @@ public class CMMetadataConstants {
     // TODO::: honi izena aldatu ?????
     public static final String CM_ECO_ECO_TYPE = "cmeco:ecoType";
 
-    // todo:: IZENA ALDATU_ MODIFIED_ITEM_LIST ????
-    public static final String MOD_MODIFIED_ITEM_LIST = "mod:modifiedItemList";
+    public static final String BOM_MODIFIED_ITEM_LIST = "bommod:bomModifiedItemList";
+
+    public static final String DOC_MODIFIED_ITEM_LIST = "docmod:docModifiedItemList";
 
     public static final String BOM_IMPACTED_ITEM_LIST = "bomimp:bomImpactedItemList";
 

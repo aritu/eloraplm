@@ -6,11 +6,11 @@
 
   <xs:include schemaLocation="advanced_search.xsd" />
 
-  <!-- Add elo:reference field -->
+  <!-- elo:reference -->
   <xs:element name="reference" type="xs:string" />
-  
-  <!-- Add ecm:primaryType field -->
+  <!-- ecm:primaryType -->
   <xs:element name="primaryType" type="xs:string" />
-  
+  <!-- dc:lastContributor -->
+  <xs:element name="lastContributor" type="xs:string" />
 
 </xs:schema>

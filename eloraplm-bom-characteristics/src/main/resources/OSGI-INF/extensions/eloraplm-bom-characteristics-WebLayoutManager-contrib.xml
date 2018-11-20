@@ -4,98 +4,168 @@
 
   <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
 
-    <layout name="bom_characteristic">
+    <layout name="bom_characteristic_master">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
         </template>
       </templates>
       <rows>
         <row>
-          <widget>bomCharacOrder</widget>
+          <widget>bomCharacMasterOrder</widget>
         </row>
         <row>
-          <widget>bomCharacTitle</widget>
+          <widget>bomCharacMasterTitle</widget>
         </row>
         <row>
-          <widget>bomCharacDescription</widget>
+          <widget>bomCharacMasterDescription</widget>
         </row>
         <row>
-          <widget>bomCharacTypeRelatedFields</widget>
+          <widget>bomCharacMasterTypeRelatedFields</widget>
         </row>
         <row>
-          <widget>bomCharacDefaultShowInDocument</widget>
+          <widget>bomCharacMasterUnit</widget>
         </row>
         <row>
-          <widget>bomCharacIsRequired</widget>
+          <widget>bomCharacDefaultShowInReport</widget>
         </row>
         <row>
-          <widget>bomCharacIsObsolete</widget>
+          <widget>bomCharacMasterRequired</widget>
+        </row>
+        <row>
+          <widget>bomCharacMasterIncludeInTitle</widget>
+        </row>
+        <row>
+          <widget>bomCharacMasterUnmodifiable</widget>
+        </row>
+         <row>
+          <widget>bomCharacMasterObsolete</widget>
         </row>
       </rows>
     </layout>
     
-    <layout name="bom_part_characteristic_classification">
+    <!--  TODO::: add master to the name  -->
+    <layout name="create_bom_part_characteristic_classification">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
         </template>
       </templates>
       <rows>
         <row>
-          <widget>bomPartCharacClassification</widget>
+          <widget>select_bomPartCharacClassification</widget>
         </row>
       </rows>
     </layout>
     
-    <layout name="bom_product_characteristic_classification">
+    <layout name="view_bom_part_characteristic_classification">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
         </template>
       </templates>
       <rows>
         <row>
-          <widget>bomProductCharacClassification</widget>
+          <widget>view_bomPartCharacMasterClassification</widget>
         </row>
       </rows>
     </layout>
     
-    <layout name="bom_tool_characteristic_classification">
+    <layout name="create_bom_product_characteristic_classification">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
         </template>
       </templates>
       <rows>
         <row>
-          <widget>bomToolCharacClassification</widget>
+          <widget>select_bomProductCharacClassification</widget>
         </row>
       </rows>
     </layout>
     
-    <layout name="bom_packaging_characteristic_classification">
+    <layout name="view_bom_product_characteristic_classification">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
         </template>
       </templates>
       <rows>
         <row>
-          <widget>bomPackagingCharacClassification</widget>
+          <widget>view_bomProductCharacMasterClassification</widget>
         </row>
       </rows>
     </layout>
     
-    <layout name="bom_specification_characteristic_classification">
+    <layout name="create_bom_tool_characteristic_classification">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
         </template>
       </templates>
       <rows>
         <row>
-          <widget>bomSpecificationCharacClassification</widget>
+          <widget>select_bomToolCharacClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="view_bom_tool_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>view_bomToolCharacMasterClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="create_bom_packaging_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>select_bomPackagingCharacClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="view_bom_packaging_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>view_bomPackagingCharacMasterClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="create_bom_specification_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>select_bomSpecificationCharacClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="view_bom_specification_characteristic_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>view_bomSpecificationCharacMasterClassification</widget>
         </row>
       </rows>
     </layout>
     
     <!--  Content view layout -->
-    <layout name="document_bom_part_characteristics_listing_ajax">
+    <layout name="document_bom_part_characteristic_masters_listing_ajax">
       <templates>
         <template mode="any">
           /layouts/layout_listing_ajax_template.xhtml
@@ -129,10 +199,17 @@
         </column>
         <column>
           <properties mode="any">
-            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
-            <property name="columnStyleClass">iconColumn</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:classification</property>
           </properties>
-          <widget>listing_icon_type</widget>
+          <widget>listing_bomCharacMasterClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:order</property>
+          </properties>
+          <widget>listing_bomCharacMasterOrder</widget>
         </column>
         <column>
           <properties mode="any">
@@ -144,9 +221,9 @@
         <column>
           <properties mode="any">
             <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-            <property name="sortPropertyName">bomcharc:classification</property>
+            <property name="sortPropertyName">bomcharcmas:obsolete</property>
           </properties>
-          <widget>listing_bomPartCharacClassification</widget>
+          <widget>listing_bomCharacMasterObsolete</widget>
         </column>
         <column>
           <properties mode="any">
@@ -165,7 +242,7 @@
       </columns>
     </layout>
 
-    <layout name="document_bom_product_characteristics_listing_ajax">
+    <layout name="document_bom_product_characteristic_masters_listing_ajax">
       <templates>
         <template mode="any">
           /layouts/layout_listing_ajax_template.xhtml
@@ -199,10 +276,17 @@
         </column>
         <column>
           <properties mode="any">
-            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
-            <property name="columnStyleClass">iconColumn</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:classification</property>
           </properties>
-          <widget>listing_icon_type</widget>
+          <widget>listing_bomCharacMasterClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:order</property>
+          </properties>
+          <widget>listing_bomCharacMasterOrder</widget>
         </column>
         <column>
           <properties mode="any">
@@ -214,9 +298,9 @@
         <column>
           <properties mode="any">
             <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-            <property name="sortPropertyName">bomcharc:classification</property>
+            <property name="sortPropertyName">bomcharcmas:obsolete</property>
           </properties>
-          <widget>listing_bomProductCharacClassification</widget>
+          <widget>listing_bomCharacMasterObsolete</widget>
         </column>
         <column>
           <properties mode="any">
@@ -235,7 +319,7 @@
       </columns>
     </layout>
     
-    <layout name="document_bom_tool_characteristics_listing_ajax">
+    <layout name="document_bom_tool_characteristic_masters_listing_ajax">
       <templates>
         <template mode="any">
           /layouts/layout_listing_ajax_template.xhtml
@@ -269,10 +353,17 @@
         </column>
         <column>
           <properties mode="any">
-            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
-            <property name="columnStyleClass">iconColumn</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:classification</property>
           </properties>
-          <widget>listing_icon_type</widget>
+          <widget>listing_bomCharacMasterClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:order</property>
+          </properties>
+          <widget>listing_bomCharacMasterOrder</widget>
         </column>
         <column>
           <properties mode="any">
@@ -284,9 +375,9 @@
         <column>
           <properties mode="any">
             <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-            <property name="sortPropertyName">bomcharc:classification</property>
+            <property name="sortPropertyName">bomcharcmas:obsolete</property>
           </properties>
-          <widget>listing_bomToolCharacClassification</widget>
+          <widget>listing_bomCharacMasterObsolete</widget>
         </column>
         <column>
           <properties mode="any">
@@ -305,7 +396,7 @@
       </columns>
     </layout>
     
-    <layout name="document_bom_packaging_characteristics_listing_ajax">
+    <layout name="document_bom_packaging_characteristic_masters_listing_ajax">
       <templates>
         <template mode="any">
           /layouts/layout_listing_ajax_template.xhtml
@@ -339,10 +430,17 @@
         </column>
         <column>
           <properties mode="any">
-            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
-            <property name="columnStyleClass">iconColumn</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:classification</property>
           </properties>
-          <widget>listing_icon_type</widget>
+          <widget>listing_bomCharacMasterClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:order</property>
+          </properties>
+          <widget>listing_bomCharacMasterOrder</widget>
         </column>
         <column>
           <properties mode="any">
@@ -354,9 +452,9 @@
         <column>
           <properties mode="any">
             <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-            <property name="sortPropertyName">bomcharc:classification</property>
+            <property name="sortPropertyName">bomcharcmas:obsolete</property>
           </properties>
-          <widget>listing_bomPackagingCharacClassification</widget>
+          <widget>listing_bomCharacMasterObsolete</widget>
         </column>
         <column>
           <properties mode="any">
@@ -375,7 +473,7 @@
       </columns>
     </layout>
     
-    <layout name="document_bom_specification_characteristics_listing_ajax">
+    <layout name="document_bom_specification_characteristic_masters_listing_ajax">
       <templates>
         <template mode="any">
           /layouts/layout_listing_ajax_template.xhtml
@@ -409,10 +507,17 @@
         </column>
         <column>
           <properties mode="any">
-            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
-            <property name="columnStyleClass">iconColumn</property>
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:classification</property>
           </properties>
-          <widget>listing_icon_type</widget>
+          <widget>listing_bomCharacMasterClassification</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+            <property name="sortPropertyName">bomcharcmas:order</property>
+          </properties>
+          <widget>listing_bomCharacMasterOrder</widget>
         </column>
         <column>
           <properties mode="any">
@@ -424,9 +529,9 @@
         <column>
           <properties mode="any">
             <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-            <property name="sortPropertyName">bomcharc:classification</property>
+            <property name="sortPropertyName">bomcharcmas:obsolete</property>
           </properties>
-          <widget>listing_bomSpecificationCharacClassification</widget>
+          <widget>listing_bomCharacMasterObsolete</widget>
         </column>
         <column>
           <properties mode="any">
@@ -444,7 +549,170 @@
         </column>
       </columns>
     </layout>
-
+    
+    
+    <!-- ######################################## -->
+    <!-- BOM Characteristics                      -->
+    <!-- ######################################## -->
+    
+    <layout name="bom_part_characteristic">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomPartClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_tool_characteristic">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomToolClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_packaging_characteristic">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomPackagingClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_specification_characteristic">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomSpecificationClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+   <layout name="bom_prod_characteristic">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomProdClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    
+    <!-- treetable layouts -   -->
+    <layout name="bom_char_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="classification">
+          <properties mode="any">
+          <property name="columnStyle">width: 50px;white-space: normal;</property>
+            <property name="columnHeading">label.treetable.column.bomcharac.classification</property>
+            <property name="columnTooltip">label.treetable.column.bomcharac.classification.tooltip</property>
+          </properties>
+          <widget>bom_charac_classification</widget>
+        </column>
+        <column name="title">
+          <properties mode="any">
+            <property name="columnStyle">width: 25em;</property>
+            <property name="columnHeading">label.treetable.column.bomcharac.title</property>
+          </properties>
+          <widget>bom_charac_title</widget>
+        </column>
+        <column name="type">
+          <properties mode="any">
+            <property name="columnStyle">width: 9em;</property>
+            <property name="columnStyleClass">alignCenter</property>
+            <property name="columnHeading">label.treetable.column.bomcharac.type</property>
+          </properties>
+          <widget>bom_charac_type</widget>
+        </column>
+        <column name="value">
+          <properties mode="any">
+            <property name="columnStyle">width: 20em;</property>
+            <property name="columnHeading">label.treetable.column.bomcharac.value</property>
+          </properties>
+          <widget>bom_charac_value</widget>
+        </column>
+        <column name="unit">
+          <properties mode="any">
+            <property name="columnStyle">width: 10em;</property>
+            <property name="columnHeading">label.treetable.column.bomcharac.unit</property>
+          </properties>
+          <widget>bom_charac_unit</widget>
+        </column>
+        <column name="showInReport">
+          <properties mode="any">
+            <property name="columnStyle">width: 40px;white-space: normal;</property>
+            <property name="columnHeading">label.treetable.column.bomcharac.showInReport</property>
+            <property name="columnTooltip">label.treetable.column.bomcharac.showInReport.tooltip</property>
+          </properties>
+          <widget>bom_charac_show_in_report</widget>
+        </column>
+        <column name="orderInReport">
+          <properties mode="any">
+            <property name="columnStyle">width: 80px;white-space: normal;</property>
+            <property name="columnHeading">label.treetable.column.bomcharac.orderInReport</property>
+            <property name="columnTooltip">label.treetable.column.bomcharac.orderInReport.tooltip</property>
+          </properties>
+          <widget>bom_charac_order_in_report</widget>
+        </column>
+        <column name="message">
+          <properties mode="any">
+            <property name="columnStyle">width: 15em;</property>
+            <!-- <property name="columnStyle">width: 9em;color: #d4002d;font-weight: bold;</property> --><!-- TODO: TO BE REMOVED -->
+            <!-- <property name="columnHeading">label.treetable.column.bomcharac.errorMsg</property> --><!-- TODO: REMOVE LABEL -->
+          </properties>
+          <widget>bom_charac_message</widget>
+        </column>
+        <!--  TODO: TO BE REMOVED 
+        <column name="obsolete">
+          <properties mode="any">
+            <property name="columnStyle">width: 40px;white-space: normal;</property>
+            <property name="columnHeading">label.treetable.column.bomcharac.obsolete</property>
+            <property name="columnTooltip">label.treetable.column.bomcharac.obsolete.tooltip</property>
+          </properties>
+          <widget>bom_charac_obsolete</widget>
+        </column> -->
+        <column name="options">
+          <properties mode="any">
+            <property name="columnStyle">width: 40px;</property>
+            <property name="columnStyleClass">alignCenter</property>
+          </properties>
+          <widget>bom_charac_options</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="tableTitle">title.treetable.bomcharac.bomCharacteristics</property>
+        <property name="tableStyleClass">ui-treetable-smallFont</property>
+        <property name="factory">#{currentDocument.type eq 'BomPart' ? bomPartCharacteristicsRoot
+            : (currentDocument.type eq 'BomProduct' ? bomProductCharacteristicsRoot
+            : (currentDocument.type eq 'BomPackaging' ? bomPackagingCharacteristicsRoot
+            : (currentDocument.type eq 'BomSpecification' ? bomSpecificationCharacteristicsRoot
+            : (currentDocument.type eq 'BomTool' ? bomToolCharacteristicsRoot : '' ))))}</property>
+      </properties>
+    </layout>
+    
+    
   </extension>
 
 
@@ -452,7 +720,7 @@
 
     <widget name="bomPartCharacAdminActions" type="documentActionsWithForms">
       <properties mode="view">
-        <property name="category">BOM_PART_CHARAC_ADMIN_ACTIONS</property>
+        <property name="category">BOM_PART_CHARAC_MASTER_ADMIN_ACTIONS</property>
         <property name="actionsDisplay">links</property>
         <property name="overallDisplay">horizontal_block</property>
         <property name="maxActionsNumber">5</property>
@@ -463,7 +731,7 @@
     
     <widget name="bomProductCharacAdminActions" type="documentActionsWithForms">
       <properties mode="view">
-        <property name="category">BOM_PRODUCT_CHARAC_ADMIN_ACTIONS</property>
+        <property name="category">BOM_PRODUCT_CHARAC_MASTER_ADMIN_ACTIONS</property>
         <property name="actionsDisplay">links</property>
         <property name="overallDisplay">horizontal_block</property>
         <property name="maxActionsNumber">5</property>
@@ -474,7 +742,7 @@
     
     <widget name="bomToolCharacAdminActions" type="documentActionsWithForms">
       <properties mode="view">
-        <property name="category">BOM_TOOL_CHARAC_ADMIN_ACTIONS</property>
+        <property name="category">BOM_TOOL_CHARAC_MASTER_ADMIN_ACTIONS</property>
         <property name="actionsDisplay">links</property>
         <property name="overallDisplay">horizontal_block</property>
         <property name="maxActionsNumber">5</property>
@@ -485,7 +753,7 @@
     
     <widget name="bomPackagingCharacAdminActions" type="documentActionsWithForms">
       <properties mode="view">
-        <property name="category">BOM_PACKAGING_CHARAC_ADMIN_ACTIONS</property>
+        <property name="category">BOM_PACKAGING_CHARAC_MASTER_ADMIN_ACTIONS</property>
         <property name="actionsDisplay">links</property>
         <property name="overallDisplay">horizontal_block</property>
         <property name="maxActionsNumber">5</property>
@@ -496,7 +764,7 @@
     
     <widget name="bomSpecificationCharacAdminActions" type="documentActionsWithForms">
       <properties mode="view">
-        <property name="category">BOM_SPECIFICATION_CHARAC_ADMIN_ACTIONS</property>
+        <property name="category">BOM_SPECIFICATION_CHARAC_MASTER_ADMIN_ACTIONS</property>
         <property name="actionsDisplay">links</property>
         <property name="overallDisplay">horizontal_block</property>
         <property name="maxActionsNumber">5</property>
@@ -505,20 +773,20 @@
       </properties>
     </widget>
     
-    <widget name="bomCharacOrder" type="int">
+    <widget name="bomCharacMasterOrder" type="int">
       <labels>
         <label mode="any">label.widget.bomcharac.order</label>
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:order</field>
+        <field>bomcharcmas:order</field>
       </fields>
       <properties widgetMode="any">
         <property name="required">true</property>
       </properties>
     </widget>
     
-    <widget name="bomCharacTitle" type="text">
+    <widget name="bomCharacMasterTitle" type="text">
       <labels>
         <label mode="any">label.widget.bomcharac.title</label>
       </labels>
@@ -531,7 +799,7 @@
       </properties>
     </widget>
     
-    <widget name="bomCharacDescription" type="text">
+    <widget name="bomCharacMasterDescription" type="textarea">
       <labels>
         <label mode="any">label.widget.bomcharac.description</label>
       </labels>
@@ -539,6 +807,9 @@
       <fields>
         <field>dc:description</field>
       </fields>
+      <properties widgetMode="edit">
+        <property name="styleClass">dataInputText</property>
+      </properties>
     </widget>
     
     <widget name="bomCharacType" type="selectOneDirectory">
@@ -547,7 +818,7 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:type</field>
+        <field>bomcharcmas:type</field>
       </fields>
       <properties widgetMode="any">
         <property name="directoryName">elora_bom_characteristic_types</property>
@@ -560,7 +831,7 @@
     </widget>
     
     
-    <widget name="bomCharacTypeRelatedFields" type="template">
+    <widget name="bomCharacMasterTypeRelatedFields" type="template">
       <handlingLabels>true</handlingLabels>
       <properties widgetMode="any">
         <property name="template">/widgets/bom_charac_type_related_fields_widget.xhtml</property>
@@ -568,16 +839,16 @@
     </widget>
     
     
-    <widget name="bomCharacNumberMaxLength" type="int">
+    <widget name="bomCharacNumberMaxIntegerPlaces" type="int">
       <labels>
-        <label mode="any">label.widget.bomcharac.number.maxLength</label>
+        <label mode="any">label.widget.bomcharac.number.maxIntegerPlaces</label>
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:numberMaxLength</field>
+        <field>bomcharcmas:numberMaxIntegerPlaces</field>
       </fields>
       <properties widgetMode="edit">
-        <property name="required">#{layoutValue.bomcharc.type == 'number'?'true':'false'}</property>
+        <property name="required">#{layoutValue.bomcharcmas.type == 'number'?'true':'false'}</property>
       </properties>
     </widget>
     
@@ -587,25 +858,26 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:numberMaxDecimalPlaces</field>
+        <field>bomcharcmas:numberMaxDecimalPlaces</field>
       </fields>
       <properties widgetMode="edit">
-        <property name="required">#{layoutValue.bomcharc.type == 'number'?'true':'false'}</property>
+        <property name="required">#{layoutValue.bomcharcmas.type == 'number'?'true':'false'}</property>
       </properties>
     </widget>
     
-    <widget name="bomCharacNumberDefaultValue" type="double">
+    <widget name="bomCharacNumberDefaultValue" type="text">
       <labels>
         <label mode="any">label.widget.bomcharac.defaultValue</label>
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:numberDefaultValue</field>
+        <field>bomcharcmas:numberDefaultValue</field>
       </fields>
+      <properties widgetMode="any">
+        <property name="converter">decimalValueConverter</property>
+      </properties>
       <properties widgetMode="edit">
-        <property name="validator">
-          #{bomCharacteristicValidator.validateNumberDefaultValue}
-        </property>
+        <property name="validator">#{bomCharacteristicMasterValidator.validateMasterNumberDefaultValue}</property>
       </properties>
     </widget>
     
@@ -615,10 +887,10 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:stringMaxLength</field>
+        <field>bomcharcmas:stringMaxLength</field>
       </fields>
       <properties widgetMode="edit">
-        <property name="required">#{layoutValue.bomcharc.type == 'string'?'true':'false'}</property>
+        <property name="required">#{layoutValue.bomcharcmas.type == 'string'?'true':'false'}</property>
       </properties>
     </widget>
     
@@ -628,12 +900,10 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:stringDefaultValue</field>
+        <field>bomcharcmas:stringDefaultValue</field>
       </fields>
       <properties widgetMode="edit">
-        <property name="validator">
-          #{bomCharacteristicValidator.validateStringDefaultValue}
-        </property>
+        <property name="validator">#{bomCharacteristicMasterValidator.validateMasterStringDefaultValue}</property>
       </properties>
     </widget>
     
@@ -643,8 +913,14 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:dateDefaultValue</field>
+        <field>bomcharcmas:dateDefaultValue</field>
       </fields>
+      <properties widgetMode="view">
+        <property name="pattern">#{nxu:basicDateFormatter()}</property>
+      </properties>
+      <properties widgetMode="edit">
+        <property name="format">#{nxu:basicDateFormatter()}</property>
+      </properties>
     </widget>
     
     
@@ -654,13 +930,12 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:booleanDefaultValue</field>
+        <field>bomcharcmas:booleanDefaultValue</field>
       </fields>
       <properties widgetMode="any">
         <property name="template">/widgets/boolean_true_false_widget_template.xhtml</property>
       </properties>
     </widget>
-    
     
     
     <widget name="bomCharacListDefaultValue" type="text">
@@ -669,12 +944,10 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:listDefaultValue</field>
+        <field>bomcharcmas:listDefaultValue</field>
       </fields>
       <properties widgetMode="edit">
-        <property name="validator">
-          #{bomCharacteristicValidator.validateListDefaultValue}
-        </property>
+        <property name="validator">#{bomCharacteristicMasterValidator.validateMasterListDefaultValue}</property>
       </properties>
     </widget>
     
@@ -684,13 +957,13 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:listContent</field>
+        <field>bomcharcmas:listContent</field>
       </fields>
       <properties widgetMode="any">
           <property name="display">table</property>
       </properties>
       <properties widgetMode="edit">
-        <property name="required">#{layoutValue.bomcharc.type == 'list'?'true':'false'}</property>
+        <property name="required">#{layoutValue.bomcharcmas.type == 'list'?'true':'false'}</property>
       </properties>
       <subWidgets>
         <widget name="bomCharacListValue" type="text"> 
@@ -702,7 +975,7 @@
             <field>listValue</field>
           </fields>
           <properties widgetMode="edit">
-            <property name="required">#{layoutValue.bomcharc.type == 'list'?'true':'false'}</property>
+            <property name="required">#{layoutValue.bomcharcmas.type == 'list'?'true':'false'}</property>
           </properties>
         </widget>
         <widget name="bomCharacListOrder" type="int">
@@ -714,43 +987,79 @@
             <field>listOrder</field>
           </fields>
           <properties widgetMode="edit">
-            <property name="required">#{layoutValue.bomcharc.type == 'list'?'true':'false'}</property>
+            <property name="required">#{layoutValue.bomcharcmas.type == 'list'?'true':'false'}</property>
           </properties>
         </widget>
       </subWidgets>
     </widget>
     
-    <widget name="bomCharacDefaultShowInDocument" type="checkbox">
+    <widget name="bomCharacMasterUnit" type="suggestOneDirectory">
       <labels>
-        <label mode="any">label.widget.bomcharac.defaultShowInDocument</label>
+        <label mode="any">label.widget.bomcharac.unit</label>
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:defaultShowInDocument</field>
+        <field>bomcharcmas:unit</field>
       </fields>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_units_of_measure</property>
+        <property name="required">false</property>
+      </properties>
     </widget>
     
-    <widget name="bomCharacIsRequired" type="checkbox">
+    <widget name="bomCharacDefaultShowInReport" type="checkbox">
       <labels>
-        <label mode="any">label.widget.bomcharac.isRequired</label>
+        <label mode="any">label.widget.bomcharac.defaultShowInReport</label>
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:isRequired</field>
+        <field>bomcharcmas:showInReport</field>
       </fields>
     </widget>
     
-    <widget name="bomCharacIsObsolete" type="checkbox">
+    <widget name="bomCharacMasterRequired" type="checkbox">
       <labels>
-        <label mode="any">label.widget.bomcharac.isObsolete</label>
+        <label mode="any">label.widget.bomcharac.required</label>
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomcharc:isObsolete</field>
+        <field>bomcharcmas:required</field>
       </fields>
     </widget>
     
-    <widget name="bomPartCharacClassification" type="bom_part_classification_select_widget">
+    <widget name="bomCharacMasterObsolete" type="checkbox">
+      <labels>
+        <label mode="any">label.widget.bomcharac.obsolete</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharcmas:obsolete</field>
+      </fields>
+    </widget>
+    
+    <widget name="bomCharacMasterIncludeInTitle" type="checkbox">
+      <labels>
+        <label mode="any">label.widget.bomcharac.includeInTitle</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharcmas:includeInTitle</field>
+      </fields>
+    </widget>
+    
+    <widget name="bomCharacMasterUnmodifiable" type="checkbox">
+      <labels>
+        <label mode="any">label.widget.bomcharac.unmodifiable</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomcharcmas:unmodifiable</field>
+      </fields>
+    </widget>
+    
+    
+    
+    <widget name="select_bomPartCharacClassification" type="bom_part_classification_select_widget">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
@@ -759,23 +1068,42 @@
         <mode value="edit">view</mode>
       </widgetModes>
       <fields>
-        <field>bomcharc:classification</field>
+        <field>bomcharcmas:classification</field>
       </fields>
     </widget>
-    
-    <widget name="listing_bomPartCharacClassification" type="bom_part_classification_select_widget">
+
+    <widget name="view_bomPartCharacMasterClassification" type="suggestOneDirectory">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
-      <fields>
-        <field>data.bomcharc.classification</field>
-      </fields>
       <widgetModes>
         <mode value="any">view</mode>
       </widgetModes>
+      <fields>
+        <field>bomcharcmas:classification</field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomPartClassHierarchical</property>
+      </properties>
     </widget>
     
-    <widget name="bomProductCharacClassification" type="bom_product_classification_select_widget">
+    <widget name="view_bomPartCharacClassification" type="suggestOneDirectory">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+      <fields>
+        <field></field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomPartClassHierarchical</property>
+      </properties>
+    </widget>
+    
+    
+    <widget name="select_bomProductCharacClassification" type="bom_product_classification_select_widget">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
@@ -784,23 +1112,42 @@
         <mode value="edit">view</mode>
       </widgetModes>
       <fields>
-        <field>bomcharc:classification</field>
+        <field>bomcharcmas:classification</field>
       </fields>
     </widget>
     
-    <widget name="listing_bomProductCharacClassification" type="bom_product_classification_select_widget">
+    <widget name="view_bomProductCharacMasterClassification" type="suggestOneDirectory">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
-      <fields>
-        <field>data.bomcharc.classification</field>
-      </fields>
       <widgetModes>
         <mode value="any">view</mode>
       </widgetModes>
+      <fields>
+        <field>bomcharcmas:classification</field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomProductClassHierarchical</property>
+      </properties>
     </widget>
     
-    <widget name="bomToolCharacClassification" type="bom_tool_classification_select_widget">
+    <widget name="view_bomProductCharacClassification" type="suggestOneDirectory">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+      <fields>
+        <field></field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomProductClassHierarchical</property>
+      </properties>
+    </widget>
+    
+    
+    <widget name="select_bomToolCharacClassification" type="bom_tool_classification_select_widget">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
@@ -809,23 +1156,42 @@
         <mode value="edit">view</mode>
       </widgetModes>
       <fields>
-        <field>bomcharc:classification</field>
+        <field>bomcharcmas:classification</field>
       </fields>
     </widget>
     
-    <widget name="listing_bomToolCharacClassification" type="bom_tool_classification_select_widget">
+    <widget name="view_bomToolCharacMasterClassification" type="suggestOneDirectory">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
-      <fields>
-        <field>data.bomcharc.classification</field>
-      </fields>
       <widgetModes>
         <mode value="any">view</mode>
       </widgetModes>
+      <fields>
+        <field>bomcharcmas:classification</field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomToolClassHierarchical</property>
+      </properties>
     </widget>
     
-    <widget name="bomPackagingCharacClassification" type="bom_packaging_classification_select_widget">
+    <widget name="view_bomToolCharacClassification" type="suggestOneDirectory">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+      <fields>
+        <field></field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomToolClassHierarchical</property>
+      </properties>
+    </widget>
+    
+    
+    <widget name="select_bomPackagingCharacClassification" type="bom_packaging_classification_select_widget">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
@@ -834,23 +1200,42 @@
         <mode value="edit">view</mode>
       </widgetModes>
       <fields>
-        <field>bomcharc:classification</field>
+        <field>bomcharcmas:classification</field>
       </fields>
     </widget>
     
-    <widget name="listing_bomPackagingCharacClassification" type="bom_packaging_classification_select_widget">
+    <widget name="view_bomPackagingCharacMasterClassification" type="suggestOneDirectory">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
-      <fields>
-        <field>data.bomcharc.classification</field>
-      </fields>
       <widgetModes>
         <mode value="any">view</mode>
       </widgetModes>
+      <fields>
+        <field>bomcharcmas:classification</field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomPackagingClassHierarchical</property>
+      </properties>
     </widget>
     
-    <widget name="bomSpecificationCharacClassification" type="bom_specification_classification_select_widget">
+    <widget name="view_bomPackagingCharacClassification" type="suggestOneDirectory">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+      <fields>
+        <field></field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomPackagingClassHierarchical</property>
+      </properties>
+    </widget>
+    
+    
+    <widget name="select_bomSpecificationCharacClassification" type="bom_specification_classification_select_widget">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
@@ -859,21 +1244,334 @@
         <mode value="edit">view</mode>
       </widgetModes>
       <fields>
-        <field>bomcharc:classification</field>
+        <field>bomcharcmas:classification</field>
       </fields>
     </widget>
     
-    <widget name="listing_bomSpecificationCharacClassification" type="bom_specification_classification_select_widget">
+    <widget name="view_bomSpecificationCharacMasterClassification" type="suggestOneDirectory">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+      <fields>
+        <field>bomcharcmas:classification</field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomSpecificationClassHierarchical</property>
+      </properties>
+    </widget>
+    
+    <widget name="view_bomSpecificationCharacClassification" type="suggestOneDirectory">
+      <labels>
+        <label mode="any">label.widget.bomcharac.classification</label>
+      </labels>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+      <fields>
+        <field></field>
+      </fields>
+      <properties mode="any">
+        <property name="directoryName">elora_bomSpecificationClassHierarchical</property>
+      </properties>
+    </widget>
+    
+    
+    <widget name="listing_bomCharacMasterClassification" type="template">
       <labels>
         <label mode="any">label.widget.bomcharac.classification</label>
       </labels>
       <fields>
-        <field>data.bomcharc.classification</field>
+        <field>data.type</field>
+        <field>data.bomcharcmas.classification</field>
       </fields>
       <widgetModes>
         <mode value="any">view</mode>
       </widgetModes>
+      <properties mode="any">
+         <property name="template">/widgets/bom_charac_master_classification_widget.xhtml</property>
+      </properties>
     </widget>
+    
+    <widget name="listing_bomCharacMasterOrder" type="text">
+      <labels>
+        <label mode="any">label.widget.bomcharac.order</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>data.bomcharcmas.order</field>
+      </fields>
+    </widget>
+    
+    <!-- <widget name="listing_bomCharacMasterObsolete" type="text">
+      <labels>
+        <label mode="any">label.widget.bomcharac.obsolete</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>data.bomcharcmas.obsolete</field>
+      </fields>
+    </widget> -->
+    
+    <widget name="listing_bomCharacMasterObsolete" type="template">
+      <labels>
+        <label mode="any">label.widget.bomcharac.obsolete</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>data.bomcharcmas.obsolete</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="template">/widgets/boolean_radio_widget_template.xhtml</property>
+      </properties>
+    </widget>
+    
+    
+    
+    
+    <!-- ######################################## -->
+    <!-- BOM Characteristics                      -->
+    <!-- ######################################## -->
+    
+    <!-- treetable widgets -   -->
+    <widget name="bom_char_tt" type="treetable">
+        <labels>
+            <label mode="any"></label>
+        </labels>
+        <fields>
+            <field>data</field>
+        </fields>
+        <widgetModes>
+            <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}
+            </mode>
+        </widgetModes>
+        <properties widgetMode="any">
+            <property name="treetableLayout">bom_char_tt</property>
+        </properties>
+    </widget>
+    
+    <widget name="bom_charac_classification" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>classificationLabel</field>
+      </fields>
+      <properties mode="any">
+        <property name="template">/widgets/bom_charac_classification_widget.xhtml</property>
+      </properties>
+    </widget>
+    
+    <widget name="bom_charac_title" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomCharacteristic.title</field>
+        <field>bomCharacteristic.required</field>
+        <field>bomCharacteristic.description</field>
+      </fields>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">/widgets/bom_charac_title_widget.xhtml</property>
+      </properties>
+    </widget>
+    
+    <widget name="bom_charac_type" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomCharacteristic.type</field>
+        <field>bomCharacteristicTypeConstraints</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_bom_characteristic_types</property>
+        <property name="localize">true</property>
+        <property name="template">/widgets/bom_charac_type_widget.xhtml</property>
+      </properties>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+    </widget>
+    
+    <widget name="bom_charac_value" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <fields>
+        <field>bomCharacteristic.type</field>
+        <field>bomCharacteristic.numberValue</field>
+        <field>bomCharacteristic.numberMaxIntegerPlaces</field>
+        <field>bomCharacteristic.numberMaxDecimalPlaces</field>
+        <field>bomCharacteristic.stringValue</field>
+        <field>bomCharacteristic.stringMaxLength</field>
+        <field>bomCharacteristic.dateValue</field>
+        <field>bomCharacteristic.booleanValue</field>
+        <field>bomCharacteristic.listValue</field>
+        <field>bomCharacteristic.listContent</field>
+        <field>bomCharacteristic.unmodifiable</field>
+        <field>bomCharacteristic.required</field>
+      </fields>
+      <translated>true</translated>
+      <properties mode="any">
+        <property name="template">/widgets/bom_charac_value_widget.xhtml</property>
+      </properties>
+    </widget>
+    
+    <widget name="bom_charac_number_value" type="text">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field></field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="converter">decimalValueConverter</property>
+      </properties>
+      <properties widgetMode="edit">
+        <property name="validator">decimalValueValidator</property>
+      </properties>
+    </widget>
+    
+    <!-- TODO::: HAU EZIN BADA FUNTZIONARAZI, KENDU -->
+    <!-- <widget name="bom_charac_number_value" type="elora_decimal">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field></field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="converter">decimalValueConverter</property>
+        <property name="maxIntegerPlaces">3</property>
+        <property name="maxDecimalPlaces">3</property>
+      </properties>
+    </widget> -->
+    
+    <widget name="bom_charac_string_value" type="text">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field></field>
+      </fields>
+      <properties widgetMode="edit">
+        <property name="validator">#{bomCharacteristicValidator.validateStringValue}</property>
+      </properties>
+    </widget>
+
+    <widget name="bom_charac_date_value" type="datetime">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field></field>
+      </fields>
+      <properties widgetMode="view">
+        <property name="pattern">#{nxu:basicDateFormatter()}</property>
+      </properties>
+      <properties widgetMode="edit">
+        <property name="format">#{nxu:basicDateFormatter()}</property>
+      </properties>
+      <controls mode="edit">
+          <!-- enable ajax submit on change/click/select (it does not work ???) -->
+          <control name="supportInsideInputWidgetEffects">true</control>
+        </controls>
+    </widget>
+
+     <widget name="bom_charac_unit" type="suggestOneDirectory">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomCharacteristic.unit</field>
+      </fields>
+      <widgetModes>
+        <mode value="any">view</mode>
+      </widgetModes>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_units_of_measure</property>
+      </properties>
+    </widget>
+
+    <widget name="bom_charac_show_in_report" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomCharacteristic.showInReport</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="template">/widgets/bom_charac_show_in_report_widget.xhtml</property>
+      </properties>
+    </widget>
+    
+    <widget name="bom_charac_order_in_report" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomCharacteristic.orderInReport</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="template">/widgets/bom_charac_order_in_report_widget.xhtml</property>
+      </properties>
+    </widget>
+    
+    <widget name="bom_charac_message" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>bomCharacteristic.messageType</field>
+        <field>bomCharacteristic.message</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="template">/widgets/bom_charac_message_widget.xhtml</property>
+      </properties>
+    </widget>
+    
+    <!-- TODO: TO BE REMOVED
+    <widget name="bom_charac_obsolete" type="checkbox">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>obsolete</field>
+      </fields>
+    </widget> -->
+
+    
+    <widget name="bom_charac_options" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+       <fields>
+        <field>bomCharacteristic.required</field>
+      </fields>
+      <properties mode="any">
+        <property name="template">/widgets/bom_charac_options_widget.xhtml</property>
+      </properties>
+    </widget>
+    <!-- end of treetable widgets -->
     
   </extension>
 
@@ -1099,6 +1797,8 @@
       <handler-class>org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler</handler-class>
       <property name="template">/widgets/3_level_select_widget.xhtml</property>
     </widgetType>
+    
+    
   </extension>
 
 </component>  

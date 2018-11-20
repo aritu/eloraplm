@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="com.aritu.eloraplm.codecreation.WebLayoutManager.contrib">
+
+    <require>com.aritu.eloraplm.doctypes.WebLayoutManager.contrib</require>
+    <require>com.aritu.eloraplm.webapp.base.WebLayoutManager.contrib</require>
+
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+    
+        <!-- vocabulary layouts -->
+        
+        <layout name="elora_code_masks">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_code_masks_id</widget>
+            </row>
+            <row>
+              <widget>elora_code_masks_prefix</widget>
+            </row>
+            <row>
+              <widget>elora_code_masks_suffix</widget>
+            </row>
+            <row>
+              <widget>elora_code_masks_digits</widget>
+            </row>
+            <row>
+              <widget>elora_code_masks_minValue</widget>
+            </row>
+            <row>
+              <widget>elora_code_masks_maxValue</widget>
+            </row>
+            <row>
+              <widget>elora_code_masks_sequenceKey</widget>
+            </row>
+            <row>
+              <widget>elora_code_masks_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_code_masks_ordering</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <!-- end of vocabulary layouts -->
+        
+        <layout name="elora_object_reference_auto">
+          <templates>
+            <template mode="any">/layouts/layout_default_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>reference_auto</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        
+    </extension>
+    
+    
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+        
+        <!-- vocabulary widgets -->
+        
+            <!-- elora_code_masks widgets -->
+            
+            <widget name="elora_code_masks_id" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.id</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:id</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_masks_prefix" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeMasks.prefix</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:prefix</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">false</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_masks_suffix" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeMasks.suffix</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:suffix</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">false</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_masks_digits" type="int">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeMasks.digits</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:digits</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_masks_minValue" type="int">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeMasks.minValue</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:minValue</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_masks_maxValue" type="int">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeMasks.maxValue</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:maxValue</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_masks_sequenceKey" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeMasks.sequenceKey</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:sequenceKey</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_masks_obsolete" type="template">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:obsolete</field>
+              </fields>
+              <properties mode="any">
+                <property name="template">
+                  /widgets/integer_yes_no_widget_template.xhtml
+                </property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_masks_ordering" type="int">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.ordering</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeMasks:ordering</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="size">10</property>
+              </properties>
+            </widget>
+            
+            <!-- end of elora_code_masks widgets -->
+
+        <!-- end of vocabulary widgets -->
+        
+        <!-- TODO Aldatu reference widget guztiak batera joateko: template bat konfigurazio desberdinekin, edo holako zeoze -->
+        <widget name="reference_required" type="template">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>elo:reference</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="converter">#{layout.mode == 'create' ? 'codeCreationConverter' : ''}</property>
+          </properties>
+          <properties widgetMode="any">
+            <property name="required">true</property>
+            <property name="template">/widgets/reference_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="reference_auto" type="template">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>elo:reference</field>
+          </fields>
+          <widgetModes>
+            <mode value="create">edit</mode>
+            <mode value="edit">view</mode>
+          </widgetModes>
+          <properties widgetMode="edit">
+            <property name="converter">#{layout.mode == 'create' ? 'codeCreationConverter' : ''}</property>
+            <property name="isHidden">#{layout.mode == 'create' ? true : false}</property>
+          </properties>
+          <properties widgetMode="any">
+            <property name="template">/widgets/reference_widget_template.xhtml</property>
+          </properties>
+        </widget>
+    
+    </extension>
+    
+</component>

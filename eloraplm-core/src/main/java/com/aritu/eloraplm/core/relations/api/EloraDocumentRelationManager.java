@@ -28,41 +28,129 @@ import org.nuxeo.ecm.platform.relations.api.exceptions.RelationAlreadyExistsExce
 public interface EloraDocumentRelationManager extends DocumentRelationManager {
 
     /**
-     * Add link between two document
+     * Add link between two documents (basic, only with quantity)
      *
      * @param from the document to link from
      * @param to the document to link to
      * @param predicate is the type of link
      * @param comment of the relation
      * @param quantity is the amount of objects
-     * @param isObjectWc informs if relation object is a wc when version is
-     *            archived
+     * @throws RelationAlreadyExistsException
+     */
+    void addRelation(CoreSession session, DocumentModel from, DocumentModel to,
+            String predicate, String comment, String quantity);
+
+    /**
+     * Add link between two documents (basic, only with quantity)
+     *
+     * @param from the document to link from
+     * @param to the node to link to
+     * @param predicate is the type of link
+     * @param comment of the relation
+     * @param quantity is the amount of objects
+     * @throws RelationAlreadyExistsException
+     */
+    void addRelation(CoreSession session, DocumentModel from, Node to,
+            String predicate, String comment, String quantity);
+
+    /**
+     * Add link between two documents with quantity and ordering
+     *
+     * @param from the document to link from
+     * @param to the document to link to
+     * @param predicate is the type of link
+     * @param comment of the relation
+     * @param quantity is the amount of objects
      * @param ordering
      * @throws RelationAlreadyExistsException
      */
     void addRelation(CoreSession session, DocumentModel from, DocumentModel to,
-            String predicate, String comment, int quantity, boolean isObjectWc,
-            int ordering);
+            String predicate, String comment, String quantity,
+            Integer ordering);
 
     /**
-     * Add link between two document
+     * Add link between two document with quantity and ordering
      *
      * @param from the document to link from
      * @param to the node to link to
      * @param predicate is the type of link
      * @param comment of the relation
      * @param quantity is the amount of objects
-     * @param isObjectWc informs if relation object is a wc when version is
-     *            archived
      * @param ordering
      * @throws RelationAlreadyExistsException
      */
     void addRelation(CoreSession session, DocumentModel from, Node to,
-            String predicate, String comment, int quantity, boolean isObjectWc,
-            int ordering);
+            String predicate, String comment, String quantity,
+            Integer ordering);
 
     /**
-     * Add link between two document
+     * Add link between two documents (for ITEM - CAD relations)
+     *
+     * @param from the document to link from
+     * @param to the document to link to
+     * @param predicate is the type of link
+     * @param comment of the relation
+     * @param quantity is the amount of objects
+     * @param directorOrdering
+     * @param viewerOrdering
+     * @throws RelationAlreadyExistsException
+     */
+    void addRelation(CoreSession session, DocumentModel from, DocumentModel to,
+            String predicate, String comment, String quantity,
+            Integer directorOrdering, Integer viewerOrdering);
+
+    /**
+     * Add link between two documents (for ITEM - CAD relations)
+     *
+     * @param from the document to link from
+     * @param to the node to link to
+     * @param predicate is the type of link
+     * @param comment of the relation
+     * @param quantity is the amount of objects
+     * @param directorOrdering
+     * @param viewerOrdering
+     * @throws RelationAlreadyExistsException
+     */
+    void addRelation(CoreSession session, DocumentModel from, Node to,
+            String predicate, String comment, String quantity,
+            Integer directorOrdering, Integer viewerOrdering);
+
+    /**
+     * Add link between two documents with all the properties
+     *
+     * @param from the document to link from
+     * @param to the document to link to
+     * @param predicate is the type of link
+     * @param comment of the relation
+     * @param quantity is the amount of objects
+     * @param ordering
+     * @param directorOrdering
+     * @param viewerOrdering
+     * @throws RelationAlreadyExistsException
+     */
+    void addRelation(CoreSession session, DocumentModel from, DocumentModel to,
+            String predicate, String comment, String quantity, Integer ordering,
+            Integer directorOrdering, Integer viewerOrdering);
+
+    /**
+     * Add link between two documents with all the properties
+     *
+     * @param from the document to link from
+     * @param to the node to link to
+     * @param predicate is the type of link
+     * @param comment of the relation
+     * @param quantity is the amount of objects
+     * @param ordering
+     * @param directorOrdering
+     * @param viewerOrdering
+     * @throws RelationAlreadyExistsException
+     */
+    void addRelation(CoreSession session, DocumentModel from, Node to,
+            String predicate, String comment, String quantity, Integer ordering,
+            Integer directorOrdering, Integer viewerOrdering);
+
+    /**
+     * Add link between two documents (all parameters and properties)
      *
      * @param from the document to link from
      * @param to the node to link to
@@ -74,18 +162,18 @@ public interface EloraDocumentRelationManager extends DocumentRelationManager {
      *            RelationEvents.AFTER_RELATION_CREATION
      * @param comment of the relation
      * @param quantity is the amount of objects
-     * @param isObjectWc informs if relation object is a wc when version is
-     *            archived
      * @param ordering
+     * @param directorOrdering
+     * @param viewerOrdering
      * @throws RelationAlreadyExistsException
      */
     void addRelation(CoreSession session, DocumentModel from, Node to,
             String predicate, boolean inverse,
-            boolean includeStatementsInEvents, String comment, int quantity,
-            boolean isObjectWc, int ordering);
+            boolean includeStatementsInEvents, String comment, String quantity,
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering);
 
     /**
-     * Add link between bom document and cad document using directorOrdering
+     * Add link between two documents (all parameters and properties)
      *
      * @param from the document to link from
      * @param to the document to link to
@@ -97,38 +185,75 @@ public interface EloraDocumentRelationManager extends DocumentRelationManager {
      *            RelationEvents.AFTER_RELATION_CREATION
      * @param comment of the relation
      * @param quantity is the amount of objects
-     * @param isObjectWc informs if relation object is a wc when version is
-     *            archived
      * @param ordering
+     * @param directorOrdering
+     * @param viewerOrdering
      * @throws RelationAlreadyExistsException
      */
 
     public void addRelation(CoreSession session, DocumentModel from,
             DocumentModel to, String predicate, boolean inverse,
-            boolean includeStatementsInEvents, String comment, int quantity,
-            boolean isObjectWc, int ordering, int directorOrdering);
+            boolean includeStatementsInEvents, String comment, String quantity,
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering);
 
     /**
-     * Add link between bom document and cad document using directorOrdering
+     * Update relation's object
      *
      * @param from the document to link from
-     * @param to the node to link to
+     * @param to the document to link to
      * @param predicate is the type of link
-     * @param inverse if to is related to from ( the event will still be
-     *            generated with from document )
-     * @param includeStatementsInEvents will add the statement to the events
-     *            RelationEvents.BEFORE_RELATION_CREATION and
-     *            RelationEvents.AFTER_RELATION_CREATION
-     * @param comment of the relation
-     * @param quantity is the amount of objects
-     * @param isObjectWc informs if relation object is a wc when version is
-     *            archived
-     * @param ordering
-     * @throws RelationAlreadyExistsException
+     * @param newTo the updated document to link to
      */
-    void addRelation(CoreSession session, DocumentModel from, Node to,
-            String predicate, boolean inverse,
-            boolean includeStatementsInEvents, String comment, int quantity,
-            boolean isObjectWc, int ordering, int directorOrdering);
+    void updateRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to, DocumentModel newTo);
+
+    /**
+     * Update relation's object and properties
+     *
+     * @param from the document to link from
+     * @param predicate is the type of link
+     * @param to the document to link to
+     * @param newTo the updated document to link to
+     * @param quantity
+     * @param ordering
+     * @param directorOrdering
+     * @param viewerOrdering
+     */
+    void updateRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to, DocumentModel newTo,
+            String quantity, Integer ordering, Integer directorOrdering,
+            Integer viewerOrdering);
+
+    /**
+     * Update relation, base method
+     *
+     * @param from the document to link from
+     * @param predicate is the type of link
+     * @param to the document to link to
+     * @param newFrom the updated document to link from
+     * @param newPredicate is the updated type of link
+     * @param newTo the updated document to link to
+     * @param quantity
+     * @param ordering
+     * @param directorOrdering
+     * @param viewerOrdering
+     * @param checkIfNewRelationExists
+     */
+    void updateRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to, DocumentModel newFrom,
+            String newPredicate, DocumentModel newTo, String quantity,
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            boolean checkIfNewRelationExists);
+
+    /**
+     * Mark relation to remove later, updating from, predicate and to fields
+     *
+     * @param session
+     * @param from
+     * @param predicate
+     * @param to
+     */
+    void softDeleteRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to);
 
 }

@@ -12,5 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-constants"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-config"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-bom"/>
 	<classpathentry kind="output" path="bin/main"/>
 </classpath>

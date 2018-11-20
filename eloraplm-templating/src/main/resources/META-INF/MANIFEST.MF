@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-templating
+Bundle-Name: eloraplm-templating
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Aritu S Coop
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-templating-TemplateProce
+ ssorComponent-contrib.xml,OSGI-INF/extensions/eloraplm-templating-Typ
+ eService-contrib.xml,OSGI-INF/extensions/eloraplm-templating-ContentT
+ emplateService-contrib.xml,OSGI-INF/extensions/eloraplm-templating-Ac
+ tionService-contrib.xml
+

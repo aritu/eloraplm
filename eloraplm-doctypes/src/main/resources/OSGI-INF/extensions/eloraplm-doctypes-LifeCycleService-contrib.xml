@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.doctypes.LifeCycleService.contrib">
+    <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
+    <require>org.nuxeo.ecm.platform.picture.LifeCycleManagerExtensions</require>
 
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         <types>
@@ -29,6 +31,11 @@
           <type name="Audio">eloraDefaultLifeCycle</type>
           <type name="Picture">eloraDefaultLifeCycle</type>
           <type name="Video">eloraDefaultLifeCycle</type>
+          
+          <type name="Workspace">eloraWsLifeCycle</type>
+          <type name="Project">eloraWsLifeCycle</type>
+          
+           <type name="AdminRoot">default</type>
           
         </types>
     </extension>

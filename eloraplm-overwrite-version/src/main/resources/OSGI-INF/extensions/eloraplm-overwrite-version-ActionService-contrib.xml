@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.overwrite.version.ActionService.contrib">
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+  
+    <action id="overwriteVersionAction" order="10" label="eloraplm.command.overwrite.version" type="fancybox" icon="/icons/action_overwrite_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter-id>isEditable</filter-id>
+      <filter-id>isVersionable</filter-id>
+      <filter-id>isCadBomOrBasicDocument</filter-id>
+      <filter-id>isNotZeroVersion</filter-id>
+      <properties>
+        <property name="include">/incl/action/overwrite_version.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
+  </extension>
+  
+</component>

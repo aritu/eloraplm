@@ -1,12 +1,13 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: eloraplm-core
+Bundle-SymbolicName: com.aritu.eloraplm.core
 Bundle-Name: eloraplm-core
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-core-ResourcePublisher-c
- ontrib.xml
+ ontrib.xml,OSGI-INF/extensions/eloraplm-core-EventServiceComponent-co
+ ntrib.xml
 

@@ -30,7 +30,7 @@ import org.nuxeo.ecm.platform.actions.ejb.ActionManager;
 import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
+import com.aritu.eloraplm.config.util.BomListsConfigHelper;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
 import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -61,6 +61,9 @@ public class BomListTabsInitializer implements Serializable {
 
     @Observer(EventNames.USER_SESSION_STARTED)
     public void loadBomListTabs() {
+        // TODO Lortzen bada ebenturen batekin edo botoi batekin eguneratzea
+        // BomListak, hobeto BomListsConfig sortu eta hor jartzea konfigurazioa
+        // estatikoki (klase bat sortuta hobeto)
         // TODO Saioa amaitu/hasi arte ez dira bom listen aldaketak kontutan
         // hartuko. Ebenturen batekin eguneratu beharko zen...
         // Gutxi gora-behera horrela deituko zaio:
@@ -80,7 +83,8 @@ public class BomListTabsInitializer implements Serializable {
         String bomCompositionListTabPrefix = "TAB_BOM_COMPOSITION_";
         String bomWhereUsedListTabPrefix = "TAB_BOM_WHERE_USED_";
         try {
-            EloraConfigTable bomListsTable = EloraConfigHelper.getBomLists();
+            EloraConfigTable bomListsTable = BomListsConfigHelper.getBomLists(
+                    false);
             if (!bomListsTable.isEmpty()) {
                 for (EloraConfigRow row : bomListsTable.getValues()) {
                     createBomListTabs(actionService, row,
@@ -90,6 +94,7 @@ public class BomListTabsInitializer implements Serializable {
                             bomWhereUsedListTabPrefix,
                             "/incl/tabs/bom_where_used_list.xhtml");
                 }
+                log.trace("BOM list tabs created.");
             }
         } catch (EloraException e) {
             // TODO Auto-generated catch block
@@ -119,8 +124,6 @@ public class BomListTabsInitializer implements Serializable {
 
             actionService.registerContribution(action, "actions", null);
         }
-
-        log.trace("BOM list tabs created.");
 
     }
 }

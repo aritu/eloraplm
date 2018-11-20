@@ -12,13 +12,33 @@
       </templates>
       <rows>
         <row>
-          <widget>default_text_search</widget>
-        </row>
-        <row>
           <widget>elora_reference_search</widget>
         </row>
         <row>
-          <widget>elora_title_search</widget>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>default_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_partClassification_search</widget>
+        </row>
+         <row>
+          <widget>elora_productClassification_search</widget>
+        </row>
+       <!-- Commented for the instance, since it is not used.  
+       <row>
+          <widget>elora_mixinType_search</widget>
+        </row>
+         -->
+         <row>
+          <widget>elora_primaryType_search</widget>
+        </row>
+        <row>
+          <widget>elora_bomItemType_search</widget>
         </row>
         <row>
           <widget>elora_customer_search</widget>
@@ -27,19 +47,10 @@
           <widget>elora_manufacturer_search</widget>
         </row>
         <row>
-          <widget>default_tags_search</widget>
+          <widget>elora_responsible_search</widget>
         </row>
         <row>
-          <widget>elora_mixinType_search</widget>
-        </row>
-        <row>
-          <widget>elora_primaryType_search</widget>
-        </row>
-        <row>
-          <widget>elora_bomItemType_search</widget>
-        </row>
-        <row>
-          <widget>elora_currentLifeCycleState_search</widget>
+          <widget>elora_owner_search</widget>
         </row>
         <row>
           <widget>elora_lastContributor_search</widget>
@@ -48,10 +59,16 @@
           <widget>elora_modified_search</widget>
         </row>
         <row>
-          <widget>default_collection_search</widget>
+          <widget>elora_created_search</widget>
         </row>
+        <!-- <row>
+          <widget>default_collection_search</widget>
+        </row> -->
         <row>
           <widget>default_location_search</widget>
+        </row>
+        <row>
+          <widget>default_tags_search</widget>
         </row>
       </rows>
     </layout>
@@ -75,14 +92,18 @@
           <fields>
             <field>eloras:elo_reference</field>
           </fields>
+          <properties widgetMode="any">
+            <property name="converter">ilikeSearchValueConverter</property>
+          </properties>
         </widget>
       </subWidgets>
     </widget>
     
-    <widget name="elora_title_search" type="container">
+    
+    <widget name="elora_title_fulltext_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">eloraplm.label.search.title</label>
+        <label mode="any">eloraplm.label.search.titleFulltext</label>
       </labels>
 <!--       <translated>true</translated> -->
       <properties widgetMode="any">
@@ -91,7 +112,7 @@
       <subWidgets>
         <widget name="dc_title" type="text">
           <fields>
-            <field>eloras:dc_title</field>
+            <field>eloras:dc_title_fulltext</field>
           </fields>
         </widget>
       </subWidgets>
@@ -233,6 +254,8 @@
             <property name="minChars">0</property>
             <property name="hideHelpLabel">true</property>
             <property name="directoryName">eloras_lifeCycle</property>
+           <!--  <property name="directoryName">elora_lifecycle_states</property>
+            <property name="labelFieldName">id</property> -->
             <property name="localize">true</property>
           </properties>
         </widget>
@@ -280,6 +303,119 @@
           <properties widgetMode="edit">
             <property name="styleClass">dataInputTextDate</property>
             <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_created_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">label.dublincore.creationDate</label>
+      </labels>
+      <translated>true</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">true</property>
+      </properties>
+      <subWidgets>
+        <widget name="dc_creationDate" type="datetimeRange">
+          <fields>
+            <field>defaults:dc_created_min</field>
+            <field>defaults:dc_created_max</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_partClassification_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">label.search.partClassification</label>
+      </labels>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">true</property>
+      </properties>
+      <subWidgets>
+        <widget name="bompart_partClassification" type="suggestManyDirectory">
+          <fields>
+            <field>eloras:search_partClassification</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_bomPartClassHierarchical</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_productClassification_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">label.search.productClassification</label>
+      </labels>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">true</property>
+      </properties>
+      <subWidgets>
+        <widget name="bomprod_productClassification" type="suggestManyDirectory">
+          <fields>
+            <field>eloras:search_productClassification</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_bomProductClassHierarchical</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_responsible_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">label.widget.responsible.responsible</label>
+      </labels>
+      <translated>true</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">true</property>
+      </properties>
+      <subWidgets>
+        <widget name="resp_responsible" type="multipleUsersSuggestion"> 
+          <fields>
+            <field>eloras:search_responsible</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="userSuggestionSearchType">USER_TYPE</property>
+            <property name="minChars">1</property>
+            <property name="hideHelpLabel">true</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_owner_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">eloraplm.label.owner</label>
+      </labels>
+      <translated>true</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">true</property>
+      </properties>
+      <subWidgets>
+        <widget name="own_owner" type="suggestManyDirectory"> 
+          <fields>
+            <field>eloras:search_owner</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="width">100%</property>
+            <property name="minChars">3</property>
+            <property name="directoryName">elora_erpCustomers</property>
           </properties>
         </widget>
       </subWidgets>

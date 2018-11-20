@@ -36,4 +36,6 @@ public class CMDocTypeConstants {
 
     public static final String CM_ECO = "CmEco";
 
+    public static final String CM_SAMPLE = "CmSample";
+
 }

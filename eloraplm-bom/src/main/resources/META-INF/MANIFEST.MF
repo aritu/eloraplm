@@ -4,9 +4,9 @@ Bundle-Name: eloraplm-bom
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-bom-ActionService-contri
  b.xml,OSGI-INF/extensions/eloraplm-bom-ContentTemplateService-contrib
  .xml,OSGI-INF/extensions/eloraplm-bom-DirectoryUIManager-contrib.xml,
@@ -15,6 +15,5 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-bom-ActionService-contri
  tensions/eloraplm-bom-TypeService-contrib.xml,OSGI-INF/extensions/elo
  raplm-bom-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-b
  om-PreviewAdapterManagerComponent-contrib.xml,OSGI-INF/extensions/elo
- raplm-bom-ThumbnailService.xml,OSGI-INF/extensions/eloraplm-bom-PageP
- roviderService-contrib.xml
+ raplm-bom-ThumbnailService.xml
 

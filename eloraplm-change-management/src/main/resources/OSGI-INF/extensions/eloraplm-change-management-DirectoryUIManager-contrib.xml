@@ -6,21 +6,14 @@
 
     <directory name="elora_cm_predicates" layout="vocabulary" sortField="label" />
     <directory name="elora_cm_inverse_predicates" layout="vocabulary" sortField="label" />
+    
+    <directory name="elora_cmEcrType" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_cmEcoType" layout="vocabulary" sortField="ordering" />
 
-    <directory layout="vocabulary" sortField="ordering" name="elora_cmPriority">
-    </directory>
-
-    <directory layout="vocabulary" sortField="ordering" name="elora_cmEcrType">
-    </directory>
-
-    <directory layout="vocabulary" sortField="ordering" name="elora_cmEcoType">
-    </directory>
-
-    <directory layout="vocabulary" sortField="ordering" name="elora_cmActionModified">
-    </directory>
-
-   <directory layout="vocabulary" sortField="ordering" name="elora_cmActionImpacted">
-    </directory>
+    <directory name="elora_cmActionModified" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_cmActionImpacted" layout="vocabulary" sortField="ordering" />
+    
+    <directory name="elora_cm_doctype_actions_impact" layout="elora_cm_doctype_actions_impact" sortField="id" />
 
   </extension>
 

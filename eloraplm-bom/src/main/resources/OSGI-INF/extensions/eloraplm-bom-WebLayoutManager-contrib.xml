@@ -6,6 +6,56 @@
 
     <!--  New layout for displaying document type, bom item, bom classification,
               and description in summary tab -->
+              
+              
+    <layout name="manufacturer_reference">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>manufacturer_reference</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="customer_reference">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>customer_reference</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_customer_product_customers">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomCustprodCustomer</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="bom_manufacturer_part_manufacturers">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomManpartManufacturer</widget>
+        </row>
+      </rows>
+    </layout>
+    
     <layout name="summary_current_bom_document_types_and_description">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
@@ -38,6 +88,42 @@
         </row>
       </rows>
     </layout>
+    
+    <layout name="summary_current_manufacturer_part_primary_info">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>type_icon_and_text</widget>
+        </row>
+        <row>
+          <widget>bomManpartManufacturer</widget>
+        </row>
+        <row>
+          <widget>description_if_schema_dc</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="summary_current_customer_product_primary_info">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>type_icon_and_text</widget>
+        </row>
+        <row>
+          <widget>bomCustprodCustomer</widget>
+        </row>
+        <row>
+          <widget>description_if_schema_dc</widget>
+        </row>
+      </rows>
+    </layout>
 
     <layout name="bom_item">
       <templates>
@@ -48,9 +134,6 @@
         <row>
           <widget>bomItemType</widget>
         </row>
-        <row>
-          <widget>bomItemResponsible</widget>
-        </row>
       </rows>
     </layout>
     
@@ -60,9 +143,6 @@
         </template>
       </templates>
       <rows>
-        <row>
-          <widget>bomItemResponsible</widget>
-        </row>
         <row>
           <widget>containerEstimatedCostAndUnit</widget>
         </row>
@@ -143,9 +223,6 @@
           <widget>bomPartUnit</widget>
         </row>
         <row>
-          <widget>bomPartSource</widget>
-        </row>
-        <row>
           <widget>bomPartMass</widget>
         </row>
         <row>
@@ -160,6 +237,9 @@
           <widget>bomPartStandard</widget>
         </row>
         <row>
+          <widget>bomPartSource</widget>
+        </row>
+        <row>
           <widget>bomPartEffectiveDate</widget>
         </row>
       </rows>
@@ -170,10 +250,7 @@
         <template mode="any">/layouts/layout_default_template.xhtml
         </template>
       </templates>
-      <rows>       
-        <row>
-          <widget>bomProdClassification</widget>
-        </row>
+      <rows>
         <row>
           <widget>bomProdUnit</widget>
         </row>
@@ -242,42 +319,670 @@
         </row>
       </rows>
     </layout>
-    
-    <layout name="bom_manufacturer_part">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml
-        </template>
-      </templates>
-      <rows>
-        <row>
-          <widget>bomManpartResponsible</widget>
-        </row>
-        <row>
-          <widget>bomManpartManufacturer</widget>
-          <widget>bomManpartManufacturerReference</widget>
-        </row>
-      </rows>
-    </layout> 
 
-    <layout name="bom_customer_product">
+<!--     Classification vocabularies -->
+
+<!--     Part Classification -->
+    <layout name="partClassifLevel2_vocabulary">
       <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
         </template>
       </templates>
       <rows>
         <row>
-          <widget>bomCustprodResponsible</widget>
+          <widget>parent</widget>
         </row>
-        <row>          
-          <widget>bomCustprodCustomer</widget>
-          <widget>bomCustprodCustomerReference</widget>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
         </row>
       </rows>
-    </layout>     
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomPartClassLevel1</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+    <layout name="partClassifLevel3_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomPartClassLevel2</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+
+
+    <layout name="partClassifHier_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomPartClassHierarchical</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+    
+    <!--     Tool Classification -->
+    <layout name="toolClassifLevel2_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomToolClassLevel1</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+    <layout name="toolClassifLevel3_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomToolClassLevel2</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+
+
+    <layout name="toolClassifHier_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomToolClassHierarchical</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+    <!--     Packaging Classification -->
+    <layout name="packClassifLevel2_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomPackagingClassLevel1</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+    <layout name="packClassifLevel3_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomPackagingClassLevel2</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+
+
+    <layout name="packClassifHier_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomPackagingClassHierarchical</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+
+<!--     Specification Classification -->
+    <layout name="specClassifLevel2_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomSpecificationClassLevel1</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+    <layout name="specClassifLevel3_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomSpecificationClassLevel2</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+
+
+    <layout name="specClassifHier_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomSpecificationClassHierarchical</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+    <!--     Product Classification -->
+    <layout name="prodClassifLevel2_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomProductClassLevel1</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+    <layout name="prodClassifLevel3_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomProductClassLevel2</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="required">true</property>
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+
+
+    <layout name="prodClassifHier_vocabulary">
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>parent</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_id</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_label</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_obsolete</widget>
+        </row>
+        <row>
+          <widget>xvocabulary_order</widget>
+        </row>
+      </rows>
+      <widget name="parent" type="selectOneDirectory">
+        <labels>
+          <label mode="any">label.vocabulary.entry.parent</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>xvocabulary:parent</field>
+        </fields>
+        <properties mode="any">
+          <property name="directoryName">elora_bomProductClassHierarchical</property>
+          <property name="localize">true</property>
+          <property name="displayIdAndLabel">true</property>
+        </properties>
+        <properties widgetMode="edit">
+          <property name="displayObsoleteEntries">true</property>
+        </properties>
+      </widget>
+    </layout>
+    
+<!--     End of Classification Vocabularies -->
+
+
+
+
+
     
     <!-- treetable layouts -->
     
-    <layout name="bom_composition_treetable">
+    <layout name="bom_comp_tt">
       <templates>
         <template mode="any">/layouts/layout_treetable_template.xhtml
         </template>
@@ -285,6 +990,7 @@
       <columns>
         <column name="icon_reference_title">
           <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
             <property name="columnHeading">label.content.header.title</property>
           </properties>
           <widget>treewidget_bom_icon_reference_title</widget>
@@ -313,10 +1019,10 @@
         </column>
         <column name="version">
             <properties mode="any">
-                <property name="columnStyle">width: 7em;</property>
+                <property name="columnStyle">width: 140px;</property>
                 <property name="columnHeading">label.version</property>
             </properties>
-            <widget>treewidget_version_wc_av</widget>
+            <widget>treewidget_editable_version_wc_av</widget>
         </column>
         <column name="lifecycle_state">
             <properties mode="any">
@@ -330,15 +1036,15 @@
                 <property name="columnStyle">width: 6em;</property>
                 <property name="columnHeading">label.content.header.quantity</property>
             </properties>
-            <widget>listing_quantity</widget>
+            <widget>treewidget_editable_quantity</widget>
         </column>
-<!--         <column name="ordering"> -->
-<!--             <properties mode="any"> -->
-<!--                 <property name="columnStyle">width: 6em;</property> -->
-<!--                 <property name="columnHeading">eloraplm.label.ordering</property> -->
-<!--             </properties> -->
-<!--             <widget>listing_ordering</widget> -->
-<!--         </column> -->
+        <column name="part_number">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">eloraplm.label.bom.partNumber</property>
+            </properties>
+            <widget>treewidget_editable_ordering</widget>
+        </column>
         <column name="remove">
             <properties mode="any">
                 <property name="columnStyle">width: 40px;</property>
@@ -348,18 +1054,17 @@
         </column>
       </columns>
       <properties mode="any">
-        <property name="headerFiltersTemplate">/incl/bom_relation_header_filters.xhtml</property>
+        <property name="headerFiltersTemplate">/incl/bom_composition_header_filters.xhtml</property>
         <property name="tableTitle">title.treetable.bomComposition</property>
         <property name="tableStyle">table-layout: auto;</property>
-        <property name="showButtons">true</property>
-        <property name="isEditable">true</property>
         <property name="isSortable">true</property>
         <property name="sortBy">ordering</property>
         <property name="sortOrder">ascending</property>
+        <property name="factory">#{bomCompositionEbomRoot}</property>
       </properties>
     </layout>
     
-    <layout name="bom_where_used_treetable">
+    <layout name="bom_where_tt">
       <templates>
         <template mode="any">/layouts/layout_treetable_template.xhtml
         </template>
@@ -367,6 +1072,7 @@
       <columns>
         <column name="icon_reference_title">
           <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
             <property name="columnHeading">label.content.header.title</property>
           </properties>
           <widget>treewidget_bom_icon_reference_title</widget>
@@ -416,17 +1122,725 @@
         </column>
       </columns>
       <properties mode="any">
-        <property name="headerFiltersTemplate">/incl/bom_relation_header_filters.xhtml</property>
+        <property name="headerFiltersTemplate">/incl/bom_where_used_header_filters.xhtml</property>
         <property name="tableTitle">title.treetable.bomWhereUsed</property>
         <property name="tableStyle">table-layout: auto;</property>
-        <property name="showButtons">true</property>
-        <property name="isEditable">false</property>
         <property name="isSortable">false</property>
+        <property name="factory">#{bomWhereUsedEbomRoot}</property>
       </properties>
     </layout>
-
+    
+    <layout name="bom_cad_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 140px;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_editable_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="viewerOrdering">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">eloraplm.label.viewer.ordering</property>
+            </properties>
+            <widget>treewidget_editable_viewer_ordering</widget>
+        </column>
+        <column name="directorOrdering">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">eloraplm.label.director.ordering</property>
+            </properties>
+            <widget>treewidget_editable_director_ordering</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>bom_cad_documents_remove_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_cad_documents_header_filters.xhtml</property>
+        <property name="tableTitle">eloraplm.label.treetable.bom.cadDocuments</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <!-- We need to use an alternative widget because we have two treetables in the same tab -->
+        <property name="alternativeButtonsWidget">bomCadDocumentsTreetableButtons</property>
+        <property name="factory">#{bomCadDocumentsRoot}</property>
+      </properties>
+    </layout>
+    
+    <layout name="bom_doc_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 140px;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_editable_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="viewerOrdering">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">eloraplm.label.viewer.ordering</property>
+            </properties>
+            <widget>treewidget_editable_viewer_ordering</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>bom_documents_remove_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_documents_header_filters.xhtml</property>
+        <property name="tableTitle">eloraplm.label.treetable.bom.documents</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <!-- We need to use an alternative widget because we have two treetables in the same tab -->
+        <property name="alternativeButtonsWidget">bomDocumentsTreetableButtons</property>
+        <property name="factory">#{bomDocumentsRoot}</property>
+      </properties>
+    </layout>
+    
+    <layout name="bom_spec_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 7em;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="viewerOrdering">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">eloraplm.label.viewer.ordering</property>
+            </properties>
+            <widget>treewidget_editable_viewer_ordering</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>bom_specification_remove_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+        <property name="tableTitle">title.treetable.bomSpecifications</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <property name="factory">#{bomSpecificationRoot}</property>
+      </properties>
+    </layout>
+    
+    
+    <layout name="bom_item_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 7em;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>bom_item_remove_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+        <property name="tableTitle">title.treetable.bomItem.outgoingRelations</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <property name="factory">#{bomItemRoot}</property>
+      </properties>
+    </layout>
+    
+    <layout name="bom_item_inv_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 7em;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>bom_item_remove_inverse_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+        <property name="tableTitle">title.treetable.bomItem.incomingRelations</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="isInverse">true</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <property name="factory">#{bomItemInverseRoot}</property>
+      </properties>
+    </layout>
+    
+    <layout name="cust_prod_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 7em;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>customer_product_remove_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+        <property name="tableTitle">title.treetable.products</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="isInverse">false</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <property name="factory">#{customerProductRoot}</property>
+      </properties>
+    </layout>
+    
+    <layout name="cust_prod_inv_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 7em;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>customer_product_remove_inverse_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+        <property name="tableTitle">title.treetable.customerProducts</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="isInverse">true</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <property name="factory">#{customerProductInverseRoot}</property>
+      </properties>
+    </layout>
+    
+    <layout name="man_part_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 7em;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>manufacturer_part_remove_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+        <property name="tableTitle">title.treetable.parts</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="isInverse">false</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <property name="factory">#{manufacturerPartRoot}</property>
+      </properties>
+    </layout>
+    
+    <layout name="man_part_inv_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>listing_viewer_file_download_link</widget>
+        </column>
+        <column name="lock">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="version">
+            <properties mode="any">
+                <property name="columnStyle">width: 7em;</property>
+                <property name="columnHeading">label.version</property>
+            </properties>
+            <widget>treewidget_version_wc_av</widget>
+        </column>
+        <column name="lifecycle_state">
+            <properties mode="any">
+                <property name="columnStyle">width: 9em;</property>
+                <property name="columnHeading">label.lifecycle</property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="remove">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>manufacturer_part_remove_inverse_relation</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+        <property name="tableTitle">title.treetable.manufacturerParts</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isSortable">true</property>
+        <property name="isInverse">true</property>
+        <property name="sortBy">ordering</property>
+        <property name="sortOrder">ascending</property>
+        <property name="factory">#{manufacturerPartInverseRoot}</property>
+      </properties>
+    </layout>
+    
     <!-- end of treetable layouts -->
-        
+    
+    <layout name="product_classification">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>bomProdClassification</widget>
+        </row>
+      </rows>
+    </layout>
+    
   </extension>
 
 
@@ -436,6 +1850,24 @@
       <labels>
         <label mode="any"/>
       </labels>
+    </widget>
+    
+    <widget name="summary_current_manufacturer_part_primary_info" type="summary_current_doc_primary_info">
+      <labels>
+        <label mode="any"/>
+      </labels>
+      <properties widgetMode="any">
+        <property name="primaryInfoLayout">summary_current_manufacturer_part_primary_info</property>
+      </properties>
+    </widget>
+    
+    <widget name="summary_current_customer_product_primary_info" type="summary_current_doc_primary_info">
+      <labels>
+        <label mode="any"/>
+      </labels>
+      <properties widgetMode="any">
+        <property name="primaryInfoLayout">summary_current_customer_product_primary_info</property>
+      </properties>
     </widget>
         
     <widget name="bomItemType" type="suggestOneDirectory">
@@ -455,38 +1887,19 @@
       </properties>
     </widget>
     
-    <widget name="bomItemResponsible" type="singleUserSuggestion">
+    <widget name="bomCustprodCustomer" type="suggestOneDirectory">
       <labels>
-        <label mode="any">label.widget.bomitem.responsible</label>
+        <label mode="any">label.widget.bomcustprod.customer</label>
       </labels>
       <fields>
-        <field>bomitem:responsible</field>
+        <field>bomcustprod:customer</field>
       </fields>
-      <properties mode="any">
-        <property name="userSuggestionSearchType">USER_TYPE</property>
-        <property name="minChars">1</property>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_erpCustomers</property>
+        <property name="required">false</property>
       </properties>
     </widget>
     
-    <!-- 
-    <widget name="bomItemEstimatedCostAndUnit" type="template">
-      <labels>
-        <label mode="any">label.widget.bomitem.estimatedCost</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>bomitem:estimatedCost</field>
-        <field>bomitem:costUnit</field>
-      </fields>
-      <properties mode="any">
-        <property name="directoryName">elora_units_of_measure</property>
-        <property name="template">
-          /widgets/bom_item_estimated_cost_and_unit_widget.xhtml
-        </property>
-      </properties>
-    </widget>
-     -->
-     
     <widget name="containerEstimatedCostAndUnit" type="container">
       <labels>
         <label mode="any">label.widget.bomitem.estimatedCost</label>
@@ -497,17 +1910,14 @@
         <property name="display">inline</property>
       </properties>
       <subWidgets>
-	      <widget name="bomItemEstimatedCost" type="double">
-		      <labels>
-	          <label mode="any"></label>
-	        </labels>
-	        <fields>
-	          <field>bomitem:estimatedCost</field>
-	        </fields>
-	        <properties widgetMode="any">
-            <property name="style">width:50%</property>
-          </properties>
-	      </widget>
+          <widget name="bomItemEstimatedCost" type="elora_decimal">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>bomitem:estimatedCost</field>
+            </fields>
+          </widget>
 	      <widget name="bomItemCostUnit" type="suggestOneDirectory">
 	        <labels>
             <label mode="any"></label>
@@ -517,6 +1927,7 @@
 	        </fields>
 	        <properties widgetMode="any">
 		        <property name="directoryName">elora_currency</property>
+                <property name="hideHelpLabel">true</property>
 		        <property name="required">false</property>
 		        <property name="width">40%</property>
 		      </properties>
@@ -525,27 +1936,6 @@
 	  </widget>
       
     
-    <!-- 
-    <widget name="bomItemEstimatedCost" type="double">
-      <labels>
-        <label mode="any">label.widget.bomitem.estimatedCost</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>bomitem:estimatedCost</field>
-      </fields>
-    </widget>
-    
-    <widget name="bomItemCostUnit" type="text">
-      <labels>
-        <label mode="any">label.widget.bomitem.costUnit</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>bomitem:costUnit</field>
-      </fields>
-    </widget>
-     -->
     <widget name="bomPartClassification" type="suggestOneDirectory">
       <labels>
         <label mode="any">label.widget.bompart.partClassification</label>
@@ -559,6 +1949,7 @@
       </widgetModes>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomPartClassHierarchical</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">false</property>
       </properties>
     </widget>
@@ -583,6 +1974,7 @@
       </fields>
       <properties widgetMode="any">
         <property name="directoryName">elora_units_of_measure</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">false</property>
       </properties>
     </widget>
@@ -598,6 +1990,7 @@
       </fields>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomSource</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">false</property>
       </properties>
     </widget>
@@ -636,6 +2029,33 @@
       </fields>
     </widget>
      -->
+     
+     <widget name="manufacturer_reference" type="text">
+      <labels>
+        <label mode="any">label.widget.bommanpart.manufacturerReference</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>elo:reference</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="required">true</property>
+      </properties>
+    </widget>
+    
+    <widget name="customer_reference" type="text">
+      <labels>
+        <label mode="any">label.widget.bomcustprod.customerReference</label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>elo:reference</field>
+      </fields>
+      <properties widgetMode="any">
+        <property name="required">true</property>
+      </properties>
+    </widget>
+     
     <widget name="bomPartStandard" type="suggestOneDirectory">
       <labels>
         <label mode="any">label.widget.bompart.standard</label>
@@ -646,8 +2066,9 @@
       </fields>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomStandard</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">false</property>
-      </properties>      
+      </properties>
     </widget>
 
     <widget name="bomPartEffectiveDate" type="datetime">
@@ -676,18 +2097,19 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bomprod:productClassification</field>
+        <field>prodclass:productClassification</field>
       </fields>
       <widgetModes>
-        <mode value="view_summary">#{currentDocument.hasSchema('bom_product')?'view':'hidden'}</mode>
+        <mode value="view_summary">#{currentDocument.hasSchema('bom_product') or currentDocument.hasFacet('EloraWorkspace') ?'view':'hidden'}</mode>
       </widgetModes>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomProductClassHierarchical</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">false</property>
       </properties>
     </widget>
 
-    <widget name="bomProdUnit" type="text">
+    <widget name="bomProdUnit" type="suggestOneDirectory">
       <labels>
         <label mode="any">label.widget.bomprod.unit</label>
       </labels>
@@ -695,6 +2117,11 @@
       <fields>
         <field>bomprod:unit</field>
       </fields>
+      <properties widgetMode="any">
+        <property name="directoryName">elora_units_of_measure</property>
+        <property name="hideHelpLabel">true</property>
+        <property name="required">false</property>
+      </properties>
     </widget>
 
     <widget name="bomProdExternalReleaseNumber" type="text">
@@ -730,6 +2157,7 @@
       </widgetModes>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomToolClassHierarchical</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">false</property>
       </properties>
     </widget>
@@ -747,6 +2175,7 @@
       </widgetModes>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomPackagingClassHierarchical</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">false</property>
       </properties>
     </widget>
@@ -764,23 +2193,11 @@
       </widgetModes>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomSpecificationClassHierarchical</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">false</property>
       </properties>
     </widget>
    
-    <widget name="bomManpartResponsible" type="singleUserSuggestion">
-      <labels>
-        <label mode="any">label.widget.bommanpart.responsible</label>
-      </labels>
-      <fields>
-        <field>bommanpart:responsible</field>
-      </fields>
-      <properties mode="any">
-        <property name="userSuggestionSearchType">USER_TYPE</property>
-        <property name="minChars">1</property>
-      </properties>
-    </widget>
-
     <widget name="bomManpartManufacturer" type="suggestOneDirectory">
       <labels>
         <label mode="any">label.widget.bommanpart.manufacturer</label>
@@ -826,33 +2243,8 @@
       </fields>
       <properties widgetMode="any">
         <property name="directoryName">elora_erpCustomers</property>
+        <property name="hideHelpLabel">true</property>
         <property name="required">true</property>
-      </properties>
-    </widget>
-  
-    <widget name="bomCustprodResponsible" type="singleUserSuggestion">
-      <labels>
-        <label mode="any">label.widget.bomcustprod.responsible</label>
-      </labels>
-      <fields>
-        <field>bomcustprod:responsible</field>
-      </fields>
-      <properties mode="any">
-        <property name="userSuggestionSearchType">USER_TYPE</property>
-        <property name="minChars">1</property>
-      </properties>
-    </widget>
-
-    <widget name="bomCustprodCustomer" type="suggestOneDirectory">
-      <labels>
-        <label mode="any">label.widget.bomcustprod.customer</label>
-      </labels>
-      <fields>
-        <field>bomcustprod:customer</field>
-      </fields>
-      <properties widgetMode="any">
-        <property name="directoryName">elora_erpCustomers</property>
-        <property name="required">false</property>
       </properties>
     </widget>
     
@@ -907,6 +2299,34 @@
         <control name="handleLabels">true</control>
       </controls>
     </widget>
+    
+    <widget name="summary_manufacturer_has_part_documents" type="summary_related_documents">
+      <labels>
+        <label mode="any">label.widgetBlock.title.PartDocuments</label>
+      </labels>
+      <properties mode="any">
+        <property name="documentRelations">#{outgoingManufacturerPartRelations}</property>
+        <property name="docStatementsInfo">#{EloraManufacturerRelationBean.outgoingManufacturerPartStatementsInfo}</property>
+      </properties>
+      <controls mode="any">
+        <control name="requireSurroundingForm">true</control>
+        <control name="handleLabels">true</control>
+      </controls>
+    </widget>
+    
+    <widget name="summary_customer_has_product_documents" type="summary_related_documents">
+      <labels>
+        <label mode="any">label.widgetBlock.title.ProductDocuments</label>
+      </labels>
+      <properties mode="any">
+        <property name="documentRelations">#{outgoingCustomerProductRelations}</property>
+        <property name="docStatementsInfo">#{EloraCustomerRelationBean.outgoingCustomerProductStatementsInfo}</property>
+      </properties>
+      <controls mode="any">
+        <control name="requireSurroundingForm">true</control>
+        <control name="handleLabels">true</control>
+      </controls>
+    </widget>
         
     <!-- treetable widgets -->
     
@@ -931,27 +2351,187 @@
     </widget>
     
     
-        <widget name="bom_composition_treetable" type="treetable">
+        
+        <widget name="bom_comp_tt" type="treetable">
             <labels>
                 <label mode="any">label.treetable.bom.composition</label>
             </labels>
             <fields>
                 <field>data</field>
             </fields>
+            <widgetModes>
+                <mode value="any">#{eloraWebActions.isEditable() ?'edit' : 'view'}</mode>
+            </widgetModes>
             <properties widgetMode="any">
-                <property name="treetableLayout">bom_composition_treetable</property>
+                <property name="treetableLayout">bom_comp_tt</property>
             </properties>
         </widget>
         
-        <widget name="bom_where_used_treetable" type="treetable">
+        <widget name="bom_where_tt" type="treetable">
             <labels>
                 <label mode="any">label.treetable.bom.whereUsed</label>
             </labels>
             <fields>
                 <field>data</field>
             </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
             <properties widgetMode="any">
-                <property name="treetableLayout">bom_where_used_treetable</property>
+                <property name="treetableLayout">bom_where_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="bom_cad_tt" type="treetable">
+            <labels>
+                <label mode="any">eloraplm.label.treetable.bom.cadDocuments</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">bom_cad_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="bom_doc_tt" type="treetable">
+            <labels>
+                <label mode="any">eloraplm.label.treetable.bom.documents</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">bom_doc_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="bom_spec_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.bom.specifications</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">bom_spec_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="bom_item_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.bom.items</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{
+                     nxd:hasPermission(currentDocument, 'Write')
+                     and currentDocument.isLocked()
+                     and currentDocumentLockDetails['document.locker'] eq currentUser
+                     and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">bom_item_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="bom_item_inv_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.bom.items</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{
+                    nxd:hasPermission(currentDocument, 'Read')
+                    and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">bom_item_inv_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="cust_prod_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.bom.items</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{
+                     nxd:hasPermission(currentDocument, 'Write')
+                     and currentDocument.isLocked()
+                     and currentDocumentLockDetails['document.locker'] eq currentUser
+                     and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cust_prod_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="cust_prod_inv_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.bom.items</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{
+                    nxd:hasPermission(currentDocument, 'Read')
+                    and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cust_prod_inv_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="man_part_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.bom.items</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{
+                     nxd:hasPermission(currentDocument, 'Write')
+                     and currentDocument.isLocked()
+                     and currentDocumentLockDetails['document.locker'] eq currentUser
+                     and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">man_part_tt</property>
+            </properties>
+        </widget>
+        
+        <widget name="man_part_inv_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.bom.items</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{
+                    nxd:hasPermission(currentDocument, 'Read')
+                    and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">man_part_inv_tt</property>
             </properties>
         </widget>
     
@@ -967,6 +2547,10 @@
         <field>level</field>
         <field>isSpecial</field>
       </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
       <properties mode="any">
         <property name="template">
               /widgets/bom_composition_ebom_remove_relation_widget.xhtml
@@ -974,7 +2558,183 @@
       </properties>
     </widget>
     
+    <widget name="bom_cad_documents_remove_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/bom_cad_documents_remove_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
     
+    <widget name="bom_documents_remove_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/bom_documents_remove_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="bom_specification_remove_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+        <field>isSpecial</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/bom_specification_remove_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="bom_item_remove_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+        <field>isSpecial</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/bom_item_remove_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="bom_item_remove_inverse_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+        <field>isSpecial</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/bom_item_remove_inverse_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="customer_product_remove_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+        <field>isSpecial</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/customer_product_remove_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="customer_product_remove_inverse_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+        <field>isSpecial</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/customer_product_remove_inverse_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="manufacturer_part_remove_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+        <field>isSpecial</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/manufacturer_part_remove_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
+    
+    <widget name="manufacturer_part_remove_inverse_relation" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>level</field>
+        <field>isSpecial</field>
+      </fields>
+      <widgetModes>
+          <mode value="edit">view</mode>
+          <mode value="any">hidden</mode>
+      </widgetModes>
+      <properties mode="any">
+        <property name="template">
+              /widgets/manufacturer_part_remove_inverse_relation_widget.xhtml
+        </property>
+      </properties>
+    </widget>
     
     <widget name="listing_bom_classification" type="template">
         <labels>
@@ -991,9 +2751,9 @@
         </properties>
     </widget>
 
-    <widget name="bomDocumentRelationButton" type="documentActions">
+    <widget name="bomDocumentsTreetableButtons" type="documentActionsWithForms">
       <properties widgetMode="view">
-        <property name="category">BOM_DOCUMENT_RELATION_BUTTON</property>
+        <property name="category">BOM_DOCUMENTS_TREETABLE_BUTTON</property>
         <property name="overallDisplay">horizontal_block</property>
       </properties>
       <controls mode="any">
@@ -1002,9 +2762,9 @@
       </controls>
     </widget>
     
-    <widget name="bomCadDocumentRelationButton" type="documentActions">
+    <widget name="bomCadDocumentsTreetableButtons" type="documentActionsWithForms">
       <properties widgetMode="view">
-        <property name="category">BOM_CAD_DOCUMENT_RELATION_BUTTON</property>
+        <property name="category">BOM_CAD_DOCUMENTS_TREETABLE_BUTTON</property>
         <property name="overallDisplay">horizontal_block</property>
       </properties>
       <controls mode="any">
@@ -1055,7 +2815,6 @@
         <control name="gridStyleClass">gridStyle12</control>
       </controls>
     </widget>
-    
 
   </extension>
   
@@ -1092,7 +2851,39 @@
           <property name="template">
             /widgets/summary/bom_types_and_description_widget_template.xhtml
           </property>
-        </widgetType>    
+        </widgetType>
+        
+        <widgetType name="summary_current_doc_primary_info">
+          <configuration>
+            <sinceVersion>5.3.1</sinceVersion>
+            <title>Document primary info</title>
+            <description>
+              <p>
+                This widget displays the primary info of current document.
+              </p>
+              <p>
+                It requires the following variables to be present in the EL context:
+                <ul>
+                      <li>currentDocument: the current document</li>
+                </ul>
+              </p>
+            </description>
+            <handlingLabels>true</handlingLabels> <!-- TODO:: HEMEN FALSE???? -->
+            <categories>
+              <category>summary</category>
+            </categories>
+            <supportedModes>
+              <mode>view</mode>
+            </supportedModes>
+            <!-- no configurable properties -->
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/summary/primary_info_widget_template.xhtml
+          </property>
+        </widgetType>
     
   </extension>
 

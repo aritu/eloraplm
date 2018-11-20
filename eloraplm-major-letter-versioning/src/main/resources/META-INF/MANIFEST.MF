@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: eloraplm-major-letter-versioning
+Bundle-SymbolicName: com.aritu.eloraplm.versioning.majorletter
 Bundle-Name: eloraplm-major-letter-versioning
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-majorLetterVersioning-Ev
  entServiceComponent-contrib.xml,OSGI-INF/extensions/eloraplm-majorLet
  terVersioning-ResourcePublisher-contrib.xml,OSGI-INF/extensions/elora

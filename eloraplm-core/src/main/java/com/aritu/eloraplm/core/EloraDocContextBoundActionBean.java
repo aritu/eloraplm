@@ -15,6 +15,8 @@ package com.aritu.eloraplm.core;
 
 import java.io.Serializable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.In;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -25,6 +27,9 @@ import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextInvalidation;
  *
  */
 public abstract class EloraDocContextBoundActionBean implements Serializable {
+
+    private static final Log log = LogFactory.getLog(
+            EloraDocContextBoundActionBean.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -37,12 +42,18 @@ public abstract class EloraDocContextBoundActionBean implements Serializable {
         return currentDocument;
     }
 
+    protected void setCurrentDocument(DocumentModel currentDocument) {
+        this.currentDocument = currentDocument;
+    }
+
     @DocumentContextInvalidation
-    public void onContextChange(DocumentModel doc) {
+    public DocumentModel onContextChange(DocumentModel doc) {
+        String logInitMsg = "[onContextChange] ["
+                + documentManager.getPrincipal().getName() + "] ";
         if (doc == null) {
             currentDocument = null;
             resetBeanCache(null);
-            return;
+            log.trace(logInitMsg + "Document invalidated: new doc is null.");
         } else {
             if (doc.isProxy()) {
                 doc = documentManager.getSourceDocument(doc.getRef());
@@ -51,20 +62,21 @@ public abstract class EloraDocContextBoundActionBean implements Serializable {
             if (currentDocument == null) {
                 currentDocument = doc;
                 resetBeanCache(doc);
-                return;
+                log.trace(logInitMsg
+                        + "Document invalidated: current doc is null.");
+
+            } else if (!doc.getRef().equals(currentDocument.getRef())) {
+                currentDocument = doc;
+                resetBeanCache(doc);
+                log.trace(logInitMsg
+                        + "Document invalidated: current and new have different reference.");
             }
         }
-        if (!doc.getRef().equals(currentDocument.getRef())) {
-            currentDocument = doc;
-            resetBeanCache(doc);
-        }
-        if (!(doc.getLockInfo() == currentDocument.getLockInfo())
-                || !(doc.isCheckedOut() == currentDocument.isCheckedOut())) {
-            currentDocument = doc;
-            resetBeanCache(doc);
-        }
+
+        return doc;
     }
 
-    protected abstract void resetBeanCache(DocumentModel newCurrentDocumentModel);
+    protected abstract void resetBeanCache(
+            DocumentModel newCurrentDocumentModel);
 
 }

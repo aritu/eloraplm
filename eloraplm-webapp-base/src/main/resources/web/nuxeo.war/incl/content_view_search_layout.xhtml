@@ -7,6 +7,7 @@
   xmlns:nxd="http://nuxeo.org/nxweb/document"
   xmlns:a4j="http://richfaces.org/a4j"
   xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
   test="#{contentView != null}">
 
 <c:if test="false">
@@ -56,44 +57,9 @@ empty:
           </h:commandLink>
         </h:form>
       </div>
-      <c:if test="#{nxd:isDirty(contentView.searchDocumentModel)}">
-        <span class="filteredValues">
-          <h:outputText value="#{messages['eloraplm.label.currentFilters']}: " style="font-weight:bold"/>
-          <c:if test="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:primaryType') != null}">
-            <h:outputText value="#{messages['label.content.header.type']}=|" />
-            <h:outputText value="#{messages[contentView.searchDocumentModel.getPropertyValue('eloadvsrch:primaryType')]}" />
-            <h:outputText value="|"/>
-          </c:if>
-          <h:outputText value=" "/>
-          <c:if test="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:title') != null}">
-            <h:outputText value="#{messages['label.dublincore.title']}=|" />
-            <h:outputText value="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:title')}" />
-            <h:outputText value="|"/>
-          </c:if>
-          <h:outputText value=" "/>
-            <c:if test="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:reference') != null}">
-            <h:outputText value="#{messages['label.widget.elo.reference']}=|" />
-            <h:outputText value="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:reference')}" />
-            <h:outputText value="|"/>
-          </c:if>
-          <h:outputText value=" "/>
-          <c:if test="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:modified_min') != null}">
-            <h:outputText value="#{messages['label.dublincore.modificationDateBetween']}=|" />
-              <h:outputText value="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:modified_min').getTime()}" >
-              <f:convertDateTime pattern="#{nxu:dateFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
-            </h:outputText> 
-            <h:outputText value="|"/>
-          </c:if>
-          <h:outputText value=" "/>
-          <c:if test="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:modified_max') != null}">
-            <h:outputText value="#{messages['label.search.and']}=|" />
-            <h:outputText value="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:modified_max').getTime()}" >
-              <f:convertDateTime pattern="#{nxu:dateFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
-            </h:outputText> 
-            <h:outputText value="|"/>
-          </c:if>
-        </span>
-      </c:if>
+      
+      <ui:include src="display_filtered_fields_info_template.xhtml"/>
+      
     </div>
     
     <div class="boxBody"
@@ -107,6 +73,8 @@ empty:
             id="submitFilter"
             action="#{contentView.resetPageProvider}"
             styleClass="button">
+            <nxu:actionListenerMethod
+              value="#{contentView.setExecuted(true)}" />
             <nxu:actionListenerMethod
               value="#{jsfResetActions.resetComponents}" />
             <f:ajax execute="@form" render="#{elementsToReRender}" />

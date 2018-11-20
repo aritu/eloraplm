@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.integration.get.factories.WorkspaceDataLoaderFactory">
+    
+    <implementation class="com.aritu.eloraplm.integration.get.factories.impl.WorkspaceDataLoaderFactoryImpl"/>
+    
+    <service>
+        <provide interface="com.aritu.eloraplm.integration.get.factories.WorkspaceDataLoaderFactory"/>
+    </service>
+</component>

@@ -1,17 +1,18 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: eloraplm-lifecycles
+Bundle-SymbolicName: com.aritu.eloraplm.lifecycles
 Bundle-Name: eloraplm-lifecycles
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-lifecycles-LifeCycleServ
  ice-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-DirectoryUIMa
  nager-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-SQLDirector
  yFactory-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-TypeServ
  ice-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-WebLayoutMana
  ger-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ActionService
- -contrib.xml
+ -contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ResourcePublishe
+ r-contrib.xml
 

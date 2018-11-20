@@ -48,8 +48,9 @@
                             value="#{basicRelationBean}"
                             field="objectDocumentUid" translated="true"
                             width="100%"
-                            placeholder="label.relation.search.popup.title"
-                            pageProviderName="#{pageProviderName}">
+                            placeholder="#{placeholder}"
+                            pageProviderName="#{pageProviderName}"
+                            additionalOperationParameters="eloraPassQueryTermsTwice">
                         </nxl:widgetType>
                     </a4j:outputPanel>
                     <h:inputHidden id="objectCheck"
@@ -70,11 +71,7 @@
 	                <h:outputLabel for="quantity"
 	                    value="#{messages['label.relation.quantity']}"
 	                    class="required relationQuantityLabel" />
-	                <h:panelGroup>
-                    <h:inputText class="dataInputText" id="quantity"
-                        value="#{basicRelationBean.quantity}" required="true" />
-                    <h:message for="quantity" class="errorMessage" />
-	                </h:panelGroup>
+                    <nxl:widget name="listing_quantity" value="#{basicRelationBean}" mode="edit" required="true" styleClass="dataInputText" />
                 </c:if>
                 
                 <c:if test="#{not isEditableOrdering}">
@@ -111,6 +108,17 @@
                     <h:inputText class="dataInputText" id="directorOrdering"
                         value="#{basicRelationBean.directorOrdering}" required="false" />
                     <h:message for="directorOrdering" class="errorMessage" />
+                  </h:panelGroup>
+                </c:if>
+                
+                <c:if test="#{isEditableViewerOrdering}">
+                  <h:outputLabel for="viewerOrdering"
+                    value="#{messages['eloraplm.label.bom.viewer.ordering']}"
+                    class="orderingLabel" />
+                  <h:panelGroup>
+                    <h:inputText class="dataInputText" id="viewerOrdering"
+                        value="#{basicRelationBean.viewerOrdering}" required="false" />
+                    <h:message for="viewerOrdering" class="errorMessage" />
                   </h:panelGroup>
                 </c:if>
                 

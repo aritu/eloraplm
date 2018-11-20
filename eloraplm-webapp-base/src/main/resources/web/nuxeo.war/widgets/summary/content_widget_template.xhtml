@@ -10,6 +10,7 @@
   <c:set var="isCadOrBomDocument" value="#{currentDocument.hasFacet('CadDocument') or currentDocument.hasFacet('BomDocument')}" />
   <c:set var="canHaveEloraViewerFile" value="#{currentDocument.hasSchema('elora_viewer')}" />
   <c:set var="hasEloraViewerFile" value="#{canHaveEloraViewerFile and !empty currentDocument.getPropertyValue('elovwr:file')}" />
+  <c:set var="hasCadAttachments" value="#{currentDocument.hasSchema('cad_attachments') and !empty currentDocument.cadatts.files}" />
   <c:choose>
     <c:when test="#{isCadOrBomDocument}">
       <c:set var="fileZoneClass" value="" />
@@ -19,19 +20,6 @@
     </c:otherwise>
   </c:choose>
   <c:set var="canHaveMainBlobAndNotCadOrBomDocument" value="#{canHaveMainBlob and !isCadOrBomDocument}" />
-  
-<!-- TODO:: to be deleted
-  <div>
-    <p>canHaveMainBlob = |<h:outputText value="#{canHaveMainBlob}" />|</p>
-    <p>hasMainBlob = |<h:outputText value="#{hasMainBlob}" />|</p>
-    <p>hasOtherBlobs = |<h:outputText value="#{hasOtherBlobs}" />|</p>
-    <br/>
-    <p>isCadOrBomDocument = |<h:outputText value="#{isCadOrBomDocument}" />|</p>
-	<p>canHaveEloraViewerFile = |<h:outputText value="#{canHaveEloraViewerFile}" />|</p>
-    <p>hasEloraViewerFile = |<h:outputText value="#{hasEloraViewerFile}" />|</p>
-    <p>fileZoneClass = |<h:outputText value="#{fileZoneClass}" />|</p>
-  </div>
--->
 
 <h:panelGroup styleClass="#{canHaveMainBlob || hasOtherBlobs ? 'content_block': ''}" layout="block">
   <!-- Write the widget label (Content) -->
@@ -143,6 +131,27 @@
               <td class="fieldColumn">
                 <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
                                 field="files:files/#{loop.index}/file" />
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+    </div>
+  </c:if>
+  
+  <!-- CAD Attachments -->
+  <c:if test="#{hasCadAttachments}">
+    <div class="#{fileZoneClass}" context="cadAttachments" id="cadAttachmentsDropZone">
+      <table class="smallTable">
+        <tbody>
+          <c:forEach items="#{currentDocument.cadatts.files}" varStatus="loop">
+            <tr>
+              <td class="labelColumn">
+                <h:outputText value=" #{messages['eloraplm.label.summary.download.cadAttachments']}" rendered="#{loop.index == 0}" />
+              </td>
+              <td class="fieldColumn">
+                <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
+                                field="cadatts:files/#{loop.index}/file" />
               </td>
             </tr>
           </c:forEach>

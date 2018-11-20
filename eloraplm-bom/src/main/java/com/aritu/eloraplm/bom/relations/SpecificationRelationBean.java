@@ -32,7 +32,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
-import org.nuxeo.ecm.platform.relations.api.impl.QNameResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.relations.web.StatementInfo;
 import org.nuxeo.ecm.platform.relations.web.StatementInfoComparator;
@@ -46,8 +46,8 @@ import com.aritu.eloraplm.relations.EloraBasicRelationBean;
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class SpecificationRelationBean extends EloraBasicRelationBean implements
-        Serializable {
+public class SpecificationRelationBean extends EloraBasicRelationBean
+        implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,10 +74,11 @@ public class SpecificationRelationBean extends EloraBasicRelationBean implements
         DocumentModel currentDoc = getCurrentDocument();
         if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
             // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(currentDoc.getRef());
+            currentDoc = documentManager.getLastDocumentVersion(
+                    currentDoc.getRef());
         }
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.BOM_HAS_SPECIFICATION, "");
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_SPECIFICATION);
         outgoingSpecificationStatements = RelationHelper.getStatements(
                 currentDoc, predicate);
 
@@ -85,9 +86,11 @@ public class SpecificationRelationBean extends EloraBasicRelationBean implements
             outgoingSpecificationStatements = Collections.emptyList();
             outgoingSpecificationStatementsInfo = Collections.emptyList();
         } else {
-            outgoingSpecificationStatementsInfo = eloraRelationActions.getStatementsInfo(outgoingSpecificationStatements);
+            outgoingSpecificationStatementsInfo = eloraRelationActions.getStatementsInfo(
+                    outgoingSpecificationStatements);
             // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(new StatementInfoComparator());
+            Comparator<StatementInfo> comp = Collections.reverseOrder(
+                    new StatementInfoComparator());
             Collections.sort(outgoingSpecificationStatementsInfo, comp);
         }
         return outgoingSpecificationStatementsInfo;
@@ -102,10 +105,11 @@ public class SpecificationRelationBean extends EloraBasicRelationBean implements
         DocumentModel currentDoc = getCurrentDocument();
         if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
             // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(currentDoc.getRef());
+            currentDoc = documentManager.getLastDocumentVersion(
+                    currentDoc.getRef());
         }
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.BOM_HAS_SPECIFICATION, "");
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_SPECIFICATION);
         incomingSpecificationStatements = EloraRelationHelper.getSubjectStatements(
                 currentDoc, predicate);
 
@@ -113,9 +117,11 @@ public class SpecificationRelationBean extends EloraBasicRelationBean implements
             incomingSpecificationStatements = Collections.emptyList();
             incomingSpecificationStatementsInfo = Collections.emptyList();
         } else {
-            incomingSpecificationStatementsInfo = eloraRelationActions.getStatementsInfo(incomingSpecificationStatements);
+            incomingSpecificationStatementsInfo = eloraRelationActions.getStatementsInfo(
+                    incomingSpecificationStatements);
             // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(new StatementInfoComparator());
+            Comparator<StatementInfo> comp = Collections.reverseOrder(
+                    new StatementInfoComparator());
             Collections.sort(incomingSpecificationStatementsInfo, comp);
         }
         return incomingSpecificationStatementsInfo;

@@ -23,12 +23,12 @@ import org.nuxeo.ecm.platform.relations.web.StatementInfo;
  */
 public interface EloraStatementInfo extends StatementInfo {
 
-    int getQuantity();
+    String getQuantity();
 
-    boolean getIsObjectWc();
+    Integer getOrdering();
 
-    int getOrdering();
+    Integer getDirectorOrdering();
 
-    int getDirectorOrdering();
+    Integer getViewerOrdering();
 
 }

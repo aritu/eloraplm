@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  >
+              <tr>
+                <td class="#{labelColumnClass}">
+                  <h:outputText value="#{messages['label.widget.bomcharac.defaultValue']}"/>
+                </td>
+                <td class="fieldColumn">
+                  <nxl:widget name="bomCharacDateDefaultValue" mode="#{fieldColumnWidgetMode}" value="#{value}"/>
+                </td>
+              </tr>
+              
+</ui:composition>

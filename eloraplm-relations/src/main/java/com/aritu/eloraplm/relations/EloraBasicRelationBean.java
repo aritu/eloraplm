@@ -39,8 +39,6 @@ import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import com.aritu.eloraplm.core.EloraDocContextBoundActionBean;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
-import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
-import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 
 @Name("eloraBasicRelationBean")
@@ -88,9 +86,13 @@ public class EloraBasicRelationBean extends EloraDocContextBoundActionBean
 
     private String comment;
 
-    private int quantity = 1;
+    private String quantity = "1";
 
-    private int ordering = 0;
+    private Integer ordering;
+
+    private Integer directorOrdering;
+
+    private Integer viewerOrdering;
 
     public String getPredicateUri() {
         return predicateUri;
@@ -132,20 +134,36 @@ public class EloraBasicRelationBean extends EloraDocContextBoundActionBean
         this.comment = comment;
     }
 
-    public int getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 
-    public int getOrdering() {
+    public Integer getOrdering() {
         return ordering;
     }
 
-    public void setOrdering(int ordering) {
+    public void setOrdering(Integer ordering) {
         this.ordering = ordering;
+    }
+
+    public Integer getDirectorOrdering() {
+        return directorOrdering;
+    }
+
+    public void setDirectorOrdering(Integer directorOrdering) {
+        this.directorOrdering = directorOrdering;
+    }
+
+    public Integer getViewerOrdering() {
+        return viewerOrdering;
+    }
+
+    public void setViewerOrdering(Integer viewerOrdering) {
+        this.viewerOrdering = viewerOrdering;
     }
 
     public EloraBasicRelationBean() {
@@ -173,7 +191,7 @@ public class EloraBasicRelationBean extends EloraDocContextBoundActionBean
             eloraDocumentRelationManager.addRelation(documentManager,
                     currentDoc, object, predicateUri, inverse,
                     includeStatementsInEvents, StringUtils.trim(comment),
-                    quantity, true, 0);
+                    quantity, ordering, directorOrdering, viewerOrdering);
             facesMessages.add(StatusMessage.Severity.INFO,
                     messages.get("label.relation.created"));
             resetCreateFormValues();
@@ -188,28 +206,29 @@ public class EloraBasicRelationBean extends EloraDocContextBoundActionBean
 
     public String deleteStatement(StatementInfo stmtInfo) {
         DocumentModel currentDoc = getCurrentDocument();
+        DocumentModel subject = RelationHelper.getDocumentModel(
+                stmtInfo.getSubject(), documentManager);
+        DocumentModel object = RelationHelper.getDocumentModel(
+                stmtInfo.getObject(), documentManager);
         if (currentDoc.isCheckedOut()) {
-            eloraDocumentRelationManager.deleteRelation(documentManager,
-                    stmtInfo.getStatement());
+            // RelationHelper.removeRelation(subject, stmtInfo.getPredicate(),
+            // object);
+            eloraDocumentRelationManager.softDeleteRelation(documentManager,
+                    subject, stmtInfo.getPredicate().getUri(), object);
         } else {
             // Get working copy stmt data and delete
-            DocumentModel subject = RelationHelper.getDocumentModel(
-                    stmtInfo.getSubject(), documentManager);
-            DocumentModel subjectWc = documentManager.getWorkingCopy(subject.getRef());
-
-            DocumentModel object = RelationHelper.getDocumentModel(
-                    stmtInfo.getObject(), documentManager);
-            EloraStatementInfo eloraStmtInfo = new EloraStatementInfoImpl(
-                    stmtInfo.getStatement());
+            DocumentModel subjectWc = documentManager.getWorkingCopy(
+                    subject.getRef());
             DocumentModel objectWc;
-            if (eloraStmtInfo.getIsObjectWc()) {
+            if (object.isImmutable()) {
                 objectWc = documentManager.getWorkingCopy(object.getRef());
             } else {
                 objectWc = object;
             }
-
-            eloraDocumentRelationManager.deleteRelation(documentManager,
-                    subjectWc, objectWc, stmtInfo.getPredicate().getUri());
+            // RelationHelper.removeRelation(subjectWc, stmtInfo.getPredicate(),
+            // objectWc);
+            eloraDocumentRelationManager.softDeleteRelation(documentManager,
+                    subjectWc, stmtInfo.getPredicate().getUri(), objectWc);
 
             // Set subject document as checked out; relations have changed.
             EloraDocumentHelper.checkOutDocument(currentDoc);
@@ -225,8 +244,10 @@ public class EloraBasicRelationBean extends EloraDocContextBoundActionBean
         objectDocumentUid = null;
         objectDocumentTitle = null;
         comment = null;
-        quantity = 1;
-        ordering = 0;
+        quantity = "1";
+        ordering = null;
+        directorOrdering = null;
+        viewerOrdering = null;
     }
 
     /*

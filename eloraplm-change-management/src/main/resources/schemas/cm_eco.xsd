@@ -9,11 +9,7 @@ targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_eco">
     <xs:simpleType>
       <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cmEcoType" />
     </xs:simpleType>
-  </xs:element>  
-  
-  <!-- <xs:element name="docsImpactedItemList" type="nxs:impactedItemListType"/>
-  <xs:element name="bomsImpactedItemList" type="nxs:impactedItemListType"/> -->
-  
+  </xs:element>
 
 
 </xs:schema>

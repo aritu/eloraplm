@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.webapp.base.ActionService.contrib">
+    <require>org.nuxeo.ecm.webapp.seam.debug.action</require>
+    <require>org.nuxeo.ecm.platform.actions</require>
+    <require>org.nuxeo.ecm.platform.audit.web</require>
+    <require>org.nuxeo.ecm.platform.comment.actions</require>
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
+    <require>org.nuxeo.ecm.platform.preview.actions</require>
+    <require>org.nuxeo.ecm.platform.publisher.web.actions</require>
+    <require>org.nuxeo.ecm.favorites.actions</require>
 
 <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
   
@@ -23,14 +31,24 @@
       </rule>
     </filter>
     
+    <filter id="isCadBomOrBasicDocument">
+      <rule grant="true">
+        <condition>#{currentDocument.hasFacet('CadDocument')
+            or currentDocument.hasFacet('BomDocument')
+            or currentDocument.hasFacet('BasicDocument')
+        }</condition>
+      </rule>
+    </filter>
+    
     <filter id="isEditable">
         <rule grant="true">
-            <permission>Write</permission>
+            <condition>#{eloraWebActions.isEditable()}</condition>
         </rule>
-        <rule grant="false">
-            <condition>#{currentDocument.isVersion()}</condition>
-            <condition>#{!currentDocument.isLocked()}</condition>
-            <condition>#{currentDocumentLockDetails['document.locker'] ne currentUser}</condition>
+    </filter>
+    
+    <filter id="hasBaseVersion">
+        <rule grant="true">
+            <condition>#{eloraWebActions.hasBaseVersion()}</condition>
         </rule>
     </filter>
     
@@ -84,12 +102,35 @@
       </filter>
       <properties>
         <property name="include">/incl/action/create_ws_proxy.xhtml</property>
-        <property name="addForm">true</property>
         <property name="ajaxSupport">true</property>
         <property name="visibleByDefault">true</property>
       </properties>
     </action>
+    
+    <!-- Action to move document -->
+    <action id="moveDocument" order="50" label="eloraplm.command.move" type="fancybox" icon="/icons/action_move_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="filter@moveDocument">
+        <rule grant="true">
+          <condition>#{currentUser.administrator and not currentDocument.isImmutable() and not currentDocument.isProxy()}</condition>
+        </rule>
+      </filter>
+      <properties>
+        <property name="include">/incl/action/move_document.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="visibleByDefault">false</property>
+      </properties>
+    </action>
+    
+    <!-- Show action by default -->
+    <action id="addCurrentDocumentToWorklist" icon="/icons/action_add_to_worklist_16.png">
+      <properties>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
 
+    <!-- Disable Create WS action -->
+    <action id="newWorkspace" enabled="false" />
     
     <!-- Disable publish tab -->
     <action id="TAB_PUBLISH" enabled="false" />
@@ -142,7 +183,7 @@
     
     <action id="TAB_LINKS" link="/incl/tabs/links.xhtml"
       order="100" label="eloraplm.label.links" type="rest_document_link">
-      <filter-id>isCadOrBomDocument</filter-id>
+      <filter-id>isCadBomOrBasicDocument</filter-id>
       <category>VIEW_ACTION_LIST</category>
     </action>
     
@@ -167,6 +208,19 @@
       <properties>
         <!-- NXP-18320: disable ajax support on Polymer tabs -->
         <property name="ajaxSupport">false</property>
+      </properties>
+    </action>
+    
+    
+    <action accessKey="v" icon="/icons/file.gif" id="TAB_PROJECT_VIEW" label="action.view.summary" link="/incl/tabs/document_view.xhtml" order="15" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter id="filter@TAB_PROJECT_VIEW">
+        <rule grant="true">
+            <type>Project</type>
+        </rule>
+      </filter>
+      <properties>
+        <property name="ajaxSupport">true</property>
       </properties>
     </action>
     
@@ -195,6 +249,15 @@
       </properties>
     </action>
     
+    <action id="eloraDownload" type="template" order="150">
+      <category>BLOB_ACTIONS</category>
+      <filter-id>isMainBlob</filter-id>
+      <filter-id>isCadDocument</filter-id>
+      <filter-id>isNotZeroVersion</filter-id>
+      <properties>
+        <property name="template">/incl/action/download_and_open_link_template.xhtml</property>
+      </properties>
+    </action>
     
   </extension>
   

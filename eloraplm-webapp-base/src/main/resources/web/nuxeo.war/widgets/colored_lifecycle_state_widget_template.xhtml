@@ -1,0 +1,16 @@
+<f:subview id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+    
+    <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <h:outputText styleClass="lifeCycleStateLabel hollow" style="
+            border-color: #{lifecycleActions.getLifeCycleStateColor(field_0)};
+            color: #{lifecycleActions.getLifeCycleStateColor(field_0)};"
+            value="#{messages[field_0]}" />
+    </c:if>
+    
+    <c:if test="#{nxl:isLikePlainMode(widget.mode)}">#{messages[field_0]}</c:if>
+    
+</f:subview>

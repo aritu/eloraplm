@@ -30,10 +30,12 @@ public class EloraGeneralConstants {
 
     public static final String CONTEXT_KEY_DOC_VERSION_LABEL = "DOC_VERSION_LABEL";
 
+    public static final String CONTEXT_SKIP_AUTOMATIC_CODE_CREATION = "SKIP_AUTOMATIC_CODE_CREATION";
+
     // File types
     public static final String FILE_TYPE_CONTENT = "content";
 
-    public static final String FILE_TYPE_ATTACHED = "attached";
+    public static final String FILE_TYPE_CAD_ATTACHMENT = "cadAttachment";
 
     public static final String FILE_TYPE_VIEWER = "viewer";
 

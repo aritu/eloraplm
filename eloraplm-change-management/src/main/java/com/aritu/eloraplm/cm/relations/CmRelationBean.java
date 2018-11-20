@@ -35,14 +35,14 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
-import org.nuxeo.ecm.platform.relations.api.impl.QNameResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.relations.web.NodeInfo;
 import org.nuxeo.ecm.platform.relations.web.StatementInfo;
 import org.nuxeo.ecm.platform.relations.web.StatementInfoComparator;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 
-import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.CMDocTypeConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.relations.EloraBasicRelationBean;
@@ -51,8 +51,8 @@ import com.aritu.eloraplm.relations.EloraBasicRelationBean;
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class CmRelationBean extends EloraBasicRelationBean implements
-        Serializable {
+public class CmRelationBean extends EloraBasicRelationBean
+        implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -79,8 +79,8 @@ public class CmRelationBean extends EloraBasicRelationBean implements
         }
 
         DocumentModel currentDoc = getCurrentDocument();
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.CM_PROCESS_IS_MANAGED_IN, "");
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.CM_PROCESS_IS_MANAGED_IN);
         outgoingCmStatements = RelationHelper.getStatements(currentDoc,
                 predicate);
 
@@ -88,9 +88,11 @@ public class CmRelationBean extends EloraBasicRelationBean implements
             outgoingCmStatements = Collections.emptyList();
             outgoingCmStatementsInfo = Collections.emptyList();
         } else {
-            outgoingCmStatementsInfo = eloraRelationActions.getStatementsInfo(outgoingCmStatements);
+            outgoingCmStatementsInfo = eloraRelationActions.getStatementsInfo(
+                    outgoingCmStatements);
             // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(new StatementInfoComparator());
+            Comparator<StatementInfo> comp = Collections.reverseOrder(
+                    new StatementInfoComparator());
             Collections.sort(outgoingCmStatementsInfo, comp);
         }
         return outgoingCmStatementsInfo;
@@ -103,8 +105,8 @@ public class CmRelationBean extends EloraBasicRelationBean implements
         }
 
         DocumentModel currentDoc = getCurrentDocument();
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.CM_PROCESS_IS_MANAGED_IN, "");
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.CM_PROCESS_IS_MANAGED_IN);
         incomingCmStatements = EloraRelationHelper.getSubjectStatements(
                 currentDoc, predicate);
 
@@ -112,9 +114,11 @@ public class CmRelationBean extends EloraBasicRelationBean implements
             incomingCmStatements = Collections.emptyList();
             incomingCmStatementsInfo = Collections.emptyList();
         } else {
-            incomingCmStatementsInfo = eloraRelationActions.getStatementsInfo(incomingCmStatements);
+            incomingCmStatementsInfo = eloraRelationActions.getStatementsInfo(
+                    incomingCmStatements);
             // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(new StatementInfoComparator());
+            Comparator<StatementInfo> comp = Collections.reverseOrder(
+                    new StatementInfoComparator());
             Collections.sort(incomingCmStatementsInfo, comp);
         }
         return incomingCmStatementsInfo;
@@ -159,7 +163,8 @@ public class CmRelationBean extends EloraBasicRelationBean implements
     public boolean isRelatedDocumentVisible(StatementInfo stmtInfo) {
         DocumentModel subject = stmtInfo.getSubjectInfo().getDocumentModel();
         // Subject is null when user has not permission
-        if (subject != null && subject.getId() == getCurrentDocument().getId()) {
+        if (subject != null
+                && subject.getId() == getCurrentDocument().getId()) {
             return stmtInfo.getObjectInfo().isDocumentVisible();
         } else {
             return stmtInfo.getSubjectInfo().isDocumentVisible();
@@ -170,7 +175,8 @@ public class CmRelationBean extends EloraBasicRelationBean implements
         DocumentModel subject = stmtInfo.getSubjectInfo().getDocumentModel();
 
         // Subject is null when user has not permission
-        if (subject != null && subject.getId() == getCurrentDocument().getId()) {
+        if (subject != null
+                && subject.getId() == getCurrentDocument().getId()) {
             return stmtInfo.getObjectInfo();
         } else {
             return stmtInfo.getSubjectInfo();
@@ -184,7 +190,7 @@ public class CmRelationBean extends EloraBasicRelationBean implements
 
         DocumentRef docRef = new IdRef(super.getObjectDocumentUid());
         String objType = documentManager.getDocument(docRef).getType();
-        if (objType.equals(EloraDoctypeConstants.CM_PR)) {
+        if (objType.equals(CMDocTypeConstants.CM_PR)) {
             super.addRelation(true);
         } else {
             super.addRelation();

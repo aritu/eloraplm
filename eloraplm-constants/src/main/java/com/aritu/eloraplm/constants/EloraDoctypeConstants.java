@@ -18,6 +18,8 @@ public class EloraDoctypeConstants {
 
     public static final String CAD_PART = "CadPart";
 
+    public static final String CAD_DESIGN_TABLE = "CadDesignTable";
+
     public static final String OTHER_CAD_DOCUMENTS_FOLDER = "FolderOtherDoc";
 
     public static final String BOM_PART = "BomPart";
@@ -48,23 +50,25 @@ public class EloraDoctypeConstants {
 
     public static final String FOLDER_BOM_PRODUCT = "FolderBomProduct";
 
+    public static final String FOLDER_CM_ECO = "FolderChangeManagementECO";
+
+    public static final String FOLDER_CM_HOM = "FolderChangeManagementHOM";
+
+    public static final String FOLDER_CM_COMM = "FolderChangeManagementCOMM";
+
+    public static final String FOLDER_CM_PRE = "FolderChangeManagementPRE";
+
+    public static final String FOLDER_CM_SAMPLE = "FolderChangeManagementSAMPLE";
+
     public static final String TEMP_FOLDER = "TempFolder";
 
     public static final String STRUCTURE_ROOT = "StructureRoot";
 
     public static final String STRUCTURE_EBOM = "StructEbom";
 
-    // public static final String STRUCTURE_CM = "StructChangeManagement";
-
-    public static final String CM_PR_FOLDER = "FolderChangeManagementPR";
-
-    public static final String CM_PR = "CmPr";
-
-    public static final String CM_ECR = "CmEcr";
-
-    public static final String CM_ECO = "CmEco";
-
     public static final String STRUCTURE_PROJECTS = "StructProject";
+
+    public static final String STRUCTURE_ARCHIVED_WS = "StructArchivedWS";
 
     public static final String PROJECT = "Project";
 }

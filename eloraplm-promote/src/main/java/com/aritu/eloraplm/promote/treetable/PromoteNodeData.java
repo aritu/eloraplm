@@ -8,6 +8,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.webapp.versioning.DocumentVersioning;
 
+import com.aritu.eloraplm.promote.treetable.NodeDynamicInfo;
 import com.aritu.eloraplm.relations.treetable.BaseRelationNodeData;
 
 public class PromoteNodeData extends BaseRelationNodeData {
@@ -45,13 +46,12 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public PromoteNodeData(String id, DocumentModel data,
             NodeDynamicInfo nodeInfo, int level, String docId, Statement stmt,
-            int quantity, boolean isObjectWc, Map<String, String> versionMap,
-            String wcVersion, boolean isDirect, boolean isSpecial,
-            boolean alreadyPromoted) {
+            String quantity, Map<String, String> versionMap, String wcVersion,
+            boolean isDirect, boolean isSpecial, boolean alreadyPromoted) {
 
         // TODO wcDoc NULL pasatzen da oingoz
-        super(id, level, docId, data, null, stmt, null, quantity, null,
-                isObjectWc, 0, isSpecial);
+        super(id, level, docId, data, null, stmt, null, quantity, null, null,
+                null, null, isSpecial, isDirect);
 
         // TODO: deberia limpiar esta clase quitando las propiedades que ya
         // estan en nodeInfo y creando una propiedad de tipo NodeChangeableInfo
@@ -101,6 +101,7 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public void setFinalState(String finalState) {
         this.finalState = finalState;
+        nodeInfo.setFinalState(finalState);
     }
 
     public boolean getIsPropagated() {
@@ -109,6 +110,7 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public void setIsPropagated(boolean isPropagated) {
         this.isPropagated = isPropagated;
+        nodeInfo.setIsPropagated(isPropagated);
     }
 
     public boolean getAlreadyPromoted() {
@@ -117,6 +119,7 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public void setAlreadyPromoted(boolean alreadyPromoted) {
         this.alreadyPromoted = alreadyPromoted;
+        nodeInfo.setAlreadyPromoted(alreadyPromoted);
     }
 
     public boolean getEditableVersion() {
@@ -125,6 +128,7 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public void setEditableVersion(boolean editableVersion) {
         this.editableVersion = editableVersion;
+        nodeInfo.setEditableVersion(editableVersion);
     }
 
     public boolean getIsEnforced() {
@@ -133,6 +137,7 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public void setIsEnforced(boolean isEnforced) {
         this.isEnforced = isEnforced;
+        nodeInfo.setIsEnforced(isEnforced);
     }
 
     public boolean getSwitchableVersion() {
@@ -141,12 +146,15 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public void setSwitchableVersion(boolean switchableVersion) {
         this.switchableVersion = switchableVersion;
+        nodeInfo.setSwitchableVersion(switchableVersion);
     }
 
+    @Override
     public boolean getIsDirect() {
         return isDirect;
     }
 
+    @Override
     public void setIsDirect(boolean isDirect) {
         this.isDirect = isDirect;
     }
@@ -157,6 +165,7 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public void setResultMsg(String resultMsg) {
         this.resultMsg = resultMsg;
+        nodeInfo.setResultMsg(resultMsg);
     }
 
     public String getResult() {
@@ -165,6 +174,7 @@ public class PromoteNodeData extends BaseRelationNodeData {
 
     public void setResult(String result) {
         this.result = result;
+        nodeInfo.setResult(result);
     }
 
     @Override

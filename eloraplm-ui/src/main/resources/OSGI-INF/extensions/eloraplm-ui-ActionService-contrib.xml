@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.ui.ActionService.contrib">
-
+  <require>org.nuxeo.connect.client.actions</require>
+  <require>org.nuxeo.ecm.platform.actions</require>
+  
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
     
     <!-- Disable Nuxeo Studio banner from the footer -->
@@ -26,13 +28,14 @@
     
     <!-- EloraPlm footer links -->
     
-    <action id="footer_aritu_website" label="eloraplm.label.footer.website" link="//aritu.com" order="10" type="bare_link">
+    <action id="footer_aritu_website" label="aritu.com" link="//aritu.com" order="10" type="bare_link">
       <category>FOOTER</category>
       <properties>
         <property name="target">_blank</property>
       </properties>
     </action>
     
+    <!-- Comment aritu twitter link for the instance
     <action id="footer_aritu_twitter" label="Twitter" link="//twitter.com/aritukoop" order="20" type="bare_link">
       <category>FOOTER</category>
       <properties>
@@ -40,7 +43,7 @@
         <property name="labelStyleClass">footerLabel</property>
         <property name="target">_blank</property>
       </properties>
-    </action>
+    </action> -->
     
     <action id="footer_aritu_linkedin" label="LinkedIn" link="//www.linkedin.com/company/aritu-kooperatiba" order="30" type="bare_link">
       <category>FOOTER</category>

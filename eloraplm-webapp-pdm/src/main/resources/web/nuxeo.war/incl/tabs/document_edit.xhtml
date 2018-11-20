@@ -17,12 +17,9 @@
     });
   </script>
   
-  <c:set var="showSaveButtonCondition" value="#{nxd:hasPermission(currentDocument, 'Write')
-        and (!currentDocument.hasFacet('CadDocument') and !currentDocument.hasFacet('BomDocument')
-            or (currentDocument.locked
-                and (currentDocumentLockDetails['document.locker'] eq currentUser)))}" />
+  <nxu:set var="showSaveButtonCondition" value="#{eloraWebActions.isEditable()}" >
   
-  <ui:include src="document_locked_warning.xhtml"/>
+  <ui:include src="document_not_editable_warning.xhtml"/>
   
   <c:if test="#{showSaveButtonCondition}">
       <div class="buttonsGadget">
@@ -37,6 +34,8 @@
        <nxl:widget name="documentEditButtons" mode="view" value="#{currentDocument}" />
       </div>
   </c:if>
+  
+  </nxu:set>
   
   <script>
     jQuery(document).ready(function() {

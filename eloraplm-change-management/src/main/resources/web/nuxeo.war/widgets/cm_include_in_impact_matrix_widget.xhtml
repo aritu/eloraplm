@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core">
+  
+    <ui:fragment rendered="#{not field_0 or widget.mode == 'view'}">
+      <h:outputText value="#{field_1 ? messages['label.yes'] : messages['label.no']}" />
+    </ui:fragment>
+    
+    <ui:fragment rendered="#{field_0 and widget.mode == 'edit'}">
+      <nxl:widgetType mode="edit" name="checkbox" value="#{field_1}">
+      
+        <ui:include src="cm_widget_ajax_content_template.xhtml">
+          <ui:param name="triggeredField" value="includeInImpactMatrix" />
+          <ui:param name="updateChildren" value="#{false}" />
+        </ui:include>
+        
+      </nxl:widgetType>
+    </ui:fragment>
+
+</ui:composition>

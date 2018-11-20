@@ -1,22 +1,32 @@
 <f:subview id="#{widget.id}"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxd="http://nuxeo.org/nxweb/document"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core">
 
-    <h:graphicImage value="#{not empty field_1.lockInfo and field_1.lockInfo.owner ne currentUser ?
-            '/icons/locked_by_other_16.gif'
-            : '/icons/locked_by_me_16.gif'}"
-        style="vertical-align: middle;"
-        rendered="#{field_0 != null and field_1.locked}">
+    <nxu:set var="hasWritePermission" value="#{nxd:hasPermission(field, 'Write')}">
         
-        <nxu:set var="owner" value="#{not empty field_1.lockInfo ? nxu:userFullName(field_1.lockInfo.owner) : ''}">
-        <nxu:set var="createdTime" value="#{not empty field_1.lockInfo ? field_1.lockInfo.created.time : ''}">
-            <f:attribute name="title" value="#{messages['label.summary.by']} #{owner}, #{messages['label.summary.the']} #{createdTime}" />
-            <f:attribute name="styleClass" value="tipsyShow" />
-        </nxu:set>
-        </nxu:set>
+        <h:graphicImage value="#{not empty field.lockInfo and field.lockInfo.owner ne currentUser ?
+                '/icons/locked_by_other_16.gif'
+                : '/icons/locked_by_me_16.gif'}"
+            style="vertical-align: middle;"
+            rendered="#{field != null and field.locked}">
+            
+            <nxu:set var="owner" value="#{not empty field.lockInfo ? nxu:userFullName(field.lockInfo.owner) : ''}">
+            <nxu:set var="createdTime" value="#{not empty field.lockInfo ? field.lockInfo.created.time : ''}">
+                <f:attribute name="title" value="#{messages['label.summary.by']} #{owner}, #{messages['label.summary.the']} #{createdTime}" />
+                <f:attribute name="styleClass" value="tipsyShow" />
+            </nxu:set>
+            </nxu:set>
+            
+        </h:graphicImage>
         
-    </h:graphicImage>
+        <h:graphicImage value="/icons/badge_read_only_14.png"
+            style="vertical-align: middle;" rendered="#{field != null and not field.locked and not hasWritePermission}"
+            title="#{messages['label.readOnly']}"
+        />
+        
+    </nxu:set>
 
 </f:subview>

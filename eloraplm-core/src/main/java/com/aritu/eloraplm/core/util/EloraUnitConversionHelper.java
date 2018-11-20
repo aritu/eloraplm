@@ -13,8 +13,13 @@
  */
 package com.aritu.eloraplm.core.util;
 
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
-import com.aritu.eloraplm.config.util.EloraConfigTable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import javax.faces.context.FacesContext;
+
+import com.aritu.eloraplm.config.util.EloraConfig;
+import com.aritu.eloraplm.config.util.EloraConfigRow;
 import com.aritu.eloraplm.constants.EloraConfigConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
@@ -26,28 +31,72 @@ import com.aritu.eloraplm.exceptions.EloraException;
  */
 public class EloraUnitConversionHelper {
 
-    public static double convertValueToDisplay(double storedValue,
-            String baseUnit) throws EloraException {
+    public static String convertValueToDisplay(FacesContext context,
+            String storedValue, String baseUnit)
+            throws EloraException, ParseException {
+
+        BigDecimal convertedValueAsDecimal = convertValueToUnit(storedValue,
+                baseUnit);
+
+        return EloraDecimalHelper.fromDecimalToLocalized(context,
+                convertedValueAsDecimal);
+    }
+
+    public static BigDecimal convertValueToUnitRounding(String storedValue,
+            String baseUnit) throws EloraException, ParseException {
+        return convertValueToUnit(storedValue, baseUnit, true);
+    }
+
+    public static BigDecimal convertValueToUnit(String storedValue,
+            String baseUnit) throws EloraException, ParseException {
+        return convertValueToUnit(storedValue, baseUnit, false);
+
+    }
+
+    private static BigDecimal convertValueToUnit(String storedValue,
+            String baseUnit, boolean roundIfTooMuchDecimals)
+            throws EloraException, ParseException {
 
         if (baseUnit == null) {
             throw new EloraException("baseUnit is null");
         }
 
-        EloraConfigTable unitConverterConfig = EloraConfigHelper.getUnitConversionConfig(
-                baseUnit);
-        double conversionFactor = (double) unitConverterConfig.getFirst().getProperty(
-                EloraConfigConstants.PROP_UNIT_CONVERSION_MAPPING_CONVERSION_FACTOR);
+        BigDecimal storedValueAsDecimal = EloraDecimalHelper.fromStandardToDecimal(
+                storedValue);
 
-        long decimalPlaces = (long) unitConverterConfig.getFirst().getProperty(
+        // Convert to the correct unit
+        EloraConfigRow configRow = EloraConfig.unitConversionConfigMap.get(
+                baseUnit);
+
+        double conversionFactor = (double) configRow.getProperty(
+                EloraConfigConstants.PROP_UNIT_CONVERSION_MAPPING_CONVERSION_FACTOR);
+        long maxDecimalPlaces = (long) configRow.getProperty(
                 EloraConfigConstants.PROP_UNIT_CONVERSION_MAPPING_DECIMAL_PLACES);
 
-        double convertedValue = storedValue * conversionFactor;
+        BigDecimal convertedValueAsDecimal = storedValueAsDecimal.multiply(
+                BigDecimal.valueOf(conversionFactor));
 
-        double truncateFactor = Math.pow(10, decimalPlaces);
-        double truncatedConvertedValue = Math.floor(
-                convertedValue * truncateFactor) / truncateFactor;
+        // Check decimalPlaces and if bigger, throw exception.
+        int decimalPlaces = convertedValueAsDecimal.stripTrailingZeros().scale() > 0
+                ? convertedValueAsDecimal.stripTrailingZeros().scale() : 0;
+        if (decimalPlaces > maxDecimalPlaces) {
+            if (roundIfTooMuchDecimals) {
+                convertedValueAsDecimal = convertedValueAsDecimal.setScale(
+                        Math.toIntExact(maxDecimalPlaces),
+                        RoundingMode.HALF_UP);
+            }
+            // We don't throw an exception for now
 
-        return truncatedConvertedValue;
+            // else {
+            //
+            // throw new EloraException(
+            // "Value has more decimals than expected after conversion: |"
+            // + convertedValueAsDecimal.toPlainString()
+            // + "|");
+            // }
+        }
+
+        return convertedValueAsDecimal;
     }
 
     public static String convertUnitToDisplay(String baseUnit)
@@ -57,29 +106,35 @@ public class EloraUnitConversionHelper {
             throw new EloraException("baseUnit is null");
         }
 
-        EloraConfigTable unitConverterConfig = EloraConfigHelper.getUnitConversionConfig(
+        EloraConfigRow configRow = EloraConfig.unitConversionConfigMap.get(
                 baseUnit);
-        String convertedUnit = (String) unitConverterConfig.getFirst().getProperty(
+        String convertedUnit = (String) configRow.getProperty(
                 EloraConfigConstants.PROP_UNIT_CONVERSION_MAPPING_DISPLAY_UNIT);
 
         return convertedUnit;
     }
 
-    public static double convertValueToStore(double value, String baseUnit)
-            throws EloraException {
+    public static String convertValueToStore(FacesContext context, String value,
+            String baseUnit) throws EloraException, ParseException {
 
         if (baseUnit == null) {
             throw new EloraException("baseUnit is null");
         }
 
-        EloraConfigTable unitConverterConfig = EloraConfigHelper.getUnitConversionConfig(
+        // Convert the value decimal separator depending on the locale
+        BigDecimal valueAsDecimal = EloraDecimalHelper.fromLocalizedToDecimal(
+                context, value);
+
+        EloraConfigRow configRow = EloraConfig.unitConversionConfigMap.get(
                 baseUnit);
-        double conversionFactor = (double) unitConverterConfig.getFirst().getProperty(
+        double conversionFactor = (double) configRow.getProperty(
                 EloraConfigConstants.PROP_UNIT_CONVERSION_MAPPING_CONVERSION_FACTOR);
 
-        double convertedValue = value / conversionFactor;
+        BigDecimal convertedValueAsDecimal = valueAsDecimal.divide(
+                BigDecimal.valueOf(conversionFactor));
 
-        return convertedValue;
+        return EloraDecimalHelper.fromDecimalToStandard(
+                convertedValueAsDecimal);
     }
 
 }

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core">
+  
+  <ui:fragment rendered="#{field != null and !empty field}">
+  
+    <h:outputText 
+      value="#{lifecycleActions.getLifeCycleStateAbbreviation(field)}"
+      styleClass="lifeCycleStateLabel hollow tipsyShow"
+      style="border-color: #{lifecycleActions.getLifeCycleStateColor(field)}; color: #{lifecycleActions.getLifeCycleStateColor(field)};">
+       <f:attribute name="title" value="#{messages[field]}" />
+    </h:outputText>
+  
+  </ui:fragment>
+  
+</ui:composition>

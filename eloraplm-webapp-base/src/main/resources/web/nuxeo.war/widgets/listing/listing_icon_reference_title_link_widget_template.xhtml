@@ -54,16 +54,19 @@
     
     <!-- If the document is in the same version as the working copy, link to WC, else, link to AV -->
     <nxu:set var="wcDoc" value="#{not field_0.isImmutable() ? field_0 : documentManager.getWorkingCopy(field_1)}">
+        
+        <h:outputText value="&#160;" />
+        <h:panelGroup rendered="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference}"
+                styleClass="eloraReference">
+                    <h:outputText value="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference ? field_0.elo.reference : '--'}" />
+        </h:panelGroup>
+        <h:outputText value="&#160;" rendered="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference}" />
+    
         <nxu:set var="linkTargetDoc" value="#{wcDoc.versionLabel eq field_0.versionLabel ? wcDoc : field_0 }">
     
             <nxd:restDocumentLink document="#{linkTargetDoc}"
               tab="#{widgetProperty_tab}" subTab="#{widgetProperty_subTab}"
               target="#{widgetProperty_target}" styleClass="documentTitleLink">
-              
-                <h:panelGroup rendered="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference}"
-                styleClass="eloraReference">
-                    <h:outputText value="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference ? field_0.elo.reference : '--'}" />
-               </h:panelGroup>
                 
                <c:if test="#{widgetProperty_localize}">
                

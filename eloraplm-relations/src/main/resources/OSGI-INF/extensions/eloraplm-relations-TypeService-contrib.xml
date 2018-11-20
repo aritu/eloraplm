@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 
 <component name="com.aritu.eloraplm.relations.TypeService.contrib">
-
+    <require>org.nuxeo.ecm.core.CoreExtensions</require>
+    
     <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
         <schema name="eloraRelationsConfig" src="schemas/sch_elora_relations_config.xsd"/>
         <schema name="relation_extended" prefix="relext" src="schemas/relation_extended.xsd"/>

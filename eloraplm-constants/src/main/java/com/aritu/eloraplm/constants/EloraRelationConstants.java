@@ -33,7 +33,8 @@ public class EloraRelationConstants {
 
     public static final String CAD_HAS_SUPPRESSED = "http://eloraplm.aritu.com/relations/CadHasSuppressed";
 
-    public static final String CAD_HAS_DOCUMENT = "http://eloraplm.aritu.com/relations/CadHasDocument";
+    // public static final String CAD_HAS_DOCUMENT =
+    // "http://eloraplm.aritu.com/relations/CadHasDocument";
 
     // public static final String CAD_HAS_VIRTUAL_COMPONENT =
     // "http://eloraplm.aritu.com/relations/CadHasVirtualComponent";
@@ -61,16 +62,33 @@ public class EloraRelationConstants {
 
     public static final String CM_PROCESS_IS_MANAGED_IN = "http://eloraplm.aritu.com/relations/CmProcessIsManagedIn";
 
+    // Container relations
+    public static final String CONTAINER_HAS_CONTAINER = "http://eloraplm.aritu.com/relations/ContainerHasContainer";
+
+    // Drafts
+    // TODO Hasieran gehitu http://eloraplm.aritu.com/relations/ ????
+    public static final String HAS_ELORA_DRAFT_RELATION = "HasEloraDraft";
+
     // Relations metadata
     public static final Resource QUANTITY = new ResourceImpl(
             ELORA_METADATA_NAMESPACE + "Quantity");
-
-    public static final Resource IS_OBJECT_WC = new ResourceImpl(
-            ELORA_METADATA_NAMESPACE + "isObjectWc");
 
     public static final Resource ORDERING = new ResourceImpl(
             ELORA_METADATA_NAMESPACE + "Ordering");
 
     public static final Resource DIRECTOR_ORDERING = new ResourceImpl(
             ELORA_METADATA_NAMESPACE + "DirectorOrdering");
+
+    public static final Resource VIEWER_ORDERING = new ResourceImpl(
+            ELORA_METADATA_NAMESPACE + "ViewerOrdering");
+
+    public static final Resource IS_MANUAL = new ResourceImpl(
+            ELORA_METADATA_NAMESPACE + "IsManual");
+
+    // Constants for soft delete
+    public static final String SOFT_DELETED_RELATION_SOURCE = "SoftDeleted";
+
+    public static final String SOFT_DELETED_RELATION_PREDICATE = "SoftDeleted";
+
+    public static final String SOFT_DELETED_RELATION_TARGET = "SoftDeleted";
 }

@@ -37,7 +37,7 @@
               
               <h:panelGroup
                 styleClass="horizontalAction #{widgetProperty_containerStyleClass} #{action.properties.containerStyleClass} #{nxu:test(widgetProperty_currentAction.id == action.id, 'selected', '')}"
-                rendered="#{eloraWebActions.evaluateBooleanExpression(action.properties.visibleByDefault)}">
+                rendered="#{eloraWebActions.evaluateBoolean(action.properties.visibleByDefault)}">
                 
                 <ui:decorate template="/incl/action/action_template.xhtml">
                   <ui:param name="actionsDisplay" value="#{widgetProperty_actionsDisplay}" />

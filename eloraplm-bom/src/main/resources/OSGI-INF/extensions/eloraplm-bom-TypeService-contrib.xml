@@ -2,6 +2,8 @@
 
 <component name="com.aritu.eloraplm.bom.TypeService.contrib">
 
+  <require>com.aritu.eloraplm.doctypes.TypeService.contrib</require>
+
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
        <schema name="bom_item" prefix="bomitem" src="schemas/bom_item.xsd"/>
        <schema name="bom_part" prefix="bompart" src="schemas/bom_part.xsd"/>
@@ -11,6 +13,7 @@
        <schema name="bom_specification" prefix="bomspec" src="schemas/bom_specification.xsd"/>
        <schema name="bom_product" prefix="bomprod" src="schemas/bom_product.xsd"/>
        <schema name="bom_customer_product" prefix="bomcustprod" src="schemas/bom_customer_product.xsd"/>
+       <schema name="product_classification" prefix="prodclass" src="schemas/product_classification.xsd"/>
   </extension>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
@@ -19,10 +22,19 @@
     
     <facet name="BomDocument" />
     
+    <facet name="EloraWorkspace">
+        <schema name="related_partaker"/>
+        <schema name="related_customer"/>
+        <schema name="product_classification"/>
+        <schema name="related_manufacturer"/>
+        <schema name="responsible"/>
+    </facet>
+    
     <!-- Doctypes -->
   
     <doctype extends="File" name="BomPart">
       <schema name="elora_viewer"/>
+      <schema name="responsible"/>
       <schema name="bom_item"/>
       <schema name="bom_part"/>
       <facet name="BomDocument" />
@@ -30,15 +42,18 @@
 
     <doctype extends="File" name="BomManufacturerPart">
       <schema name="elora_viewer"/>
+      <schema name="responsible"/>
       <schema name="bom_manufacturer_part"/>
       <facet name="BomDocument" />
     </doctype>
 
     <doctype extends="File" name="BomTool">
       <schema name="elora_viewer"/>
+      <schema name="responsible"/>
       <schema name="bom_item"/>
       <schema name="bom_tool"/>
       <schema name="related_partaker"/>
+      <schema name="owner"/>
       <schema name="related_customer"/>
       <schema name="related_manufacturer"/>
       <facet name="BomDocument" />
@@ -46,6 +61,7 @@
 
     <doctype extends="File" name="BomPackaging">
       <schema name="elora_viewer"/>
+      <schema name="responsible"/>
       <schema name="bom_item"/>
       <schema name="bom_packaging"/>
       <schema name="related_partaker"/>
@@ -57,6 +73,7 @@
     <doctype extends="File" name="BomSpecification">
       <schema name="elora_viewer"/>
       <schema name="note"/>
+      <schema name="responsible"/>
       <schema name="bom_item"/>
       <schema name="bom_specification"/>
       <facet name="BomDocument" />
@@ -64,13 +81,16 @@
 
     <doctype extends="File" name="BomProduct">
       <schema name="elora_viewer"/>
+      <schema name="responsible"/>
       <schema name="bom_item"/>
+      <schema name="product_classification"/>
       <schema name="bom_product"/>
       <facet name="BomDocument" />
     </doctype>
 
     <doctype extends="File" name="BomCustomerProduct">
       <schema name="elora_viewer"/>
+      <schema name="responsible"/>
       <schema name="bom_customer_product"/>
       <facet name="BomDocument" />
     </doctype>
@@ -113,27 +133,6 @@
   <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
 
     <type id="StructEbom">
- <!-- TODO Komentautakoa kendu, doctypesen definituta dau. -->
-<!--       <label>StructEbom</label> -->
-<!--       <icon>/icons/struct_ebom_16.gif</icon> -->
-<!--       <bigIcon>/icons/struct_ebom_100.png</bigIcon> -->
-<!--       <description>StructEbom.description</description> -->
-<!--       <default-view>view_documents</default-view> -->
-<!--       <layouts mode="any"> -->
-<!--         <layout>heading</layout> -->
-<!--       </layouts> -->
-<!--       <layouts mode="edit"> -->
-<!--         <layout>heading</layout> -->
-<!--         <layout>dublincore</layout> -->
-<!--       </layouts> -->
-<!--       <contentViews category="content"> -->
-<!--         <contentView>document_content</contentView> -->
-<!--       </contentViews> -->
-<!--       <contentViews category="trash_content"> -->
-<!--         <contentView showInExportView="false"> -->
-<!--           document_trash_content -->
-<!--         </contentView> -->
-<!--       </contentViews> -->
       <subtypes>
         <type>FolderBomPart</type>
         <type>FolderBomManufacturerPart</type>
@@ -343,12 +342,14 @@
       <default-view>view_documents</default-view>
       <layouts mode="view">
         <layout>summary_bom_part</layout>
+        <layout>responsible</layout>
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
         <layout>elora_object_reference_required</layout>
         <layout>heading</layout>
         <layout>bom_item</layout>
+        <layout>responsible</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_part</layout>
@@ -359,7 +360,7 @@
       </contentViews>
    </type>
  
-      <type id="BomManufacturerPart">
+   <type id="BomManufacturerPart">
       <label>BomManufacturerPart</label>
       <icon>/icons/bom_manufacturer_part_16.gif</icon>
       <bigIcon>/icons/bom_manufacturer_part_100.png</bigIcon>
@@ -367,14 +368,15 @@
       <description>BomManufacturerPart.description</description>
       <default-view>view_documents</default-view>
       <layouts mode="view">
-        <layout>bom_manufacturer_part</layout>
+        <layout>responsible</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object</layout>
+        <layout>manufacturer_reference</layout>
         <layout>heading</layout>
+        <layout>bom_manufacturer_part_manufacturers</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
-        <layout>bom_manufacturer_part</layout>
+        <layout>responsible</layout>
         <layout>bom_dublincore</layout>
       </layouts>
    </type>
@@ -389,8 +391,10 @@
        <layouts mode="view">
         <!-- <layout>summary_bom_tool</layout>  Nothing to be defined for the instance, since bommToolClassification is already included in the summary section. -->
         <layout>related_partaker</layout>
+        <layout>owner</layout>
         <layout>related_customer</layout>
         <layout>related_manufacturer</layout>
+        <layout>responsible</layout>
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
@@ -399,8 +403,10 @@
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_item</layout>
+        <layout>responsible</layout>
         <layout>bom_tool</layout>
         <layout>related_partaker</layout>
+        <layout>owner</layout>
         <layout>related_customer</layout>
         <layout>related_manufacturer</layout>
         <layout>bom_dublincore</layout>
@@ -422,6 +428,7 @@
         <layout>related_partaker</layout>
         <layout>related_customer</layout>
         <layout>related_manufacturer</layout>
+        <layout>responsible</layout>
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
@@ -430,6 +437,7 @@
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_item</layout>
+        <layout>responsible</layout>
         <layout>bom_packaging</layout>
         <layout>related_partaker</layout>
         <layout>related_customer</layout>
@@ -450,6 +458,7 @@
       <default-view>view_documents</default-view>
        <layouts mode="view">
         <!-- <layout>summary_bom_tool</layout>  Nothing to be defined for the instance, since bommToolClassification is already included in the summary section. -->
+        <layout>responsible</layout>
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
@@ -459,6 +468,7 @@
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_item</layout>
+        <layout>responsible</layout>
         <layout>bom_specification</layout>
         <layout>bom_dublincore</layout>
       </layouts>
@@ -476,6 +486,7 @@
       <default-view>view_documents</default-view>
       <layouts mode="view">
         <layout>summary_bom_product</layout>
+        <layout>responsible</layout>
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
@@ -484,6 +495,8 @@
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_item</layout>
+        <layout>responsible</layout>
+        <layout>product_classification</layout>
         <layout>bom_product</layout>
         <layout>bom_dublincore</layout>
       </layouts>
@@ -492,7 +505,7 @@
       </contentViews>
    </type>
 
-     <type id="BomCustomerProduct">
+   <type id="BomCustomerProduct">
       <label>BomCustomerProduct</label>
       <icon>/icons/bom_customer_product_16.gif</icon>
       <bigIcon>/icons/bom_customer_product_100.png</bigIcon>
@@ -500,14 +513,15 @@
       <description>BomCustomerProduct.description</description>
       <default-view>view_documents</default-view>
       <layouts mode="view">
-        <layout>bom_customer_product</layout>
+        <layout>responsible</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object</layout>
+        <layout>customer_reference</layout>
         <layout>heading</layout>
+        <layout>bom_customer_product_customers</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
-        <layout>bom_customer_product</layout>
+        <layout>responsible</layout>
         <layout>bom_dublincore</layout>
       </layouts>
       <contentViews category="eloraplm_link_content_category">
@@ -516,6 +530,12 @@
    </type>
    
    <type id="Workspace">
+      <layouts mode="any" append="true">
+        <layout>product_classification</layout>
+      </layouts>
+      <layouts mode="edit" append="true">
+        <layout>product_classification</layout>
+      </layouts>
       <subtypes>
         <type>BomPart</type>
         <type>BomManufacturerPart</type>
@@ -525,6 +545,36 @@
         <type>BomProduct</type>
         <type>BomCustomerProduct</type>
       </subtypes>
+    </type>
+    
+    <type id="Project">
+      <layouts mode="view" append="true">
+        <layout>product_classification</layout>
+      </layouts>
+      <layouts mode="any" append="true">
+        <layout>product_classification</layout>
+      </layouts>
+      <subtypes>
+        <type>BomPart</type>
+        <type>BomManufacturerPart</type>
+        <type>BomTool</type>
+        <type>BomPackaging</type>
+        <type>BomSpecification</type>
+        <type>BomProduct</type>
+        <type>BomCustomerProduct</type>
+      </subtypes>
+    </type>
+ 
+    <type id="CmEco">
+        <subtypes>
+            <type>BomPart</type>
+            <type>BomManufacturerPart</type>
+            <type>BomTool</type>
+            <type>BomPackaging</type>
+            <type>BomSpecification</type>
+            <type>BomProduct</type>
+            <type>BomCustomerProduct</type>
+        </subtypes>
     </type>
     
     <type id="Folder">
@@ -538,7 +588,7 @@
         <type>BomCustomerProduct</type>
       </subtypes>
     </type>
- 
+    
   </extension>
   
 </component>

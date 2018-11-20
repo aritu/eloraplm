@@ -13,12 +13,16 @@
  */
 package com.aritu.eloraplm.bom.treetable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
-import com.aritu.eloraplm.config.util.EloraConfigRow;
-import com.aritu.eloraplm.config.util.EloraConfigTable;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
+
+import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.relations.treetable.BaseRelationNodeData;
 import com.aritu.eloraplm.relations.treetable.RelationNodeData;
@@ -32,16 +36,13 @@ import com.aritu.eloraplm.treetable.NodeManager;
 public class BomCompositionNodeService extends RelationNodeService
         implements NodeManager {
 
+    protected boolean showDirectDocuments;
+
     public BomCompositionNodeService(CoreSession session,
-            boolean showUniqueVersionsPerDocument) throws EloraException {
+            boolean showUniqueVersionsPerDocument,
+            boolean showObsoleteStateDocuments, boolean showDirectDocuments)
+            throws EloraException {
         super(session);
-
-        // TODO: Hay que poner que coja de la configuracion los subtipos de
-        // relaciones que se quieren!!!
-        // predicates.put(EloraRelationConstants.BOM_COMPOSED_OF, false);
-        // predicates.put(EloraRelationConstants.BOM_HAS_SPECIFICATION, false);
-
-        loadConfigurations();
 
         treeDirection = TREE_DIRECTION_COMPOSITION;
 
@@ -50,7 +51,10 @@ public class BomCompositionNodeService extends RelationNodeService
         nodeId = 0;
 
         this.showUniqueVersionsPerDocument = showUniqueVersionsPerDocument;
+        this.showObsoleteStateDocuments = showObsoleteStateDocuments;
+        this.showDirectDocuments = showDirectDocuments;
 
+        loadConfigurations();
     }
 
     /**
@@ -62,36 +66,46 @@ public class BomCompositionNodeService extends RelationNodeService
      * @param data
      * @param predicateUri
      * @param quantity
-     * @param isObjectWc
      * @param isSpecial
      * @return
      */
     @Override
     protected RelationNodeData saveRelationNodeData(String id, int level,
             String docId, DocumentModel data, DocumentModel wcDoc,
-            Statement stmt, String predicateUri, int quantity, String comment,
-            boolean isObjectWc, int ordering, boolean isSpecial) {
+            Statement stmt, String predicateUri, String quantity,
+            String comment, Integer ordering, Integer directorOrdering,
+            Integer viewerOrdering, boolean isSpecial, boolean isDirect) {
 
         return new BaseRelationNodeData(id, level, docId, data, wcDoc, stmt,
-                predicateUri, quantity, comment, isObjectWc, ordering,
-                isSpecial);
+                predicateUri, quantity, comment, ordering, directorOrdering,
+                viewerOrdering, isSpecial, isDirect);
     }
 
     private void loadConfigurations() throws EloraException {
-        // Hierarchical and direct relations
-        EloraConfigTable hierarchicalRelationsConfig = EloraConfigHelper.getBomHierarchicalRelationsConfig();
-        EloraConfigTable directRelationsConfig = EloraConfigHelper.getBomDirectRelationsConfig();
-
-        loadPredicates(hierarchicalRelationsConfig);
-        loadPredicates(directRelationsConfig);
+        loadDirectRelations();
+        loadPredicates();
     }
 
-    private void loadPredicates(EloraConfigTable relationsConfig) {
-        for (EloraConfigRow relationConfig : relationsConfig.getValues()) {
-            boolean isSpecial = ((long) relationConfig.getProperty(
-                    "isSpecial") == 1);
-            String predicateUri = relationConfig.getProperty("id").toString();
-            predicates.put(predicateUri, isSpecial);
+    private void loadDirectRelations() {
+        directRelationsList = new ArrayList<>(
+                RelationsConfig.bomDirectRelationsList);
+    }
+
+    private void loadPredicates() {
+        List<String> predicatesList = new ArrayList<String>();
+        predicatesList.addAll(RelationsConfig.bomHierarchicalRelationsList);
+
+        if (showDirectDocuments) {
+            predicatesList.addAll(directRelationsList);
+        }
+
+        loadPredicateResources(predicatesList);
+    }
+
+    private void loadPredicateResources(List<String> predicatesList) {
+        for (String predicateUri : predicatesList) {
+            Resource predicateResource = new ResourceImpl(predicateUri);
+            predicates.add(predicateResource);
         }
     }
 

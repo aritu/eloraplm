@@ -1,0 +1,43 @@
+<f:subview
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core">
+
+
+  <c:if test="#{widget.mode == 'edit'}">
+        
+        <h:outputScript target="#{pageJsTarget}">
+            function upperCaseInput(a){
+                setTimeout(function(){
+                    a.value = a.value.toUpperCase();
+                }, 1);
+            }
+        </h:outputScript>
+        
+        <h:outputText value="#{messages['eloraplm.label.reference.auto']}" rendered="#{widgetProperty_isHidden}" />
+        <h:inputText id="reference_field" value="#{field}" styleClass="#{widgetProperty_isHidden ? 'hidden' : ''}" onkeydown="upperCaseInput(this)">
+            <c:if test="#{widget.properties.required}">
+                <f:validateRequired />
+            </c:if>
+            
+            <c:if test="#{not empty widgetProperty_converter}">
+                 <f:converter converterId="#{widgetProperty_converter}" />
+            </c:if>
+
+            <f:validator validatorId="uniqueReferenceByTypeValidator" />
+            <f:attribute name="document" value="#{layout.mode == 'create' ? changeableDocument : currentDocument}" />
+            
+        </h:inputText>
+        
+        <h:message for="reference_field" styleClass="errorMessage" />
+    
+  </c:if>
+  
+
+  <c:if test="#{widget.mode == 'view'}">
+    #{field}
+  </c:if>
+
+
+</f:subview>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.search.TypeService.contrib">
+  <require>org.nuxeo.search.ui.types</require>
+  <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
        <schema name="elora_search" prefix="eloras" src="schemas/elora_search.xsd"/>
@@ -10,6 +12,57 @@
     <doctype extends="DefaultSearch" name="EloraSearch">
       <schema name="elora_search" />
     </doctype>
+  </extension>
+  
+  <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
+    <types>
+      <type name="EloraSearch">default</type>
+    </types>
+  </extension>
+  
+  <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
+
+    <type id="EloraSearch">
+      <label>EloraSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <!--  Override DefaultSearch in order to:
+            - Don't display heading layout (Title and Description repeated)
+            - Display simple_search_layout instead of default_search_layout
+            - Don't display content_view_display layout (Search Results selector and Order by columns)
+    -->
+    <type id="DefaultSearch">
+      <label>DefaultSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>DefaultSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <!-- <layout>heading</layout> -->
+        <!-- <layout>default_search_layout</layout> -->
+        <layout>simple_search_layout</layout>
+        <!-- <layout>content_view_display</layout> -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>simple_search_layout</layout>
+      </layouts>
+    </type>
+
   </extension>
 
 

@@ -1,813 +1,885 @@
 <?xml version="1.0"?>
-
 <component name="com.aritu.eloraplm.doctypes.TypeService.contrib">
-
-  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
-       <schema name="elora_object" prefix="elo" src="schemas/elora_object.xsd"/>
-       <schema name="elora_viewer" prefix="elovwr" src="schemas/elora_viewer.xsd"/>
-       <schema name="cad_document" prefix="cad" src="schemas/cad_document.xsd"/>
-       <schema name="cad_drawing" prefix="caddrw" src="schemas/cad_drawing.xsd"/>
-       <schema name="cad_design_table" prefix="caddtb" src="schemas/cad_design_table.xsd"/>
-       <schema name="project" prefix="prj" src="schemas/project.xsd"/>
-       <schema name="related_partaker" prefix="ptk" src="schemas/related_partaker.xsd"/>
-       <schema name="related_customer" prefix="cust" src="schemas/related_customer.xsd"/>
-       <schema name="related_manufacturer" prefix="manu" src="schemas/related_manufacturer.xsd"/>
-<!--        <schema name="related_supplier" prefix="supp" src="schemas/related_supplier.xsd"/> -->
-       <schema name="elora_advanced_search" prefix="eloadvsrch" src="schemas/elora_advanced_search.xsd" />
-  </extension>
-
-
-  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="configuration">
-    <configuration>
-        <!-- <prefetch>common.icon, dc:title, dc:description, dc:created, dc:modified, dc:lastContributor, dc:creator</prefetch> -->
-        <prefetch>common.icon, elo:reference, dc:title, dc:description, dc:created, dc:modified, dc:lastContributor, dc:creator</prefetch>
-    </configuration>
-  </extension>
-  
-
-  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
-  
-    <!-- Facets -->
+    <require>org.nuxeo.ecm.core.CoreExtensions</require>
+    <require>org.nuxeo.nuxeo.ecm.platform.audio.doctype</require>
+    <require>org.nuxeo.ecm.platform.picture.coreTypes</require>
+    <require>org.nuxeo.nuxeo.ecm.platform.video.doctype</require>
+    <require>org.nuxeo.ecm.platform.userworkspace.coreTypes</require>
+    <require>org.nuxeo.ecm.platform.forum.types</require>
+    <require>org.nuxeo.ecm.platform.audio.ecm.types</require>
+    <require>org.nuxeo.ecm.platform.video.jsf.types</require>
+    <require>org.nuxeo.ecm.platform.picture.jsf.types</require>
+    <require>org.nuxeo.ecm.platform.types</require>
     
-    <facet name="CadDocument" />
-    <facet name="EloraWorkspace">
-        <schema name="related_partaker"/>
-        <schema name="related_customer"/>
-        <schema name="related_manufacturer"/>
-    </facet>    
-    <facet name="EloraStruct" />
-    <facet name="BasicDocument" />
-    
-    <!-- Doctypes -->
-    
-    <doctype append="true" name="File">
-      <schema name="elora_object"/>
-      <facet name="BasicDocument"/>
-    </doctype>
-    
-    <doctype append="true" name="Note">
-      <schema name="elora_object"/>
-      <facet name="BasicDocument"/>
-    </doctype>
-    
-    <doctype append="true" name="Audio">
-      <schema name="elora_object"/>
-      <facet name="BasicDocument"/>
-    </doctype>
-    
-    <doctype append="true" name="Picture">
-      <schema name="elora_object"/>
-      <facet name="BasicDocument"/>
-    </doctype>
-    
-    <doctype append="true" name="Video">
-      <schema name="elora_object"/>
-      <facet name="BasicDocument"/>
-    </doctype>
-    
-    <doctype append="true" name="Workspace">
-      <facet name="EloraWorkspace"/>
-    </doctype>
-    
-    <doctype append="true" name="Domain">
-      <facet name="Orderable"/>
-    </doctype>
-    
-    <doctype extends="WorkspaceRoot" name="StructArchivedWS">
-      <facet name="EloraStruct"/>
-    </doctype>
-    
-    <doctype extends="File" name="CadDocument">
-      <schema name="cad_document"/>
-      <facet name="CadDocument" />
-    </doctype>
-
-    <doctype extends="CadDocument" name="CadAssembly">
-      <schema name="elora_viewer"/>
-    </doctype>
-  
-    <doctype extends="CadDocument" name="CadPart">
-      <schema name="elora_viewer"/>
-    </doctype>
-
-    <doctype extends="CadDocument" name="CadDrawing">
-      <schema name="cad_drawing"/>
-      <schema name="elora_viewer"/>
-    </doctype>
-
-    <doctype extends="CadDocument" name="CadDesignTable">
-      <schema name="cad_design_table"/>
-    </doctype>
-
-    <doctype extends="Folder" name="StructureRoot">
-      <facet name="SuperSpace"/>
-      <facet name="Orderable"/>
-      <facet name="EloraStruct"/>
-    </doctype>
-
-    <doctype extends="Folder" name="CollaborationRoot">
-      <facet name="SuperSpace"/>
-      <facet name="Orderable"/>
-      <facet name="EloraStruct"/>
-    </doctype>
-
-    <doctype extends="Folder" name="LibraryRoot">
-      <facet name="SuperSpace"/>
-      <facet name="Orderable"/>
-      <facet name="EloraStruct"/>
-    </doctype>
-    
-    <doctype extends="Folder" name="StructCadDoc">
-      <facet name="EloraStruct"/>
-    </doctype>
-    
-    <doctype extends="Folder" name="FolderCadPart">
-      <facet name="EloraStruct"/>
-    </doctype>
-
-    <doctype extends="Folder" name="FolderCadAssembly">
-      <facet name="EloraStruct"/>
-    </doctype>
-    
-    <doctype extends="Folder" name="FolderCadDrawing">
-      <facet name="EloraStruct"/>
-    </doctype>
-    
-    <doctype extends="Folder" name="FolderOtherDoc">
-      <facet name="EloraStruct"/>
-    </doctype>
-
-    <doctype extends="Folder" name="StructEbom">
-      <facet name="EloraStruct"/>
-    </doctype>
-    
-    <doctype extends="Folder" name="StructChangeManagement">
-      <facet name="EloraStruct"/>
-    </doctype>
-
-    <doctype extends="Folder" name="StructProject">
-      <facet name="EloraStruct"/>
-    </doctype>
-    
-    <doctype extends="Folder" name="Project">
-        <schema name="elora_object"/>
-        <schema name="project"/>
-        <facet name="Commentable"/>
-        <facet name="EloraWorkspace"/>
-    </doctype>
-    
-    <doctype extends="Folder" name="TempFolder">
-      <facet name="HiddenInNavigation"/>
-      <facet name="EloraStruct"/>
-    </doctype>
-    
-    <doctype name="EloraAdvancedSearch" extends="AdvancedSearch">
-      <schema name="elora_advanced_search" />
-    </doctype>
-    
-  </extension>
-
-  
-  <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
-
-    <type id="Domain">
-      <icon>/icons/domain_16.gif</icon>
-      <bigIcon>/icons/domain_100.png</bigIcon>
-      <subtypes>
-        <type>StructureRoot</type>
-        <type>CollaborationRoot</type>
-        <type>LibraryRoot</type>
-      </subtypes>
-    </type>
-
-    <type id="WorkspaceRoot">
-      <icon>/icons/workspace_root_16.gif</icon>
-      <bigIcon>/icons/workspace_root_100.png</bigIcon>
-      <subtypes>
-        <type>Project</type>
-      </subtypes>
-    </type>
-    
-    <type id="Workspace">
-      <icon>/icons/workspace_16.gif</icon>
-      <bigIcon>/icons/workspace_100.png</bigIcon>
-      <layouts mode="any">
-        <layout>heading</layout>
-        <layout>partaker</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>partaker</layout>        
-        <layout>dublincore</layout>
-      </layouts>      
-      <subtypes>
-        <type>CadAssembly</type>
-        <type>CadPart</type>
-        <type>CadDrawing</type>
-        <type>CadDesignTable</type>
-      </subtypes>
-    </type>
-          
-    <type id="StructArchivedWS">
-      <subtypes>
-        <type>Workspace</type>
-      </subtypes>
-    </type>
-          
-    <type id="Folder">
-      <icon>/icons/folder_16.gif</icon>
-      <bigIcon>/icons/folder_100.png</bigIcon>
-      <subtypes>
-        <type>CadAssembly</type>
-        <type>CadPart</type>
-        <type>CadDrawing</type>
-        <type>CadDesignTable</type>
-      </subtypes>
-    </type>
-    
-    <type id="File">
-      <icon>/icons/file_16.gif</icon>
-      <bigIcon>/icons/file_100.png</bigIcon>
-      <layouts mode="any">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>file</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>file</layout>
-        <layout>dublincore</layout>
-      </layouts>
-    </type>
-    
-    <type id="Forum">
-      <icon>/icons/forum_16.gif</icon>
-      <bigIcon>/icons/forum_100.png</bigIcon>
-    </type>
-    
-    <type id="Note">
-      <icon>/icons/note_16.gif</icon>
-      <bigIcon>/icons/note_100.png</bigIcon>
-      <layouts mode="any">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>note</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>note</layout>
-        <layout>dublincore</layout>
-      </layouts>
-    </type>
-    
-    
-    <!-- DAM doctypes -->
-    <type id="Audio">
-      <icon>/icons/audio_16.gif</icon>
-      <bigIcon>/icons/audio_100.png</bigIcon>
-      <layouts mode="any">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>audio_file</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>audio_file</layout>
-        <layout>dublincore</layout>
-      </layouts>
-    </type>
-    
-    <type id="Picture">
-      <icon>/icons/picture_16.gif</icon>
-      <bigIcon>/icons/picture_100.png</bigIcon>
-      <layouts mode="any">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>picture</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>picture</layout>
-        <layout>dublincore</layout>
-      </layouts>
-    </type>
-    
-    <type id="Video">
-      <icon>/icons/video_16.gif</icon>
-      <bigIcon>/icons/video_100.png</bigIcon>
-      <layouts mode="any">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>video_file</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>elora_object</layout>
-        <layout>heading</layout>
-        <layout>video_file</layout>
-        <layout>dublincore</layout>
-      </layouts>
-    </type>
-    <!-- End of DAM doctypes -->
-    
-    
-    <type id="OrderedFolder">
-      <icon>/icons/ordered_folder_16.gif</icon>
-      <bigIcon>/icons/ordered_folder_100.png</bigIcon>
-      <subtypes>
-        <type>CadAssembly</type>
-        <type>CadPart</type>
-        <type>CadDrawing</type>
-        <type>CadDesignTable</type>
-      </subtypes>
-    </type>
-        
-    <type id="CadAssembly">
-      <label>CadAssembly</label>
-      <icon>/icons/cad_assembly_16.gif</icon>
-      <bigIcon>/icons/cad_assembly_100.png</bigIcon>
-      <category>CadGroup</category>
-      <description>CadAssembly.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="view">
-        <layout>summary_cad_assembly</layout>
-        <layout>cad_document</layout>
-      </layouts>
-      <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
-        <layout>heading</layout>
-        <layout>file</layout>
-        <layout>elora_viewer</layout>
-        <layout>cad_document</layout>
-        <layout>cad_assembly</layout>
-        <layout>cad_dublincore</layout>
-      </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>       
-   </type>
-
-    <type id="CadPart">
-      <label>CadPart</label>
-      <icon>/icons/cad_part_16.gif</icon>
-      <bigIcon>/icons/cad_part_100.png</bigIcon>
-      <category>CadGroup</category>
-      <description>CadPart.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="view">
-        <layout>summary_cad_part</layout>
-        <layout>cad_document</layout>
-      </layouts>
-      <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
-        <layout>heading</layout>
-        <layout>file</layout>
-        <layout>elora_viewer</layout>
-        <layout>cad_document</layout>
-        <layout>cad_part</layout>
-        <layout>cad_dublincore</layout>
-      </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>       
-   </type>
-
-    <type id="CadDrawing">
-      <label>CadDrawing</label>
-      <icon>/icons/cad_drawing_16.gif</icon>
-      <bigIcon>/icons/cad_drawing_100.png</bigIcon>
-      <category>CadGroup</category>
-      <description>CadDrawing.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="view">
-        <layout>cad_drawing</layout>
-        <layout>cad_document</layout>
-      </layouts>
-      <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
-        <layout>heading</layout>
-        <layout>file</layout>
-        <layout>elora_viewer</layout>
-        <layout>cad_document</layout>
-        <layout>cad_drawing</layout>
-        <layout>cad_dublincore</layout>
-      </layouts>     
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>   
-   </type>
-
-    <type id="CadDesignTable">
-      <label>CadDesignTable</label>
-      <icon>/icons/cad_design_table_16.gif</icon>
-      <bigIcon>/icons/cad_design_table_100.png</bigIcon>
-      <category>CadGroup</category>
-      <description>CadDesignTable.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="view">
-        <layout>cad_design_table</layout>
-        <layout>cad_document</layout>
-      </layouts>
-      <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
-        <layout>heading</layout>
-        <layout>file</layout>
-        <layout>cad_dublincore</layout>
-        <layout>cad_document</layout>
-        <layout>cad_design_table</layout>
-      </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>       
-   </type>
-   
-   <type id="StructureRoot">
-      <label>StructureRoot</label>
-      <icon>/icons/structure_root_16.gif</icon>
-      <bigIcon>/icons/structure_root_100.png</bigIcon>
-      <category>SuperDocument</category>
-      <description>StructureRoot.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-    </type>
-
-   <type id="CollaborationRoot">
-      <label>CollaborationRoot</label>
-      <icon>/icons/collaboration_root_16.gif</icon>
-      <bigIcon>/icons/collaboration_root_100.png</bigIcon>
-      <category>SuperDocument</category>
-      <description>CollaborationRoot.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-    </type>
-
-   <type id="LibraryRoot">
-      <label>LibraryRoot</label>
-      <icon>/icons/library_root_16.gif</icon>
-      <bigIcon>/icons/library_root_100.png</bigIcon>
-      <category>SuperDocument</category>
-      <description>LibraryRoot.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-    </type>
-
-   <type id="StructArchivedWS">
-      <label>StructArchivedWS</label>
-      <icon>/icons/struct_archived_ws_16.gif</icon>
-      <bigIcon>/icons/struct_archived_ws_100.png</bigIcon>
-      <description>StructArchivedWS.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>Workspace</type>
-      </subtypes>      
-   </type>
-    
-   <type id="StructCadDoc">
-      <label>StructCadDoc</label>
-      <icon>/icons/struct_cad_doc_16.gif</icon>
-      <bigIcon>/icons/struct_cad_doc_100.png</bigIcon>
-      <description>StructCadDoc.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>FolderCadPart</type>
-        <type>FolderCadAssembly</type>
-        <type>FolderCadDrawing</type>
-        <type>FolderOtherDoc</type>
-      </subtypes>      
-   </type>
-
-   <type id="FolderCadPart">
-      <label>FolderCadPart</label>
-      <icon>/icons/folder_cad_part_16.gif</icon>
-      <bigIcon>/icons/folder_cad_part_100.png</bigIcon>
-      <description>FolderCadPart.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>FolderCadPart</type>
-        <type>CadPart</type>
-      </subtypes>      
-   </type>
-
-   <type id="FolderCadAssembly">
-      <label>FolderCadAssembly</label>
-      <icon>/icons/folder_cad_assembly_16.gif</icon>
-      <bigIcon>/icons/folder_cad_assembly_100.png</bigIcon>
-      <description>FolderCadAssembly.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>FolderCadAssembly</type>
-        <type>CadAssembly</type>
-      </subtypes>      
-   </type>
- 
-    <type id="FolderCadDrawing">
-      <label>FolderCadDrawing</label>
-      <icon>/icons/folder_cad_drawing_16.gif</icon>
-      <bigIcon>/icons/folder_cad_drawing_100.png</bigIcon>
-      <description>FolderCadDrawing.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>FolderCadDrawing</type>
-        <type>CadDrawing</type>
-      </subtypes>      
-   </type>
-
-    <type id="FolderOtherDoc">
-      <label>FolderOtherDoc</label>
-      <icon>/icons/folder_cad_other_16.gif</icon>
-      <bigIcon>/icons/folder_cad_other_100.png</bigIcon>
-      <description>FolderOtherDoc.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>Folder</type>
-        <type>OrderedFolder</type>
-        <type>Forum</type>
-        <type>File</type>
-        <type>Note</type>
-        <type>CadDesignTable</type>
-        <type>Picture</type>
-        <type>Video</type>
-        <type>Audio</type>        
-      </subtypes>      
-   </type>
-   
-   <type id="StructChangeManagement">
-      <label>StructChangeManagement</label>
-      <icon>/icons/struct_change_management_16.gif</icon>
-      <bigIcon>/icons/struct_change_management_100.png</bigIcon>
-      <description>StructChangeManagement.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-   </type>
-   
-   <type id="StructProject">
-      <label>StructProject</label>
-      <icon>/icons/struct_project_16.gif</icon>
-      <bigIcon>/icons/struct_project_100.png</bigIcon>
-      <description>StructProject.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-   </type>
- 
-    <type id="Project">
-      <label>Project</label>
-      <icon>/icons/project_16.gif</icon>
-      <bigIcon>/icons/project_100.png</bigIcon>
-      <description>Project.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-        <layout>elora_object</layout>
-        <layout>partaker</layout>
-        <layout>project</layout>
-        <layout>projectPhase</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-        <layout>elora_object</layout>
-        <layout>partaker</layout>
-        <layout>project</layout>
-        <layout>projectPhase</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>Folder</type>
-        <type>OrderedFolder</type>
-        <type>Project</type>
-        <type>Forum</type>
-        <type>File</type>
-        <type>Note</type>
-        <type>CadAssembly</type>
-        <type>CadPart</type>
-        <type>CadDrawing</type>
-        <type>CadDesignTable</type>
-        <type>Picture</type>
-        <type>Video</type>
-        <type>Audio</type>        
-      </subtypes>      
-   </type>
-
-    <type id="StructEbom">
-      <label>StructEbom</label>
-      <icon>/icons/struct_ebom_16.gif</icon>
-      <bigIcon>/icons/struct_ebom_100.png</bigIcon>
-      <description>StructEbom.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-   </type>
-
-   <type id="TempFolder">
-      <label>TempFolder</label>
-      <icon>/icons/temp_folder_16.gif</icon>
-      <bigIcon>/icons/temp_folder_100.png</bigIcon>
-      <description>TempFolder.description</description>
-      <default-view>view_documents</default-view>
-      <subtypes>
-        <type>File</type>
-        <type>Folder</type>
-      </subtypes>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-    </type>
- 
-  </extension>
-
+    <extension target="org.nuxeo.ecm.core.schema.TypeService"
+        point="schema">
+        <schema name="elora_object" prefix="elo"
+            src="schemas/elora_object.xsd" />
+        <schema name="elora_viewer" prefix="elovwr"
+            src="schemas/elora_viewer.xsd" />
+        <schema name="cad_document" prefix="cad"
+            src="schemas/cad_document.xsd" />
+        <schema name="cad_drawing" prefix="caddrw"
+            src="schemas/cad_drawing.xsd" />
+        <schema name="cad_design_table" prefix="caddtb"
+            src="schemas/cad_design_table.xsd" />
+        <schema name="owner" prefix="own"
+            src="schemas/owner.xsd" />
+        <schema name="priority" prefix="prio" src="schemas/priority.xsd" />
+        <schema name="project" prefix="prj" src="schemas/project.xsd" />
+        <schema name="related_partaker" prefix="ptk"
+            src="schemas/related_partaker.xsd" />
+        <schema name="related_customer" prefix="cust"
+            src="schemas/related_customer.xsd" />
+        <schema name="related_manufacturer" prefix="manu"
+            src="schemas/related_manufacturer.xsd" />
+        <schema name="responsible" prefix="resp"
+            src="schemas/responsible.xsd" />
+        <!-- <schema name="related_supplier" prefix="supp" src="schemas/related_supplier.xsd"/> -->
+        <schema name="elora_advanced_search" prefix="eloadvsrch"
+            src="schemas/elora_advanced_search.xsd" />
+        <schema name="cad_attachments" prefix="cadatts"
+            src="schemas/cad_attachments.xsd" />
+    </extension>
+    <extension target="org.nuxeo.ecm.core.schema.TypeService"
+        point="configuration">
+        <configuration>
+            <!-- <prefetch>common.icon, dc:title, dc:description, dc:created, 
+                dc:modified, dc:lastContributor, dc:creator</prefetch> -->
+            <prefetch>common.icon, elo:reference, dc:title,
+                dc:description, dc:created, dc:modified,
+                dc:lastContributor, dc:creator
+            </prefetch>
+        </configuration>
+    </extension>
+    <extension target="org.nuxeo.ecm.core.schema.TypeService"
+        point="doctype">
+        <!-- Facets -->
+        <facet name="CadDocument" />
+        <facet name="EloraWorkspace">
+            <schema name="related_partaker" />
+            <schema name="related_customer" />
+            <schema name="related_manufacturer" />
+            <schema name="responsible" />
+        </facet>
+        <facet name="EloraStruct" />
+        <facet name="BasicDocument" />
+        <facet name="WorkableDomainChild" />
+        <facet name="LockRequiredToEdit" />
+        <!-- Doctypes -->
+        <doctype append="true" name="File">
+            <schema name="elora_object" />
+            <facet name="BasicDocument" />
+        </doctype>
+        <doctype append="true" name="Note">
+            <schema name="elora_object" />
+            <facet name="BasicDocument" />
+        </doctype>
+        <doctype append="true" name="Audio">
+            <schema name="elora_object" />
+            <facet name="BasicDocument" />
+        </doctype>
+        <doctype append="true" name="Picture">
+            <schema name="elora_object" />
+            <facet name="BasicDocument" />
+        </doctype>
+        <doctype append="true" name="Video">
+            <schema name="elora_object" />
+            <facet name="BasicDocument" />
+        </doctype>
+        <doctype append="true" name="UserWorkspacesRoot">
+            <facet name="WorkableDomainChild" />
+        </doctype>
+        <doctype append="true" name="Workspace">
+            <schema name="elora_object" />
+            <facet name="EloraWorkspace" />
+            <facet name="LockRequiredToEdit" />
+        </doctype>
+        <doctype append="true" name="Domain">
+            <facet name="Orderable" />
+        </doctype>
+        <doctype extends="WorkspaceRoot" name="StructArchivedWS">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="File" name="CadDocument">
+            <schema name="cad_document" />
+            <facet name="CadDocument" />
+        </doctype>
+        <doctype extends="CadDocument" name="CadAssembly">
+            <schema name="elora_viewer" />
+            <schema name="cad_attachments" />
+        </doctype>
+        <doctype extends="CadDocument" name="CadPart">
+            <schema name="elora_viewer" />
+            <schema name="cad_attachments" />
+        </doctype>
+        <doctype extends="CadDocument" name="CadDrawing">
+            <schema name="cad_drawing" />
+            <schema name="elora_viewer" />
+            <schema name="cad_attachments" />
+        </doctype>
+        <doctype extends="CadDocument" name="CadDesignTable">
+            <schema name="cad_design_table" />
+        </doctype>
+        <doctype extends="Folder" name="StructureRoot">
+            <facet name="SuperSpace" />
+            <facet name="Orderable" />
+            <facet name="EloraStruct" />
+            <facet name="WorkableDomainChild" />
+        </doctype>
+        <doctype extends="Folder" name="CollaborationRoot">
+            <facet name="SuperSpace" />
+            <facet name="Orderable" />
+            <facet name="EloraStruct" />
+            <facet name="WorkableDomainChild" />
+        </doctype>
+        <doctype extends="Folder" name="LibraryRoot">
+            <facet name="SuperSpace" />
+            <facet name="Orderable" />
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="StructCadDoc">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="FolderCadPart">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="FolderCadAssembly">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="FolderCadDrawing">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="FolderOtherDoc">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="StructEbom">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="StructChangeManagement">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="StructProject">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="Project">
+            <schema name="elora_object" />
+            <schema name="priority" />
+            <schema name="project" />
+            <facet name="Commentable" />
+            <facet name="EloraWorkspace" />
+            <facet name="SuperSpace" />
+            <facet name="LockRequiredToEdit" />
+        </doctype>
+        <doctype extends="Folder" name="TempFolder">
+            <facet name="HiddenInNavigation" />
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype name="EloraAdvancedSearch" extends="AdvancedSearch">
+            <schema name="elora_advanced_search" />
+        </doctype>
+        <doctype extends="Folder" name="AdminRoot">
+            <facet name="SuperSpace" />
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="DocumentationRoot">
+            <facet name="SuperSpace" />
+            <facet name="Orderable" />
+            <facet name="EloraStruct" />
+        </doctype>
+    </extension>
+    <extension target="org.nuxeo.ecm.platform.types.TypeService"
+        point="types">
+        <type id="Domain">
+            <icon>/icons/domain_16.gif</icon>
+            <bigIcon>/icons/domain_100.png</bigIcon>
+            <subtypes>
+                <type>StructureRoot</type>
+                <type>CollaborationRoot</type>
+                <type>LibraryRoot</type>
+                <type>AdminRoot</type>
+                <type>DocumentationRoot</type>
+            </subtypes>
+        </type>
+        <type id="WorkspaceRoot">
+            <icon>/icons/workspace_root_16.gif</icon>
+            <bigIcon>/icons/workspace_root_100.png</bigIcon>
+            <subtypes>
+                <type>Project</type>
+            </subtypes>
+        </type>
+        <type id="Workspace">
+            <icon>/icons/workspace_16.gif</icon>
+            <bigIcon>/icons/workspace_100.png</bigIcon>
+            <layouts mode="any">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>responsible</layout>
+                <layout>partaker</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>responsible</layout>
+                <layout>partaker</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <subtypes>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+            </subtypes>
+            <deniedSubtypes>
+                <type>Workspace</type>
+            </deniedSubtypes>
+        </type>
+        <type id="StructArchivedWS">
+            <subtypes>
+                <type>Workspace</type>
+            </subtypes>
+        </type>
+        <type id="Folder">
+            <icon>/icons/folder_16.gif</icon>
+            <bigIcon>/icons/folder_100.png</bigIcon>
+            <subtypes>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+            </subtypes>
+        </type>
+        <type id="File">
+            <icon>/icons/file_16.gif</icon>
+            <bigIcon>/icons/file_100.png</bigIcon>
+            <layouts mode="any">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>file</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>file</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <type id="Forum">
+            <icon>/icons/forum_16.gif</icon>
+            <bigIcon>/icons/forum_100.png</bigIcon>
+        </type>
+        <type id="Note">
+            <icon>/icons/note_16.gif</icon>
+            <bigIcon>/icons/note_100.png</bigIcon>
+            <layouts mode="any">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>note</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>note</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <!-- DAM doctypes -->
+        <type id="Audio">
+            <icon>/icons/audio_16.gif</icon>
+            <bigIcon>/icons/audio_100.png</bigIcon>
+            <layouts mode="any">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>audio_file</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>audio_file</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <type id="Picture">
+            <icon>/icons/picture_16.gif</icon>
+            <bigIcon>/icons/picture_100.png</bigIcon>
+            <layouts mode="any">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>picture</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>picture</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <type id="Video">
+            <icon>/icons/video_16.gif</icon>
+            <bigIcon>/icons/video_100.png</bigIcon>
+            <layouts mode="any">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>video_file</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>video_file</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <!-- End of DAM doctypes -->
+        <type id="OrderedFolder">
+            <icon>/icons/ordered_folder_16.gif</icon>
+            <bigIcon>/icons/ordered_folder_100.png</bigIcon>
+            <subtypes>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+            </subtypes>
+        </type>
+        <type id="CadAssembly">
+            <label>CadAssembly</label>
+            <icon>/icons/cad_assembly_16.gif</icon>
+            <bigIcon>/icons/cad_assembly_100.png</bigIcon>
+            <category>CadGroup</category>
+            <description>CadAssembly.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>summary_cad_assembly</layout>
+                <layout>cad_document</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_auto</layout>
+                <layout>heading</layout>
+                <layout>file</layout>
+                <layout>elora_viewer</layout>
+                <layout>cad_document</layout>
+                <layout>cad_assembly</layout>
+                <layout>cad_dublincore</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <type id="CadPart">
+            <label>CadPart</label>
+            <icon>/icons/cad_part_16.gif</icon>
+            <bigIcon>/icons/cad_part_100.png</bigIcon>
+            <category>CadGroup</category>
+            <description>CadPart.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>summary_cad_part</layout>
+                <layout>cad_document</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_auto</layout>
+                <layout>heading</layout>
+                <layout>file</layout>
+                <layout>elora_viewer</layout>
+                <layout>cad_document</layout>
+                <layout>cad_part</layout>
+                <layout>cad_dublincore</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <type id="CadDrawing">
+            <label>CadDrawing</label>
+            <icon>/icons/cad_drawing_16.gif</icon>
+            <bigIcon>/icons/cad_drawing_100.png</bigIcon>
+            <category>CadGroup</category>
+            <description>CadDrawing.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>cad_drawing</layout>
+                <layout>cad_document</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_auto</layout>
+                <layout>heading</layout>
+                <layout>file</layout>
+                <layout>elora_base_viewer</layout>
+                <layout>cad_document</layout>
+                <layout>cad_drawing</layout>
+                <layout>cad_dublincore</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <type id="CadDesignTable">
+            <label>CadDesignTable</label>
+            <icon>/icons/cad_design_table_16.gif</icon>
+            <bigIcon>/icons/cad_design_table_100.png</bigIcon>
+            <category>CadGroup</category>
+            <description>CadDesignTable.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>cad_design_table</layout>
+                <layout>cad_document</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_required</layout>
+                <layout>heading</layout>
+                <layout>file</layout>
+                <layout>cad_dublincore</layout>
+                <layout>cad_document</layout>
+                <layout>cad_design_table</layout>
+            </layouts>
+            <contentViews category="eloraplm_link_content_category">
+                <contentView>eloraplm_link_content</contentView>
+            </contentViews>
+        </type>
+        <type id="StructureRoot">
+            <label>StructureRoot</label>
+            <icon>/icons/structure_root_16.gif</icon>
+            <bigIcon>/icons/structure_root_100.png</bigIcon>
+            <category>SuperDocument</category>
+            <description>StructureRoot.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>orderable_document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        <type id="CollaborationRoot">
+            <label>CollaborationRoot</label>
+            <icon>/icons/collaboration_root_16.gif</icon>
+            <bigIcon>/icons/collaboration_root_100.png</bigIcon>
+            <category>SuperDocument</category>
+            <description>CollaborationRoot.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>orderable_document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        <type id="LibraryRoot">
+            <label>LibraryRoot</label>
+            <icon>/icons/library_root_16.gif</icon>
+            <bigIcon>/icons/library_root_100.png</bigIcon>
+            <category>SuperDocument</category>
+            <description>LibraryRoot.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>orderable_document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        <type id="StructArchivedWS">
+            <label>StructArchivedWS</label>
+            <icon>/icons/struct_archived_ws_16.gif</icon>
+            <bigIcon>/icons/struct_archived_ws_100.png</bigIcon>
+            <description>StructArchivedWS.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Workspace</type>
+            </subtypes>
+        </type>
+        <type id="StructCadDoc">
+            <label>StructCadDoc</label>
+            <icon>/icons/struct_cad_doc_16.gif</icon>
+            <bigIcon>/icons/struct_cad_doc_100.png</bigIcon>
+            <description>StructCadDoc.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>FolderCadPart</type>
+                <type>FolderCadAssembly</type>
+                <type>FolderCadDrawing</type>
+                <type>FolderOtherDoc</type>
+            </subtypes>
+        </type>
+        <type id="FolderCadPart">
+            <label>FolderCadPart</label>
+            <icon>/icons/folder_cad_part_16.gif</icon>
+            <bigIcon>/icons/folder_cad_part_100.png</bigIcon>
+            <description>FolderCadPart.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>FolderCadPart</type>
+                <type>CadPart</type>
+            </subtypes>
+        </type>
+        <type id="FolderCadAssembly">
+            <label>FolderCadAssembly</label>
+            <icon>/icons/folder_cad_assembly_16.gif</icon>
+            <bigIcon>/icons/folder_cad_assembly_100.png</bigIcon>
+            <description>FolderCadAssembly.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>FolderCadAssembly</type>
+                <type>CadAssembly</type>
+            </subtypes>
+        </type>
+        <type id="FolderCadDrawing">
+            <label>FolderCadDrawing</label>
+            <icon>/icons/folder_cad_drawing_16.gif</icon>
+            <bigIcon>/icons/folder_cad_drawing_100.png</bigIcon>
+            <description>FolderCadDrawing.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>FolderCadDrawing</type>
+                <type>CadDrawing</type>
+            </subtypes>
+        </type>
+        <type id="FolderOtherDoc">
+            <label>FolderOtherDoc</label>
+            <icon>/icons/folder_cad_other_16.gif</icon>
+            <bigIcon>/icons/folder_cad_other_100.png</bigIcon>
+            <description>FolderOtherDoc.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Folder</type>
+                <type>OrderedFolder</type>
+                <type>Forum</type>
+                <type>File</type>
+                <type>Note</type>
+                <type>CadDesignTable</type>
+                <type>Picture</type>
+                <type>Video</type>
+                <type>Audio</type>
+            </subtypes>
+        </type>
+        <type id="StructChangeManagement">
+            <label>StructChangeManagement</label>
+            <icon>/icons/struct_change_management_16.gif</icon>
+            <bigIcon>/icons/struct_change_management_100.png</bigIcon>
+            <description>StructChangeManagement.description
+            </description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        <type id="StructProject">
+            <label>StructProject</label>
+            <icon>/icons/struct_project_16.gif</icon>
+            <bigIcon>/icons/struct_project_100.png</bigIcon>
+            <description>StructProject.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        <type id="Project">
+            <label>Project</label>
+            <icon>/icons/project_16.gif</icon>
+            <bigIcon>/icons/project_100.png</bigIcon>
+            <description>Project.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>project</layout>
+                <layout>summary_priority</layout>
+                <layout>partaker</layout>
+                <layout>projectPhase</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_auto</layout>
+                <layout>heading</layout>
+                <layout>project</layout>
+                <layout>responsible</layout>
+                <layout>priority</layout>
+                <layout>partaker</layout>
+                <layout>projectPhase</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Folder</type>
+                <type>OrderedFolder</type>
+                <type>Forum</type>
+                <type>File</type>
+                <type>Note</type>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+                <type>Picture</type>
+                <type>Video</type>
+                <type>Audio</type>
+            </subtypes>
+        </type>
+        <type id="StructEbom">
+            <label>StructEbom</label>
+            <icon>/icons/struct_ebom_16.gif</icon>
+            <bigIcon>/icons/struct_ebom_100.png</bigIcon>
+            <description>StructEbom.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        <type id="TempFolder">
+            <label>TempFolder</label>
+            <icon>/icons/temp_folder_16.gif</icon>
+            <bigIcon>/icons/temp_folder_100.png</bigIcon>
+            <description>TempFolder.description</description>
+            <default-view>view_documents</default-view>
+            <subtypes>
+                <type>File</type>
+                <type>Folder</type>
+            </subtypes>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        <type id="EloraAdvancedSearch">
+            <label>Elora Advanced Search</label>
+            <icon>/icons/advanced_search.gif</icon>
+            <bigIcon>/icons/folder_100.png</bigIcon>
+            <default-view>view_documents</default-view>
+        </type>
+        <type id="AdminRoot">
+            <label>AdminRoot</label>
+            <icon>/icons/admin_root_16.gif</icon>
+            <bigIcon>/icons/admin_root_100.png</bigIcon>
+            <category>SuperDocument</category>
+            <description>AdminRoot.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        <type id="DocumentationRoot">
+            <label>DocumentationRoot</label>
+            <icon>/icons/documentation_root_16.gif</icon>
+            <bigIcon>/icons/documentation_root_100.png</bigIcon>
+            <category>SuperDocument</category>
+            <description>DocumentationRoot.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Folder</type>
+                <type>OrderedFolder</type>
+                <type>File</type>
+                <type>Note</type>
+                <type>Audio</type>
+                <type>Video</type>
+                <type>Picture</type>
+            </subtypes>
+        </type>
+    </extension>
 </component>

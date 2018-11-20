@@ -40,6 +40,7 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationConstants;
 import org.nuxeo.ecm.platform.relations.services.DocumentRelationService;
 
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.core.relations.EloraCoreGraph;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 
 /**
@@ -57,48 +58,94 @@ public class EloraDocumentRelationService extends DocumentRelationService
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
-            DocumentModel to, String predicate, String comment, int quantity,
-            boolean isObjectWc, int ordering) {
+            DocumentModel to, String predicate, String comment,
+            String quantity) {
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
-                false, false, comment, quantity, isObjectWc, ordering);
+                false, false, comment, quantity, null, null, null);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
-            Node toResource, String predicate, String comment, int quantity,
-            boolean isObjectWc, int ordering) {
+            Node toResource, String predicate, String comment,
+            String quantity) {
 
-        addRelation(session, from, toResource, predicate, false, false,
-                comment, quantity, isObjectWc, ordering);
+        addRelation(session, from, toResource, predicate, false, false, comment,
+                quantity, null, null, null);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
-            Node toResource, String predicate, boolean inverse,
-            boolean includeStatementsInEvents, String comment, int quantity,
-            boolean isObjectWc, int ordering) {
+            DocumentModel to, String predicate, String comment, String quantity,
+            Integer ordering) {
+        addRelation(session, from, getNodeFromDocumentModel(to), predicate,
+                false, false, comment, quantity, ordering, null, null);
+    }
 
-        addRelation(session, from, toResource, predicate, inverse,
-                includeStatementsInEvents, comment, quantity, isObjectWc,
-                ordering, 0);
+    @Override
+    public void addRelation(CoreSession session, DocumentModel from,
+            Node toResource, String predicate, String comment, String quantity,
+            Integer ordering) {
+
+        addRelation(session, from, toResource, predicate, false, false, comment,
+                quantity, ordering, null, null);
+    }
+
+    @Override
+    public void addRelation(CoreSession session, DocumentModel from,
+            DocumentModel to, String predicate, String comment, String quantity,
+            Integer directorOrdering, Integer viewerOrdering) {
+        addRelation(session, from, getNodeFromDocumentModel(to), predicate,
+                false, false, comment, quantity, null, directorOrdering,
+                viewerOrdering);
+    }
+
+    @Override
+    public void addRelation(CoreSession session, DocumentModel from,
+            Node toResource, String predicate, String comment, String quantity,
+            Integer directorOrdering, Integer viewerOrdering) {
+
+        addRelation(session, from, toResource, predicate, false, false, comment,
+                quantity, null, directorOrdering, viewerOrdering);
+    }
+
+    @Override
+    public void addRelation(CoreSession session, DocumentModel from,
+            DocumentModel to, String predicate, String comment, String quantity,
+            Integer ordering, Integer directorOrdering,
+            Integer viewerOrdering) {
+        addRelation(session, from, getNodeFromDocumentModel(to), predicate,
+                false, false, comment, quantity, ordering, directorOrdering,
+                viewerOrdering);
+    }
+
+    @Override
+    public void addRelation(CoreSession session, DocumentModel from,
+            Node toResource, String predicate, String comment, String quantity,
+            Integer ordering, Integer directorOrdering,
+            Integer viewerOrdering) {
+
+        addRelation(session, from, toResource, predicate, false, false, comment,
+                quantity, ordering, directorOrdering, viewerOrdering);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
             DocumentModel to, String predicate, boolean inverse,
-            boolean includeStatementsInEvents, String comment, int quantity,
-            boolean isObjectWc, int ordering, int directorOrdering) {
+            boolean includeStatementsInEvents, String comment, String quantity,
+            Integer ordering, Integer directorOrdering,
+            Integer viewerOrdering) {
 
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
-                inverse, includeStatementsInEvents, comment, quantity,
-                isObjectWc, ordering, 0);
+                inverse, includeStatementsInEvents, comment, quantity, ordering,
+                directorOrdering, viewerOrdering);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
             Node toResource, String predicate, boolean inverse,
-            boolean includeStatementsInEvents, String comment, int quantity,
-            boolean isObjectWc, int ordering, int directorOrdering) {
+            boolean includeStatementsInEvents, String comment, String quantity,
+            Integer ordering, Integer directorOrdering,
+            Integer viewerOrdering) {
         Graph graph = getRelationManager().getGraph(
                 EloraRelationConstants.ELORA_GRAPH_NAME, session);
         QNameResource fromResource = getNodeFromDocumentModel(from);
@@ -139,29 +186,39 @@ public class EloraDocumentRelationService extends DocumentRelationService
 
         if (session.getPrincipal() != null
                 && stmt.getProperty(RelationConstants.AUTHOR) == null) {
-            stmt.addProperty(RelationConstants.AUTHOR, new LiteralImpl(
-                    session.getPrincipal().getName()));
+            stmt.addProperty(RelationConstants.AUTHOR,
+                    new LiteralImpl(session.getPrincipal().getName()));
         }
 
         // Custom metadata for relation document model
-        if (stmt.getProperties(EloraRelationConstants.QUANTITY) == null) {
-            stmt.addProperty(EloraRelationConstants.QUANTITY, new LiteralImpl(
-                    String.valueOf(quantity)));
+        if (quantity != null) {
+            if (stmt.getProperties(EloraRelationConstants.QUANTITY) == null) {
+                stmt.addProperty(EloraRelationConstants.QUANTITY,
+                        new LiteralImpl(quantity));
+            }
         }
 
-        if (stmt.getProperties(EloraRelationConstants.IS_OBJECT_WC) == null) {
-            stmt.addProperty(EloraRelationConstants.IS_OBJECT_WC,
-                    new LiteralImpl(String.valueOf(isObjectWc)));
+        if (ordering != null) {
+            if (stmt.getProperties(EloraRelationConstants.ORDERING) == null) {
+                stmt.addProperty(EloraRelationConstants.ORDERING,
+                        new LiteralImpl(String.valueOf(ordering)));
+            }
         }
 
-        if (stmt.getProperties(EloraRelationConstants.ORDERING) == null) {
-            stmt.addProperty(EloraRelationConstants.ORDERING, new LiteralImpl(
-                    String.valueOf(ordering)));
+        if (directorOrdering != null) {
+            if (stmt.getProperties(
+                    EloraRelationConstants.DIRECTOR_ORDERING) == null) {
+                stmt.addProperty(EloraRelationConstants.DIRECTOR_ORDERING,
+                        new LiteralImpl(String.valueOf(directorOrdering)));
+            }
         }
 
-        if (stmt.getProperties(EloraRelationConstants.DIRECTOR_ORDERING) == null) {
-            stmt.addProperty(EloraRelationConstants.DIRECTOR_ORDERING,
-                    new LiteralImpl(String.valueOf(directorOrdering)));
+        if (viewerOrdering != null) {
+            if (stmt.getProperties(
+                    EloraRelationConstants.VIEWER_ORDERING) == null) {
+                stmt.addProperty(EloraRelationConstants.VIEWER_ORDERING,
+                        new LiteralImpl(String.valueOf(viewerOrdering)));
+            }
         }
         // end of custom metadata
 
@@ -192,6 +249,152 @@ public class EloraDocumentRelationService extends DocumentRelationService
         // after notification
         notifyEvent(RelationEvents.AFTER_RELATION_CREATION, from, options,
                 comment, session);
+    }
+
+    @Override
+    public void updateRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to, DocumentModel newTo) {
+
+        updateRelation(session, from, predicate, to, null, null, newTo, null,
+                null, null, null, true);
+    }
+
+    @Override
+    public void updateRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to, DocumentModel newTo,
+            String quantity, Integer ordering, Integer directorOrdering,
+            Integer viewerOrdering) {
+
+        updateRelation(session, from, predicate, to, null, null, newTo,
+                quantity, ordering, directorOrdering, viewerOrdering, true);
+    }
+
+    @Override
+    public void updateRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to, DocumentModel newFrom,
+            String newPredicate, DocumentModel newTo, String quantity,
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            boolean checkIfNewRelationExists) {
+
+        EloraCoreGraph graph = (EloraCoreGraph) getRelationManager().getGraph(
+                EloraRelationConstants.ELORA_GRAPH_NAME, session);
+
+        // Create old statement
+        QNameResource fromResource = getNodeFromDocumentModel(from);
+        Resource predicateResource = new ResourceImpl(predicate);
+        QNameResource toResource = getNodeFromDocumentModel(to);
+
+        Statement oldStmt = new StatementImpl(fromResource, predicateResource,
+                toResource);
+
+        // Create new statement
+        Statement newStmt = (Statement) oldStmt.clone();
+
+        if (newFrom != null) {
+            newStmt.setSubject(getNodeFromDocumentModel(newFrom));
+        }
+
+        if (newPredicate != null) {
+            newStmt.setPredicate(new ResourceImpl(newPredicate));
+        }
+
+        if (newTo != null) {
+            newStmt.setObject(getNodeFromDocumentModel(newTo));
+        }
+
+        if (checkIfNewRelationExists) {
+
+            // We only check if from, predicate or to has changed, else we
+            // consider we only want to change properties
+            if ((newFrom != null && !from.equals(newFrom))
+                    || (newPredicate != null && !predicate.equals(newPredicate))
+                    || (newTo != null && !to.equals(newTo))) {
+                List<Statement> newStatementCopies = graph.getStatements(
+                        newStmt);
+                if (!newStatementCopies.isEmpty()) {
+                    throw new RelationAlreadyExistsException();
+                }
+            }
+        }
+
+        if (quantity != null) {
+            newStmt.setProperty(EloraRelationConstants.QUANTITY,
+                    new LiteralImpl(quantity));
+        }
+
+        if (ordering != null) {
+            newStmt.setProperty(EloraRelationConstants.ORDERING,
+                    new LiteralImpl(String.valueOf(ordering)));
+        }
+
+        if (directorOrdering != null) {
+            newStmt.setProperty(EloraRelationConstants.DIRECTOR_ORDERING,
+                    new LiteralImpl(String.valueOf(directorOrdering)));
+        }
+
+        if (viewerOrdering != null) {
+            newStmt.setProperty(EloraRelationConstants.VIEWER_ORDERING,
+                    new LiteralImpl(String.valueOf(viewerOrdering)));
+        }
+
+        // Send notifications and apply the update
+
+        Map<String, Serializable> options = new HashMap<String, Serializable>();
+        String currentLifeCycleState = from.getCurrentLifeCycleState();
+        options.put(CoreEventConstants.DOC_LIFE_CYCLE, currentLifeCycleState);
+        // if (includeStatementsInEvents) {
+        // putStatements(options, stmt);
+        // }
+        options.put(RelationEvents.GRAPH_NAME_EVENT_KEY,
+                EloraRelationConstants.ELORA_GRAPH_NAME);
+
+        String comment = "Changed object - old: " + to.getId() + " new: "
+                + newTo.getId();
+
+        notifyEvent(RelationEvents.BEFORE_RELATION_MODIFICATION, from, options,
+                comment, session);
+
+        graph.update(oldStmt, newStmt);
+
+        notifyEvent(RelationEvents.AFTER_RELATION_MODIFICATION, from, options,
+                comment, session);
+
+    }
+
+    @Override
+    public void softDeleteRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to) {
+
+        EloraCoreGraph graph = (EloraCoreGraph) getRelationManager().getGraph(
+                EloraRelationConstants.ELORA_GRAPH_NAME, session);
+
+        // Create old statement
+        QNameResource fromResource = null;
+        Resource predicateResource = null;
+        QNameResource toResource = null;
+        if (from != null) {
+            fromResource = getNodeFromDocumentModel(from);
+        }
+        if (predicate != null) {
+            predicateResource = new ResourceImpl(predicate);
+        }
+        if (to != null) {
+            toResource = getNodeFromDocumentModel(to);
+        }
+
+        Statement stmt = new StatementImpl(fromResource, predicateResource,
+                toResource);
+
+        // notifyEvent(RelationEvents.BEFORE_RELATION_MODIFICATION, from,
+        // options,
+        // comment, session);
+
+        graph.softDelete(stmt);
+
+        // notifyEvent(RelationEvents.AFTER_RELATION_MODIFICATION, from,
+        // options,
+        // comment, session);
+
     }
 
     private QNameResource getNodeFromDocumentModel(DocumentModel model) {

@@ -1,10 +1,12 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"  >
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/">
 
 
-  <xs:complexType name="impactedItemType">
+  <xs:complexType name="impactedItemType" >
     <xs:sequence>
-      <xs:element name="rowNumber" type="xs:long"/>
+      <xs:element name="rowNumber" type="xs:integer"/>
+      <xs:element name="nodeId" type="xs:string"/>
+      <xs:element name="parentNodeId" type="xs:string"/>
       <xs:element name="modifiedItem">
         <xs:simpleType>
           <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
@@ -20,13 +22,21 @@ xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"  >
           <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
         </xs:simpleType>
       </xs:element>
-       <xs:element name="originItemWc">
+      <xs:element name="originItemWc">
         <xs:simpleType>
           <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
         </xs:simpleType>
       </xs:element>
+      <xs:element name="predicate" type="xs:string"/>
+      <xs:element name="quantity" type="xs:string"/>
+      <xs:element name="isAnarchic" type="xs:boolean" default="false"/>
       <xs:element name="action" type="xs:string" default="id_change"/>
       <xs:element name="destinationItem">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="destinationItemWc">
         <xs:simpleType>
           <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
         </xs:simpleType>
@@ -34,8 +44,8 @@ xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"  >
       <xs:element name="isManaged" type="xs:boolean" default="false"/>
       <xs:element name="isManual" type="xs:boolean" default="false"/>
       <xs:element name="type" type="xs:string"/>
-      <xs:element name="messageType" type="xs:string"/>
-      <xs:element name="messageData" type="xs:string"/>
+      <xs:element name="comment" type="xs:string"/>
+      <xs:element name="isUpdated" type="xs:boolean" default="false"/>
     </xs:sequence>
   </xs:complexType>
   
@@ -46,6 +56,5 @@ xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"  >
     </xs:sequence>
   </xs:complexType>
 
-  <!-- <xs:element name="impactedItemList" type="nxs:impactedItemListType"/> -->
 
 </xs:schema>

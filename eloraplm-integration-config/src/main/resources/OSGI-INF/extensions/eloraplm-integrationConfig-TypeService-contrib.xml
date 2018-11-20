@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.integrationConfig.TypeService.contrib">
+
+  <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+        <schema name="eloraCadMetadataMapping" src="schemas/sch_elora_cad_metadata_mapping.xsd"/>
+        <schema name="eloraCadMetadataType" src="schemas/sch_elora_cad_metadata_type.xsd"/>
+        <schema name="eloraDoctypeMapping" src="schemas/sch_elora_doctype_mapping.xsd"/>
+        <schema name="eloraIntegrationVersionControl" src="schemas/sch_elora_integration_version_control.xsd"/>
+        <schema name="eloraMetadataMapping" src="schemas/sch_elora_metadata_mapping.xsd"/>
+  </extension>
+
+</component>

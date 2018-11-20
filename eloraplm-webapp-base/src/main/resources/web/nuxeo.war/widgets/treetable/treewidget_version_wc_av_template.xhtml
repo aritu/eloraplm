@@ -1,33 +1,21 @@
-<f:subview id="#{widget.id}"
+<ui:composition id="#{widget.id}"
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:h="http://java.sun.com/jsf/html">
-
-    <h:outputText value="#{field_0.versionLabel}" />
-    
-    <h:panelGroup styleClass="visualizedType" rendered="#{field_0.isVersionable()}">
-    
-        <h:outputText value="AV" title="#{messages['label.title.archivedVersion']}"
-            styleClass="tipsyShow" style="cursor: default;"
-            rendered ="#{field_0.isVersion()}"/>
-        <h:outputText value="WC" title="#{messages['label.title.workingCopy']}"
-            styleClass="tipsyShow" style="cursor: default;"
-            rendered ="#{not field_0.isVersion()}"/>
-        
-        <h:graphicImage url="/icons/wc_newer_10.png" title="#{messages['eloraplm.message.wcIsNewer']}: #{field_1.versionLabel}"
-            style="margin-left: 2px;"
-            styleClass="tipsyShow"
-            rendered="#{field_0.uid.major_version ne field_1.uid.major_version
-                    or field_0.uid.minor_version ne field_1.uid.minor_version}" />
-            
-        <h:graphicImage url="/icons/wc_checked_out_10.png" title="#{messages['eloraplm.message.wcIsCheckedOut']}"
-            style="margin-left: 2px;"
-            styleClass="tipsyShow"
-            rendered="#{field_0.isVersion()
-                and field_0.uid.major_version eq field_1.uid.major_version
-                and field_0.uid.minor_version eq field_1.uid.minor_version
-                and field_0.versionLabel ne field_1.versionLabel}" />
-    
-    </h:panelGroup>
-
-</f:subview>
+  xmlns:ui="http://java.sun.com/jsf/facelets">
+  
+      <ui:fragment rendered="#{widget.mode eq 'view' or value.level ne 1}">
+        <ui:include src="treewidget_version_wc_av_view.xhtml">
+            <ui:param name="doc" value="#{field_0}" />
+            <ui:param name="wcDoc" value="#{field_1}" />
+        </ui:include>
+    </ui:fragment>
+  
+    <ui:fragment rendered="#{widget.mode eq 'edit' and value.level eq 1}">
+        <ui:include src="treewidget_version_wc_av_edit.xhtml">
+            <ui:param name="doc" value="#{field_0}" />
+            <ui:param name="wcDoc" value="#{field_1}" />
+            <ui:param name="docId" value="#{field_2}" />
+            <ui:param name="versionList" value="#{field_3}" />
+        </ui:include>
+    </ui:fragment>
+  
+</ui:composition>

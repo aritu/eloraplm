@@ -1,9 +1,12 @@
-Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .
 Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.queries
 Bundle-Name: eloraplm-queries
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-Vendor: Nuxeo
 Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: eloraplm-queries
+Bundle-Vendor: Aritu S Coop
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-queries-PageProviderServ
+ ice-contrib.xml
+

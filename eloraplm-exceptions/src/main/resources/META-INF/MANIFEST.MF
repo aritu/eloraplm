@@ -2,8 +2,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Manifest-Version: 1.0
 Bundle-Name: eloraplm-exceptions
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-Vendor: Nuxeo
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Aritu S Coop
 Bundle-Version: 1.0.qualifier
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: eloraplm-exceptions
+Bundle-SymbolicName: com.aritu.eloraplm.exceptions

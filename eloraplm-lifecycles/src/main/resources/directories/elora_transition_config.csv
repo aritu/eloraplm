@@ -1,0 +1,3 @@
+id,allowedByAllStates,allowsAllStates,obsolete
+approve,1,0,0
+makeObsolete,0,1,0

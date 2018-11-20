@@ -1,0 +1,225 @@
+<div 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets">
+
+  <h3>
+    <h:outputText value="#{messages[title]}" />
+  </h3>
+
+  <h:form id="#{fancyboxFormId}">
+
+    <h:panelGroup styleClass="content" layout="block">
+      <!--  title -->
+      <h:panelGroup>
+        <h:outputLabel value="#{messages['eloraplm.label.cm.process']}:" />
+        <strong><h:outputText value="#{currentDocument.elo.reference} - #{currentDocument.title}" /></strong>
+      </h:panelGroup>
+      
+      <!--  content -->
+      <h:panelGroup>
+        <a4j:outputPanel>
+
+            <br/><br/>
+            <table class="cmItemTable">
+            <!-- ################### origin item ################### -->
+              <tr>
+                <td class="labelColumn"><strong><h:outputLabel value="#{messages['eloraplm.label.cm.origin']}:" /></strong></td>
+                <td class="fieldColumn">
+                  <h:panelGroup id="originItemWcUidPanel">
+                    <nxl:widgetType name="eloraSingleDocumentSuggestion" mode="edit"
+                      ajaxReRender="originItemWcUidMsg originItemMsgPanel originItemRealUidPanel actionPanelLabel actionPanel actionMsgPanel destinationItemPanelLabel destinationItemPanel destinationItemMsgPanel includeInImpactMatrixPanelLabel includeInImpactMatrixPanel commentPanelLabel commentPanel buttonsPanel"
+                      value="#{treeBean}" 
+                      field="originItemWcUid"
+                      translated="true"
+                      width="100%"
+                      placeholder="eloraplm.placeholder.suggestion.cm.originItem"
+                      pageProviderName="#{originPageProviderName}"
+                      required="true"
+                      additionalOperationParameters="eloraPassQueryTermsTwice"
+                      >
+                    </nxl:widgetType>
+                    <h:message for="originItemWcUid" class="errorMessage" id="originItemWcUidMsg" />
+                  </h:panelGroup>
+                  
+                  
+                  <h:panelGroup id="originItemRealUidPanel">
+                    <ui:fragment rendered="#{treeBean.originItemWcUid != null}">
+                      <c:choose>
+                        <c:when test="${treeBean.originItemVersionList != null and treeBean.originItemVersionList.size() > 0}">
+                          <h:selectOneListbox id="originItemRealUid"
+                            styleClass="dataInputText"
+                            size="1"
+                            value="#{treeBean.originItemRealUid}">
+                
+                            
+                            <nxu:selectItems value="#{treeBean.originItemVersionList}"
+                              var="version" itemValue="#{version.key}"
+                              itemLabel="#{version.value}" />
+                  
+                            <f:ajax event="change" execute="@this" render="originItemMsgPanel originItemWcUidPanel originItemRealUidMsg actionPanelLabel actionPanel destinationItemPanelLabel destinationItemPanel includeInImpactMatrixPanelLabel includeInImpactMatrixPanel commentPanelLabel commentPanel buttonsPanel"/>
+                          </h:selectOneListbox>
+                          <h:message for="originItemRealUid" class="errorMessage" id="originItemRealUidMsg" />
+                        </c:when>
+                        <c:otherwise>
+                          <h:outputText value="#{messages['eloraplm.message.cm.addModifiedItem.emptyOriginItemVersionList']}"  class="errorMessage"/>
+                        </c:otherwise>
+                      </c:choose>
+                    </ui:fragment>
+                  </h:panelGroup>
+                  
+                  <h:panelGroup id="originItemMsgPanel">
+                    <ui:fragment rendered="#{treeBean.originItemMsg != null}">
+                      <h:outputText value="#{treeBean.originItemMsg}" class="errorMessage"/>
+                    </ui:fragment>
+                  </h:panelGroup>
+                </td>
+              </tr>
+              <!-- ################### action selection ################### -->
+              <tr>
+                <td class="labelColumn">
+                  <h:panelGroup id="actionPanelLabel">
+                    <ui:fragment rendered="#{treeBean.originItemRealUid != null and treeBean.originItemMsg == null}">
+                      <strong><h:outputLabel value="#{messages['eloraplm.label.cm.action']}:" /></strong>
+                    </ui:fragment>
+                  </h:panelGroup>
+                </td>
+                <td class="fieldColumn">
+                  <h:panelGroup id="actionPanel">
+                    <ui:fragment rendered="#{treeBean.originItemRealUid != null and treeBean.originItemMsg == null}">
+                      <nxl:widgetType name="selectOneDirectory" mode="edit"
+                        value="#{treeBean.action}" 
+                        directoryName="elora_cmActionModified" 
+                        localize="true" 
+                        displayIdAndLabel="false"
+                        ordering="ordering" 
+                        style="min-width: 10em;"
+                        notDisplayDefaultOption="true"
+                        required="true">
+                        <f:ajax event="change" execute="@this" render="actionMsgPanel destinationItemPanelLabel destinationItemPanel destinationItemMsgPanel includeInImpactMatrixPanelLabel includeInImpactMatrixPanel commentPanelLabel commentPanel buttonsPanel"/>
+                       </nxl:widgetType>
+                     </ui:fragment>
+                  </h:panelGroup>
+                  
+                  <h:panelGroup id="actionMsgPanel">
+                    <ui:fragment rendered="#{treeBean.actionMsg != null}">
+                      <h:outputText value="#{treeBean.actionMsg}" class="errorMessage"/>
+                    </ui:fragment>
+                  </h:panelGroup>
+                </td>
+              </tr>
+              <!--   ########### destination item ########### -->
+              <tr>
+                <td class="labelColumn">
+                  <h:panelGroup id="destinationItemPanelLabel">
+                    <ui:fragment rendered="#{treeBean.originItemMsg == null and treeBean.action != null and treeBean.actionMsg == null}">
+                      <strong><h:outputLabel value="#{messages['eloraplm.label.cm.destination']}:" /></strong>
+                    </ui:fragment>
+                  </h:panelGroup>
+                </td>
+                <td class="fieldColumn">
+                  <h:panelGroup id="destinationItemPanel">
+                    <!-- if action == replace, display destination item selection and destination item version selection -->
+                    <ui:fragment rendered="#{treeBean.originItemMsg == null and treeBean.action != null and treeBean.actionMsg == null and treeBean.action eq 'id_replace'}">
+                     <nxu:set var="pageProviderName" value="#{treeBean.getPageProviderNameForAddModifiedItemReplaceDestinationItem()}">
+                        <nxl:widgetType name="eloraSingleDocumentSuggestion" mode="edit"
+                            ajaxReRender="destinationItemMsgPanel includeInImpactMatrixPanelLabel includeInImpactMatrixPanel commentPanelLabel commentPanel buttonsPanel"
+                            value="#{treeBean}" 
+                            field="destinationItemWcUid"
+                            translated="true"
+                            width="100%"
+                            placeholder="eloraplm.placeholder.suggestion.cm.destinationItem"
+                            pageProviderName="#{pageProviderName}"
+                            required="true"
+                            additionalOperationParameters="eloraPassQueryTermsTwice">
+                        </nxl:widgetType>
+                        <h:message for="destinationItemWcUid" class="errorMessage" />
+                        
+                      </nxu:set>
+                    </ui:fragment>
+                    <!-- if action != replace, display destination item in read mode -->
+                    <ui:fragment rendered="#{treeBean.originItemMsg == null and treeBean.action != null and treeBean.actionMsg == null and not (treeBean.action eq 'id_replace') }">
+                      <nxl:widget name="cm_destination_item" mode="view" value="#{treeBean}" />
+                      <h:outputText value="&#160;&#160;&#160;" />
+                      <nxl:widget name="cm_destination_item_version" mode="view" value="#{treeBean}" />
+                    </ui:fragment>
+                  </h:panelGroup>
+                  
+                  <h:panelGroup id="destinationItemMsgPanel">
+                    <ui:fragment rendered="#{treeBean.destinationItemMsg != null}">
+                      <h:outputText value="#{treeBean.destinationItemMsg}" class="errorMessage"/>
+                    </ui:fragment>
+                  </h:panelGroup>
+                  
+                </td>
+              </tr>
+              <!--   ########### includeInImpactMatrix ########### -->
+              <tr>
+                <td class="labelColumn">
+                  <h:panelGroup id="includeInImpactMatrixPanelLabel">
+               
+                   <ui:fragment rendered="#{(treeBean.originItemMsg == null and treeBean.action != null and treeBean.actionMsg == null and not (treeBean.action eq 'id_replace')) or 
+                        (treeBean.originItemMsg == null and treeBean.actionMsg == null and treeBean.destinationItemWcUid != null and treeBean.destinationItemMsg == null)}">
+                      <strong><h:outputLabel value="#{messages['eloraplm.label.cm.includeInImpactMatrix']}:" /></strong>
+                    </ui:fragment>
+                  </h:panelGroup>
+                </td>
+                <td class="fieldColumn">
+                  <h:panelGroup id="includeInImpactMatrixPanel">
+                    <ui:fragment rendered="#{(treeBean.originItemMsg == null and treeBean.action != null and treeBean.actionMsg == null and not (treeBean.action eq 'id_replace')) or 
+                        (treeBean.originItemMsg == null and treeBean.actionMsg == null and treeBean.originItemMsg == null and treeBean.destinationItemWcUid != null and treeBean.destinationItemMsg == null)}">
+                     
+                      <ui:fragment rendered="#{not treeBean.isImpactable}">
+                        <h:outputText value="#{treeBean.includeInImpactMatrix ? messages['label.yes'] : messages['label.no']}" />
+                      </ui:fragment>
+                      <ui:fragment rendered="#{treeBean.isImpactable}">
+                        <nxl:widgetType mode="edit" name="checkbox" value="#{treeBean.includeInImpactMatrix}"/>
+                      </ui:fragment>
+                      
+                    </ui:fragment>
+                  </h:panelGroup>
+                </td>
+              </tr>
+              <!--   ########### comment ########### -->
+              <tr>
+                <td class="labelColumn">
+                  <h:panelGroup id="commentPanelLabel">
+                    <ui:fragment rendered="#{(treeBean.originItemMsg == null and treeBean.action != null and treeBean.actionMsg == null and not (treeBean.action eq 'id_replace')) or 
+                        (treeBean.originItemMsg == null and treeBean.actionMsg == null and treeBean.destinationItemWcUid != null and treeBean.destinationItemMsg == null)}">
+                      <strong><h:outputLabel value="#{messages['eloraplm.label.cm.comment']}:" /></strong>
+                    </ui:fragment>
+                  </h:panelGroup>
+                </td>
+                <td class="fieldColumn">
+                  <h:panelGroup id="commentPanel">
+                    <ui:fragment rendered="#{(treeBean.originItemMsg == null and treeBean.action != null and treeBean.actionMsg == null and not (treeBean.action eq 'id_replace')) or 
+                        (treeBean.originItemMsg == null and treeBean.actionMsg == null and treeBean.destinationItemWcUid != null and treeBean.destinationItemMsg == null)}">
+                      <nxl:widgetType name="textarea" mode="edit" value="#{treeBean.comment}" /> 
+                    </ui:fragment>
+                  </h:panelGroup>
+                </td>
+              </tr>
+            </table>
+          
+        </a4j:outputPanel>
+      </h:panelGroup>
+    </h:panelGroup>
+    
+    <div class="buttonsGadget">
+      <h:panelGroup id="buttonsPanel">
+        <h:commandButton value="#{messages['command.add']}" styleClass="button" action="#{treeBean.addModifiedItem}" disabled="#{not treeBean.isValid}">
+        </h:commandButton>
+      
+        <h:commandButton value="#{messages['command.cancel']}" styleClass="button" actionListener="#{treeBean.cancelAddModifiedItemActionListener}">
+          <f:ajax execute="@this" onevent="jQuery.fancybox.close"/>
+        </h:commandButton>
+      </h:panelGroup>
+    </div>
+
+  </h:form>
+</div>

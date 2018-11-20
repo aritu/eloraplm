@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: eloraplm-pdf-thumbnails
+Bundle-SymbolicName: com.aritu.eloraplm.thumbnails
 Bundle-Name: eloraplm-pdf-thumbnails
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-pdfThumbnails-ThumbnailS
  ervice.xml,OSGI-INF/extensions/eloraplm-pdfThumbnails-PreviewAdapterM
  anagerComponent-contrib.xml,OSGI-INF/extensions/eloraplm-pdfThumbnail

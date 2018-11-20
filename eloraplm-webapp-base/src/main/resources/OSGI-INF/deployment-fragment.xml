@@ -2,12 +2,14 @@
 
 <fragment version="1">
 
+    <require>org.nuxeo.ecm.webapp.base</require>
+    <require>org.nuxeo.ecm.webapp.core</require>
     <require>org.nuxeo.ecm.webapp.ui</require>
     <require>org.nuxeo.ecm.relations.web</require>
     <require>org.nuxeo.ecm.platform.ui.select2</require>
     <require>com.aritu.eloraplm.l10n</require>
     <require>org.nuxeo.ecm.platform.contentview.jsf</require>
-  
+    
     <install>
         <unzip from="${bundle.fileName}" to="/" prefix="web">
           <include>web/nuxeo.war/**</include>

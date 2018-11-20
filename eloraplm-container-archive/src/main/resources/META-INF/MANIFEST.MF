@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-container-archive
+Bundle-Name: eloraplm-container-archive
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Aritu S Coop
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-container-archive-Action
+ Service-contrib.xml,OSGI-INF/extensions/eloraplm-container-archive-We
+ bResources-contrib.xml
+

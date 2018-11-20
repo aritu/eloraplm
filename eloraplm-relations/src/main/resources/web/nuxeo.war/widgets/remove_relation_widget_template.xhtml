@@ -1,39 +1,47 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:a4j="http://richfaces.org/a4j"
-  >
-  
-    <h:panelGroup layout="block" id="#{widget.id}" rendered="#{nxd:hasPermission(currentDocument, 'Write')
-        and currentDocument.isLocked()
-        and currentDocumentLockDetails['document.locker'] eq currentUser
-        and not currentDocument.isVersion()
-        and not currentDocument.isProxy()
-        and level == '1'}">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <h:panelGroup layout="block" id="#{widget.id}" rendered="#{isVisible}">
 
-        <a4j:commandButton
-            actionListener="#{treeBean.markRelationNodeAsRemoved(node, currentDocument)}"
-            render="#{treeWidgetId} :eloraMetadataHeading"
-            execute="@this" 
-            image="/icons/delete_red.png"
+        <h:commandButton
+            image="/icons/row_delete_16.png"
             title="#{messages['eloraplm.command.remove']}"
-            rendered="#{isSpecial == 'false' and not nodeData.isRemoved}"
-            />
+            alt=""
+            rendered="#{isSpecial == 'false' and not nodeData.isRemoved}">
+            
+            <p:ajax
+                listener="#{treeBean.markRelationNodeAsRemoved(component.namingContainer, node, currentDocument, isAnarchic)}"
+                process="@this"
+                partialSubmit="true"
+                onstart="preparePartialAjaxUpdate(cfg.source)"
+                onsuccess="markTreeNodeAsRemoved()"
+                />
+                
+        </h:commandButton>
         
-        <a4j:commandButton
-            actionListener="#{treeBean.unmarkRelationNodeAsRemoved(node, currentDocument)}"
-            render="#{treeWidgetId} :eloraMetadataHeading"
-            execute="@this" 
-            image="/icons/action_undo_16.png"
+        <h:commandButton
+            image="/icons/row_undo_delete_16.png"
             title="#{messages['eloraplm.command.undoRemove']}"
-            rendered="#{isSpecial == 'false' and nodeData.isRemoved}"
-            />
+            alt=""
+            rendered="#{isSpecial == 'false' and nodeData.isRemoved}">
+            
+            <p:ajax
+                listener="#{treeBean.unmarkRelationNodeAsRemoved(component.namingContainer, node, currentDocument, isAnarchic)}"
+                process="@this"
+                partialSubmit="true"
+                onstart="preparePartialAjaxUpdate(cfg.source)"
+                onsuccess="unmarkTreeNodeAsRemoved()"
+                />
+                
+        </h:commandButton>
         
-        <a4j:commandButton
+        <h:commandButton
             image="/icons/delete.png"
             title="#{messages['eloraplm.message.info.relation.mustRemoveFromSubject']}"
+            alt=""
             style="cursor: not-allowed"
             rendered="#{isSpecial == 'true'}"
             />

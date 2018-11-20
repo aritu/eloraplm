@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.core.EventServiceComponent.contrib">
+
+    <require>org.nuxeo.elasticsearch.core.listener</require>
+   
+    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
+        
+        <!-- orderingPriorityListener -->
+        <listener name="orderingPriorityListener" async="false" postCommit="false" 
+                  class="com.aritu.eloraplm.core.listener.OrderingPriorityListener" priority="150">
+            <event>documentCreated</event>
+        </listener>
+
+      <listener name="elasticSearchInlineListener" async="false"
+        enabled="${elasticsearch.enabled:=true}"
+        postCommit="false" priority="500"
+        class="com.aritu.eloraplm.core.listener.EloraElasticSearchInlineListener">
+          <event>beforeDocumentModification</event>
+          <event>documentCreated</event>
+          <event>documentCreatedByCopy</event>
+          <event>documentMoved</event>
+          <event>lifecycle_transition_event</event>
+          <event>documentSecurityUpdated</event>
+          <event>documentRemoved</event>
+          <event>sessionSaved</event>
+          <event>documentCheckedOut</event>
+          <event>documentCheckedIn</event>
+          <event>binaryTextUpdated</event>
+          <event>documentTagUpdated</event>
+          <event>documentProxyUpdated</event>
+          <event>childrenOrderChanged</event>
+          <event>PdmRestoredEvent</event>
+      </listener>
+
+    </extension>
+
+</component>

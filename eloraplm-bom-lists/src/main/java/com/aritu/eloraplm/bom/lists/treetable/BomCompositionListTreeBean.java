@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
@@ -31,9 +32,7 @@ import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.IdRef;
-import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.VersioningOption;
-import org.nuxeo.ecm.core.api.impl.VersionModelImpl;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
@@ -48,7 +47,7 @@ import com.aritu.eloraplm.bom.lists.BomListHelper;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
-import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.relations.treetable.EditableRelationTreeBean;
 
@@ -66,10 +65,11 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
 
     private static final long serialVersionUID = 1L;
 
+    private static final Log log = LogFactory.getLog(
+            BomCompositionListTreeBean.class);
+
     @In
     protected transient BomListBean bomList;
-
-    private static final Log log = LogFactory.getLog(BomCompositionListTreeBean.class);
 
     private Map<String, TreeNode> roots;
 
@@ -105,18 +105,27 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
 
     @Override
     public void createRoot() {
+        String logInitMsg = "[createRoot] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
         roots = new HashMap<>();
 
         DocumentModel currentDoc = getCurrentDocument();
         try {
+            log.trace(logInitMsg + "Creating tree...");
+            // TODO Ez dau funtzionauko edizioak ez dalako
+            // RelationNodeService-etik heredatzen eta
+            // EditableRelationTreeBean-etako nodeService propietatea ezin
+            // dauelako erabili
             BomCompositionListNodeService nodeService = new BomCompositionListNodeService(
                     documentManager, bomList.getId());
             setRoot(nodeService.getRoot(currentDoc));
+            setIsDirty(false);
+            log.trace(logInitMsg + "Tree created.");
         } catch (EloraException e) {
-            // TODO Logetan idatzi
-
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get("eloraplm.message.error.treetable.createRoot"));
+            log.error(logInitMsg + e.getMessage(), e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.treetable.createRoot"));
         }
     }
 
@@ -161,15 +170,14 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
         createRoot();
     }
 
-    @Override
     public void addRelationNode(DocumentModel currentDoc) {
         setPredicateUri(EloraRelationConstants.BOM_LIST_HAS_ENTRY);
-        super.addRelationNode(currentDoc);
+        super.addRelationNode(currentDoc, false);
     }
 
-    @Override
-    public String save(DocumentModel currentDoc, DocumentModel subjectDoc) {
-        String superResponse = super.save(currentDoc, subjectDoc);
+    public String save(DocumentModel currentDoc, DocumentModel subjectDoc)
+            throws EloraException, CheckinNotAllowedException {
+        String superResponse = super.save(currentDoc, subjectDoc, false);
 
         // After the normal save, we check in the BOM List
         if (subjectDoc.isCheckedOut()) {
@@ -186,60 +194,13 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
                 facesMessages.add(StatusMessage.Severity.ERROR,
                         messages.get("eloraplm.message.error.relations.saved"));
             }
-
             documentManager.save();
         }
-
         return superResponse;
     }
 
-    // In BomLists the process is different
-    @Override
-    public void restoreRelations(DocumentModel currentDoc,
+    public void importBomList(DocumentModel currentDoc,
             DocumentModel subjectDoc) {
-
-        try {
-            DocumentModel latestCurrentDocVersion = EloraDocumentHelper.getLatestVersion(
-                    currentDoc, documentManager);
-
-            if (latestCurrentDocVersion != null) {
-                // Get the BomList related to the latest version of the current
-                // document
-                DocumentModelList bomLists = BomListHelper.getBomListForDocument(
-                        latestCurrentDocVersion, bomList.getId(), false,
-                        documentManager);
-                if (bomLists != null && !bomLists.isEmpty()
-                        && bomLists.size() == 1) {
-                    DocumentModel currentBomList = bomLists.get(0);
-
-                    VersionModel version = new VersionModelImpl();
-                    version.setId(currentBomList.getId());
-
-                    EloraRelationHelper.restoreRelations(subjectDoc, version,
-                            eloraDocumentRelationManager, documentManager);
-
-                } else {
-                    // Remove all relations
-                    RelationHelper.removeRelation(subjectDoc, null, null);
-                }
-            } else {
-                // Remove all relations
-                RelationHelper.removeRelation(subjectDoc, null, null);
-            }
-
-            facesMessages.add(StatusMessage.Severity.INFO,
-                    messages.get("eloraplm.message.success.relations.restore"));
-
-            createRoot();
-
-        } catch (EloraException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get("eloraplm.message.error.relations.restore"));
-        }
-
-    }
-
-    public void importBomList(DocumentModel currentDoc, DocumentModel subjectDoc) {
 
         String logInitMsg = "[importBomList] ["
                 + documentManager.getPrincipal().getName() + "] ";
@@ -256,8 +217,8 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
             if (importSourceType.equals("current")) {
                 sourceDoc = currentDoc;
             } else {
-                sourceDoc = documentManager.getDocument(new IdRef(
-                        importSourceUid));
+                sourceDoc = documentManager.getDocument(
+                        new IdRef(importSourceUid));
             }
 
             if (sourceDoc == null) {
@@ -274,13 +235,15 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
             Resource predicateResource = null;
             if (importList.equals("Ebom")) {
                 sourceBomList = sourceDoc;
+                // TODO Predicate bat baino gehixau????'
                 predicateResource = new ResourceImpl(
                         EloraRelationConstants.BOM_COMPOSED_OF);
             } else {
                 DocumentModelList sourceBomLists = BomListHelper.getBomListForDocument(
                         sourceDoc, importList, false, documentManager);
                 if (sourceBomLists == null || sourceBomLists.isEmpty()) {
-                    throw new EloraException("Source document has no BOM list.");
+                    throw new EloraException(
+                            "Source document has no BOM list.");
                 } else if (sourceBomLists.size() > 1) {
                     throw new EloraException(
                             "Source document has more than one BOM list.");
@@ -301,9 +264,9 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
                         sourceStmt);
                 eloraDocumentRelationManager.addRelation(documentManager,
                         subjectDoc, stmtInfo.getObject(),
-                        EloraRelationConstants.BOM_LIST_HAS_ENTRY, false,
-                        false, stmtInfo.getComment(), stmtInfo.getQuantity(),
-                        stmtInfo.getIsObjectWc(), stmtInfo.getOrdering());
+                        EloraRelationConstants.BOM_LIST_HAS_ENTRY,
+                        stmtInfo.getComment(), stmtInfo.getQuantity(),
+                        stmtInfo.getOrdering());
             }
 
             log.trace(logInitMsg + "BOM list imported.");
@@ -313,16 +276,20 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
 
             createRoot();
         } catch (EloraException e) {
-            log.error(logInitMsg + "Uncontrolled exception: "
-                    + e.getClass().getName() + ". " + e.getMessage(), e);
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
             // TODO Aldatu??
             facesMessages.add(StatusMessage.Severity.ERROR,
                     messages.get(e.getMessage()));
             TransactionHelper.setTransactionRollbackOnly();
             // navigationContext.invalidateCurrentDocument();
         } catch (Exception e) {
-            log.error(logInitMsg + "Uncontrolled exception: "
-                    + e.getClass().getName() + ". " + e.getMessage(), e);
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
             // TODO Aldatu??
             facesMessages.add(StatusMessage.Severity.ERROR,
                     messages.get(e.getMessage()));
@@ -334,6 +301,12 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
             log.trace(logInitMsg + "--- EXIT --- ");
         }
 
+    }
+
+    @Override
+    @Factory(value = "bomCompositionListRoot", scope = ScopeType.EVENT)
+    public TreeNode getRootFromFactory() {
+        return getRoot();
     }
 
 }

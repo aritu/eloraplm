@@ -18,10 +18,12 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
+import com.aritu.eloraplm.config.util.EloraConfig;
 import com.aritu.eloraplm.constants.CMDocTypeConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
+import com.aritu.eloraplm.constants.NuxeoFacetConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -121,23 +123,6 @@ public class EloraStructureHelper {
 
     /**
      *
-     * @param type
-     * @return
-     * @throws EloraException
-     */
-    private static String getParentTypeByDocType(String type)
-            throws EloraException {
-
-        if (type == null) {
-            throw new EloraException("Document type cannot be null.");
-        }
-
-        String parentType = EloraConfigHelper.getAutocopyParentTypeConfig(type);
-        return parentType;
-    }
-
-    /**
-     *
      * @param realRef
      * @param type
      * @param session
@@ -224,7 +209,7 @@ public class EloraStructureHelper {
         if (documentsFolder == null) {
             throw new IllegalArgumentException("null documentsRef");
         }
-        String parentType = getParentTypeByDocType(type);
+        String parentType = EloraConfig.autocopyParentTypesMap.get(type);
         if (parentType == null) {
             return getChildrenByType(documentsFolder.getRef(),
                     OTHER_CAD_DOCUMENTS_FOLDER, session);
@@ -322,7 +307,8 @@ public class EloraStructureHelper {
             throw new EloraException(
                     "The Change Management process type must be defined.");
         }
-        String cmProcessParentType = getParentTypeByDocType(cmProcessType);
+        String cmProcessParentType = EloraConfig.autocopyParentTypesMap.get(
+                cmProcessType);
         if (cmProcessParentType == null) {
             throw new EloraException(
                     "Change Management process parent type cannot be retrieved.");
@@ -373,13 +359,13 @@ public class EloraStructureHelper {
      */
 
     // TODO: Mirar si se puede hacer mas rapido utilizando
-    // documentManager.getRootDocument(). Sin tener que dar tastas vueltas al
+    // documentManager.getSuperSpace(). Sin tener que dar tantas vueltas al
     // while
     public static String getStructureRootUid(DocumentModel doc,
             CoreSession session) throws EloraException {
         DocumentModel structRootDoc = null;
-        while (doc != null && !"/".equals(doc.getPath())) {
-            if (doc.getType().equals(EloraDoctypeConstants.STRUCTURE_ROOT)) {
+        while (doc != null && !("/".equals(doc.getPathAsString()))) {
+            if (doc.hasFacet(NuxeoFacetConstants.FACET_SUPER_SPACE)) {
                 structRootDoc = doc;
                 break;
             }
@@ -392,4 +378,57 @@ public class EloraStructureHelper {
         return structRootDoc.getId();
     }
 
+    // TODO: Mirar si se puede hacer mas rapido utilizando
+    // documentManager.getRootDocument(). Sin tener que dar tantas vueltas al
+    // while
+    public static DocumentModel getWorkableDomainChildDocModel(
+            DocumentModel doc, CoreSession session) throws EloraException {
+        DocumentModel structRootDoc = null;
+
+        while (doc != null && !("/".equals(doc.getPathAsString()))) {
+            if (doc.hasFacet(EloraFacetConstants.FACET_WORKABLE_DOMAIN_CHILD)) {
+                structRootDoc = doc;
+                break;
+            }
+            doc = session.getDocument(doc.getParentRef());
+        }
+        if (structRootDoc == null) {
+            throw new EloraException("structure root document does not exist");
+        }
+
+        return structRootDoc;
+    }
+
+    public static DocumentModel getDocumentWorkspace(DocumentModel doc,
+            CoreSession session) throws EloraException {
+        DocumentModel workspaceDoc = null;
+
+        while (doc != null && !("/".equals(doc.getPathAsString()))) {
+            if (doc.hasFacet(EloraFacetConstants.FACET_ELORA_WORKSPACE)) {
+                workspaceDoc = doc;
+                break;
+            }
+            doc = session.getDocument(doc.getParentRef());
+        }
+        if (workspaceDoc == null) {
+            throw new EloraException("workspace document does not exist");
+        }
+
+        return workspaceDoc;
+    }
+
+    public static boolean isDocUnderWorkspaceRoot(DocumentModel doc) {
+        boolean isUnderWsRoot = false;
+        CoreSession session = doc.getCoreSession();
+
+        while (doc != null && !("/".equals(doc.getPathAsString()))) {
+            if (doc.getType().equals(NuxeoDoctypeConstants.WORKSPACE_ROOT)) {
+                isUnderWsRoot = true;
+                break;
+            }
+            doc = session.getDocument(doc.getParentRef());
+        }
+
+        return isUnderWsRoot;
+    }
 }

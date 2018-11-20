@@ -1,0 +1,11 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:include src="/incl/action/demote_promote.xhtml">
+        <ui:param name="lifecycleTransitionActions" value="#{demoteActions}" />
+        <ui:param name="transitionType" value="demote" />
+        <ui:param name="windowTitle" value="eloraplm.title.lifecycles.demote" />
+        <ui:param name="buttonLabel" value="eloraplm.command.demote" />
+    </ui:include>
+
+</ui:composition>

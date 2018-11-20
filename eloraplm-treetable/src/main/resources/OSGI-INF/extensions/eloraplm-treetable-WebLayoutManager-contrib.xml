@@ -32,18 +32,29 @@
     </extension>
     
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
-        <widget name="treetableButtons" type="documentActions">
+        
+         <widget name="ttSelectionButtons" type="documentActionsWithForms">
+          <properties widgetMode="view">
+            <property name="category">TREETABLE_SELECTION_BUTTON</property>
+            <property name="overallDisplay">horizontal_block</property>
+            <property name="actionsDisplay">icons</property>
+          </properties>
+        </widget>
+        
+        <widget name="ttButtons" type="documentActionsWithForms">
           <properties widgetMode="view">
             <property name="category">TREETABLE_BUTTON</property>
             <property name="overallDisplay">horizontal_block</property>
           </properties>
-          <controls mode="any">
-            <control name="requireSurroundingForm">false</control>
-            <control name="gridStyleClass">
-              gridStyle12
-            </control>
-          </controls>
         </widget>
+        
+        <widget name="ttInverseButtons" type="documentActionsWithForms">
+          <properties widgetMode="view">
+            <property name="category">TREETABLE_INVERSE_BUTTON</property>
+            <property name="overallDisplay">horizontal_block</property>
+          </properties>
+        </widget>
+        
     </extension>
     
 </component>

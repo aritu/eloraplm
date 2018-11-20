@@ -1,0 +1,19 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core">
+
+    <nxl:widgetType mode="#{widget.mode}" name="checkbox" value="#{field}">
+
+      <c:if test="#{widget.mode eq 'edit'}">
+        <ui:include src="bom_charac_widget_ajax_content_template.xhtml">
+          <ui:param name="triggeredField" value="showInReport" />
+        </ui:include>
+      </c:if>
+
+    </nxl:widgetType>
+
+</ui:composition>

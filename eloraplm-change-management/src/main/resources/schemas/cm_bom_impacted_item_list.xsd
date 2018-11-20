@@ -1,6 +1,6 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cm_bom_imp" 
-targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_bom_imp">
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cm_bom_imp_list" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_bom_imp_list">
 
   <xs:include schemaLocation="cm_impacted_item.xsd" />
   

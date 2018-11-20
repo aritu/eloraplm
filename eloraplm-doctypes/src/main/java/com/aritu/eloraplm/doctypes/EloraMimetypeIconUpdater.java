@@ -63,9 +63,7 @@ public class EloraMimetypeIconUpdater extends MimetypeIconUpdater {
                 // blob
                 if (doc.hasSchema(MAIN_BLOB_SCHEMA)
                         && doc.getProperty(MAIN_BLOB_FIELD).isDirty()) {
-                    updateIconAndSizeFields(
-                            doc,
-                            getMimetypeRegistry(),
+                    updateIconAndSizeFields(doc, getMimetypeRegistry(),
                             doc.getProperty(MAIN_BLOB_FIELD).getValue(
                                     Blob.class));
                 }
@@ -92,7 +90,8 @@ public class EloraMimetypeIconUpdater extends MimetypeIconUpdater {
             throws PropertyException {
         // update the icon field of the document
         if (blob != null && doc.getType().equals(NuxeoDoctypeConstants.FILE)) {
-            MimetypeEntry mimetypeEntry = mimetypeService.getMimetypeEntryByMimeType(blob.getMimeType());
+            MimetypeEntry mimetypeEntry = mimetypeService.getMimetypeEntryByMimeType(
+                    blob.getMimeType());
             updateIconField(mimetypeEntry, doc);
         } else {
             // reset to document type icon

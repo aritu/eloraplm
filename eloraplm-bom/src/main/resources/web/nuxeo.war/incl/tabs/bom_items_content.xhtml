@@ -1,39 +1,33 @@
 <ui:composition
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
   xmlns:h="http://java.sun.com/jsf/html"
-  >
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxd="http://nuxeo.org/nxweb/document">
+    
+  <h:panelGroup styleClass="textAlignC displayB" style="margin-bottom: 15px;">
+<!--     TODO: Hau include komun batera pasatu -->
+    <c:if test="#{nxd:hasPermission(currentDocument, 'Write') and not currentDocument.isVersion() and not currentDocument.isProxy()}">
+      <c:if test="#{currentDocument.locked and !(currentDocumentLockDetails['document.locker'] eq currentUser)}">
+          <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentLockedByOther']}" class="processMessage completeWarning" />
+      </c:if>
+      <c:if test="#{documentManager.getVersionsForDocument(currentDocument.ref).size() eq 0}">
+          <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentWithoutVersion']}" class="processMessage completeWarning" />
+      </c:if>
+   </c:if>
+  </h:panelGroup>
+  
 
-<script type="text/javascript">
-  function toggleLayers(more_block, more_items) {
-    var objMoreBlock = document.getElementById(more_block).style;
-    var objMoreItems = document.getElementById(more_items).style;
-    if(objMoreBlock.display == "block")
-      objMoreBlock.display = "none";
-    if(objMoreItems.display == "none")
-      objMoreItems.display = "block";
-  }
-</script>
+    <ui:fragment rendered="#{currentDocument.type ne 'BomProduct' and currentDocument.type ne 'BomPart'}">
+      <nxl:widget name="bom_item_tt" mode="view" value="#{bomItemTreeBean}" />
+    </ui:fragment>
 
-<ui:include src="/incl/tabs/document_locked_warning.xhtml"/>
-
-<ui:include src="/bom_document_relations.xhtml">
-  <ui:param name="formId" value="bom_has_bom_relations" />
-  <ui:param name="documentRelations" value="#{outgoingBomHasBomRelations}" />
-  <ui:param name="relationWidget" value="bomHasBomRelationButton" />
-  <ui:param name="relationBean" value="#{bomHasBomRelationBean}" />
-  <ui:param name="message" value="#{messages['title.bom.related.item']}" />
-  <ui:param name="visibility" value="#{not (currentDocument.type == 'BomPart' || currentDocument.type == 'BomProduct')}" />
-</ui:include>
-
-<ui:include src="/bom_document_relations.xhtml">
-  <ui:param name="formId" value="bom_specification_relations" />
-  <ui:param name="documentRelations" value="#{outgoingSpecificationRelations}" />
-  <ui:param name="relationWidget" value="bomHasSpecificationRelationButton" />
-  <ui:param name="relationBean" value="#{specificationRelationBean}" />
-  <ui:param name="message" value="#{messages['title.bom.related.specification']}" />
-  <ui:param name="visibility" value="#{not (currentDocument.type == 'BomSpecification')}" />
-</ui:include>
+    <ui:fragment rendered="#{currentDocument.type ne 'BomSpecification'}">
+      <nxl:widget name="bom_item_inv_tt" mode="view" value="#{bomItemInverseTreeBean}" />
+    </ui:fragment>
 
 
 </ui:composition>

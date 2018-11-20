@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-export
+Bundle-Name: eloraplm-export
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Aritu S Coop
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-export-ActionService-con
+ trib.xml
+

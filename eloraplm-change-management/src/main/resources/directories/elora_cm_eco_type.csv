@@ -1,4 +1,4 @@
-id,label,obsolete
-id_fastTrack,Fast track,0
-id_mediumImpact,Medium impact,0
-id_highImpact,High impact,0
+id,label,obsolete,ordering
+id_fastTrack,Fast track,0,10
+id_mediumImpact,Medium impact,0,20
+id_highImpact,High impact,0,30

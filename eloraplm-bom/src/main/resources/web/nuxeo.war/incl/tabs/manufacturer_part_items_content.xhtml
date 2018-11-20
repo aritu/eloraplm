@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxd="http://nuxeo.org/nxweb/document">
+    
+  <h:panelGroup styleClass="textAlignC displayB" style="margin-bottom: 15px;">
+<!--     TODO: Hau include komun batera pasatu -->
+    <c:if test="#{nxd:hasPermission(currentDocument, 'Write') and not currentDocument.isVersion() and not currentDocument.isProxy()}">
+      <c:if test="#{currentDocument.locked and !(currentDocumentLockDetails['document.locker'] eq currentUser)}">
+          <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentLockedByOther']}" class="processMessage completeWarning" />
+      </c:if>
+      <c:if test="#{documentManager.getVersionsForDocument(currentDocument.ref).size() eq 0}">
+          <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentWithoutVersion']}" class="processMessage completeWarning" />
+      </c:if>
+   </c:if>
+  </h:panelGroup>
+
+    <nxl:widget name="man_part_tt" mode="view" value="#{manufacturerPartTreeBean}" />
+
+</ui:composition>

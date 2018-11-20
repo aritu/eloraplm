@@ -22,6 +22,8 @@ public final class NuxeoMetadataConstants {
 
     public static final String NX_DC_LAST_CONTRIBUTOR = "dc:lastContributor";
 
+    public static final String NX_DC_CONTRIBUTORS = "dc:contributors";
+
     public static final String NX_DC_CREATOR = "dc:creator";
 
     public static final String NX_DC_CREATED = "dc:created";
@@ -29,6 +31,8 @@ public final class NuxeoMetadataConstants {
     public static final String NX_DC_MODIFIED = "dc:modified";
 
     public static final String NX_DC_TITLE = "dc:title";
+
+    public static final String NX_DC_SOURCE = "dc:source";
 
     public static final String NX_FILE_CONTENT = "file:content";
 
@@ -44,8 +48,16 @@ public final class NuxeoMetadataConstants {
 
     public static final String NX_ECM_VERSIONABLE_ID = "ecm:versionVersionableId";
 
+    public static final String NX_ECM_MAJOR_VERSION = "ecm:majorVersion";
+
+    public static final String NX_ECM_MINOR_VERSION = "ecm:minorVersion";
+
     public static final String NX_RELATION_PREDICATE = "relation:predicate";
 
     public static final String NX_RELATION_TARGET = "relation:target";
+
+    public static final String NX_RELATION_SOURCE = "relation:source";
+
+    public static final String NX_SCHEMA_UID = "uid";
 
 }

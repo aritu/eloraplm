@@ -1,18 +1,12 @@
 <?xml version="1.0"?>
 <component name="com.aritu.eloraplm.relations.ActionService.contrib">
+  <require>org.nuxeo.ecm.platform.actions.relations.web</require>
 
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
 
     <filter id="cadCompositionTreeButtons">
         <rule grant="true">
-            <permission>Write</permission>
             <condition>#{webActions.currentTabId eq 'TAB_CAD_COMPOSITION_TREETABLE'}</condition>
-        </rule>
-        <rule grant="false">
-            <condition>#{currentDocument.isVersion()}</condition>
-            <condition>#{currentDocument.isProxy()}</condition>
-            <condition>#{!currentDocument.isLocked()}</condition>
-            <condition>#{currentDocumentLockDetails['document.locker'] ne currentUser}</condition>
         </rule>
     </filter>
 
@@ -27,26 +21,7 @@
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
 
     <!-- Hide default relations tab -->
-        <action id="TAB_RELATIONS" enabled="false" />
-    
-    <!-- Enable nuxeo relations tab to admin -->
-<!--     <action id="TAB_RELATIONS" link="/incl/tabs/document_relations.xhtml" -->
-<!--       enabled="true" label="action.view.relations" order="55" type="rest_document_link"> -->
-<!--       <category>VIEW_ACTION_LIST</category> -->
-<!--       <filter id="view_relations"> -->
-<!--         <rule grant="false"> -->
-<!--           <condition>#{not currentUser.administrator}</condition> -->
-<!--         </rule> -->
-<!--         <rule grant="false"> -->
-<!--           <facet>Folderish</facet> -->
-<!--         </rule> -->
-<!--         <rule grant="false"> -->
-<!--           <type>Server</type> -->
-<!--         </rule> -->
-<!--       </filter> -->
-<!--     </action> -->
-    
-    
+    <action id="TAB_RELATIONS" enabled="false" />
     
     <action id="TAB_CAD_COMPOSITION_TREETABLE" link="/incl/tabs/cad_composition_treetable.xhtml"
       order="30" label="label.com.aritu.eloraplm.relations.tab.cadComposition" type="rest_document_link">
@@ -56,48 +31,53 @@
       <filter-id>isNotDraft</filter-id>
     </action>
     
-    
-    
     <action id="TAB_CAD_WHERE_USED_TREETABLE" link="/incl/tabs/cad_where_used_treetable.xhtml"
       order="35" label="label.com.aritu.eloraplm.relations.tab.cadWhereUsed" type="rest_document_link">
       <category>VIEW_ACTION_LIST</category>
       <filter-id>isCadDocument</filter-id>
       <filter-id>isNotSpecial</filter-id>
       <filter-id>isNotDraft</filter-id>
+      <filter-id>isNotCheckedOut</filter-id>
     </action>
-
 
     <!-- Treetable buttons -->
-    <!-- Oraingoz kendu egingo da edizioa, checkin leihoa sortu arte -->
-    <action id="BtnRestoreCadRelations" order="10" label="eloraplm.command.relations.restore" type="link" link="#{cadCompositionTreeBean.restoreRelations}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>cadCompositionTreeButtons</filter-id>
-      <filter-id>isCheckedOut</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
     
     <action id="BtnAddCadRelation" order="20" label="eloraplm.command.relation.add" type="fancybox" icon="">
       <category>TREETABLE_BUTTON</category>
       <filter-id>cadCompositionTreeButtons</filter-id>
       <properties>
         <property name="include">/incl/action/cad_composition_add_relation.xhtml</property>
-        <property name="addForm">true</property>
         <property name="ajaxSupport">true</property>
         <property name="styleClass">button</property>
       </properties>
     </action>
     
+    <action id="BtnSaveCadRelations" order="30" label="command.save" type="link" link="#{cadCompositionTreeBean.save(currentDocument, currentDocument, false)}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cadCompositionTreeButtons</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
     
+    <!-- Summary panel right -->
     
-    <!-- Hau kendu egingo da erlazio denak ondo sortzen direnean, baina "Other relations" bat sortu beharko da. -->
+    <action id="summary_cad_drawing_of_documents" type="widget" order="200">
+      <category>SUMMARY_PANEL_RIGHT</category>
+      <properties>
+        <property name="widgetName">summary_cad_drawing_of_documents</property>
+      </properties>
+      <filter-id>isCadDocument</filter-id>
+    </action>
     
-<!--     <action enabled="true" id="TAB_CAD_RELATIONS" label="Relations (KENTZEKO)" link="/incl/tabs/cad_document_relations.xhtml" order="55" type="rest_document_link"> -->
-<!--       <category>VIEW_ACTION_LIST</category> -->
-<!--       <filter-id>isCadDocument</filter-id> -->
-<!--     </action> -->
+    <action id="summary_cad_drawing_of_inverse_documents" type="widget" order="200">
+      <category>SUMMARY_PANEL_RIGHT</category>
+      <properties>
+        <property name="widgetName">summary_cad_drawing_of_inverse_documents</property>
+      </properties>
+      <filter-id>isCadDocument</filter-id>
+    </action>
 
   </extension>
 

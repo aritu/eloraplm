@@ -1,0 +1,14 @@
+<projectDescription>
+  <name>eloraplm-promote-constants</name>
+  <projects>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>org.nuxeo.ide.NuxeoNature</nature>
+  </natures>
+</projectDescription>

@@ -1,0 +1,41 @@
+<div id="descriptionBlock"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  >
+
+  <table class="dataTableLine summaryCmItemsTable">
+    <tbody>
+      <nxu:set var="modifiedItemsList" value="#{cmActionsBean.getManualModifiedItemsList()}">
+        <c:forEach items="#{modifiedItemsList}" var="modifiedItem">
+          <tr>
+            <nxu:set var="originDocumentRef" value="#{eloraWebActions.getDocumentRefFromId(modifiedItem.originItem)}">
+            <nxu:set var="originDocument" value="#{eloraWebActions.getDocument(originDocumentRef)}">
+              <td style="white-space: nowrap">
+                <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{originDocument}"/>
+              </td>
+              <td style="white-space: nowrap">
+                <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{originDocument}"/>
+              </td>
+              <td style="white-space: nowrap">
+                <nxl:widgetType name="listing_version_lock_icon" mode="view" field="#{originDocument}"/>
+              </td>
+              <td style="white-space: nowrap">
+                <nxl:widget name="itemState" mode="view" value="#{originDocument}"/>
+              </td>
+              <td style="white-space: nowrap">
+                <nxl:widgetType name="selectOneDirectory" mode="view" value="#{modifiedItem.action}" directoryName="elora_cmActionModified" localize="true" />
+              </td>
+               <td style="white-space: nowrap">
+                <h:outputText value="#{modifiedItem.isManaged ? messages['eloraplm.label.cm.isManaged'] : ''}" />
+              </td>
+            </nxu:set>
+            </nxu:set>
+          </tr>
+        </c:forEach>
+      </nxu:set>
+    </tbody>
+  </table>
+
+</div>

@@ -1,0 +1,13 @@
+id,lifecycle,state,demoteTransitions,promoteTransitions,obsolete
+0,eloraDefaultLifeCycle,preliminary,,"approve,makeObsolete",0
+1,eloraDefaultLifeCycle,approved,backToPreliminary,makeObsolete,0
+2,eloraDefaultLifeCycle,obsolete,backToPreliminary,,0
+3,eloraWsLifeCycle,working,,"complete,reject",0
+4,eloraWsLifeCycle,completed,backToWorking,,0
+5,eloraWsLifeCycle,rejected,backToWorking,,0
+6,eloraCadLifeCycle,preliminary,,"approve,makeObsolete",0
+7,eloraCadLifeCycle,approved,backToPreliminary,makeObsolete,0
+8,eloraCadLifeCycle,obsolete,backToPreliminary,,0
+9,eloraBomLifeCycle,preliminary,,"approve,makeObsolete",0
+10,eloraBomLifeCycle,approved,backToPreliminary,makeObsolete,0
+11,eloraBomLifeCycle,obsolete,backToPreliminary,,0

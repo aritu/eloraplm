@@ -2,6 +2,8 @@
 
 <component name="com.aritu.eloraplm.bom.LifeCycleService.contrib">
 
+    <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
+
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         <types>
           <type name="BomPart">eloraBomLifeCycle</type>
@@ -27,49 +29,44 @@
 
         <lifecycle defaultInitial="preliminary" name="eloraBomLifeCycle">
           <transitions>
-            <transition destinationState="preliminary" name="create">
-              <description>Create the real document</description>
-            </transition>
-            <transition destinationState="approved" name="approve">
+            <transition name="approve" destinationState="approved">
               <description>Approve the content</description>
             </transition>
-            <transition destinationState="obsolete" name="obsolete">
+            <transition name="makeObsolete" destinationState="obsolete">
               <description>Content becomes obsolete</description>
             </transition>
-            <transition destinationState="deleted" name="delete">
+            <transition name="delete" destinationState="deleted">
               <description>Move document to trash (temporary delete)</description>
             </transition>
-            <transition destinationState="preliminary" name="undelete">
+            <transition name="undelete" destinationState="preliminary">
               <description>Recover the document from trash</description>
             </transition>
-            <transition destinationState="preliminary" name="backToPreliminary">
+            <transition name="backToPreliminary" destinationState="preliminary">
               <description>demote a preliminary</description>
-            </transition>
-            <transition destinationState="approved" name="backToApproved">
-              <description>demote a approved</description>
             </transition>
           </transitions>
           <states>
-            <state description="Default state" initial="true" name="preliminary">
+            <state name="preliminary" description="Default state" initial="true">
               <transitions>
                 <transition>approve</transition>
+                <transition>makeObsolete</transition>
                 <transition>delete</transition>
               </transitions>
             </state>
-            <state description="Content has been validated" initial="true" name="approved">
+            <state name="approved" description="Content has been validated" initial="true">
               <transitions>
                 <transition>delete</transition>
-                <transition>obsolete</transition>
+                <transition>makeObsolete</transition>
                 <transition>backToPreliminary</transition>
               </transitions>
             </state>
-            <state description="Content is obsolete" initial="true" name="obsolete">
+            <state name="obsolete" description="Content is obsolete" initial="true">
               <transitions>
                 <transition>delete</transition>
                 <transition>backToApproved</transition>
               </transitions>
             </state>
-            <state description="Document is deleted" name="deleted">
+            <state name="deleted" description="Document is deleted">
               <transitions>
                 <transition>undelete</transition>
               </transitions>

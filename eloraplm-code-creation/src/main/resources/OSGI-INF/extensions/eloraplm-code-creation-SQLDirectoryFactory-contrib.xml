@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.codecreation.SQLDirectoryFactory.contrib">
+
+    <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+
+        <directory name="elora_code_types">
+          <schema>vocabulary</schema>
+          <dataSource>java:/nxsqldirectory</dataSource>
+          <table>elora_code_types</table>
+          <idField>id</idField>
+          <autoincrementIdField>false</autoincrementIdField>
+          <readOnly>false</readOnly>
+          <dataFile>directories/elora_code_types.csv</dataFile>
+          <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
+        
+        <directory name="elora_code_masks">
+          <schema>eloraCodeMasks</schema>
+          <dataSource>java:/nxsqldirectory</dataSource>
+          <table>elora_code_masks</table>
+          <idField>id</idField>
+          <autoincrementIdField>false</autoincrementIdField>
+          <readOnly>false</readOnly>
+          <dataFile>directories/elora_code_masks.csv</dataFile>
+          <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
+        
+    </extension>
+  
+</component>

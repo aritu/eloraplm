@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.checkin.CheckinPublisher.contrib">
+
+  <require>com.aritu.eloraplm.core.ResourcePublisher.contrib</require>
+
+  <implementation class="com.aritu.eloraplm.checkin.services.CheckinService"/>
+  <service>
+    <provide interface="com.aritu.eloraplm.checkin.api.CheckinManager"/>
+  </service>
+
+</component>

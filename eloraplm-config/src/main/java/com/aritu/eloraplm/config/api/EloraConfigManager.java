@@ -77,10 +77,10 @@ public interface EloraConfigManager {
             boolean canBeEmpty) throws EloraException;
 
     void updateConfigProperty(String vocabulary, String key, String property,
-            String value) throws EloraException;
+            String value, boolean mustExistKey) throws EloraException;
 
     void updateConfigProperty(String vocabulary,
-            Map<String, Serializable> filter, String property, String value)
-            throws EloraException;
+            Map<String, Serializable> filter, String property, String value,
+            boolean mustExistKey) throws EloraException;
 
 }

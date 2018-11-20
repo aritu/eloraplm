@@ -1,0 +1,33 @@
+<!-- See documentation at http://doc.nuxeo.com/x/HgIz -->
+<package type="addon" name="eloraplm" version="@VERSION@">
+  <title>EloraPLM Standard</title>
+  <description>
+    <p>EloraPLM pakete estandarra.</p>
+    <p>Paquete estándar EloraPLM.</p>
+    <p>EloraPLM standard package.</p>
+  </description>
+  <home-page>http://aritu.com/</home-page>
+  <vendor>Aritu Koop. E.</vendor>
+  <installer restart="true" />
+  <uninstaller restart="true" />
+  <supported>false</supported>
+  <hotreload-support>false</hotreload-support>
+  <!--  -->
+  <require-terms-and-conditions-acceptance>false</require-terms-and-conditions-acceptance>
+  <nuxeo-validation>none</nuxeo-validation>
+  <production-state>proto</production-state>
+  <license>Apache License, Version 2.0</license>
+  <license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
+  <visibility>PRIVATE</visibility>
+  <platforms>
+    <platform>cap-@DISTRIB_VERSION@</platform>
+    <platform>cap-@DISTRIB_VERSION@-HF*</platform>
+  </platforms>
+  <dependencies>
+    <package>nuxeo-dam:6.1.4</package>
+    <package>nuxeo-diff:1.6.5</package>
+    <package>nuxeo-diff-pictures:1.0.2</package>
+    <package>nuxeo-template-rendering:6.5.4</package>
+    <package>nuxeo-virtualnavigation:1.1.4</package>
+  </dependencies>
+</package>

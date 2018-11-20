@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: eloraplm-dashboard
+Bundle-Name: eloraplm-dashboard
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Aritu S Coop
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-dashboard-ActionService-
+ contrib.xml,OSGI-INF/extensions/eloraplm-dashboard-WebLayoutManager-c
+ ontrib.xml,OSGI-INF/extensions/eloraplm-dashboard-ContentViewService-
+ contrib.xml
+

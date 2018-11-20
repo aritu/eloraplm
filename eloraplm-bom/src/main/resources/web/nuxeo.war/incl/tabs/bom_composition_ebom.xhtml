@@ -1,35 +1,10 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxu="http://nuxeo.org/nxweb/util"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:c="http://java.sun.com/jstl/core"
-  xmlns:nxd="http://nuxeo.org/nxweb/document">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <ui:include src="document_not_editable_warning.xhtml"/>
+    
+    <nxl:widget name="bom_comp_tt" mode="view" value="#{bomCompositionEbomTreeBean}" />
   
-  
-    <h:panelGroup styleClass="textAlignC displayB" style="margin-bottom: 15px;">
-    
-      <!-- TODO: Hau include komun batera pasatu -->
-      <c:if test="#{nxd:hasPermission(currentDocument, 'Write') and not currentDocument.isVersion() and not currentDocument.isProxy()}">
-
-        <c:if test="#{!currentDocument.locked}">
-            <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentNotLocked']}" class="processMessage completeWarning" />
-        </c:if>
-        
-        <c:if test="#{currentDocument.locked and !(currentDocumentLockDetails['document.locker'] eq currentUser)}">
-            <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentLockedByOther']}" class="processMessage completeWarning" />
-        </c:if>
-        
-     </c:if>
-    
-    </h:panelGroup>
-    
-    <h:form>
- 
-        <nxl:widget name="bom_composition_treetable" mode="view" value="#{bomCompositionEbomTreeBean}" />
-        
-    </h:form>
-    
 </ui:composition>

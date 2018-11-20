@@ -15,6 +15,8 @@
 package com.aritu.eloraplm.bom.autostructure;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,15 +39,17 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
-import com.aritu.eloraplm.config.util.EloraConfigRow;
-import com.aritu.eloraplm.config.util.EloraConfigTable;
+import com.aritu.eloraplm.bom.treetable.BomCompositionEbomTreeBean;
+import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraEventNames;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
+import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 @Name("bomStructureAction")
@@ -54,7 +58,12 @@ public class BomStructureActionBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Log log = LogFactory.getLog(BomStructureActionBean.class);
+    private static final Log log = LogFactory.getLog(
+            BomStructureActionBean.class);
+
+    private DocumentModel currentDoc;
+
+    Map<String, List<DocumentModel>> itemList;
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -69,9 +78,12 @@ public class BomStructureActionBean implements Serializable {
     protected Map<String, String> messages;
 
     @In(create = true)
+    protected transient BomCompositionEbomTreeBean bomCompositionEbomTreeBean;
+
+    @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
 
-    public void createStructure() throws EloraException {
+    public void createStructure() {
         String logInitMsg = "[createStructure] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -80,124 +92,240 @@ public class BomStructureActionBean implements Serializable {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
 
-            DocumentModel currentDoc = navigationContext.getCurrentDocument();
-            currentDoc = currentDoc.isProxy() ? documentManager.getWorkingCopy(currentDoc.getRef())
-                    : currentDoc;
-
-            // Check if it is locked
+            setCurrentDocument();
             if (!currentDoc.isLocked()) {
                 facesMessages.add(StatusMessage.Severity.ERROR,
                         messages.get("message.error.notLocked"));
                 return;
             }
 
-            // Get director cad documents
-            DocumentModelList directorDocList = getDirectorDocuments(currentDoc);
-
+            DocumentModelList directorDocList = getNotDrawingDirectorDocuments();
             // TODO: Por ahora coger solo el primer director
-            // for (DocumentModel director : directorDocList) {
-            // createItemRelations(currentDoc, director);
-            // }
-
             if (!directorDocList.isEmpty()) {
-                // Remove all structure relations
-                Resource predicateResource = new ResourceImpl(
-                        EloraRelationConstants.BOM_COMPOSED_OF);
-                RelationHelper.removeRelation(currentDoc, predicateResource,
-                        null);
-                createItemRelations(currentDoc, directorDocList.get(0));
-                EloraDocumentHelper.checkOutDocument(currentDoc);
-                navigationContext.invalidateCurrentDocument();
+                removeAllCompositionRelations();
+                createItemRelationsFromDirectorHierarchicalStructure(
+                        directorDocList.get(0));
+
+                EloraEventHelper.fireEvent(
+                        EloraEventNames.ELORA_BOM_STRUCT_UPDATED_EVENT,
+                        currentDoc);
+
             } else {
-                facesMessages.add(
-                        StatusMessage.Severity.INFO,
-                        messages.get("eloraplm.message.warning.autostructure.no.director.found"));
+                facesMessages.add(StatusMessage.Severity.INFO, messages.get(
+                        "eloraplm.message.warning.autostructure.no.director.found"));
             }
+
+            bomCompositionEbomTreeBean.createRoot();
 
             facesMessages.add(StatusMessage.Severity.INFO,
                     messages.get("eloraplm.message.success.autostructure"));
-
-        } catch (EloraException e) {
-            log.error(logInitMsg + e.getMessage(), e);
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(e.getMessage()));
-            TransactionHelper.setTransactionRollbackOnly();
-            navigationContext.invalidateCurrentDocument();
         } catch (Exception e) {
-            log.error(logInitMsg + "Uncontrolled exception: "
-                    + e.getClass().getName() + ". " + e.getMessage(), e);
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
             facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(e.getMessage()));
+                    messages.get("eloraplm.message.error.autostructure"));
             TransactionHelper.setTransactionRollbackOnly();
-            navigationContext.invalidateCurrentDocument();
         } finally {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
+            navigationContext.invalidateCurrentDocument();
         }
+        log.trace(logInitMsg + "--- EXIT --- ");
     }
 
-    private void createItemRelations(DocumentModel item, DocumentModel director)
-            throws EloraException {
-        EloraConfigTable hierarchicalRelationsConfig = EloraConfigHelper.getCadHierarchicalRelationsConfig();
-        // TODO: Tener en cuenta los special ??? En algun momento puede haber
-        // hierarchical y special
-        for (EloraConfigRow relationConfig : hierarchicalRelationsConfig.getValues()) {
-            String predicateUri = relationConfig.getProperty("id").toString();
-            Resource predicateResource = new ResourceImpl(predicateUri);
-            List<Statement> directorStmts = RelationHelper.getStatements(
-                    director, predicateResource);
-            for (Statement directorStmt : directorStmts) {
-                DocumentModel childDoc = RelationHelper.getDocumentModel(
-                        directorStmt.getObject(), documentManager);
-                predicateResource = new ResourceImpl(
-                        EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
-                List<Statement> childDocStmts = EloraRelationHelper.getSubjectStatements(
-                        childDoc, predicateResource);
-                if (!childDocStmts.isEmpty()) {
-                    for (Statement childDocStmt : childDocStmts) {
-                        DocumentModel itemObject = RelationHelper.getDocumentModel(
-                                childDocStmt.getSubject(), documentManager);
-                        itemObject = documentManager.getWorkingCopy(itemObject.getRef());
-                        eloraDocumentRelationManager.addRelation(
-                                documentManager, item, itemObject,
-                                EloraRelationConstants.BOM_COMPOSED_OF, false);
-                    }
-                } else {
-                    facesMessages.add(
-                            StatusMessage.Severity.WARN,
-                            messages.get("eloraplm.message.warning.autostructure.missing.item"),
-                            childDoc.getPropertyValue(EloraMetadataConstants.ELORA_ELO_REFERENCE));
-                }
-            }
-        }
-    }
+    private DocumentModelList getNotDrawingDirectorDocuments() {
+        String logInitMsg = "[getNotDrawingDirectorDocuments] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
 
-    private DocumentModelList getDirectorDocuments(DocumentModel doc)
-            throws EloraException {
         Resource predicateResource = new ResourceImpl(
                 EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
 
         DocumentModelList docList = new DocumentModelListImpl();
-        List<Statement> stmts = RelationHelper.getStatements(doc,
+        List<Statement> stmts = RelationHelper.getStatements(currentDoc,
                 predicateResource);
         for (Statement stmt : stmts) {
             // TODO: Por ahora se hace sencillo
             // EloraStatementInfoImpl stmtInfo = new
             // EloraStatementInfoImpl(stmt);
-            // int directorOrdering = stmtInfo.getDirectorOrdering();
+            // Integer directorOrdering = stmtInfo.getDirectorOrdering();
             DocumentModel object = RelationHelper.getDocumentModel(
                     stmt.getObject(), documentManager);
             // if (directorOrdering > 0
             // && !object.getTitle().equals(
             // EloraDoctypeConstants.CAD_DRAWING)) {
 
-            object = EloraDocumentHelper.getLatestVersion(object,
-                    documentManager);
-
+            if (!object.isVersion()) {
+                object = EloraDocumentHelper.getLatestVersion(object);
+            }
             if (!object.getType().equals(EloraDoctypeConstants.CAD_DRAWING)) {
                 docList.add(object);
+                log.trace(logInitMsg + "Document |" + object.getId()
+                        + "| added as director");
             }
         }
+        log.trace(logInitMsg + "--- EXIT --- ");
         return docList;
+    }
+
+    private void setCurrentDocument() {
+        currentDoc = navigationContext.getCurrentDocument();
+        currentDoc = currentDoc.isProxy()
+                ? documentManager.getWorkingCopy(currentDoc.getRef())
+                : currentDoc;
+    }
+
+    private void removeAllCompositionRelations() {
+        // Resource predicateResource = new ResourceImpl(
+        // EloraRelationConstants.BOM_COMPOSED_OF);
+        // RelationHelper.removeRelation(currentDoc, predicateResource, null);
+        eloraDocumentRelationManager.softDeleteRelation(documentManager,
+                currentDoc, EloraRelationConstants.BOM_COMPOSED_OF, null);
+
+    }
+
+    private void createItemRelationsFromDirectorHierarchicalStructure(
+            DocumentModel director) {
+        String logInitMsg = "[createItemRelationsFromDirectorHierarchicalStructure] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER ---");
+
+        // TODO Hemen predicateka banaka egin beharrean zerrenda osoa batera
+        // pasauta egin ahalko zan??
+        for (String predicateUri : RelationsConfig.cadHierarchicalRelationsList) {
+            Resource predicateResource = new ResourceImpl(predicateUri);
+            processDirectorChildrensParentItems(director, predicateResource);
+        }
+        log.trace(logInitMsg + "--- EXIT ---");
+    }
+
+    private void processDirectorChildrensParentItems(DocumentModel director,
+            Resource predicateResource) {
+        List<Resource> predicates = new ArrayList<Resource>();
+        predicates.add(predicateResource);
+        List<Statement> directorStmts = EloraRelationHelper.getStatements(
+                director, predicates);
+        for (Statement directorStmt : directorStmts) {
+            DocumentModel childDoc = RelationHelper.getDocumentModel(
+                    directorStmt.getObject(), documentManager);
+            EloraStatementInfoImpl stmtInfo = new EloraStatementInfoImpl(
+                    directorStmt);
+            String quantity = stmtInfo.getQuantity();
+            Integer ordering = stmtInfo.getOrdering();
+
+            log.trace("Process director's child |" + childDoc.getId() + "|");
+            processChildParentItems(childDoc, quantity, ordering);
+            log.trace("Finish processing director's child |" + childDoc.getId()
+                    + "|");
+        }
+    }
+
+    private void processChildParentItems(DocumentModel childDoc,
+            String quantity, Integer ordering) {
+        Resource predicateResource = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
+        List<Statement> childDocStmts = EloraRelationHelper.getSubjectStatements(
+                childDoc, predicateResource);
+
+        if (!childDocStmts.isEmpty()) {
+            itemList = new HashMap<>();
+            for (Statement childDocStmt : childDocStmts) {
+                DocumentModel item = RelationHelper.getDocumentModel(
+                        childDocStmt.getSubject(), documentManager);
+                if (!item.isCheckedOut()) {
+                    // TODO: Esto hay que mejorarlo por rendimiento
+                    getOrderedDocumentList(item);
+                }
+            }
+            for (Map.Entry<String, List<DocumentModel>> entry : itemList.entrySet()) {
+                List<DocumentModel> items = entry.getValue();
+                DocumentModel relatedItem = null;
+                if (items.size() > 1) {
+                    log.trace("Multiple items related");
+                    relatedItem = getRelatedLastItem(items);
+                } else {
+                    relatedItem = items.get(0);
+                }
+                log.trace("Process item |" + relatedItem.getId() + "|");
+                processParentItem(childDoc, relatedItem, quantity, ordering);
+                log.trace(
+                        "Finish processing item |" + relatedItem.getId() + "|");
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.WARN,
+                    messages.get(
+                            "eloraplm.message.warning.autostructure.missing.item"),
+                    childDoc.getPropertyValue(
+                            EloraMetadataConstants.ELORA_ELO_REFERENCE));
+        }
+    }
+
+    private void getOrderedDocumentList(DocumentModel item) {
+        String versionSeriesId = documentManager.getVersionSeriesId(
+                item.getRef());
+        if (itemList.containsKey(versionSeriesId)) {
+            itemList.get(versionSeriesId).add(item);
+        } else {
+            List<DocumentModel> relatedDocList = new ArrayList<>();
+            relatedDocList.add(item);
+            itemList.put(versionSeriesId, relatedDocList);
+        }
+    }
+
+    private DocumentModel getRelatedLastItem(List<DocumentModel> docs) {
+        List<String> uidList = EloraDocumentHelper.getUidListFromDocList(docs);
+        Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(docs);
+
+        return EloraRelationHelper.getLatestRelatedVersion(
+                String.valueOf(majorVersion), uidList, documentManager);
+    }
+
+    private void processParentItem(DocumentModel childDoc, DocumentModel item,
+            String quantity, Integer ordering) {
+        if (isCorrectItemType(item)) {
+            log.trace("Add relation to item |" + item.getId() + "|");
+            eloraDocumentRelationManager.addRelation(documentManager,
+                    currentDoc, item, EloraRelationConstants.BOM_COMPOSED_OF,
+                    "", quantity, ordering);
+        } else {
+            facesMessages.add(StatusMessage.Severity.WARN,
+                    messages.get(
+                            "eloraplm.message.warning.autostructure.incorrect.item"),
+                    childDoc.getPropertyValue(
+                            EloraMetadataConstants.ELORA_ELO_REFERENCE));
+        }
+    }
+
+    private boolean isCorrectItemType(DocumentModel item) {
+        try {
+            checkItemType(item);
+            return true;
+        } catch (EloraException e) {
+            return false;
+        }
+    }
+
+    private void checkItemType(DocumentModel item) throws EloraException {
+        String corType = getCorrespondingTypeForCurrentDoc();
+        if (!item.getType().equals(corType)) {
+            throw new EloraException("No corresponding type found");
+        }
+    }
+
+    private String getCorrespondingTypeForCurrentDoc() {
+        String docType = currentDoc.getType();
+        switch (docType) {
+        case EloraDoctypeConstants.BOM_PART:
+        case EloraDoctypeConstants.BOM_PRODUCT:
+            return EloraDoctypeConstants.BOM_PART;
+        case EloraDoctypeConstants.BOM_PACKAGING:
+            return EloraDoctypeConstants.BOM_PACKAGING;
+        case EloraDoctypeConstants.BOM_TOOL:
+            return EloraDoctypeConstants.BOM_TOOL;
+        default:
+            return null;
+        }
     }
 }

@@ -1,15 +1,16 @@
 <?xml version="1.0" ?>
 <component name="com.aritu.eloraplm.ui.PluggableAuthenticationService.contrib">
-
+  <require>org.nuxeo.ecm.platform.ui.web.login</require>
+  
   <extension target="org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService" point="loginScreen">
     <loginScreenConfig>
-      <bodyBackgroundStyle>url("${org.nuxeo.ecm.contextPath}/img/bg_elora_login.jpg") center center no-repeat #000;</bodyBackgroundStyle>
-      <headerStyle>background-color: #FFF;box-shadow: 0 0 4px #000;</headerStyle>
-      <footerStyle>background-color: rgba(0, 0, 0, 0.7);</footerStyle>
-      <logoWidth>318</logoWidth>
-      <logoHeight>39</logoHeight>
+      <bodyBackgroundStyle>url("${org.nuxeo.ecm.contextPath}/img/bg_eloraplm_login.jpg") center center no-repeat #053832;</bodyBackgroundStyle>
+      <headerStyle>background-color: #1c5531;border-bottom: 1px solid #2c874e;</headerStyle>
+      <footerStyle>background-color: #053832;</footerStyle>
+      <logoWidth>113</logoWidth>
+      <logoHeight>40</logoHeight>
       <logoAlt>EloraPLM</logoAlt>
-      <logoUrl>${org.nuxeo.ecm.contextPath}/img/eloraplm_horizontal_logo.png</logoUrl>
+      <logoUrl>${org.nuxeo.ecm.contextPath}/img/eloraplm_logo_animation.gif</logoUrl>
       <newsIframeUrl />
       <removeNews>true</removeNews>
     </loginScreenConfig>

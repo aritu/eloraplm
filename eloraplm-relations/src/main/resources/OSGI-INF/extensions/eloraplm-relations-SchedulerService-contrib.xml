@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.relations.SchedulerService.contrib">
+
+    <extension target="org.nuxeo.ecm.core.scheduler.SchedulerService" point="schedule">
+        <schedule id="softDeletedRelationCleaner">
+            <eventId>softDeletedRelationsCleanup</eventId>
+            <eventCategory>EloraEvent</eventCategory>
+            <!-- Every day at 22:00 -->
+            <cronExpression>0 0 22 * * ?</cronExpression>
+        </schedule>
+    </extension>
+    
+</component>

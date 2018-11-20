@@ -2,14 +2,88 @@
 
 <component name="com.aritu.eloraplm.lifecycles.ActionService.contrib">
 
-  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
+    <extension target="org.nuxeo.ecm.platform.actions.ActionService"
+        point="filters">
 
-    <filter id="isNotReleased">
-        <rule grant="false">
-            <condition>#{lifecycleActions.isReleasedState(currentDocument.currentLifeCycleState)}</condition>
-        </rule>
-    </filter>
-    
-  </extension>
-  
+        <filter id="isNotReleased">
+            <rule grant="false">
+                <condition>#{lifecycleActions.isReleasedState(currentDocument.currentLifeCycleState)}
+                </condition>
+            </rule>
+        </filter>
+        
+        <filter id="canDemote">
+            <rule grant="true">
+                <condition>#{currentDocument.type eq 'File'
+                    or currentDocument.type eq 'Note'
+                    or currentDocument.type eq 'Audio'
+                    or currentDocument.type eq 'Picture'
+                    or currentDocument.type eq 'Video'
+                    or currentDocument.hasFacet('EloraWorkspace')
+                    or currentDocument.hasFacet('CadDocument')
+                    or currentDocument.hasFacet('BomDocument')}</condition>
+            </rule>
+            <rule grant="false">
+                <condition>#{currentDocument.isVersionable() and currentDocument.isCheckedOut()}</condition>
+                <condition>#{empty demoteActions.transitions}</condition>
+            </rule>
+        </filter>
+        <filter id="canPromote">
+            <rule grant="true">
+                <condition>#{currentDocument.type eq 'File'
+                    or currentDocument.type eq 'Note'
+                    or currentDocument.type eq 'Audio'
+                    or currentDocument.type eq 'Picture'
+                    or currentDocument.type eq 'Video'
+                    or currentDocument.hasFacet('EloraWorkspace')
+                    or currentDocument.hasFacet('CadDocument')
+                    or currentDocument.hasFacet('BomDocument')}</condition>
+            </rule>
+            <rule grant="false">
+                <condition>#{currentDocument.isVersionable() and currentDocument.isCheckedOut()}</condition>
+                <condition>#{empty promoteActions.transitions}</condition>
+            </rule>
+        </filter>
+        
+        <filter append="true" id="hasWsLifeCycle">
+          <rule grant="true">
+            <type>CmSample</type>
+            <type>CmComm</type>
+            <type>Workspace</type>
+            <type>Project</type>
+          </rule>
+        </filter>
+
+    </extension>
+
+    <extension target="org.nuxeo.ecm.platform.actions.ActionService"
+        point="actions">
+        
+        <action id="demote" order="20"
+            label="eloraplm.command.demote" type="fancybox"
+            icon="/icons/action_demote_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter-id>canDemote</filter-id>
+            <properties>
+                <property name="include">/incl/action/demote.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="visibleByDefault">true</property>
+            </properties>
+        </action>
+        
+        <action id="promote" order="25"
+            label="eloraplm.command.promote" type="fancybox"
+            icon="/icons/action_promote_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter-id>canPromote</filter-id>
+            <properties>
+                <property name="include">/incl/action/promote.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="visibleByDefault">true</property>
+            </properties>
+        </action>
+        
+    </extension>
 </component> 

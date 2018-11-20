@@ -7,6 +7,7 @@
         <schema name="eloraLifecycleStates" src="schemas/sch_elora_lifecycle_states.xsd"/>
         <schema name="eloraRelationPropagation" src="schemas/sch_elora_relation_propagation.xsd"/>
         <schema name="eloraUnitConversionMapping" src="schemas/sch_elora_unit_conversion_mapping.xsd"/>
+        <schema name="eloraCheckoutConfig" src="schemas/sch_elora_checkout_config.xsd"/>
     </extension>
     
 </component>

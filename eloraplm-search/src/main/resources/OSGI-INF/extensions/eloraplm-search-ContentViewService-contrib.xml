@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.search.ContentViewService.contrib">
+  <require>org.nuxeo.search.ui.contentviews</require>
 
   <extension target="org.nuxeo.ecm.platform.ui.web.ContentViewService" point="contentViews">
 
@@ -16,58 +17,79 @@
         <whereClause docType="EloraSearch">
           <fixedPart>
             ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot', 'WorkspaceRoot', 'Favorites')
-            AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct')
+            AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
             AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
-            AND ecm:isCheckedInVersion = 0
+            AND ecm:isVersion = 0
             AND ecm:isProxy = 0
             AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
           </predicate>
-          <predicate parameter="cust:customers" operator="IN">
-            <field schema="elora_search" name="search_customer" />
+          <predicate parameter="elo:reference" operator="ILIKE">
+            <field schema="elora_search" name="elo_reference" />
           </predicate>
-          <predicate parameter="manu:manufacturers" operator="IN">
-            <field schema="elora_search" name="search_manufacturer" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-          <predicate parameter="ecm:mixinType" operator="IN">
-            <field schema="elora_search" name="system_mixinType" />
-          </predicate>
-          <predicate parameter="ecm:primaryType" operator="IN">
-            <field schema="elora_search" name="system_primaryType" />
+          <predicate parameter="dc:title" operator="FULLTEXT">
+            <field schema="elora_search" name="dc_title_fulltext" />
           </predicate>
           <predicate parameter="ecm:currentLifeCycleState" operator="IN">
             <field schema="elora_search" name="system_currentLifeCycleState" />
           </predicate>
-          <predicate parameter="elo:reference" operator="LIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="LIKE">
-            <field schema="elora_search" name="dc_title" />
+          <!-- Commented for the instance, since it is not used. 
+          <predicate parameter="ecm:mixinType" operator="IN">
+            <field schema="elora_search" name="system_mixinType" />
+          </predicate> -->
+          <predicate parameter="ecm:primaryType" operator="IN">
+            <field schema="elora_search" name="system_primaryType" />
           </predicate>
           <predicate parameter="bomitem:bomItemType" operator="IN">
             <field schema="elora_search" name="bomitem_bomItemType" />
           </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
+           <predicate parameter="dc:lastContributor" operator="IN">
             <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>          
+          </predicate>
+          <predicate parameter="manu:manufacturers" operator="IN">
+            <field schema="elora_search" name="search_manufacturer" />
+          </predicate>
+          <predicate parameter="cust:customers" operator="IN">
+            <field schema="elora_search" name="search_customer" />
+          </predicate>
+          <predicate parameter="bompart:partClassification" operator="IN">
+            <field schema="elora_search" name="search_partClassification" />
+          </predicate>
+          <predicate parameter="prodclass:productClassification" operator="IN">
+            <field schema="elora_search" name="search_productClassification" />
+          </predicate>
+          <predicate parameter="resp:responsible" operator="IN">
+            <field schema="elora_search" name="search_responsible" />
+          </predicate>
+          <predicate parameter="own:owner" operator="IN">
+            <field schema="elora_search" name="search_owner" />
+          </predicate>
+          <predicate parameter="ecm:tag" operator="IN">
+            <field schema="default_search" name="ecm_tags" />
+          </predicate>
           <predicate operator="BETWEEN" parameter="dc:modified">
             <field name="dc_modified_min" schema="default_search"/>
             <field name="dc_modified_max" schema="default_search"/>
           </predicate>
-          <predicate parameter="collectionMember:collectionIds"
+          <predicate operator="BETWEEN" parameter="dc:created">
+            <field name="dc_created_min" schema="default_search"/>
+            <field name="dc_created_max" schema="default_search"/>
+          </predicate>
+         <!--  <predicate parameter="collectionMember:collectionIds"
             operator="IN">
             <field schema="default_search" name="ecm_collections" />
-          </predicate>
+          </predicate> -->
           <predicate parameter="ecm:path" operator="STARTSWITH">
             <field schema="default_search" name="ecm_path" />
           </predicate>
         </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" />
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
       <searchLayout name="elora_search_layout" />
@@ -103,7 +125,69 @@
         <flag>SEARCH</flag>
       </flags>
     </contentView>
+    
+    
+     <!-- Override simple_search content view in order to change the query -->
+    <contentView name="simple_search">
+      <title>label.search.form.simple</title>
+      <translateTitle>true</translateTitle>
+      <showTitle>false</showTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <trackUsage>true</trackUsage>
+        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+        <property name="coreSession">#{documentManager}</property>
+        <whereClause docType="DefaultSearch">
+          <fixedPart>
+            ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot', 'WorkspaceRoot', 'Favorites')
+            AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
+            AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:parentId IS NOT NULL
+            AND SORTED_COLUMN IS NOT NULL
+          </fixedPart>
+          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+            <field schema="default_search" name="ecm_fulltext" />
+          </predicate>
+        </whereClause>
+         <sort column="elo:orderingPriority" ascending="true" />
+         <sort column="elo:reference" ascending="true" />
+         <sort column="dc:title" ascending="true" />
+        <!-- sort column="dc:title" ascending="true" / sort by fulltext relevance -->
+        <pageSize>20</pageSize>
+      </coreQueryPageProvider>
+      <searchLayout name="simple_search_layout" />
+      <waitForExecution>true</waitForExecution>
+      <waitForExecutionSentence>
+        label.search.waitForExecution
+      </waitForExecutionSentence>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChanged</event>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+      </resultLayouts>
+      <resultColumns>
+        #{searchDocument.cvd.selectedLayoutColumns}
+      </resultColumns>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
   
   </extension>
 
-</component>    
+</component>

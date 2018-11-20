@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.integration.DraftServicePublisher.contrib">
+
+  <implementation class="com.aritu.eloraplm.integration.service.DraftService"/>
+  <service>
+    <provide interface="com.aritu.eloraplm.integration.api.DraftManager"/>
+  </service>
+
+</component>

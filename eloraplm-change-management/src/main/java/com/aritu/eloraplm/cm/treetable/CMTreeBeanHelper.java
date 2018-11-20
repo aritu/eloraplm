@@ -13,49 +13,58 @@
  */
 package com.aritu.eloraplm.cm.treetable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.primefaces.model.TreeNode;
-
-import com.aritu.eloraplm.config.util.EloraConfigTable;
+import org.nuxeo.ecm.core.api.IdRef;
+import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.constants.CMConstants;
+import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
- * // TODO: write class general comment
+ * Helper class for Change Management tree beans.
  *
  * @author aritu
  *
  */
 public class CMTreeBeanHelper {
 
-    private static final Log log = LogFactory.getLog(CMTreeBeanHelper.class);
+    public static boolean calculateDestinationItemVersionListIsReadOnlyValue(
+            String action, boolean isManaged) {
 
-    /**
-     *
-     */
-    public CMTreeBeanHelper() {
-        // TODO Auto-generated constructor stub
+        boolean destinationItemVersionIsReadOnly = false;
+
+        if (!(action.equals(CMConstants.ACTION_CHANGE)
+                || action.equals(CMConstants.ACTION_REPLACE))
+                || (action.equals(CMConstants.ACTION_CHANGE) && isManaged)
+                || (action.equals(CMConstants.ACTION_REPLACE) && isManaged)) {
+            destinationItemVersionIsReadOnly = true;
+        }
+
+        return destinationItemVersionIsReadOnly;
     }
 
     public static boolean calculateIsManagedIsReadOnlyValue(String action,
-            DocumentModel destinationItem,
-            EloraConfigTable releasedStatesConfig) {
+            DocumentModel destinationItem) {
 
         boolean isManagedIsReadOnly = false;
-
+        /*
+         * isManaged field is editable only if the action is not REMOVE or IGNORE
+         * or if the destination item is not CHECKED OUT
+         */
         if (action.equals(CMConstants.ACTION_REMOVE)
-                || action.equals(CMConstants.ACTION_IGNORE)) {
+                || action.equals(CMConstants.ACTION_IGNORE)
+                || (action.equals(CMConstants.ACTION_REPLACE)
+                        && destinationItem == null)) {
             isManagedIsReadOnly = true;
         } else {
-            // isManaged field is editable only if the destination item is in a
-            // released state
             if (destinationItem != null) {
-                String desinationItemState = destinationItem.getCurrentLifeCycleState();
-                if (!releasedStatesConfig.containsKey(desinationItemState)) {
+                if (destinationItem.isCheckedOut()) {
                     isManagedIsReadOnly = true;
                 }
             }
@@ -65,59 +74,222 @@ public class CMTreeBeanHelper {
     }
 
     public static boolean calculatedImpactedItemActionIsReadOnlyValue(
-            String action, TreeNode parentNode) {
+            String action, String originItemWcUid, String originItemType,
+            String modifiedItemAction, String modifiedItemDestinationWcUid,
+            String parentAction) {
         boolean actionIsReadOnly = false;
 
-        // if the action is Ignore, destination item is not editable
+        // if the action is Ignore, in some cases the action should not be
+        // editable
         if (action.equals(CMConstants.ACTION_IGNORE)) {
-            // If the parentNode Action is also Ignore, this item
-            // action must be readOnly.
-            String parentAction = "";
-            String parentNodeClassName = parentNode.getData().getClass().getSimpleName();
-            if (parentNodeClassName.equals(
-                    CmModifiedItemsNodeData.class.getSimpleName())) {
-                CmModifiedItemsNodeData parentNodeData = (CmModifiedItemsNodeData) parentNode.getData();
-                parentAction = parentNodeData.getAction();
-            }
-            if (parentNodeClassName.equals(
-                    CmImpactedItemsNodeData.class.getSimpleName())) {
-                CmImpactedItemsNodeData parentNodeData = (CmImpactedItemsNodeData) parentNode.getData();
-                parentAction = parentNodeData.getAction();
-            }
-            if (parentAction.equals(CMConstants.ACTION_IGNORE)) {
+
+            // if the action is ignored because the origin of the impacted item
+            // is the same as the destination of the modified item, the action
+            // must be readOnly
+            if (modifiedItemAction.equals(CMConstants.ACTION_REPLACE)
+                    && originItemWcUid.equals(modifiedItemDestinationWcUid)) {
                 actionIsReadOnly = true;
+            } else {
+                if (parentAction != null
+                        && parentAction.equals(CMConstants.ACTION_IGNORE)
+                        && originItemType != null && !originItemType.equals(
+                                EloraDoctypeConstants.CAD_DRAWING)) {
+                    actionIsReadOnly = true;
+                }
             }
+
         }
 
         return actionIsReadOnly;
     }
 
     public static void processRefreshNodeTriggeredByIsManaged(
-            CmItemsNodeData nodeData, CoreSession session)
+            CMItemsNodeData nodeData, CoreSession session)
             throws EloraException {
 
         boolean isManaged = nodeData.getIsManaged();
 
         String action = nodeData.getAction();
-        if (action != null && action.equals(CMConstants.ACTION_CHANGE)) {
+        if (action != null && (action.equals(CMConstants.ACTION_CHANGE)
+                || action.equals(CMConstants.ACTION_REPLACE))) {
             DocumentModel destinationItem = nodeData.getDestinationItem();
 
             // if isManaged = true, change destinationItem to the AV
             if (isManaged) {
                 if (destinationItem != null && !destinationItem.isVersion()) {
                     DocumentModel newDestinationItem = EloraDocumentHelper.getLatestVersion(
-                            destinationItem, session);
+                            destinationItem);
                     nodeData.setDestinationItem(newDestinationItem);
+                    nodeData.setDestinationItemVersionIsReadOnly(true);
                 }
             } else {
-                // put back again the WC
-                if (destinationItem != null && destinationItem.isVersion()) {
-                    DocumentModel newDestinationItem = session.getWorkingCopy(
-                            destinationItem.getRef());
-                    nodeData.setDestinationItem(newDestinationItem);
+                // put back again the WC and display the list
+                nodeData.setDestinationItem(nodeData.getDestinationItemWc());
+
+                if (nodeData.getDestinationItemVersionList() == null
+                        || nodeData.getDestinationItemVersionList().size() == 0) {
+                    loadDestinationVersions(nodeData, session);
                 }
+
+                nodeData.setDestinationItemUid(
+                        nodeData.getDestinationItemWc().getId());
+
+                nodeData.setDestinationItemVersionIsReadOnly(false);
+
+                boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
+                        nodeData.getAction(), nodeData.getDestinationItem());
+                nodeData.setIsManagedIsReadOnly(isManagedIsReadOnly);
             }
         }
+    }
+
+    public static void processRefreshNodeTriggeredByDestinationItemUid(
+            CMItemsNodeData nodeData, CoreSession session)
+            throws EloraException {
+
+        String destinationItemUid = nodeData.getDestinationItemUid();
+
+        DocumentModel destinationItem = session.getDocument(
+                new IdRef(destinationItemUid));
+
+        nodeData.setDestinationItem(destinationItem);
+
+        if (destinationItem.isVersion()) {
+            nodeData.setIsManaged(true);
+            nodeData.setDestinationItemVersionIsReadOnly(true);
+        } else {
+            nodeData.setIsManaged(false);
+            nodeData.setDestinationItemVersionIsReadOnly(false);
+        }
+
+        boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
+                nodeData.getAction(), nodeData.getDestinationItem());
+        nodeData.setIsManagedIsReadOnly(isManagedIsReadOnly);
 
     }
+
+    public static void loadDestinationVersions(CMItemsNodeData nodeData,
+            CoreSession session) throws EloraException {
+
+        Map<String, String> versionList = new HashMap<String, String>();
+
+        DocumentModel destinationItemWc = nodeData.getDestinationItemWc();
+        if (destinationItemWc != null) {
+            String destinationItemWcUid = destinationItemWc.getId();
+
+            // calculate the version list
+            versionList = CMHelper.calculateModifiableItemVersionList(session,
+                    destinationItemWcUid);
+
+            // Add also the WC at the end
+            versionList.put(destinationItemWcUid,
+                    destinationItemWc.getVersionLabel() + " (WC)");
+        }
+
+        nodeData.setDestinationItemVersionList(versionList);
+    }
+
+    // -----------------------------------------------------------------------------
+    // The way to calculate the comment of the modified and impacted items have
+    // been changed. We keep the code commented, in case we need to change it
+    // again.
+    /*private static String getModifiedItemActionLabel(String action)
+            throws EloraException {
+    
+        String actionLabel = null;
+    
+        if (!CMConfig.modifiedActionsLabelMap.containsKey(action)) {
+            throw new EloraException("label for key = |" + action
+                    + "| in ModifiedActionsConfig is null");
+        }
+        actionLabel = CMConfig.modifiedActionsLabelMap.get(action);
+    
+        return actionLabel;
+    }
+    
+    public static String calculateModifiedItemComment(String action,
+            DocumentModel cmProcess, DocumentModel originItem,
+            DocumentModel destinationItem) throws EloraException {
+    
+        String actionLabel = getModifiedItemActionLabel(action);
+    
+        String comment = "["
+                + cmProcess.getPropertyValue(
+                        EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                + "] " + actionLabel + ": ";
+    
+        switch (action) {
+        case CMConstants.ACTION_CHANGE:
+            comment += cmProcess.getTitle();
+            break;
+        case CMConstants.ACTION_REMOVE:
+            comment += originItem.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE) + " "
+                    + originItem.getTitle();
+            break;
+    
+        case CMConstants.ACTION_REPLACE:
+            comment += originItem.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE) + " "
+                    + originItem.getTitle() + " by "
+                    + destinationItem.getPropertyValue(
+                            EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                    + " " + destinationItem.getTitle();
+            break;
+        case CMConstants.ACTION_IGNORE:
+            // empty comment
+            comment = "";
+            break;
+        }
+    
+        return comment;
+    }
+
+    public static String calculateImpactedItemComment(DocumentModel cmProcess,
+            String modifiedItemAction, DocumentModel modifiedItemOriginItem,
+            DocumentModel modifiedItemDestinationItem) throws EloraException {
+
+        String actionLabel = getModifiedItemActionLabel(modifiedItemAction);
+
+        String comment = "["
+                + cmProcess.getPropertyValue(
+                        EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                + "] " + actionLabel + ": ";
+
+        switch (modifiedItemAction) {
+        case CMConstants.ACTION_CHANGE:
+        case CMConstants.ACTION_REMOVE:
+            comment += modifiedItemOriginItem.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE) + " "
+                    + modifiedItemOriginItem.getTitle();
+            break;
+
+        case CMConstants.ACTION_REPLACE:
+            comment += modifiedItemOriginItem.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE) + " "
+                    + modifiedItemOriginItem.getTitle() + " by "
+                    + modifiedItemDestinationItem.getPropertyValue(
+                            EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                    + " " + modifiedItemDestinationItem.getTitle();
+            break;
+        }
+
+        return comment;
+    }*/
+    // -----------------------------------------------------------------------------
+
+    public static String calculateComment(DocumentModel cmProcess,
+            String action) throws EloraException {
+
+        String comment = null;
+
+        if (!action.equals(CMConstants.ACTION_IGNORE)) {
+            comment = "["
+                    + cmProcess.getPropertyValue(
+                            EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                    + "] " + cmProcess.getTitle();
+        }
+        return comment;
+    }
+
 }

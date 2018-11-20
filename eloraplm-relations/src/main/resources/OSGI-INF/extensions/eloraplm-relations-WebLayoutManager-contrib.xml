@@ -21,12 +21,6 @@
               <widget>elora_relations_config_subtype</widget>
             </row>
             <row>
-              <widget>elora_relations_config_isSpecial</widget>
-            </row>
-            <row>
-              <widget>elora_relations_config_isIconOnly</widget>
-            </row>
-            <row>
               <widget>elora_relations_config_obsolete</widget>
             </row>
             <row>
@@ -38,7 +32,7 @@
         
         <!-- treetable layouts -->
         
-        <layout name="cad_composition_treetable">
+        <layout name="cad_comp_tt">
           <templates>
             <template mode="any">/layouts/layout_treetable_template.xhtml
             </template>
@@ -75,10 +69,10 @@
             </column>
             <column name="version">
                 <properties mode="any">
-                    <property name="columnStyle">width: 7em;</property>
+                    <property name="columnStyle">width: 140px;</property>
                     <property name="columnHeading">label.version</property>
                 </properties>
-                <widget>treewidget_version_wc_av</widget>
+                <widget>treewidget_editable_version_wc_av</widget>
             </column>
             <column name="lifecycle_state">
                 <properties mode="any">
@@ -94,6 +88,13 @@
                 </properties>
                 <widget>listing_quantity</widget>
             </column>
+            <column name="number">
+                <properties mode="any">
+                    <property name="columnStyle">width: 6em;</property>
+                    <property name="columnHeading">eloraplm.label.number</property>
+                </properties>
+                <widget>treewidget_editable_ordering</widget>
+            </column>
             <column name="related_boms">
                 <properties mode="any">
                     <property name="columnStyle">width: 20%;</property>
@@ -102,25 +103,24 @@
                 </properties>
                 <widget>listing_related_boms</widget>
             </column>
-
-<!-- Oraingoz kendu egingo da edizioa, checkin leihoa sortu arte -->
-<!--             <column name="remove"> -->
-<!--                 <properties mode="any"> -->
-<!--                     <property name="columnStyle">width: 40px;</property> -->
-<!--                     <property name="columnStyleClass">alignCenter</property> -->
-<!--                 </properties> -->
-<!--                 <widget>cad_composition_remove_relation</widget> -->
-<!--             </column> -->
-
+            <column name="remove">
+                <properties mode="any">
+                    <property name="columnStyle">width: 40px;</property>
+                    <property name="columnStyleClass">alignCenter</property>
+                </properties>
+                <widget>cad_composition_remove_relation</widget>
+            </column>
           </columns>
           <properties mode="any">
             <property name="tableTitle">title.treetable.cadComposition</property>
-            <property name="showButtons">false</property>
             <property name="headerFiltersTemplate">/incl/cad_relation_header_filters.xhtml</property>
+<!--             <property name="tableStyle">table-layout: auto;</property> -->
+            <property name="rowStyleClass">#{nodeData.isSuppressed ? 'suppressedRelation' : ''}</property>
+            <property name="factory">#{cadCompositionRoot}</property>
           </properties>
         </layout>
         
-        <layout name="cad_where_used_treetable">
+        <layout name="cad_where_tt">
           <templates>
             <template mode="any">/layouts/layout_treetable_template.xhtml
             </template>
@@ -131,6 +131,7 @@
                 <property name="columnStyleClass">ellipsisWhenOverflow</property>
                 <property name="columnHeading">label.content.header.title</property>
               </properties>
+              <widget>listing_based_on_relation</widget>
               <widget>treewidget_cad_icon_reference_title</widget>
             </column>
             <column name="download_link">
@@ -179,8 +180,9 @@
           </columns>
           <properties mode="any">
             <property name="tableTitle">title.treetable.cadWhereUsed</property>
-            <property name="showButtons">false</property>
             <property name="headerFiltersTemplate">/incl/cad_relation_header_filters.xhtml</property>
+            <property name="rowStyleClass">#{nodeData.isSuppressed ? 'suppressedRelation' : ''}</property>
+            <property name="factory">#{cadWhereUsedRoot}</property>
           </properties>
         </layout>
         
@@ -228,36 +230,6 @@
           </fields>
         </widget>
         
-        <widget name="elora_relations_config_isSpecial" type="template">
-          <labels>
-            <label mode="any">label.widget.relationsConfig.entry.isSpecial</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>eloraRelationsConfig:isSpecial</field>
-          </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
-        </widget>
-        
-        <widget name="elora_relations_config_isIconOnly" type="template">
-          <labels>
-            <label mode="any">label.widget.relationsConfig.entry.isIconOnly</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>eloraRelationsConfig:isIconOnly</field>
-          </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
-        </widget>
-        
         <widget name="elora_relations_config_obsolete" type="template">
           <labels>
             <label mode="any">label.widget.relationsConfig.entry.obsolete</label>
@@ -290,27 +262,33 @@
         
         
         <!-- treetable widgets -->
-        <widget name="cad_composition_treetable" type="treetable">
+        <widget name="cad_comp_tt" type="treetable">
             <labels>
                 <label mode="any">label.treetable.cad.composition</label>
             </labels>
             <fields>
                 <field>data</field>
             </fields>
+            <widgetModes>
+                <mode value="any">#{eloraWebActions.isEditable() ?'edit' : 'view'}</mode>
+            </widgetModes>
             <properties widgetMode="any">
-                <property name="treetableLayout">cad_composition_treetable</property>
+                <property name="treetableLayout">cad_comp_tt</property>
             </properties>
         </widget>
         
-        <widget name="cad_where_used_treetable" type="treetable">
+        <widget name="cad_where_tt" type="treetable">
             <labels>
                 <label mode="any">label.treetable.cad.whereUsed</label>
             </labels>
             <fields>
                 <field>data</field>
             </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
             <properties widgetMode="any">
-                <property name="treetableLayout">cad_where_used_treetable</property>
+                <property name="treetableLayout">cad_where_tt</property>
             </properties>
         </widget>
         
@@ -371,7 +349,7 @@
             </fields>
             <properties widgetMode="any">
                 <property name="template">
-                    /widgets/listing_related_boms_widget.xhtml
+                    /widgets/related_boms_with_state_widget.xhtml
                 </property>
             </properties>
         </widget>
@@ -385,6 +363,10 @@
             <field>level</field>
             <field>isSpecial</field>
           </fields>
+          <widgetModes>
+            <mode value="edit">view</mode>
+            <mode value="any">hidden</mode>
+          </widgetModes>
           <properties mode="any">
             <property name="template">
                   /widgets/cad_composition_remove_relation_widget.xhtml
@@ -399,13 +381,41 @@
             </labels>
             <translated>true</translated>
             <fields>
-                <field>predicateUri</field>
+                <field>isBasedOn</field>
             </fields>
             <properties widgetMode="any">
                 <property name="template">
                     /widgets/listing_based_on_relation_widget.xhtml
                 </property>
             </properties>
+        </widget>
+        
+        <widget name="summary_cad_drawing_of_documents" type="summary_related_documents">
+          <labels>
+            <label mode="any">label.widgetBlock.title.CadDocuments</label>
+          </labels>
+          <properties mode="any">
+            <property name="documentRelations">#{outgoingCadSpecialRelations}</property>
+            <property name="docStatementsInfo">#{eloraRelationActions.outgoingCadSpecialStatementsInfo}</property>
+          </properties>
+          <controls mode="any">
+            <control name="requireSurroundingForm">true</control>
+            <control name="handleLabels">true</control>
+          </controls>
+        </widget>
+        
+        <widget name="summary_cad_drawing_of_inverse_documents" type="summary_related_inverse_documents">
+          <labels>
+            <label mode="any">label.widgetBlock.title.CadDocuments</label>
+          </labels>
+          <properties mode="any">
+            <property name="documentRelations">#{incomingCadSpecialRelations}</property>
+            <property name="docStatementsInfo">#{eloraRelationActions.incomingCadSpecialStatementsInfo}</property>
+          </properties>
+          <controls mode="any">
+            <control name="requireSurroundingForm">true</control>
+            <control name="handleLabels">true</control>
+          </controls>
         </widget>
         
     </extension>

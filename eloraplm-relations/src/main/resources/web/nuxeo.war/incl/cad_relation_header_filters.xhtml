@@ -1,18 +1,52 @@
-<f:subview
+<ui:composition
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui"
   xmlns:h="http://java.sun.com/jsf/html">
  
     <h:selectBooleanCheckbox id="showDrawings" value="#{value.showDrawings}">
-        <f:ajax render="@form" execute="@this" listener="#{value.reloadTree}" />
+        <p:ajax
+            update="@form"
+            process="@this"
+            partialSubmit="true"
+            listener="#{value.reloadTree}"
+            onstart="PF('treeBlocker_#{treeWidgetId}').show();"
+            onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
     </h:selectBooleanCheckbox>
-    
     <h:outputLabel for="showDrawings" value="#{messages['eloraplm.label.relations.showDrawings']}" />
     
+    <h:selectBooleanCheckbox id="showSuppressed" value="#{value.showSuppressed}">
+        <p:ajax
+            update="@form"
+            process="@this"
+            partialSubmit="true"
+            listener="#{value.reloadTree}"
+            onstart="PF('treeBlocker_#{treeWidgetId}').show();"
+            onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
+    </h:selectBooleanCheckbox>
+    <h:outputLabel for="showSuppressed" value="#{messages['eloraplm.label.relations.showSuppressed']}" />
     
-    <h:selectBooleanCheckbox id="showUniqueVersionsPerDocument" value="#{value.showUniqueVersionsPerDocument}">
-        <f:ajax render="@form" execute="@this" listener="#{value.reloadTree}" />
+    <h:selectBooleanCheckbox id="showObsoleteStateDocuments" value="#{value.showObsoleteStateDocuments}">
+        <p:ajax
+            update="@form"
+            process="@this"
+            partialSubmit="true"
+            listener="#{value.reloadTree}"
+            onstart="PF('treeBlocker_#{treeWidgetId}').show();"
+            onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
     </h:selectBooleanCheckbox>
     
+    <h:outputLabel for="showObsoleteStateDocuments" value="#{messages['eloraplm.label.relations.showObsoleteStateDocuments']}" />
+    
+    <h:selectBooleanCheckbox id="showUniqueVersionsPerDocument" value="#{value.showUniqueVersionsPerDocument}">
+        <p:ajax
+            update="@form"
+            process="@this"
+            partialSubmit="true"
+            listener="#{value.reloadTree}"
+            onstart="PF('treeBlocker_#{treeWidgetId}').show();"
+            onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
+    </h:selectBooleanCheckbox>
     <h:outputLabel for="showUniqueVersionsPerDocument" value="#{messages['eloraplm.label.relations.showUniqueVersionsPerDocument']}" />
-</f:subview>
+    
+</ui:composition>

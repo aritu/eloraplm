@@ -51,8 +51,8 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class BasicRelationBean extends EloraDocContextBoundActionBean implements
-        Serializable {
+public class BasicRelationBean extends EloraDocContextBoundActionBean
+        implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,11 +92,13 @@ public class BasicRelationBean extends EloraDocContextBoundActionBean implements
 
     private String comment;
 
-    private int quantity = 1;
+    private String quantity = "1";
 
-    private int ordering = 0;
+    private Integer ordering;
 
-    private int directorOrdering = 0;
+    private Integer directorOrdering;
+
+    private Integer viewerOrdering;
 
     private boolean addDirectRelation = false;
 
@@ -140,28 +142,36 @@ public class BasicRelationBean extends EloraDocContextBoundActionBean implements
         this.comment = comment;
     }
 
-    public int getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 
-    public int getOrdering() {
+    public Integer getOrdering() {
         return ordering;
     }
 
-    public void setOrdering(int ordering) {
+    public void setOrdering(Integer ordering) {
         this.ordering = ordering;
     }
 
-    public int getDirectorOrdering() {
+    public Integer getDirectorOrdering() {
         return directorOrdering;
     }
 
-    public void setDirectorOrdering(int directorOrdering) {
+    public void setDirectorOrdering(Integer directorOrdering) {
         this.directorOrdering = directorOrdering;
+    }
+
+    public Integer getViewerOrdering() {
+        return viewerOrdering;
+    }
+
+    public void setViewerOrdering(Integer viewerOrdering) {
+        this.viewerOrdering = viewerOrdering;
     }
 
     public boolean getAddDirectRelation() {
@@ -206,14 +216,14 @@ public class BasicRelationBean extends EloraDocContextBoundActionBean implements
                     documentManager.getPrincipal().getName())) {
 
                 objectDocumentUid = objectDocumentUid.trim();
-                DocumentModel object = documentManager.getDocument(new IdRef(
-                        objectDocumentUid));
+                DocumentModel object = documentManager.getDocument(
+                        new IdRef(objectDocumentUid));
                 try {
                     eloraDocumentRelationManager.addRelation(documentManager,
                             currentDoc, object, predicateUri, false,
                             includeStatementsInEvents,
-                            StringUtils.trim(comment), quantity, true, 0,
-                            directorOrdering);
+                            StringUtils.trim(comment), quantity, ordering,
+                            directorOrdering, viewerOrdering);
 
                     // Checkbox is selected
                     if (addDirectRelation) {
@@ -252,31 +262,33 @@ public class BasicRelationBean extends EloraDocContextBoundActionBean implements
             for (Statement stmt : stmts) {
                 NodeInfo objectInfo = new NodeInfoImpl(stmt.getObject(),
                         RelationHelper.getDocumentModel(stmt.getObject(),
-                                documentManager), true);
+                                documentManager),
+                        true);
                 // If document is not visible we don't relate it
                 if (objectInfo.isDocumentVisible()) {
                     eloraDocumentRelationManager.addRelation(documentManager,
                             currentDoc, stmt.getObject(), predicateUri, false,
                             includeStatementsInEvents,
-                            StringUtils.trim(comment), quantity, true, 0,
-                            directorOrdering);
+                            StringUtils.trim(comment), quantity, ordering,
+                            directorOrdering, viewerOrdering);
                 }
             }
         } else {
             List<Statement> stmts = EloraRelationHelper.getSubjectStatements(
-                    object, new ResourceImpl(
-                            EloraRelationConstants.CAD_DRAWING_OF));
+                    object,
+                    new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF));
             for (Statement stmt : stmts) {
                 NodeInfo subjectInfo = new NodeInfoImpl(stmt.getSubject(),
                         RelationHelper.getDocumentModel(stmt.getSubject(),
-                                documentManager), true);
+                                documentManager),
+                        true);
                 // If document is not visible we don't relate it
                 if (subjectInfo.isDocumentVisible()) {
                     eloraDocumentRelationManager.addRelation(documentManager,
                             currentDoc, stmt.getSubject(), predicateUri, false,
                             includeStatementsInEvents,
-                            StringUtils.trim(comment), quantity, true, 0,
-                            directorOrdering);
+                            StringUtils.trim(comment), quantity, ordering,
+                            directorOrdering, viewerOrdering);
                 }
             }
         }
@@ -287,8 +299,10 @@ public class BasicRelationBean extends EloraDocContextBoundActionBean implements
         objectDocumentUid = null;
         objectDocumentTitle = null;
         comment = null;
-        quantity = 1;
-        ordering = 0;
+        quantity = "1";
+        ordering = null;
+        directorOrdering = null;
+        viewerOrdering = null;
         addDirectRelation = false;
     }
 

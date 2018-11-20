@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="com.aritu.eloraplm.integration.PageProviderService.contrib">
+  <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService" point="providers">
+    <coreQueryPageProvider name="default_favorite_content">
+      <pattern escapeParameters="true" quoteParameters="false">
+        SELECT * FROM Document 
+        WHERE ecm:mixinType != 'HiddenInNavigation'
+        AND ecm:isVersion = 0
+        AND ecm:currentLifeCycleState != 'deleted'
+        AND ecm:isProxy = 0
+        AND ecm:primaryType IN (?)
+        AND collectionMember:collectionIds/* = ?
+      </pattern>
+      <sort column="elo:orderingPriority" ascending="true" />
+      <sort column="elo:reference" ascending="true" />
+      <sort column="dc:title" ascending="true" />
+    </coreQueryPageProvider>
+  </extension>
+</component>

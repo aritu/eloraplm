@@ -12,7 +12,7 @@ import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.core.EloraDocContextBoundActionBean;
 
-public class CoreTreeBean extends EloraDocContextBoundActionBean
+public abstract class CoreTreeBean extends EloraDocContextBoundActionBean
         implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,13 +29,18 @@ public class CoreTreeBean extends EloraDocContextBoundActionBean
     @In(create = true)
     protected Map<String, String> messages;
 
+    private boolean isDirty = false;
+
     private TreeNode root;
+
+    private TreeNode selectedNode;
+
+    private TreeNode[] selectedNodes;
 
     public CoreTreeBean() {
     }
 
-    public void createRoot() {
-    }
+    protected abstract void createRoot();
 
     public TreeNode getRoot() {
         return root;
@@ -43,6 +48,22 @@ public class CoreTreeBean extends EloraDocContextBoundActionBean
 
     public void setRoot(TreeNode root) {
         this.root = root;
+    }
+
+    public TreeNode getSelectedNode() {
+        return selectedNode;
+    }
+
+    public void setSelectedNode(TreeNode selectedNode) {
+        this.selectedNode = selectedNode;
+    }
+
+    public TreeNode[] getSelectedNodes() {
+        return selectedNodes;
+    }
+
+    public void setSelectedNodes(TreeNode[] selectedNodes) {
+        this.selectedNodes = selectedNodes;
     }
 
     public void collapseAll() {
@@ -70,4 +91,15 @@ public class CoreTreeBean extends EloraDocContextBoundActionBean
     protected void resetBeanCache(DocumentModel newCurrentDocumentModel) {
         createRoot();
     }
+
+    public boolean getIsDirty() {
+        return isDirty;
+    }
+
+    public void setIsDirty(boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    protected abstract TreeNode getRootFromFactory();
+
 }

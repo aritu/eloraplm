@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.relations.EventServiceComponent.contrib">
+
+    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
+        <listener name="softDeletedRelationCleaner" async="false" class="com.aritu.eloraplm.relations.listener.SoftDeletedRelationCleanupListener">
+            <event>softDeletedRelationsCleanup</event>
+        </listener>
+    </extension>
+
+</component>

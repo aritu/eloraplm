@@ -19,7 +19,7 @@ package com.aritu.eloraplm.promote.treetable;
  * @author aritu
  *
  */
-class NodeDynamicInfo {
+public class NodeDynamicInfo {
 
     protected boolean isPropagated;
 
@@ -36,6 +36,10 @@ class NodeDynamicInfo {
     protected String resultMsg;
 
     protected String result;
+
+    protected String hiddenResultMsg;
+
+    protected String hiddenResult;
 
     public String getFinalState() {
         return finalState;
@@ -59,6 +63,22 @@ class NodeDynamicInfo {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public String getHiddenResultMsg() {
+        return hiddenResultMsg;
+    }
+
+    public void setHiddenResultMsg(String hiddenResultMsg) {
+        this.hiddenResultMsg = hiddenResultMsg;
+    }
+
+    public String getHiddenResult() {
+        return hiddenResult;
+    }
+
+    public void setHiddenResult(String hiddenResult) {
+        this.hiddenResult = hiddenResult;
     }
 
     public boolean getSwitchableVersion() {

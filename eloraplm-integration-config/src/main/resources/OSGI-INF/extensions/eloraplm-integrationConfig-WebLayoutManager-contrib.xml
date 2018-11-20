@@ -1,0 +1,631 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.integrationConfig.WebLayoutManager.contrib">
+
+    <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        <layout name="elora_cad_metadata_mapping">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_cad_metadata_mapping_id</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_mapping_authoring_tool</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_mapping_cad_doctype</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_mapping_cad_metadata_type</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_mapping_cad_metadata_name</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_mapping_description</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_mapping_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_mapping_ordering</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <layout name="elora_cad_metadata_type">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_cad_metadata_type_id</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_type_cad_type_name</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_type_data_type</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_type_comment</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_type_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_cad_metadata_type_order</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <layout name="elora_doctype_mapping">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_doctype_mapping_id</widget>
+            </row>
+            <row>
+              <widget>elora_doctype_mapping_authoring_tool</widget>
+            </row>
+            <row>
+              <widget>elora_doctype_mapping_cad_doctype</widget>
+            </row>
+            <row>
+              <widget>elora_doctype_mapping_plm_doctype</widget>
+            </row>
+            <row>
+              <widget>elora_doctype_mapping_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_doctype_mapping_order</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <layout name="elora_metadata_mapping">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_metadata_mapping_id</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_authoring_tool</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_cad_doctype</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_cad_metadata_name</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_plm_doctype</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_plm_metadata</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_plm_metadata_type</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_update_mode</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_metadata_mapping_order</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        <layout name="elora_integration_version_control">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_integration_version_control_id</widget>
+            </row>
+            <row>
+              <widget>elora_integration_version_control_min_allowed_version</widget>
+            </row>
+            <row>
+              <widget>elora_integration_version_control_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_integration_version_control_ordering</widget>
+            </row>
+          </rows>
+        </layout>
+    </extension>
+    
+    <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <!-- elora_cad_metadata_mapping widgets -->
+        
+        <widget name="elora_cad_metadata_mapping_id" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataMapping.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataMapping:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_mapping_authoring_tool" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataMapping.authoringTool</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataMapping:authoring_tool</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_mapping_cad_doctype" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataMapping.cadDoctype</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataMapping:cad_doctype</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_mapping_cad_metadata_type" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataMapping.cadMetadataType</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataMapping:cad_metadata_type</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_mapping_cad_metadata_name" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataMapping.cadMetadataName</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataMapping:cad_metadata_name</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_mapping_description" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataMapping.description</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataMapping:description</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_mapping_obsolete" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataMapping.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataMapping:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_cad_metadata_mapping_ordering" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataMapping.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataMapping:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        
+        <!-- elora_cad_metadata_type widgets -->
+        
+        <widget name="elora_cad_metadata_type_id" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataType.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataType:id</field>
+          </fields>
+          <widgetModes>
+            <mode value="edit">view</mode>
+          </widgetModes>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_type_cad_type_name" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataType.cadTypeName</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataType:cad_type_name</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_type_data_type" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataType.dataType</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataType:data_type</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_type_comment" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataType.comment</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataType:comment</field>
+          </fields>
+        </widget>
+        
+        <widget name="elora_cad_metadata_type_obsolete" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataType.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataType:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_cad_metadata_type_ordering" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.cadMetadataType.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraCadMetadataType:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        <!-- elora_doctype_mapping widgets -->
+        
+        <widget name="elora_doctype_mapping_id" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.doctypeMapping.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDoctypeMapping:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_doctype_mapping_authoring_tool" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.doctypeMapping.authoringTool</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDoctypeMapping:authoring_tool</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_doctype_mapping_cad_doctype" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.doctypeMapping.cadDoctype</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDoctypeMapping:cad_doctype</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_doctype_mapping_plm_doctype" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.doctypeMapping.plmDoctype</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDoctypeMapping:plm_doctype</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_doctype_mapping_obsolete" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.doctypeMapping.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDoctypeMapping:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_doctype_mapping_ordering" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.doctypeMapping.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraDoctypeMapping:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        <!-- elora_metadata_mapping widgets -->
+        
+        <widget name="elora_metadata_mapping_id" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_metadata_mapping_authoring_tool" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.authoringTool</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:authoring_tool</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_metadata_mapping_cad_doctype" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.cadDoctype</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:cad_doctype</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_metadata_mapping_cad_metadata_name" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.cadMetadataName</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:cad_metadata_name</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_metadata_mapping_plm_doctype" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.plmDoctype</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:plm_doctype</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_metadata_mapping_plm_metadata" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.plmMetadata</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:plm_metadata</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_metadata_mapping_plm_metadata_type" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.plmMetadataType</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:plm_metadata_type</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_metadata_mapping_update_mode" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.updateMode</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:update_mode</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/update_mode_widget_template.xhtml
+            </property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_metadata_mapping_obsolete" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_metadata_mapping_ordering" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.metadataMapping.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraMetadataMapping:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+        <!-- elora_integration_version_control widgets -->
+        
+        <widget name="elora_integration_version_control_id" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.integrationVersionControl.id</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraIntegrationVersionControl:id</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_integration_version_control_min_allowed_version" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.integrationVersionControl.minAllowedVersion</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraIntegrationVersionControl:min_allowed_version</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="required">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="elora_integration_version_control_obsolete" type="template">
+          <labels>
+            <label mode="any">eloraplm.label.integrationVersionControl.obsolete</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraIntegrationVersionControl:obsolete</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">
+              /widgets/integer_yes_no_widget_template.xhtml
+            </property>
+          </properties>
+        </widget>
+    
+        <widget name="elora_integration_version_control_ordering" type="int">
+          <labels>
+            <label mode="any">eloraplm.label.integrationVersionControl.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloraIntegrationVersionControl:ordering</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="size">10</property>
+          </properties>
+        </widget>
+        
+    </extension>
+    
+</component>

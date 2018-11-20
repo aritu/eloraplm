@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:selectOneListbox id="switchChildren" value="#{pdmBean.switchChildrenOption}" size="1"
+        rendered="#{eloraWebActions.isEditable()}">
+      <f:selectItem itemValue="" itemLabel="#{messages['eloraplm.label.switchChildren.placeholder']}" />
+      <f:selectItem itemValue="AsStored" itemLabel="#{messages['eloraplm.label.switchChildren.asStored']}" />
+      <f:selectItem itemValue="LatestVersions" itemLabel="#{messages['eloraplm.label.switchChildren.latestVersions']}" />
+      <f:selectItem itemValue="LatestReleased" itemLabel="#{messages['eloraplm.label.switchChildren.latestReleased']}" />
+      <f:selectItem itemValue="WorkingCopies" itemLabel="#{messages['eloraplm.label.switchChildren.workingCopies']}" />
+      
+      <p:ajax
+            event="change"
+            update="@form :eloraMetadataHeading"
+            process="@this"
+            partialSubmit="true"
+            listener="#{pdmBean.switchChildren}"
+            onstart="PF('treeBlocker_#{treeWidgetId}').show();"
+            onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
+    </h:selectOneListbox>
+    
+</ui:composition>

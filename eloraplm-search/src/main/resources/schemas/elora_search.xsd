@@ -15,6 +15,8 @@
   
   <xs:element name="elo_reference" type="xs:string" />
   <xs:element name="dc_title" type="xs:string" />
+  <xs:element name="dc_title_fulltext" type="xs:string" />
+  
   <xs:element name="bomitem_bomItemType" type="nxs:stringList"/>
   
   <xs:element name="system_primaryType" type="nxs:stringList"/>
@@ -23,6 +25,10 @@
   <xs:element name="search_manufacturer" type="nxs:stringList"/>
   <xs:element name="dc_lastContributor" type="nxs:stringList"/>
   <xs:element name="system_mixinType" type="nxs:stringList"/>
+  <xs:element name="search_partClassification" type="nxs:stringList"/>
+  <xs:element name="search_productClassification" type="nxs:stringList"/>
+  <xs:element name="search_responsible" type="nxs:stringList"/>
+  <xs:element name="search_owner" type="nxs:stringList"/>
   
   <!-- aggregates field-->
   <xs:element name="system_primaryType_agg" type="nxs:stringList"/>

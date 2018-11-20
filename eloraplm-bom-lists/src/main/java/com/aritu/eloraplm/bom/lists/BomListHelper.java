@@ -13,16 +13,13 @@
  */
 package com.aritu.eloraplm.bom.lists;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.core.api.IterableQueryResult;
-import org.nuxeo.ecm.core.query.sql.NXQL;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
@@ -48,8 +45,8 @@ public class BomListHelper {
         DocumentModelList bomListDocs = null;
 
         if (!allBomListUids.isEmpty()) {
-            String queryLists = EloraQueryFactory.getBomListsByListId(bomListId,
-                    allBomListUids);
+            String queryLists = EloraQueryFactory.getBomListsByListIdQuery(
+                    bomListId, allBomListUids);
 
             bomListDocs = session.query(queryLists);
         }
@@ -70,39 +67,25 @@ public class BomListHelper {
 
         if (!inverse) {
 
-            String queryAllLists = EloraQueryFactory.getRelatedDocsByPredicate(
-                    doc.getId(), EloraRelationConstants.BOM_HAS_LIST);
-            IterableQueryResult itAllLists = session.queryAndFetch(
-                    queryAllLists, NXQL.NXQL);
+            DocumentModelList bomLists = RelationHelper.getObjectDocuments(doc,
+                    new ResourceImpl(EloraRelationConstants.BOM_HAS_LIST));
 
-            try {
-                if (itAllLists.size() > 0) {
-                    for (Map<String, Serializable> map : itAllLists) {
-                        String bomListUid = (String) map.get("relation:target");
-                        allBomListUids.add(bomListUid);
-                    }
+            if (bomLists.size() > 0) {
+                for (DocumentModel bomList : bomLists) {
+                    allBomListUids.add(bomList.getId());
                 }
-            } finally {
-                itAllLists.close();
             }
 
         } else {
 
-            String queryAllLists = EloraQueryFactory.getRelatedDocsByPredicate(
-                    doc.getId(), EloraRelationConstants.BOM_LIST_HAS_ENTRY,
-                    true);
-            IterableQueryResult itAllLists = session.queryAndFetch(
-                    queryAllLists, NXQL.NXQL);
+            DocumentModelList bomLists = RelationHelper.getSubjectDocuments(
+                    new ResourceImpl(EloraRelationConstants.BOM_LIST_HAS_ENTRY),
+                    doc);
 
-            try {
-                if (itAllLists.size() > 0) {
-                    for (Map<String, Serializable> map : itAllLists) {
-                        String bomListUid = (String) map.get("relation:source");
-                        allBomListUids.add(bomListUid);
-                    }
+            if (bomLists.size() > 0) {
+                for (DocumentModel bomList : bomLists) {
+                    allBomListUids.add(bomList.getId());
                 }
-            } finally {
-                itAllLists.close();
             }
 
         }

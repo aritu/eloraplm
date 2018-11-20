@@ -2,9 +2,6 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:h="http://java.sun.com/jsf/html"
   xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:nxu="http://nuxeo.org/nxweb/util"
-  xmlns:nxh="http://nuxeo.org/nxweb/html"
-  xmlns:nxd="http://nuxeo.org/nxweb/document"
   xmlns:c="http://java.sun.com/jstl/core">
   
   <c:set var="valueField" value="#{field_0}" />
@@ -15,16 +12,30 @@
 
   <!-- EDIT MODE -->
   <c:if test="#{widget.mode == 'edit'}">
-    <h:inputText id="value_field" value="#{valueField}"  size="50" maxlength="50" style="width:200px;text-align:right;"  validator="#{measureValueValidator.validate}">
-      <f:converter converterId="measureValueConverter"/>
-      <f:attribute name="baseUnit" value="#{unitField}" />
-    </h:inputText>
-    <span>
-      <h:outputText value="#{unitField}">
-        <f:converter converterId="measureUnitConverter"/>
-      </h:outputText>
-	</span>
-	<h:message for="value_field" styleClass="errorMessage" />
+
+        <h:inputText id="value_field" value="#{valueField}"  size="50" maxlength="50" style="width:200px;text-align:right;">
+          <f:converter converterId="measureValueConverter"/>
+          <f:attribute name="baseUnit" value="#{unitField}" />
+          <f:validator validatorId="measureValueValidator" />
+
+          <c:if test="#{not empty widget.properties.validator}">
+              <f:validator validatorId="#{widget.properties.validator}" />
+          </c:if>
+          
+          <c:if test="#{widget.properties.required}">
+              <f:validateRequired />
+          </c:if>
+          
+        </h:inputText>
+        
+        <span>
+          <h:outputText value="#{unitField}">
+            <f:converter converterId="measureUnitConverter"/>
+          </h:outputText>
+        </span>
+        
+        <h:message for="value_field" styleClass="errorMessage" />
+    
   </c:if>
   
   <!-- VIEW MODE -->

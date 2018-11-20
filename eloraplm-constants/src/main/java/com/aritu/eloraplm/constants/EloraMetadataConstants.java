@@ -4,19 +4,33 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_ELO_REFERENCE = "elo:reference";
 
+    public static final String ELORA_ELO_ORDERING_PRIORITY = "elo:orderingPriority";
+
     public static final String ELORA_ELOVWR_FILE = "elovwr:file";
+
+    public static final String ELORA_ELOVWR_FILENAME = "elovwr:filename";
+
+    public static final String ELORA_ELOVWR_BASEFILE = "elovwr:baseFile";
+
+    public static final String ELORA_CADATTS_FILES = "cadatts:files";
 
     public static final String ELORA_RELEXT_QUANTITY = "relext:quantity";
 
-    public static final String ELORA_RELEXT_ISOBJECTWC = "relext:isObjectWc";
-
     public static final String ELORA_RELEXT_ORDERING = "relext:ordering";
+
+    public static final String ELORA_RELEXT_DIRECTORORDERING = "relext:directorOrdering";
+
+    public static final String ELORA_RELEXT_VIEWERORDERING = "relext:viewerOrdering";
+
+    public static final String ELORA_RELEXT_ISMANUAL = "relext:isManual";
 
     public static final String ELORA_CAD_AUTHORING_TOOL = "cad:authoringTool";
 
     public static final String ELORA_CAD_AUTHORING_TOOL_VERSION = "cad:authoringToolVersion";
 
     public static final String ELORA_CAD_INTEGRATION_TOOL = "cad:integrationTool";
+
+    public static final String ELORA_CAD_CAD_TYPE = "cad:cadType";
 
     // BOM metadata
 
@@ -42,10 +56,10 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_BOMPART_PARTCLASSIFICATION = "bompart:partClassification";
 
-    public static final String ELORA_BOMPROD_PRODUCTCLASSIFICATION = "bomprod:productClassification";
-
     public static final String ELORA_BOMSPEC_SPECIFICATIONCLASSIFICATION = "bomspec:specificationClassification";
 
     public static final String ELORA_BOMTOOL_TOOLCLASSIFICATION = "bomtool:toolClassification";
+
+    public static final String ELORA_PRODCLASS_PRODUCTCLASSIFICATION = "prodclass:productClassification";
 
 }

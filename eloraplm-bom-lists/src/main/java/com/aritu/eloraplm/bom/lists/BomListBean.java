@@ -38,7 +38,7 @@ import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
+import com.aritu.eloraplm.config.util.BomListsConfigHelper;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
 import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
@@ -155,7 +155,7 @@ public class BomListBean implements Serializable {
         try {
             DocumentModel currentDocument = navigationContext.getCurrentDocument();
 
-            bomListsTable = EloraConfigHelper.getBomLists();
+            bomListsTable = BomListsConfigHelper.getBomLists(false);
             id = webActions.getCurrentSubTabId().replace(
                     webActions.getCurrentTabId().concat("_"), "");
 
@@ -170,15 +170,18 @@ public class BomListBean implements Serializable {
             // Check if the BOM list is created or not (for Composition)
             isListCreated = false;
 
-            DocumentModelList bomLists = BomListHelper.getBomListForDocument(
-                    currentDocument, id, false, documentManager);
-            if (bomLists != null && !bomLists.isEmpty()) {
-                if (bomLists.size() == 1) {
-                    isListCreated = true;
-                    currentBomList = bomLists.get(0);
-                } else {
-                    throw new EloraException(
-                            "The current document has more than one BomList documents of the same list id.");
+            if (currentDocument != null) {
+
+                DocumentModelList bomLists = BomListHelper.getBomListForDocument(
+                        currentDocument, id, false, documentManager);
+                if (bomLists != null && !bomLists.isEmpty()) {
+                    if (bomLists.size() == 1) {
+                        isListCreated = true;
+                        currentBomList = bomLists.get(0);
+                    } else {
+                        throw new EloraException(
+                                "The current document has more than one BomList documents of the same list id.");
+                    }
                 }
             }
 

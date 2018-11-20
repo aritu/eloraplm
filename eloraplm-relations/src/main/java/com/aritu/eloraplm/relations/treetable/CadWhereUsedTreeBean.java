@@ -3,13 +3,19 @@ package com.aritu.eloraplm.relations.treetable;
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
 import java.io.Serializable;
+
+import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.international.StatusMessage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
+import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextInvalidation;
+import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.treetable.CoreTreeBean;
@@ -21,9 +27,16 @@ import com.aritu.eloraplm.treetable.CoreTreeBean;
 public class CadWhereUsedTreeBean extends CoreTreeBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    protected boolean showDrawings = true;
+    private static final Log log = LogFactory.getLog(
+            CadWhereUsedTreeBean.class);
 
-    protected boolean showUniqueVersionsPerDocument = true;
+    private boolean showDrawings;
+
+    private boolean showSuppressed;
+
+    private boolean showObsoleteStateDocuments;
+
+    private boolean showUniqueVersionsPerDocument;
 
     public boolean getShowDrawings() {
         return showDrawings;
@@ -31,6 +44,23 @@ public class CadWhereUsedTreeBean extends CoreTreeBean implements Serializable {
 
     public void setShowDrawings(boolean showDrawings) {
         this.showDrawings = showDrawings;
+    }
+
+    public boolean getShowSuppressed() {
+        return showSuppressed;
+    }
+
+    public void setShowSuppressed(boolean showSuppressed) {
+        this.showSuppressed = showSuppressed;
+    }
+
+    public boolean getShowObsoleteStateDocuments() {
+        return showObsoleteStateDocuments;
+    }
+
+    public void setShowObsoleteStateDocuments(
+            boolean showObsoleteStateDocuments) {
+        this.showObsoleteStateDocuments = showObsoleteStateDocuments;
     }
 
     public boolean getShowUniqueVersionsPerDocument() {
@@ -43,22 +73,54 @@ public class CadWhereUsedTreeBean extends CoreTreeBean implements Serializable {
     }
 
     public CadWhereUsedTreeBean() {
+        showDrawings = true;
+        showSuppressed = false;
+        showObsoleteStateDocuments = false;
+        showUniqueVersionsPerDocument = true;
     }
 
     @Override
     public void createRoot() {
+        String logInitMsg = "[createRoot] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
         DocumentModel currentDoc = getCurrentDocument();
         try {
+            log.trace(logInitMsg + "Creating tree...");
             CadWhereUsedNodeService nodeService = new CadWhereUsedNodeService(
-                    documentManager, showDrawings,
-                    showUniqueVersionsPerDocument);
+                    documentManager, showDrawings, showSuppressed,
+                    showObsoleteStateDocuments, showUniqueVersionsPerDocument);
             setRoot(nodeService.getRoot(currentDoc));
+            log.trace(logInitMsg + "Tree created.");
         } catch (EloraException e) {
-            // TODO Logetan idatzi
-
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get("eloraplm.message.error.treetable.createRoot"));
+            log.error(logInitMsg + e.getMessage(), e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.treetable.createRoot"));
         }
+    }
+
+    @Override
+    @DocumentContextInvalidation
+    public DocumentModel onContextChange(DocumentModel doc) {
+        String logInitMsg = "[onContextChange] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        doc = super.onContextChange(doc);
+
+        if (!(doc.isCheckedOut() == getCurrentDocument().isCheckedOut())) {
+            setCurrentDocument(doc);
+            resetBeanCache(doc);
+            log.trace(logInitMsg
+                    + "Document invalidated: current and new have different checked out status.");
+        }
+
+        return doc;
+    }
+
+    @Override
+    @Factory(value = "cadWhereUsedRoot", scope = ScopeType.EVENT)
+    public TreeNode getRootFromFactory() {
+        return getRoot();
     }
 
 }

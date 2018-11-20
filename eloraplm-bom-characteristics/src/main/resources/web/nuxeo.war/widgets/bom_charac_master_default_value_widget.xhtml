@@ -1,0 +1,35 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:nxu="http://nuxeo.org/nxweb/util">
+  
+
+<nxu:set var="bomCharacType" value="#{field.bomcharcmas.type}">
+
+  <ui:fragment rendered="#{bomCharacType == 'number'}">
+     <nxl:widget name="bomCharacNumberDefaultValue" mode="view" value="#{field}"/>
+  </ui:fragment>
+  
+  <ui:fragment rendered="#{bomCharacType == 'string'}">
+    <nxl:widget name="bomCharacStringDefaultValue" mode="view" value="#{field}"/>
+  </ui:fragment>
+  
+  <ui:fragment rendered="#{bomCharacType == 'date'}">
+    <nxl:widget name="bomCharacDateDefaultValue" mode="view" value="#{field}"/>
+  </ui:fragment>
+  
+  <ui:fragment rendered="#{bomCharacType == 'boolean'}">
+    <nxl:widget name="bomCharacBooleanDefaultValue" mode="view" value="#{field}"/>
+  </ui:fragment>
+  
+  <ui:fragment rendered="#{bomCharacType == 'list'}">
+    <nxl:widget name="bomCharacListDefaultValue" mode="view" value="#{field}"/>
+  </ui:fragment> 
+
+</nxu:set>
+
+  
+</ui:composition>

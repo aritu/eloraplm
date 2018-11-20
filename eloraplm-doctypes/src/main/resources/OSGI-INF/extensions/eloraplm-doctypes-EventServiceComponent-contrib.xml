@@ -13,6 +13,11 @@
             <event>aboutToCreate</event>
             <event>beforeDocumentModification</event>
         </listener>
+        
+        <!-- Document creation initial actions -->
+        <listener name="docCreationInitialActionsProcessor" async="false" postCommit="false" class="com.aritu.eloraplm.doctypes.DocCreationInitialActionsProcessor" priority="120">
+            <event>documentCreated</event>
+        </listener>
     
     </extension>
 

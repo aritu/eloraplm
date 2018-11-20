@@ -16,23 +16,32 @@ package com.aritu.eloraplm.webapp.base.beans;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.NuxeoPrincipal;
+import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.convert.api.ConversionService;
+import org.nuxeo.ecm.core.convert.api.ConverterNotRegistered;
 import org.nuxeo.ecm.directory.Session;
 import org.nuxeo.ecm.directory.api.DirectoryService;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
-
-import org.nuxeo.ecm.core.api.security.SecurityConstants;
+import com.aritu.eloraplm.constants.EloraEventNames;
+import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraEventHelper;
+import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
  * @author aritu
@@ -50,17 +59,13 @@ public class EloraWebActionsBean implements Serializable {
     @In
     protected transient NavigationContext navigationContext;
 
-    /**
-     * @param expression
-     * @return
-     */
-    public Boolean evaluateBooleanExpression(String expression) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        Boolean result = context.getApplication().evaluateExpressionGet(
-                context, expression, Boolean.class);
+    @In(create = true, required = false)
+    protected transient FacesMessages facesMessages;
 
-        return result;
-    }
+    @In(create = true)
+    protected Map<String, String> messages;
+
+    private Boolean isAny2PdfConverterAvailable;
 
     /**
      * @param directoryName
@@ -72,28 +77,10 @@ public class EloraWebActionsBean implements Serializable {
         if (entryId == null) {
             return null;
         }
-        DirectoryService dirService = Framework.getService(DirectoryService.class);
+        DirectoryService dirService = Framework.getService(
+                DirectoryService.class);
         try (Session session = dirService.open(directoryName)) {
             return session.getEntry(entryId);
-        }
-    }
-
-    /**
-     * @param doc
-     * @return
-     */
-    public boolean isEditable(DocumentModel doc) {
-        NuxeoPrincipal user = (NuxeoPrincipal) documentManager.getPrincipal();
-        if (!doc.isVersion()
-                && !doc.isProxy()
-                && doc.isLocked()
-                && documentManager.hasPermission(doc.getRef(),
-                        SecurityConstants.WRITE)
-                && user.getName().equals(
-                        documentManager.getLockInfo(doc.getRef()).getOwner())) {
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -102,12 +89,166 @@ public class EloraWebActionsBean implements Serializable {
      */
     public boolean isInAWorkspace() {
 
-        DocumentModel superSpace = documentManager.getSuperSpace(navigationContext.getCurrentDocument());
+        DocumentModel superSpace = documentManager.getSuperSpace(
+                navigationContext.getCurrentDocument());
 
-        if (superSpace.getType().equals(NuxeoDoctypeConstants.WORKSPACE)) {
+        if (superSpace.hasFacet(EloraFacetConstants.FACET_ELORA_WORKSPACE)) {
             return true;
         }
 
         return false;
+    }
+
+    public DocumentRef getDocumentRefFromId(String id) {
+        if (id == null || id.isEmpty()) {
+            return null;
+        }
+        DocumentRef docRef = new IdRef(id);
+
+        return docRef;
+    }
+
+    public DocumentModel getDocument(DocumentRef docRef) {
+        if (docRef == null) {
+            return null;
+        }
+        DocumentModel docM = documentManager.getDocument(docRef);
+
+        return docM;
+    }
+
+    public boolean isAvObsolete() {
+        try {
+            return EloraDocumentHelper.isAvObsolete(
+                    navigationContext.getCurrentDocument());
+        } catch (EloraException e) {
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.checkIfDocIsObsolete"));
+            return false;
+        }
+    }
+
+    public boolean isWcObsolete() {
+        try {
+            return EloraDocumentHelper.isWcObsolete(
+                    navigationContext.getCurrentDocument());
+        } catch (EloraException e) {
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.checkIfDocIsObsolete"));
+            return false;
+        }
+    }
+
+    /**
+     * @param doc
+     * @return
+     */
+    public boolean isEditable() {
+        return EloraDocumentHelper.isEditable(
+                navigationContext.getCurrentDocument());
+    }
+
+    public boolean hasBaseVersion() {
+        if (EloraDocumentHelper.getBaseVersion(
+                navigationContext.getCurrentDocument()) != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param expr
+     * @return
+     */
+    public Boolean evaluateBoolean(String expr) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Boolean result = context.getApplication().evaluateExpressionGet(context,
+                expr, Boolean.class);
+
+        return result;
+    }
+
+    /**
+     * @param expr
+     * @return
+     */
+    public String evaluateString(String expr) {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        String result = context.getApplication().evaluateExpressionGet(context,
+                expr, String.class);
+
+        return result;
+    }
+
+    public Object evaluateObject(String expr) {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        Object result = context.getApplication().evaluateExpressionGet(context,
+                expr, Object.class);
+
+        return result;
+    }
+
+    // public List<Object> reverseListOrder(List<Object> list) {
+    // Collections.reverse(list);
+    // return list;
+    // }
+
+    public String getEloraDownloadLink() throws EloraException {
+
+        DocumentModel currentDoc = navigationContext.getCurrentDocument();
+        if (currentDoc.isProxy()) {
+            currentDoc = documentManager.getSourceDocument(currentDoc.getRef());
+        }
+        if (!currentDoc.isImmutable()) {
+            currentDoc = EloraDocumentHelper.getBaseVersion(currentDoc);
+        }
+
+        return "elora://" + documentManager.getPrincipal().getName() + "/"
+                + currentDoc.getId() + "/"
+                + currentDoc.getPropertyValue(
+                        EloraMetadataConstants.ELORA_CAD_AUTHORING_TOOL)
+                + "/" + currentDoc.getPropertyValue(
+                        EloraMetadataConstants.ELORA_CAD_AUTHORING_TOOL_VERSION);
+    }
+
+    public void registerDownloadAndOpenAction() {
+        DocumentModel currentDoc = navigationContext.getCurrentDocument();
+
+        if (currentDoc.isProxy()) {
+            currentDoc = documentManager.getSourceDocument(currentDoc.getRef());
+        }
+        if (!currentDoc.isImmutable()) {
+            currentDoc = EloraDocumentHelper.getBaseVersion(currentDoc);
+        }
+
+        // Nuxeo Event
+        String comment = currentDoc.getVersionLabel();
+        EloraEventHelper.fireEvent(
+                EloraEventNames.ELORA_DOWNLOAD_AND_OPEN_EVENT, currentDoc,
+                comment);
+    }
+
+    public Boolean getIsAny2PdfConverterAvailable() {
+        if (isAny2PdfConverterAvailable == null) {
+            isAny2PdfConverterAvailable = Boolean.valueOf(
+                    checkIfAny2PdfConverterIsAvailable());
+        }
+
+        return isAny2PdfConverterAvailable;
+
+    }
+
+    private boolean checkIfAny2PdfConverterIsAvailable() {
+        ConversionService cs = Framework.getService(ConversionService.class);
+        try {
+            cs.isConverterAvailable("any2pdf");
+            return true;
+        } catch (ConverterNotRegistered e) {
+            return false;
+        }
+
     }
 }

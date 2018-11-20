@@ -32,7 +32,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
-import org.nuxeo.ecm.platform.relations.api.impl.QNameResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.relations.web.StatementInfo;
 import org.nuxeo.ecm.platform.relations.web.StatementInfoComparator;
@@ -77,8 +77,8 @@ public class BomHasBomRelationBean extends EloraBasicRelationBean implements
             currentDoc = documentManager.getLastDocumentVersion(currentDoc.getRef());
         }
 
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.BOM_HAS_BOM, "");
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_BOM);
         outgoingBomHasBomStatements = RelationHelper.getStatements(currentDoc,
                 predicate);
 
@@ -105,8 +105,8 @@ public class BomHasBomRelationBean extends EloraBasicRelationBean implements
             // Get last version to show its relations
             currentDoc = documentManager.getLastDocumentVersion(currentDoc.getRef());
         }
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.BOM_HAS_BOM, "");
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_BOM);
         incomingBomHasBomStatements = EloraRelationHelper.getSubjectStatements(
                 currentDoc, predicate);
 

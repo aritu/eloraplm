@@ -38,7 +38,8 @@ import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.exceptions.RelationAlreadyExistsException;
-import org.nuxeo.ecm.platform.relations.api.impl.QNameResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.relations.web.StatementInfo;
 import org.nuxeo.ecm.platform.relations.web.StatementInfoComparator;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
@@ -46,6 +47,7 @@ import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.bom.treetable.CustomerProductInverseTreeBean;
 import com.aritu.eloraplm.config.util.EloraConfigHelper;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
@@ -53,7 +55,6 @@ import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.EloraDocContextBoundActionBean;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
-import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -71,9 +72,9 @@ public class EloraCustomerRelationBean extends EloraDocContextBoundActionBean
 
     protected EloraVersionLabelService eloraVersionLabelService = Framework.getService(EloraVersionLabelService.class);
 
-    protected List<Statement> incomingCustomerProductStatements;
+    protected List<Statement> outgoingCustomerProductStatements;
 
-    protected List<StatementInfo> incomingCustomerProductStatementsInfo;
+    protected List<StatementInfo> outgoingCustomerProductStatementsInfo;
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -95,6 +96,9 @@ public class EloraCustomerRelationBean extends EloraDocContextBoundActionBean
 
     @In(create = true)
     protected transient WebActions webActions;
+
+    @In(create = true)
+    protected CustomerProductInverseTreeBean customerProductInverseTreeBean;
 
     // Add Relation form properties
 
@@ -137,31 +141,31 @@ public class EloraCustomerRelationBean extends EloraDocContextBoundActionBean
         predicateUri = EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT;
     }
 
-    @Factory(value = "incomingCustomerProductRelations", scope = ScopeType.EVENT)
+    @Factory(value = "outgoingCustomerProductRelations", scope = ScopeType.EVENT)
     public List<StatementInfo> getIncomingBomCustomerStatementsInfo() {
-        if (incomingCustomerProductStatementsInfo != null) {
-            return incomingCustomerProductStatementsInfo;
+        if (outgoingCustomerProductStatementsInfo != null) {
+            return outgoingCustomerProductStatementsInfo;
         }
 
         // Get last version to show its relations. We don't check if it is
         // checked out because is incoming and we show just AV -> AV relations
         DocumentModel currentDoc = documentManager.getLastDocumentVersion(getCurrentDocument().getRef());
 
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT, "");
-        incomingCustomerProductStatements = EloraRelationHelper.getSubjectStatements(
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT);
+        outgoingCustomerProductStatements = RelationHelper.getStatements(
                 currentDoc, predicate);
 
-        if (incomingCustomerProductStatements.isEmpty()) {
-            incomingCustomerProductStatements = Collections.emptyList();
-            incomingCustomerProductStatementsInfo = Collections.emptyList();
+        if (outgoingCustomerProductStatements.isEmpty()) {
+            outgoingCustomerProductStatements = Collections.emptyList();
+            outgoingCustomerProductStatementsInfo = Collections.emptyList();
         } else {
-            incomingCustomerProductStatementsInfo = eloraRelationActions.getStatementsInfo(incomingCustomerProductStatements);
+            outgoingCustomerProductStatementsInfo = eloraRelationActions.getStatementsInfo(outgoingCustomerProductStatements);
             // sort by modification date, reverse
             Comparator<StatementInfo> comp = Collections.reverseOrder(new StatementInfoComparator());
-            Collections.sort(incomingCustomerProductStatementsInfo, comp);
+            Collections.sort(outgoingCustomerProductStatementsInfo, comp);
         }
-        return incomingCustomerProductStatementsInfo;
+        return outgoingCustomerProductStatementsInfo;
     }
 
     public String addRelation() throws EloraException {
@@ -170,62 +174,74 @@ public class EloraCustomerRelationBean extends EloraDocContextBoundActionBean
             currentDoc = documentManager.getWorkingCopy(currentDoc.getRef());
         }
         try {
-            // Create new customer product
-            String structureRootId = EloraStructureHelper.getStructureRootUid(
-                    currentDoc, documentManager);
-
-            String targetFolderPath = EloraStructureHelper.getPathByType(
-                    new IdRef(structureRootId),
-                    EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT,
-                    EloraDoctypeConstants.STRUCTURE_EBOM, documentManager);
-
-            String custName = EloraConfigHelper.getCustomerConfig(customer);
-            PathSegmentService pss = Framework.getService(PathSegmentService.class);
-            String pathCustName = pss.generatePathSegment(custName);
-            DocumentModel custProdDoc = documentManager.createDocumentModel(
-                    targetFolderPath, pathCustName,
-                    EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT);
-
-            custProdDoc.setPropertyValue(NuxeoMetadataConstants.NX_DC_TITLE,
-                    custName);
-            custProdDoc.setPropertyValue(
-                    EloraMetadataConstants.ELORA_ELO_REFERENCE, reference);
-            custProdDoc.setPropertyValue(
-                    EloraMetadataConstants.ELORA_BOMCUSTPROD_CUSTOMER, customer);
-
-            custProdDoc = documentManager.createDocument(custProdDoc);
+            DocumentModel custProdDoc = createCustomerProduct(currentDoc);
 
             // Check in new document
-            EloraDocumentHelper.checkInDocument(
-                    EloraConfigHelper.getReleasedLifecycleStatesConfig(),
-                    documentManager, eloraVersionLabelService, custProdDoc,
+            EloraDocumentHelper.setupCheckIn(eloraVersionLabelService,
+                    custProdDoc,
                     "Created from Product: " + currentDoc.getTitle());
 
             custProdDoc = documentManager.saveDocument(custProdDoc);
 
             resetCreateFormValues();
 
-            // Add inverse relation taking custProdDoc as subject, wc -> wc
-            eloraDocumentRelationManager.addRelation(documentManager,
-                    currentDoc, custProdDoc, predicateUri, true);
+            addRelations(currentDoc, custProdDoc);
 
-            DocumentModel custProdDocLastVersion = documentManager.getLastDocumentVersion(custProdDoc.getRef());
-            DocumentModel currentDocLastVersion = documentManager.getLastDocumentVersion(currentDoc.getRef());
-            // Add inverse relation taking custProdDocLastVersion as subject, av
-            // -> av
-            eloraDocumentRelationManager.addRelation(documentManager,
-                    currentDocLastVersion, custProdDocLastVersion,
-                    predicateUri, true);
-
-            facesMessages.add(StatusMessage.Severity.INFO,
-                    messages.get("label.relation.created"));
         } catch (RelationAlreadyExistsException e) {
             facesMessages.add(StatusMessage.Severity.WARN,
                     messages.get("label.relation.already.exists"));
         }
 
         resetCustomerProductStatements();
+
+        customerProductInverseTreeBean.createRoot();
+
         return null;
+    }
+
+    private DocumentModel createCustomerProduct(DocumentModel doc)
+            throws EloraException {
+        String structureRootId = EloraStructureHelper.getStructureRootUid(doc,
+                documentManager);
+
+        String targetFolderPath = EloraStructureHelper.getPathByType(new IdRef(
+                structureRootId), EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT,
+                EloraDoctypeConstants.STRUCTURE_EBOM, documentManager);
+
+        String custName = EloraConfigHelper.getCustomerConfig(customer);
+        PathSegmentService pss = Framework.getService(PathSegmentService.class);
+        String pathCustName = pss.generatePathSegment(custName);
+        DocumentModel custProdDoc = documentManager.createDocumentModel(
+                targetFolderPath, pathCustName,
+                EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT);
+
+        custProdDoc.setPropertyValue(NuxeoMetadataConstants.NX_DC_TITLE,
+                custName);
+        custProdDoc.setPropertyValue(
+                EloraMetadataConstants.ELORA_ELO_REFERENCE, reference);
+        custProdDoc.setPropertyValue(
+                EloraMetadataConstants.ELORA_BOMCUSTPROD_CUSTOMER, customer);
+
+        return documentManager.createDocument(custProdDoc);
+    }
+
+    private void addRelations(DocumentModel currentDoc,
+            DocumentModel custProdDoc) {
+        // Add inverse relation taking custProdDoc as subject, wc -> wc
+        eloraDocumentRelationManager.addRelation(documentManager, custProdDoc,
+                currentDoc, predicateUri, "", "1");
+
+        // We don't use eloraDocumentHelper.getLatestVersion because in this
+        // case this returns the same and maybe is more efficient
+        DocumentModel custProdDocLastVersion = documentManager.getLastDocumentVersion(custProdDoc.getRef());
+        DocumentModel currentDocLastVersion = documentManager.getLastDocumentVersion(currentDoc.getRef());
+        // Add inverse relation taking custProdDocLastVersion as subject, av->av
+        eloraDocumentRelationManager.addRelation(documentManager,
+                custProdDocLastVersion, currentDocLastVersion, predicateUri,
+                "", "1");
+
+        facesMessages.add(StatusMessage.Severity.INFO,
+                messages.get("label.relation.created"));
     }
 
     public String deleteStatement(StatementInfo stmtInfo) {
@@ -238,13 +254,13 @@ public class EloraCustomerRelationBean extends EloraDocContextBoundActionBean
     protected void resetEventContext() {
         Context evtCtx = Contexts.getEventContext();
         if (evtCtx != null) {
-            evtCtx.remove("incomingCustomerProductRelations");
+            evtCtx.remove("outgoingCustomerProductRelations");
         }
     }
 
     protected void resetCustomerProductStatements() {
-        incomingCustomerProductStatements = null;
-        incomingCustomerProductStatementsInfo = null;
+        outgoingCustomerProductStatements = null;
+        outgoingCustomerProductStatementsInfo = null;
     }
 
     private void resetCreateFormValues() {
@@ -253,7 +269,7 @@ public class EloraCustomerRelationBean extends EloraDocContextBoundActionBean
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aritu.eloraplm.core.EloraDocContextBoundActionBean#resetBeanCache
      * (org.nuxeo.ecm.core.api.DocumentModel)

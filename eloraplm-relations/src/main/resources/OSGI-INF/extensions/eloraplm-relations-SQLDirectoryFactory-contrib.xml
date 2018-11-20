@@ -7,7 +7,7 @@
     <directory name="elora_cad_predicates">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cad_relation_predicates</table>
+      <table>elora_cad_predicates</table>
       <idField>id</idField>
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
@@ -18,7 +18,7 @@
     <directory name="elora_cad_inverse_predicates">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cad_relation_inverse_predicates</table>
+      <table>elora_cad_inv_predicates</table>
       <idField>id</idField>
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>

@@ -1,6 +1,10 @@
-id,label,obsolete
-kg,kg,0
-g,g,0
-m,m,0
-m2,m2,0
-m3,m3,0
+id,label,obsolete,ordering
+un,un,0,1000
+ml,ml,0,1010
+l,l,0,1020
+mm,mm,0,1030
+mm2,mm2,0,1040
+mm3,mm3,0,1050
+cm,cm,0,1060
+cm2,cm2,0,1070
+cm3,cm3,0,1080

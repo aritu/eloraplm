@@ -11,64 +11,61 @@
     <h3>
         <h:outputText value="#{messages['eloraplm.title.promote']}" />
     </h3>
-
-    <h:form id="#{fancyboxFormId}">
-      <h:panelGroup styleClass="content" layout="block">
-        <ui:remove>
-          <h:selectOneMenu id="selectedPromoteOption"
-            value="#{promoteTreeBean.selectedPromoteOption}"
-            required="true">
-            <nxu:selectItems value="#{promoteTreeBean.promoteOptions}" var="item" itemValue="#{item.key}" itemLabel="#{item.value}"/>
-          </h:selectOneMenu>
-          <h:message for="selectedPromoteOption" class="errorMessage" />
-        </ui:remove>
-        
-        <h:selectOneMenu id="selectedRelationOption"
-          value="#{promoteTreeBean.selectedRelationOption}"
-          required="true">
-          <nxu:selectItems value="#{promoteTreeBean.relationOptions}" var="item" itemValue="#{item.key}" itemLabel="#{item.value}"/>
-        </h:selectOneMenu>
-        <h:message for="selectedRelationOption" class="errorMessage" />
-        
-        <h:commandButton value="#{messages['eloraplm.command.load']}" action="#{promoteTreeBean.applyFilters}">
-          <f:ajax execute="selectedRelationOption @this" render="tree" />
-        </h:commandButton>
-          
-        <h:panelGroup id="tree">
-            <nxl:widget name="promote_treetable" mode="view" value="#{promoteTreeBean}" />
-        </h:panelGroup>
-          
-      </h:panelGroup>
-    </h:form>
     
-    <!-- The treetable conflicts with h:commandButton, so we have to separate the form in two, but this does not cause any error
-    as there are two separate actions in this window -->
-    <h:form id="promoteForm">
-    
-        <!-- As it is not an AJAX call, we activate status icon manually -->
-        <a4j:status id="commonStatus">
-            <f:facet name="start">
-                <h:graphicImage value="/img/standart_waiter.gif" />
-            </f:facet>
-        </a4j:status>
-        <script type="text/javascript">
-             function switchStatus(){
-                 jQuery("span[id$=\\:promoteForm\\:commonStatus] .rf-st-start").show();
-                 jQuery("span[id$=\\:promoteForm\\:commonStatus] .rf-st-stop").show();
-             }
-        </script>
-        
-        <div class="buttonsGadget">
-            <!-- followTransition method conflicts with the standard way to treat render updates,
-            so we have to render @all in order to work, but @all conflicts with clipboardActions, so we have to reload the page without AJAX -->
-            <!-- As it is not an AJAX call, we activate status icon manually -->
-            <h:commandButton value="#{messages['eloraplm.command.promote']}" action="#{promoteTreeBean.runPromote}" onclick="switchStatus();" />
-            
-            <h:commandButton value="#{messages['command.cancel']}"
-                styleClass="button">
-                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
+    <c:choose>
+      <c:when test="#{promoteDoc == null}">
+        <br/><br/>
+        <p class="errorMessage"><h:outputText value="#{messages['eloraplm.message.error.cm.emptyItemSelection']}" /></p>
+      </c:when>
+      <c:otherwise>
+      
+        <h:form id="#{fancyboxFormId}">
+          <h:panelGroup styleClass="content" layout="block">
+            <h:selectOneMenu id="selectedPromoteOption" value="#{promoteTreeBean.selectedPromoteOption}" required="true">
+              <nxu:selectItems value="#{promoteTreeBean.promoteOptions}" var="item" itemValue="#{item.key}" itemLabel="#{item.value}"/>
+            </h:selectOneMenu>
+            <h:message for="selectedPromoteOption" class="errorMessage" />
+          
+            <h:commandButton value="#{messages['eloraplm.command.load']}" action="#{promoteTreeBean.applyFilters(promoteDoc)}">
+              <f:ajax execute="@form" render="tree :#{component.namingContainer.parent.clientId}:demote_promote_buttons" />
             </h:commandButton>
-        </div>
-        
-    </h:form>
+          
+            <h:panelGroup id="tree">
+              <nxl:widget name="prom_tt" mode="view" value="#{promoteTreeBean}" />
+            </h:panelGroup>
+          
+          </h:panelGroup>
+        </h:form>
+    
+            <!-- The treetable conflicts with h:commandButton, so we have to separate the form in two, but this does not cause any error
+            as there are two separate actions in this window -->
+            <h:form id="demote_promote_buttons">
+                <!-- As it is not an AJAX call, we activate status icon manually -->
+                <a4j:status id="commonStatus">
+                    <f:facet name="start">
+                        <h:graphicImage value="/img/standart_waiter.gif" />
+                    </f:facet>
+                </a4j:status>
+                <script type="text/javascript">
+                     function switchStatus(){
+                         jQuery("span[id$=\\:demote_promote_buttons\\:commonStatus] .rf-st-start").show();
+                         jQuery("span[id$=\\:demote_promote_buttons\\:commonStatus] .rf-st-stop").show();
+                     }
+                </script>
+                <div class="buttonsGadget">
+                    <!-- followTransition method conflicts with the standard way to treat render updates,
+                    so we have to render @all in order to work, but @all conflicts with clipboardActions, so we have to reload the page without AJAX -->
+                    <!-- As it is not an AJAX call, we activate status icon manually -->
+                    <h:commandButton id="executeButton" value="#{messages['eloraplm.command.promote']}" action="#{actionBean.runPromote(promoteDoc)}" onclick="switchStatus();" disabled="#{not promoteTreeBean.allOK}" />
+                    
+                    <h:commandButton value="#{messages['command.cancel']}"
+                        styleClass="button">
+                        <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
+                    </h:commandButton>
+                </div>
+                
+            </h:form>
+      </c:otherwise>
+    </c:choose>
+    
 </ui:composition>

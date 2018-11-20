@@ -17,159 +17,251 @@ package com.aritu.eloraplm.core.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.server.jaxrs.batch.BatchManager;
+import org.nuxeo.ecm.core.api.AbstractSession;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.Filter;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.LifeCycleConstants;
 import org.nuxeo.ecm.core.api.Lock;
+import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
-import org.nuxeo.ecm.core.api.blobholder.DocumentBlobHolder;
 import org.nuxeo.ecm.core.api.blobholder.SimpleBlobHolder;
 import org.nuxeo.ecm.core.api.impl.CompoundFilter;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.api.impl.FacetFilter;
 import org.nuxeo.ecm.core.api.impl.LifeCycleFilter;
-import org.nuxeo.ecm.core.api.model.Property;
-import org.nuxeo.ecm.core.api.PropertyException;
-import org.nuxeo.ecm.core.api.model.impl.ListProperty;
+import org.nuxeo.ecm.core.api.security.SecurityConstants;
+import org.nuxeo.ecm.core.model.Document;
+import org.nuxeo.ecm.core.model.Session;
 import org.nuxeo.ecm.core.schema.FacetNames;
-import org.nuxeo.ecm.core.schema.types.ComplexType;
-import org.nuxeo.ecm.core.schema.types.Type;
+import org.nuxeo.ecm.core.storage.sql.Model;
 import org.nuxeo.ecm.core.versioning.VersioningService;
+import org.nuxeo.ecm.platform.actions.ActionContext;
+import org.nuxeo.ecm.platform.actions.ejb.ActionManager;
+import org.nuxeo.ecm.platform.actions.jsf.JSFActionContext;
+import org.nuxeo.ecm.platform.actions.seam.SeamActionContext;
 import org.nuxeo.ecm.platform.dublincore.listener.DublinCoreListener;
 import org.nuxeo.ecm.platform.ec.notification.NotificationConstants;
 import org.nuxeo.ecm.platform.relations.api.Node;
 import org.nuxeo.ecm.platform.relations.api.QNameResource;
 import org.nuxeo.ecm.platform.relations.api.RelationManager;
-import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.ResourceAdapter;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.impl.QNameResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationConstants;
-import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
+import org.nuxeo.ecm.platform.ui.web.util.SeamContextHelper;
 import org.nuxeo.ecm.webengine.jaxrs.context.RequestCleanupHandler;
 import org.nuxeo.ecm.webengine.jaxrs.context.RequestContext;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
-import com.aritu.eloraplm.config.util.EloraConfigTable;
+import com.aritu.eloraplm.config.util.LifecyclesConfig;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
-import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
+import com.aritu.eloraplm.constants.PdmEventNames;
+import com.aritu.eloraplm.constants.QueriesConstants;
+import com.aritu.eloraplm.constants.VersionStatusConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
+import com.aritu.eloraplm.exceptions.DocumentAlreadyLockedException;
+import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
+import com.aritu.eloraplm.exceptions.DocumentLockRightsException;
+import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.UnlockCheckedOutDocumentException;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
+import com.aritu.eloraplm.queries.util.EloraQueryHelper;
 import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 
 public class EloraDocumentHelper {
 
-    private EloraDocumentHelper() {
-    }
+    private static final Log log = LogFactory.getLog(EloraDocumentHelper.class);
 
-    /**
-     * Given a document property, updates its value with the given blob. The
-     * property can be a blob list or a blob. If a blob list the blob is
-     * appended to the list, if a blob then it will be set as the property
-     * value. Both blob list formats are supported: the file list (blob holder
-     * list) and simple blob list.
-     */
-    public static void addBlob(Property p, Map<String, String> cProps, Blob blob)
-            throws PropertyException {
-        if (p.isList()) {
-            // detect if a list of simple blobs or a list of files (blob
-            // holder)
-            Type ft = ((ListProperty) p).getType().getFieldType();
-            if (ft.isComplexType() && ((ComplexType) ft).getFieldsCount() == 3) {
-                p.addValue(createBlobHolderMap(cProps, blob));
+    public static DocumentModel lockDocument(DocumentModel doc)
+            throws DocumentAlreadyLockedException,
+            DocumentInUnlockableStateException, EloraException,
+            DocumentLockRightsException {
+        String logInitMsg = "[lockDocument] ";
+
+        CoreSession session = doc.getCoreSession();
+        DocumentModel wcDoc = session.getWorkingCopy(doc.getRef());
+        boolean isLockable = EloraDocumentHelper.getIsCurrentStateLockable(
+                wcDoc);
+        if (isLockable) {
+            NuxeoPrincipal user = (NuxeoPrincipal) session.getPrincipal();
+            if (!wcDoc.isLocked()) {
+                try {
+                    session.setLock(wcDoc.getRef());
+                } catch (DocumentSecurityException e) {
+                    throw new DocumentLockRightsException(doc);
+                }
+                log.trace(logInitMsg + "Document |" + wcDoc.getId()
+                        + "| locked.");
+                // We get the document again to have updated lock
+                // information
+                wcDoc = session.getDocument(wcDoc.getRef());
             } else {
-                p.addValue(blob);
+                String lockOwner = wcDoc.getLockInfo().getOwner();
+                if (!user.getName().equals(lockOwner)
+                        && !user.isAdministrator()) {
+                    throw new DocumentAlreadyLockedException(doc, lockOwner);
+                }
             }
         } else {
-            p.setValue(blob);
+            throw new DocumentInUnlockableStateException(doc,
+                    wcDoc.getCurrentLifeCycleState());
         }
+        return wcDoc;
     }
 
-    public static HashMap<String, Serializable> createBlobHolderMap(
-            Map<String, String> cProps, Blob blob) {
-        HashMap<String, Serializable> map = new HashMap<>();
-        map.put("file", (Serializable) blob);
-        map.put("filename", blob.getFilename());
-        for (Map.Entry<String, String> entry : cProps.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
+    public static DocumentModel unlockDocument(DocumentModel doc)
+            throws DocumentLockRightsException,
+            UnlockCheckedOutDocumentException {
+        String logInitMsg = "[unlockDocument] ";
+
+        CoreSession session = doc.getCoreSession();
+        DocumentModel wcDoc = session.getWorkingCopy(doc.getRef());
+
+        if (wcDoc.isLocked()) {
+            String lockOwner = wcDoc.getLockInfo().getOwner();
+            NuxeoPrincipal principal = (NuxeoPrincipal) session.getPrincipal();
+            if (principal.isAdministrator()
+                    || principal.getName().equals(lockOwner)) {
+
+                EloraVersionLabelService eloraVersionLabelService = Framework.getService(
+                        EloraVersionLabelService.class);
+                if (wcDoc.isVersionable() && wcDoc.isCheckedOut()
+                        && !(wcDoc.getVersionLabel().equals(
+                                eloraVersionLabelService.getZeroVersion()))) {
+                    throw new UnlockCheckedOutDocumentException(wcDoc);
+                }
+
+                try {
+                    wcDoc.removeLock();
+
+                    log.trace(logInitMsg + "Document |" + wcDoc.getId()
+                            + "| unlocked.");
+                    // We get the document again to have updated lock
+                    // information
+                    doc = session.getDocument(doc.getRef());
+
+                } catch (DocumentSecurityException e) {
+                    throw new DocumentLockRightsException(doc);
+                }
+
+            } else {
+                throw new DocumentLockRightsException(doc);
+            }
+
         }
-        return map;
+
+        return doc;
     }
 
-    public static EloraLockInfo getLockInfo(DocumentModel doc)
+    public static EloraLockInfo getLockInfo(DocumentModel wcDoc)
             throws EloraException {
+        if (wcDoc.isImmutable()) {
+            throw new EloraException(
+                    "Provided document is not a working copy.");
+        }
+
         EloraLockInfo eloraLockInfo;
-        if (doc.isLocked()) {
-            Lock lockInfo = doc.getLockInfo();
-            eloraLockInfo = new EloraLockInfo(doc.isLocked(),
+        if (wcDoc.isLocked()) {
+            Lock lockInfo = wcDoc.getLockInfo();
+            eloraLockInfo = new EloraLockInfo(wcDoc.isLocked(),
                     lockInfo.getOwner(), lockInfo.getCreated().getTime(),
-                    getIsLockable(doc));
+                    getIsCurrentStateLockable(wcDoc));
         } else {
             eloraLockInfo = new EloraLockInfo(false, "", null,
-                    getIsLockable(doc));
+                    getIsCurrentStateLockable(wcDoc));
         }
         return eloraLockInfo;
     }
 
-    public static boolean getIsLockable(DocumentModel doc)
+    public static boolean getIsCurrentStateLockable(DocumentModel wcDoc)
             throws EloraException {
-        boolean isLockable = EloraConfigHelper.getIsLifeCycleStateLockable(doc.getCurrentLifeCycleState());
+
+        if (wcDoc.isImmutable()) {
+            throw new EloraException(
+                    "Provided document is not a working copy.");
+        }
+
+        boolean isLockable = LifecyclesConfig.lockableStatesList.contains(
+                wcDoc.getCurrentLifeCycleState());
         return isLockable;
     }
 
-    public static DocumentModel getLatestReleasedVersion(DocumentModel doc,
-            CoreSession session) throws EloraException {
-
-        EloraConfigTable releasedStatesConfig = EloraConfigHelper.getReleasedLifecycleStatesConfig();
-        DocumentModel latestReleased = null;
-        String[] releasedStates = releasedStatesConfig.getKeys().toArray(
-                new String[0]);
-
-        String versionVersionableId = session.getWorkingCopy(doc.getRef()).getId();
-        String query = EloraQueryFactory.getReleasedDocs(versionVersionableId,
-                releasedStates);
-
-        DocumentModelList releasedDocs = session.query(query);
-        if (releasedDocs.size() > 0) {
-            latestReleased = releasedDocs.get(0);
+    public static boolean isLockedByUserOrAdmin(DocumentModel doc,
+            CoreSession session) {
+        NuxeoPrincipal user = (NuxeoPrincipal) session.getPrincipal();
+        DocumentModel wcDoc = session.getWorkingCopy(doc.getRef());
+        if (wcDoc.isLocked()
+                && (user.getName().equals(wcDoc.getLockInfo().getOwner())
+                        || user.isAdministrator())) {
+            return true;
         } else {
-            latestReleased = getLatestVersion(doc, session);
+            return false;
+        }
+    }
+
+    public static DocumentModel getLatestReleasedVersionOrLatestVersion(
+            DocumentModel doc) throws EloraException {
+
+        DocumentModel latestReleased = getLatestReleasedVersion(doc);
+        if (latestReleased == null) {
+            latestReleased = getLatestVersion(doc);
         }
         return latestReleased;
     }
 
-    public static DocumentModel getLatestAliveVersion(DocumentModel doc,
-            CoreSession session) throws EloraException {
+    public static DocumentModel getLatestReleasedVersion(DocumentModel doc)
+            throws EloraException {
+
+        CoreSession session = doc.getCoreSession();
+        DocumentModel latestReleased = null;
+        String versionVersionableId = session.getWorkingCopy(
+                doc.getRef()).getId();
+
+        String query = EloraQueryFactory.getReleasedDocsQuery(
+                versionVersionableId, QueriesConstants.SORT_ORDER_DESC);
+        DocumentModelList releasedDocs = session.query(query);
+        if (releasedDocs.size() > 0) {
+            latestReleased = releasedDocs.get(0);
+        }
+        return latestReleased;
+    }
+
+    @Deprecated
+    public static DocumentModel getLatestAliveVersion(DocumentModel doc)
+            throws EloraException {
         DocumentModel latestAliveDoc = null;
-        EloraConfigTable obsoleteStatesConfig = EloraConfigHelper.getObsoleteLifecycleStatesConfig();
-        String[] obsoleteStates = obsoleteStatesConfig.getKeys().toArray(
-                new String[0]);
-        String versionVersionableId = session.getWorkingCopy(doc.getRef()).getId();
-        String query = EloraQueryFactory.getLatestAliveVersionDoc(
-                versionVersionableId, obsoleteStates);
+        CoreSession session = doc.getCoreSession();
+        String versionVersionableId = session.getWorkingCopy(
+                doc.getRef()).getId();
+        String query = EloraQueryFactory.getLatestAliveVersionDocQuery(
+                versionVersionableId);
         DocumentModelList latestDocs = session.query(query);
         if (latestDocs.size() > 0) {
             latestAliveDoc = latestDocs.get(0);
@@ -177,38 +269,70 @@ public class EloraDocumentHelper {
         return latestAliveDoc;
     }
 
-    public static DocumentModel getLatestVersion(DocumentModel doc,
-            CoreSession session) throws EloraException {
-        DocumentModel latestVersionDoc = null;
-        DocumentModel wcDoc = session.getWorkingCopy(doc.getRef());
-        if (!wcDoc.isCheckedOut()) {
-            // Get document version working copy is based on
-            DocumentRef wcBaseRef = session.getBaseVersion(wcDoc.getRef());
-            latestVersionDoc = session.getDocument(wcBaseRef);
+    public static DocumentModel getLatestVersion(DocumentModel doc) {
+        CoreSession session = doc.getCoreSession();
+        DocumentModel wcDoc = null;
+        if (doc.isImmutable()) {
+            wcDoc = session.getWorkingCopy(doc.getRef());
         } else {
-            // If working copy is checked out we can't get it's based
-            // version. We get the released doc in latest major or if it doesn't
-            // exist latest version
-            latestVersionDoc = getMajorReleasedVersion(wcDoc, session);
-            if (latestVersionDoc == null) {
-                latestVersionDoc = session.getLastDocumentVersion(doc.getRef());
-            }
+            wcDoc = doc;
         }
-        return latestVersionDoc;
+
+        return getBaseVersion(wcDoc);
     }
 
-    public static DocumentModel getMajorReleasedVersion(DocumentModel doc,
-            CoreSession session) throws EloraException {
+    public static DocumentModel getMajorReleasedVersion(DocumentModel doc)
+            throws EloraException {
 
         DocumentModel releasedDoc = null;
-        EloraConfigTable releasedStatesConfig = EloraConfigHelper.getReleasedLifecycleStatesConfig();
         String majorVersion = doc.getPropertyValue(
                 NuxeoMetadataConstants.NX_UID_MAJOR_VERSION).toString();
-        String[] releasedStates = releasedStatesConfig.getKeys().toArray(
-                new String[0]);
-        String versionVersionableId = session.getWorkingCopy(doc.getRef()).getId();
-        String query = EloraQueryFactory.getMajorReleasedVersion(
-                versionVersionableId, releasedStates, majorVersion);
+
+        // We guess there is at least one released state in configuration. If
+        // not it will crash
+        if (LifecyclesConfig.releasedStatesList.isEmpty()) {
+            throw new EloraException(
+                    "There must be at least one released state in configuration");
+        }
+
+        CoreSession session = doc.getCoreSession();
+        String versionVersionableId = session.getWorkingCopy(
+                doc.getRef()).getId();
+        String query = EloraQueryFactory.getMajorReleasedVersionQuery(
+                versionVersionableId, majorVersion);
+
+        DocumentModelList releasedDocs = session.query(query);
+        if (releasedDocs.size() > 1) {
+            throw new EloraException(
+                    "There are multiple released docs in the same major version");
+        }
+        if (releasedDocs.size() > 0) {
+            releasedDoc = releasedDocs.get(0);
+        }
+        return releasedDoc;
+    }
+
+    public static DocumentModel getMajorReleasedOrObsoleteVersion(
+            DocumentModel doc) throws EloraException {
+
+        DocumentModel releasedDoc = null;
+        String majorVersion = doc.getPropertyValue(
+                NuxeoMetadataConstants.NX_UID_MAJOR_VERSION).toString();
+
+        if (LifecyclesConfig.releasedStatesList.isEmpty()) {
+            throw new EloraException(
+                    "There must be at least one released state in configuration");
+        }
+        if (LifecyclesConfig.obsoleteStatesList.isEmpty()) {
+            throw new EloraException(
+                    "There must be at least one obsolete state in configuration");
+        }
+
+        CoreSession session = doc.getCoreSession();
+        String versionVersionableId = session.getWorkingCopy(
+                doc.getRef()).getId();
+        String query = EloraQueryFactory.getMajorReleasedOrObsoleteVersionQuery(
+                versionVersionableId, majorVersion);
 
         DocumentModelList releasedDocs = session.query(query);
         if (releasedDocs.size() > 1) {
@@ -231,6 +355,14 @@ public class EloraDocumentHelper {
         return documentResource;
     }
 
+    public static QNameResourceImpl getDocumentResource(String docUid,
+            String repositoryName) {
+        String objectDocUid = docUid;
+        String localName = repositoryName + "/" + objectDocUid;
+        return new QNameResourceImpl(RelationConstants.DOCUMENT_NAMESPACE,
+                localName);
+    }
+
     public static DocumentModel getDocumentModel(
             RelationManager relationManager, CoreSession session, Node node) {
         if (node.isQNameResource()) {
@@ -247,8 +379,11 @@ public class EloraDocumentHelper {
     }
 
     // Overload method for optional parameter fileName
+    // FILENAME SHOULD ALWAYS BE PROVIDED
+    @Deprecated
     public static void relateBatchWithDoc(DocumentModel doc, int fileId,
-            String batchId, String fileType, String hash) throws EloraException {
+            String batchId, String fileType, String hash)
+            throws EloraException {
         relateBatchWithDoc(doc, fileId, batchId, fileType, "", hash);
     }
 
@@ -263,17 +398,17 @@ public class EloraDocumentHelper {
             String digest = bh.getHash().toUpperCase();
             if (!digest.equals(hash.toUpperCase())) {
                 throw new EloraException("Incorrect hash in batch |" + batch
-                        + "|");
+                        + "|. Document hash: |" + digest + "| Passed hash: |"
+                        + hash.toUpperCase() + "|");
             }
-
-            Map<String, String> customProps = new HashMap<>();
 
             if (RequestContext.getActiveContext() != null) {
                 RequestContext.getActiveContext().addRequestCleanupHandler(
                         new RequestCleanupHandler() {
                             @Override
                             public void cleanup(HttpServletRequest request) {
-                                BatchManager bm = Framework.getLocalService(BatchManager.class);
+                                BatchManager bm = Framework.getLocalService(
+                                        BatchManager.class);
                                 bm.clean(batch);
                             }
                         });
@@ -282,9 +417,12 @@ public class EloraDocumentHelper {
             // Add Blob to document
             switch (fileType) {
             case EloraGeneralConstants.FILE_TYPE_CONTENT:
-                EloraDocumentHelper.addBlob(
+                if (fileName != null) {
+                    blob.setFilename(fileName);
+                }
+                DocumentHelper.addBlob(
                         doc.getProperty(NuxeoMetadataConstants.NX_FILE_CONTENT),
-                        customProps, blob);
+                        blob);
 
                 // session.save();
                 //
@@ -292,18 +430,33 @@ public class EloraDocumentHelper {
                 // doc.getPropertyValue(NuxeoMetadataConstants.NX_FILE_CONTENT);
 
                 break;
-            case EloraGeneralConstants.FILE_TYPE_ATTACHED:
-                blob.setFilename(fileName);
-                customProps.put("isCadAttachment", "1");
-                EloraDocumentHelper.addBlob(
-                        doc.getProperty(NuxeoMetadataConstants.NX_FILES_FILES),
-                        customProps, blob);
+            case EloraGeneralConstants.FILE_TYPE_CAD_ATTACHMENT:
+                if (fileName != null) {
+                    blob.setFilename(fileName);
+                }
+
+                DocumentHelper.addBlob(
+                        doc.getProperty(
+                                EloraMetadataConstants.ELORA_CADATTS_FILES),
+                        blob);
                 break;
             case EloraGeneralConstants.FILE_TYPE_VIEWER:
-                blob.setFilename(fileName);
-                EloraDocumentHelper.addBlob(
-                        doc.getProperty(EloraMetadataConstants.ELORA_ELOVWR_FILE),
-                        customProps, blob);
+                if (fileName != null) {
+                    blob.setFilename(fileName);
+                }
+
+                // TODO Hau kendu Mikelek batcha igotzerakuan pasatzen dauenien
+                blob.setMimeType("application/pdf");
+
+                // We add it to the viewer base file and the viewer file
+                DocumentHelper.addBlob(
+                        doc.getProperty(
+                                EloraMetadataConstants.ELORA_ELOVWR_BASEFILE),
+                        blob);
+                DocumentHelper.addBlob(
+                        doc.getProperty(
+                                EloraMetadataConstants.ELORA_ELOVWR_FILE),
+                        blob);
                 break;
             }
         } catch (Exception e) {
@@ -313,15 +466,15 @@ public class EloraDocumentHelper {
 
     }
 
-    public static void checkInDocument(EloraConfigTable releasedStatesConfig,
-            CoreSession session, EloraVersionLabelService versionLabelService,
-            DocumentModel doc, String checkinComment) {
+    public static void setupCheckIn(
+            EloraVersionLabelService versionLabelService, DocumentModel doc,
+            String checkinComment) {
         // Save and check in the document
         doc.putContextData(VersioningService.CHECKIN_COMMENT, checkinComment);
 
         // Check in the document
         String nextVersionIncrement = calculateNextVersionIncrement(
-                releasedStatesConfig, session, versionLabelService, doc);
+                versionLabelService, doc);
 
         if (nextVersionIncrement.equals("major")) {
             doc.putContextData(VersioningService.VERSIONING_OPTION,
@@ -330,6 +483,43 @@ public class EloraDocumentHelper {
             doc.putContextData(VersioningService.VERSIONING_OPTION,
                     VersioningOption.MINOR);
         }
+    }
+
+    public static boolean isWorkingCopy(DocumentModel doc) {
+        return !doc.isProxy() && !doc.isVersion() ? true : false;
+    }
+
+    public static boolean isWcOrAvObsolete(DocumentModel doc)
+            throws EloraException {
+
+        if (!doc.isImmutable()) {
+            return isDocObsolete(doc);
+        } else {
+            return isAvObsolete(doc);
+        }
+    }
+
+    public static boolean isWcObsolete(DocumentModel doc)
+            throws EloraException {
+        return isDocObsolete(doc);
+    }
+
+    public static boolean isAvObsolete(DocumentModel doc)
+            throws EloraException {
+        boolean isWcObsolete = isDocObsolete(
+                doc.getCoreSession().getWorkingCopy(doc.getRef()));
+        boolean isAvObsolete = isDocObsolete(doc);
+        return isWcObsolete || isAvObsolete;
+    }
+
+    private static boolean isDocObsolete(DocumentModel doc)
+            throws EloraException {
+        if (LifecyclesConfig.obsoleteStatesList.contains(
+                doc.getCurrentLifeCycleState())) {
+            return true;
+        }
+
+        return false;
     }
 
     public static void disableVersioningDocument(DocumentModel doc)
@@ -348,11 +538,40 @@ public class EloraDocumentHelper {
             if (doc.isVersion()) {
                 doc.putContextData(CoreSession.ALLOW_VERSION_WRITE,
                         Boolean.TRUE);
+                doc.putContextData("disableMajorLetterTranslation",
+                        Boolean.TRUE);
             }
         } catch (Exception e) {
             // TODO: handle exception
             throw new EloraException(e.getMessage());
         }
+    }
+
+    /**
+     * @param session
+     * @param reference
+     * @param primaryType
+     * @return get the first wc document
+     * @throws EloraException
+     */
+    public static DocumentModel getWcDocumentByTypeAndReference(
+            CoreSession session, String reference, String primaryType)
+            throws EloraException {
+
+        String query = EloraQueryFactory.getWcDocsByTypeAndReferenceQuery(
+                primaryType, reference);
+
+        return EloraQueryHelper.executeGetFirstQuery(query, session);
+    }
+
+    public static DocumentModel getWcDocumentByTypeListAndReference(
+            CoreSession session, String reference, List<String> primaryTypes)
+            throws EloraException {
+
+        String query = EloraQueryFactory.getWcDocsByTypeListAndReferenceQuery(
+                reference, primaryTypes);
+
+        return EloraQueryHelper.executeGetFirstQuery(query, session);
     }
 
     // TODO::: dejamos este método aquí o lo quitamos????
@@ -373,15 +592,16 @@ public class EloraDocumentHelper {
     }
 
     // TODO Probau ondo dabilela
-    public static String calculateNextMajorVersion(CoreSession session,
-            DocumentModel realDoc) throws EloraException {
+    public static String calculateNextMajorVersion(DocumentModel realDoc)
+            throws EloraException {
 
-        EloraConfigTable releasedStatesConfig = EloraConfigHelper.getReleasedLifecycleStatesConfig();
-        EloraVersionLabelService versionLabelService = Framework.getService(EloraVersionLabelService.class);
-        Long major = (Long) realDoc.getPropertyValue(VersioningService.MAJOR_VERSION_PROP);
+        EloraVersionLabelService versionLabelService = Framework.getService(
+                EloraVersionLabelService.class);
+        Long major = (Long) realDoc.getPropertyValue(
+                VersioningService.MAJOR_VERSION_PROP);
 
         String nextIncrement = calculateNextVersionIncrement(
-                releasedStatesConfig, session, versionLabelService, realDoc);
+                versionLabelService, realDoc);
         if (nextIncrement.equals("major")) {
             major++;
         }
@@ -391,15 +611,16 @@ public class EloraDocumentHelper {
     }
 
     // TODO Probau ondo dabilela
-    public static String calculateNextMinorVersion(CoreSession session,
-            DocumentModel realDoc) throws EloraException {
+    public static String calculateNextMinorVersion(DocumentModel realDoc)
+            throws EloraException {
 
-        EloraConfigTable releasedStatesConfig = EloraConfigHelper.getReleasedLifecycleStatesConfig();
-        EloraVersionLabelService versionLabelService = Framework.getService(EloraVersionLabelService.class);
-        Long minor = (Long) realDoc.getPropertyValue(VersioningService.MINOR_VERSION_PROP);
+        EloraVersionLabelService versionLabelService = Framework.getService(
+                EloraVersionLabelService.class);
+        Long minor = (Long) realDoc.getPropertyValue(
+                VersioningService.MINOR_VERSION_PROP);
 
         String nextIncrement = calculateNextVersionIncrement(
-                releasedStatesConfig, session, versionLabelService, realDoc);
+                versionLabelService, realDoc);
         if (nextIncrement.equals("minor")) {
             minor++;
         } else {
@@ -412,16 +633,17 @@ public class EloraDocumentHelper {
 
     // TODO Probau ondo dabilela
     public static String calculateNextVersionLabel(
-            EloraConfigTable releasedStatesConfig, CoreSession session,
             EloraVersionLabelService versionLabelService, DocumentModel realDoc)
             throws EloraException {
         String nextVersionLabel = "";
 
-        Long major = (Long) realDoc.getPropertyValue(VersioningService.MAJOR_VERSION_PROP);
-        Long minor = (Long) realDoc.getPropertyValue(VersioningService.MINOR_VERSION_PROP);
+        Long major = (Long) realDoc.getPropertyValue(
+                VersioningService.MAJOR_VERSION_PROP);
+        Long minor = (Long) realDoc.getPropertyValue(
+                VersioningService.MINOR_VERSION_PROP);
 
         String nextIncrement = calculateNextVersionIncrement(
-                releasedStatesConfig, session, versionLabelService, realDoc);
+                versionLabelService, realDoc);
         switch (nextIncrement) {
         case "major":
             major++;
@@ -444,23 +666,24 @@ public class EloraDocumentHelper {
 
     // TODO Probau ondo dabilela
     public static String calculateNextVersionIncrement(
-            EloraConfigTable releasedStatesConfig, CoreSession session,
-            EloraVersionLabelService versionLabelService, DocumentModel realDoc) {
+            EloraVersionLabelService versionLabelService,
+            DocumentModel realDoc) {
 
-        long major = ((Long) realDoc.getPropertyValue(VersioningService.MAJOR_VERSION_PROP)).longValue();
+        long major = ((Long) realDoc.getPropertyValue(
+                VersioningService.MAJOR_VERSION_PROP)).longValue();
 
         String nextIncrement = "minor";
 
-        String[] releasedStates = releasedStatesConfig.getKeys().toArray(
-                new String[0]);
-
         // Get all versions with the same major, and check their lifecycle state
-        List<DocumentModel> docVersions = session.getVersions(realDoc.getRef());
+        List<DocumentModel> docVersions = realDoc.getCoreSession().getVersions(
+                realDoc.getRef());
         for (DocumentModel docVersion : docVersions) {
-            long versionMajor = ((Long) docVersion.getPropertyValue(VersioningService.MAJOR_VERSION_PROP)).longValue();
+            long versionMajor = ((Long) docVersion.getPropertyValue(
+                    VersioningService.MAJOR_VERSION_PROP)).longValue();
             if (versionMajor == major) {
                 String versionState = docVersion.getCurrentLifeCycleState();
-                if (Arrays.asList(releasedStates).contains(versionState)) {
+                if (LifecyclesConfig.releasedStatesList.contains(
+                        versionState)) {
                     nextIncrement = "major";
                 }
 
@@ -477,12 +700,11 @@ public class EloraDocumentHelper {
      * @param doc
      * @return
      */
-    public static void checkOutDocument(DocumentModel doc) {
+    public static DocumentModel checkOutDocument(DocumentModel doc) {
 
         // TODO EloraVersioningService-en followTransitionByOption protected
-        // denez,
-        // ezin zaio deitu checkout egiteko funtzioetatik, eta gainera Document
-        // erabiltzen duenez, ezin da funtzio batera atera.
+        // denez, ezin zaio deitu checkout egiteko funtzioetatik, eta gainera
+        // Document erabiltzen duenez, ezin da funtzio batera atera.
         //
         // Modu ona izango zen dokumentua Dirty jarri ahal izatea, eta gero
         // saveDocument egitea checked out jartzeko, doc.checkOut() jarri ordez,
@@ -498,11 +720,15 @@ public class EloraDocumentHelper {
             // We have to emulate the saveDocument, the document has to follow a
             // transition in some states
             String lifecycleState = doc.getCurrentLifeCycleState();
-            if (EloraLifeCycleConstants.CAD_APPROVED.equals(lifecycleState)) {
-                doc.followTransition(EloraLifeCycleConstants.CAD_TRANS_BACK_TO_PRELIMINARY);
+            if (EloraLifeCycleConstants.APPROVED.equals(lifecycleState)) {
+                doc.followTransition(
+                        EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY);
             }
 
         }
+
+        doc.refresh();
+        return doc;
     }
 
     /**
@@ -513,23 +739,59 @@ public class EloraDocumentHelper {
      * @return
      * @throws EloraException
      */
-    public static DocumentModel restoreToVersion(DocumentModel doc,
+    public static DocumentModel restoreWorkingCopyToVersion(DocumentModel wcDoc,
             VersionModel version,
             EloraDocumentRelationManager eloraDocumentRelationManager,
             CoreSession session) throws EloraException {
 
         // If the document is a proxy, get its source
-        if (doc.isProxy()) {
-            doc = session.getSourceDocument(doc.getRef());
+        if (wcDoc.isProxy()) {
+            wcDoc = session.getSourceDocument(wcDoc.getRef());
         }
 
-        DocumentModel restoredDocument = session.restoreToVersion(doc.getRef(),
-                new IdRef(version.getId()), true, true);
+        DocumentModel restoredDocument = restoreToVersion(wcDoc, version, true,
+                true, session);
 
         session.save();
 
         EloraRelationHelper.restoreRelations(restoredDocument, version,
                 eloraDocumentRelationManager, session);
+
+        return restoredDocument;
+    }
+
+    public static DocumentModel restoreDocumentToVersion(DocumentModel doc,
+            VersionModel version,
+            EloraDocumentRelationManager eloraDocumentRelationManager,
+            CoreSession session) throws EloraException {
+
+        DocumentModel restoredDocument = restoreToVersion(doc, version, true,
+                true, session);
+
+        session.save();
+        EloraRelationHelper.restoreRelations(restoredDocument, version,
+                eloraDocumentRelationManager, session);
+        return restoredDocument;
+    }
+
+    public static DocumentModel restoreToVersion(DocumentModel doc,
+            VersionModel version, boolean skipSnapshotCreation,
+            boolean skipCheckout, CoreSession session) {
+
+        return restoreToVersion(doc.getRef(), new IdRef(version.getId()),
+                skipSnapshotCreation, skipCheckout, session);
+    }
+
+    public static DocumentModel restoreToVersion(DocumentRef docRef,
+            DocumentRef versionRef, boolean skipSnapshotCreation,
+            boolean skipCheckout, CoreSession session) {
+
+        DocumentModel restoredDocument = session.restoreToVersion(docRef,
+                versionRef, skipSnapshotCreation, skipCheckout);
+
+        String comment = restoredDocument.getVersionLabel();
+        EloraEventHelper.fireEvent(PdmEventNames.PDM_RESTORED_EVENT,
+                restoredDocument, comment);
 
         return restoredDocument;
     }
@@ -611,30 +873,25 @@ public class EloraDocumentHelper {
                 NuxeoMetadataConstants.NX_UID_MAJOR_VERSION).toString();
         String versionVersionableId = wcDoc.getId();
 
-        String query = EloraQueryFactory.getMajorVersionDocs(
-                versionVersionableId, majorVersion);
+        String query = EloraQueryFactory.getMajorVersionDocsQuery(
+                versionVersionableId, majorVersion, true,
+                QueriesConstants.SORT_ORDER_DESC);
 
         DocumentModelList releasedDocs = session.query(query);
 
         return releasedDocs;
     }
 
-    private static DocumentModelList getReleasedAndLatestVersions(
+    public static DocumentModelList getReleasedAndLatestVersions(
             DocumentRef docRef, CoreSession session) throws EloraException {
 
         DocumentModel wcDoc = session.getWorkingCopy(docRef);
         String majorVersion = wcDoc.getPropertyValue(
                 NuxeoMetadataConstants.NX_UID_MAJOR_VERSION).toString();
-        EloraConfigTable releasedStatesConfig = EloraConfigHelper.getReleasedLifecycleStatesConfig();
-        EloraConfigTable obsoleteStatesConfig = EloraConfigHelper.getObsoleteLifecycleStatesConfig();
-        String[] releasedStates = releasedStatesConfig.getKeys().toArray(
-                new String[0]);
-        String[] obsoleteStates = obsoleteStatesConfig.getKeys().toArray(
-                new String[0]);
         String versionVersionableId = wcDoc.getId();
 
-        String query = EloraQueryFactory.getReleasedDocs(versionVersionableId,
-                releasedStates);
+        String query = EloraQueryFactory.getReleasedDocsQuery(
+                versionVersionableId, QueriesConstants.SORT_ORDER_DESC);
         DocumentModelList releasedDocs = session.query(query);
         if (releasedDocs.size() > 0) {
             boolean completed = false;
@@ -649,8 +906,9 @@ public class EloraDocumentHelper {
             }
             if (!completed) {
                 // If no one has majorVersion then get all versions within major
-                query = EloraQueryFactory.getMajorVersionDocs(
-                        versionVersionableId, majorVersion);
+                query = EloraQueryFactory.getMajorVersionDocsQuery(
+                        versionVersionableId, majorVersion, false,
+                        QueriesConstants.SORT_ORDER_DESC);
                 releasedDocs.addAll(0, session.query(query));
             }
         } else {
@@ -661,31 +919,339 @@ public class EloraDocumentHelper {
         return releasedDocs;
     }
 
-    public static List<Blob> getBomRelatedCadFiles(DocumentModel doc) {
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.BOM_HAS_CAD_DOCUMENT, "");
-        DocumentModelList relDocs = RelationHelper.getObjectDocuments(doc,
-                predicate);
+    public static DocumentModelList getOlderReleasedOrObsoleteVersions(
+            CoreSession session, DocumentRef docRef, long currentMajorVersion)
+            throws EloraException {
 
-        List<Blob> fileList = new ArrayList<>();
-        for (DocumentModel relDoc : relDocs) {
-            BlobHolder bh = new DocumentBlobHolder(relDoc,
-                    EloraMetadataConstants.ELORA_ELOVWR_FILE);
-            fileList.add(bh.getBlob());
+        DocumentModel wcDoc = session.getWorkingCopy(docRef);
+        String versionVersionableId = wcDoc.getId();
+
+        String query = EloraQueryFactory.getOlderReleasedOrObsoleteVersionsQuery(
+                versionVersionableId, QueriesConstants.SORT_ORDER_DESC,
+                currentMajorVersion);
+        return session.query(query);
+    }
+
+    public static boolean isReleased(DocumentModel doc) throws EloraException {
+        if (LifecyclesConfig.releasedStatesList.contains(
+                doc.getCurrentLifeCycleState())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns base AV document, even if WC is checked out
+     *
+     * @param wcDoc
+     * @return
+     * @throws EloraException
+     */
+    public static DocumentModel getBaseVersion(DocumentModel wcDoc) {
+        CoreSession session = wcDoc.getCoreSession();
+
+        // It doesn't work with proxies, first we have to get its source
+        if (wcDoc.isProxy()) {
+            wcDoc = session.getSourceDocument(wcDoc.getRef());
         }
 
-        return fileList;
+        Session localSession = ((AbstractSession) session).getSession();
+        Document doc = localSession.getDocumentByUUID(wcDoc.getId());
+
+        Serializable baseVersionId = doc.getPropertyValue(
+                Model.MAIN_BASE_VERSION_PROP);
+        if (baseVersionId == null) {
+            log.error("The document |" + doc.getUUID()
+                    + "| has no base version. Probably because it has no AVs.");
+            return null;
+        }
+
+        DocumentModel baseDoc = session.getDocument(
+                new IdRef((String) baseVersionId));
+
+        return baseDoc;
     }
 
-    public static Blob getDocumentViewerFile(DocumentModel doc) {
-        BlobHolder bh = new DocumentBlobHolder(doc,
-                EloraMetadataConstants.ELORA_ELOVWR_FILE);
-        return bh.getBlob();
+    /**
+     * Returns if the document is editable. Basically: For versionable docs, it
+     * has to be checked out by the user. For non-versionable docs, it has to be
+     * locked by the user.
+     *
+     * @param doc
+     * @return
+     */
+    public static boolean isEditable(DocumentModel doc) {
+        CoreSession session = doc.getCoreSession();
+        String currentUser = doc.getCoreSession().getPrincipal().getName();
+
+        // We don't check that it is not a proxy, because in some cases we enter
+        // the function through a proxy
+        if (session.hasPermission(doc.getRef(), SecurityConstants.WRITE)
+                && !doc.isImmutable()) {
+
+            // Versionable
+            if (doc.isVersionable()) {
+                if (isCheckedOutByMe(doc)) {
+                    return true;
+                }
+            } else {
+                // Non-versionable, but lock required
+                if (doc.hasFacet(
+                        EloraFacetConstants.FACET_LOCK_REQUIRED_TO_EDIT)) {
+                    if (doc.isLocked() && doc.getLockInfo().getOwner().equals(
+                            currentUser)) {
+                        return true;
+                    }
+                }
+                // Non-versionable and free to edit
+                else {
+                    if (!doc.isLocked() || doc.getLockInfo().getOwner().equals(
+                            currentUser)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
-    public static void addViewerBlob(DocumentModel doc, Blob blob) {
-        DocumentHelper.addBlob(
-                doc.getProperty(EloraMetadataConstants.ELORA_ELOVWR_FILE), blob);
+    private static boolean isCheckedOutByMe(DocumentModel doc) {
+        try {
+            checkThatIsCheckedOutByMe(doc);
+            return true;
+        } catch (DocumentNotCheckedOutException e) {
+            return false;
+        }
+    }
+
+    public static void checkThatIsCheckedOutByMe(DocumentModel doc)
+            throws DocumentNotCheckedOutException {
+        // String logInitMsg = "[checkThatIsCheckedOutByMe]";
+
+        String currentUser = doc.getCoreSession().getPrincipal().getName();
+        if (!doc.isCheckedOut() || !(doc.isLocked()
+                && doc.getLockInfo().getOwner().equals(currentUser))) {
+            throw new DocumentNotCheckedOutException(doc);
+        }
+        // log.trace(logInitMsg + "Document checked out by user");
+    }
+
+    public static void copyProperties(DocumentModel from, DocumentModel to) {
+        copyProperties(from, to, null);
+    }
+
+    public static void copyProperties(DocumentModel from, DocumentModel to,
+            Map<String, List<String>> excludedProperties) {
+
+        for (String schema : to.getSchemas()) {
+            // TODO: En un futuro ver la forma de evitar los schemas que no nos
+            // interesan pasar de un documento a otro. Ahora añadimos una
+            // condicion pero puede que sea mejor solucionarlo dandole una
+            // vuelta a como registramos los tipos de documentos (mirar tema
+            // draft)
+            if (from.hasSchema(schema)
+                    && !schema.equals(NuxeoMetadataConstants.NX_SCHEMA_UID)) {
+                // We create a shallow copy so we don't alter the "from" doc
+                Map<String, Object> schemaProps = new HashMap<String, Object>(
+                        from.getProperties(schema));
+
+                if (excludedProperties != null
+                        && !excludedProperties.isEmpty()) {
+                    if (excludedProperties.containsKey(schema)) {
+                        List<String> excludedSchemaProps = excludedProperties.get(
+                                schema);
+                        for (String excludedProp : excludedSchemaProps) {
+                            schemaProps.remove(excludedProp);
+                        }
+                    }
+                }
+
+                to.setProperties(schema, schemaProps);
+            }
+        }
+    }
+
+    public static boolean isSupported(String parentState, String childState)
+            throws EloraException {
+        return LifecyclesConfig.supportedStatesMap.get(parentState).contains(
+                childState);
+    }
+
+    public static List<String> getUidListFromDocList(List<DocumentModel> docs) {
+        List<String> uidList = new ArrayList<String>();
+        for (DocumentModel doc : docs) {
+            uidList.add(doc.getId());
+        }
+        return uidList;
+    }
+
+    public static Long getLatestMajorFromDocList(List<DocumentModel> docs) {
+        Long latestMajor = (Long) docs.get(0).getPropertyValue(
+                NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
+
+        for (int i = 1; i < docs.size(); i++) {
+            Long major = (Long) docs.get(i).getPropertyValue(
+                    NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
+            if (latestMajor < major) {
+                latestMajor = major;
+            }
+        }
+        return latestMajor;
+    }
+
+    public static String getVersionStatus(DocumentModel currentDoc,
+            DocumentModel wcDoc) throws EloraException {
+        String versionStatus = VersionStatusConstants.VERSION_STATUS_NORMAL;
+
+        // Obsolete
+        if (isWcObsolete(wcDoc)) {
+            versionStatus = VersionStatusConstants.VERSION_STATUS_WC_OBSOLETE;
+        }
+        // Version changes
+        else {
+
+            String currentMajor = currentDoc.getPropertyValue(
+                    NuxeoMetadataConstants.NX_UID_MAJOR_VERSION).toString();
+            String currentMinor = currentDoc.getPropertyValue(
+                    NuxeoMetadataConstants.NX_UID_MINOR_VERSION).toString();
+            String wcMajor = wcDoc.getPropertyValue(
+                    NuxeoMetadataConstants.NX_UID_MAJOR_VERSION).toString();
+            String wcMinor = wcDoc.getPropertyValue(
+                    NuxeoMetadataConstants.NX_UID_MINOR_VERSION).toString();
+
+            if (currentMajor.equals(wcMajor)) {
+                if (wcDoc.isCheckedOut()) {
+                    versionStatus = VersionStatusConstants.VERSION_STATUS_WC_CHECKED_OUT;
+                } else {
+                    if (!currentMinor.equals(wcMinor)) {
+                        if (LifecyclesConfig.releasedStatesList.contains(
+                                wcDoc.getCurrentLifeCycleState())) {
+                            versionStatus = VersionStatusConstants.VERSION_STATUS_NEWER_RELEASED_EXISTS;
+                        } else {
+                            versionStatus = VersionStatusConstants.VERSION_STATUS_NEWER_NON_RELEASED_EXISTS;
+                        }
+                    }
+                }
+            } else {
+                boolean newerReleasedVersionExists = EloraQueryFactory.checkIfNewerReleasedVersionExists(
+                        currentMajor, currentMinor,
+                        currentDoc.getVersionSeriesId(),
+                        currentDoc.getCoreSession());
+
+                if (newerReleasedVersionExists) {
+                    versionStatus = VersionStatusConstants.VERSION_STATUS_NEWER_RELEASED_EXISTS;
+                } else {
+
+                    if (wcDoc.isCheckedOut()) {
+                        versionStatus = VersionStatusConstants.VERSION_STATUS_WC_CHECKED_OUT;
+                    } else {
+                        versionStatus = VersionStatusConstants.VERSION_STATUS_NEWER_NON_RELEASED_EXISTS;
+                    }
+                }
+            }
+        }
+
+        return versionStatus;
+    }
+
+    // TODO Onena izango zan truko hau erabili beharrik ez eukitzea dokumentua
+    // dirty jarteko
+    public static DocumentModel setDocumentDirty(DocumentModel doc) {
+        Calendar now = Calendar.getInstance();
+        doc.setPropertyValue(NuxeoMetadataConstants.NX_DC_MODIFIED, now);
+        return doc;
+    }
+
+    public static void updateContributorAndModified(DocumentModel currentDoc,
+            boolean save) {
+        CoreSession session = currentDoc.getCoreSession();
+        String principalName = session.getPrincipal().getName();
+        currentDoc.setPropertyValue(
+                NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR, principalName);
+        Calendar now = Calendar.getInstance();
+        currentDoc.setPropertyValue(NuxeoMetadataConstants.NX_DC_MODIFIED, now);
+
+        String[] contributorsArray = (String[]) currentDoc.getProperty(
+                "dublincore", "contributors");
+        List<String> contributorsList = Arrays.asList(contributorsArray);
+        // make it resizable
+        contributorsList = new ArrayList<String>(contributorsList);
+
+        if (!contributorsList.contains(principalName)) {
+            contributorsList.add(principalName);
+            String[] contributorListIn = new String[contributorsList.size()];
+            contributorsList.toArray(contributorListIn);
+            currentDoc.setProperty("dublincore", "contributors",
+                    contributorListIn);
+        }
+
+        if (save) {
+            session.saveDocument(currentDoc);
+        }
+
+    }
+
+    /**
+     * Checks if the specified document satisfies specified filter.
+     *
+     * @param doc
+     * @param filterName
+     * @return true if the document satisfies specified filter
+     */
+    public static boolean checkFilter(DocumentModel doc, String filterName) {
+        boolean result = false;
+
+        ActionManager actionManager = Framework.getLocalService(
+                ActionManager.class);
+
+        if (actionManager.checkFilter(filterName, createActionContext(doc))) {
+            result = true;
+        }
+
+        return result;
+    }
+
+    /**
+     * Creates an ActionContext used for checking document filters. Inspired in
+     * ActionContextProvider Nuxeo class.
+     *
+     * @param document
+     * @return
+     */
+    private static ActionContext createActionContext(DocumentModel document) {
+        ActionContext actionCtx;
+        FacesContext faces = FacesContext.getCurrentInstance();
+        if (faces == null) {
+            actionCtx = new SeamActionContext();
+        } else {
+            actionCtx = new JSFActionContext(faces);
+        }
+        actionCtx.setCurrentDocument(document);
+        CoreSession session = document.getCoreSession();
+        actionCtx.setDocumentManager(session);
+        actionCtx.setCurrentPrincipal((NuxeoPrincipal) session.getPrincipal());
+        actionCtx.putLocalVariable("SeamContext", new SeamContextHelper());
+        return actionCtx;
+    }
+
+    public static void updateCheckinComment(DocumentModel docModel,
+            String checkinComment) throws EloraException {
+        CoreSession session = docModel.getCoreSession();
+
+        if (!docModel.isImmutable()) {
+            throw new EloraException(
+                    "Document is working copy, so it does not have a checkin comment.");
+        }
+
+        if (docModel.isProxy()) {
+            docModel = session.getSourceDocument(docModel.getRef());
+        }
+
+        Session localSession = ((AbstractSession) session).getSession();
+        Document doc = localSession.getDocumentByUUID(docModel.getId());
+        doc.setReadOnly(false);
+        doc.setPropertyValue(Model.VERSION_DESCRIPTION_PROP, checkinComment);
     }
 
 }

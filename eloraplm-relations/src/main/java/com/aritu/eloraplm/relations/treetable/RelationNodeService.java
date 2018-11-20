@@ -19,6 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -31,6 +33,8 @@ import org.nuxeo.runtime.api.Framework;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import com.aritu.eloraplm.config.util.LifecyclesConfig;
+import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
@@ -47,6 +51,8 @@ import com.aritu.eloraplm.treetable.NodeManager;
  */
 public class RelationNodeService implements NodeManager {
 
+    private static final Log log = LogFactory.getLog(RelationNodeService.class);
+
     public static final String TREE_DIRECTION_COMPOSITION = "Composition";
 
     public static final String TREE_DIRECTION_WHERE_USED = "WhereUsed";
@@ -55,6 +61,10 @@ public class RelationNodeService implements NodeManager {
 
     protected static final String RELATION_TYPE_BOM = "BomRelation";
 
+    protected static final String RELATION_TYPE_CONTAINER = "ContainerRelation";
+
+    protected static final String RELATION_TYPE_DOC = "DocRelation";
+
     protected static final boolean NODES_EXPANDED_BY_DEFAULT = false;
 
     protected CoreSession session;
@@ -62,11 +72,17 @@ public class RelationNodeService implements NodeManager {
     protected RelationManager relationManager = Framework.getLocalService(
             RelationManager.class);
 
-    protected Map<String, Boolean> iconOnlyPredicates;
+    protected List<Resource> predicates;
 
-    protected Map<String, Boolean> predicates;
+    protected List<Resource> cadSpecialPredicates;
+
+    protected List<String> directRelationsList;
 
     protected Map<String, List<String>> iconOnlyRelationDocs;
+
+    LinkedHashMap<String, List<DocumentModel>> docList;
+
+    Map<String, Statement> stmtList;
 
     protected DocumentModel currentDoc;
 
@@ -80,52 +96,49 @@ public class RelationNodeService implements NodeManager {
 
     protected boolean showUniqueVersionsPerDocument;
 
+    protected boolean showObsoleteStateDocuments;
+
     public RelationNodeService(CoreSession session) {
 
         this.session = session;
-        iconOnlyPredicates = new LinkedHashMap<String, Boolean>();
-        predicates = new LinkedHashMap<String, Boolean>();
+        predicates = new ArrayList<>();
+        cadSpecialPredicates = new ArrayList<>();
+        directRelationsList = new ArrayList<>();
+        iconOnlyRelationDocs = new HashMap<>();
         treeDirection = "";
         relationType = "";
         nodeId = 0;
         showUniqueVersionsPerDocument = true;
+        showObsoleteStateDocuments = false;
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aritu.eloraplm.treetable.NodeService#getRoot(java.lang.Object)
+     * @see com.aritu.eloraplm.treetable.NodeManager#getRoot(java.lang.Object)
      */
     @Override
     public TreeNode getRoot(Object parentObject) throws EloraException {
+        String logInitMsg = "[getRoot] [" + session.getPrincipal().getName()
+                + "] ";
+        log.trace(logInitMsg + "--- ENTER ---");
 
         int level = 0;
 
         // TODO proxy bat bada fallau,... txekeuak
         DocumentModel parentDoc = (DocumentModel) parentObject;
-
-        if (parentDoc.isProxy()) {
-            throw new EloraException("The root document is a proxy.");
-        }
-
-        // If the root document is a working copy, we get the tree of its base
-        // document
-        if (parentDoc.isVersion() || parentDoc.isCheckedOut()) {
-            currentDoc = parentDoc;
-        } else {
-            currentDoc = EloraDocumentHelper.getLatestVersion(parentDoc,
-                    session);
-        }
+        currentDoc = getTreeRootDocument(parentDoc);
 
         RelationNodeData nodeData = saveRelationNodeData(String.valueOf(nodeId),
-                level, currentDoc.getId(), currentDoc, null, null, null, 0,
-                null, false, 0, false);
+                level, currentDoc.getId(), currentDoc, null, null, null, null,
+                null, null, null, null, false, false);
 
         nodeId++;
 
-        // Get icon only documents
-        iconOnlyRelationDocs = new HashMap<String, List<String>>();
-        if (treeDirection.equals(TREE_DIRECTION_COMPOSITION)) {
+        // Get icon only documents (are only shown the ones refering the root
+        // document)
+        if (relationType.equals(RELATION_TYPE_CAD)
+                && treeDirection.equals(TREE_DIRECTION_COMPOSITION)) {
             iconOnlyRelationDocs = getIconOnlyRelationDocs();
         }
 
@@ -151,26 +164,29 @@ public class RelationNodeService implements NodeManager {
             rootNode = node;
         }
 
-        List<RelationNodeData> childNodeList;
-        level++;
-        // Check if it is special in level 0 (now 1)
-        if (level == 1 && treeDirection.equals(TREE_DIRECTION_COMPOSITION)
-                && nodeData.getData().getType().equals(
-                        EloraDoctypeConstants.CAD_DRAWING)) {
+        if (!nodeData.getIsDirect()) {
+            List<RelationNodeData> childNodeList;
+            level++;
+            // Check if it is special in level 0 (now 1)
+            if (level == 1 && treeDirection.equals(TREE_DIRECTION_COMPOSITION)
+                    && relationType.equals(RELATION_TYPE_CAD)
+                    && nodeData.getData().getType().equals(
+                            EloraDoctypeConstants.CAD_DRAWING)) {
 
-            specialInLevel0 = true;
-            childNodeList = getSpecialInLevel0ChildrenNodeData(nodeData);
+                specialInLevel0 = true;
+                childNodeList = getSpecialInLevel0ChildrenNodeData(nodeData);
 
-        } else {
+            } else {
+                // Get child nodes
+                childNodeList = getChildrenNodeData(nodeData, level);
+            }
 
-            // Get child nodes
-            childNodeList = getChildrenNodeData(nodeData, level);
-        }
-
-        // For each child, processTreeNode
-        if (!childNodeList.isEmpty()) {
-            for (RelationNodeData childNode : childNodeList) {
-                rootNode = processTreeNode(rootNode, node, childNode, level);
+            // For each child, processTreeNode
+            if (!childNodeList.isEmpty()) {
+                for (RelationNodeData childNode : childNodeList) {
+                    rootNode = processTreeNode(rootNode, node, childNode,
+                            level);
+                }
             }
         }
 
@@ -188,22 +204,14 @@ public class RelationNodeService implements NodeManager {
      */
     private Map<String, List<String>> getIconOnlyRelationDocs()
             throws EloraException {
-        Map<String, List<String>> iconOnlyRelationDocs = new HashMap<String, List<String>>();
+        Map<String, List<String>> iconOnlyRelationDocs = new HashMap<>();
 
-        for (Map.Entry<String, Boolean> predicateEntry : iconOnlyPredicates.entrySet()) {
-            String predicateUri = predicateEntry.getKey();
-            Boolean isSpecial = predicateEntry.getValue();
-
+        for (String predicateUri : RelationsConfig.cadIconOnlyRelationsList) {
             Resource predicateResource = new ResourceImpl(predicateUri);
 
             DocumentModelList relatedDocs;
-            if (isSpecial) {
-                relatedDocs = RelationHelper.getSubjectDocuments(
-                        predicateResource, currentDoc);
-            } else {
-                relatedDocs = RelationHelper.getObjectDocuments(currentDoc,
-                        predicateResource);
-            }
+            relatedDocs = RelationHelper.getObjectDocuments(currentDoc,
+                    predicateResource);
 
             if (!relatedDocs.isEmpty()) {
                 for (DocumentModel doc : relatedDocs) {
@@ -211,7 +219,7 @@ public class RelationNodeService implements NodeManager {
                     if (iconOnlyRelationDocs.containsKey(docId)) {
                         iconOnlyRelationDocs.get(docId).add(predicateUri);
                     } else {
-                        List<String> relations = new ArrayList<String>();
+                        List<String> relations = new ArrayList<>();
                         relations.add(predicateUri);
                         iconOnlyRelationDocs.put(doc.getId(), relations);
                     }
@@ -229,7 +237,11 @@ public class RelationNodeService implements NodeManager {
      */
     private List<RelationNodeData> getSpecialInLevel0ChildrenNodeData(
             RelationNodeData nodeData) throws EloraException {
-        List<RelationNodeData> childNodeList = new ArrayList<RelationNodeData>();
+
+        docList = new LinkedHashMap<String, List<DocumentModel>>();
+        stmtList = new HashMap<String, Statement>();
+
+        List<RelationNodeData> childNodeList = new ArrayList<>();
         DocumentModel parentDoc = nodeData.getData();
 
         String predicateUri = EloraRelationConstants.CAD_DRAWING_OF;
@@ -240,8 +252,11 @@ public class RelationNodeService implements NodeManager {
                 EloraRelationConstants.ELORA_GRAPH_NAME, parentDoc,
                 predicateResource);
 
-        childNodeList.addAll(treatRelatedDocs(relatedStmts, predicateUri,
-                parentDoc.isVersion(), inverse, 1, isSpecial));
+        if (!relatedStmts.isEmpty()) {
+            processStatementsAndPopulateLists(relatedStmts, false);
+            childNodeList.addAll(treatRelatedDocs(docList, stmtList,
+                    parentDoc.isVersion(), inverse, 1, isSpecial));
+        }
 
         return childNodeList;
     }
@@ -254,67 +269,134 @@ public class RelationNodeService implements NodeManager {
      */
     private List<RelationNodeData> getChildrenNodeData(
             RelationNodeData nodeData, int level) throws EloraException {
-        List<RelationNodeData> childNodeList = new ArrayList<RelationNodeData>();
+        List<RelationNodeData> childNodeList = new ArrayList<>();
         DocumentModel parentDoc = nodeData.getData();
 
-        for (Map.Entry<String, Boolean> predicateEntry : predicates.entrySet()) {
-            String predicateUri = predicateEntry.getKey();
-            Boolean isSpecial = predicateEntry.getValue();
+        if (relationType.equals(RELATION_TYPE_CAD)) {
+            childNodeList.addAll(getSpecialChildrenNodeData(level, parentDoc));
+        }
 
-            Resource predicateResource = new ResourceImpl(predicateUri);
+        childNodeList.addAll(getNormalChildrenNodeData(level, parentDoc));
 
-            Map<String, List<DocumentModel>> docList = new HashMap<String, List<DocumentModel>>();
-            Map<String, Statement> stmtList = new HashMap<String, Statement>();
+        return childNodeList;
+    }
 
-            boolean inverse = false;
-            List<Statement> relatedStmts;
-            if (treeDirection.equals(TREE_DIRECTION_COMPOSITION)) {
-                if (isSpecial) {
-                    // Don't show special relations of the main document in
-                    // composition
-                    if (level == 1) {
-                        continue;
-                    }
-                    relatedStmts = EloraRelationHelper.getSubjectStatements(
-                            EloraRelationConstants.ELORA_GRAPH_NAME, parentDoc,
-                            predicateResource);
+    private List<RelationNodeData> getSpecialChildrenNodeData(int level,
+            DocumentModel parentDoc) throws EloraException {
 
-                    inverse = true;
-                } else {
-                    relatedStmts = RelationHelper.getStatements(
-                            EloraRelationConstants.ELORA_GRAPH_NAME, parentDoc,
-                            predicateResource);
-                }
-            } else if (treeDirection.equals(TREE_DIRECTION_WHERE_USED)) {
-                if (isSpecial) {
-                    relatedStmts = RelationHelper.getStatements(
-                            EloraRelationConstants.ELORA_GRAPH_NAME, parentDoc,
-                            predicateResource);
-                } else {
-                    relatedStmts = EloraRelationHelper.getSubjectStatements(
-                            EloraRelationConstants.ELORA_GRAPH_NAME, parentDoc,
-                            predicateResource);
-                    inverse = true;
-                }
+        List<RelationNodeData> specialChildren = new ArrayList<>();
+
+        switch (treeDirection) {
+        case TREE_DIRECTION_COMPOSITION:
+
+            // Do not show special relations of root in composition
+            if (level > 1) {
+                specialChildren = getChildNodes(parentDoc, level, true, true);
+            }
+            break;
+
+        case TREE_DIRECTION_WHERE_USED:
+            specialChildren = getChildNodes(parentDoc, level, false, true);
+            break;
+
+        default:
+            throw new EloraException("Unsupported tree direction provided.");
+        }
+
+        return specialChildren;
+
+    }
+
+    private List<RelationNodeData> getNormalChildrenNodeData(int level,
+            DocumentModel parentDoc) throws EloraException {
+
+        List<RelationNodeData> normalChildren = new ArrayList<>();
+
+        switch (treeDirection) {
+        case TREE_DIRECTION_COMPOSITION:
+            normalChildren = getChildNodes(parentDoc, level, false, false);
+            break;
+
+        case TREE_DIRECTION_WHERE_USED:
+            normalChildren = getChildNodes(parentDoc, level, true, false);
+            break;
+
+        default:
+            throw new EloraException("Unsupported tree direction provided.");
+        }
+
+        return normalChildren;
+
+    }
+
+    private List<RelationNodeData> getChildNodes(DocumentModel parentDoc,
+            int level, boolean inverse, boolean isSpecial)
+            throws EloraException {
+
+        // Empty lists
+        docList = new LinkedHashMap<String, List<DocumentModel>>();
+        stmtList = new HashMap<String, Statement>();
+
+        List<RelationNodeData> childNodes = new ArrayList<>();
+
+        List<Resource> predicatesList = isSpecial ? cadSpecialPredicates
+                : predicates;
+
+        List<Statement> relatedStmts;
+        if (inverse) {
+            relatedStmts = EloraRelationHelper.getSubjectStatementsByPredicateList(parentDoc,
+                    predicatesList);
+        } else {
+            relatedStmts = EloraRelationHelper.getStatements(parentDoc,
+                    predicatesList);
+        }
+
+        if (!relatedStmts.isEmpty()) {
+            processStatementsAndPopulateLists(relatedStmts, inverse);
+            childNodes = treatRelatedDocs(docList, stmtList,
+                    parentDoc.isVersion(), inverse, level, isSpecial);
+        }
+
+        return childNodes;
+    }
+
+    private void processStatementsAndPopulateLists(List<Statement> stmts,
+            boolean inverse) throws EloraException {
+        String logInitMsg = "[processStatementsAndPopulateLists] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER ---");
+
+        for (Statement stmt : stmts) {
+            DocumentModel relatedDoc = null;
+            if (inverse) {
+                log.trace(logInitMsg
+                        + "Trying to get doc from subject using statement |"
+                        + stmt.toString() + "|");
+                relatedDoc = RelationHelper.getDocumentModel(stmt.getSubject(),
+                        session);
             } else {
-                throw new EloraException(
-                        "Unsupported tree direction provided.");
+                log.trace(logInitMsg
+                        + "Trying to get doc from object using statement |"
+                        + stmt.toString() + "|");
+                relatedDoc = RelationHelper.getDocumentModel(stmt.getObject(),
+                        session);
             }
 
-            for (Statement stmt : relatedStmts) {
-                DocumentModel relatedDoc = null;
-                if (inverse) {
-                    relatedDoc = RelationHelper.getDocumentModel(
-                            stmt.getSubject(), session);
-                } else {
-                    relatedDoc = RelationHelper.getDocumentModel(
-                            stmt.getObject(), session);
-                }
+            if (relatedDoc == null) {
+                throw new EloraException(
+                        "Error with permissions getting document from statement |"
+                                + stmt.toString() + "|");
+            }
 
-                // TODO: Poner control de permisos.
-                // We consider that when relatedDoc is null user doesn't have
-                // any permission on the document
+            log.trace(logInitMsg + "Related doc |" + relatedDoc.getId()
+                    + "| retrieved");
 
+            // TODO: Poner control de permisos.
+            // We consider that when relatedDoc is null user doesn't have
+            // any permission on the document
+            if (showObsoleteStateDocuments
+                    || !LifecyclesConfig.obsoleteStatesList.contains(
+                            relatedDoc.getCurrentLifeCycleState())) {
                 // TODO: se puede mirar si todo esto se podría meter en la
                 // estructura de una clase y luego no tener que andar
                 // consultando datos en el bucle
@@ -323,155 +405,24 @@ public class RelationNodeService implements NodeManager {
                 if (docList.containsKey(versionSeriesId)) {
                     docList.get(versionSeriesId).add(relatedDoc);
                 } else {
-                    List<DocumentModel> relatedDocList = new ArrayList<DocumentModel>();
+                    List<DocumentModel> relatedDocList = new ArrayList<>();
                     relatedDocList.add(relatedDoc);
                     docList.put(versionSeriesId, relatedDocList);
                 }
                 stmtList.put(relatedDoc.getId(), stmt);
-
-            }
-
-            childNodeList.addAll(
-                    treatRelatedDocs(docList, stmtList, predicateUri,
-                            parentDoc.isVersion(), inverse, level, isSpecial));
-        }
-
-        return childNodeList;
-    }
-
-    /**
-     * @param relatedDocs
-     * @param level
-     * @param currentDocType
-     * @param predicateUri
-     * @param parentIsVersion
-     * @return
-     * @throws EloraException
-     */
-    private List<RelationNodeData> treatRelatedDocs(
-            List<Statement> relatedStmts, String predicateUri,
-            boolean parentIsVersion, boolean inverse, int level,
-            boolean isSpecial) throws EloraException {
-        List<RelationNodeData> childNodeList = new ArrayList<RelationNodeData>();
-        if (relatedStmts != null && !relatedStmts.isEmpty()) {
-
-            Map<String, List<String>> processedRels = new HashMap<String, List<String>>();
-
-            for (Statement stmt : relatedStmts) {
-
-                DocumentModel childDoc;
-                if (inverse) {
-                    childDoc = RelationHelper.getDocumentModel(
-                            stmt.getSubject(), session);
-                } else {
-                    childDoc = RelationHelper.getDocumentModel(stmt.getObject(),
-                            session);
-                }
-
-                if (childDoc != null) {
-                    // TODO HAU OBJECT->SUBJECT norantzan bakarrik da???
-                    // parentIsVersion hori atara. ZE PASETAN DA SPECIALEKIN???
-                    // DRAWING ADB???
-
-                    // If the user creates a relation from WC to a specific
-                    // archived version (instead of to another WC), we have to
-                    // hide this relation when we display the tree of an AV
-                    // document, or the user will see the same document twice
-                    // (one AV and the WC).
-                    // If parent element is an AV and child is WC, ignore it
-                    if (parentIsVersion && !childDoc.isVersion()) {
-                        continue;
-                    }
-
-                    String versionSeriesId = childDoc.getVersionSeriesId();
-
-                    // Check if there is a special in level 0, and avoid to
-                    // repeat it (even when it is the same document in a
-                    // different version)
-                    if (level == 2 && specialInLevel0 && isSpecial) {
-
-                        if (versionSeriesId.equals(
-                                currentDoc.getVersionSeriesId())) {
-                            continue;
-                        }
-                    }
-
-                    // If showUniqueVersionsPerDocument is checked, discard
-                    // duplicate docs with different versions
-                    if (showUniqueVersionsPerDocument) {
-                        if (processedRels.containsKey(versionSeriesId)) {
-                            if (processedRels.get(versionSeriesId).contains(
-                                    predicateUri)) {
-                                // Ignore if this relation has been processed
-                                // before to avoid painting it twice
-                                continue;
-                            } else {
-                                // It has multiple different relations to the
-                                // same document. If this is possible continue
-                                // painting node
-                                processedRels.get(versionSeriesId).add(
-                                        predicateUri);
-                            }
-                        } else {
-                            List<String> predicateList = new ArrayList<String>();
-                            predicateList.add(predicateUri);
-                            processedRels.put(versionSeriesId, predicateList);
-                        }
-
-                        // If composition & special or where used, get the
-                        // correct version
-                        if (childDoc.isVersion() && (treeDirection.equals(
-                                TREE_DIRECTION_WHERE_USED) || isSpecial)) {
-                            childDoc = EloraRelationHelper.getLatestRelatedReleasedVersion(
-                                    childDoc, stmt, session);
-                        }
-                    }
-
-                    String childUid = childDoc.getId();
-
-                    EloraStatementInfo stmtInfo = new EloraStatementInfoImpl(
-                            stmt);
-                    int quantity = stmtInfo.getQuantity();
-                    String comment = stmtInfo.getComment();
-                    boolean isObjectWc = stmtInfo.getIsObjectWc();
-                    int ordering = stmtInfo.getOrdering();
-
-                    DocumentModel wcDoc = null;
-                    if (childDoc.isImmutable()) {
-                        wcDoc = session.getWorkingCopy(childDoc.getRef());
-                    } else {
-                        wcDoc = childDoc;
-                    }
-
-                    RelationNodeData node = saveRelationNodeData(
-                            String.valueOf(nodeId), level, childUid, childDoc,
-                            wcDoc, stmt, predicateUri, quantity, comment,
-                            isObjectWc, ordering, isSpecial);
-
-                    // Check if it has iconOnlyRelationDocs
-                    if (iconOnlyRelationDocs.containsKey(childUid)) {
-                        List<String> iconOnlyRelations = iconOnlyRelationDocs.get(
-                                childUid);
-                        node.setIconOnlyRelations(iconOnlyRelations);
-                    }
-
-                    childNodeList.add(node);
-
-                    nodeId++;
-                }
+                log.trace("Related doc added to list");
             }
         }
-
-        return childNodeList;
+        log.trace(logInitMsg + "--- EXIT ---");
     }
 
     private List<RelationNodeData> treatRelatedDocs(
             Map<String, List<DocumentModel>> docList,
-            Map<String, Statement> stmtList, String predicateUri,
-            boolean parentIsVersion, boolean inverse, int level,
-            boolean isSpecial) throws EloraException {
+            Map<String, Statement> stmtList, boolean parentIsVersion,
+            boolean inverse, int level, boolean isSpecial)
+            throws EloraException {
 
-        List<RelationNodeData> childNodeList = new ArrayList<RelationNodeData>();
+        List<RelationNodeData> childNodeList = new ArrayList<>();
         if (docList != null && !docList.isEmpty()) {
             for (Map.Entry<String, List<DocumentModel>> entry : docList.entrySet()) {
                 String versionSeriesId = entry.getKey();
@@ -481,16 +432,16 @@ public class RelationNodeService implements NodeManager {
 
                 if (showUniqueVersionsPerDocument) {
                     node = createNodeData(docs.get(0), docs, versionSeriesId,
-                            docs.size(), predicateUri, stmtList, isSpecial,
-                            inverse, parentIsVersion, level);
+                            docs.size(), stmtList, isSpecial, inverse,
+                            parentIsVersion, level);
                     if (node != null) {
                         childNodeList.add(node);
                     }
                 } else {
                     for (DocumentModel doc : docs) {
                         node = createNodeData(doc, docs, versionSeriesId, 0,
-                                predicateUri, stmtList, isSpecial, inverse,
-                                parentIsVersion, level);
+                                stmtList, isSpecial, inverse, parentIsVersion,
+                                level);
                         if (node != null) {
                             childNodeList.add(node);
                         }
@@ -498,15 +449,32 @@ public class RelationNodeService implements NodeManager {
                 }
             }
         }
-
         return childNodeList;
+    }
+
+    protected DocumentModel getTreeRootDocument(DocumentModel doc)
+            throws EloraException {
+        if (doc.isProxy()) {
+            throw new EloraException("The root document is a proxy.");
+        }
+        DocumentModel rootDoc = null;
+        // If the root document is a working copy, we get the tree of its base
+        // document
+        if (doc.isVersion() || doc.isCheckedOut()) {
+            rootDoc = doc;
+        } else {
+            rootDoc = EloraDocumentHelper.getLatestVersion(doc);
+        }
+        return rootDoc;
     }
 
     protected RelationNodeData createNodeData(DocumentModel childDoc,
             List<DocumentModel> docs, String versionSeriesId, int docNum,
-            String predicateUri, Map<String, Statement> stmtList,
-            boolean isSpecial, boolean inverse, boolean parentIsVersion,
-            int level) throws EloraException {
+            Map<String, Statement> stmtList, boolean isSpecial, boolean inverse,
+            boolean parentIsVersion, int level) throws EloraException {
+
+        String logInitMsg = "[createNodeData] ["
+                + session.getPrincipal().getName() + "] ";
 
         if (childDoc != null) {
             // TODO HAU OBJECT->SUBJECT norantzan bakarrik da???
@@ -522,9 +490,6 @@ public class RelationNodeService implements NodeManager {
             if (parentIsVersion && !childDoc.isVersion()) {
                 return null;
             }
-            // Check if there is a special in level 0, and avoid to
-            // repeat it (even when it is the same document in a
-            // different version)
             if (level == 2 && specialInLevel0 && isSpecial) {
                 if (versionSeriesId.equals(currentDoc.getVersionSeriesId())) {
                     return null;
@@ -534,46 +499,23 @@ public class RelationNodeService implements NodeManager {
             // If showUniqueVersionsPerDocument is checked, discard
             // duplicate docs with different versions
             if (docNum > 1) {
-                // If composition & special or where used, get the
-                // correct version
-                if (childDoc.isVersion()
-                        && (treeDirection.equals(TREE_DIRECTION_WHERE_USED)
-                                || isSpecial)) {
-                    List<String> uidList = new ArrayList<String>();
-
-                    // TODO: se puede evitar esto sacandolo antes?¿?¿
-                    for (DocumentModel doc : docs) {
-                        uidList.add(doc.getId());
+                if (childDoc.isVersion()) {
+                    log.trace(logInitMsg + "Multiple docs related with |"
+                            + childDoc.getId() + "|");
+                    childDoc = selectChildToShow(childDoc, docs);
+                    if (childDoc == null) {
+                        return null;
                     }
-                    childDoc = EloraRelationHelper.getLatestRelatedReleasedVersion(
-                            versionSeriesId, uidList, session);
                 }
             }
 
             String childUid = childDoc.getId();
+            RelationNodeData node = saveNodeData(childDoc, stmtList, level,
+                    childUid);
 
-            Statement stmt = stmtList.get(childUid);
-            EloraStatementInfo stmtInfo = new EloraStatementInfoImpl(stmt);
-            int quantity = stmtInfo.getQuantity();
-            String comment = stmtInfo.getComment();
-            boolean isObjectWc = stmtInfo.getIsObjectWc();
-            int ordering = stmtInfo.getOrdering();
-
-            DocumentModel wcDoc = null;
-            if (childDoc.isImmutable()) {
-                wcDoc = session.getWorkingCopy(childDoc.getRef());
-            } else {
-                wcDoc = childDoc;
-            }
-
-            RelationNodeData node = saveRelationNodeData(String.valueOf(nodeId),
-                    level, childUid, childDoc, wcDoc, stmt, predicateUri,
-                    quantity, comment, isObjectWc, ordering, isSpecial);
-
-            nodeId++;
-
-            // Check if it has iconOnlyRelationDocs
-            if (iconOnlyRelationDocs.containsKey(childUid)) {
+            // Check if it is in iconOnlyRelationDocs
+            if (relationType.equals(RELATION_TYPE_CAD)
+                    && iconOnlyRelationDocs.containsKey(childUid)) {
                 List<String> iconOnlyRelations = iconOnlyRelationDocs.get(
                         childUid);
                 node.setIconOnlyRelations(iconOnlyRelations);
@@ -581,6 +523,67 @@ public class RelationNodeService implements NodeManager {
             return node;
         }
         return null;
+    }
+
+    private RelationNodeData saveNodeData(DocumentModel childDoc,
+            Map<String, Statement> stmtList, int level, String childUid) {
+
+        Statement stmt = stmtList.get(childUid);
+        EloraStatementInfo stmtInfo = new EloraStatementInfoImpl(stmt);
+        String predicateUri = stmtInfo.getPredicate().getUri();
+        String quantity = stmtInfo.getQuantity();
+        String comment = stmtInfo.getComment();
+        Integer ordering = stmtInfo.getOrdering();
+        Integer directorOrdering = stmtInfo.getDirectorOrdering();
+        Integer viewerOrdering = stmtInfo.getViewerOrdering();
+        boolean isSpecial = RelationsConfig.cadSpecialRelationsList.contains(
+                predicateUri);
+        boolean isDirect = directRelationsList.contains(predicateUri);
+
+        DocumentModel wcDoc = null;
+        if (childDoc.isImmutable()) {
+            wcDoc = session.getWorkingCopy(childDoc.getRef());
+        } else {
+            wcDoc = childDoc;
+        }
+
+        RelationNodeData node = saveRelationNodeData(String.valueOf(nodeId),
+                level, childUid, childDoc, wcDoc, stmt, predicateUri, quantity,
+                comment, ordering, directorOrdering, viewerOrdering, isSpecial,
+                isDirect);
+
+        nodeId++;
+        return node;
+    }
+
+    private DocumentModel selectChildToShow(DocumentModel childDoc,
+            List<DocumentModel> docs) throws EloraException {
+
+        String logInitMsg = "[createNodeData] ["
+                + session.getPrincipal().getName() + "] ";
+
+        List<String> uidList = EloraDocumentHelper.getUidListFromDocList(docs);
+        Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(docs);
+
+        log.trace(
+                logInitMsg + "About to get latest related version of document |"
+                        + childDoc.getId() + "| ");
+        childDoc = EloraRelationHelper.getLatestRelatedVersion(
+                String.valueOf(majorVersion), uidList, session);
+
+        if (childDoc == null) {
+            throw new EloraException(
+                    "Null value retrieved getting latest related version");
+        }
+
+        log.trace(logInitMsg + "Document |" + childDoc.getId() + "| retrieved");
+
+        if (!showObsoleteStateDocuments
+                && LifecyclesConfig.obsoleteStatesList.contains(
+                        childDoc.getCurrentLifeCycleState())) {
+            childDoc = null;
+        }
+        return childDoc;
     }
 
     /**
@@ -594,14 +597,14 @@ public class RelationNodeService implements NodeManager {
      * @param predicateUri
      * @param quantity
      * @param comment
-     * @param isObjectWc
      * @param isSpecial
      * @return
      */
     protected RelationNodeData saveRelationNodeData(String id, int level,
             String docId, DocumentModel data, DocumentModel wcDoc,
-            Statement stmt, String predicateUri, int quantity, String comment,
-            boolean isObjectWc, int ordering, boolean isSpecial) {
+            Statement stmt, String predicateUri, String quantity,
+            String comment, Integer ordering, Integer directorOrdering,
+            Integer viewerOrdering, boolean isSpecial, boolean isDirect) {
         // Do nothing
         return null;
     }

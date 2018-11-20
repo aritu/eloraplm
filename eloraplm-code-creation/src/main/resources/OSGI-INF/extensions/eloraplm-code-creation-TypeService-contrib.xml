@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.codecreation.TypeService.contrib">
+
+  <require>com.aritu.eloraplm.doctypes.TypeService.contrib</require>
+  <require>com.aritu.eloraplm.change.management.TypeService.contrib</require>
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+    <schema name="eloraCodeMasks" src="schemas/sch_elora_code_masks.xsd"/>
+  </extension>
+  
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+  
+    <!-- Facets -->
+    
+    <facet name="AutomaticCode" />
+    
+    <!-- Doctypes -->
+    
+    <doctype append="true" name="CadAssembly">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CadPart">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CadDrawing">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    
+    <doctype append="true" name="BomPart">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="BomProduct">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="BomPackaging">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="BomSpecification">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="BomTool">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    
+    <doctype append="true" name="Project">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CmEco">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CmPre">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CmHom">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CmSample">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CmComm">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CmEcr">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    <doctype append="true" name="CmPr">
+      <facet name="AutomaticCode"/>
+    </doctype>
+    
+  </extension>
+    
+</component>

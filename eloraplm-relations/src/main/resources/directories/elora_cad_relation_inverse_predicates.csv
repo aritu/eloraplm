@@ -6,4 +6,3 @@ http://eloraplm.aritu.com/relations/CadDrawingOf,label.relation.predicate.invers
 http://eloraplm.aritu.com/relations/CadComposedOf,label.relation.predicate.inverse.CadComposedOf,0
 http://eloraplm.aritu.com/relations/CadBasedOn,label.relation.predicate.inverse.CadBasedOn,0
 http://eloraplm.aritu.com/relations/CadHasSuppressed,label.relation.predicate.inverse.CadHasSuppressed,0
-http://eloraplm.aritu.com/relations/CadHasDocument,label.relation.predicate.inverse.CadHasDocument,0

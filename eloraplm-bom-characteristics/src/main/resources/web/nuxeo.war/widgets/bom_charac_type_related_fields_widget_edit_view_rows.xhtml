@@ -1,0 +1,59 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  >
+  
+        <ui:fragment rendered="#{bomCharacType == 'number'}">
+          <tr>
+            <td></td>
+            <td>
+              <table>
+                <ui:include src="bom_charac_type_related_fields_widget_number_rows.xhtml" />
+              </table>
+            </td>
+          </tr>
+        </ui:fragment> 
+        <ui:fragment rendered="#{bomCharacType == 'string'}">
+          <tr>
+            <td></td>
+            <td>
+              <table>
+                <ui:include src="bom_charac_type_related_fields_widget_string_rows.xhtml" />
+              </table>
+            </td>
+          </tr>
+        </ui:fragment>
+        <ui:fragment rendered="#{bomCharacType == 'date'}">
+          <tr>
+            <td></td>
+            <td>
+              <table>
+                <ui:include src="bom_charac_type_related_fields_widget_date_rows.xhtml" />
+              </table>
+            </td>
+          </tr>
+        </ui:fragment>
+        <ui:fragment rendered="#{bomCharacType == 'boolean'}">
+          <tr>
+            <td></td>
+            <td>
+              <table>
+                <ui:include src="bom_charac_type_related_fields_widget_boolean_rows.xhtml" />
+              </table>
+            </td>
+          </tr>
+        </ui:fragment>
+        <ui:fragment rendered="#{bomCharacType == 'list'}">
+          <tr>
+            <td></td>
+            <td>
+              <table style="width:100%">
+                <ui:include src="bom_charac_type_related_fields_widget_list_rows.xhtml" />
+              </table>
+            </td>
+          </tr>
+        </ui:fragment>
+          
+</ui:composition>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.integration.LifeCycleService.contrib">
+
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
+        <types>
+          <type name="CadAssemblyDraft">eloraDraftLifeCycle</type>
+          <type name="CadPartDraft">eloraDraftLifeCycle</type>
+          <type name="CadDrawingDraft">eloraDraftLifeCycle</type>
+          <type name="CadDesignTableDraft">eloraDraftLifeCycle</type>
+        </types>
+    </extension>
+
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="lifecycle">
+        <lifecycle defaultInitial="eloraDraftCreated" name="eloraDraftLifeCycle">
+          <states>
+            <state description="Default state" initial="true" name="eloraDraftCreated" />
+          </states>
+        </lifecycle>
+    </extension>
+
+</component>

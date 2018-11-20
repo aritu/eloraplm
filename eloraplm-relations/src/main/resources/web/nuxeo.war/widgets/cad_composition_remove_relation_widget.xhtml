@@ -6,7 +6,10 @@
     <ui:include src="remove_relation_widget_template.xhtml">
         <ui:param name="treeBean" value="#{cadCompositionTreeBean}" />
         <ui:param name="level" value="#{field_0}" />
-        <ui:param name="isSpecial" value="#{field_1}" />
+        <ui:param name="isSpecial" value="#{currentDocument.type eq 'CadDrawing' ? false : field_1}" />
+        <ui:param name="isAnarchic" value="#{false}" />
+        <ui:param name="subjectDocument" value="#{currentDocument}" />
+        <ui:param name="isVisible" value="#{level == '1'}" />
     </ui:include>
     
 </ui:composition>

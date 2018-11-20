@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.history.ResourcePublisher.contrib">
+    <implementation class="com.aritu.eloraplm.history.services.VersionRemoveCheckerService"/>
+    <service>
+        <provide interface="com.aritu.eloraplm.history.api.VersionRemoveCheckerManager"/>
+    </service>
+</component>

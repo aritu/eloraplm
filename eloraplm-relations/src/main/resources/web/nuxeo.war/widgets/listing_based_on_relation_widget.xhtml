@@ -1,12 +1,11 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    xmlns:h="http://java.sun.com/jsf/html">
 
-    <nxu:graphicImage value="/icons/relation_based_on_16.png"
-        style="vertical-align: middle;"
+    <h:graphicImage value="/icons/relation_based_on_16.png"
+        style="position: absolute; margin-left: -6px; margin-top: 5px;"
         styleClass="tipsyShow"
         title="#{messages['label.relation.predicate.CadBasedOn']}"
-        rendered="#{field_0 eq 'http://eloraplm.aritu.com/relations/CadBasedOn'}" />
+        rendered="#{field_0}" />
 
 </ui:composition>

@@ -18,13 +18,15 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;
-import com.sun.faces.util.MessageFactory;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage;
 
+import com.sun.faces.util.MessageFactory;
+import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.core.util.EloraUnitConversionHelper;
 
 /**
@@ -59,7 +61,7 @@ public class MeasureValueConverter implements Converter {
         String logInitMsg = "[getAsObject / convertingValueToStore] ";
         log.trace(logInitMsg + "--- ENTER --- value = |" + value + "|");
 
-        Double convertedValue = null;
+        String convertedValue = null;
 
         try {
             if (value != null && !value.isEmpty()) {
@@ -67,15 +69,16 @@ public class MeasureValueConverter implements Converter {
                 String baseUnit = getUnit(component);
                 log.trace(logInitMsg + "baseUnit = |" + baseUnit + "|");
 
-                double valueAsDouble = Double.parseDouble(value);
-
                 convertedValue = EloraUnitConversionHelper.convertValueToStore(
-                        valueAsDouble, baseUnit);
+                        context, value, baseUnit);
             }
+        } catch (ConverterException e) {
+            throw e;
         } catch (Exception e) {
 
-            log.error(
-                    logInitMsg + "Exception thrown. Exception class = |"
+            log.trace(
+                    logInitMsg
+                            + "Conversion failed: Exception thrown. Exception class = |"
                             + e.getClass() + "|, message: " + e.getMessage(),
                     e);
 
@@ -104,19 +107,26 @@ public class MeasureValueConverter implements Converter {
             String baseUnit = getUnit(component);
             log.trace(logInitMsg + "baseUnit = |" + baseUnit + "|");
 
-            double convertedValueAsDouble = EloraUnitConversionHelper.convertValueToDisplay(
-                    (double) value, baseUnit);
+            convertedValue = EloraUnitConversionHelper.convertValueToDisplay(
+                    context, (String) value, baseUnit);
 
-            convertedValue = String.valueOf(convertedValueAsDouble);
-
+        } catch (ConverterException e) {
+            throw e;
         } catch (Exception e) {
 
+            // Here we can't throw a ConverterException, so we log it as an
+            // error and we use FacesMessages to notify the user
             log.error(
-                    logInitMsg + "Exception thrown. Exception class = |"
+                    logInitMsg
+                            + "Conversion of saved value failed: Exception thrown. Exception class = |"
                             + e.getClass() + "|, message: " + e.getMessage(),
                     e);
 
-            throw new ConverterException(e.getMessage());
+            Object[] params = { value };
+            FacesMessages.instance().add(StatusMessage.Severity.ERROR,
+                    EloraMessageHelper.getTranslatedMessage(context,
+                            "eloraplm.message.error.measureValueConverter",
+                            params));
         }
 
         log.trace(logInitMsg + "--- EXIT --- convertedValue = |"

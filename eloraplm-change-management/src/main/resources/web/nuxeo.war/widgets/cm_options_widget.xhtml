@@ -3,27 +3,70 @@
   xmlns:ui="http://java.sun.com/jsf/facelets"
   xmlns:h="http://java.sun.com/jsf/html"
   xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:a4j="http://richfaces.org/a4j">
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:c="http://java.sun.com/jstl/core">
   
-  <h:panelGroup layout="block" id="#{widget.id}" rendered="#{nxd:hasPermission(currentDocument, 'Write')}">
+  <h:panelGroup layout="block" id="#{widget.id}" rendered="#{widget.mode eq 'edit'}">
   
-    <a4j:commandButton
-        actionListener="#{cmModifiedItemsTreeBean.markModifiedNodeAsRemoved(node)}"
-        render="#{treeWidgetId}"
-        execute="@this" 
-        image="/icons/delete_red.png"
+    <c:if test="#{webActions.currentTabId eq 'TAB_CM_DOC_MODIFIED_ITEMS_TREETABLE'}">
+      <h:commandButton
+        image="/icons/row_delete_16.png"
         title="#{messages['eloraplm.command.remove']}"
-        rendered="#{not nodeData.isRemoved}"
-    />
-    
-    <a4j:commandButton
-        actionListener="#{cmModifiedItemsTreeBean.unmarkModifiedNodeAsRemoved(node)}"
-        render="#{treeWidgetId}"
-        execute="@this" 
-        image="/icons/action_undo_16.png"
+        rendered="#{not nodeData.isRemoved}">
+        
+          <p:ajax
+            listener="#{cmDocModifiedItemsTreeBean.markModifiedNodeAsRemoved(component.namingContainer, node)}"
+            process="@this"
+            partialSubmit="true" 
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="markTreeNodeAsRemoved()" />
+            
+      </h:commandButton>
+      
+      <h:commandButton
+        image="/icons/row_undo_delete_16.png"
         title="#{messages['eloraplm.command.undoRemove']}"
-        rendered="#{nodeData.isRemoved}"
-    />
+        rendered="#{nodeData.isRemoved}">
+        
+          <p:ajax
+            listener="#{cmDocModifiedItemsTreeBean.unmarkModifiedNodeAsRemoved(component.namingContainer, node)}"
+            process="@this"
+            partialSubmit="true" 
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="unmarkTreeNodeAsRemoved()" />
+            
+      </h:commandButton>
+    </c:if>
+    
+    <c:if test="#{webActions.currentTabId eq 'TAB_CM_BOM_MODIFIED_ITEMS_TREETABLE'}">
+      <h:commandButton
+        image="/icons/row_delete_16.png"
+        title="#{messages['eloraplm.command.remove']}"
+        rendered="#{not nodeData.isRemoved}">
+        
+          <p:ajax
+            listener="#{cmBomModifiedItemsTreeBean.markModifiedNodeAsRemoved(component.namingContainer, node)}"
+            process="@this"
+            partialSubmit="true" 
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="markTreeNodeAsRemoved()" />
+            
+      </h:commandButton>
+      
+      <h:commandButton
+        image="/icons/row_undo_delete_16.png"
+        title="#{messages['eloraplm.command.undoRemove']}"
+        rendered="#{nodeData.isRemoved}">
+        
+          <p:ajax
+            listener="#{cmBomModifiedItemsTreeBean.unmarkModifiedNodeAsRemoved(component.namingContainer, node)}"
+            process="@this"
+            partialSubmit="true" 
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="unmarkTreeNodeAsRemoved()" />
+            
+      </h:commandButton>
+    </c:if>
     
   </h:panelGroup>
   

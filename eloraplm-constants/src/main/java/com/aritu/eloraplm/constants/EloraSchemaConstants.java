@@ -31,6 +31,8 @@ public class EloraSchemaConstants {
 
     public static final String CAD_DESIGN_TABLE = "cad_design_table";
 
+    public static final String CAD_ATTACHMENTS = "cad_attachments";
+
     public static final String PROJECT = "project";
 
     public static final String RELATED_PARTAKER = "related_partaker";
@@ -40,5 +42,7 @@ public class EloraSchemaConstants {
     public static final String RELATED_MANUFACTURER = "related_manufacturer";
 
     public static final String RELATED_SUPPLIER = "related_supplier";
+
+    public static final String BOM_ITEM = "bom_item";
 
 }

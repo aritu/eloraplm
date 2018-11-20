@@ -2,6 +2,9 @@
 
 <component name="com.aritu.eloraplm.versioning.TypeService">
   <require>org.nuxeo.ecm.core.CoreExtensions</require>
+  <require>org.nuxeo.nuxeo.ecm.platform.audio.doctype</require>
+  <require>org.nuxeo.ecm.platform.picture.coreTypes</require>
+  <require>org.nuxeo.nuxeo.ecm.platform.video.doctype</require>
   
   <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
     <schema name="major_letter_versioning" prefix="ltrvers" src="schema/major_letter_versioning.xsd"/>

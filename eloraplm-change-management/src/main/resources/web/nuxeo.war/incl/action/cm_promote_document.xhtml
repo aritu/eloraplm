@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+
+  <ui:include src="/incl/action/elora_promote_tree.xhtml">
+    <ui:param name="actionBean" value="#{cmDocModifiedItemsTreeBean}" />
+    <ui:param name="promoteDoc" value="#{cmDocModifiedItemsTreeBean.selectedNode.data.destinationItem}" />
+  </ui:include>
+
+</ui:composition>

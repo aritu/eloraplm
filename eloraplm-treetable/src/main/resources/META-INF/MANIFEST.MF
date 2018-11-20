@@ -4,9 +4,9 @@ Bundle-Name: eloraplm-treetable
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-treetable-WebLayoutManag
  er-contrib.xml,OSGI-INF/extensions/eloraplm-treetable-WebResources-co
  ntrib.xml

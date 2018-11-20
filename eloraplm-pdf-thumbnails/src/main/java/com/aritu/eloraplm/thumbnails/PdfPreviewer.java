@@ -15,6 +15,8 @@ import org.nuxeo.ecm.platform.preview.adapter.PlainTextPreviewer;
 import org.nuxeo.ecm.platform.preview.api.PreviewException;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
+
 /**
  * @author Alexandre Russel
  */
@@ -27,8 +29,16 @@ public class PdfPreviewer extends PlainTextPreviewer {
         StringBuilder htmlPage = new StringBuilder();
 
         // TODO Hau ataratzeko ez dau funtziorik?
-        String pdfPath = "/nuxeo/api/v1/id/" + dm.getId()
-                + "/@blob/elovwr:file";
+
+        String property;
+        if (dm.hasSchema(EloraSchemaConstants.ELORA_VIEWER)) {
+            property = "elovwr:file";
+        } else {
+            property = "file:content";
+        }
+
+        String pdfPath = "/nuxeo/api/v1/id/" + dm.getId() + "/@blob/"
+                + property;
 
         String sourceMimeType = blob.getMimeType();
 
@@ -38,8 +48,7 @@ public class PdfPreviewer extends PlainTextPreviewer {
             converterName = "any2html";
         }
 
-        BlobHolder blobHolder2preview = new DocumentBlobHolder(dm,
-                "elovwr:file");
+        BlobHolder blobHolder2preview = new DocumentBlobHolder(dm, property);
         BlobHolder result;
 
         String content = null;
@@ -72,7 +81,8 @@ public class PdfPreviewer extends PlainTextPreviewer {
 
         htmlPage.append("<?xml version=\"1.0\" encoding=\"UTF-8\"/>");
         htmlPage.append("<html>");
-        htmlPage.append("<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/></head>");
+        htmlPage.append(
+                "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/></head>");
         htmlPage.append("<body>");
         htmlPage.append(htmlContent(pdfPath, content));
         htmlPage.append("</body></html>");

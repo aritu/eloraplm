@@ -4,11 +4,6 @@ xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/bom_product"
 targetNamespace="http://www.nuxeo.org/ecm/project/schemas/bom_product"
 xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
 
-  <xs:element name="productClassification" >
-    <xs:simpleType>
-      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bomProductClassHierarchical" />
-    </xs:simpleType>
-  </xs:element>
   <xs:element name="unit" type="xs:string" />
   <xs:element name="externalReleaseNumber" type="xs:string" />
   <xs:element name="externalVersionNumber" type="xs:string" />

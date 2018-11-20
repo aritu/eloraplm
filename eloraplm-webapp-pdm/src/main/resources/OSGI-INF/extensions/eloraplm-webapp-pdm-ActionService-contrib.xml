@@ -1,27 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.webapp.pdm.ActionService.contrib">
-  
+  <require>org.nuxeo.ecm.platform.actions</require>
   <require>org.nuxeo.ecm.webapp.seam.debug.action</require>
+  <require>org.nuxeo.ecm.collections.actions</require>
+  <require>org.nuxeo.ecm.favorites.actions</require>
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
+      <filter id="can_write">
+          <rule grant="true">
+            <permission>Write</permission>
+          </rule>
+      </filter>
+      <filter id="cannot_write">
+          <rule grant="false">
+            <permission>Write</permission>
+          </rule>
+      </filter>
+      <filter id="can_lock">
+          <rule grant="true">
+            <permission>Write</permission>
+            <condition>#{lockActions.canLockCurrentDoc}</condition>
+          </rule>
+        </filter>
+    
+        <filter id="can_unlock">
+          <rule grant="true">
+            <condition>#{lockActions.canUnlockCurrentDoc}</condition>
+          </rule>
+        </filter>
+  </extension>
   
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
     
     <!-- default actions on upper buttons -->
     
-    <!-- TODO: Decidir cual va a ser el filtro para mostrar esta accion. Poner bien los labels y el link  -->
-    <action id="checkinAction" order="10" label="command.checkin" link="#{pdmAction.checkIn}" icon="/icons/action_check_in_16.png">
+    <action id="checkinAction" order="10" label="eloraplm.command.checkIn" type="fancybox" icon="/icons/action_check_in_16.png">
       <category>DOCUMENT_UPPER_ACTION</category>
       <filter-id>versionable</filter-id>
-      <filter-id>isLocked</filter-id>
+      <filter-id>isEditable</filter-id>
       <properties>
+        <property name="include">/incl/action/checkin_document.xhtml</property>
+        <property name="ajaxSupport">true</property>
         <property name="visibleByDefault">true</property>
       </properties>
     </action>
     
-    <action id="undoCheckoutAction" order="0" label="command.undoCheckout" link="#{pdmAction.undoCheckout}" icon="/icons/action_undo_checkout_16.png">
+    <action id="checkoutAction" order="10" label="eloraplm.command.checkOut" link="#{pdmAction.checkOut(currentDocument)}" icon="/icons/action_check_out_16.png">
       <category>DOCUMENT_UPPER_ACTION</category>
       <filter-id>versionable</filter-id>
-      <filter-id>isCheckedOut</filter-id>
+      <filter-id>isNotCheckedOut</filter-id>
+      <filter-id>can_write</filter-id>
+      <properties>
+        <property name="visibleByDefault">true</property>
+      </properties>
+    </action>
+
+    <action id="undoCheckoutAction" order="0" label="eloraplm.command.undoCheckout" link="#{pdmAction.undoCheckout(currentDocument)}" icon="/icons/action_undo_checkout_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter-id>versionable</filter-id>
+      <filter-id>isNotZeroVersion</filter-id>
+      <filter-id>isEditable</filter-id>
       <properties>
         <property name="visibleByDefault">true</property>
       </properties>
@@ -55,7 +94,7 @@
         <property name="visibleByDefault">true</property>
       </properties>
     </action>
-    
+
   </extension>
   
 </component> 

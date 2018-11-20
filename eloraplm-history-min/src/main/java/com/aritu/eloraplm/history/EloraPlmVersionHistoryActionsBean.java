@@ -20,17 +20,33 @@
 
 package com.aritu.eloraplm.history;
 
+import static org.jboss.seam.ScopeType.EVENT;
 import static org.jboss.seam.annotations.Install.FRAMEWORK;
-import static org.jboss.seam.ScopeType.CONVERSATION;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.VersionModel;
+import org.nuxeo.ecm.core.api.impl.VersionModelImpl;
+import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
+import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
+
+import com.aritu.eloraplm.constants.EloraEventNames;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraEventHelper;
+import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
  * Extra actions for History tab
@@ -38,7 +54,7 @@ import org.nuxeo.ecm.core.api.IdRef;
  * @author Aritu
  */
 @Name("eloraPlmVersionHistoryActions")
-@Scope(CONVERSATION)
+@Scope(EVENT)
 @Install(precedence = FRAMEWORK)
 public class EloraPlmVersionHistoryActionsBean implements Serializable {
 
@@ -46,6 +62,42 @@ public class EloraPlmVersionHistoryActionsBean implements Serializable {
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
+
+    @In(create = true)
+    protected transient NavigationContext navigationContext;
+
+    @In(create = true, required = false)
+    protected transient FacesMessages facesMessages;
+
+    @In(create = true)
+    protected Map<String, String> messages;
+
+    @In(create = true, required = false)
+    protected transient DocumentsListsManager documentsListsManager;
+
+    private List<VersionModel> versions;
+
+    public List<VersionModel> getVersions() {
+        if (versions == null || versions.isEmpty()) {
+            versions = new ArrayList<VersionModel>();
+            List<DocumentModel> versionDocs = documentsListsManager.getWorkingList(
+                    DocumentsListsManager.CURRENT_VERSION_SELECTION);
+            for (DocumentModel versionDoc : versionDocs) {
+                versionDoc.refresh();
+                VersionModel version = new VersionModelImpl();
+                version.setId(versionDoc.getId());
+                version.setLabel(versionDoc.getVersionLabel());
+                version.setDescription(versionDoc.getCheckinComment());
+
+                versions.add(version);
+            }
+        }
+        return versions;
+    }
+
+    public void setVersions(List<VersionModel> versions) {
+        this.versions = versions;
+    }
 
     public DocumentModel getArchivedVersionDocument(String versionId) {
         DocumentModel versionDoc = null;
@@ -61,15 +113,19 @@ public class EloraPlmVersionHistoryActionsBean implements Serializable {
     public boolean isCurrent(DocumentModel versionDoc,
             DocumentModel currentDoc) {
 
-        String sourceDocId = "";
-
-        if (currentDoc != null && versionDoc != null) {
+        if (currentDoc != null && versionDoc != null
+                && !currentDoc.isCheckedOut()) {
             if (currentDoc.isProxy()) {
-                sourceDocId = currentDoc.getSourceId();
-            } else {
-                sourceDocId = currentDoc.getId();
+                currentDoc = documentManager.getSourceDocument(
+                        currentDoc.getRef());
             }
-            if (versionDoc.getId().equals(sourceDocId)) {
+            if (!currentDoc.isImmutable()) {
+                DocumentRef currentDocRef = documentManager.getBaseVersion(
+                        currentDoc.getRef());
+                currentDoc = documentManager.getDocument(currentDocRef);
+            }
+
+            if (versionDoc.getId().equals(currentDoc.getId())) {
                 return true;
             }
         }
@@ -77,55 +133,43 @@ public class EloraPlmVersionHistoryActionsBean implements Serializable {
         return false;
     }
 
-    /*public String getLastComment(DocumentModel versionDoc,
-            DocumentModel currentDoc) {
-        String lastComment = "";
-    
-        //
-    
-        AuditReader reader = Framework.getService(AuditReader.class);
-    
-        // List<LogEntry> logEntries =
-        // reader.getLogEntriesFor(versionDoc.getId());
-    
-        // Same method but with a filter
-        FilterMapEntry eventIdFilter = new FilterMapEntry();
-        eventIdFilter.setColumnName("eventId");
-        eventIdFilter.setOperator("=");
-        eventIdFilter.setQueryParameterName("eventId");
-        eventIdFilter.setObject(DocumentEventTypes.DOCUMENT_CHECKEDIN);
-    
-         FilterMapEntry eventStartDateFilter = new FilterMapEntry();
-        eventStartDateFilter.setColumnName("eventDate");
-        eventStartDateFilter.setOperator(">=");
-        eventStartDateFilter.setQueryParameterName("startDate");
-        eventStartDateFilter.setObject(versionDoc.getPropertyValue(
-                NuxeoMetadataConstants.NX_DC_CREATED));
-    
-         FilterMapEntry eventEndDateFilter = new FilterMapEntry();
-        eventEndDateFilter.setColumnName("eventDate");
-        eventEndDateFilter.setOperator("<=");
-        eventEndDateFilter.setQueryParameterName("endDate");
-        eventEndDateFilter.setObject(versionDoc.getPropertyValue(
-                NuxeoMetadataConstants.NX_DC_MODIFIED));
-    
-        Map<String, FilterMapEntry> filterMap = new HashMap<String, FilterMapEntry>();
-        filterMap.put("eventId", eventIdFilter);
-        // filterMap.put("eventStartDate", eventStartDateFilter);
-        // filterMap.put("eventEndDate", eventEndDateFilter);
-    
-        List<LogEntry> logEntriesFiltered = reader.getLogEntriesFor(
-                currentDoc.getId(), filterMap, true);
-    
-        lastComment = "size=" + logEntriesFiltered.size();
-    
-        StringBuilder queryStr = new StringBuilder();
-        queryStr.append(" FROM LogEntry log WHERE log.docUUID=:uuid ");
-        queryStr.append(" AND log.eventId =:eventId ");
-        queryStr.append(" AND log.eventDate >=:startDate ");
-        queryStr.append(" AND log.eventDate <=:endDate ");
-    
-        return lastComment;
-    }*/
+    public int countSelectedVersions() {
+        List<DocumentModel> currentVersionSelection = documentsListsManager.getWorkingList(
+                DocumentsListsManager.CURRENT_VERSION_SELECTION);
+        if (currentVersionSelection != null) {
+            return currentVersionSelection.size();
+        }
+        return 0;
+    }
+
+    public void saveCheckinComments() {
+        if (versions != null && !versions.isEmpty()) {
+            try {
+                for (VersionModel version : versions) {
+
+                    DocumentModel versionDoc = documentManager.getDocument(
+                            new IdRef(version.getId()));
+
+                    String previousComment = versionDoc.getCheckinComment();
+
+                    EloraDocumentHelper.updateCheckinComment(versionDoc,
+                            version.getDescription());
+
+                    // Nuxeo Event
+                    String comment = "'" + previousComment + "' => '"
+                            + version.getDescription() + "'";
+                    EloraEventHelper.fireEvent(
+                            EloraEventNames.ELORA_VERSION_COMMENT_CHANGED_EVENT,
+                            versionDoc, comment);
+                }
+
+                facesMessages.add(StatusMessage.Severity.INFO, messages.get(
+                        "eloraplm.message.success.history.changeCheckinComments"));
+            } catch (EloraException e) {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.history.changeCheckinComments"));
+            }
+        }
+    }
 
 }

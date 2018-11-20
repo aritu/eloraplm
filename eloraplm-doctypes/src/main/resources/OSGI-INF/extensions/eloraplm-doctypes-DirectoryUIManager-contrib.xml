@@ -4,22 +4,22 @@
 
   <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
 
-    <directory layout="vocabulary" sortField="ordering" name="elora_cadClassLevel1" />
-    <directory layout="subtopic_vocabulary" sortField="ordering" name="elora_cadClassLevel2" />
-    <directory layout="subtopic_vocabulary" sortField="ordering" name="elora_cadClassLevel3" />
-    <directory layout="subtopic_vocabulary" sortField="parent" name="elora_cadClassHierarchical" />
+    <directory name="elora_cadType" layout="vocabulary" sortField="ordering" />
+    
+    <directory name="elora_cadClassLevel1" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_cadClassLevel2" layout="cadClassLevel2_vocabulary" sortField="ordering" />
+    <directory name="elora_cadClassLevel3" layout="cadClassLevel3_vocabulary" sortField="ordering" />
+    <directory name="elora_cadClassHierarchical" layout="cadClassHierarchical_vocabulary" sortField="parent" />
+    
+    <directory name="elora_priority" layout="vocabulary" sortField="ordering" />
 
-    <directory layout="vocabulary" sortField="ordering" name="elora_erpCustomers">
-    </directory>
+    <directory layout="vocabulary" sortField="ordering" name="elora_erpCustomers" />
+    <directory layout="vocabulary" sortField="ordering" name="elora_erpManufacturers" />
 
-    <directory layout="vocabulary" sortField="ordering" name="elora_erpManufacturers">
-    </directory>
+<!--     <directory layout="vocabulary" sortField="ordering" name="elora_erpSuppliers" /> -->
 
-<!--     <directory layout="vocabulary" sortField="ordering" name="elora_erpSuppliers"> -->
-<!--     </directory> -->
-
-    <directory layout="vocabulary" sortField="ordering" name="elora_partaker">
-    </directory>
+    <directory layout="vocabulary" sortField="ordering" name="elora_partaker" />
+    <directory layout="vocabulary" sortField="ordering" name="elora_projectType" />
 
   </extension>
 

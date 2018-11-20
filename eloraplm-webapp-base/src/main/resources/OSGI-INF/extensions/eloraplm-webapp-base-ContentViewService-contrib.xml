@@ -1,10 +1,13 @@
 <?xml version="1.0"?>
 
 <component name="com.aritu.eloraplm.webapp.base.ContentViewService.contrib">
+    <require>org.nuxeo.ecm.webapp.contentview.contrib</require>
+    <require>org.nuxeo.platform.audit.contentView.contrib</require>
 
   <extension target="org.nuxeo.ecm.platform.ui.web.ContentViewService"
     point="contentViews">
 
+    <!-- DOCUMENT CONTENT -->
     <contentView name="document_content">
 
       <title>label.contentview.document_content</title>
@@ -25,24 +28,27 @@
             <field schema="elora_advanced_search" name="modified_min" />
             <field schema="elora_advanced_search" name="modified_max" />
           </predicate>
-          <predicate parameter="elo:reference" operator="FULLTEXT">
+          <predicate parameter="elo:reference" operator="ILIKE">
             <field schema="elora_advanced_search" name="reference" />
           </predicate>
+          <predicate parameter="ecm:currentLifeCycleState" operator="=">
+            <field schema="elora_advanced_search" name="currentLifeCycleState" />
+          </predicate>
+          <predicate parameter="dc:lastContributor" operator="=">
+            <field schema="elora_advanced_search" name="lastContributor" />
+          </predicate>
           <fixedPart>
-            ecm:parentId = ? AND ecm:isCheckedInVersion = 0 AND
-            ecm:mixinType !=
-            'HiddenInNavigation' AND ecm:currentLifeCycleState
-            != 'deleted'
+            ecm:parentId = ? AND ecm:isVersion = 0
+            AND ecm:mixinType != 'HiddenInNavigation'
+            AND ecm:currentLifeCycleState != 'deleted' 
           </fixedPart>
         </whereClause>
         <parameter>#{currentDocument.id}</parameter>
-        <sort column="elo:reference, dc:title" ascending="true" />
+        <sort column="dc:modified" ascending="false" />
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
 
-      <!-- <searchLayout name="document_content_filter"
-        filterDisplayType="quick" /> -->
-      <searchLayout name="document_content_filter" />
+      <searchLayout name="elora_document_content_filter" />
       <showFilterForm>true</showFilterForm>
 
       <showPageSizeSelector>true</showPageSizeSelector>
@@ -67,7 +73,10 @@
       <actions category="CURRENT_SELECTION_LIST" />
 
     </contentView>
-                  
+
+
+
+    <!-- ELORAPLM LINK CONTENT -->
     <contentView name="eloraplm_link_content">
 
       <title>eloraplm.label.contentview.link_content</title>
@@ -88,24 +97,53 @@
             <field schema="elora_advanced_search" name="modified_min" />
             <field schema="elora_advanced_search" name="modified_max" />
           </predicate>
-          <predicate parameter="elo:reference" operator="FULLTEXT">
+          <predicate parameter="elo:reference" operator="ILIKE">
             <field schema="elora_advanced_search" name="reference" />
           </predicate>
           <predicate parameter="ecm:primaryType" operator="=">
             <field schema="elora_advanced_search" name="primaryType" />
           </predicate>
+          <predicate parameter="ecm:currentLifeCycleState" operator="=">
+            <field schema="elora_advanced_search" name="currentLifeCycleState" />
+          </predicate>
           <fixedPart>
             ecm:uuid IN (?)
           </fixedPart>
         </whereClause>
-        <parameter>#{eloraLinks.getLinksWss()}</parameter>
-        <sort ascending="true" column="dc:title"/>
+        <parameter>#{eloraLinks.getLinks()}</parameter>
+        <sort ascending="false" column="dc:created"/>
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
 
-      <!-- <searchLayout name="eloraplm_link_content_filter"
-        filterDisplayType="quick" /> -->
       <searchLayout name="eloraplm_link_content_filter" />
+      <showFilterForm>true</showFilterForm>
+
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+     
+      <!-- disable cache for this content view -->
+      <cacheSize>0</cacheSize>
+      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+
+      <resultLayouts>
+        <layout iconPath="/icons/document_listing_icon.png" name="link_listing_table" showCSVExport="true" showPDFExport="false" title="link_listing_table" translateTitle="true"/>
+      </resultLayouts>
+
+    </contentView>
+    
+    <contentView name="DOCUMENT_HISTORY">
+
+      <title>label.contentview.document.history</title>
+      <translateTitle>true</translateTitle>
+      <showTitle>true</showTitle>
+
+      <pageProvider name="FULL_DOCUMENT_HISTORY_PROVIDER">
+        <property name="coreSession">#{documentManager}</property>
+        <property name="generateUIComments">true</property>
+        <parameter>#{currentDocument.versionSeriesId}</parameter>
+      </pageProvider>
+
+      <searchLayout filterDisplayType="quick" name="basicauditsearch"/>
       <showFilterForm>true</showFilterForm>
 
       <showPageSizeSelector>true</showPageSizeSelector>
@@ -115,15 +153,15 @@
         <event>documentCreated</event>
         <event>documentChildrenChanged</event>
       </refresh>
-      <cacheSize>10</cacheSize>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+      <cacheSize>0</cacheSize>
+      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.versionSeriesId}</cacheKey>
 
       <resultLayouts>
-        <layout iconPath="/icons/document_listing_icon.png" name="link_listing_table" showCSVExport="true" showPDFExport="false" title="history_listing" translateTitle="true"/>
+        <layout iconPath="/icons/document_listing_icon.png" name="history_listing" showCSVExport="true" showPDFExport="false" title="history_listing" translateTitle="true"/>
       </resultLayouts>
 
     </contentView>
     
- </extension>
+  </extension>
 
 </component>

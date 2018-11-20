@@ -13,6 +13,7 @@
  */
 package com.aritu.eloraplm.config.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,4 +74,53 @@ public class EloraConfigTable {
     public Collection<EloraConfigRow> getValues() {
         return rows.values();
     }
+
+    /**
+     * This method returns a list with the distinct values that the specified
+     * property has in this configuration table. propertyName has in this
+     * configuration.
+     *
+     * @param propertyName
+     * @return
+     */
+    public ArrayList<String> extractConfigTablePropertyValuesAsList(
+            String propertyName) {
+
+        ArrayList<String> list = new ArrayList<String>();
+
+        for (EloraConfigRow configRow : getValues()) {
+            if (configRow.getProperty(propertyName) != null) {
+                String rowPropertyValue = configRow.getProperty(
+                        propertyName).toString();
+                if (!list.contains(rowPropertyValue)) {
+                    list.add(rowPropertyValue);
+                }
+            }
+        }
+        return list;
+    }
+
+    public HashMap<String, String> extractConfigTablePropertyValuesAsMap(
+            String keyPropertyName, String valuePropertyName) {
+
+        HashMap<String, String> map = new HashMap<String, String>();
+
+        for (EloraConfigRow configRow : getValues()) {
+            if (configRow.getProperty(keyPropertyName) != null) {
+                String keyPropertyValue = configRow.getProperty(
+                        keyPropertyName).toString();
+
+                if (configRow.getProperty(valuePropertyName) != null) {
+                    String valuePropertyValue = configRow.getProperty(
+                            valuePropertyName).toString();
+
+                    if (!map.containsKey(keyPropertyValue)) {
+                        map.put(keyPropertyValue, valuePropertyValue);
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
 }

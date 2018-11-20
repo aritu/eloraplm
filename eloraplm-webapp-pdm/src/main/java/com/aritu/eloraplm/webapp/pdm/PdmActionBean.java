@@ -15,6 +15,8 @@
 package com.aritu.eloraplm.webapp.pdm;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -23,6 +25,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -30,16 +33,35 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.impl.VersionModelImpl;
+import org.nuxeo.ecm.platform.actions.Action;
 import org.nuxeo.ecm.platform.relations.api.RelationManager;
+import org.nuxeo.ecm.platform.relations.api.Resource;
+import org.nuxeo.ecm.platform.relations.api.Statement;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
+import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.webapp.helpers.EventManager;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
+import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
+import com.aritu.eloraplm.checkin.api.CheckinManager;
+import com.aritu.eloraplm.config.util.EloraConfig;
+import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
+import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
+import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraEventHelper;
+import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
+import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
+import com.aritu.eloraplm.exceptions.DocumentAlreadyLockedException;
+import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
+import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 
@@ -49,7 +71,18 @@ public class PdmActionBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String CHECKOUT_SWITCH_CHILDREN_OPTION_AS_STORED = "AsStored";
+
+    private static final String CHECKOUT_SWITCH_CHILDREN_OPTION_LATEST_VERSIONS = "LatestVersions";
+
+    private static final String CHECKOUT_SWITCH_CHILDREN_OPTION_LATEST_RELEASED = "LatestReleased";
+
+    private static final String CHECKOUT_SWITCH_CHILDREN_OPTION_WORKING_COPIES = "WorkingCopies";
+
     private static final Log log = LogFactory.getLog(PdmActionBean.class);
+
+    @In(create = true)
+    protected transient WebActions webActions;
 
     @Context
     protected RelationManager relationManager;
@@ -69,89 +102,87 @@ public class PdmActionBean implements Serializable {
     @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
 
-    protected EloraVersionLabelService eloraVersionLabelService = Framework.getService(EloraVersionLabelService.class);
+    protected EloraVersionLabelService eloraVersionLabelService = Framework.getService(
+            EloraVersionLabelService.class);
 
-    public void checkIn() throws EloraException {
+    private String checkinComment;
+
+    public String getCheckinComment() {
+        return checkinComment;
+    }
+
+    public void setCheckinComment(String checkinComment) {
+        this.checkinComment = checkinComment;
+    }
+
+    public void checkIn(DocumentModel doc) throws EloraException {
         String logInitMsg = "[checkIn] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
-
+        CheckinManager checkinManager = Framework.getService(
+                CheckinManager.class);
         try {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
 
-            DocumentModel currentDoc = navigationContext.getCurrentDocument();
-            boolean isProxy = currentDoc.isProxy();
-
-            // We always get the working copy because it is possible to execute
-            // checkin from a proxy document and we need wc to get all its
-            // relations
-
-            DocumentModel doc = null;
-            if (isProxy) {
-                doc = documentManager.getWorkingCopy(currentDoc.getRef());
-            } else {
-                doc = currentDoc;
+            if (doc.isImmutable()) {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.pdm.checkinNotAllowed"));
+                throw new EloraException("Cannot checkin a version");
             }
-
-            // TODO: ¿Hay que mirar los permisos del usuario aquí?
-            // Check if it is locked
-            if (!doc.isLocked()) {
+            try {
+                doc = checkinManager.checkinDocument(doc, checkinComment, true);
+            } catch (CheckinNotAllowedException e) {
                 facesMessages.add(StatusMessage.Severity.ERROR,
-                        messages.get("message.error.checkin.notLocked"));
-                return;
+                        messages.get(
+                                "eloraplm.message.error.pdm.checkinNotAllowed"),
+                        e.getErrorDocument().getPropertyValue(
+                                EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                        e.getErrorDocument().getTitle());
+                throw new EloraException(e.getMessage());
+            } catch (DocumentNotCheckedOutException e) {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.pdm.documentNotCheckedOut"));
+                throw new EloraException(e.getMessage());
+
+            } catch (BomCharacteristicsValidatorException e) {
+                facesMessages.add(StatusMessage.Severity.ERROR,
+                        messages.get(
+                                "eloraplm.message.error.pdm.characteristicsRequired"),
+                        e.getDocument().getPropertyValue(
+                                EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                        e.getDocument().getTitle());
+                throw new EloraException(e.getMessage());
             }
-            // Check if it is checked out, or else, do checkout
-            EloraDocumentHelper.checkOutDocument(doc);
+            navigationContext.invalidateCurrentDocument();
 
-            String checkinComment = "Updated and checked in from Elora UI.";
-            EloraDocumentHelper.checkInDocument(
-                    EloraConfigHelper.getReleasedLifecycleStatesConfig(),
-                    documentManager, eloraVersionLabelService, doc,
-                    checkinComment);
+            // Seam Event
+            Events.instance().raiseEvent(PdmEventNames.PDM_CHECKED_IN_EVENT,
+                    doc);
 
-            // Update viewer before save
-            // Blob viewerBlob = ViewerPdfUpdater.createViewer(doc);
-            // if (viewerBlob != null) {
-            // EloraDocumentHelper.addViewerBlob(doc, viewerBlob);
-            // }
-
-            if (isProxy) {
-                // If checkin is executed from a proxy we save wc document
-                // (because we checked in wc) but we wan't to refresh current
-                // document (proxy) to see last changes
-                doc = documentManager.saveDocument(doc);
-                documentManager.save();
-                navigationContext.invalidateCurrentDocument();
-            } else {
-                // If checkin is executed from wc is enough to save current
-                // document because it coincides (wc == currentDoc)
-                navigationContext.saveCurrentDocument();
+            // Nuxeo Event
+            String comment = doc.getVersionLabel();
+            if (checkinComment != null) {
+                comment += " " + checkinComment;
             }
-
-            // Duplicate relations from doc to docLastVersion
-            EloraRelationHelper.copyRelationsToLastVersion(doc,
-                    eloraDocumentRelationManager, documentManager);
-
-            // Unlock the document
-            if (doc.isLocked()) {
-                doc.removeLock();
-            }
+            EloraEventHelper.fireEvent(PdmEventNames.PDM_CHECKED_IN_EVENT, doc,
+                    comment);
 
             facesMessages.add(StatusMessage.Severity.INFO,
-                    messages.get("message.checkin.checkinSuccess"));
-
+                    messages.get("eloraplm.message.success.checkin"));
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(e.getMessage()));
+                    messages.get("eloraplm.message.error.checkin"));
             TransactionHelper.setTransactionRollbackOnly();
             navigationContext.invalidateCurrentDocument();
         } catch (Exception e) {
-            log.error(logInitMsg + "Uncontrolled exception: "
-                    + e.getClass().getName() + ". " + e.getMessage(), e);
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
             facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(e.getMessage()));
+                    messages.get("eloraplm.message.error.checkin"));
             TransactionHelper.setTransactionRollbackOnly();
             navigationContext.invalidateCurrentDocument();
         } finally {
@@ -160,50 +191,248 @@ public class PdmActionBean implements Serializable {
         }
     }
 
-    public String undoCheckout() {
+    public void undoCheckout(DocumentModel doc) {
         String logInitMsg = "[undoCheckout] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
 
         try {
-            DocumentModel doc = navigationContext.getCurrentDocument();
-            VersionModel version = new VersionModelImpl();
-            version.setId(EloraDocumentHelper.getLatestVersion(doc,
-                    documentManager).getId());
+            TransactionHelper.commitOrRollbackTransaction();
+            TransactionHelper.startTransaction();
 
-            DocumentModel restoredDoc = EloraDocumentHelper.restoreToVersion(
-                    doc, version, eloraDocumentRelationManager, documentManager);
+            if (doc.isImmutable()) {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.pdm.undoCheckoutNotAllowed"));
+                throw new EloraException("Cannot checkin a version");
+            }
+
+            VersionModel version = new VersionModelImpl();
+            version.setId(EloraDocumentHelper.getLatestVersion(doc).getId());
+
+            // We have to obtain current tab actions before restoring the
+            // document
+            Action currentTabAction = webActions.getCurrentTabAction();
+            Action currentSubTabAction = webActions.getCurrentSubTabAction();
+
+            doc = EloraDocumentHelper.restoreWorkingCopyToVersion(doc, version,
+                    eloraDocumentRelationManager, documentManager);
 
             // TODO: Mirar en que nos afectan los eventos de abajo
             // same as edit basically
             // XXX AT: do edit events need to be sent?
-            EventManager.raiseEventsOnDocumentChange(restoredDoc);
+            EventManager.raiseEventsOnDocumentChange(doc);
 
+            if (doc.isLocked()) {
+                doc.removeLock();
+            }
+
+            resetTabList(currentTabAction, currentSubTabAction);
             navigationContext.invalidateCurrentDocument();
 
-            // We don't return to restoredDoc because if we are in a proxy it
-            // navigates to its source
-            return navigationContext.navigateToDocument(
-                    navigationContext.getCurrentDocument(), "after-edit");
+            // Seam event
+            Events.instance().raiseEvent(
+                    PdmEventNames.PDM_CHECKOUT_UNDONE_EVENT, doc);
+
+            // Nuxeo Event
+            String comment = doc.getVersionLabel();
+            EloraEventHelper.fireEvent(PdmEventNames.PDM_CHECKOUT_UNDONE_EVENT,
+                    doc, comment);
+
+            facesMessages.add(StatusMessage.Severity.INFO,
+                    messages.get("eloraplm.message.success.undoCheckout"));
+            log.info("Document |" + doc.getId() + "| has been unchecked out.");
 
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(e.getMessage()));
+                    messages.get("eloraplm.message.error.undoCheckout"));
             TransactionHelper.setTransactionRollbackOnly();
             navigationContext.invalidateCurrentDocument();
         } catch (Exception e) {
-            log.error(logInitMsg + "Uncontrolled exception: "
-                    + e.getClass().getName() + ". " + e.getMessage(), e);
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
             facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(e.getMessage()));
+                    messages.get("eloraplm.message.error.undoCheckout"));
             TransactionHelper.setTransactionRollbackOnly();
             navigationContext.invalidateCurrentDocument();
         } finally {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
         }
-        return logInitMsg;
+    }
+
+    public void checkOut(DocumentModel doc) {
+        checkOut(doc, true);
+    }
+
+    public void checkOut(DocumentModel doc, boolean handleCharacteristics) {
+        String logInitMsg = "[checkOut] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- with handleCharacteristics = |"
+                + handleCharacteristics + "|");
+
+        try {
+            TransactionHelper.commitOrRollbackTransaction();
+            TransactionHelper.startTransaction();
+
+            if (doc.isImmutable()) {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.pdm.checkoutNotAllowed"));
+            }
+            DocumentModel wcDoc = getWcDoc(doc);
+
+            wcDoc = EloraDocumentHelper.lockDocument(wcDoc);
+            wcDoc = EloraDocumentHelper.checkOutDocument(wcDoc);
+
+            switchRelatedChildren(wcDoc);
+
+            // if handleCharacteristics is true and the document may have
+            // characteristics
+            if (handleCharacteristics && EloraDocumentHelper.checkFilter(wcDoc,
+                    BomCharacteristicsConstants.IS_DOC_WITH_CHARAC_FILTER_ID)) {
+                BomCharacteristicsHelper.loadCharacteristicMasters(wcDoc);
+            }
+
+            // We set the document dirty to update lastContributor and modified
+            wcDoc = EloraDocumentHelper.setDocumentDirty(wcDoc);
+
+            resetTabList();
+            navigationContext.invalidateCurrentDocument();
+
+            // Seam event
+            Events.instance().raiseEvent(PdmEventNames.PDM_CHECKED_OUT_EVENT,
+                    doc);
+
+            // Nuxeo Event
+            String comment = wcDoc.getVersionLabel();
+            EloraEventHelper.fireEvent(PdmEventNames.PDM_CHECKED_OUT_EVENT,
+                    wcDoc, comment);
+
+            facesMessages.add(StatusMessage.Severity.INFO,
+                    messages.get("eloraplm.message.success.checkout"));
+            log.info("Document |" + wcDoc.getId() + "| has been checked out.");
+
+        } catch (DocumentAlreadyLockedException
+                | DocumentInUnlockableStateException | EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("eloraplm.message.error.checkout"));
+            TransactionHelper.setTransactionRollbackOnly();
+            navigationContext.invalidateCurrentDocument();
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("eloraplm.message.error.checkout"));
+            TransactionHelper.setTransactionRollbackOnly();
+            navigationContext.invalidateCurrentDocument();
+        } finally {
+            TransactionHelper.commitOrRollbackTransaction();
+            TransactionHelper.startTransaction();
+        }
+    }
+
+    private DocumentModel getWcDoc(DocumentModel doc) {
+        if (doc.isProxy()) {
+            doc = documentManager.getWorkingCopy(doc.getRef());
+        }
+        if (doc.isImmutable()) {
+            doc = documentManager.getWorkingCopy(doc.getRef());
+        }
+        return doc;
+    }
+
+    public void switchRelatedChildren(DocumentModel subjectWcDoc)
+            throws EloraException {
+
+        String logInitMsg = "[switchRelatedChildren] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        if (!subjectWcDoc.isCheckedOut()) {
+            throw new EloraException("Document is not checked out.");
+        }
+
+        List<Resource> switchablePredicates = new ArrayList<Resource>();
+        for (String predicateUri : EloraConfig.checkoutSwitchChildrenMap.keySet()) {
+            switchablePredicates.add(new ResourceImpl(predicateUri));
+        }
+
+        DocumentModel subjectRealDoc = EloraDocumentHelper.getBaseVersion(
+                subjectWcDoc);
+
+        List<Statement> switchableStatements = EloraRelationHelper.getStatements(
+                subjectRealDoc, switchablePredicates);
+        for (Statement stmt : switchableStatements) {
+
+            String switchChildrenOption = EloraConfig.checkoutSwitchChildrenMap.get(
+                    stmt.getPredicate().getUri());
+
+            EloraStatementInfo stmtInfo = new EloraStatementInfoImpl(stmt);
+            DocumentModel objectRealDoc = RelationHelper.getDocumentModel(
+                    stmtInfo.getObject(), documentManager);
+
+            if (!switchChildrenOption.equals(
+                    CHECKOUT_SWITCH_CHILDREN_OPTION_WORKING_COPIES)) {
+
+                DocumentModel objectWcDoc = documentManager.getWorkingCopy(
+                        objectRealDoc.getRef());
+                DocumentModel newObjectRealDoc = getSwitchedObjectVersion(
+                        objectRealDoc, objectWcDoc, switchChildrenOption);
+
+                eloraDocumentRelationManager.updateRelation(documentManager,
+                        subjectWcDoc, stmtInfo.getPredicate().getUri(),
+                        objectWcDoc, newObjectRealDoc);
+
+                log.trace(logInitMsg
+                        + "Switched relation's object for document |"
+                        + subjectWcDoc.getId() + "|, switch children option: |"
+                        + switchChildrenOption + "|. Old object: |"
+                        + objectWcDoc.getId() + "|. New object: |"
+                        + objectRealDoc.getId() + "|.");
+            }
+        }
+
+    }
+
+    private DocumentModel getSwitchedObjectVersion(DocumentModel objectRealDoc,
+            DocumentModel objectWcDoc, String switchChildrenOption)
+            throws EloraException {
+
+        switch (switchChildrenOption) {
+        case CHECKOUT_SWITCH_CHILDREN_OPTION_AS_STORED:
+            return objectRealDoc;
+        case CHECKOUT_SWITCH_CHILDREN_OPTION_LATEST_RELEASED:
+            return EloraDocumentHelper.getLatestReleasedVersionOrLatestVersion(
+                    objectRealDoc);
+        case CHECKOUT_SWITCH_CHILDREN_OPTION_LATEST_VERSIONS:
+            return documentManager.getDocument(
+                    EloraDocumentHelper.getBaseVersion(objectWcDoc).getRef());
+        default:
+            throw new EloraException("Incorrect switch children option.");
+        }
+    }
+
+    private void resetTabList() {
+        Action currentTabAction = webActions.getCurrentTabAction();
+        Action currentSubTabAction = webActions.getCurrentSubTabAction();
+        resetTabList(currentTabAction, currentSubTabAction);
+    }
+
+    private void resetTabList(Action currentTabAction,
+            Action currentSubTabAction) {
+        webActions.resetTabList();
+        List<Action> tabActionsList = webActions.getTabsList();
+        if (tabActionsList.contains(currentTabAction)) {
+            webActions.setCurrentTabAction(currentTabAction);
+            List<Action> subTabActionsList = webActions.getSubTabsList();
+            if (subTabActionsList.contains(currentSubTabAction)) {
+                webActions.setCurrentSubTabAction(currentSubTabAction);
+            }
+        }
     }
 
 }

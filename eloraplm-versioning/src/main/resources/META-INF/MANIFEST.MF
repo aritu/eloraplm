@@ -1,12 +1,13 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: eloraplm-versioning
+Bundle-SymbolicName: com.aritu.eloraplm.versioning
 Bundle-Name: eloraplm-versioning
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-versioning-VersioningSer
- vice-contrib.xml
+ vice-contrib.xml,OSGI-INF/extensions/eloraplm-versioning-ActionServic
+ e-contrib.xml
 

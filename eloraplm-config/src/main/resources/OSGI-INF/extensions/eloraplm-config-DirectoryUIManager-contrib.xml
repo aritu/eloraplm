@@ -13,6 +13,7 @@
     <directory name="elora_link_content_filter_types" layout="vocabulary" sortField="label" />
     <directory name="elora_units_of_measure" layout="vocabulary" sortField="id" />
     <directory name="elora_currency" layout="vocabulary" sortField="id" />
+    <directory name="elora_checkout_config" layout="elora_checkout_config" sortField="id" />
   </extension>
 
 </component>

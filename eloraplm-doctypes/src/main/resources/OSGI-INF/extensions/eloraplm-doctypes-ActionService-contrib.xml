@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.doctypes.ActionService.contrib">
-
+  <require>org.nuxeo.ecm.platform.actions</require>
+  
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
 
-    <filter append="true" id="create">
+    <filter id="create" append="true">
       <rule grant="true">
         <permission>AddChildren</permission>
         <type>Domain</type>
@@ -15,6 +16,8 @@
         <type>FolderOtherDoc</type>
         <type>StructProject</type>
         <type>Project</type>
+        <type>AdminRoot</type>
+        <type>DocumentationRoot</type>
       </rule>
     </filter>
     
@@ -30,6 +33,16 @@
         <type>StructProject</type>
         <type>Project</type>
       </rule>
+    </filter>
+    
+    <filter id="isNormalDocument">
+        <rule grant="true">
+            <type>File</type>
+            <type>Note</type>
+            <type>Audio</type>
+            <type>Video</type>
+            <type>Picture</type>
+        </rule>
     </filter>
     
     <filter id="isCadDocument">
@@ -54,9 +67,9 @@
           <type>CadDrawing</type>
         </rule>
     </filter>
-    
+
     <filter id="isCheckedOut">
-        <rule grant="false">
+        <rule grant="false"> 
             <condition>#{not currentDocument.isCheckedOut()}</condition>
         </rule>
     </filter>

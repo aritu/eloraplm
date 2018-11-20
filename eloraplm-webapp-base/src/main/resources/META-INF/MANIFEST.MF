@@ -4,14 +4,15 @@ Bundle-Name: eloraplm-webapp-base
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-webapp-base-ContentViewS
  ervice-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-WebLayout
  Manager-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-ActionSe
- rvice-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-PageProvid
- erService-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-Config
- urationService-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-W
- ebResources-contrib.xml
+ rvice-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-Configurat
+ ionService-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-WebRe
+ sources-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-TrashSer
+ vice-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-EventServic
+ eComponent-contrib.xml
 

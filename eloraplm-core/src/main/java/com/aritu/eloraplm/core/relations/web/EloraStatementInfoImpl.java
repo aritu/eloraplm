@@ -27,8 +27,8 @@ import com.aritu.eloraplm.constants.EloraRelationConstants;
  * @author aritu
  *
  */
-public class EloraStatementInfoImpl extends StatementInfoImpl implements
-        EloraStatementInfo {
+public class EloraStatementInfoImpl extends StatementInfoImpl
+        implements EloraStatementInfo {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,36 +48,17 @@ public class EloraStatementInfoImpl extends StatementInfoImpl implements
     }
 
     @Override
-    public int getQuantity() {
+    public String getQuantity() {
         String quantity = null;
         Node node = statement.getProperty(EloraRelationConstants.QUANTITY);
         if (node != null && node.isLiteral()) {
             quantity = ((Literal) node).getValue();
-            if (quantity != null) {
-                try {
-                    return Integer.parseInt(quantity);
-                } catch (NumberFormatException e) {
-                    // TODO Logak jarri
-                }
-            }
         }
-        return 1;
+        return quantity;
     }
 
     @Override
-    public boolean getIsObjectWc() {
-        String isObjectWc = "true";
-        Node node = statement.getProperty(EloraRelationConstants.IS_OBJECT_WC);
-        if (node != null && node.isLiteral()) {
-            if (isObjectWc != null) {
-                isObjectWc = ((Literal) node).getValue();
-            }
-        }
-        return Boolean.parseBoolean(isObjectWc);
-    }
-
-    @Override
-    public int getOrdering() {
+    public Integer getOrdering() {
         String ordering = null;
         Node node = statement.getProperty(EloraRelationConstants.ORDERING);
         if (node != null && node.isLiteral()) {
@@ -90,13 +71,14 @@ public class EloraStatementInfoImpl extends StatementInfoImpl implements
                 }
             }
         }
-        return 0;
+        return null;
     }
 
     @Override
-    public int getDirectorOrdering() {
+    public Integer getDirectorOrdering() {
         String directorOrdering = null;
-        Node node = statement.getProperty(EloraRelationConstants.DIRECTOR_ORDERING);
+        Node node = statement.getProperty(
+                EloraRelationConstants.DIRECTOR_ORDERING);
         if (node != null && node.isLiteral()) {
             directorOrdering = ((Literal) node).getValue();
             if (directorOrdering != null) {
@@ -107,6 +89,24 @@ public class EloraStatementInfoImpl extends StatementInfoImpl implements
                 }
             }
         }
-        return 0;
+        return null;
+    }
+
+    @Override
+    public Integer getViewerOrdering() {
+        String viewerOrdering = null;
+        Node node = statement.getProperty(
+                EloraRelationConstants.VIEWER_ORDERING);
+        if (node != null && node.isLiteral()) {
+            viewerOrdering = ((Literal) node).getValue();
+            if (viewerOrdering != null) {
+                try {
+                    return Integer.parseInt(viewerOrdering);
+                } catch (NumberFormatException e) {
+                    // TODO Logak jarri
+                }
+            }
+        }
+        return null;
     }
 }

@@ -33,7 +33,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.platform.relations.api.Resource;
-import org.nuxeo.ecm.platform.relations.api.impl.QNameResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
@@ -132,10 +132,10 @@ public class WorkspaceBomActionsBean implements Serializable {
         }
 
         List<Resource> predicates = new ArrayList<Resource>();
-        predicates.add(new QNameResourceImpl(
-                EloraRelationConstants.BOM_HAS_DOCUMENT, ""));
-        predicates.add(new QNameResourceImpl(
-                EloraRelationConstants.BOM_HAS_CAD_DOCUMENT, ""));
+        predicates.add(
+                new ResourceImpl(EloraRelationConstants.BOM_HAS_DOCUMENT));
+        predicates.add(
+                new ResourceImpl(EloraRelationConstants.BOM_HAS_CAD_DOCUMENT));
 
         DocumentModelList relatedDocuments = new DocumentModelListImpl();
 

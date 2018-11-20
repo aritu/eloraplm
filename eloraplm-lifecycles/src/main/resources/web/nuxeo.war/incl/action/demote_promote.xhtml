@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <script type="text/javascript">
+
+    jQuery(document).ready(function() {
+        resizeLifecycleTransitionsWindow();
+    });
+    
+    function initLifecycleTransitionScreen(data) {
+        if(data.status == "success") {
+            resizeLifecycleTransitionsWindow();
+        }
+    }
+
+    function resizeLifecycleTransitionsWindow() {
+        jQuery('#fancybox-wrap').css('width', 'auto');
+        jQuery('#fancybox-content').css('width', 'auto');
+        jQuery('#fancybox-content .content').css('height', 'auto');
+        jQuery('#fancybox-content .content').css('max-height', jQuery(window).height() - 200 + 'px');
+        jQuery.fancybox.resize();
+        jQuery.fancybox.center();
+    }
+    
+    </script>
+    
+    <h3>
+        <h:outputText value="#{messages[windowTitle]}" />
+    </h3>
+    
+    <h:panelGroup styleClass="content" layout="block">
+    
+        <h:form id="demote_promote_main">
+            
+            <h:panelGrid columns="4" columnClasses="labelColumn,fieldColumn,labelColumn,fieldColumn">
+                <h:outputLabel for="transition" value="#{messages['eloraplm.label.lifecycles.transition']}" styleClass="required" />
+                <h:panelGroup>
+                    <h:selectOneMenu id="transition" value="#{lifecycleTransitionActions.transition}" required="true">
+                        <f:selectItem itemLabel="" itemValue="#{null}" />
+                        <f:selectItems value="#{lifecycleTransitionActions.transitions}" var="item" itemLabel="#{messages[item]}" />
+                        <f:ajax
+                            listener="#{lifecycleTransitionActions.init()}"
+                            render="previousScreen :#{component.namingContainer.parent.namingContainer.clientId}:demote_promote_buttons"
+                            onevent="initLifecycleTransitionScreen" />
+                    </h:selectOneMenu>
+                    <h:message for="transition" class="errorMessage" />
+                </h:panelGroup>
+                <h:outputLabel for="lifecycle" value="#{messages['eloraplm.label.lifecycle']}" />
+                <h:outputText id="lifecycle" value="#{messages[currentDocument.getLifeCyclePolicy()]}" />
+            </h:panelGrid>
+            
+            <h:panelGroup id="previousScreen" layout="block">
+                <ui:include src="#{lifecycleTransitionActions.getPreviousScreen()}">
+                </ui:include>
+            </h:panelGroup>
+            
+          </h:form>
+          
+    </h:panelGroup>
+
+    <h:form id="demote_promote_buttons">
+        <div class="buttonsGadget">
+
+            <h:commandButton id="executeButton"
+                value="#{messages[buttonLabel]}"
+                styleClass="button"
+                action="#{lifecycleTransitionActions.execute}"
+                disabled="#{not lifecycleTransitionActions.canBeExecuted()}">
+            </h:commandButton>
+
+            <h:commandButton value="#{messages['command.cancel']}"
+                styleClass="button">
+                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
+            </h:commandButton>
+
+        </div>
+    </h:form>
+
+</ui:composition>

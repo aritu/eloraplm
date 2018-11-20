@@ -1,6 +1,5 @@
-id,label,obsolete
-BasicDocument,label.eloras.facettype.basicdocument,0
-CadDocument,label.eloras.facettype.caddocument,0
-BomDocument,label.eloras.facettype.bomdocument,0
-EloraWorkspace,label.eloras.facettype.eloraworkspace,0
-EloraDraft,label.eloras.facettype.eloradraft,0
+id,label,obsolete,ordering
+BasicDocument,label.eloras.facettype.basicdocument,0,10
+CadDocument,label.eloras.facettype.caddocument,0,20
+BomDocument,label.eloras.facettype.bomdocument,0,30
+EloraWorkspace,label.eloras.facettype.eloraworkspace,0,40

@@ -5,7 +5,13 @@ xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
 
   <xs:element name="sheetFormat" type="xs:string" />
   <xs:element name="scale" type="xs:string" />
-  <xs:element name="numberOfSheets" type="xs:double" />
+  <xs:element name="numberOfSheets">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+  </xs:element>
   <xs:element name="templateName" type="xs:string" />
 
 </xs:schema>

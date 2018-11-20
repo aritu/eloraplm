@@ -117,6 +117,7 @@
         Framework.login();
         RepositoryManager mgr = Framework.getService(RepositoryManager.class);
         Repository defaultRepository = mgr.getDefaultRepository();
+        
         CoreSession coreSession = CoreInstance.openCoreSession(defaultRepository.getName());
         UserProfileService userProfileService = Framework.getLocalService(UserProfileService.class);
         DocumentModel userProfileDoc = userProfileService.getUserProfileDocument(nuxeoUsername, coreSession);
@@ -131,6 +132,8 @@
         if (userLocale != null) {
             userLanguage = userLocale.getLanguage();
         }
+        
+        CoreInstance.closeCoreSession(coreSession);
       %>
 
       <p id="nuxeo_username" style="display:none;"><%= nuxeoUsername %></p>

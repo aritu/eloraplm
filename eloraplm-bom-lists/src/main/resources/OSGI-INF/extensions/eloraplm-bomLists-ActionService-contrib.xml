@@ -9,14 +9,7 @@
     
     <filter id="bomCompositionListTreeButtons">
         <rule grant="true">
-            <permission>Write</permission>
             <condition>#{webActions.currentTabId eq 'TAB_BOM_COMPOSITION' and webActions.currentSubTabId ne 'TAB_BOM_COMPOSITION_EBOM'}</condition>
-        </rule>
-        <rule grant="false">
-            <condition>#{currentDocument.isVersion()}</condition>
-            <condition>#{currentDocument.isProxy()}</condition>
-            <condition>#{!currentDocument.isLocked()}</condition>
-            <condition>#{currentDocumentLockDetails['document.locker'] ne currentUser}</condition>
         </rule>
     </filter>
     
@@ -38,15 +31,6 @@
       </properties>
     </action>
     
-    <action id="BtnRestoreBomListRelations" order="10" label="eloraplm.command.relations.restore" type="link" link="#{bomCompositionListTreeBean.restoreRelations(currentDocument, bomList.currentBomList)}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomCompositionListTreeButtons</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
     <action id="BtnAddBomListRelation" order="20" label="eloraplm.command.relation.add" type="fancybox" icon="">
       <category>TREETABLE_BUTTON</category>
       <filter-id>bomCompositionListTreeButtons</filter-id>
@@ -57,12 +41,12 @@
       </properties>
     </action>
     
-    <action id="BtnSaveBomList" order="30" label="command.save" type="link" link="#{bomCompositionListTreeBean.save(currentDocument, bomList.currentBomList)}" icon="">
+    <action id="BtnSaveBomList" order="30" label="command.save" type="link" link="#{bomCompositionListTreeBean.save(currentDocument, bomList.currentBomList, false)}" icon="">
       <category>TREETABLE_BUTTON</category>
       <filter-id>bomCompositionListTreeButtons</filter-id>
       <properties>
         <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
+        <property name="styleClass">button mainAction</property>
       </properties>
     </action>
     

@@ -1,0 +1,139 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+
+  <h3>
+    <h:outputText value="#{messages[title]}" />
+  </h3>
+ 
+
+  <h:form id="#{fancyboxFormId}">
+  
+    <p:blockUI block="resultPanel" widgetVar="resultPanelBlocker" animate="false" styleClass="opaqueBlockUI" />
+
+    <p:remoteCommand name="executeActionsAfterSelectionUpdate"
+                        process="@none"
+                        update="#{component.namingContainer.clientId}:resultPanel #{component.namingContainer.clientId}:buttonsPanel"
+                        oncomplete="PF('resultPanelBlocker').hide();"
+                        />
+
+   <h:outputScript>
+    PF('resultPanelBlocker').show();
+    updateTreetableForm_#{treeWidgetId}();
+   </h:outputScript>
+
+    <h:panelGroup id="resultPanel" styleClass="content" layout="block">
+      <!--  title -->
+      <h:panelGroup>
+        <h:outputLabel value="#{messages['eloraplm.label.cm.process']}:" />
+        <strong><h:outputText value="#{currentDocument.elo.reference} - #{currentDocument.title}" /></strong>
+      </h:panelGroup>
+      
+      <br/><br/>
+      <ui:fragment rendered="#{treeBean.selectedNodes == null or fn:length(treeBean.selectedNodes) == 0}">
+          <p class="errorMessage"><h:outputText value="#{messages['eloraplm.message.error.cm.editImpactedItems.emptyItemSelection']}" /></p>
+      </ui:fragment>
+      <ui:fragment rendered="#{treeBean.selectedNodes != null and fn:length(treeBean.selectedNodes) > 0}">
+          <!--  content -->
+          <h:panelGroup>
+            <a4j:outputPanel>
+                <table class="cmItemTable">
+                  <!-- ################### modifiable attribute selection ################### -->
+                  <tr>
+                    <td class="labelColumn">
+                          <strong><h:outputLabel value="#{messages['eloraplm.label.cm.modifiableAttribute']}:" /></strong>
+                    </td>
+                    <td class="fieldColumn">
+                      <h:panelGroup id="attributePanel">
+                           <h:selectOneListbox id="attributeSelection" size="1" value="#{treeBean.editAttribute}" style="min-width: 10em;" >
+                             <f:selectItem itemValue="#{null}" itemLabel="" />
+                             <f:selectItem itemValue = "action" itemLabel = "#{messages['eloraplm.label.cm.modifiableAttribute.action']}"/>
+                             <f:selectItem itemValue = "isManaged" itemLabel = "#{messages['eloraplm.label.cm.modifiableAttribute.isManaged']}"/>
+                             <f:selectItem itemValue = "comment" itemLabel = "#{messages['eloraplm.label.cm.modifiableAttribute.comment']}"/>
+                             
+                             <f:ajax event="change" execute="@this" render="labelPanel attributeValuePanel buttonsPanel"/>
+                           </h:selectOneListbox> 
+                      </h:panelGroup>
+                    </td>
+                  </tr>
+                  <!-- ################### attribute value ################### -->
+                  <tr>
+                    <td class="labelColumn">
+                      <h:panelGroup id="labelPanel">
+                        <ui:fragment rendered="#{treeBean.editAttribute != null and treeBean.editAttribute == 'action'}">
+                          <strong><h:outputLabel value="#{messages['eloraplm.label.cm.action']}:" /></strong>
+                        </ui:fragment>
+                        
+                        <ui:fragment rendered="#{treeBean.editAttribute != null and treeBean.editAttribute == 'isManaged'}">
+                          <strong><h:outputLabel value="#{messages['eloraplm.label.cm.modifiableAttribute.isManaged']}:" /></strong>
+                        </ui:fragment>
+                        
+                         <ui:fragment rendered="#{treeBean.editAttribute != null and treeBean.editAttribute == 'comment'}">
+                          <strong><h:outputLabel value="#{messages['eloraplm.label.cm.modifiableAttribute.comment']}:" /></strong>
+                        </ui:fragment>
+                        
+                        
+                      </h:panelGroup>
+                    </td>
+                    <td class="fieldColumn">
+                      <h:panelGroup id="attributeValuePanel">
+                      
+                         <!-- ################### action selection ################### -->
+                        <ui:fragment rendered="#{treeBean.editAttribute != null and treeBean.editAttribute == 'action'}">
+                          <nxl:widgetType name="selectOneDirectory" mode="edit"
+                            value="#{treeBean.editAction}" 
+                            directoryName="elora_cmActionImpacted" 
+                            localize="true" 
+                            displayIdAndLabel="false" 
+                            ordering="ordering" 
+                            style="min-width: 10em;"
+                            notDisplayDefaultOption="true"
+                            required="true">
+                           </nxl:widgetType>
+                        </ui:fragment>
+                        
+                        <!-- ################### isManaged selection ################### -->
+                        <ui:fragment rendered="#{treeBean.editAttribute != null and treeBean.editAttribute == 'isManaged'}">
+                          <nxl:widgetType mode="edit" name="checkbox" value="#{treeBean.editIsManaged}"/>
+                        </ui:fragment>
+                        
+                        
+                        <!-- ################### comment  ################### -->
+                        <ui:fragment rendered="#{treeBean.editAttribute != null and treeBean.editAttribute == 'comment'}">
+                           <nxl:widgetType name="textarea" mode="edit" value="#{treeBean.editComment}" /> 
+                        </ui:fragment>
+                        
+                      </h:panelGroup>
+                    </td>
+                  </tr>
+                </table>
+            </a4j:outputPanel>
+          </h:panelGroup>
+
+      </ui:fragment>
+    </h:panelGroup>
+    
+    <div class="buttonsGadget">
+      <h:panelGroup id="buttonsPanel">
+        <h:commandButton value="#{messages['command.edit']}"
+            styleClass="button"
+            action="#{treeBean.editImpactedItems}"
+            disabled="#{treeBean.selectedNodes == null or fn:length(treeBean.selectedNodes) == 0 or treeBean.editAttribute == null}">
+        </h:commandButton>
+      
+        <h:commandButton value="#{messages['command.cancel']}" styleClass="button" actionListener="#{treeBean.cancelEditImpactedItemsActionListener}">
+          <f:ajax execute="@this" onevent="jQuery.fancybox.close"/>
+        </h:commandButton>
+      </h:panelGroup>
+    </div>
+
+  </h:form>
+
+</ui:composition>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.integration.cm.OperationServiceComponent.contrib">
+
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
+        <operation class="com.aritu.eloraplm.integration.cm.restoperations.SetCmProcessAsManaged" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.cm.restoperations.GetCmProcessStructure" replace="true" />
+    </extension>
+    
+</component>

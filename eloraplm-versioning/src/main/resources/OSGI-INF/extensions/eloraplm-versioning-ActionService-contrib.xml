@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.versioning.ActionService.contrib">
+
+<extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+  
+    <filter id="isNotZeroVersion">
+      <rule grant="false">
+        <condition>#{eloraDocument.isZeroVersion(currentDocument.versionLabel)}</condition>
+      </rule>
+    </filter>
+    
+  </extension>
+  
+</component> 

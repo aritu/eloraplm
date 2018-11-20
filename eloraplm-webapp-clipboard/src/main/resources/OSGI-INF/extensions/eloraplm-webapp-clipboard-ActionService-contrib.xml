@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.webapp.clipboard.ActionService.contrib">
+  <require>org.nuxeo.ecm.platform.actions</require>
 
   <!-- Filters -->
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
@@ -84,22 +85,24 @@
     <!-- New CLIPBOARD_PASTE_AS_PROXY action. 
          This action will create a Proxy to each copied object, instead of pasting them.  
     -->
-    <action id="CLIPBOARD_PASTE_AS_PROXY" link="#{clipboardActions.pasteClipboardAsProxy}"
-      label="eloraplm.command.clipboard.pasteAsProxy" icon="" order="20">
-      <category>CURRENT_SELECTION_LIST</category>
-      <category>ORDERABLE_CURRENT_SELECTION_LIST</category>
-      <filter-id>canPasteFromClipboardAsProxy</filter-id>
-    </action>
+<!--     Disabled because we can't filter when it is displayed in a quick way -->
+<!--     <action id="CLIPBOARD_PASTE_AS_PROXY" link="#{clipboardActions.pasteClipboardAsProxy}" -->
+<!--       label="eloraplm.command.clipboard.pasteAsProxy" icon="" order="20"> -->
+<!--       <category>CURRENT_SELECTION_LIST</category> -->
+<!--       <category>ORDERABLE_CURRENT_SELECTION_LIST</category> -->
+<!--       <filter-id>canPasteFromClipboardAsProxy</filter-id> -->
+<!--     </action> -->
     
     <!-- New CLIPBOARD_PASTE_AS_DUPLICATE action. !!!FOR THE INSTANCE DISABLED!!!
          This action will create a duplicate of each copied object, instead of pasting them.  
     -->
-    <action id="CLIPBOARD_PASTE_AS_DUPLICATE" link="#{clipboardActions.pasteClipboardAsDuplicate}"
-      label="eloraplm.command.clipboard.pasteAsDuplicate" icon="" order="25" enabled="false">
-      <category>CURRENT_SELECTION_LIST</category>
-      <category>ORDERABLE_CURRENT_SELECTION_LIST</category>
-      <filter-id>canPasteFromClipboardAsDuplicate</filter-id>
-    </action>
+<!--     Disabled because we can't filter when it is displayed in a quick way -->
+<!--     <action id="CLIPBOARD_PASTE_AS_DUPLICATE" link="#{clipboardActions.pasteClipboardAsDuplicate}" -->
+<!--       label="eloraplm.command.clipboard.pasteAsDuplicate" icon="" order="25" enabled="false"> -->
+<!--       <category>CURRENT_SELECTION_LIST</category> -->
+<!--       <category>ORDERABLE_CURRENT_SELECTION_LIST</category> -->
+<!--       <filter-id>canPasteFromClipboardAsDuplicate</filter-id> -->
+<!--     </action> -->
     
     <!-- *********** Popup actions ***********-->
     

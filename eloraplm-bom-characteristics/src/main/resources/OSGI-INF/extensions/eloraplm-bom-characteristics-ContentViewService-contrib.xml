@@ -5,8 +5,8 @@
   <extension target="org.nuxeo.ecm.platform.ui.web.ContentViewService"
     point="contentViews">
 
-    <contentView name="bom_part_characteristics_content">
-      <title>label.contentview.bomcharac.bom_part_characteristics_content</title>
+    <contentView name="bom_part_characteristic_masters_content">
+      <title>label.contentview.bomcharac.bom_part_characteristic_masters_content</title>
       <translateTitle>true</translateTitle>
       <showTitle>false</showTitle>
       <coreQueryPageProvider>
@@ -14,32 +14,30 @@
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraAdvancedSearch">
           <fixedPart>
-            ecm:primaryType = 'BomPartCharacteristic'
-           <!--  AND ecm:isCheckedInVersion = 0 
-            AND ecm:mixinType != 'HiddenInNavigation' 
-            AND ecm:currentLifeCycleState != 'deleted' -->
+            ecm:primaryType = 'BomPartCharacteristicMaster'
           </fixedPart>
         </whereClause>
+        <sort column="bomcharcmas:classification" ascending="true" />
+        <sort column="bomcharcmas:order" ascending="true" />
         <sort column="dc:title" ascending="true" />
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
-      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}
-      </cacheKey>
+      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
       <cacheSize>10</cacheSize>
       <refresh>
         <event>documentChildrenChanged</event>
       </refresh>
       <resultLayouts>
-        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_part_characteristics_listing_ajax" 
+        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_part_characteristic_masters_listing_ajax" 
                 showCSVExport="true" showPDFExport="true" showSyndicationLinks="false" title="document_listing" 
                 translateTitle="true"/>
       </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
+      <selectionList>BOM_PART_CHARAC_MAST_CURRENT_SELECTION</selectionList>
       <actions category="CURRENT_SELECTION_LIST"/>
     </contentView>
     
-    <contentView name="bom_product_characteristics_content">
-      <title>label.contentview.bomcharac.bom_product_characteristics_content</title>
+    <contentView name="bom_product_characteristic_masters_content">
+      <title>label.contentview.bomcharac.bom_product_characteristic_masters_content</title>
       <translateTitle>true</translateTitle>
       <showTitle>false</showTitle>
       <coreQueryPageProvider>
@@ -47,32 +45,30 @@
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraAdvancedSearch">
           <fixedPart>
-            ecm:primaryType = 'BomProductCharacteristic'
-           <!--  AND ecm:isCheckedInVersion = 0 
-            AND ecm:mixinType != 'HiddenInNavigation' 
-            AND ecm:currentLifeCycleState != 'deleted' -->
+            ecm:primaryType = 'BomProductCharacteristicMaster'
           </fixedPart>
         </whereClause>
+        <sort column="bomcharcmas:classification" ascending="true" />
+        <sort column="bomcharcmas:order" ascending="true" />
         <sort column="dc:title" ascending="true" />
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
-      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}
-      </cacheKey>
+      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
       <cacheSize>10</cacheSize>
       <refresh>
         <event>documentChildrenChanged</event>
       </refresh>
       <resultLayouts>
-        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_product_characteristics_listing_ajax" 
+        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_product_characteristic_masters_listing_ajax" 
                 showCSVExport="true" showPDFExport="true" showSyndicationLinks="false" title="document_listing" 
                 translateTitle="true"/>
       </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
+      <selectionList>BOM_PRODUCT_CHARAC_MAST_CURRENT_SELECTION</selectionList>
       <actions category="CURRENT_SELECTION_LIST"/>
     </contentView>
 
-    <contentView name="bom_tool_characteristics_content">
-      <title>label.contentview.bomcharac.bom_tool_characteristics_content</title>
+    <contentView name="bom_tool_characteristic_masters_content">
+      <title>label.contentview.bomcharac.bom_tool_characteristic_masters_content</title>
       <translateTitle>true</translateTitle>
       <showTitle>false</showTitle>
       <coreQueryPageProvider>
@@ -80,32 +76,30 @@
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraAdvancedSearch">
           <fixedPart>
-            ecm:primaryType = 'BomToolCharacteristic'
-           <!--  AND ecm:isCheckedInVersion = 0 
-            AND ecm:mixinType != 'HiddenInNavigation' 
-            AND ecm:currentLifeCycleState != 'deleted' -->
+            ecm:primaryType = 'BomToolCharacteristicMaster'
           </fixedPart>
         </whereClause>
+        <sort column="bomcharcmas:classification" ascending="true" />
+        <sort column="bomcharcmas:order" ascending="true" />
         <sort column="dc:title" ascending="true" />
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
-      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}
-      </cacheKey>
+      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
       <cacheSize>10</cacheSize>
       <refresh>
         <event>documentChildrenChanged</event>
       </refresh>
       <resultLayouts>
-        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_tool_characteristics_listing_ajax" 
+        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_tool_characteristic_masters_listing_ajax" 
                 showCSVExport="true" showPDFExport="true" showSyndicationLinks="false" title="document_listing" 
                 translateTitle="true"/>
       </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
+      <selectionList>BOM_TOOL_CHARAC_MAST_CURRENT_SELECTION</selectionList>
       <actions category="CURRENT_SELECTION_LIST"/>
     </contentView>
     
-    <contentView name="bom_packaging_characteristics_content">
-      <title>label.contentview.bomcharac.bom_packaging_characteristics_content</title>
+    <contentView name="bom_packaging_characteristic_masters_content">
+      <title>label.contentview.bomcharac.bom_packaging_characteristic_masters_content</title>
       <translateTitle>true</translateTitle>
       <showTitle>false</showTitle>
       <coreQueryPageProvider>
@@ -113,32 +107,30 @@
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraAdvancedSearch">
           <fixedPart>
-            ecm:primaryType = 'BomPackagingCharacteristic'
-           <!--  AND ecm:isCheckedInVersion = 0 
-            AND ecm:mixinType != 'HiddenInNavigation' 
-            AND ecm:currentLifeCycleState != 'deleted' -->
+            ecm:primaryType = 'BomPackagingCharacteristicMaster'
           </fixedPart>
         </whereClause>
+        <sort column="bomcharcmas:classification" ascending="true" />
+        <sort column="bomcharcmas:order" ascending="true" />
         <sort column="dc:title" ascending="true" />
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
-      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}
-      </cacheKey>
+      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
       <cacheSize>10</cacheSize>
       <refresh>
         <event>documentChildrenChanged</event>
       </refresh>
       <resultLayouts>
-        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_packaging_characteristics_listing_ajax" 
+        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_packaging_characteristic_masters_listing_ajax" 
                 showCSVExport="true" showPDFExport="true" showSyndicationLinks="false" title="document_listing" 
                 translateTitle="true"/>
       </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
+      <selectionList>BOM_PACKAGING_CHARAC_MAST_CURRENT_SELECTION</selectionList>
       <actions category="CURRENT_SELECTION_LIST"/>
     </contentView>
     
-    <contentView name="bom_specification_characteristics_content">
-      <title>label.contentview.bomcharac.bom_specification_characteristics_content</title>
+    <contentView name="bom_specification_characteristic_masters_content">
+      <title>label.contentview.bomcharac.bom_specification_characteristic_masters_content</title>
       <translateTitle>true</translateTitle>
       <showTitle>false</showTitle>
       <coreQueryPageProvider>
@@ -146,27 +138,25 @@
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraAdvancedSearch">
           <fixedPart>
-            ecm:primaryType = 'BomSpecificationCharacteristic'
-           <!--  AND ecm:isCheckedInVersion = 0 
-            AND ecm:mixinType != 'HiddenInNavigation' 
-            AND ecm:currentLifeCycleState != 'deleted' -->
+            ecm:primaryType = 'BomSpecificationCharacteristicMaster'
           </fixedPart>
         </whereClause>
+        <sort column="bomcharcmas:classification" ascending="true" />
+        <sort column="bomcharcmas:order" ascending="true" />
         <sort column="dc:title" ascending="true" />
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
-      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}
-      </cacheKey>
+      <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
       <cacheSize>10</cacheSize>
       <refresh>
         <event>documentChildrenChanged</event>
       </refresh>
       <resultLayouts>
-        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_specification_characteristics_listing_ajax" 
+        <layout iconPath="/icons/document_listing_icon.png" name="document_bom_specification_characteristic_masters_listing_ajax" 
                 showCSVExport="true" showPDFExport="true" showSyndicationLinks="false" title="document_listing" 
                 translateTitle="true"/>
       </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
+      <selectionList>BOM_SPECIFICATION_CHARAC_MAST_CURRENT_SELECTION</selectionList>
       <actions category="CURRENT_SELECTION_LIST"/>
     </contentView>
     

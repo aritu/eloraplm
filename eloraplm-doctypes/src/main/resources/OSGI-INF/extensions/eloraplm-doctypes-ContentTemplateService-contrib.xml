@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.doctypes.ContentTemplateService.contrib">
-<!-- <require>eloraplm-change-management</require> -->
+  <require>org.nuxeo.ecm.platform.content.template.service.ContentTemplateService.defaultContrib</require>
+
   <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
   
     <factoryBinding name="DomainFactory" factoryName="SimpleTemplateFactory" targetType="Domain">
@@ -10,10 +11,10 @@
     <factoryBinding name="StructureRootFactory" factoryName="SimpleTemplateFactory" targetType="StructureRoot">
       <template>
         <templateItem typeName="StructArchivedWS" id="archivedWS" title="Archived workspaces" description="Archived Workspaces."/>
+        <templateItem typeName="StructChangeManagement" id="changeManagement" title="Archived Change Management" description="Archived Change Management."/>
+        <templateItem typeName="StructProject" id="projects" title="Archived Projects" description="Archived Projects."/>
         <templateItem typeName="StructCadDoc" id="documents" title="Documents" description="CAD documents."/>
         <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering BOMs."/>
-        <templateItem typeName="StructChangeManagement" id="changeManagement" title="Change Management" description="Change Management."/>
-        <templateItem typeName="StructProject" id="projects" title="Projects" description="Projects."/>
         <templateItem typeName="WorkspaceRoot" id="workspaces" title="Workspaces" description="Workspaces."/>
         <templateItem typeName="TempFolder" id="temp" title="Temp folder" description="Temporary files."/>
       </template>
@@ -22,9 +23,9 @@
     <factoryBinding name="CollaborationRootFactory" factoryName="SimpleTemplateFactory" targetType="CollaborationRoot">
       <template>
         <templateItem typeName="StructArchivedWS" id="archivedWS" title="Archived workspaces" description="Archived Workspaces."/>
+        <templateItem typeName="StructProject" id="projects" title="Archived Projects" description="Archived Projects."/>
         <templateItem typeName="StructCadDoc" id="documents" title="Documents" description="CAD documents."/>
         <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering BOMs."/>
-        <templateItem typeName="StructProject" id="projects" title="Projects" description="Projects."/>
         <templateItem typeName="WorkspaceRoot" id="workspaces" title="Workspaces" description="Workspaces."/>
         <templateItem typeName="TempFolder" id="temp" title="Temp folder" description="Temporary files."/>
       </template>

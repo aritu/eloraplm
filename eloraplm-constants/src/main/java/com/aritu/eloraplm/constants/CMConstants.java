@@ -42,17 +42,27 @@ public class CMConstants {
 
     public static final String ACTION_IGNORE = "id_ignore";
 
-    // MESSAGE TYPES
-    public static final String MSG_TYPE_WARNING_BOM = "warning_bom";
-
-    // FIELDS TRIGERRING REFRESH NODE ACTION
+    // FIELDS and ACTIONS TRIGERRING REFRESH NODE ACTION
     public static final String TRIGGER_FIELD_ACTION = "action";
 
     public static final String TRIGGER_FIELD_IS_MANAGED = "isManaged";
 
-    public static final String TRIGGER_FIELD_DEST_ITEM_REAL_UID = "destinationItemRealUid";
+    public static final String TRIGGER_FIELD_DESTINATION_ITEM_UID = "destinationItemUid";
 
-    // OTHER CONSTANTS
-    public static final String DEFAULT_SELECTED_KEY = "default_selected";
+    public static final String TRIGGER_ACTION_LOAD_DESTINATION_VERSIONS = "loadDestinationVersions";
+
+    // MODIFIABLE ATTRIBUTES
+    public static final String MODIFIABLE_ATTRIBUTE_ACTION = "action";
+
+    public static final String MODIFIABLE_ATTRIBUTE_IS_MANAGED = "isManaged";
+
+    public static final String MODIFIABLE_ATTRIBUTE_COMMENT = "comment";
+
+    // COMMENTS
+    public static final String COMMENT_IGNORE_SINCE_NO_CHANGES_IN_DESTINATION = "Ignore: since there is nothing to change in the destination";
+
+    public static final String COMMENT_IGNORE_SINCE_ANCESTOR_IS_IGNORE = "Ignore: since it's ancestor action is Ignore";
+
+    public static final String COMMENT_IGNORE_SINCE_ORIGIN_SAME_AS_REPLACE_DESTINATION = "Ignore: origin item is the same as the modification destination, so there is nothing to change";
 
 }

@@ -27,15 +27,21 @@ public class CadRelationNodeData extends BaseRelationNodeData {
 
     private static final long serialVersionUID = 1L;
 
-    protected List<DocumentModel> relatedBoms;
+    private boolean isBasedOn;
+
+    private boolean isSuppressed;
+
+    private List<DocumentModel> relatedBoms;
 
     public CadRelationNodeData(String id, int level, String docId,
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
-            String predicateUri, int quantity, String comment,
-            boolean isObjectWc, int ordering, boolean isSpecial) {
+            String predicateUri, String quantity, String comment,
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            boolean isSpecial, boolean isDirect) {
 
         super(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
-                comment, isObjectWc, ordering, isSpecial);
+                comment, ordering, directorOrdering, viewerOrdering, isSpecial,
+                isDirect);
 
         relatedBoms = new ArrayList<DocumentModel>();
     }
@@ -48,12 +54,30 @@ public class CadRelationNodeData extends BaseRelationNodeData {
         this.relatedBoms = relatedBoms;
     }
 
+    public boolean getIsBasedOn() {
+        return isBasedOn;
+    }
+
+    public void setIsBasedOn(boolean isBasedOn) {
+        this.isBasedOn = isBasedOn;
+    }
+
+    public boolean getIsSuppressed() {
+        return isSuppressed;
+    }
+
+    public void setIsSuppressed(boolean isSuppressed) {
+        this.isSuppressed = isSuppressed;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result
                 + ((relatedBoms == null) ? 0 : relatedBoms.hashCode());
+        result = prime * result + (isBasedOn ? 1231 : 1237);
+        result = prime * result + (isSuppressed ? 1231 : 1237);
         return result;
     }
 
@@ -74,6 +98,12 @@ public class CadRelationNodeData extends BaseRelationNodeData {
                 return false;
             }
         } else if (!relatedBoms.equals(other.relatedBoms)) {
+            return false;
+        }
+        if (isBasedOn != other.isBasedOn) {
+            return false;
+        }
+        if (isSuppressed != other.isSuppressed) {
             return false;
         }
         return true;

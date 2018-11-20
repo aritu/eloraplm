@@ -10,7 +10,7 @@
  
 <nxu:set var="actionDirectoryName" value="#{field_1 ? 'elora_cmActionModified' : 'elora_cmActionImpacted'}">
   
-  <ui:fragment rendered="#{field_2}">
+  <ui:fragment rendered="#{field_2 or widget.mode == 'view'}">
     <nxl:widgetType name="selectOneDirectory" mode="view" 
       value="#{field_0}" 
       directoryName="#{actionDirectoryName}" 
@@ -20,25 +20,20 @@
       notDisplayDefaultOption="true"/>
   </ui:fragment>
   
-  <ui:fragment rendered="#{not field_2}">
+  <ui:fragment rendered="#{not field_2 and widget.mode == 'edit'}">
     <nxl:widgetType name="selectOneDirectory" mode="edit" 
       value="#{field_0}" 
       directoryName="#{actionDirectoryName}" 
-      localize="true" displayIdAndLabel="false" 
+      localize="true" 
+      displayIdAndLabel="false" 
+      ordering="ordering" 
       style="min-width: 10em;"
       notDisplayDefaultOption="true">
       
-      <c:if test="#{webActions.currentTabId eq 'TAB_CM_DOC_IMPACTED_ITEMS_TREETABLE'}">
-        <f:ajax
-          event="change" listener="#{cmDocImpactedItemsTreeBean.refreshNode(node, 'action')}"
-          render="#{treeWidgetId}" execute="@this" />
-      </c:if>
-      
-      <c:if test="#{webActions.currentTabId eq 'TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE'}">
-        <f:ajax
-          event="change" listener="#{cmBomImpactedItemsTreeBean.refreshNode(node, 'action')}"
-          render="#{treeWidgetId}" execute="@this" />
-      </c:if>
+      <ui:include src="cm_widget_ajax_content_template.xhtml">
+        <ui:param name="triggeredField" value="action" />
+        <ui:param name="updateChildren" value="#{true}" />
+      </ui:include>
 
     </nxl:widgetType>
   </ui:fragment>

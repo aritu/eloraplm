@@ -4,8 +4,8 @@
   xmlns:h="http://java.sun.com/jsf/html"
   xmlns:nxl="http://nuxeo.org/nxforms/layout">
 
-    <h:outputScript library="js" name="check_loaded_scripts.js" target="head" />
+    <h:outputScript library="js" name="treetable_scripts.js" target="#{pageJsTarget}" />
 
-    <nxl:layout name="#{widget.properties.treetableLayout}" mode="view" value="#{value}" />
+    <nxl:layout name="#{widget.properties.treetableLayout}" mode="#{widget.mode}" value="#{value}" />
 
 </f:subview>

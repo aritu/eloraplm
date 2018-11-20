@@ -27,36 +27,36 @@
       </h:panelGroup>
   </h:panelGrid>
   
-  <h:form>
-  
     <c:if test="#{not bomList.isListCreated}">
-        <h:panelGroup styleClass="bubbleBox">
-        
-            <h3 class="bubbleHeader">#{messages['eloraplm.title.bom.list.notCreated']}</h3>
+        <h:form>
+            <h:panelGroup styleClass="bubbleBox">
             
-            <h:panelGroup styleClass="boxBody">
-            
-                <h:outputFormat value="#{messages['eloraplm.label.bom.list.notCreated']} ">
-                    <f:param value="#{bomList.label}" />
-                </h:outputFormat>
-                <h:outputText value="#{messages['eloraplm.label.bom.list.confirmCreate']} " />
+                <h3 class="bubbleHeader">#{messages['eloraplm.title.bom.list.notCreated']}</h3>
                 
-                <h:commandButton value="#{messages['command.create']}"
-                    styleClass="button"
-                    action="#{bomList.createList}">
-                    <f:ajax execute="@form"
-                        render="@form" />
-                </h:commandButton>
+                <h:panelGroup styleClass="boxBody">
+                
+                    <h:outputFormat value="#{messages['eloraplm.label.bom.list.notCreated']} ">
+                        <f:param value="#{bomList.label}" />
+                    </h:outputFormat>
+                    <h:outputText value="#{messages['eloraplm.label.bom.list.confirmCreate']} " />
+                    
+                    <h:commandButton value="#{messages['command.create']}"
+                        styleClass="button"
+                        action="#{bomList.createList}">
+                        <f:ajax execute="@form"
+                            render="@form" />
+                    </h:commandButton>
+                    
+                </h:panelGroup>
                 
             </h:panelGroup>
             
-        </h:panelGroup>
+        </h:form>
     </c:if>
     
     <c:if test="#{bomList.isListCreated}">
-        <nxl:widget name="bom_composition_list_treetable" mode="view" value="#{bomCompositionListTreeBean}" />
+        <nxl:widget name="bom_comp_list_tt" mode="view" value="#{bomCompositionListTreeBean}" />
     </c:if>
-    
-  </h:form>
+
 
 </ui:composition>

@@ -14,7 +14,9 @@
 package com.aritu.eloraplm.relations.treetable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.relations.api.Statement;
@@ -35,37 +37,49 @@ public class BaseRelationNodeData extends BaseNodeData
 
     private DocumentModel wcDoc;
 
-    // Statementa gehitu danez, predicateUri, quantity, etab. sobran dauz, baina
+    // TODO Statementa gehitu danez, predicateUri, quantity, etab. sobran dauz,
+    // baina
     // lortu behar da moduren bat balio horreik gordetzeko benetan erlazio bat
     // sortu gabe. graph.add() ein barik posible da?
     private Statement stmt;
 
     private String predicateUri;
 
-    private int quantity;
+    private String quantity;
 
     private String comment;
 
-    private boolean isObjectWc;
+    private Integer ordering;
 
-    private int ordering;
+    private Integer directorOrdering;
+
+    private Integer viewerOrdering;
 
     private List<String> iconOnlyRelations;
 
     private boolean isSpecial;
 
+    // It is used to check if we have to obtain child relations. If it is
+    // (conceptual) direct
+    private boolean isDirect;
+
+    private Map<String, String> versionList;
+
     public BaseRelationNodeData(String id, int level, String docId,
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
-            String predicateUri, int quantity, String comment,
-            boolean isObjectWc, int ordering, boolean isSpecial) {
+            String predicateUri, String quantity, String comment,
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            boolean isSpecial, boolean isDirect) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
-                comment, isObjectWc, ordering, isSpecial, false, false);
+                comment, ordering, directorOrdering, viewerOrdering, isSpecial,
+                isDirect, false, false);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
-            String predicateUri, int quantity, String comment,
-            boolean isObjectWc, int ordering, boolean isSpecial, boolean isNew,
+            String predicateUri, String quantity, String comment,
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            boolean isSpecial, boolean isDirect, boolean isNew,
             boolean isRemoved) {
         super(id, level, isNew, isRemoved);
 
@@ -76,9 +90,20 @@ public class BaseRelationNodeData extends BaseNodeData
         this.predicateUri = predicateUri;
         this.quantity = quantity;
         this.comment = comment;
-        this.isObjectWc = isObjectWc;
         this.ordering = ordering;
+        this.directorOrdering = directorOrdering;
+        this.viewerOrdering = viewerOrdering;
         this.isSpecial = isSpecial;
+        this.isDirect = isDirect;
+
+        versionList = new LinkedHashMap<String, String>();
+        if (docId != null && data != null) {
+            String versionLabel = data.getVersionLabel();
+            if (!data.isImmutable()) {
+                versionLabel += " (WC)";
+            }
+            versionList.put(docId, versionLabel);
+        }
 
         iconOnlyRelations = new ArrayList<String>();
     }
@@ -134,12 +159,12 @@ public class BaseRelationNodeData extends BaseNodeData
     }
 
     @Override
-    public int getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
     @Override
-    public void setQuantity(int quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 
@@ -154,23 +179,33 @@ public class BaseRelationNodeData extends BaseNodeData
     }
 
     @Override
-    public boolean getIsObjectWc() {
-        return isObjectWc;
-    }
-
-    @Override
-    public void setIsObjectWc(boolean isObjectWc) {
-        this.isObjectWc = isObjectWc;
-    }
-
-    @Override
-    public int getOrdering() {
+    public Integer getOrdering() {
         return ordering;
     }
 
     @Override
-    public void setOrdering(int ordering) {
+    public void setOrdering(Integer ordering) {
         this.ordering = ordering;
+    }
+
+    @Override
+    public Integer getDirectorOrdering() {
+        return directorOrdering;
+    }
+
+    @Override
+    public void setDirectorOrdering(Integer directorOrdering) {
+        this.directorOrdering = directorOrdering;
+    }
+
+    @Override
+    public Integer getViewerOrdering() {
+        return viewerOrdering;
+    }
+
+    @Override
+    public void setViewerOrdering(Integer viewerOrdering) {
+        this.viewerOrdering = viewerOrdering;
     }
 
     @Override
@@ -184,6 +219,15 @@ public class BaseRelationNodeData extends BaseNodeData
     }
 
     @Override
+    public boolean getIsDirect() {
+        return isDirect;
+    }
+
+    public void setIsDirect(boolean isDirect) {
+        this.isDirect = isDirect;
+    }
+
+    @Override
     public List<String> getIconOnlyRelations() {
         return iconOnlyRelations;
     }
@@ -194,6 +238,16 @@ public class BaseRelationNodeData extends BaseNodeData
     }
 
     @Override
+    public Map<String, String> getVersionList() {
+        return versionList;
+    }
+
+    @Override
+    public void setVersionList(Map<String, String> versionList) {
+        this.versionList = versionList;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -201,12 +255,16 @@ public class BaseRelationNodeData extends BaseNodeData
         result = prime * result + ((docId == null) ? 0 : docId.hashCode());
         result = prime * result + ((iconOnlyRelations == null) ? 0
                 : iconOnlyRelations.hashCode());
-        result = prime * result + (isObjectWc ? 1231 : 1237);
         result = prime * result + (isSpecial ? 1231 : 1237);
         result = prime * result + ordering;
+        result = prime * result + directorOrdering;
+        result = prime * result + viewerOrdering;
         result = prime * result
                 + ((predicateUri == null) ? 0 : predicateUri.hashCode());
-        result = prime * result + quantity;
+        result = prime * result
+                + ((quantity == null) ? 0 : quantity.hashCode());
+        result = prime * result
+                + ((versionList == null) ? 0 : versionList.hashCode());
         return result;
     }
 
@@ -243,13 +301,16 @@ public class BaseRelationNodeData extends BaseNodeData
         } else if (!iconOnlyRelations.equals(other.iconOnlyRelations)) {
             return false;
         }
-        if (isObjectWc != other.isObjectWc) {
-            return false;
-        }
         if (isSpecial != other.isSpecial) {
             return false;
         }
         if (ordering != other.ordering) {
+            return false;
+        }
+        if (directorOrdering != other.directorOrdering) {
+            return false;
+        }
+        if (viewerOrdering != other.viewerOrdering) {
             return false;
         }
         if (predicateUri == null) {
@@ -260,6 +321,13 @@ public class BaseRelationNodeData extends BaseNodeData
             return false;
         }
         if (quantity != other.quantity) {
+            return false;
+        }
+        if (versionList == null) {
+            if (other.versionList != null) {
+                return false;
+            }
+        } else if (!versionList.equals(other.versionList)) {
             return false;
         }
         return true;

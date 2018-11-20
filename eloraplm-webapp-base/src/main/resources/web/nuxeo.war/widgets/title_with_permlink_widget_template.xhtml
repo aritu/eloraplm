@@ -8,33 +8,28 @@
   xmlns:c="http://java.sun.com/jstl/core">
   <h1>
   
-    <h:panelGroup styleClass="typeIcon">
-        <h:graphicImage height="24" width="24" value="#{nxd:typeInfo(field).bigIcon}"
+    <span class="typeIcon"><h:graphicImage height="24" width="24" value="#{nxd:typeInfo(field).bigIcon}"
             title="#{messages[nxd:typeInfo(currentDocument).label]}"
-            rendered="#{!empty nxd:typeInfo(field).bigIcon}" />
-    </h:panelGroup>
+            rendered="#{!empty nxd:typeInfo(field).bigIcon}" /></span>
         
     <c:if test="#{field.version}">
-        <h:panelGroup styleClass="titleVersionLabel">
-            AV <h:outputText value="#{documentManager.getVersionLabel(field)}" />
-        </h:panelGroup>
+        <span class="titleVersionLabel">AV #{documentManager.getVersionLabel(field)}</span>
     </c:if>
-        
-    <h:panelGroup styleClass="eloraReference"
-        rendered="#{field.hasSchema('elora_object') and not empty field.elo.reference}">
-        <h:outputText value="#{field.hasSchema('elora_object') and not empty field.elo.reference ? field.elo.reference : '--'}"/>
-    </h:panelGroup>
-
+    
+    &#160;<h:outputText styleClass="eloraReference"
+        rendered="#{field.hasSchema('elora_object') and not empty field.elo.reference}"
+        value="#{field.hasSchema('elora_object') and not empty field.elo.reference ? field.elo.reference : '--' }" />&#160;
+    
      <c:if test="#{widgetProperty_localize}">
-        <h:outputText value="#{messages[nxd:titleOrId(field)]}" title="#{messages[nxd:titleOrId(field)]}" />
+        <span title="#{messages[nxd:titleOrId(field)]}">#{messages[nxd:titleOrId(field)]}</span>
      </c:if>
      <c:if test="#{not widgetProperty_localize}">
-         <h:outputText value="#{nxd:titleOrId(field)}" title="#{nxd:titleOrId(field)}" />
+         <span title="#{nxd:titleOrId(field)}">#{nxd:titleOrId(field)}</span>
      </c:if>
 
     <span title="uid: #{field.id}">
       <nxd:restDocumentLink document="#{field}" pattern="id" target="_blank">
-        <nxu:graphicImage value="/icons/permalink.png"
+        <h:graphicImage value="/icons/permalink.png"
           style="vertical-align:middle"
           styleClass="tipsyShow tipsyGravityS"
           alt="#{messages['label.permalink']}"

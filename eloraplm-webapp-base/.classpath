@@ -13,5 +13,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-versioning"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-exceptions"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-config"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-queries"/>
 	<classpathentry kind="output" path="bin/main"/>
 </classpath>

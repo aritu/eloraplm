@@ -17,6 +17,7 @@ package com.aritu.eloraplm.core.util;
 import javax.servlet.http.HttpServletRequest;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
+
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -53,9 +54,33 @@ public class EloraUrlHelper {
      * @return
      * @throws EloraException
      */
+    public static String getDocumentEditionInPrintModeUrl(
+            HttpServletRequest request, DocumentModel doc)
+            throws EloraException {
+        return getDocumentPageUrl(request, doc, DOCUMENT_PAGE_EDITION, true);
+    }
+
+    /**
+     * @param request
+     * @param doc
+     * @return
+     * @throws EloraException
+     */
     public static String getDocumentSummaryUrl(HttpServletRequest request,
             DocumentModel doc) throws EloraException {
         return getDocumentPageUrl(request, doc, DOCUMENT_PAGE_SUMMARY);
+    }
+
+    /**
+     * @param request
+     * @param doc
+     * @return
+     * @throws EloraException
+     */
+    public static String getDocumentSummaryInPrintModeUrl(
+            HttpServletRequest request, DocumentModel doc)
+            throws EloraException {
+        return getDocumentPageUrl(request, doc, DOCUMENT_PAGE_SUMMARY, true);
     }
 
     /**
@@ -67,6 +92,20 @@ public class EloraUrlHelper {
      */
     private static String getDocumentPageUrl(HttpServletRequest request,
             DocumentModel doc, String page) throws EloraException {
+        return getDocumentPageUrl(request, doc, page, false);
+    }
+
+    /**
+     * @param request
+     * @param doc
+     * @param page
+     * @param mode
+     * @return
+     * @throws EloraException
+     */
+    private static String getDocumentPageUrl(HttpServletRequest request,
+            DocumentModel doc, String page, boolean printMode)
+            throws EloraException {
         String serverUrl = getServerUrl(request);
         String pageTabUrl;
         switch (page) {
@@ -79,6 +118,14 @@ public class EloraUrlHelper {
         default:
             pageTabUrl = "view_documents";
             break;
+        }
+
+        if (printMode) {
+            if (pageTabUrl.contains("?")) {
+                pageTabUrl += "&page=galaxy%2Fprint";
+            } else {
+                pageTabUrl += "?page=galaxy%2Fprint";
+            }
         }
 
         String docPageUrl = String.join("/", new String[] { serverUrl,

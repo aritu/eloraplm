@@ -36,4 +36,16 @@ public class EloraFacetConstants {
     // For basic documents: File, Note, Audio, Picture, Video
     public static final String FACET_BASIC_DOCUMENT = "BasicDocument";
 
+    // For automatic code creation
+    public static final String FACET_AUTOMATIC_CODE = "AutomaticCode";
+
+    // For domain children that contain workspaces inside
+    public static final String FACET_WORKABLE_DOMAIN_CHILD = "WorkableDomainChild";
+
+    // For Change Management processes
+    public static final String FACET_CM_PROCESS = "CMProcess";
+
+    // For Non-Versionable documents than must be locked to edit
+    public static final String FACET_LOCK_REQUIRED_TO_EDIT = "LockRequiredToEdit";
+
 }

@@ -8,13 +8,14 @@ xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
     <xs:simpleType>
       <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bomItemTypes" />
     </xs:simpleType>
-  </xs:element>  
-  <xs:element name="responsible" type="xs:string">
-    <xs:simpleType>
-      <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
-    </xs:simpleType>
   </xs:element>
-  <xs:element name="estimatedCost" type="xs:double" />
+  <xs:element name="estimatedCost">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+  </xs:element>
   <xs:element name="costUnit" type="xs:string" default="EUR"/>
 
 </xs:schema>

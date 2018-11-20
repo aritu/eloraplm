@@ -1,6 +1,16 @@
 /*
  * Webapp Base style modifications for EloraPlm
  */
+ 
+#ambiance-notification
+{
+    z-index: 99998;
+}
+ 
+.nx-page .select2-drop
+{
+    z-index: 99999;
+}
 
 #descriptionBlock
 {
@@ -18,7 +28,7 @@
     font-size: 0.9em;
     margin-bottom: 5px;
     border-top: 4px solid #aaa;
-    box-shadow: 0 0 1px rgba(0,0,0,0.3);
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
 }
 
 #eloraMetadataHeading > table:first-child,
@@ -47,18 +57,28 @@
 .eloraReference
 {
     border-radius: 3px;
-    background-color: rgb(240, 250, 255);
+    background-color: #e5e8e2;
+    color: #053832;
     padding: 0.15em 0.3em 0.15em 0.3em;
     margin-right: 0.3em;
-    border: 1px solid #e0eaef;
+    border: 1px solid transparent;
     vertical-align: middle;
 }
 
 h1 .eloraReference
 {
-    background-color: rgb(77,77,77);
+    background-color: #053832;
     color: white;
     border: none;
+}
+
+.nx-page table.dataOutput tbody tr:hover .eloraReference,
+.nx-page .select2-results .select2-highlighted .eloraReference,
+.nx-page table.dataTableLine tbody tr:hover .eloraReference,
+.nx-page table.treetable tbody tr:hover .eloraReference
+{
+    border-color: #2c874e;
+    color: #2c874e;
 }
 
 h1 .typeIcon
@@ -69,7 +89,11 @@ h1 .typeIcon
     background-color: white;
     margin-right: 0.3em;
     text-align: center;
-    box-shadow: 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: 0 0px 2px #053832;
+    position: relative;
+    top: 2px;
+    left: 1px;
+    padding: 12px 8px 8px 8px;
 }
 
 h1 .typeIcon img
@@ -87,7 +111,7 @@ h1 .typeIcon img
     margin-right: 0.3em;
 }
 
-table.treetable td.ellipsisWhenOverflow
+table.treetable tbody td.ellipsisWhenOverflow
 {
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -162,6 +186,21 @@ table.treetable td.ellipsisWhenOverflow
     border: 1px solid #fd4;
 }
 
+.isObsoleteMessage
+{
+    color: #fff;
+    text-align: center;
+    display: block;
+    padding: 0.3em 2em;
+    margin: 0.3em 0;
+    background-color: #053832;
+    border: 1px solid #000;
+    border-radius: 4px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    font-weight: bold;
+    clear: both;
+}
+
 .nx-page .goToWcMessage a.button,
 .nx-page .goToWcMessage a.button:hover
 {
@@ -213,9 +252,10 @@ table.treetable td.ellipsisWhenOverflow
 
 .iconColumn img.proxyBadge
 {
-    position: absolute;
-    margin-left: -20px;
-    margin-top: 4px;
+    position: relative;
+    margin-left: -16px;
+    left: 4px;
+    top: 3px;
 }
 
 
@@ -277,6 +317,44 @@ table.treetable td.ellipsisWhenOverflow
 }
 */
 
+.suppressedRelation
+{
+    font-style: italic;
+    text-decoration: line-through;
+}
+
+.checkedOutLabel
+{
+    color: #b323ef;
+}
+
+.label.label-checked-out
+{
+    background-color: #faeeff;
+    border: 1px solid #b323ef;
+    color: #b323ef;
+}
+
+
+.nx-page input.numberInput[type="text"]
+{
+    width:200px;
+    text-align:right;
+}
+
+.nx-page input.shortNumberInput[type="text"]
+{
+    width: 3em;
+    height: 2em;
+    padding: 0.3em 0.5em;
+    text-align:right;
+    margin-bottom: 0;
+}
+
+.opaqueBlockUI {
+    background: #fff url(/nuxeo/img/standart_waiter.gif) center center no-repeat;
+    opacity: 1;
+}
 
 /*
  * 

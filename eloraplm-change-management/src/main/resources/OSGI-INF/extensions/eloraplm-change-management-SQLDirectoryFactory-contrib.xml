@@ -7,7 +7,7 @@
     <directory name="elora_cm_predicates">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cm_relation_predicates</table>
+      <table>elora_cm_predicates</table>
       <idField>id</idField>
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
@@ -18,22 +18,11 @@
     <directory name="elora_cm_inverse_predicates">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cm_relation_inverse_predicates</table>
+      <table>elora_cm_inv_predicates</table>
       <idField>id</idField>
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
       <dataFile>directories/elora_cm_relation_inverse_predicates.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
-    </directory>
-
-    <directory name="elora_cmPriority">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cm_priority</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_cm_priority.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
 
@@ -78,6 +67,17 @@
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
       <dataFile>directories/elora_cm_action_impacted.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_cm_doctype_actions_impact">
+      <schema>eloraCmDoctypeActionsImpact</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_type_actions_impact</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_doctype_actions_impact.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
     

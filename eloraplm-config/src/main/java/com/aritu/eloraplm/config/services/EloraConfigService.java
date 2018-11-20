@@ -160,8 +160,10 @@ public class EloraConfigService extends DefaultComponent
         EloraConfigRow configRow = new EloraConfigRow();
         DirectoryService directoryService = Framework.getLocalService(
                 DirectoryService.class);
-        Session dirSession = directoryService.open(vocabulary);
+        Session dirSession = null;
         try {
+            dirSession = directoryService.open(vocabulary);
+
             DocumentModel vocabDoc = dirSession.getEntry(key);
             if (vocabDoc == null) {
                 if (!canBeEmpty) {
@@ -174,8 +176,12 @@ public class EloraConfigService extends DefaultComponent
                             vocabDataModel.getData(property));
                 }
             }
+        } catch (Exception e) {
+            throw new EloraException(e);
         } finally {
-            dirSession.close();
+            if (dirSession != null) {
+                dirSession.close();
+            }
         }
         return configRow;
     }
@@ -254,8 +260,10 @@ public class EloraConfigService extends DefaultComponent
         EloraConfigTable configTable = new EloraConfigTable();
         DirectoryService directoryService = Framework.getLocalService(
                 DirectoryService.class);
-        Session dirSession = directoryService.open(vocabulary);
+        Session dirSession = null;
         try {
+            dirSession = directoryService.open(vocabulary);
+
             filter = filter == null ? new HashMap<String, Serializable>()
                     : filter;
             DocumentModelList vocabDocs = dirSession.query(filter);
@@ -286,35 +294,51 @@ public class EloraConfigService extends DefaultComponent
                             configRow);
                 }
             }
+        } catch (Exception e) {
+            throw new EloraException(e);
         } finally {
-            dirSession.close();
+            if (dirSession != null) {
+                dirSession.close();
+            }
         }
         return configTable;
     }
 
     @Override
     public void updateConfigProperty(String vocabulary, String key,
-            String property, String value) throws EloraException {
+            String property, String value, boolean mustExistKey)
+            throws EloraException {
         Map<String, Serializable> filter = new HashMap<String, Serializable>();
         // TODO Hau konstanteekin
         filter.put("id", key);
 
-        updateConfigProperty(vocabulary, filter, property, value);
+        updateConfigProperty(vocabulary, filter, property, value, mustExistKey);
     }
 
     @Override
     public void updateConfigProperty(String vocabulary,
-            Map<String, Serializable> filter, String property, String value)
-            throws EloraException {
+            Map<String, Serializable> filter, String property, String value,
+            boolean mustExistKey) throws EloraException {
         DirectoryService directoryService = Framework.getLocalService(
                 DirectoryService.class);
-        Session dirSession = directoryService.open(vocabulary);
+        Session dirSession = null;
         try {
+            dirSession = directoryService.open(vocabulary);
+
             filter = filter == null ? new HashMap<String, Serializable>()
                     : filter;
             DocumentModelList vocabDocs = dirSession.query(filter);
 
-            if (vocabDocs.size() != 1) {
+            if (vocabDocs.isEmpty()) {
+                if (mustExistKey) {
+                    throw new EloraException(
+                            "Filter has returned empty response. No vocabularies updated.");
+                } else {
+                    return;
+                }
+            }
+
+            if (vocabDocs.size() > 1) {
                 throw new EloraException(
                         "Filter query must return just one result.");
             }
@@ -322,17 +346,15 @@ public class EloraConfigService extends DefaultComponent
             // We get the first and unique entry
             DocumentModel vocabDoc = vocabDocs.get(0);
             if (vocabDoc != null) {
-                // Update the property
-                // DataModel vocabDataModel =
-                // vocabDoc.getDataModels().values().iterator().next();
-                // vocabDataModel.setValue(property, value);
                 vocabDoc.setPropertyValue(property, value);
-
                 dirSession.updateEntry(vocabDoc);
             }
-
+        } catch (Exception e) {
+            throw new EloraException(e);
         } finally {
-            dirSession.close();
+            if (dirSession != null) {
+                dirSession.close();
+            }
         }
     }
 

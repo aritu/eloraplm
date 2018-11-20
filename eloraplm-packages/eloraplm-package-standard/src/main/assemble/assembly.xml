@@ -1,0 +1,64 @@
+<project name="eloraplm-package-standard" default="build" xmlns:nx="urn:nuxeo-build" xmlns:artifact="urn:nuxeo-artifact">
+    <taskdef resource="org/nuxeo/build/antlib.xml" uri="urn:nuxeo-build" />
+    <taskdef resource="org/nuxeo/build/artifact/antlib.xml" uri="urn:nuxeo-artifact" />
+    <taskdef resource="net/sf/antcontrib/antlib.xml" />
+
+    <target name="build" description="Build EloraPLM Package">
+        <property name="outdir" value="${maven.project.build.directory}" />
+        <!-- Include your artifacts in the graph adding your groupId to groupPrefixes -->
+        <artifact:nuxeo-expand includeTestScope="true" groupPrefixes="org.nuxeo,com.aritu.eloraplm" />
+
+        <tstamp />
+
+        <delete failonerror="false" dir="${outdir}/marketplace" />
+        <mkdir dir="${outdir}/marketplace" />
+        <copy todir="${outdir}/marketplace">
+            <fileset dir="src/main/resources" />
+            <filterset>
+                <filter token="VERSION" value="${maven.project.version}" />
+                <filter token="DISTRIB_VERSION" value="${nuxeo.distribution.version}" />
+            </filterset>
+        </copy>
+
+        <!-- Bundles -->
+        <copy todir="${outdir}/marketplace/install/bundles" overwrite="true">
+            <artifact:set>
+                <includes>
+                    <artifact groupId="com.aritu.eloraplm*" scope="!test" type="!pom" />
+                </includes>
+                <excludes>
+                    <artifact groupId="${maven.project.groupId}" artifactId="${maven.project.artifactId}" version="${maven.project.version}" type="${maven.project.packaging}" refid=""/>
+                    <artifact groupId="com.aritu.eloraplm.lib*" />
+                </excludes>
+            </artifact:set>
+        </copy>
+
+        <!-- Generate install.xml content -->
+        <!-- See documentation at http://doc.nuxeo.com/x/IgIz -->
+        <var name="install.bundles" value="" />
+        <if>
+            <available file="${outdir}/marketplace/install/bundles" />
+            <then>
+                <var name="install.bundles" value="${line.separator}
+  &lt;update file=&quot;${package.root}/install/bundles&quot; todir=&quot;${env.bundles}&quot; /&gt;" />
+            </then>
+        </if>
+
+        <var name="install.libs" value="" />
+        <var name="install.properties" value="" />
+        <var name="install.templates" value="" />
+
+        <copy file="src/main/resources/install.xml" todir="${outdir}/marketplace" overwrite="true">
+            <filterset>
+                <filter token="BUNDLES" value="${install.bundles}" />
+                <filter token="LIBS" value="${install.libs}" />
+                <filter token="PROPERTIES" value="${install.properties}" />
+                <filter token="TEMPLATES" value="${install.templates}" />
+            </filterset>
+        </copy>
+
+        <zip destfile="${outdir}/${maven.project.artifactId}-${maven.project.version}.zip" basedir="${outdir}/marketplace" />
+        <artifact:attach file="${outdir}/${maven.project.artifactId}-${maven.project.version}.zip" type="zip" />
+    </target>
+
+</project>

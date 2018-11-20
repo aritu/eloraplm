@@ -5,14 +5,12 @@ import static org.jboss.seam.annotations.Install.FRAMEWORK;
 
 import java.io.Serializable;
 
-import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import com.aritu.eloraplm.config.util.EloraConfigHelper;
+
 import com.aritu.eloraplm.config.util.EloraConfigRow;
-import com.aritu.eloraplm.config.util.EloraConfigTable;
-import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.config.util.LifecyclesConfig;
 
 @Name("lifecycleActions")
 @Scope(CONVERSATION)
@@ -21,26 +19,12 @@ public class LifecycleActionsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected EloraConfigTable lifecycleConfigTable;
-
-    protected EloraConfigTable releasedConfigTable;
-
-    @Create
-    public void initBean() {
-        try {
-            lifecycleConfigTable = EloraConfigHelper.getLifecycleStatesConfig();
-            releasedConfigTable = EloraConfigHelper.getReleasedLifecycleStatesConfig();
-        } catch (EloraException e) {
-            lifecycleConfigTable = new EloraConfigTable();
-            releasedConfigTable = new EloraConfigTable();
-        }
-    }
-
     public String getLifeCycleStateColor(String lifeCycleState) {
         String color = "#888888";
 
-        if (lifecycleConfigTable.containsKey(lifeCycleState)) {
-            EloraConfigRow lifecycleConfigRow = lifecycleConfigTable.getRow(lifeCycleState);
+        if (LifecyclesConfig.allStatesConfig.containsKey(lifeCycleState)) {
+            EloraConfigRow lifecycleConfigRow = LifecyclesConfig.allStatesConfig.getRow(
+                    lifeCycleState);
             color = (String) lifecycleConfigRow.getProperty("color");
         }
 
@@ -48,10 +32,23 @@ public class LifecycleActionsBean implements Serializable {
     }
 
     public boolean isReleasedState(String lifeCycleState) {
-        if (releasedConfigTable.containsKey(lifeCycleState)) {
+        if (LifecyclesConfig.releasedStatesList.contains(lifeCycleState)) {
             return true;
         }
         return false;
+    }
+
+    public String getLifeCycleStateAbbreviation(String lifeCycleState) {
+        String abbreviation = "";
+
+        if (LifecyclesConfig.allStatesConfig.containsKey(lifeCycleState)) {
+            EloraConfigRow lifecycleConfigRow = LifecyclesConfig.allStatesConfig.getRow(
+                    lifeCycleState);
+            abbreviation = (String) lifecycleConfigRow.getProperty(
+                    "abbreviation");
+        }
+
+        return abbreviation;
     }
 
 }

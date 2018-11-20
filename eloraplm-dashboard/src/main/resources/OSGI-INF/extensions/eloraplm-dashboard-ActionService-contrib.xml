@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.dashboard.ActionService.contrib">
+  <require>org.nuxeo.ecm.user.center.dashboard.jsf.layouts.dashboard</require>
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+  
+    <!-- disable dashboard actions -->
+    <action id="dashboard_user_shared_documents" enabled="false"/>
+    <action id="dashboard_user_tasks" enabled="false"/>
+    <action id="dashboard_user_sections" enabled="false"/>
+    <action id="dashboard_domain_published_documents" enabled="false"/>
+    <action id="dashboard_user_sites" enabled="false"/>
+    <action id="dashboard_user_deleted_documents" enabled="false"/>
+    <action id="dashboard_user_workspaces" enabled="false"/>
+    <action id="dashboard_user_documents" enabled="false"/>
+    <action id="dashboard_domain_documents" enabled="false"/>
+  
+  
+    <action id="dashboard_user_last_contrib_documents" type="widget" order="20">
+      <category>DASHBOARD_RIGHT</category>
+      <properties>
+        <property name="widgetName">dashboard_user_last_contrib_documents</property>
+      </properties>
+    </action>
+    
+    <action id="dashboard_user_locked_documents" type="widget" order="20">
+      <category>DASHBOARD_LEFT</category>
+      <properties>
+        <property name="widgetName">dashboard_user_locked_documents</property>
+      </properties>
+    </action>
+  
+    
+  </extension>
+  
+</component> 

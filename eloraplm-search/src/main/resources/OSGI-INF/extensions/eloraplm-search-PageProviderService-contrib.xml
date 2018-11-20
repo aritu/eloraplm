@@ -9,16 +9,23 @@
        <!-- 
           Original query:
           SELECT * FROM Document WHERE ecm:fulltext.dc:title LIKE '?' AND ecm:mixinType !=
-          'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND
+          'HiddenInNavigation' AND ecm:isVersion = 0 AND
           ecm:currentLifeCycleState != 'deleted'
         -->
       <coreQueryPageProvider name="DEFAULT_DOCUMENT_SUGGESTION">
         <property name="maxResults">PAGE_SIZE</property>
         <pattern escapeParameters="true" quoteParameters="false">
-          SELECT * FROM Document WHERE (ecm:fulltext.elo:reference LIKE '?' OR ecm:fulltext.dc:title LIKE '?') 
-          AND ecm:mixinType != 'HiddenInNavigation' AND ecm:isCheckedInVersion = 0 AND 
-          ecm:currentLifeCycleState != 'deleted' AND ecm:isProxy = 0
+          SELECT * FROM Document WHERE (elo:reference ILIKE '?' OR ecm:fulltext.dc:title LIKE '?') 
+          AND ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot', 'WorkspaceRoot', 'Favorites')
+          AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
+          AND ecm:isVersion = 0 
+          AND ecm:isProxy = 0
+          AND ecm:currentLifeCycleState != 'deleted'
+          AND ecm:parentId IS NOT NULL
         </pattern>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" />
         <pageSize>10</pageSize>
       </coreQueryPageProvider>
       

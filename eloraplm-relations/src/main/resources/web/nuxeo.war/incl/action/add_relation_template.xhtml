@@ -7,33 +7,48 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
     xmlns:nxu="http://nuxeo.org/nxweb/util">
+
     <h3>
         <h:outputText value="#{messages['eloraplm.title.relation.add']}" />
     </h3>
     
     <h:form id="#{fancyboxFormId}">
+        
+        <!-- Hidden fields -->
+        <c:if test="#{not isEditablePredicate}">
+          <h:inputHidden id="predicateUri" value="#{treeBean.predicateUri}" />
+          <h:message for="predicateUri" class="errorMessage" />
+        </c:if>
+        
+        <c:if test="#{not isEditableAddDirectRelations}">
+          <h:inputHidden id="addDirectRelations" value="#{treeBean.addDirectRelations}" />
+          <h:message for="addDirectRelations" class="errorMessage" />
+        </c:if>
+        
+        <c:if test="#{not isEditableQuantity}">
+          <h:inputHidden id="quantity" value="#{treeBean.quantity}" />
+          <h:message for="quantity" class="errorMessage" />
+        </c:if>
+        
+        <c:if test="#{not isEditableOrdering}">
+          <h:inputHidden id="ordering" value="#{treeBean.ordering}" />
+          <h:message for="ordering" class="errorMessage" />
+        </c:if>
+        
+        <c:if test="#{not isEditableDirectorOrdering}">
+          <h:inputHidden id="directorOrdering" value="#{treeBean.directorOrdering}" />
+          <h:message for="directorOrdering" class="errorMessage" />
+        </c:if>
+        
+        <c:if test="#{not isEditableViewerOrdering}">
+          <h:inputHidden id="viewerOrdering" value="#{treeBean.viewerOrdering}" />
+          <h:message for="viewerOrdering" class="errorMessage" />
+        </c:if>
+        
+        
         <h:panelGroup styleClass="content" layout="block">
             <h:panelGrid columns="2" styleClass="dataInput"
                 columnClasses="relationCreateLabelColumn, relationCreateFieldColumn">
-
-                <c:if test="#{not isEditablePredicate}">
-                  <h:inputHidden id="predicateUri" value="#{treeBean.predicateUri}" />
-                  <h:message for="predicateUri" class="errorMessage" />
-                </c:if>
-                <c:if test="#{isEditablePredicate}">
-                  <h:outputLabel for="predicateUri"
-	                    value="#{messages['label.relation.predicate']}"
-	                    class="required relationPredicateLabel" />
-	                <h:panelGroup>
-	                    <h:selectOneListbox value="#{treeBean.predicateUri}"
-	                        id="predicateUri" required="true">
-	                        <nxu:selectItems value="#{treeBean.getPredicateList()}" var="predicate"
-	                            itemValue="#{predicate.key}" itemLabel="#{messages[predicate.value]}" />
-	                    </h:selectOneListbox>
-	                  
-	                    <h:message for="predicateUri" class="errorMessage" />
-	                </h:panelGroup>
-                </c:if>
                 
                 <h:outputLabel for="objectDocumentUid"
                     value="#{messages['label.relation.object']}"
@@ -43,13 +58,15 @@
                         <h:inputHidden id="objectDocumentUid"
                             value="#{treeBean.objectDocumentUid}" required="true" />
                         <nxl:widgetType
-                            name="eloraSingleDocumentSuggestion"
-                            mode="edit" ajaxReRender="objectDocumentUid"
+                            name="singleDocumentSuggestion"
+                            mode="edit" ajaxReRender="@form"
                             value="#{treeBean}"
                             field="objectDocumentUid" translated="true"
                             width="100%"
-                            placeholder="label.relation.search.popup.title"
-                            pageProviderName="#{pageProviderName}">
+                            placeholder="#{placeholder}"
+                            pageProviderName="#{pageProviderName}"
+                            documentSchemas="dublincore,common,elora_object"
+                            additionalOperationParameters="eloraPassQueryTermsTwice">
                         </nxl:widgetType>
                     </a4j:outputPanel>
                     <h:inputHidden id="objectCheck"
@@ -58,33 +75,86 @@
                         <f:attribute name="objectDocumentUidInputId"
                             value="objectDocumentUid" />
                     </h:inputHidden>
+                    
                     <h:message for="objectCheck" class="errorMessage" />
                 </h:panelGroup>
                 
-                <h:outputLabel for="quantity"
-                    value="#{messages['label.relation.quantity']}"
-                    class="required relationQuantityLabel" />
-                <h:panelGroup>
-                    <h:inputText class="dataInputText" id="quantity"
-                        value="#{treeBean.quantity}" required="true" />
-                    <h:message for="quantity" class="errorMessage" />
-                </h:panelGroup>
                 
-                <c:if test="#{not isEditableOrdering}">
-                  <h:inputHidden id="ordering" value="#{treeBean.ordering}" />
-                  <h:message for="ordering" class="errorMessage" />
+                <c:if test="#{isEditablePredicate}">
+                  <h:outputLabel for="predicateUri"
+                        value="#{messages['label.relation.predicate']}"
+                        class="required relationPredicateLabel" />
+                    <h:panelGroup>
+                        <h:selectOneListbox value="#{treeBean.predicateUri}"
+                            id="predicateUri" required="true" size="1" hideNoSelectionOption="false">
+                            <f:selectItem itemLabel="#{messages['eloraplm.label.relations.selectPredicate']}" itemValue="" />
+                            <nxu:selectItems value="#{treeBean.getPredicateList()}" var="predicate"
+                                itemValue="#{predicate.key}" itemLabel="#{messages[predicate.value]}" />
+                        </h:selectOneListbox>
+                      
+                        <h:message for="predicateUri" class="errorMessage" />
+                    </h:panelGroup>
                 </c:if>
+                
+
+                <c:if test="#{isEditableQuantity}">
+                    <h:outputLabel for="quantity"
+                        value="#{messages['eloraplm.label.relation.quantity']}"
+                        class="required relationQuantityLabel" />
+                    <nxl:widget name="quantity" value="#{treeBean}" mode="edit" required="true" styleClass="dataInputText" />
+                </c:if>
+
+                
+                <c:if test="#{isEditableAddDirectRelations}">
+                  <h:outputLabel for="addDirectRelations"
+                    value="#{messages['eloraplm.label.bom.add.direct.relation']}"
+                    class="relationAddDirectRelationsLabel" />
+                  <h:panelGroup>
+                    <h:selectBooleanCheckbox id="addDirectRelations" value="#{treeBean.addDirectRelations}" />
+                    <h:message for="addDirectRelations" class="errorMessage" />
+                  </h:panelGroup>
+                </c:if>
+                
+
                 
                 <c:if test="#{isEditableOrdering}">
                   <h:outputLabel for="ordering"
-                    value="#{messages['eloraplm.label.ordering']}"
+                    value="#{messages[orderingLabel]}"
                     class="required relationOrderingLabel" />
                   <h:panelGroup>
-                    <h:inputText class="dataInputText" id="ordering"
+                    <h:inputText styleClass="dataInputText numberInput" id="ordering"
                         value="#{treeBean.ordering}" required="true" />
                     <h:message for="ordering" class="errorMessage" />
                   </h:panelGroup>
                 </c:if>
+                
+
+                
+                <c:if test="#{isEditableDirectorOrdering}">
+                  <h:outputLabel for="directorOrdering"
+                    value="#{messages['eloraplm.label.bom.director.ordering']}"
+                    class="orderingLabel" />
+                  <h:panelGroup>
+                    <h:inputText styleClass="dataInputText numberInput" id="directorOrdering"
+                        value="#{treeBean.directorOrdering}" required="false" />
+                    <h:message for="directorOrdering" class="errorMessage" />
+                  </h:panelGroup>
+                </c:if>
+                
+
+                
+                <c:if test="#{isEditableViewerOrdering}">
+                  <h:outputLabel for="viewerOrdering"
+                    value="#{messages['eloraplm.label.bom.viewer.ordering']}"
+                    class="orderingLabel" />
+                  <h:panelGroup>
+                    <h:inputText styleClass="dataInputText numberInput" id="viewerOrdering"
+                        value="#{treeBean.viewerOrdering}" required="false" />
+                    <h:message for="viewerOrdering" class="errorMessage" />
+                  </h:panelGroup>
+                </c:if>
+                
+
                 
                 <h:outputLabel for="comment"
                     value="#{messages['label.relation.comment']}"
@@ -98,23 +168,18 @@
                 
             </h:panelGrid>
         </h:panelGroup>
-        
-        <h:panelGroup id="global_flag_validation_failed_render">
-            <h:outputScript rendered="#{!empty param.btnAddRelation and !facesContext.validationFailed}">
-               jQuery.fancybox.close();
-            </h:outputScript>
-        </h:panelGroup>
-        
+
         <div class="buttonsGadget">
+            
             <h:commandButton value="#{messages['command.add']}"
                 styleClass="button"
-                actionListener="#{treeBean.addRelationNode(currentDocument)}">
+                actionListener="#{treeBean.addRelationNode(currentDocument, isAnarchic)}">
                 <f:param name="btnAddRelation" value="true" />
                 <!-- We don't need to add global_flag_validation_failed_render to render attribute because it is inside the form -->
                 <f:ajax execute="@form"
                     render="@form
-                    :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:treetableForm:#{treeWidgetId}
-                    :eloraMetadataHeading" />
+                    :#{component.namingContainer.parent.namingContainer.clientId}:global_flag_validation_failed_render
+                    :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:ttForm:#{treeWidgetId}" />
             </h:commandButton>
                 
             <h:commandButton value="#{messages['command.cancel']}"
@@ -123,6 +188,13 @@
             </h:commandButton>
             
         </div>
-        
     </h:form>
+    
+    <h:panelGroup id="global_flag_validation_failed_render">
+        <h:outputText style="display: none;" value="#{param.btnAddRelation}" />
+        <h:outputScript rendered="#{not empty param.btnAddRelation and !facesContext.isValidationFailed()}">
+            jQuery.fancybox.close();
+        </h:outputScript>
+    </h:panelGroup>
+
 </ui:composition>

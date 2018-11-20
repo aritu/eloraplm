@@ -38,7 +38,8 @@ public class DefaultVersionLabelManager implements EloraVersionLabelService {
 
     @Override
     public String getMajor(DocumentModel doc) {
-        Object major = doc.getPropertyValue(VersioningService.MAJOR_VERSION_PROP);
+        Object major = doc.getPropertyValue(
+                VersioningService.MAJOR_VERSION_PROP);
         if (major == null || !(major instanceof Long)) {
             return "-";
         } else {
@@ -48,7 +49,8 @@ public class DefaultVersionLabelManager implements EloraVersionLabelService {
 
     @Override
     public String getMinor(DocumentModel doc) {
-        Object minor = doc.getPropertyValue(VersioningService.MINOR_VERSION_PROP);
+        Object minor = doc.getPropertyValue(
+                VersioningService.MINOR_VERSION_PROP);
         if (minor == null || !(minor instanceof Long)) {
             return "-";
         } else {
@@ -80,7 +82,7 @@ public class DefaultVersionLabelManager implements EloraVersionLabelService {
 
     @Override
     public String getZeroVersion() {
-        return "0.0";
+        return "0.0+";
     }
 
     @Override

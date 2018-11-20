@@ -14,101 +14,60 @@
 package com.aritu.eloraplm.cm;
 
 /**
- * // TODO: write class general comment
+ * This class encapsulates the attributes related to Modified Item.
  *
  * @author aritu
  *
  */
-public class ModifiedItem {
+public class ModifiedItem extends CMItem {
 
-    // long rowNumber;
+    protected String derivedFrom;
 
-    String originItem;
+    protected boolean includeInImpactMatrix;
 
-    String originItemWc;
-
-    String action;
-
-    String destinationItem;
-
-    boolean isManaged;
-
-    String type;
-
-    /**
-     * @param rowNumber
-     * @param originItem
-     * @param originItemWc
-     * @param action
-     * @param destinationItem
-     * @param isManaged
-     * @param type
-     */
-    public ModifiedItem(String originItem, String originItemWc, String action,
-            String destinationItem, boolean isManaged, String type) {
-        super();
-        this.originItem = originItem;
-        this.originItemWc = originItemWc;
-        this.action = action;
-        this.destinationItem = destinationItem;
-        this.isManaged = isManaged;
-        this.type = type;
-    }
-
-    /*public long getRowNumber() {
-        return rowNumber;
-    }
-    
-    public void setRowNumber(long rowNumber) {
-        this.rowNumber = rowNumber;
+    /*public ModifiedItem(String nodeId, String parentNodeId, String derivedFrom,
+            String parentItem, String originItem, String originItemWc,
+            String predicate, String quantity, boolean isAnarchic,
+            String action, String destinationItem, String destinationItemWc,
+            boolean isManaged, boolean isManual, String type, String comment,
+            boolean isUpdated, boolean includeInImpactMatrix) {
+        super(nodeId, parentNodeId, parentItem, originItem, originItemWc,
+                predicate, quantity, isAnarchic, action, destinationItem,
+                destinationItemWc, isManaged, isManual, type, comment,
+                isUpdated);
+        this.derivedFrom = derivedFrom;
+        this.includeInImpactMatrix = includeInImpactMatrix;
     }*/
 
-    public String getOriginItem() {
-        return originItem;
+    public ModifiedItem(Long rowNumber, String nodeId, String parentNodeId,
+            String derivedFrom, String parentItem, String originItem,
+            String originItemWc, String predicate, String quantity,
+            boolean isAnarchic, String action, String destinationItem,
+            String destinationItemWc, boolean isManaged, boolean isManual,
+            String type, String comment, boolean isUpdated,
+            boolean includeInImpactMatrix) {
+        super(rowNumber, nodeId, parentNodeId, parentItem, originItem,
+                originItemWc, predicate, quantity, isAnarchic, action,
+                destinationItem, destinationItemWc, isManaged, isManual, type,
+                comment, isUpdated);
+        this.derivedFrom = derivedFrom;
+        this.includeInImpactMatrix = includeInImpactMatrix;
     }
 
-    public void setOriginItem(String originItem) {
-        this.originItem = originItem;
+    public String getDerivedFrom() {
+        return derivedFrom;
     }
 
-    public String getOriginItemWc() {
-        return originItemWc;
+    public void setDerivedFrom(String derivedFrom) {
+        this.derivedFrom = derivedFrom;
     }
 
-    public void setOriginItemWc(String originItemWc) {
-        this.originItemWc = originItemWc;
+    public boolean getIncludeInImpactMatrix() {
+        return includeInImpactMatrix;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getDestinationItem() {
-        return destinationItem;
-    }
-
-    public void setDestinationItem(String destinationItem) {
-        this.destinationItem = destinationItem;
-    }
-
-    public boolean isManaged() {
-        return isManaged;
-    }
-
-    public void setManaged(boolean isManaged) {
-        this.isManaged = isManaged;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public void setIncludeInImpactMatrix(boolean includeInImpactMatrix) {
+        this.includeInImpactMatrix = includeInImpactMatrix;
     }
 
 }

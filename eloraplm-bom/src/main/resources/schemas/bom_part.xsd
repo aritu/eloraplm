@@ -16,11 +16,29 @@ xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
       <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bomSource" />
     </xs:simpleType>
   </xs:element>
-  <xs:element name="mass" type="xs:double" />
+  <xs:element name="mass">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+  </xs:element>
   <xs:element name="massUnit" type="xs:string" default="kg"/>
-  <xs:element name="volume" type="xs:double" />
+  <xs:element name="volume">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+  </xs:element>
   <xs:element name="volumeUnit" type="xs:string" default="m3"/>
-  <xs:element name="surface" type="xs:double" />
+  <xs:element name="surface">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+  </xs:element>
   <xs:element name="surfaceUnit" type="xs:string" default="m2"/>
   <xs:element name="standard" default="id_standard1">
     <xs:simpleType>

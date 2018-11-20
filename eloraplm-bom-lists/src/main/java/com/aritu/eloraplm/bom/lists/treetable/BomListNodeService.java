@@ -70,7 +70,9 @@ public class BomListNodeService implements NodeManager {
         this.session = session;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see com.aritu.eloraplm.treetable.NodeService#getRoot(java.lang.Object)
      */
     @Override
@@ -89,8 +91,8 @@ public class BomListNodeService implements NodeManager {
         }
 
         RelationNodeData nodeData = saveRelationNodeData(String.valueOf(nodeId),
-                level, currentDoc.getId(), currentDoc, null, null, null, 0,
-                null, false, 0, false);
+                level, currentDoc.getId(), currentDoc, null, null, null, null,
+                null, null);
 
         nodeId++;
 
@@ -199,10 +201,9 @@ public class BomListNodeService implements NodeManager {
                                     stmt.getSubject());
                         }
 
-                        int quantity = stmtInfo.getQuantity();
+                        String quantity = stmtInfo.getQuantity();
                         String comment = stmtInfo.getComment();
-                        boolean isObjectWc = stmtInfo.getIsObjectWc();
-                        int ordering = stmtInfo.getOrdering();
+                        Integer ordering = stmtInfo.getOrdering();
 
                         DocumentModel wcDoc = null;
                         if (childDoc.isImmutable()) {
@@ -215,7 +216,7 @@ public class BomListNodeService implements NodeManager {
                                 String.valueOf(nodeId), level, childDoc.getId(),
                                 childDoc, wcDoc, stmt,
                                 EloraRelationConstants.BOM_LIST_HAS_ENTRY,
-                                quantity, comment, isObjectWc, ordering, false);
+                                quantity, comment, ordering);
 
                         childNodeList.add(node);
 
@@ -237,18 +238,17 @@ public class BomListNodeService implements NodeManager {
      * @param predicateUri
      * @param quantity
      * @param comment
-     * @param isObjectWc
      * @param isSpecial
      * @return
      */
     protected RelationNodeData saveRelationNodeData(String id, int level,
             String docId, DocumentModel data, DocumentModel wcDoc,
-            Statement stmt, String predicateUri, int quantity, String comment,
-            boolean isObjectWc, int ordering, boolean isSpecial) {
+            Statement stmt, String predicateUri, String quantity,
+            String comment, Integer ordering) {
 
         RelationNodeData nodeData = new BaseRelationNodeData(id, level, docId,
-                data, wcDoc, stmt, predicateUri, quantity, comment, isObjectWc,
-                ordering, isSpecial);
+                data, wcDoc, stmt, predicateUri, quantity, comment, ordering,
+                null, null, false, false);
 
         return nodeData;
     }

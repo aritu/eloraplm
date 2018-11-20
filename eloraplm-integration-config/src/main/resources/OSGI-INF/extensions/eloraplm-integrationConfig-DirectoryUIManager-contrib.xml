@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.integrationConfig.DirectoryUIManager.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
+    <directory name="elora_cad_metadata_mapping" layout="elora_cad_metadata_mapping" sortField="id" />
+    <directory name="elora_cad_metadata_type" layout="elora_cad_metadata_type" sortField="id" />
+    <directory name="elora_doctype_mapping" layout="elora_doctype_mapping" sortField="id" />
+    <directory name="elora_integration_version_control" layout="elora_integration_version_control" sortField="id" />
+    <directory name="elora_metadata_mapping" layout="elora_metadata_mapping" sortField="id" />
+    <directory name="elora_vocabularies_timestamps" layout="vocabulary" sortField="id" />
+  </extension>
+
+</component>

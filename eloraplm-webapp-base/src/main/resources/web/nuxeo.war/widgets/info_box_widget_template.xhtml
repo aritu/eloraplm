@@ -6,12 +6,6 @@
 
 
   <table class="fullWidth infoBoxTable">
-    <!--<c:if test="#{!empty fieldOrValue.dc.created}">
-      <tr>
-        <td class="labelColumn">#{messages['label.dublincore.creationDate']}</td>
-        <td class="fieldColumn"><h:outputText value="#{fieldOrValue.dc.created}" /></td>
-      </tr>
-    </c:if>-->
     <c:if test="#{!empty fieldOrValue.dc.creator and !empty fieldOrValue.dc.created}">
       <tr>
         <td class="labelColumn">#{messages['label.summary.createdBy']}</td>

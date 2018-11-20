@@ -6,7 +6,7 @@
 
     <!-- treetable layouts -->
     
-    <layout name="bom_composition_list_treetable">
+    <layout name="bom_comp_list_tt">
           <templates>
             <template mode="any">/layouts/layout_treetable_template.xhtml
             </template>
@@ -66,15 +66,14 @@
           </columns>
           <properties mode="any">
             <property name="tableTitle">title.treetable.bomComposition</property>
-            <property name="showButtons">true</property>
-            <property name="isEditable">true</property>
             <property name="isSortable">true</property>
             <property name="sortBy">ordering</property>
             <property name="sortOrder">ascending</property>
+            <property name="factory">#{bomCompositionListRoot}</property>
           </properties>
         </layout>
         
-        <layout name="bom_where_used_list_treetable">
+        <layout name="bom_where_list_tt">
           <templates>
             <template mode="any">/layouts/layout_treetable_template.xhtml
             </template>
@@ -119,8 +118,7 @@
           </columns>
           <properties mode="any">
             <property name="tableTitle">title.treetable.bomWhereUsedList</property>
-            <property name="showButtons">false</property>
-            <property name="isEditable">false</property>
+            <property name="factory">#{bomWhereUsedListRoot}</property>
           </properties>
         </layout>
     <!-- end of treetable layouts -->
@@ -159,27 +157,33 @@
 
     <!-- treetable widgets -->
 
-        <widget name="bom_composition_list_treetable" type="treetable">
+        <widget name="bom_comp_list_tt" type="treetable">
             <labels>
                 <label mode="any">label.treetable.bom.compositionList</label>
             </labels>
             <fields>
                 <field>data</field>
             </fields>
+            <widgetModes>
+                <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}</mode>
+            </widgetModes>
             <properties widgetMode="any">
-                <property name="treetableLayout">bom_composition_list_treetable</property>
+                <property name="treetableLayout">bom_comp_list_tt</property>
             </properties>
         </widget>
         
-        <widget name="bom_where_used_list_treetable" type="treetable">
+        <widget name="bom_where_list_tt" type="treetable">
             <labels>
                 <label mode="any">label.treetable.bom.whereUsedList</label>
             </labels>
             <fields>
                 <field>data</field>
             </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
             <properties widgetMode="any">
-                <property name="treetableLayout">bom_where_used_list_treetable</property>
+                <property name="treetableLayout">bom_where_list_tt</property>
             </properties>
         </widget>
         
@@ -196,22 +200,6 @@
             <property name="template">
                   /widgets/bom_composition_list_remove_relation_widget.xhtml
             </property>
-          </properties>
-        </widget>
-        
-        <widget name="listing_ordering" type="text">
-          <labels>
-            <label mode="any">eloraplm.label.ordering</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>ordering</field>
-          </fields>
-          <widgetModes>
-            <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode>
-          </widgetModes>
-          <properties mode="any">
-            <property name="style">height: 23px; padding: 0.3em 0.5em; margin-bottom: 0;#{value.level eq 1 ? '' : 'display: none;'}</property>
           </properties>
         </widget>
 

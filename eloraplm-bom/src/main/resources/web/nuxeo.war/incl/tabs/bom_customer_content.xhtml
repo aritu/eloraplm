@@ -1,25 +1,27 @@
 <ui:composition
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:c="http://java.sun.com/jstl/core">
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxd="http://nuxeo.org/nxweb/document">
+    
+  <h:panelGroup styleClass="textAlignC displayB" style="margin-bottom: 15px;">
+<!--     TODO: Hau include komun batera pasatu -->
+    <c:if test="#{nxd:hasPermission(currentDocument, 'Write') and not currentDocument.isVersion() and not currentDocument.isProxy()}">
+      <c:if test="#{currentDocument.locked and !(currentDocumentLockDetails['document.locker'] eq currentUser)}">
+          <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentLockedByOther']}" class="processMessage completeWarning" />
+      </c:if>
+      <c:if test="#{documentManager.getVersionsForDocument(currentDocument.ref).size() eq 0}">
+          <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentWithoutVersion']}" class="processMessage completeWarning" />
+      </c:if>
+   </c:if>
+  </h:panelGroup>
+  
 
-<script type="text/javascript">
-  function toggleLayers(more_block, more_items) {
-    var objMoreBlock = document.getElementById(more_block).style;
-    var objMoreItems = document.getElementById(more_items).style;
-    if(objMoreBlock.display == "block")
-      objMoreBlock.display = "none";
-    if(objMoreItems.display == "none")
-      objMoreItems.display = "block";
-  }
-</script>
+    <nxl:widget name="cust_prod_inv_tt" mode="view" value="#{customerProductInverseTreeBean}" />
 
-<ui:include src="/bom_document_inverse_relations.xhtml">
-  <ui:param name="formId" value="customer_relations" />
-  <ui:param name="documentRelations" value="#{incomingCustomerProductRelations}" />
-  <ui:param name="relationWidget" value="bomProductCustomerRelationButton" />
-  <ui:param name="relationBean" value="#{customerRelationBean}" />
-  <ui:param name="message" value="#{messages['title.bom.related.customer']}" />
-</ui:include>
 
 </ui:composition>

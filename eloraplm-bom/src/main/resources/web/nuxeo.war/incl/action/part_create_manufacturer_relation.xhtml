@@ -1,0 +1,51 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    >
+    
+    <h3>
+        <h:outputText value="#{messages['eloraplm.title.relation.add']}" />
+    </h3>
+    
+    <h:form id="#{fancyboxFormId}">  
+      <h:panelGroup styleClass="content" layout="block">
+        <h:panelGrid columns="2" styleClass="dataInput"
+            columnClasses="relationCreateLabelColumn, relationCreateFieldColumn">
+          
+          <h:outputLabel for="reference" value="#{messages['label.widget.elo.reference']}" class="required relationObjectLabel" />
+          <h:panelGroup>
+            <nxl:widgetType id="reference" name="text" mode="edit" value="#{manufacturerRelationBean.reference}" required="true"/>
+            <h:message for="reference" class="errorMessage" />
+          </h:panelGroup>
+          
+          <h:outputLabel for="manufacturer" value="#{messages['eloraplm.label.manufacturer']}" class="required relationObjectLabel" />
+          <h:panelGroup>
+            <nxl:widget name="bomManufacturerList" mode="edit" value="#{manufacturerRelationBean.manufacturer}" />
+            <h:message for="manufacturer" class="errorMessage" />
+          </h:panelGroup>
+        </h:panelGrid>
+      </h:panelGroup>
+      
+      <h:panelGroup id="global_flag_validation_failed_render">
+          <h:outputScript rendered="#{!empty param.btnAddRelation and !facesContext.validationFailed}">
+             jQuery.fancybox.close();
+          </h:outputScript>
+      </h:panelGroup>
+      
+      <div class="buttonsGadget">
+        <h:commandButton value="#{messages['command.add']}"
+            styleClass="button"
+            actionListener="#{manufacturerRelationBean.addRelation()}">
+            <f:param name="btnAddRelation" value="true" />
+            <!-- We don't need to add global_flag_validation_failed_render to render attribute because it is inside the form -->                
+            <f:ajax execute="@form"
+                    render="@form
+                    :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:ttForm:#{treeWidgetId}
+                    :eloraMetadataHeading" />
+        </h:commandButton>
+      </div>
+    </h:form>
+</ui:composition>

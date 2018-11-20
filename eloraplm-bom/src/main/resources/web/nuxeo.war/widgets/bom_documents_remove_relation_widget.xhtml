@@ -1,0 +1,15 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  >
+
+  <ui:include src="remove_relation_widget_template.xhtml">
+    <ui:param name="treeBean" value="#{bomDocumentsTreeBean}" />
+    <ui:param name="level" value="#{field_0}" />
+    <ui:param name="isSpecial" value="#{false}" />
+    <ui:param name="subjectDocument" value="#{currentDocument}" />
+    <ui:param name="isAnarchic" value="#{false}" />
+    <ui:param name="isVisible" value="#{level == '1'}" />
+</ui:include>
+
+</ui:composition>

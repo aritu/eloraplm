@@ -99,6 +99,11 @@ public class BaseNodeData implements NodeData {
     }
 
     @Override
+    public boolean getIsDirty() {
+        return isNew || isModified || isRemoved;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

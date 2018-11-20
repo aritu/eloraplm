@@ -5,9 +5,9 @@ Bundle-Name: eloraplm-change-management
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
-Bundle-Vendor: Nuxeo
+Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-change-management-TypeSe
  rvice-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-Cont
  entTemplateService-contrib.xml,OSGI-INF/extensions/eloraplm-change-ma
@@ -18,7 +18,7 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-change-management-TypeSe
  -INF/extensions/eloraplm-change-management-RoutingService-contrib.xml
  ,OSGI-INF/extensions/eloraplm-change-management-SQLDirectoryFactory-c
  ontrib.xml,OSGI-INF/extensions/eloraplm-change-management-DirectoryUI
- Manager-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-Pa
- geProviderService-contrib.xml,OSGI-INF/extensions/eloraplm-change-man
- agement-WebResources-contrib.xml
+ Manager-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-We
+ bResources-contrib.xml,OSGI-INF/extensions/eloraplm-change-management
+ -ContentViewService-contrib.xml
 

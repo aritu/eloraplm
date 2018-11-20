@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.change.management.ContentViewService.contrib">
+
+  <require>com.aritu.eloraplm.webapp.base.ContentViewService.contrib</require>
+  
+  <extension target="org.nuxeo.ecm.platform.ui.web.ContentViewService"
+    point="contentViews">
+
+    <!-- Override ELORAPLM LINK CONTENT -->
+    <contentView name="eloraplm_link_content">
+
+      <title>eloraplm.label.contentview.link_content</title>
+      <translateTitle>true</translateTitle>
+      <showTitle>false</showTitle>
+
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+        <whereClause docType="EloraAdvancedSearch">
+          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+            <field schema="elora_advanced_search" name="fulltext_all" />
+          </predicate>
+          <predicate parameter="dc:title" operator="FULLTEXT">
+            <field schema="elora_advanced_search" name="title" />
+          </predicate>
+          <predicate parameter="dc:modified" operator="BETWEEN">
+            <field schema="elora_advanced_search" name="modified_min" />
+            <field schema="elora_advanced_search" name="modified_max" />
+          </predicate>
+          <predicate parameter="elo:reference" operator="ILIKE">
+            <field schema="elora_advanced_search" name="reference" />
+          </predicate>
+          <predicate parameter="ecm:primaryType" operator="=">
+            <field schema="elora_advanced_search" name="primaryType" />
+          </predicate>
+          <predicate parameter="ecm:currentLifeCycleState" operator="=">
+            <field schema="elora_advanced_search" name="currentLifeCycleState" />
+          </predicate>
+          <fixedPart>
+            ecm:uuid IN (?)
+          </fixedPart>
+        </whereClause>
+        <parameter>#{eloraCmLinks.getLinks()}</parameter>
+        <sort ascending="false" column="dc:created"/>
+        <pageSize>20</pageSize>
+      </coreQueryPageProvider>
+
+      <searchLayout name="eloraplm_link_content_filter" />
+      <showFilterForm>true</showFilterForm>
+
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+     
+      <!-- disable cache for this content view -->
+      <cacheSize>0</cacheSize>
+      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+
+      <resultLayouts>
+        <layout iconPath="/icons/document_listing_icon.png" name="link_listing_table" showCSVExport="true" showPDFExport="false" title="link_listing_table" translateTitle="true"/>
+      </resultLayouts>
+
+    </contentView>
+    
+  </extension>
+
+</component>

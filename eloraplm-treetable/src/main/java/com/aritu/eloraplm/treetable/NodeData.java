@@ -41,4 +41,6 @@ public interface NodeData extends Serializable, Comparable<Object> {
 
     void setIsModified(boolean isModified);
 
+    boolean getIsDirty();
+
 }

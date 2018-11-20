@@ -38,7 +38,8 @@ import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.exceptions.RelationAlreadyExistsException;
-import org.nuxeo.ecm.platform.relations.api.impl.QNameResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
+import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.relations.web.StatementInfo;
 import org.nuxeo.ecm.platform.relations.web.StatementInfoComparator;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
@@ -46,6 +47,7 @@ import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.bom.treetable.ManufacturerPartInverseTreeBean;
 import com.aritu.eloraplm.config.util.EloraConfigHelper;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
@@ -53,7 +55,6 @@ import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.EloraDocContextBoundActionBean;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
-import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -73,9 +74,9 @@ public class EloraManufacturerRelationBean extends
 
     protected static boolean includeStatementsInEvents = false;
 
-    protected List<Statement> incomingBomPartManufacturerStatements;
+    protected List<Statement> outgoingManufacturerPartStatements;
 
-    protected List<StatementInfo> incomingBomPartManufacturerStatementsInfo;
+    protected List<StatementInfo> outgoingManufacturerPartStatementsInfo;
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -97,6 +98,9 @@ public class EloraManufacturerRelationBean extends
 
     @In(create = true)
     protected transient WebActions webActions;
+
+    @In(create = true)
+    protected ManufacturerPartInverseTreeBean manufacturerPartInverseTreeBean;
 
     // Add Relation form properties
 
@@ -139,31 +143,29 @@ public class EloraManufacturerRelationBean extends
         predicateUri = EloraRelationConstants.BOM_MANUFACTURER_HAS_PART;
     }
 
-    @Factory(value = "incomingBomPartManufacturerRelations", scope = ScopeType.EVENT)
+    @Factory(value = "outgoingManufacturerPartRelations", scope = ScopeType.EVENT)
     public List<StatementInfo> getIncomingBomManufacturerStatementsInfo() {
-        if (incomingBomPartManufacturerStatementsInfo != null) {
-            return incomingBomPartManufacturerStatementsInfo;
+        if (outgoingManufacturerPartStatementsInfo != null) {
+            return outgoingManufacturerPartStatementsInfo;
         }
 
-        // Get last version to show its relations. We don't check if it is
-        // checked out because is incoming and we show just AV -> AV relations
         DocumentModel currentDoc = documentManager.getLastDocumentVersion(getCurrentDocument().getRef());
 
-        Resource predicate = new QNameResourceImpl(
-                EloraRelationConstants.BOM_MANUFACTURER_HAS_PART, "");
-        incomingBomPartManufacturerStatements = EloraRelationHelper.getSubjectStatements(
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_MANUFACTURER_HAS_PART);
+        outgoingManufacturerPartStatements = RelationHelper.getStatements(
                 currentDoc, predicate);
 
-        if (incomingBomPartManufacturerStatements.isEmpty()) {
-            incomingBomPartManufacturerStatements = Collections.emptyList();
-            incomingBomPartManufacturerStatementsInfo = Collections.emptyList();
+        if (outgoingManufacturerPartStatements.isEmpty()) {
+            outgoingManufacturerPartStatements = Collections.emptyList();
+            outgoingManufacturerPartStatementsInfo = Collections.emptyList();
         } else {
-            incomingBomPartManufacturerStatementsInfo = eloraRelationActions.getStatementsInfo(incomingBomPartManufacturerStatements);
+            outgoingManufacturerPartStatementsInfo = eloraRelationActions.getStatementsInfo(outgoingManufacturerPartStatements);
             // sort by modification date, reverse
             Comparator<StatementInfo> comp = Collections.reverseOrder(new StatementInfoComparator());
-            Collections.sort(incomingBomPartManufacturerStatementsInfo, comp);
+            Collections.sort(outgoingManufacturerPartStatementsInfo, comp);
         }
-        return incomingBomPartManufacturerStatementsInfo;
+        return outgoingManufacturerPartStatementsInfo;
     }
 
     public String addRelation() throws EloraException {
@@ -172,61 +174,71 @@ public class EloraManufacturerRelationBean extends
             currentDoc = documentManager.getWorkingCopy(currentDoc.getRef());
         }
         try {
-            String structureRootId = EloraStructureHelper.getStructureRootUid(
-                    currentDoc, documentManager);
 
-            String targetFolderPath = EloraStructureHelper.getPathByType(
-                    new IdRef(structureRootId),
-                    EloraDoctypeConstants.BOM_MANUFACTURER_PART,
-                    EloraDoctypeConstants.STRUCTURE_EBOM, documentManager);
+            DocumentModel manPartDoc = createManufacturerPart(currentDoc);
 
-            String manName = EloraConfigHelper.getManufacturerConfig(manufacturer);
-            PathSegmentService pss = Framework.getService(PathSegmentService.class);
-            String pathManName = pss.generatePathSegment(manName);
-            DocumentModel manPartDoc = documentManager.createDocumentModel(
-                    targetFolderPath, pathManName,
-                    EloraDoctypeConstants.BOM_MANUFACTURER_PART);
-
-            manPartDoc.setPropertyValue(NuxeoMetadataConstants.NX_DC_TITLE,
-                    manName);
-            manPartDoc.setPropertyValue(
-                    EloraMetadataConstants.ELORA_ELO_REFERENCE, reference);
-            manPartDoc.setPropertyValue(
-                    EloraMetadataConstants.ELORA_BOMMANPART_MANUFACTURER,
-                    manufacturer);
-
-            manPartDoc = documentManager.createDocument(manPartDoc);
-
-            EloraDocumentHelper.checkInDocument(
-                    EloraConfigHelper.getReleasedLifecycleStatesConfig(),
-                    documentManager, eloraVersionLabelService, manPartDoc,
-                    "Created from Part: " + currentDoc.getTitle());
+            // Check in new document
+            EloraDocumentHelper.setupCheckIn(eloraVersionLabelService,
+                    manPartDoc, "Created from Part: " + currentDoc.getTitle());
 
             manPartDoc = documentManager.saveDocument(manPartDoc);
 
             resetCreateFormValues();
 
-            // Add inverse relation taking custProdDoc as subject
-            eloraDocumentRelationManager.addRelation(documentManager,
-                    currentDoc, manPartDoc, predicateUri, true);
+            addRelations(currentDoc, manPartDoc);
 
-            DocumentModel manPartDocLastVersion = documentManager.getLastDocumentVersion(manPartDoc.getRef());
-            DocumentModel currentDocLastVersion = documentManager.getLastDocumentVersion(currentDoc.getRef());
-            // Add inverse relation taking custProdDocLastVersion as subject, av
-            // -> av
-            eloraDocumentRelationManager.addRelation(documentManager,
-                    currentDocLastVersion, manPartDocLastVersion, predicateUri,
-                    true);
-
-            facesMessages.add(StatusMessage.Severity.INFO,
-                    messages.get("label.relation.created"));
         } catch (RelationAlreadyExistsException e) {
             facesMessages.add(StatusMessage.Severity.WARN,
                     messages.get("label.relation.already.exists"));
         }
 
         resetManufacturerPartStatements();
+
+        manufacturerPartInverseTreeBean.createRoot();
+
         return null;
+    }
+
+    private DocumentModel createManufacturerPart(DocumentModel doc)
+            throws EloraException {
+        String structureRootId = EloraStructureHelper.getStructureRootUid(doc,
+                documentManager);
+
+        String targetFolderPath = EloraStructureHelper.getPathByType(new IdRef(
+                structureRootId), EloraDoctypeConstants.BOM_MANUFACTURER_PART,
+                EloraDoctypeConstants.STRUCTURE_EBOM, documentManager);
+
+        String manName = EloraConfigHelper.getManufacturerConfig(manufacturer);
+        PathSegmentService pss = Framework.getService(PathSegmentService.class);
+        String pathManName = pss.generatePathSegment(manName);
+        DocumentModel manPartDoc = documentManager.createDocumentModel(
+                targetFolderPath, pathManName,
+                EloraDoctypeConstants.BOM_MANUFACTURER_PART);
+
+        manPartDoc.setPropertyValue(NuxeoMetadataConstants.NX_DC_TITLE, manName);
+        manPartDoc.setPropertyValue(EloraMetadataConstants.ELORA_ELO_REFERENCE,
+                reference);
+        manPartDoc.setPropertyValue(
+                EloraMetadataConstants.ELORA_BOMMANPART_MANUFACTURER,
+                manufacturer);
+
+        return documentManager.createDocument(manPartDoc);
+    }
+
+    private void addRelations(DocumentModel currentDoc, DocumentModel manPartDoc) {
+        // Add inverse relation taking manPartDoc as subject
+        eloraDocumentRelationManager.addRelation(documentManager, manPartDoc,
+                currentDoc, predicateUri, "", "1");
+
+        DocumentModel manPartDocLastVersion = documentManager.getLastDocumentVersion(manPartDoc.getRef());
+        DocumentModel currentDocLastVersion = documentManager.getLastDocumentVersion(currentDoc.getRef());
+        // Add inverse relation taking custProdDocLastVersion as subject, av->av
+        eloraDocumentRelationManager.addRelation(documentManager,
+                manPartDocLastVersion, currentDocLastVersion, predicateUri, "",
+                "1");
+
+        facesMessages.add(StatusMessage.Severity.INFO,
+                messages.get("label.relation.created"));
     }
 
     public String deleteStatement(StatementInfo stmtInfo) {
@@ -239,13 +251,13 @@ public class EloraManufacturerRelationBean extends
     protected void resetEventContext() {
         Context evtCtx = Contexts.getEventContext();
         if (evtCtx != null) {
-            evtCtx.remove("incomingBomPartManufacturerRelations");
+            evtCtx.remove("outgoingManufacturerPartRelations");
         }
     }
 
     protected void resetManufacturerPartStatements() {
-        incomingBomPartManufacturerStatements = null;
-        incomingBomPartManufacturerStatementsInfo = null;
+        outgoingManufacturerPartStatements = null;
+        outgoingManufacturerPartStatementsInfo = null;
     }
 
     private void resetCreateFormValues() {

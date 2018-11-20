@@ -1,3 +1,30 @@
+.nx-page a,
+.nx-page a:visited
+{
+    color: #053832;
+}
+
+.nx-page a:hover,
+.nx-page table.dataOutput tbody tr:hover a
+{
+    color: #2c874e;
+}
+
+.breadcrumbs a,
+.breadcrumbs a:link,
+.breadcrumbs a:visited
+{
+    color: #053832;
+}
+
+.dataTable th a:hover,
+.dataTableLine th a:hover,
+.dataTableNoBorder th a:hover,
+.dataList th a:hover,
+.dataOutput th a:hover
+{
+    color: #2c874e;
+}
 
 h1
 {
@@ -13,7 +40,12 @@ h1
 
 h1, h2, h3, h4, h5, h6, .mainTitle
 {
-    color: rgb(77,77,77);
+    color: #053832;
+}
+
+.hidden
+{
+    display: none !important;
 }
 
 .titleBlock .currentDocumentDescription
@@ -26,19 +58,15 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 
 .copyrights
 {
-    float: none;
+    float: left;
 }
 
-.tabsContent
-{
-    border-color: #c6c9cf;
-}
 
 #nxw_documentTabs_panel.tabsBar
 {
     border: none;
     background: none;
-    top: 13px;
+    top: 12px;
     position: relative;
 }
 
@@ -51,8 +79,8 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 #nxw_documentTabs_panel.tabsBar li:hover,
 #nxw_documentTabs_panel.tabsBar li.selected
 {
-    border-left: 1px solid #c6c9cf;
-    border-right: 1px solid #c6c9cf;
+    border-left: 1px solid #bbb;
+    border-right: 1px solid #bbb;
 }
 
 
@@ -66,31 +94,72 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 #nxw_documentTabs_panel.tabsBar li.selected a,
 #nxw_documentTabs_panel.tabsBar li.selected a:visited
 {
-    border-color: #aaa;
+    border-top-color: #8cd600;
     border-radius: 0;
 }
 
-.nxMainContainer .column,
-.nxMainContainer .verticalTabsColumn,
-.nxMainContainer .nxSearchForm
+.tabsBar.vertical li,
+.tabsBar.vertical li:hover,
+.tabsBar.vertical li.selected,
+.tabsBar.vertical li.selected:hover
 {
-    background-color: rgb(77,77,77);
+    margin: 0 0 0.15em 0.2em;
 }
 
-.nxMainContainer,
-.nxMainContainer .column + .content,
+.nxMainContainer .column
+{
+    padding-top: 80px;
+    border-right: 1px solid #8cd600;
+}
+
+.nxMainContainer .column_sidebar
+{
+    width: auto;
+}
+
+.nxMainContainer .ws_content
+{
+    margin-left: 48px;
+}
+
+.nxMainContainer #column_sidebar_browse #nxw_treeExplorerTabs_tab_content
+{
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+.nxMainContainer #column_sidebar_clipboard
+{
+    font-size: 0.85em;
+}
+
+.nxMainContainer #column_sidebar_clipboard .userClipboard
+{
+    width: 340px;
+}
+
+.nxMainContainer .column
+{
+    background-color: #f4f4f4;
+}
+
+.nxMainContainer
+/*,
+.nxMainContainer .ws_content,
+.nxMainContainer .verticalTabsContent,
+.nxMainContainer .nxSearchResults*/
+{
+    background-color: #fafffa;
+}
+
+/*
+.nxMainContainer .ws_content,
 .nxMainContainer .verticalTabsContent,
 .nxMainContainer .nxSearchResults
 {
-    background-color: #dadcdd;
+    background-image: linear-gradient(to bottom, #fafdfa 50px, #dadcdd);
 }
-
-.nxMainContainer .column + .content,
-.nxMainContainer .verticalTabsContent,
-.nxMainContainer .nxSearchResults
-{
-    background-image: linear-gradient(to bottom, #f6f9fd 50px, #dadcdd);
-}
+*/
 
 .nxMainContainer .nxSearchResults .bubbleBox
 {
@@ -100,6 +169,42 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 .nxFooter
 {
     border-top: 1px solid #cacccd;
+    background-color: #ddeae1;
+}
+
+.nxHeader
+{
+    z-index: 40000;
+    background-color: #1c5531;
+    border-bottom: 1px solid #2c874e;
+    color: #fff;
+    height: 60px;
+    padding: 5px;
+    font-family: "Source Sans Pro", sans-serif;
+}
+
+.nxHeader + .nxMainContainer
+{
+    margin-top: 60px;
+}
+
+.nx-page .nxMainContainer .nxSearchForm
+{
+    padding-top: 60px;
+    background-color: #f4f4f4;
+    border-right: 1px solid #8cd600;
+}
+
+.nxHeader .content
+{
+    width: 85%;
+    margin-top: 4px;
+}
+
+.nxHeader .logo
+{
+    padding-left: 50px;
+    width: 15%;
 }
 
 .nxHeader .logo img
@@ -108,9 +213,120 @@ h1, h2, h3, h4, h5, h6, .mainTitle
     top: 5px;
 }
 
+.nxHeader a,
+.nxHeader a:link,
+.nxHeader a:visited,
+.userMenuActions .button,
+.mainTabs a:link,
+.mainTabs a:visited
+{
+
+    color: #fff;
+}
+
+.nxHeader a:hover,
+.nxHeader a:active
+
+{
+    color: #8cd600;
+}
+
+.mainTabs a:link,
+.mainTabs a:visited
+{
+    font-size: 1.3em;
+}
+
+.mainTabs li
+{
+    margin: 0 0.5em;
+}
+
+.mainTabs li,
+.mainTabs li:hover,
+.mainTabs li.selected
+{
+    border: none;
+}
+
+.mainTabs a:hover,
+.mainTabs li:hover,
+.mainTabs li.selected a
+{
+    color: #8cd600;
+    font-weight: normal;
+}
+
+.nxHeader .userActions,
+.nxHeader .userMenuActions
+{
+    border-top: none;
+}
+
+.userMenuActions .actionList .dropdown
+{
+    border: 1px solid #1c5531;
+}
+
+.userMenuActions .actionList .dropdown:hover
+{
+
+    background-color: #1c5531;
+    border: 1px solid #8cd600;
+    color: #8cd600;
+
+}
+
+.ui-sidebar
+{
+    padding: 0;
+    border: none;
+}
+
+.ui-sidebar-left
+{
+    top: 61px;
+    padding: 0 0 0 48px;
+}
+
+#column_sidebar_buttons
+{
+    width: 48px;
+    z-index: 39000;
+}
+
+#column_sidebar_buttons .sidebar_button
+{
+    margin-bottom: 20px;
+}
+
+.tabsBar.vertical li:hover a,
+.tabsBar.vertical li.selected a
+{
+    background-color: rgba(0, 0, 0, 0.5);
+    border-left: 3px solid #2c874e;
+    border-top: 0;
+    color: #fff;
+}
+
+.tabsBar li a:hover,
+.tabsBar li.selected a,
+.tabsBar li.selected a:visited,
+.modularTabs li a:hover,
+.modularTabs li.selected a,
+.modularTabs li.selected a:visited
+{
+    border-color: #8cd600;
+}
+
 .tipsy
 {
     font-size: 0.8em;
+}
+
+#ambiance-notification {
+    top: 64px;
+    right: 28px;
 }
 
 /*
@@ -123,3 +339,316 @@ h1, h2, h3, h4, h5, h6, .mainTitle
     width: 99%;
 }
 */
+
+
+/* Show Close and Clean buttons in Richfaces calendar */
+.nx-page .rf-cal-btn-close,
+.nx-page .rf-cal-tl-ftr:nth-child(2)
+{
+    display: block;
+}
+
+/* Make loading icon a modal layer */
+.nx-page .rf-st-start {
+    background-color: rgba(255,255,255,0.6);
+    border: none;
+    width: 100%;
+    height: 100%;
+    padding: calc(30vh - 40px) calc(50% - 40px);
+    position: fixed;
+    margin: 0;
+    left: 0;
+    top: 0;
+    z-index: 88888;
+}
+
+.nx-page .rf-st-start img {
+    border: 2px solid #8cd600;
+    border-radius: 40px;
+    padding: 30px;
+    background-color: rgba(255,255,255,0.8);
+    box-shadow: 0 0 12px #fff;
+}
+
+
+
+table.listItem
+{
+    border: 7px solid #f6f6f6;
+    background-color: #f6f6f6;
+    margin: 5px 0;
+    width: 100%;
+}
+
+table.listItem td
+{
+    padding: 5px;
+}
+
+
+.ui-dialog.ui-widget
+{
+    font-size: 1em;
+    z-index: 9002 !important;
+}
+
+#fancybox-wrap
+{
+    z-index: 40005;
+}
+
+.breadcrumbs .actionSubList a:hover
+{
+    color: #2c874e;
+}
+
+.nx-page .select2-results .select2-highlighted
+{
+    background: #f8f9fb;
+    color: #2c874e;
+}
+
+.summaryTitle,
+.gridBox .summaryTitle
+{
+    color: #053832;
+}
+
+.content #nxw_documentTabs_tab_content.tabsContent
+{
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    border: none;
+}
+
+.bubbleBox.bubbleListing
+{
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    margin: 0 0.4em 1.2em 2px;
+}
+
+.tabsBar.subtabsBar li.selected a
+{
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #e6e9ef;
+}
+
+#nxw_documentTabs_panel.tabsBar li.selected,
+#nxw_documentTabs_panel.tabsBar li:hover
+{
+    box-shadow: 0 -2px 2px rgba(0,0,0,0.5);
+}
+
+.nxFooter,
+.nx-page .nxFooter a,
+.nx-page .nxFooter a:hover,
+.copyrights
+{
+    color: #053832;
+}
+
+.dataTableLine
+{
+    border: none;
+}
+
+.dataTableLine tr td,
+.dataTableLine.smallTable tr td
+{
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    border-color: #e6e9ef;
+    padding: 0.4em 0.6em;
+}
+
+.dataTableLine tr:first-child td
+{
+    border-top: none;
+}
+
+.nx-page .rf-cal-c
+{
+    color: #2c874e;
+}
+
+.nx-page .rf-cal-hov,
+.nx-page .rf-cal-tl-btn:hover,
+.nx-page .rf-cal-time-btn:hover,
+.nx-page div.rf-cal-editor-btn-hov,
+.nx-page .rf-cal-edtr-btn:hover,
+.nx-page .rf-cal-edtr-tl-hov,
+.nx-page .rf-cal-sel
+{
+    background-color: #2c874e;
+    color: #fff;
+
+}
+
+.nx-page .button:hover,
+.nx-page a.button:hover,
+.nx-page input.button:hover,
+.nx-page .action_bar a:hover,
+.nx-page button:hover,
+.nx-page input[type="reset"]:hover,
+.nx-page input[type="submit"]:hover,
+.nx-page input[type="button"]:hover,
+.nx-page .button:focus,
+.nx-page button:focus,
+.nx-page input:focus,
+.nx-page input[type="text"]:focus,
+.nx-page input[type="password"]:focus,
+.nx-page input[type="reset"]:focus,
+.nx-page input[type="submit"]:focus,
+.nx-page input[type="button"]:focus,
+.nx-page select:focus,
+.nx-page textarea:focus,
+.nx-page .select2-container.select2-container-active .select2-choice,
+.nx-page .select2-container-multi.select2-container-active .select2-choices
+{
+    border-color: #2c874e;
+    box-shadow: 0 0 3px #8cd600;
+    color: #053832;
+}
+
+.select2-drop-active,
+.select2-container-active .select2-choice,
+.select2-container-active .select2-choices
+{
+    border: 1px solid #2c874e;
+}
+
+::selection
+{
+    background-color: #c5c8c2;
+    color: #053832;
+}
+
+
+a .user,
+a .group,
+a span.user,
+a span.group
+{
+    color: inherit;
+}
+
+a .user:hover,
+a .group:hover
+{
+    background-color: #f3f6f9;
+    border-color: inherit;
+}
+
+.subtabsBar li a:hover,
+.subtabsBar li.selected a,
+.subtabsBar li.selected a:visited
+{
+    border-bottom: none;
+}
+
+.nx-page .button.primary,
+.nx-page input.button.primary
+{
+    background-color: #1c5531;
+    border: 1px solid #053832;
+    color: #fff;
+}
+
+.nx-page .button.primary:hover,
+.nx-page input.button.primary:hover
+{
+    background-color: #053832;
+    border: 1px solid #2c874e;
+    color: #fff;
+    box-shadow: 0 0 3px #8cd600;
+}
+
+#fancybox-wrap a,
+#fancybox-wrap a:link,
+#fancybox-wrap a:visited
+{
+    color: #053832;
+}
+
+#fancybox-wrap a:hover
+{
+    color: #2c874e;
+}
+
+.nx-page .searchesSelector
+{
+    background-color: #053832;
+}
+
+.nx-page .thumbnailOptions input,
+.nx-page .thumbnailOptions input[type="submit"]
+{
+    color: #053832;
+}
+
+.nx-page .thumbnailOptions input:hover,
+.nx-page .thumbnailOptions input[type="submit"]:hover
+{
+    color: #2c874e;
+    box-shadow: none;
+}
+
+.gridBox .foldableBox
+{
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    border: none;
+}
+
+.ambiance,
+.ambiance:hover
+{
+    border-left-width: 4px;
+    border-left-style: solid;
+    border-radius: 0;
+}
+
+.foldableLightBox .folded a.foldableHeaderLink,
+.foldableLightBox .unfolded a.foldableHeaderLink
+{
+    border: none;
+    border-radius: 0;
+    background-color: #f8f9fb;
+    margin-bottom: 3px;
+}
+
+.foldableLightBox .folded a.foldableHeaderLink:hover,
+.foldableLightBox .unfolded a.foldableHeaderLink:hover
+{
+    background-color: #e3e6e9;
+}
+
+#nxw_documentTabs_tab_content.tabsContent > div > .processMessage 
+{
+    position: relative;
+    top: -10px;
+}
+
+.processMessage
+{
+    background-color: #f3f6f9;
+    border-radius: 0;
+    border-left: 4px solid #42444e;
+    background-position-y: 1.1em;
+}
+
+.completeInfo
+{
+    border-color: #597497;
+}
+.completeSuccess
+{
+    border-color: #569150;
+}
+.completeError
+{
+    border-color: #ff0044;
+}
+.completeWarning
+{
+    border-color: #e27000;
+}

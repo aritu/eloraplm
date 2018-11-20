@@ -1,6 +1,7 @@
 package com.aritu.eloraplm.relations.treetable;
 
 import java.util.List;
+import java.util.Map;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.relations.api.Statement;
@@ -33,27 +34,37 @@ public interface RelationNodeData extends NodeData {
 
     void setPredicateUri(String predicateUri);
 
-    int getQuantity();
+    String getQuantity();
 
-    void setQuantity(int quantity);
+    void setQuantity(String quantity);
 
     String getComment();
 
     void setComment(String comment);
 
-    boolean getIsObjectWc();
+    Integer getOrdering();
 
-    void setIsObjectWc(boolean isObjectWc);
+    void setOrdering(Integer ordering);
 
-    int getOrdering();
+    Integer getDirectorOrdering();
 
-    void setOrdering(int ordering);
+    void setDirectorOrdering(Integer directorOrdering);
+
+    Integer getViewerOrdering();
+
+    void setViewerOrdering(Integer viewerOrdering);
 
     boolean getIsSpecial();
+
+    boolean getIsDirect();
 
     void setIsSpecial(boolean isSpecial);
 
     List<String> getIconOnlyRelations();
 
     void setIconOnlyRelations(List<String> iconOnlyRelations);
+
+    Map<String, String> getVersionList();
+
+    void setVersionList(Map<String, String> versionList);
 }

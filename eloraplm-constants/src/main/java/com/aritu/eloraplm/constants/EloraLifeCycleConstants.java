@@ -33,26 +33,33 @@ public class EloraLifeCycleConstants {
     public static final String NX_TRANS_UNDELETE = "undelete";
 
     // --------------------------------------------------------
-    // CAD LifeCycle constants --------------------------------
+    // ELORA LifeCycle constants ------------------------------
     // --------------------------------------------------------
     // -- STATES
-    public static final String CAD_PRECREATED = "precreated";
+    public static final String CREATED = "created";
 
-    public static final String CAD_PRELIMINARY = "preliminary";
+    // TODO:: remove CAD_ prefix from all those constants
+    // -- STATES
+    public static final String PRECREATED = "precreated";
 
-    public static final String CAD_APPROVED = "approved";
+    public static final String PRELIMINARY = "preliminary";
 
-    public static final String CAD_OBSOLETE = "obsolete";
+    public static final String APPROVED = "approved";
+
+    public static final String OBSOLETE = "obsolete";
 
     // -- TRANSITIONS
-    public static final String CAD_TRANS_APPROVE = "approve";
+    public static final String TRANS_APPROVE = "approve";
 
-    public static final String CAD_TRANS_OBSOLETE = "obsolete";
+    public static final String TRANS_OBSOLETE = "makeObsolete";
 
-    public static final String CAD_TRANS_BACK_TO_PRELIMINARY = "backToPreliminary";
+    public static final String TRANS_BACK_TO_PRELIMINARY = "backToPreliminary";
 
-    public static final String CAD_TRANS_BACK_TO_APPROVED = "backToApproved";
+    public static final String TRANS_CREATE = "create";
 
-    public static final String CAD_TRANS_CREATE = "create";
+    // -- WORKSPACE TRANSITIONS
+    public static final String TRANS_COMPLETE = "complete";
+
+    public static final String TRANS_BACK_TO_WORKING = "backToWorking";
 
 }

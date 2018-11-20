@@ -1,0 +1,47 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <c:if test="#{webActions.currentTabId eq 'TAB_CM_DOC_MODIFIED_ITEMS_TREETABLE'}">
+        <p:ajax
+            event="change"
+            listener="#{cmDocModifiedItemsTreeBean.refreshNode(component.namingContainer, node, triggeredField, updateChildren)}"
+            process="@this"
+            partialSubmit="true"
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="markTreeNodeAsModified(#{updateChildren})" />
+    </c:if>
+    
+    <c:if test="#{webActions.currentTabId eq 'TAB_CM_BOM_MODIFIED_ITEMS_TREETABLE'}">
+        <p:ajax
+            event="change"
+            listener="#{cmBomModifiedItemsTreeBean.refreshNode(component.namingContainer, node, triggeredField, updateChildren)}"
+            process="@this"
+            partialSubmit="true"
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="markTreeNodeAsModified(#{updateChildren})" />
+    </c:if>
+    
+    <c:if test="#{webActions.currentTabId eq 'TAB_CM_DOC_IMPACTED_ITEMS_TREETABLE'}">
+        <p:ajax
+            event="change"
+            listener="#{cmDocImpactedItemsTreeBean.refreshNode(component.namingContainer, node, triggeredField, updateChildren)}"
+            process="@this"
+            partialSubmit="true"
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="markTreeNodeAsModified(#{updateChildren})" />
+    </c:if>
+    
+    <c:if test="#{webActions.currentTabId eq 'TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE'}">
+        <p:ajax
+            event="change"
+            listener="#{cmBomImpactedItemsTreeBean.refreshNode(component.namingContainer, node, triggeredField, updateChildren)}"
+            process="@this"
+            partialSubmit="true"
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="markTreeNodeAsModified(#{updateChildren})" />
+    </c:if> 
+    
+</ui:composition>

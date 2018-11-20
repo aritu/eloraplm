@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.codecreation.code-creation-service">
+
+    <service><provide interface="com.aritu.eloraplm.codecreation.service.CodeCreationService" /></service>
+    <implementation class="com.aritu.eloraplm.codecreation.service.CodeCreationServiceImpl" />
+    
+</component>

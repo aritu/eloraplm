@@ -39,9 +39,15 @@ public class EloraRelationCreationBean {
 
     public void validateObject(FacesContext context, UIComponent component,
             Object value) {
+        String logInitMsg = "[validateObject] ";
+
+        log.trace(logInitMsg + "Entering doc validation...");
         Map<String, Object> attributes = component.getAttributes();
         final String objectDocumentUidInputId = (String) attributes.get(
                 "objectDocumentUidInputId");
+
+        log.trace(logInitMsg + "Value: |" + objectDocumentUidInputId + "|");
+
         if (StringUtils.isBlank(objectDocumentUidInputId)) {
             log.error("Cannot validate relation creation: input id not found");
             return;
@@ -57,6 +63,8 @@ public class EloraRelationCreationBean {
         }
 
         String objectValue = ((String) objectDocumentUidInput.getLocalValue());
+        log.trace(logInitMsg + "Local value: |" + objectValue + "|");
+
         if (objectValue != null) {
             objectValue = objectValue.trim();
         }

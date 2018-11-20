@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.integration.OperationServiceComponent.contrib">
+
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
+        <operation class="com.aritu.eloraplm.integration.checkin.restoperations.TryCheckin" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.checkin.restoperations.DoCheckin" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.checkin.restoperations.CancelCheckin" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.checkin.restoperations.GetIsLockedAndHash" replace="true" />
+<!--         <operation class="com.aritu.eloraplm.integration.checkin.restoperations.Save" replace="true" /> -->
+        
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.DoGetOrCheckout" replace="true"/>
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.GetChildrenCadDocuments" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.GetFavoriteWorkspaces" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.GetFileInfo" replace="true"/>
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.GetFileStructInfo" replace="true"/>
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.GetNavigationFolder" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.GetWorkspace" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.UpdateFavoriteWorkspaces" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.GetUserWorkspaces" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.CheckIfWorkspaceIsUpdated" replace="true" />
+        
+        <operation class="com.aritu.eloraplm.integration.restoperations.EloraLock" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.restoperations.EloraUnlock" replace="true" />
+        
+        <operation class="com.aritu.eloraplm.integration.restoperations.CheckSessionStatus" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.restoperations.SyncVocabulary" replace="true" />
+    </extension>
+    
+</component>

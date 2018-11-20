@@ -10,55 +10,66 @@
 
 <nxu:set var="typeLabel" value="#{nxd:typeLabel(field)}">
 <nxu:set var="label" value="#{empty field_2 ? messages[typeLabel] : messages[field_2]}">
-<c:if test="#{nxl:isLikePlainMode(widget.mode)}">#{nxd:titleOrId(field_0)}</c:if>
-<c:if test="#{nxl:isLikeViewMode(widget.mode)}">
-    <div class="popupTarget dropout" docRef="#{field_1}">
     
-    <nxd:restDocumentLink document="#{field_0}"
-      tab="#{widgetProperty_tab}" subTab="#{widgetProperty_subTab}"
-      target="#{widgetProperty_target}">
-      <span id="title_#{field_1}" title="#{label}" class="documentTitle">
-      
-      <h:panelGroup rendered="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference}"
-        styleClass="eloraReference">
-        
-            <h:outputText value="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference ? field_0.elo.reference : '--'}" />
-       
-       </h:panelGroup>
-        
-       <c:if test="#{widgetProperty_localize}">
-        #{messages[nxd:titleOrId(field_0)]}
-       </c:if>
-       <c:if test="#{!widgetProperty_localize}">
-         #{nxd:titleOrId(field_0)}
-       </c:if>
-      </span>
-    </nxd:restDocumentLink>
-
-    <c:if test="#{!widgetProperty_hideExternalLink}">
-      <nxd:restDocumentLink document="#{field_0}"
-        newConversation="true" target="_blank"
-        tab="#{widgetProperty_tab}"
-        subTab="#{widgetProperty_subTab}">
-        <nxu:graphicImage value="/icons/external.gif"
-          style="vertical-align:middle"
-          alt="#{messages['permalink.newTab']}"
-          title="#{messages['permalink.newTab']}" />
-      </nxd:restDocumentLink>
+    <c:if test="#{nxl:isLikePlainMode(widget.mode)}">
+        <h:outputText value="#{field_0.elo.reference}" rendered="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference}" />
+        <h:outputText value="--" rendered="#{not field_0.hasSchema('elora_object') or empty field_0.elo.reference}" />
+        <h:outputText value=" - #{nxd:titleOrId(field_0)}" />
     </c:if>
+    
+    <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <div class="popupTarget dropout" docRef="#{field_1}">
+        
+            <h:panelGroup rendered="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference}"
+                styleClass="eloraReference">
+            
+                <h:outputText value="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference ? field_0.elo.reference : '--'}" />
+           
+           </h:panelGroup>
+           <h:outputText value="&#160;" rendered="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference}" />
+        
+        <nxd:restDocumentLink document="#{field_0}"
+          tab="#{widgetProperty_tab}" subTab="#{widgetProperty_subTab}"
+          target="#{widgetProperty_target}">
+          <span id="title_#{field_1}" title="#{label}" class="documentTitle">
+          
+           <c:if test="#{widgetProperty_localize}">
+            #{messages[nxd:titleOrId(field_0)]}
+           </c:if>
+           <c:if test="#{!widgetProperty_localize}">
+             #{nxd:titleOrId(field_0)}
+           </c:if>
+          </span>
+        </nxd:restDocumentLink>
+    
+        <c:if test="#{!widgetProperty_hideExternalLink}">
+          <nxd:restDocumentLink document="#{field_0}"
+            newConversation="true" target="_blank"
+            tab="#{widgetProperty_tab}"
+            subTab="#{widgetProperty_subTab}">
+            <nxu:graphicImage value="/icons/external.gif"
+              style="vertical-align:middle"
+              alt="#{messages['permalink.newTab']}"
+              title="#{messages['permalink.newTab']}" />
+          </nxd:restDocumentLink>
+        </c:if>
+    
+      </div>
+    
+    </c:if>
+    
+    <c:if test="#{widget.mode == 'pdf'}">
+      <nxp:html>
+        <c:if test="#{widgetProperty_localize}">
+            #{messages[nxd:titleOrId(field_0)]}
+           </c:if>
+           <c:if test="#{!widgetProperty_localize}">
+             #{nxd:titleOrId(field_0)}
+           </c:if>
+      </nxp:html>
+    </c:if>
+    
+</nxu:set>
+</nxu:set>
 
-  </div>
-
-</c:if>
-<c:if test="#{widget.mode == 'pdf'}">
-  <nxp:html>
-    <c:if test="#{widgetProperty_localize}">
-        #{messages[nxd:titleOrId(field_0)]}
-       </c:if>
-       <c:if test="#{!widgetProperty_localize}">
-         #{nxd:titleOrId(field_0)}
-       </c:if>
-  </nxp:html>
-</c:if>
-</nxu:set></nxu:set>
 </f:subview>

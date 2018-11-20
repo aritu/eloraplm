@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <component name="com.aritu.eloraplm.webapp.base.WebLayoutManager.contrib">
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp</require>
     <require>org.nuxeo.ecm.platform.forms.layouts.webapp.base</require>
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp.listing</require>
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
+    <require>org.nuxeo.ecm.platform.action.widgets</require>
+    <require>org.nuxeo.ecm.webapp.info.view</require>
+    <require>org.nuxeo.ecm.relations.web.layouts.contrib</require>
     
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
         point="widgettypes">
@@ -40,387 +46,6 @@
             /widgets/listing/listing_version_and_visualized_type_widget_template.xhtml
           </property>
         </widgetType>
-        
-        <!-- Listing Reference & Title Link widget type -->
-<!--         <widgetType name="listing_reference_title_link"> -->
-<!--           <configuration> -->
-<!--             <title>Reference &amp; Title with link</title> -->
-<!--             <description> -->
-<!--               <p> -->
-<!--                 This widget type displays the reference and title inside a link to navigate to a document, as well -->
-<!--                 as a download link for the document binary content. -->
-<!--               </p> -->
-<!--               <p> -->
-<!--                 It requires the following fields configuration: -->
-<!--                 <ul> -->
-<!--                   <li> -->
-<!--                     first field maps the document model, it will be used to -->
-<!--                     display the document link and its title -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     second field maps the unique id to be used for contextual menu -->
-<!--                     (e.g. the document model id) -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     third field maps the displayed link title (can be the document -->
-<!--                     model description) -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     fourth field maps the document model file to be used for -->
-<!--                     download link -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     fifth field maps the file name to be used for download link -->
-<!--                     (can be the document model file name property value) -->
-<!--                   </li> -->
-<!--                 </ul> -->
-<!--               </p> -->
-<!--               <p> -->
-<!--                 It also requires the following properties configuration: -->
-<!--                 <ul> -->
-<!--                   <li> -->
-<!--                     file_schema: the file schema name, used to check whether -->
-<!--                     download link should be displayed (e.g: file) -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     file_property_name: the file property name (e.g file:content) -->
-<!--                   </li> -->
-<!--                 </ul> -->
-<!--               </p> -->
-<!--             </description> -->
-<!--             <confProperties> -->
-<!--               <property name="sortPropertyName">elo:reference, dc:title</property> -->
-<!--             </confProperties> -->
-<!--             <fields> -->
-<!--               <list>false</list> -->
-<!--               <complex>false</complex> -->
-<!--               <defaultConfiguration> -->
-<!--                 <field>data</field> -->
-<!--                 <field>data.ref</field> -->
-<!--                 <field>data.dc.description</field> -->
-<!--                 <field>data.file.content</field> -->
-<!--                 <field>data.file.content.filename</field> -->
-<!--               </defaultConfiguration> -->
-<!--             </fields> -->
-<!--             <categories> -->
-<!--               <category>listing</category> -->
-<!--             </categories> -->
-<!--             <properties> -->
-<!--               <defaultValues mode="any"> -->
-<!--                 <property name="hideExternalLink">true</property> -->
-<!--               </defaultValues> -->
-<!--               <layouts mode="any"> -->
-<!--                 <layout name="listing_reference_title_link_widget_type_properties_any"> -->
-<!--                   <rows> -->
-<!--                     <row> -->
-<!--                       <widget>tab</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget>subTab</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget>target</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget category="widgetTypeConf">localize</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget>hideExternalLink</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget>hideDownloadLink</widget> -->
-<!--                     </row> -->
-<!--                   </rows> -->
-<!--                   <widget name="tab" type="text"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Tab</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         The tab to select when clicking on the -->
-<!--                         document link. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>tab</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="subTab" type="text"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Sub Tab</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         The sub tab to select when clicking on the -->
-<!--                         document link. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>subTab</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="target" type="text"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Target</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         The target attribute of the link. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>target</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="localize" type="checkbox"> -->
-<!--                     <categories> -->
-<!--                       <category>widgetTypeConf</category> -->
-<!--                     </categories> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Localize</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         Flag indicating that -->
-<!--                         the title is localized. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>localize</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="hideExternalLink" type="checkbox"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Hide External Link</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         Flag indicating that -->
-<!--                         the external link, opening the document in a new -->
-<!--                         conversation, must be hidden. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>hideExternalLink</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="hideDownloadLink" type="checkbox"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Hide Download Link</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         Flag indicating that -->
-<!--                         the download link must be hidden. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>hideDownloadLink</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                 </layout> -->
-<!--               </layouts> -->
-<!--             </properties> -->
-<!--           </configuration> -->
-<!--           <handler-class> -->
-<!--             org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler -->
-<!--           </handler-class> -->
-<!--           <property name="template"> -->
-<!--             /widgets/listing/listing_reference_title_link_widget_template.xhtml -->
-<!--           </property> -->
-<!--         </widgetType> -->
-        
-        <!-- Listing Icon & Reference & Title Link widget type -->
-<!--         <widgetType name="listing_icon_reference_title_link"> -->
-<!--           <configuration> -->
-<!--             <title>Icon &amp; Reference &amp; Title with link</title> -->
-<!--             <description> -->
-<!--               <p> -->
-<!--                 This widget type displays the icon, reference and title inside a link to navigate to a document, as well -->
-<!--                 as a download link for the document binary content. -->
-<!--               </p> -->
-<!--               <p> -->
-<!--                 It requires the following fields configuration: -->
-<!--                 <ul> -->
-<!--                   <li> -->
-<!--                     first field maps the document model, it will be used to -->
-<!--                     display the document link and its title -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     second field maps the unique id to be used for contextual menu -->
-<!--                     (e.g. the document model id) -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     third field maps the displayed link title (can be the document -->
-<!--                     model description) -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     fourth field maps the document model file to be used for -->
-<!--                     download link -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     fifth field maps the file name to be used for download link -->
-<!--                     (can be the document model file name property value) -->
-<!--                   </li> -->
-<!--                 </ul> -->
-<!--               </p> -->
-<!--               <p> -->
-<!--                 It also requires the following properties configuration: -->
-<!--                 <ul> -->
-<!--                   <li> -->
-<!--                     file_schema: the file schema name, used to check whether -->
-<!--                     download link should be displayed (e.g: file) -->
-<!--                   </li> -->
-<!--                   <li> -->
-<!--                     file_property_name: the file property name (e.g file:content) -->
-<!--                   </li> -->
-<!--                 </ul> -->
-<!--               </p> -->
-<!--             </description> -->
-<!--             <confProperties> -->
-<!--               <property name="sortPropertyName">elo:reference, dc:title</property> -->
-<!--             </confProperties> -->
-<!--             <fields> -->
-<!--               <list>false</list> -->
-<!--               <complex>false</complex> -->
-<!--               <defaultConfiguration> -->
-<!--                 <field>data</field> -->
-<!--                 <field>data.ref</field> -->
-<!--                 <field>data.dc.description</field> -->
-<!--                 <field>data.file.content</field> -->
-<!--                 <field>data.file.content.filename</field> -->
-<!--               </defaultConfiguration> -->
-<!--             </fields> -->
-<!--             <categories> -->
-<!--               <category>listing</category> -->
-<!--             </categories> -->
-<!--             <properties> -->
-<!--               <defaultValues mode="any"> -->
-<!--                 <property name="hideExternalLink">true</property> -->
-<!--               </defaultValues> -->
-<!--               <layouts mode="any"> -->
-<!--                 <layout name="listing_icon_reference_title_link_widget_type_properties_any"> -->
-<!--                   <rows> -->
-<!--                     <row> -->
-<!--                       <widget>tab</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget>subTab</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget>target</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget category="widgetTypeConf">localize</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget>hideExternalLink</widget> -->
-<!--                     </row> -->
-<!--                     <row> -->
-<!--                       <widget>hideDownloadLink</widget> -->
-<!--                     </row> -->
-<!--                   </rows> -->
-<!--                   <widget name="tab" type="text"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Tab</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         The tab to select when clicking on the -->
-<!--                         document link. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>tab</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="subTab" type="text"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Sub Tab</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         The sub tab to select when clicking on the -->
-<!--                         document link. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>subTab</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="target" type="text"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Target</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         The target attribute of the link. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>target</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="localize" type="checkbox"> -->
-<!--                     <categories> -->
-<!--                       <category>widgetTypeConf</category> -->
-<!--                     </categories> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Localize</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         Flag indicating that -->
-<!--                         the title is localized. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>localize</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="hideExternalLink" type="checkbox"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Hide External Link</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         Flag indicating that -->
-<!--                         the external link, opening the document in a new -->
-<!--                         conversation, must be hidden. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>hideExternalLink</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                   <widget name="hideDownloadLink" type="checkbox"> -->
-<!--                     <labels> -->
-<!--                       <label mode="any">Hide Download Link</label> -->
-<!--                     </labels> -->
-<!--                     <helpLabels> -->
-<!--                       <label mode="any"> -->
-<!--                         Flag indicating that -->
-<!--                         the download link must be hidden. -->
-<!--                       </label> -->
-<!--                     </helpLabels> -->
-<!--                     <fields> -->
-<!--                       <field>hideDownloadLink</field> -->
-<!--                     </fields> -->
-<!--                   </widget> -->
-<!--                 </layout> -->
-<!--               </layouts> -->
-<!--             </properties> -->
-<!--           </configuration> -->
-<!--           <handler-class> -->
-<!--             org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler -->
-<!--           </handler-class> -->
-<!--           <property name="template"> -->
-<!--             /widgets/listing/listing_icon_reference_title_link_widget_template.xhtml -->
-<!--           </property> -->
-<!--         </widgetType> -->
-        
-        
-        
         
         <!-- Listing Reference & Title widget type -->
         <widgetType name="listing_reference_title">
@@ -994,6 +619,23 @@
                 /widgets/measure_value_and_unit_widget_template.xhtml
               </property>
         </widgetType>
+        
+        <!-- New widget type for decimal values that will be stored as strings -->
+        <widgetType name="elora_decimal">
+            <configuration>
+                <properties>
+                    <defaultValues mode="any">
+                        <property name="converter">decimalValueConverter</property>
+                        <property name="validator">decimalValueValidator</property>
+                        <property name="editableOnlyOnFirstLevel">false</property>
+                    </defaultValues>
+                </properties>
+            </configuration>
+            
+            <property name="template">
+                /widgets/elora_decimal_widget_template.xhtml
+            </property>
+        </widgetType>
     
         <!-- New widget type for displaying document type, CAD part type and description -->
         <widgetType name="summary_current_document_types_and_description">
@@ -1199,6 +841,35 @@
         <property name="template">/widgets/3_level_select_widget.xhtml</property>
       </widgetType>
       
+      <widgetType name="summary_current_document_creator">
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/summary/creator_widget_template.xhtml
+          </property>
+      </widgetType>
+      
+      <widgetType name="summary_current_document_last_contributor">
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/summary/last_contributor_widget_template.xhtml
+          </property>
+      </widgetType>
+      
+      <widgetType name="text_with_listener">
+          <configuration>
+            <title>Text widget with listener</title>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/text_with_listener_widget_template.xhtml
+          </property>
+        </widgetType>
       
       <!-- Treewidget types -->
       
@@ -1241,6 +912,27 @@
         </widgetType>
         
       <!-- End of Treewidget types -->
+      
+      
+      
+        <widgetType name="project_summary_document_header">
+          <configuration>
+            <handlingLabels>true</handlingLabels>
+            <categories>
+              <category>summary</category>
+            </categories>
+            <supportedModes>
+              <mode>view</mode>
+            </supportedModes>
+            <!-- no configurable properties -->
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/summary/project_metadata_header_widget_template.xhtml
+          </property>
+        </widgetType>
     
     </extension>
     
@@ -1361,9 +1053,21 @@
         </widget>
         
         
-        <widget name="listing_quantity" type="text">
+        <widget name="listing_quantity" type="elora_decimal">
             <labels>
                 <label mode="any">label.content.header.quantity</label>
+            </labels>
+            <fields>
+                <field>quantity</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
+        </widget>
+        
+        <widget name="quantity" type="elora_decimal">
+            <labels>
+                <label mode="any">eloraplm.label.relation.quantity</label>
             </labels>
             <fields>
                 <field>quantity</field>
@@ -1454,7 +1158,7 @@
         
         <widget name="selectOneVersion" type="selectOneType">
             <labels>
-                <label mode="any">label.version</label>
+                <label mode="any">eloraplm.label.version</label>
             </labels>
             <fields>
               <field>docId</field>
@@ -1471,34 +1175,6 @@
             </fields>
         </widget>
         
-        
-        
-        <!--  Suggestion widgets -->
-        
-        <widget name="single_wc_document_suggestion" type="eloraSingleDocumentSuggestion">
-          <fields>
-            <field>data.ref</field>
-          </fields>
-          <translated>true</translated>
-          <properties mode="any">
-            <property name="pageProviderName">
-              wc_document_suggestion
-            </property>
-          </properties>
-        </widget>
-        
-        <widget name="single_workspace_suggestion" type="singleDocumentSuggestion">
-          <fields>
-            <field>data.ref</field>
-          </fields>
-          <translated>true</translated>
-          <properties mode="any">
-            <property name="pageProviderName">
-              workspace_suggestion
-            </property>
-            <property name="documentSchemas">dublincore,common</property>
-          </properties>
-        </widget>
         
         <widget name="listing_version_lock_icon" type="listing_version_lock_icon">
             <labels>
@@ -1590,7 +1266,7 @@
            </subWidgets>
          </widget>
          
-         <widget name="listing_colored_lifecycle_state" type="text">
+         <widget name="listing_colored_lifecycle_state" type="template">
           <labels>
             <label mode="any">label.content.header.currentLifecycleState</label>
           </labels>
@@ -1598,13 +1274,43 @@
           <fields>
             <field>data.currentLifeCycleState</field>
           </fields>
+          <widgetModes>
+              <mode value="edit">view</mode>
+          </widgetModes>
           <properties mode="any">
-            <property name="localize">true</property>
-            <property name="styleClass">lifeCycleStateLabel hollow</property>
-            <property name="style">
-                border-color: #{lifecycleActions.getLifeCycleStateColor(value.data.currentLifeCycleState)};
-                color: #{lifecycleActions.getLifeCycleStateColor(value.data.currentLifeCycleState)};
-            </property>
+            <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="colored_lifecycle_state" type="template">
+          <labels>
+            <label mode="any">label.content.header.currentLifecycleState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>currentLifeCycleState</field>
+          </fields>
+          <widgetModes>
+              <mode value="edit">view</mode>
+          </widgetModes>
+          <properties mode="any">
+            <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="colored_short_lifecycle_state" type="template">
+          <labels>
+            <label mode="any">label.content.header.currentLifecycleState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>currentLifeCycleState</field>
+          </fields>
+          <widgetModes>
+              <mode value="edit">view</mode>
+          </widgetModes>
+          <properties mode="any">
+            <property name="template">/widgets/colored_short_lifecycle_state_widget_template.xhtml</property>
           </properties>
         </widget>
         
@@ -1641,6 +1347,9 @@
           <fields>
             <field>eloadvsrch:reference</field>
           </fields>
+          <properties widgetMode="any">
+            <property name="converter">ilikeSearchValueConverter</property>
+          </properties>
           <properties widgetMode="edit">
             <property name="styleClass">dataInputText</property>
           </properties>
@@ -1682,7 +1391,24 @@
           </properties>
         </widget>
         
-         <!-- New widget for searching by primary type in content view filters -->
+        <!-- New widget for searching by current lifecycle state in content view filters -->
+        <widget name="elora_search_current_lifecycle_state" type="selectOneDirectory">
+          <labels>
+            <label mode="any">label.content.header.currentLifecycleState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:currentLifeCycleState</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="directoryName">eloras_lifeCycle</property>
+            <!-- <property name="directoryName">elora_lifecycle_states</property>
+            <property name="itemLabel">#{item.id}</property> -->
+            <property name="localize">true</property>
+          </properties>
+        </widget>
+        
+        <!-- New widget for searching by primary type in content view filters -->
         <widget name="elora_search_primaryType" type="selectOneDirectory">
           <labels>
             <label mode="any">label.content.header.type</label>
@@ -1697,8 +1423,29 @@
           </properties>
         </widget>
         
+        <!-- New widget for searching by last contributor in content view filters -->
+        <widget name="elora_search_last_contributor" type="singleUserSuggestion">
+          <labels>
+            <label mode="any">label.dublincore.lastContributor</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:lastContributor</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="userSuggestionSearchType">USER_TYPE</property>
+            <property name="firstLabelField">firstName</property>
+            <property name="secondLabelField">lastName</property>
+            <property name="hideFirstLabel">false</property>
+            <property name="hideSecondLabel">false</property>
+            <property name="displayAction">edit</property>
+            <property name="hideIcon">false</property>
+          </properties>
+        </widget>
+        
         <!-- Use elora_header_description instead of Nuxeo's default document_header in order to apply Elora internal rules
         for displaying the description field in the header of the documents. -->
+        <!-- 
         <widget name="elora_header_description" type="textarea">
           <widgetModes>
             <mode value="any">
@@ -1718,7 +1465,7 @@
             </property>
           </properties>
         </widget>
-        
+        -->
         
         
         <!-- Treewidgets -->
@@ -1741,6 +1488,18 @@
           </properties>
         </widget>
         
+        <widget name="treewidget_editable_version_wc_av" type="treewidget_version_wc_av">
+            <labels>
+                <label mode="any">label.version</label>
+            </labels>
+            <fields>
+                <field>data</field>
+                <field>wcDoc</field>
+                <field>docId</field>
+                <field>versionList</field>
+            </fields>
+        </widget>
+        
         <widget name="treewidget_version_wc_av" type="treewidget_version_wc_av">
             <labels>
                 <label mode="any">label.version</label>
@@ -1748,7 +1507,12 @@
             <fields>
                 <field>data</field>
                 <field>wcDoc</field>
+                <field>docId</field>
+                <field>versionList</field>
             </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
         </widget>
         
         <widget name="treewidget_lock_icon" type="treewidget_lock_icon">
@@ -1756,12 +1520,213 @@
                 <label mode="any"></label>
             </labels>
             <fields>
-                <field>data</field>
                 <field>wcDoc</field>
             </fields>
         </widget>
         
+        <widget name="treewidget_editable_quantity" type="elora_decimal">
+            <labels>
+                <label mode="any">label.content.header.quantity</label>
+            </labels>
+            <fields>
+                <field>quantity</field>
+            </fields>
+            <properties mode="edit">
+                <property name="styleClass">shortNumberInput</property>
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="editableOnlyOnFirstLevel">true</property>
+            </properties>
+        </widget>
+        
+        <widget name="treewidget_editable_ordering" type="text_with_listener">
+          <labels>
+            <label mode="any">eloraplm.label.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>ordering</field>
+          </fields>
+          <properties mode="edit">
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="styleClass">shortNumberInput</property>
+                <property name="showOnlyOnFirstLevel">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="treewidget_editable_viewer_ordering" type="text_with_listener">
+          <labels>
+            <label mode="any">eloraplm.label.viewer.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>viewerOrdering</field>
+          </fields>
+          <properties mode="edit">
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="styleClass">shortNumberInput</property>
+                <property name="showOnlyOnFirstLevel">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="treewidget_editable_director_ordering" type="text_with_listener">
+          <labels>
+            <label mode="any">eloraplm.label.director.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>directorOrdering</field>
+          </fields>
+          <properties mode="edit">
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="styleClass">shortNumberInput</property>
+                <property name="showOnlyOnFirstLevel">true</property>
+          </properties>
+        </widget>
+        
         <!-- End of Treewidgets -->
+        
+        <widget name="summary_current_document_creator" type="summary_current_document_creator">
+          <labels>
+            <label mode="any"/>
+          </labels>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+            <control name="requireSurroundingForm">true</control>
+          </controls>
+        </widget>
+        
+        <widget name="summary_current_document_last_contributor" type="summary_current_document_last_contributor">
+          <labels>
+            <label mode="any"/>
+          </labels>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+            <control name="requireSurroundingForm">true</control>
+          </controls>
+        </widget>
+        
+        <widget name="listing_ordering" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>ordering</field>
+          </fields>
+          <widgetModes>
+            <mode value="any">view</mode>
+            <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
+          </widgetModes>
+          <properties mode="any">
+            <property name="style">height: 23px; padding: 0.3em 0.5em; margin-bottom: 0;#{value.level eq 1 ? '' : 'display: none;'}</property>
+          </properties>
+        </widget>
+        
+        <widget name="listing_viewer_ordering" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.viewer.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>viewerOrdering</field>
+          </fields>
+          <widgetModes>
+            <mode value="any">view</mode>
+            <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
+          </widgetModes>
+          <properties mode="any">
+            <property name="style">height: 23px; padding: 0.3em 0.5em; margin-bottom: 0;#{value.level eq 1 ? '' : 'display: none;'}</property>
+          </properties>
+        </widget>
+        
+        <widget name="listing_director_ordering" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.director.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>directorOrdering</field>
+          </fields>
+          <widgetModes>
+            <mode value="any">view</mode>
+            <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
+          </widgetModes>
+          <properties mode="any">
+            <property name="style">height: 23px; padding: 0.3em 0.5em; margin-bottom: 0;#{value.level eq 1 ? '' : 'display: none;'}</property>
+          </properties>
+        </widget>
+        
+        <widget name="reference_not_required" type="template">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>elo:reference</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="required">false</property>
+            <property name="template">/widgets/reference_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="reference_required" type="template">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>elo:reference</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="required">true</property>
+            <property name="template">/widgets/reference_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <!-- CR TO BE CHANGED -->
+        <widget name="reference_automatic" type="text">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>elo:reference</field>
+          </fields>
+          <widgetModes>
+            <mode value="create">hidden</mode>
+            <mode value="edit">view</mode>
+          </widgetModes>
+        </widget>
+        
+        <!--  is_manual widget -->    
+        <widget name="is_manual" type="template">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>isManual</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">/widgets/is_manual_widget.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="project_summary_document_header" type="project_summary_document_header">
+          <widgetModes>
+            <mode value="any">
+              #{currentDocument.type eq 'Project' ? 'view' : 'hidden'}
+            </mode>
+          </widgetModes>
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+          </controls>
+        </widget>
+        
 
     </extension>
     
@@ -1834,12 +1799,12 @@
                         <property name="label">label.selection.column.lock
                         </property>
                     </properties>
-                    <properties mode="csv">
-                        <property name="isHidden">true</property>
-                    </properties>
-                    <properties mode="pdf">
-                        <property name="isHidden">true</property>
-                    </properties>
+<!--                     <properties mode="csv"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="pdf"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
                     <widget>listing_version_lock_icon</widget>
                 </column>
                 <column name="modification_date">
@@ -2144,7 +2109,9 @@
               <widget>type_icon_and_text</widget>
             </row>
             <row>
-<!--               <widget>cad_part_type</widget> -->
+              <widget>cadType</widget>
+            </row>
+            <row>
               <widget>cadClassification</widget>
             </row>
             <row>
@@ -2578,17 +2545,18 @@
             </columns>
         </layout>
         
-        <!--  Override document_content_filter layout -->
-        <layout name="document_content_filter">
+        <layout name="elora_document_content_filter">
           <templates>
             <template mode="any">/layouts/layout_default_template.xhtml</template>
           </templates>
           <rows>
             <row>
+              <widget>elora_search_reference</widget>
               <widget>elora_search_title</widget>
             </row>
             <row>
-              <widget>elora_search_reference</widget>
+              <widget>elora_search_current_lifecycle_state</widget>
+              <widget>elora_search_last_contributor</widget>
             </row>
             <row>
               <widget>elora_search_modified_min</widget>
@@ -2607,10 +2575,12 @@
               <widget>elora_search_primaryType</widget>
             </row>
             <row>
+              <widget>elora_search_reference</widget>
               <widget>elora_search_title</widget>
             </row>
             <row>
-              <widget>elora_search_reference</widget>
+              <widget>elora_search_current_lifecycle_state</widget>
+              <widget>elora_search_last_contributor</widget>
             </row>
             <row>
               <widget>elora_search_modified_min</widget>
@@ -2628,9 +2598,11 @@
             <row>
               <widget>header_title_and_permlink</widget>
             </row>
+            <!--
             <row>
-              <widget>elora_header_description</widget>
+                <widget>elora_header_description</widget>
             </row>
+            -->
           </rows>
         </layout>
         

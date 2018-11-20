@@ -2,6 +2,8 @@
 
 <component name="com.aritu.eloraplm.doctypes.SecurityService.contrib">
 
+  <require>org.nuxeo.ecm.core.security.defaultPermissions</require>
+
   <extension point="permissions" target="org.nuxeo.ecm.core.security.SecurityService">
     <permission name="Write">
       <remove>Remove</remove>
@@ -10,7 +12,7 @@
       <include>Read</include>
       <include>Write</include>
       <include>Remove</include>
-    </permission>   
+    </permission>
   </extension>
 
   <extension point="permissionsVisibility" target="org.nuxeo.ecm.core.security.SecurityService">
@@ -23,4 +25,4 @@
     </visibility>
   </extension>
   
-</component>  
+</component>

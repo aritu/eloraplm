@@ -47,6 +47,7 @@ import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraWebappClipboardConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
+import com.aritu.eloraplm.core.util.EloraStructureHelper;
 
 /**
  * // TODO: write class general comment
@@ -331,10 +332,14 @@ public class EloraClipboardActionsBean extends ClipboardActionsBean {
             return false;
         }
         // Elora filters: it is only possible to paste the workList content as
-        // Proxy list if the target is a document with EloraWorkspace facet or
-        // it is a folder
-        if (pasteTarget.hasFacet(EloraFacetConstants.FACET_ELORA_WORKSPACE)
-                || pasteTarget.getType().equals(NuxeoDoctypeConstants.FOLDER)) {
+        // Proxy list if the target is folderish (in the actual action we filter
+        // it more)
+
+        if (pasteTarget.isFolder()) {
+
+            /*if (pasteTarget.hasFacet(EloraFacetConstants.FACET_ELORA_WORKSPACE)
+                || pasteTarget.getType().equals(NuxeoDoctypeConstants.FOLDER)) {*/
+
             // filter on allowed content types
             // see if at least one doc can be pasted
             // String pasteTypeName = clipboard.getClipboardDocumentType();
@@ -447,23 +452,35 @@ public class EloraClipboardActionsBean extends ClipboardActionsBean {
         log.trace(logInitMsg + "--- ENTER --- ");
 
         DocumentModel currentDocument = navigationContext.getCurrentDocument();
+
+        // TODO Add filters to check if currentDocument is inside a
+        // WorkspaceRoot
+
         if (null != docPaste) {
 
-            log.trace(logInitMsg + "docPaste.size = |" + docPaste.size() + "|");
+            if (EloraStructureHelper.isDocUnderWorkspaceRoot(currentDocument)) {
+                log.trace(logInitMsg + "docPaste.size = |" + docPaste.size()
+                        + "|");
 
-            List<DocumentModel> newDocs = recreateDocumentsAsProxyWithNewParent(
-                    getParent(currentDocument), docPaste);
+                List<DocumentModel> newDocs = recreateDocumentsAsProxyWithNewParent(
+                        getParent(currentDocument), docPaste);
 
-            Object[] params = { newDocs.size() };
-            facesMessages.add(StatusMessage.Severity.INFO,
-                    "#0 " + messages.get("n_pasted_docs"), params);
+                Object[] params = { newDocs.size() };
+                facesMessages.add(StatusMessage.Severity.INFO,
+                        "#0 " + messages.get("n_pasted_docs"), params);
 
-            EventManager.raiseEventsOnDocumentSelected(currentDocument);
-            Events.instance().raiseEvent(EventNames.DOCUMENT_CHILDREN_CHANGED,
-                    currentDocument);
+                EventManager.raiseEventsOnDocumentSelected(currentDocument);
+                Events.instance().raiseEvent(
+                        EventNames.DOCUMENT_CHILDREN_CHANGED, currentDocument);
 
-            log.debug(logInitMsg
-                    + "Elements pasted as proxy and created into the backend.");
+                log.debug(logInitMsg
+                        + "Elements pasted as proxy and created into the backend.");
+            } else {
+                facesMessages.add(StatusMessage.Severity.ERROR,
+                        messages.get("eloraplm.message.error.pasteAsProxy"));
+                log.debug(logInitMsg
+                        + "Current document is not under a WorkspaceRoot.");
+            }
         } else {
             log.debug(logInitMsg + "No docPaste to process paste as proxy on.");
         }
@@ -489,72 +506,85 @@ public class EloraClipboardActionsBean extends ClipboardActionsBean {
 
         List<DocumentModel> documentsToPast = new LinkedList<DocumentModel>();
 
-        // filter list on content type
-        for (DocumentModel doc : documents) {
+        if (EloraStructureHelper.isDocUnderWorkspaceRoot(parent)) {
 
-            // if the copied document is a proxy, retrieve the document pointed
-            // by the proxy
-            if (doc.isProxy()) {
-                log.trace(logInitMsg + "doc = |" + doc.getId()
-                        + "| is a proxy. Retrieve it's source.");
-                doc = documentManager.getDocument(new IdRef(doc.getSourceId()));
-            }
+            // filter list on content type
+            for (DocumentModel doc : documents) {
 
-            // Elora filter: only documents without facet FOLDERISH (folders,
-            // eloraWorkspace, ...) can be pasted as Proxy
-            if (!doc.hasFacet(FacetNames.FOLDERISH)) {
+                // if the copied document is a proxy, retrieve the document
+                // pointed
+                // by the proxy
+                if (doc.isProxy()) {
+                    log.trace(logInitMsg + "doc = |" + doc.getId()
+                            + "| is a proxy. Retrieve it's source.");
+                    doc = documentManager.getDocument(
+                            new IdRef(doc.getSourceId()));
+                }
 
-                // Nuxeo filter
-                if (typeManager.isAllowedSubType(doc.getType(),
-                        parent.getType(),
-                        navigationContext.getCurrentDocument())) {
+                // Elora filter: only documents without facet FOLDERISH
+                // (folders,
+                // eloraWorkspace, ...) can be pasted as Proxy
+                if (!doc.hasFacet(FacetNames.FOLDERISH)) {
 
-                    // Elora filter: check if there is already a proxy to that
-                    // document
-                    DocumentModelList proxies = documentManager.getProxies(
-                            doc.getRef(), parent.getRef());
-                    if (proxies != null && proxies.size() > 0) {
-                        log.trace(logInitMsg + "doc = |" + doc.getId()
-                                + "| cannot be pasted as proxy, since there is already a proxy to that document.");
+                    // Nuxeo filter
+                    if (typeManager.isAllowedSubType(doc.getType(),
+                            parent.getType(),
+                            navigationContext.getCurrentDocument())) {
+
+                        // Elora filter: check if there is already a proxy to
+                        // that
+                        // document
+                        DocumentModelList proxies = documentManager.getProxies(
+                                doc.getRef(), parent.getRef());
+                        if (proxies != null && proxies.size() > 0) {
+                            log.trace(logInitMsg + "doc = |" + doc.getId()
+                                    + "| cannot be pasted as proxy, since there is already a proxy to that document.");
+                        } else {
+                            documentsToPast.add(doc);
+                        }
                     } else {
-                        documentsToPast.add(doc);
+                        log.trace(logInitMsg + "doc = |" + doc.getId()
+                                + "| cannot be pasted as proxy, since it is not an allowed subtype.");
                     }
                 } else {
                     log.trace(logInitMsg + "doc = |" + doc.getId()
-                            + "| cannot be pasted as proxy, since it is not an allowed subtype.");
+                            + "| cannot be pasted as proxy, since it has FOLDERISH facet.");
                 }
-            } else {
-                log.trace(logInitMsg + "doc = |" + doc.getId()
-                        + "| cannot be pasted as proxy, since it has FOLDERISH facet.");
+
             }
-        }
 
-        boolean destinationIsDeleted = LifeCycleConstants.DELETED_STATE.equals(
-                parent.getCurrentLifeCycleState());
+            boolean destinationIsDeleted = LifeCycleConstants.DELETED_STATE.equals(
+                    parent.getCurrentLifeCycleState());
 
-        StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-        // paste documents as Proxy
-        for (DocumentModel doc : documentsToPast) {
-            if (destinationIsDeleted && !checkDeletedState(doc)) {
-                addWarnMessage(sb, doc);
-            } else {
-                // create the proxy
-                newDocuments.add(documentManager.createProxy(doc.getRef(),
-                        parent.getRef()));
-                log.trace("proxy created for doc = |" + doc.getId()
-                        + "|, in target = |" + parent.getId() + "|");
+            // paste documents as Proxy
+            for (DocumentModel doc : documentsToPast) {
+                if (destinationIsDeleted && !checkDeletedState(doc)) {
+                    addWarnMessage(sb, doc);
+                } else {
+                    // create the proxy
+                    newDocuments.add(documentManager.createProxy(doc.getRef(),
+                            parent.getRef()));
+                    log.trace("proxy created for doc = |" + doc.getId()
+                            + "|, in target = |" + parent.getId() + "|");
+                }
             }
-        }
 
-        if (destinationIsDeleted) {
-            for (DocumentModel d : newDocuments) {
-                setDeleteState(d);
+            if (destinationIsDeleted) {
+                for (DocumentModel d : newDocuments) {
+                    setDeleteState(d);
+                }
             }
-        }
-        documentManager.save();
-        if (sb.length() > 0) {
-            facesMessages.add(StatusMessage.Severity.WARN, sb.toString());
+            documentManager.save();
+            if (sb.length() > 0) {
+                facesMessages.add(StatusMessage.Severity.WARN, sb.toString());
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("eloraplm.message.error.pasteAsProxy"));
+            log.debug(logInitMsg
+                    + "Current document is not under a WorkspaceRoot.");
         }
 
         log.trace(logInitMsg + "--- EXIT --- ");
