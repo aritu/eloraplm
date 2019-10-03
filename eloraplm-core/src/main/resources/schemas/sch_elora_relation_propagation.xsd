@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<xs:schema
+    targetNamespace="http://eloraplm.aritu.com/schemas/sch_elora_relation_propagation"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+
+    <xs:element name="id" type="xs:string"/>
+    <xs:element name="action" type="xs:string"/>
+    <xs:element name="relation" type="xs:string"/>
+    <xs:element name="direction" type="xs:integer"/>
+    <xs:element name="propagate" type="xs:integer"/>
+    <xs:element name="enforce" type="xs:integer"/>
+    <xs:element name="obsolete" type="xs:integer" default="0"/>
+    <xs:element name="ordering" type="xs:integer" default="10000000"/>
+
+</xs:schema>
+
+

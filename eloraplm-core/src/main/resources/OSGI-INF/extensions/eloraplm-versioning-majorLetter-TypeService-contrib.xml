@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<!-- TODO HAU LISTENER ESTANDAR BAT, EZ MAJOR LETTERerako BAKARRIK -->
+<component name="com.aritu.eloraplm.versioning.TypeService">
+  <require>org.nuxeo.ecm.core.CoreExtensions</require>
+  <require>org.nuxeo.nuxeo.ecm.platform.audio.doctype</require>
+  <require>org.nuxeo.ecm.platform.picture.coreTypes</require>
+  <require>org.nuxeo.nuxeo.ecm.platform.video.doctype</require>
+  
+  <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+    <schema name="major_letter_versioning" prefix="ltrvers" src="schemas/major_letter_versioning.xsd"/>
+  </extension>
+  
+  <!-- Override -->
+  <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService">
+    <doctype append="true" name="File">
+        <schema name="major_letter_versioning"/>
+    </doctype>
+    <doctype append="true" name="Note">
+        <schema name="major_letter_versioning"/>
+    </doctype>
+    
+    <!-- DAM doctypes -->
+    <doctype append="true" name="Video">
+        <schema name="major_letter_versioning"/>
+    </doctype>
+    <doctype append="true" name="Picture">
+        <schema name="major_letter_versioning"/>
+    </doctype>
+    <doctype append="true" name="Audio">
+        <schema name="major_letter_versioning"/>
+    </doctype>
+    
+    <!-- Other doctypes -->
+    <doctype append="true" name="BomList">
+        <schema name="major_letter_versioning"/>
+    </doctype>
+    
+  </extension>
+  
+</component>

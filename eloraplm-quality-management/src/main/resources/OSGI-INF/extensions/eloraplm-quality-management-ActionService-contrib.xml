@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.qm.ActionService.contrib">
+    <require>org.nuxeo.ecm.platform.actions</require>
+    
+    <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
+        
+        <filter id="create" append="true">
+            <rule grant="true">
+                <type>ProductValidation</type>
+                <type>ProductVerification</type>
+                <type>ProductionProcessValidation</type>
+                <type>ProductionPartApprovalProcess</type>
+            </rule>
+        </filter>
+        
+        <filter append="true" id="viewQmSummaryTab">
+            <rule grant="true">
+                <type>ProductValidation</type>
+                <type>ProductVerification</type>
+                <type>ProductionProcessValidation</type>
+                <type>ProductionPartApprovalProcess</type>
+            </rule>
+        </filter>
+        
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+        
+        <action accessKey="v" icon="/icons/file.gif" id="TAB_QM_SUMMARY" label="action.view.summary" link="/incl/tabs/document_view.xhtml" order="0" type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>viewQmSummaryTab</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+            </properties>
+        </action>
+        
+        <!-- QM tab -->
+        <action id="TAB_QM" link="/incl/tabs/qm.xhtml" order="104" label="eloraplm.label.qm" type="rest_document_link">
+            <filter-id>isBomDocument</filter-id>
+            <category>VIEW_ACTION_LIST</category>
+        </action>
+        
+    </extension>
+    
+</component>

@@ -1,0 +1,673 @@
+/*
+ * Webapp Base style modifications for EloraPlm
+ */
+ 
+#ambiance-notification
+{
+    z-index: 99998;
+}
+ 
+.nx-page .select2-drop
+{
+    z-index: 99999;
+}
+
+#descriptionBlock
+{
+    clear: both;
+    padding: 3px;
+}
+
+#nxw_documentHeaderActions_panel .widgetPanel.actionsWidgetPanel {
+    padding: 0;
+}
+
+#eloraMetadataHeading
+{
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    background-position: right center;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    border-top: 4px solid #aaa;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+
+#eloraMetadataHeading > table:first-child,
+#eloraMetadataHeading > table:first-child tr
+{
+    border: none;
+    background: transparent;
+}
+
+#eloraMetadataHeading > table:first-child tr
+{
+    height: 3em;
+}
+
+#eloraMetadataHeading > table:first-child td
+{
+    border: 1px solid #e8e8e8;
+    background: transparent;
+}
+
+.versionColumn
+{
+    width: 7em;
+}
+
+.eloraReference
+{
+    border-radius: 3px;
+    background-color: #e5e8e2;
+    color: #053832;
+    padding: 0.15em 0.3em 0.15em 0.3em;
+    margin-right: 0.3em;
+    border: 1px solid transparent;
+    vertical-align: middle;
+}
+
+h1 .eloraReference
+{
+    background-color: #053832;
+    color: white;
+    border: none;
+}
+
+.nx-page table.dataOutput tbody tr:hover .eloraReference,
+.nx-page .select2-results .select2-highlighted .eloraReference,
+.nx-page table.dataTableLine tbody tr:hover .eloraReference,
+.nx-page table.treetable tbody tr:hover .eloraReference
+{
+    border-color: #2c874e;
+    color: #2c874e;
+}
+
+h1 .typeIcon
+{
+    vertical-align: middle;
+    padding: 12px 10px 8px 10px;
+    border-radius: 20px;
+    background-color: white;
+    margin-right: 0.3em;
+    text-align: center;
+    box-shadow: 0 0px 2px #053832;
+    position: relative;
+    top: 2px;
+    left: 1px;
+    padding: 12px 8px 8px 8px;
+}
+
+h1 .typeIcon img
+{
+    vertical-align: text-bottom;
+}
+
+.titleVersionLabel
+{
+    background-color: #fefefe;
+    padding: 0 0.4em;
+    border-radius: 3px;
+    box-shadow: 0 0 1px rgba(0,0,0,0.2);
+    vertical-align: middle;
+    margin-right: 0.3em;
+}
+
+table.treetable tbody td.ellipsisWhenOverflow
+{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+
+.iconOnlyPanel .eloraReference
+{
+    padding: 0.2em 0.4em;
+}
+
+#headerRevision
+{
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+#eloraMetadataHeading > table:first-child td.headerThumbnail
+{
+     width: 150px;
+     height: 100px;
+     max-width: 150px;
+     max-height: 100px;
+     background-repeat: no-repeat;
+     background-position: center center;
+     background-size: cover;
+}
+
+#eloraMetadataHeading label
+{
+    color: #777;
+}
+
+#nxw_headerThumbnailButtons_panel
+{
+    top: 80px;
+    position: relative;
+}
+
+#nxw_headerThumbnailButtons_panel .actionsWidgetPanel
+{
+    text-align: center;
+    padding: 0;
+}
+
+#nxw_headerThumbnailButtons_panel .horizontalAction a
+{
+    background-color: rgba(255,255,255,0.7);
+    border-radius: 20px;
+    padding: 6px 8px;
+    box-shadow: 0 0 2px gray;
+}
+
+#nxw_headerThumbnailButtons_panel .horizontalAction a:hover
+{
+    background-color: #fff;
+}
+
+#nxw_headerThumbnailButtons_panel .horizontalAction img
+{
+    vertical-align: text-bottom;
+}
+
+.goToWcMessage
+{
+    text-align: center;
+    display: block;
+    padding: 0.3em 2em;
+    margin: 0.3em 0;
+    background-color: rgba(255, 230, 50, 0.3);
+    border: 1px solid #fd4;
+}
+
+.isObsoleteMessage
+{
+    color: #fff;
+    text-align: center;
+    display: block;
+    padding: 0.3em 2em;
+    margin: 0.3em 0;
+    background-color: #053832;
+    border: 1px solid #000;
+    border-radius: 4px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    font-weight: bold;
+    clear: both;
+}
+
+.nx-page .goToWcMessage a.button,
+.nx-page .goToWcMessage a.button:hover
+{
+    margin: 0.5em;
+    background-color: #fc5;
+}
+
+#eloraMetadataHeading.archivedVersion
+{
+    border-style: dashed none none;
+}
+
+
+.visualizedType,
+.visualizedTypeProxy
+{
+     color: #AAA;
+     font-size: 0.8em;
+     margin-left: 0.5em;
+}
+.visualizedTypeProxy
+{
+    text-decoration: underline;
+}
+
+.lifeCycleStateLabel
+{
+    border-radius: 3px;
+    line-height: 130%;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 0 0.2em 0.2em 0;
+    padding: 0.06em 0.3em;
+    vertical-align: baseline;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.lifeCycleStateLabel.hollow
+{
+    background-color: #fff;
+    border: 1px solid #888;
+    color: #888;
+}
+.lifeCycleStateLabel.filled
+{
+    background-color: #888;
+    color: #fff;
+}
+
+.delayedLabel
+{
+    border-radius: 3px;
+    line-height: 130%;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 0 0.2em 0.2em 0;
+    padding: 0.06em 0.3em;
+    vertical-align: baseline;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #e22;
+    border: 2px solid #e22;
+}
+
+.delayedDate
+{
+    color: #e22;
+}
+
+.dataTable.widgetTable th, .dataTable.widgetTable td
+{
+    border-color: #e6e9ef;
+    border-style: none solid solid none;
+    border-width: 1px;
+    padding: 0.7em 0.4em;
+}
+
+.dataTable.widgetTable th
+{
+    background-color: #f8f9fb;
+}
+
+.iconColumn img.proxyBadge
+{
+    position: relative;
+    margin-left: -16px;
+    left: 4px;
+    top: 3px;
+}
+
+
+.eloraFilesReadMode .simpleBox
+{
+    display: block;
+}
+.nx-page a.button.filtered
+{
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.nx-page a.button.filtered:hover
+{
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.buttonsPanel
+{
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    
+    position: sticky;
+    bottom: 20px;
+    padding: 10px;
+    border: 1px solid #e6e9ef;
+    box-shadow: -10px 0 10px #fff, 10px 0 10px #fff, 0 10px 5px #fff, 0 -10px 5px #fff;
+    background: linear-gradient(to right, rgba(248,249,251,0.9) 0%, rgba(248,249,251,0.5) 40%, rgba(248,249,251,0.9) 70%)
+}
+
+.nx-page .buttonsPanel .button
+{
+    margin: 0;
+    border-radius: 0;
+    box-shadow: 0 1px 1px #ddd;
+}
+
+.nx-page .buttonsPanel .button.mainAction
+{
+    text-transform: uppercase;
+    background-color: #1c5531;
+    border-color: #053832;
+    color: #fff;
+}
+
+.nx-page .buttonsPanel .button.mainAction:hover
+{
+    background-color: #053832;
+    color: #fff;
+}
+
+ 
+.filteredValues
+{
+    color: #777;
+    font-size: 0.9em;
+    line-height: 22px;
+    vertical-align: middle;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.labelColumn.typeRelatedLabelColumn
+{ 
+   font-weight: bold;
+}
+
+
+.noPaddingContainer .containerField
+{
+    padding: 0;
+}
+
+
+.nx-page .tableButtonColumn
+{
+    width: 110px;
+}
+
+/*
+// TODO It doesn't work
+.nx-page .tableButtonColumn .button[disabled="disabled"],
+.nx-page .tableButtonColumn .button[disabled],
+.nx-page .tableButtonColumn input[type="submit"]:disabled
+{
+    background: none transparent;
+    border: 1px solid #e6e9ef;
+    box-shadow: none;
+    color: #c6c6c6;
+    cursor: default;
+    display: initial;
+}
+*/
+
+.suppressedRelation
+{
+    font-style: italic;
+    text-decoration: line-through;
+}
+
+.checkedOutLabel
+{
+    color: #b323ef;
+}
+
+.label.label-checked-out
+{
+    background-color: #faeeff;
+    border: 1px solid #b323ef;
+    color: #b323ef;
+}
+
+
+.nx-page input.numberInput[type="text"]
+{
+    width:200px;
+    text-align:right;
+}
+
+.nx-page input.shortNumberInput[type="text"]
+{
+    width: 3em;
+    height: 2em;
+    padding: 0.3em 0.5em;
+    text-align:right;
+    margin-bottom: 0;
+}
+
+.opaqueBlockUI {
+    background: #fff url(/nuxeo/img/standart_waiter.gif) center center no-repeat;
+    opacity: 1;
+}
+
+.logClientName {
+    color: #8a4;
+}
+
+.logProcessReference {
+    color: #a84;
+}
+
+/*
+ * 
+ * Heading styles by doctype
+ * 
+ */
+
+#eloraMetadataHeading.CadAssembly
+{
+    border-color: #a30;
+}
+#eloraMetadataHeading.CadPart
+{
+    border-color: #390;
+}
+#eloraMetadataHeading.CadDrawing
+{
+    border-color: #399;
+}
+#eloraMetadataHeading.CadDesignTable
+{
+    border-color: #666;
+}
+
+#eloraMetadataHeading.BomPart
+{
+    border-color: #779500;
+}
+#eloraMetadataHeading.BomPackaging
+{
+    border-color: #94792b;
+}
+#eloraMetadataHeading.BomProduct
+{
+    border-color: #2c89a0;
+}
+#eloraMetadataHeading.BomSpecification
+{
+    border-color: #a02c2c;
+}
+#eloraMetadataHeading.BomTool
+{
+    border-color: #ff7f2a;
+}
+#eloraMetadataHeading.BomCustomerProduct
+{
+    border-color: #2ca05a;
+}
+#eloraMetadataHeading.BomManufacturerPart
+{
+    border-color: #ab00ef;
+}
+#eloraMetadataHeading.Project
+{
+    border-color: #784421;
+}
+
+/* Colored percentage */
+.percentageLabel
+{
+    border-radius: 3px;
+    line-height: 130%;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 0 0.2em 0.2em 0;
+    padding: 0.06em 1em;
+    vertical-align: baseline;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background-color: #fff;
+    color: #000;
+}
+
+.percentageLabel.lowest
+{
+    background-color: #f88;
+    color: #600;
+}
+
+.percentageLabel.low
+{
+    background-color: #fa8;
+    color: #820;
+}
+
+.percentageLabel.medium
+{
+    background-color: #fe8;
+    color: #440;
+}
+
+.percentageLabel.high
+{
+    background-color: #de8;
+    color: #240;
+}
+.percentageLabel.highest
+{
+    background-color: #ae8;
+    color: #040;
+}
+
+/* PF DataTables */
+.ui-datatable table.datatable
+{
+    width: 100%;
+}
+
+.ui-datatable table.datatable,
+.ui-datatable table.datatable tbody,
+.ui-datatable table.datatable tbody tr
+{
+    border: 1px solid #e6e9ef;
+}
+
+.ui-datatable table.datatable tbody td
+{
+    border-width: 1px 0;
+    border-color: #e6e9ef;
+    border-style: solid;
+    white-space: normal;
+}
+
+.ui-datatable
+{
+    font-size: 0.9em;
+}
+
+.ui-datatable-smallFont
+{
+    font-size: 0.8em;
+}
+
+.ui-datatable tr > td
+{
+    background-color: transparent;
+    padding: 0.7em 0.6em 0.7em 0.7em;
+}
+
+.ui-datatable tr.ui-state-hover,
+.ui-datatable tr.ui-widget-content.ui-state-hover
+{
+    background-color: #eee;
+    box-shadow: none;
+}
+
+.ui-datatable tr.ui-state-highlight,
+.ui-datatable tr.ui-widget-content.ui-state-highlight
+{
+    color: initial;
+    background: unset;
+    text-shadow: unset;
+    border-color: #5cf;
+}
+
+/*
+.ui-datatable tr.ui-state-highlight > td:last-child,
+.ui-datatable .ui-widget-content tr.ui-state-highlight > td:last-child,
+.ui-datatable .ui-widget-header tr.ui-state-highlight > td:last-child
+{
+    background-image: url(/nuxeo/icons/badge_selected_row_12.png);
+    background-position: 12px center;
+    background-repeat: no-repeat;
+    background-color: #5cf;
+    color: transparent;
+}
+*/
+
+.ui-datatable tr.ui-state-highlight > td,
+.ui-datatable tr.ui-widget-content.ui-state-highlight > td
+{
+    border-color: #5cf;
+    border-width: 2px 0;
+}
+
+.ui-datatable tr.ui-state-highlight > td:first-child,
+.ui-datatable tr.ui-widget-content.ui-state-highlight > td:first-child
+{
+    border-left-width: 2px;
+}
+
+.ui-datatable .ui-widget-header.ui-datatable-header
+{
+    background-image: none;
+    background-color: #f8f9fb;
+    border: 1px solid #e6e9ef;
+    border-bottom: none;
+    text-align: left;
+    padding-top: 0.6em;
+    font-size: 1.1em;
+    color: #000;
+}
+
+.ui-datatable .ui-state-default
+{
+    background-image: none;
+    background-color: #f8f9fb;
+    border: 1px solid #e6e9ef;
+    color: #000;
+}
+
+.ui-datatable thead th
+{
+    text-align: left;
+}
+
+.nx-page table.datatable tbody tr:hover
+{
+    background-color: #f8f9fb;
+}
+
+.ui-datatable tr.ui-datatable-even,
+.ui-datatable tr.ui-datatable-odd {
+    background-color: #fff;
+}
+
+
+.ui-datatable tr.ui-state-highlight > td.selectColumn,
+.ui-datatable .ui-widget-content tr.ui-state-highlight > td.selectColumn,
+.ui-datatable .ui-widget-header tr.ui-state-highlight > td.selectColumn
+{
+    background-image: url(/nuxeo/icons/badge_selected_row_12.png);
+    background-position: 12px center;
+    background-repeat: no-repeat;
+    background-color: #5cf;
+    color: transparent;
+}
+
+.ui-datatable th.selectColumn,
+.ui-datatable td.selectColumn
+{
+    width: 35px;
+}
+/***/

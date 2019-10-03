@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.viewer.api.ViewerFileService">
+    <documentation>
+        Service to configure the creation of viewer files.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.viewer.api.ViewerFileServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.viewer.api.ViewerFileService"/>
+    </service>
+    
+    <extension-point name="types">
+        <documentation>
+            Used to define which viewer file to use for each document type.
+            <code>
+                <types>
+                    <type name="...">...</type>
+                </types>
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.viewer.api.TypesDescriptor" />
+    </extension-point>
+    
+    <extension-point name="viewerFiles">
+        <documentation>
+            Used to define the viewer files and their sections.
+            
+            Section types: file / template
+            
+            If type is file, in the section or in all the relations there must be defined the xpath; if it is template, same with template attribute.
+            
+            If no relations defined, target is current document.
+            <code>
+                <viewerFile id="...">
+                    
+                    <section order="0" type="..." xpath="..." template="..." modifier="...">
+                        <relation xpath="..." template="..." predicate="..." inverse="false" modifier="..." checkImportationDateForOverwriteViewer="false" />
+                    </section>
+                    
+                </viewerFile>
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.viewer.api.ViewerFileDescriptor" />
+    </extension-point>
+
+    <extension-point name="modifiers">
+        <documentation>
+            Used to register the modifiers that write texts over existing viewer file sections.
+            
+            defaultRefPoint: left / center / right , top / center / bottom (default: left, bottom)
+            <p/>
+            Text:
+            
+            - type: xpath / method / fixed
+            
+              If type is xpath, xpath attribute needed; if it is method, method attribute needed; if it is fixed, value attribute needed
+              
+            - refPoint: left / center / right , top / center / bottom
+            
+            - Color format is r,g,b (default: 0,0,0)
+            
+            - style: regular / bold / italic / bold,italic (default: regular)
+            
+            <p/>
+            Conditions:
+            
+            - allRequired: by default it is true, so all condition elements must be true; if false, then if just one condition is fulfilled, the text will be shown
+            
+            Condition:
+            
+            A text can have one or more conditions to show / hide
+            
+            - type: xpath / method
+            
+              If type is xpath, xpath attribute needed; if it is method, method attribute needed
+              
+            - expression: equals / not equals
+            
+            - value is a simple text
+            
+            <p/>
+            Line:
+            
+            - Define start point with x0 and y0, based on refPoint0.
+            
+            - refPoint0: left / center / right , top / center / bottom
+            
+            - Define end point with x1 and y1, based on refPoint1.
+            
+            - refPoint1: left / center / right , top / center / bottom
+            
+            - Color format is r,g,b (default: 0,0,0)
+            
+            - Width is a double (default: 1d)
+            
+            <code>
+                <modifier id="..." defaultRefPoint="...,...">
+                    
+                    <text type="xpath" xpath="..." refPoint="...,..." x="0" y="0" style="..." align="..." color="0,0,0" size="0" rotation="0" opacity="0.0" />
+                    <text type="method" method="..." refPoint="...,..." x="0" y="0" style="..." align="..." color="0,0,0" size="0" rotation="0" opacity="0.0" />
+                    <text type="fixed" value="..." refPoint="...,..." x="0" y="0" style="..." align="..." color="0,0,0" size="0" rotation="0" opacity="0.0">
+                        <conditions allRequired="true/false">
+                            <condition type="xpath" xpath="..." expression="equals" value="..." />
+                            <condition type="method" method="..." expression="not equals" value="..." />
+                        </conditions>
+                    </text>
+                    
+                    <line x0="0" y0="0" x1="0" y1="0" refPoint0="...,..." refPoint1="...,..." color="0,0,0" width="0" />
+                    
+                </modifier>
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.viewer.api.ModifierDescriptor" />
+    </extension-point>
+
+</component> 

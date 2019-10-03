@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.core.OperationServiceComponent.contrib">
+    
+    <extension point="contextHelpers" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
+        <contextHelper id="Elo" class="com.aritu.eloraplm.core.automation.AutomationFunctions"/>
+    </extension>
+    
+</component>

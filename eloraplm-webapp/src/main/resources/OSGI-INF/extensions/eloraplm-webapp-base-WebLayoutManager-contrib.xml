@@ -1,0 +1,2446 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.webapp.base.WebLayoutManager.contrib">
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp</require>
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp.base</require>
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp.listing</require>
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
+    <require>org.nuxeo.ecm.platform.action.widgets</require>
+    <require>org.nuxeo.ecm.webapp.info.view</require>
+    <require>org.nuxeo.ecm.relations.web.layouts.contrib</require>
+    
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
+        point="widgettypes">
+        
+        <!-- Version & Visualized Type widget type -->
+        <widgetType name="listing_version_and_visualized_type">
+          <configuration>
+            <title>Version &amp; Visualized Type</title>
+            <description>
+              <p>This widget type displays a document model version label
+              and the visualized type (Proxy/WC/Version)</p>
+              <p>
+                It requires the following fields configuration:
+                <ul>
+                  <li>
+                    first field mapping the document model, its version label will
+                    be retrieved querying the versioning service
+                  </li>
+                </ul>
+              </p>
+            </description>
+            <fields>
+              <list>false</list>
+              <complex>false</complex>
+              <defaultConfiguration>
+                <field>data</field>
+              </defaultConfiguration>
+            </fields>
+            <categories>
+              <category>listing</category>
+            </categories>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/listing/listing_version_and_visualized_type_widget_template.xhtml
+          </property>
+        </widgetType>
+        
+        <!-- Listing Reference & Title widget type -->
+        <widgetType name="listing_reference_title">
+          <configuration>
+            <title>Reference &amp; Title</title>
+            <description>
+              <p>
+                This widget type displays the reference and title inside a link to navigate to a document.
+              </p>
+              <p>
+                It requires the following fields configuration:
+                <ul>
+                  <li>
+                    first field maps the document model, it will be used to
+                    display the document link and its title
+                  </li>
+                  <li>
+                    second field maps the unique id to be used for contextual menu
+                    (e.g. the document model id)
+                  </li>
+                  <li>
+                    third field maps the displayed link title (can be the document
+                    model description)
+                  </li>
+                </ul>
+              </p>
+            </description>
+            <confProperties>
+              <property name="sortPropertyName">elo:reference, dc:title</property>
+            </confProperties>
+            <fields>
+              <list>false</list>
+              <complex>false</complex>
+              <defaultConfiguration>
+                <field>data</field>
+                <field>data.ref</field>
+                <field>data.dc.description</field>
+              </defaultConfiguration>
+            </fields>
+            <categories>
+              <category>listing</category>
+            </categories>
+            <properties>
+              <defaultValues mode="any">
+                <property name="hideExternalLink">true</property>
+              </defaultValues>
+              <layouts mode="any">
+                <layout name="listing_reference_title_widget_type_properties_any">
+                  <rows>
+                    <row>
+                      <widget>tab</widget>
+                    </row>
+                    <row>
+                      <widget>subTab</widget>
+                    </row>
+                    <row>
+                      <widget>target</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">localize</widget>
+                    </row>
+                    <row>
+                      <widget>hideExternalLink</widget>
+                    </row>
+                  </rows>
+                  <widget name="tab" type="text">
+                    <labels>
+                      <label mode="any">Tab</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        The tab to select when clicking on the
+                        document link.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>tab</field>
+                    </fields>
+                  </widget>
+                  <widget name="subTab" type="text">
+                    <labels>
+                      <label mode="any">Sub Tab</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        The sub tab to select when clicking on the
+                        document link.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>subTab</field>
+                    </fields>
+                  </widget>
+                  <widget name="target" type="text">
+                    <labels>
+                      <label mode="any">Target</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        The target attribute of the link.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>target</field>
+                    </fields>
+                  </widget>
+                  <widget name="localize" type="checkbox">
+                    <categories>
+                      <category>widgetTypeConf</category>
+                    </categories>
+                    <labels>
+                      <label mode="any">Localize</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        Flag indicating that
+                        the title is localized.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>localize</field>
+                    </fields>
+                  </widget>
+                  <widget name="hideExternalLink" type="checkbox">
+                    <labels>
+                      <label mode="any">Hide External Link</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        Flag indicating that
+                        the external link, opening the document in a new
+                        conversation, must be hidden.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>hideExternalLink</field>
+                    </fields>
+                  </widget>
+                </layout>
+              </layouts>
+            </properties>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/listing/listing_reference_title_widget_template.xhtml
+          </property>
+        </widgetType>
+        
+        <!-- Listing Icon & Reference & Title widget type -->
+        <widgetType name="listing_icon_reference_title">
+          <configuration>
+            <title>Icon &amp; Reference &amp; Title</title>
+            <description>
+              <p>
+                This widget type displays the icon, reference and title inside a link to navigate to a document.
+              </p>
+              <p>
+                It requires the following fields configuration:
+                <ul>
+                  <li>
+                    first field maps the document model, it will be used to
+                    display the document link and its title
+                  </li>
+                  <li>
+                    second field maps the unique id to be used for contextual menu
+                    (e.g. the document model id)
+                  </li>
+                </ul>
+              </p>
+            </description>
+            <confProperties>
+              <property name="sortPropertyName">elo:reference, dc:title</property>
+            </confProperties>
+            <fields>
+              <list>false</list>
+              <complex>false</complex>
+              <defaultConfiguration>
+                <field>data</field>
+                <field>data.ref</field>
+              </defaultConfiguration>
+            </fields>
+            <categories>
+              <category>listing</category>
+            </categories>
+            <properties>
+              <defaultValues mode="any">
+                <property name="hideExternalLink">true</property>
+              </defaultValues>
+              <layouts mode="any">
+                <layout name="listing_icon_reference_title_widget_type_properties_any">
+                  <rows>
+                    <row>
+                      <widget>tab</widget>
+                    </row>
+                    <row>
+                      <widget>subTab</widget>
+                    </row>
+                    <row>
+                      <widget>target</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">localize</widget>
+                    </row>
+                    <row>
+                      <widget>hideExternalLink</widget>
+                    </row>
+                  </rows>
+                  <widget name="tab" type="text">
+                    <labels>
+                      <label mode="any">Tab</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        The tab to select when clicking on the
+                        document link.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>tab</field>
+                    </fields>
+                  </widget>
+                  <widget name="subTab" type="text">
+                    <labels>
+                      <label mode="any">Sub Tab</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        The sub tab to select when clicking on the
+                        document link.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>subTab</field>
+                    </fields>
+                  </widget>
+                  <widget name="target" type="text">
+                    <labels>
+                      <label mode="any">Target</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        The target attribute of the link.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>target</field>
+                    </fields>
+                  </widget>
+                  <widget name="localize" type="checkbox">
+                    <categories>
+                      <category>widgetTypeConf</category>
+                    </categories>
+                    <labels>
+                      <label mode="any">Localize</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        Flag indicating that
+                        the title is localized.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>localize</field>
+                    </fields>
+                  </widget>
+                  <widget name="hideExternalLink" type="checkbox">
+                    <labels>
+                      <label mode="any">Hide External Link</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        Flag indicating that
+                        the external link, opening the document in a new
+                        conversation, must be hidden.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>hideExternalLink</field>
+                    </fields>
+                  </widget>
+                </layout>
+              </layouts>
+            </properties>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/listing/listing_icon_reference_title_widget_template.xhtml
+          </property>
+        </widgetType>
+        
+        <widgetType name="selectOneType" >
+          <configuration>
+            <description>
+              <p>
+                This widget displays a combo box and it fills it from a map
+              </p>
+              <p>
+                It requires the following variables to be present in the EL context:
+                <ul>
+                  <li>field_0: selected item in combo box</li>
+                  <li>field_1: a map of elements to list in combo box</li>
+                </ul>
+              </p>
+            </description>
+            <title>List</title>
+            <fields>
+              <list>false</list>
+              <complex>false</complex>
+              <defaultConfiguration>
+                <field>field_0</field>
+                <field>field_1</field>
+              </defaultConfiguration>
+            </fields>
+            <categories>
+              <category>listing</category>
+            </categories>
+            <properties>
+              <defaultValues mode="any">
+                <property name="hideExternalLink">true</property>
+              </defaultValues>
+            </properties>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/listing/listing_elements_widget_template.xhtml
+          </property>
+        </widgetType>
+    
+        <widgetType name="eloraSingleDocumentSuggestion">
+          <configuration>
+            <title>EloraPlm single document suggestion</title>
+            <sinceVersion>7.10</sinceVersion>
+            <supportedModes>
+              <mode>view</mode>
+              <mode>edit</mode>
+            </supportedModes>
+            <fields>
+              <list>false</list>
+              <complex>false</complex>
+              <supportedTypes>
+                <type>string</type>
+              </supportedTypes>
+            </fields>
+            <categories>
+              <category>document</category>
+            </categories>
+            <properties>
+              <defaultValues mode="any">
+                <property name="width">100%</property>
+              </defaultValues>
+              <defaultValues mode="edit">
+                <property name="pageProviderName">default_document_suggestion</property>
+                <property name="documentSchemas">dublincore,common,elora_object</property>
+                <property name="minChars">3</property>
+                <property name="restoreSeamCtx">true</property>
+              </defaultValues>
+              <layouts mode="view">
+                <layout name="singleDocumentSuggestion_widget_type_properties_view">
+                  <rows>
+                    <row>
+                      <widget category="widgetTypeConf">documentSuggestion_tab</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">documentSuggestion_subTab</widget>
+                    </row>
+                  </rows>
+                </layout>
+              </layouts>
+              <layouts mode="edit">
+                <layout name="singleDocumentSuggestion_widget_type_properties_edit">
+                  <rows>
+                    <row>
+                      <widget category="widgetTypeConf">required</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">placeholder</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">suggestion_width</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">suggestion_minChars</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">documentSuggestion_query</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">documentSuggestion_queryDemoPreview</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">documentSuggestion_pageProviderName
+                      </widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">documentSuggestion_repository</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">documentSuggestion_documentSchemas
+                      </widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">ajaxReRender</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">suggestion_helpLabel</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">suggestion_hideHelpLabel</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">select2_containerCssClass</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">select2_dropdownCssClass</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">select2_inlinejs</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">select2_inlinejsDemoPreview</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">select2_selectionFormatter</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">select2_suggestionFormatter
+                      </widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">select2_additionalParam</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">select2_dropdownOnArrow</widget>
+                    </row>
+                  </rows>
+                </layout>
+              </layouts>
+            </properties>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/single_document_suggestion_widget_template.xhtml
+          </property>
+        </widgetType>
+        
+        <widgetType name="listing_version_lock_icon">
+              <configuration>
+                <sinceVersion>5.4.0</sinceVersion>
+                <title>Lock icon</title>
+                <description>
+                  <p>This widget type displays a lock icon.</p>
+                  <p>
+                    It requires the following fields configuration:
+                    <ul>
+                      <li>
+                        first field maps a property stating that lock icon should be
+                        displayed if not empty (e.g. the document model lock state)
+                      </li>
+                    </ul>
+                  </p>
+                </description>
+                <fields>
+                  <list>false</list>
+                  <complex>false</complex>
+                  <defaultConfiguration>
+                    <field>data</field>
+                  </defaultConfiguration>
+                </fields>
+                <categories>
+                  <category>listing</category>
+                </categories>
+              </configuration>
+              <handler-class>
+                org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+              </handler-class>
+              <property name="template">
+                /widgets/listing/listing_version_lock_icon_widget_template.xhtml
+              </property>
+          </widgetType>
+    
+        <!-- New widget type for displaying a measure field value with its unit -->
+        <widgetType name="measure_value_and_unit">
+            <property name="template">
+                /widgets/measure_value_and_unit_widget_template.xhtml
+            </property>
+        </widgetType>
+        
+        <!-- New widget type for decimal values that will be stored as strings -->
+        <widgetType name="elora_decimal">
+            <configuration>
+                <properties>
+                    <defaultValues mode="any">
+                        <property name="converter">decimalValueConverter</property>
+                        <property name="validator">decimalValueValidator</property>
+                        <property name="editableOnlyOnFirstLevel">false</property>
+                    </defaultValues>
+                </properties>
+            </configuration>
+            
+            <property name="template">
+                /widgets/elora_decimal_widget_template.xhtml
+            </property>
+        </widgetType>
+    
+        <!-- New widget type for displaying document type, CAD part type and description -->
+        <widgetType name="summary_current_document_types_and_description">
+          <configuration>
+            <sinceVersion>5.3.1</sinceVersion>
+            <title>Document type</title>
+            <description>
+              <p>
+                This widget displays the type, CAD part type and description of the currentDocument.
+              </p>
+              <p>
+                It requires the following variables to be present in the EL context:
+                <ul>
+                      <li>currentDocument: the current document</li>
+                </ul>
+              </p>
+            </description>
+            <handlingLabels>true</handlingLabels> <!-- TODO:: HEMEN FALSE???? -->
+            <categories>
+              <category>summary</category>
+            </categories>
+            <supportedModes>
+              <mode>view</mode>
+            </supportedModes>
+            <!-- no configurable properties -->
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/summary/types_and_description_widget_template.xhtml
+          </property>
+        </widgetType>
+        
+        <!-- New widget type for displaying the type of the document and its related icon -->
+        <widgetType name="type_icon_and_text">
+              <property name="template">
+                /widgets/type_icon_and_text_widget_template.xhtml
+              </property>
+        </widgetType>
+        
+        <widgetType name="eloraDocumentActionsWithForms">
+          <configuration>
+            <sinceVersion>5.7</sinceVersion>
+            <title>Toolbar actions</title>
+            <description>
+              <p>This widget displays actions filtered on the document given as
+                field mapping, and surrounds them by a form.
+              </p>
+              <p>
+                It will display actions in the category given in the 'category'
+                property. The widget label and help label will be displayed above
+                the actions.
+              </p>
+              <p>
+                The fact that actions are surrounded by their own form makes it
+                possible to use fancybox actions for instance, whose popup content
+                would use a different form.
+              </p>
+            </description>
+            <categories>
+              <category>tab_designer</category>
+            </categories>
+            <fields>
+              <defaultConfiguration>
+                <field/>
+              </defaultConfiguration>
+            </fields>
+            <containingForm>true</containingForm>
+            <supportedModes>
+              <mode>view</mode>
+            </supportedModes>
+            <properties>
+              <layouts mode="any">
+                <layout name="documentActionsWithForms_widget_type_properties_any">
+                  <rows>
+                    <row>
+                      <widget category="widgetTypeConf">actions_category</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">actionsDisplay</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">actions_overallDisplay</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">actions_maxActionsNumber</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">actions_styleClass</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">actions_moreMenuLabel</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">actions_useAjaxForm</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">ajaxReRender</widget>
+                    </row>
+                    <row>
+                      <widget category="widgetTypeConf">actions_disableFiltered</widget>
+                    </row>
+                  </rows>
+                </layout>
+              </layouts>
+            </properties>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/actions/elora_document_actions_with_forms_widget_template.xhtml
+          </property>
+        </widgetType>
+    
+      <!-- New widget type for displaying 3 level selection -->
+      <widgetType name="3_level_select_widget">
+        <configuration>
+          <sinceVersion>7.10</sinceVersion>
+            <title>3 level select widget</title>
+            <description>
+              <p>This widget displays 3 level select widget. Each select widget is joined to a directory.</p>
+              <p>It requires the following fields configuration:
+                <ul>
+                  <li>
+                    field: the value holding the 3 level selection
+                  </li>
+                </ul>
+              </p>
+              <p>It requires the following properties configuration:
+                <ul>
+                  <li>
+                    directoryNameLevel1: level 1 directory name
+                  </li>
+                  <li>
+                    directoryNameLevel2: level 2 directory name
+                  </li>
+                  <li>
+                    directoryNameLevel3: level 3 directory name
+                  </li>
+                </ul>
+              </p>
+            </description>
+            <supportedModes>
+              <mode>edit</mode>
+              <mode>view</mode>
+            </supportedModes>
+            <fields>
+              <list>true</list>
+              <complex>false</complex>
+              <supportedTypes>
+                <type>string</type>
+              </supportedTypes>
+              <defaultTypes>
+                <type>string</type>
+              </defaultTypes>
+            </fields>
+            <categories>
+              <category>document</category>
+            </categories>
+          </configuration>
+          <handler-class>org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler</handler-class>
+        <property name="template">/widgets/3_level_select_widget.xhtml</property>
+      </widgetType>
+      
+      <widgetType name="summary_current_document_creator">
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/summary/creator_widget_template.xhtml
+          </property>
+      </widgetType>
+      
+      <widgetType name="summary_current_document_last_contributor">
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/summary/last_contributor_widget_template.xhtml
+          </property>
+      </widgetType>
+      
+      <widgetType name="text_with_listener">
+          <configuration>
+            <title>Text widget with listener</title>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/text_with_listener_widget_template.xhtml
+          </property>
+        </widgetType>
+      
+      <!-- Treewidget types -->
+      
+      <widgetType name="treewidget_icon_reference_title">
+          <configuration>
+            <title>Treewidget: Icon &amp; Reference &amp; Title</title>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/treetable/treewidget_icon_reference_title_template.xhtml
+          </property>
+        </widgetType>
+        
+        
+        <widgetType name="treewidget_version_wc_av">
+          <configuration>
+            <title>Treewidget: Version &amp; WC/AV</title>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/treetable/treewidget_version_wc_av_template.xhtml
+          </property>
+        </widgetType>
+        
+        
+        <widgetType name="treewidget_lock_icon">
+          <configuration>
+            <title>Treewidget: Lock Icon</title>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/treetable/treewidget_lock_icon_template.xhtml
+          </property>
+        </widgetType>
+        
+      <!-- End of Treewidget types -->
+        
+        <widgetType name="colored_percentage">
+            <property name="template">
+                /widgets/colored_percentage_widget_template.xhtml
+            </property>
+        </widgetType>
+    
+    </extension>
+    
+    
+    <extension point="widgets"
+        target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <widget name="documentHeaderActions" type="documentActions">
+          <properties widgetMode="view">
+            <property name="category">DOCUMENT_HEADER</property>
+            <property name="overallDisplay">horizontal_block</property>
+          </properties>
+        </widget>
+        
+        
+        <!-- Version & Visualized Type widget -->
+        <widget name="listing_version_and_visualized_type" type="listing_version_and_visualized_type">
+            <labels>
+                <label mode="any">label.version</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+        </widget>
+        
+        <widget name="version_and_visualized_type" type="listing_version_and_visualized_type">
+            <labels>
+                <label mode="any">label.version</label>
+            </labels>
+            <fields>
+                <field></field>
+            </fields>
+        </widget>
+        
+        <widget name="listing_reference_title" type="listing_reference_title">
+          <labels>
+            <label mode="any">label.content.header.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>data</field>
+            <field>data.ref</field>
+            <field>data.dc.description</field>
+          </fields>
+        </widget>
+        
+        <widget name="listing_icon_reference_title" type="listing_icon_reference_title">
+          <labels>
+            <label mode="any">label.content.header.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>data</field>
+            <field>data.ref</field>
+          </fields>
+          <properties mode="any">
+            <property name="isInRelationListing">false</property>
+          </properties>
+        </widget>
+        
+        <widget name="listing_rel_icon_reference_title" type="listing_icon_reference_title">
+          <labels>
+            <label mode="any">label.content.header.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>data</field>
+            <field>data.ref</field>
+            <field>predicateUri</field>
+            <field>comment</field>
+          </fields>
+          <properties mode="any">
+            <property name="isInRelationListing">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="icon_reference_title" type="listing_icon_reference_title">
+          <labels>
+            <label mode="any">label.content.header.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field></field>
+            <field>ref</field>
+          </fields>
+        </widget>
+        
+        <widget name="listing_download_link" type="template">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <properties mode="any">
+            <property name="template">/widgets/listing/listing_general_download_link_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="listing_main_file_download_link" type="template">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <fields>
+            <field>data</field>
+            <field>data.file.content</field>
+            <field>data.file.content.filename</field>
+          </fields>
+          <properties mode="any">
+            <property name="file_property_name">file:content</property>
+            <property name="file_schema">file</property>
+            <property name="template">/widgets/listing/listing_download_link_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="listing_viewer_file_download_link" type="template">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <fields>
+            <field>data</field>
+            <field>data.elovwr.file</field>
+            <field>data.elovwr.file.filename</field>
+          </fields>
+          <properties mode="any">
+            <property name="file_property_name">elovwr:file</property>
+            <property name="file_schema">elora_viewer</property>
+            <property name="template">/widgets/listing/listing_download_link_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        
+        <widget name="listing_quantity" type="elora_decimal">
+            <labels>
+                <label mode="any">label.content.header.quantity</label>
+            </labels>
+            <fields>
+                <field>quantity</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
+        </widget>
+        
+        <widget name="quantity" type="elora_decimal">
+            <labels>
+                <label mode="any">eloraplm.label.relation.quantity</label>
+            </labels>
+            <fields>
+                <field>quantity</field>
+            </fields>
+        </widget>
+        
+        <!-- New widget to show lock info -->
+        <widget name="locker" type="text">
+          <labels>
+            <label mode="any">label.document.lock</label>
+          </labels>
+          <fields>
+            <field>#{nxu:userFullName(currentDocumentLockDetails['document.locker'])}</field>
+          </fields>
+          <translated>true</translated>
+          <widgetModes>
+            <mode value="any">
+              #{nxu:test(!empty currentDocumentLockDetails, 'view', 'hidden')}
+            </mode>
+          </widgetModes>
+        </widget>
+        
+        <!-- New widget to show lock info -->
+        <widget name="lockCreated" type="datetime">
+          <labels>
+            <label mode="any">label.summary.the</label>
+          </labels>
+          <fields>
+            <field>#{currentDocumentLockDetails['document.lock.created'].time}</field>
+          </fields>
+          <translated>true</translated>
+          <widgetModes>
+            <mode value="any">
+              #{nxu:test(!empty currentDocumentLockDetails, 'view', 'hidden')}
+            </mode>
+          </widgetModes>
+          <properties widgetMode="any">
+            <property name="pattern">#{nxu:basicDateAndTimeFormatter()}</property>
+          </properties>
+        </widget>
+        
+        
+        <!-- Override to hide the label -->
+        <widget name="summary_current_document_view" type="summary_current_document_view">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <controls mode="any">
+            <control name="requireSurroundingForm">true</control>
+            <control name="handleLabels">false</control>
+          </controls>
+        </widget>
+        
+        <!-- Override to hide the label -->
+        <widget name="summary_current_document_dublincore" type="summary_current_document_dublincore">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <controls mode="any">
+            <control name="requireSurroundingForm">true</control>
+            <control name="handleLabels">false</control>
+          </controls>
+        </widget>
+        
+        <!-- Override to configure actions display in upperButtons -->
+        <widget name="documentActionsUpperButtons" type="eloraDocumentActionsWithForms">
+          <properties mode="view">
+            <property name="category">DOCUMENT_UPPER_ACTION</property>
+            <property name="actionsDisplay">icons</property>
+            <property name="overallDisplay">horizontal_block</property>
+            <property name="styleClass">globalActions contextActions</property>
+            <property name="actionStyleClass">button</property>
+          </properties>
+        </widget>
+        
+        <widget name="selectOneVersion" type="selectOneType">
+            <labels>
+                <label mode="any">eloraplm.label.version</label>
+            </labels>
+            <fields>
+              <field>docId</field>
+              <field>versionMap</field>
+            </fields>
+        </widget>
+        
+        <widget name="wcVersionLabel" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.lastVersion</label>
+            </labels>
+            <fields>
+              <field>wcVersion</field>
+            </fields>
+        </widget>
+        
+        
+        <widget name="listing_version_lock_icon" type="listing_version_lock_icon">
+            <labels>
+              <label mode="any"/>
+            </labels>
+            <fields>
+              <field>data</field>
+            </fields>
+        </widget>
+        
+        <widget name="version_lock_icon" type="listing_version_lock_icon">
+            <labels>
+              <label mode="any"/>
+            </labels>
+            <fields>
+              <field></field>
+            </fields>
+        </widget>
+        
+        <!--  New widget for displaying document type, CAD part type and description in summary -->
+        <widget name="summary_current_document_types_and_description" type="summary_current_document_types_and_description">
+          <labels>
+            <label mode="any"/>
+          </labels>
+        </widget>
+        
+        <!--  New widget for displaying the type of the document and its related icon -->
+        <widget name="type_icon_and_text" type="type_icon_and_text">
+          <labels>
+            <label mode="any">label.content.header.type</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>type</field>
+          </fields>
+        </widget>
+
+        
+        <!-- New widget for displaying Dublin Core description field -->
+        <widget name="description_if_schema_dc" type="text">
+          <labels>
+            <label mode="any">label.dublincore.description</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>dc:description</field>
+          </fields>
+          <widgetModes>
+            <mode value="view_summary">#{currentDocument.hasSchema('dublincore')?'view':'hidden'}</mode>
+          </widgetModes>
+        </widget>
+        
+        
+        <!-- Widget to display actions on the header's thumbnail -->
+        <widget name="headerThumbnailButtons" type="documentActions">
+          <properties widgetMode="view">
+            <property name="category">HEADER_THUMBNAIL_BUTTON</property>
+            <property name="overallDisplay">horizontal_block</property>
+          </properties>
+          <controls mode="any">
+            <control name="requireSurroundingForm">false</control>
+          </controls>
+        </widget>
+        
+        
+        <!-- 
+            Override infoViewTitleContainer widget in order to display the icon + reference + title in the title container area. 
+            It uses infoViewIconReferenceTitle widget of type listing_icon_reference_title instead of infoViewTitle widget 
+            of type title_link.
+        -->
+        <widget name="infoViewTitleContainer" type="container">
+          <handlingLabels>false</handlingLabels>
+           <properties widgetMode="any">
+             <property name="hideSubLabels">true</property>
+             <property name="styleClass">infoViewTitle</property>
+             <property name="display">block_top</property>
+           </properties>
+           <subWidgets>
+             <widget name="infoViewIconReferenceTitle" type="listing_icon_reference_title">
+               <fields>
+                 <field></field>
+                 <field>ref</field>
+               </fields>
+               <properties mode="any">
+                 <property name="target">_top</property>
+                 <property name="hideExternalLink">true</property>
+               </properties>
+             </widget>
+           </subWidgets>
+         </widget>
+         
+         <widget name="listing_colored_lifecycle_state" type="template">
+          <labels>
+            <label mode="any">label.content.header.currentLifecycleState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>data.currentLifeCycleState</field>
+          </fields>
+          <widgetModes>
+              <mode value="edit">view</mode>
+          </widgetModes>
+          <properties mode="any">
+            <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="colored_lifecycle_state" type="template">
+          <labels>
+            <label mode="any">label.content.header.currentLifecycleState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>currentLifeCycleState</field>
+          </fields>
+          <widgetModes>
+              <mode value="edit">view</mode>
+          </widgetModes>
+          <properties mode="any">
+            <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="colored_short_lifecycle_state" type="template">
+          <labels>
+            <label mode="any">label.content.header.currentLifecycleState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>currentLifeCycleState</field>
+          </fields>
+          <widgetModes>
+              <mode value="edit">view</mode>
+          </widgetModes>
+          <properties mode="any">
+            <property name="template">/widgets/colored_short_lifecycle_state_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="listing_path" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.path</label>
+            </labels>
+            <fields>
+                <field>data.path</field>
+            </fields>
+        </widget>
+        
+        
+        <!-- New widget for searching by title in content view filters -->
+        <widget name="elora_search_title" type="text">
+          <labels>
+            <label mode="any">label.dublincore.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:title</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputText</property>
+          </properties>
+        </widget>
+        
+        <!-- New widget for searching by reference in content view filters -->
+        <widget name="elora_search_reference" type="text">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:reference</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="converter">ilikeSearchValueConverter</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputText</property>
+          </properties>
+        </widget>
+        
+        <!-- New widgets for searching by modified date min in content view filters -->
+        <widget name="elora_search_modified_min" type="datetime">
+          <labels>
+            <label mode="any">label.dublincore.modificationDateBetween</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:modified_min</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="pattern">#{nxu:basicDateAndTimeFormatter()}</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="defaultTime">00:00</property>
+          </properties>
+        </widget>
+        
+        <!-- New widget for searching by modified date max in content view filters -->
+        <widget name="elora_search_modified_max" type="datetime">
+          <labels>
+            <label mode="any">label.search.and</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:modified_max</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="pattern">#{nxu:basicDateAndTimeFormatter()}</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="defaultTime">23:59</property>
+          </properties>
+        </widget>
+        
+        <!-- New widget for searching by current lifecycle state in content view filters -->
+        <widget name="elora_search_current_lifecycle_state" type="selectOneDirectory">
+          <labels>
+            <label mode="any">label.content.header.currentLifecycleState</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:currentLifeCycleState</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="directoryName">eloras_lifeCycle</property>
+            <!-- <property name="directoryName">elora_lifecycle_states</property>
+            <property name="itemLabel">#{item.id}</property> -->
+            <property name="localize">true</property>
+          </properties>
+        </widget>
+        
+        <!-- New widget for searching by last contributor in content view filters -->
+        <widget name="elora_search_last_contributor" type="singleUserSuggestion">
+          <labels>
+            <label mode="any">label.dublincore.lastContributor</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:lastContributor</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="userSuggestionSearchType">USER_TYPE</property>
+            <property name="firstLabelField">firstName</property>
+            <property name="secondLabelField">lastName</property>
+            <property name="hideFirstLabel">false</property>
+            <property name="hideSecondLabel">false</property>
+            <property name="displayAction">edit</property>
+            <property name="hideIcon">false</property>
+          </properties>
+        </widget>
+        
+        <!-- Use elora_header_description instead of Nuxeo's default document_header in order to apply Elora internal rules
+        for displaying the description field in the header of the documents. -->
+        <!-- 
+        <widget name="elora_header_description" type="textarea">
+          <widgetModes>
+            <mode value="any">
+              #{currentDocument.hasFacet('CMProcess') or currentcurrentDocument.folder==false or empty
+              currentDocument.dublincore.description ?'hidden':mode}
+            </mode>
+          </widgetModes>
+          <fields>
+            <field>dc:description</field>
+          </fields>
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <properties mode="any">
+            <property name="styleClass">
+              currentDocumentDescription quote
+            </property>
+          </properties>
+        </widget>
+        -->
+        
+        
+        <!-- Treewidgets -->
+        <widget name="treewidget_cad_icon_reference_title" type="treewidget_icon_reference_title">
+          <labels>
+            <label mode="any">label.content.header.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>data</field>
+            <field>data.ref</field>
+            <field>predicateUri</field>
+            <field>comment</field>
+            <field>data.elo.reference</field>
+            <field>wcDoc</field>
+          </fields>
+          <properties mode="any">
+            <property name="showPredicateTooltip">true</property>
+            <property name="predicateVocabulary">elora_cad_predicates</property>
+          </properties>
+        </widget>
+        
+        <widget name="treewidget_editable_version_wc_av" type="treewidget_version_wc_av">
+            <labels>
+                <label mode="any">label.version</label>
+            </labels>
+            <fields>
+                <field>data</field>
+                <field>wcDoc</field>
+                <field>docId</field>
+                <field>versionList</field>
+            </fields>
+        </widget>
+        
+        <widget name="treewidget_version_wc_av" type="treewidget_version_wc_av">
+            <labels>
+                <label mode="any">label.version</label>
+            </labels>
+            <fields>
+                <field>data</field>
+                <field>wcDoc</field>
+                <field>docId</field>
+                <field>versionList</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
+        </widget>
+        
+        <widget name="treewidget_lock_icon" type="treewidget_lock_icon">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>wcDoc</field>
+            </fields>
+        </widget>
+        
+        <widget name="treewidget_editable_quantity" type="elora_decimal">
+            <labels>
+                <label mode="any">label.content.header.quantity</label>
+            </labels>
+            <fields>
+                <field>quantity</field>
+            </fields>
+            <properties mode="edit">
+                <property name="styleClass">shortNumberInput</property>
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="editableOnlyOnFirstLevel">true</property>
+            </properties>
+        </widget>
+        
+        <widget name="treewidget_editable_ordering" type="text_with_listener">
+          <labels>
+            <label mode="any">eloraplm.label.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>ordering</field>
+          </fields>
+          <properties mode="edit">
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="styleClass">shortNumberInput</property>
+                <property name="showOnlyOnFirstLevel">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="treewidget_editable_viewer_ordering" type="text_with_listener">
+          <labels>
+            <label mode="any">eloraplm.label.viewer.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>viewerOrdering</field>
+          </fields>
+          <properties mode="edit">
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="styleClass">shortNumberInput</property>
+                <property name="showOnlyOnFirstLevel">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="treewidget_editable_inverse_viewer_ordering" type="text_with_listener">
+          <labels>
+            <label mode="any">eloraplm.label.viewer.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>inverseViewerOrdering</field>
+          </fields>
+          <properties mode="edit">
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="styleClass">shortNumberInput</property>
+                <property name="showOnlyOnFirstLevel">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="treewidget_editable_director_ordering" type="text_with_listener">
+          <labels>
+            <label mode="any">eloraplm.label.director.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>directorOrdering</field>
+          </fields>
+          <properties mode="edit">
+                <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="styleClass">shortNumberInput</property>
+                <property name="showOnlyOnFirstLevel">true</property>
+          </properties>
+        </widget>
+        
+        <!-- End of Treewidgets -->
+        
+        <widget name="summary_current_document_creator" type="summary_current_document_creator">
+          <labels>
+            <label mode="any"/>
+          </labels>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+            <control name="requireSurroundingForm">true</control>
+          </controls>
+        </widget>
+        
+        <widget name="summary_current_document_last_contributor" type="summary_current_document_last_contributor">
+          <labels>
+            <label mode="any"/>
+          </labels>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+            <control name="requireSurroundingForm">true</control>
+          </controls>
+        </widget>
+        
+        <widget name="listing_ordering" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>ordering</field>
+          </fields>
+          <widgetModes>
+            <mode value="any">view</mode>
+            <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
+          </widgetModes>
+          <properties mode="any">
+            <property name="style">height: 23px; padding: 0.3em 0.5em; margin-bottom: 0;#{value.level eq 1 ? '' : 'display: none;'}</property>
+          </properties>
+        </widget>
+        
+        <widget name="listing_viewer_ordering" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.viewer.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>viewerOrdering</field>
+          </fields>
+          <widgetModes>
+            <mode value="any">view</mode>
+            <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
+          </widgetModes>
+          <properties mode="any">
+            <property name="style">height: 23px; padding: 0.3em 0.5em; margin-bottom: 0;#{value.level eq 1 ? '' : 'display: none;'}</property>
+          </properties>
+        </widget>
+        
+        <widget name="listing_director_ordering" type="text">
+          <labels>
+            <label mode="any">eloraplm.label.director.ordering</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>directorOrdering</field>
+          </fields>
+          <widgetModes>
+            <mode value="any">view</mode>
+            <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
+          </widgetModes>
+          <properties mode="any">
+            <property name="style">height: 23px; padding: 0.3em 0.5em; margin-bottom: 0;#{value.level eq 1 ? '' : 'display: none;'}</property>
+          </properties>
+        </widget>
+        
+        <widget name="reference_not_required" type="template">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>elo:reference</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="required">false</property>
+            <property name="template">/widgets/reference_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="reference_required" type="template">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>elo:reference</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="required">true</property>
+            <property name="template">/widgets/reference_widget_template.xhtml</property>
+          </properties>
+        </widget>
+        
+        <!-- CR TO BE CHANGED -->
+        <widget name="reference_automatic" type="text">
+          <labels>
+            <label mode="any">label.widget.elo.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>elo:reference</field>
+          </fields>
+          <widgetModes>
+            <mode value="create">hidden</mode>
+            <mode value="edit">view</mode>
+          </widgetModes>
+        </widget>
+        
+        <!--  is_manual widget -->    
+        <widget name="is_manual" type="template">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>isManual</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">/widgets/is_manual_widget.xhtml</property>
+          </properties>
+        </widget>
+        
+        <widget name="summary_project_progress" type="template">
+            <labels>
+                <label mode="any">eloraplm.label.project.progress</label>
+            </labels>
+            <translated>true</translated>
+            <properties mode="any">
+                <property name="template">/widgets/project_progress_widget_template.xhtml</property>
+            </properties>
+        </widget>
+        
+        
+    </extension>
+    
+    
+    
+    <extension point="layouts"
+        target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        <layout name="document_listing_table" type="listingTable">
+            <aliases>
+                <alias>search_listing_ajax</alias>
+                <alias>document_listing_ajax</alias>
+                <alias>document_listing</alias>
+            </aliases>
+            <columns>
+                <column alwaysSelected="true" name="selection">
+                    <properties mode="any">
+                        <property
+                            name="isListingSelectionBoxWithCurrentDocument"> true
+                        </property>
+                        <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.checkbox
+                        </property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <properties mode="pdf">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>listing_ajax_selection_box_with_current_document
+                    </widget>
+                </column>
+                <column name="icon_type">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.icon_type
+                        </property>
+                    </properties>
+                    <widget>listing_icon_type</widget>
+                </column>
+                <column name="title_link">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">elo:reference, dc:title</property>
+                        <property name="label">label.selection.column.title_link</property>
+                    </properties>
+                    <widget>listing_reference_title</widget>
+                </column>
+                
+                <column name="download_link">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.downloadLink
+                        </property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <properties mode="pdf">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>listing_download_link</widget>
+                </column>
+                
+                <column name="lock">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.lock
+                        </property>
+                    </properties>
+<!--                     <properties mode="csv"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="pdf"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+                    <widget>listing_version_lock_icon</widget>
+                </column>
+                <column name="modification_date">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:modified</property>
+                        <property name="label">label.dublincore.modificationDate
+                        </property>
+                    </properties>
+                    <widget>listing_modification_date</widget>
+                </column>
+                <column name="lastContributor">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:lastContributor
+                        </property>
+                        <property name="label">label.dublincore.lastContributor
+                        </property>
+                    </properties>
+                    <widget>listing_last_contributor</widget>
+                </column>
+                <column name="version_and_visualized_type">
+                    <properties mode="any">
+                        <property name="columnStyleClass">versionColumn</property>
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.version</property>
+                    </properties>
+                    <widget>listing_version_and_visualized_type</widget>
+                </column>
+                <column name="lifecycle">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">
+                            ecm:currentLifeCycleState
+                        </property>
+                        <property name="label">label.lifecycle
+                        </property>
+                    </properties>
+                    <widget>listing_colored_lifecycle_state</widget>
+                </column>
+                <column name="livedit_link">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.livedit_link
+                        </property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <properties mode="pdf">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>listing_livedit_link</widget>
+                </column>
+                <column name="description" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:description
+                        </property>
+                        <property name="label">description</property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_description</widget>
+                </column>
+                <column name="nature" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:nature</property>
+                        <property name="label">label.dublincore.nature
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_nature</widget>
+                </column>
+                <column name="subjects" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.dublincore.subject
+                        </property>
+                    </properties>
+                    <widget>listing_subjects</widget>
+                </column>
+                <column name="rights" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:rights</property>
+                        <property name="label">label.dublincore.rights
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_rights</widget>
+                </column>
+                <column name="source" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:source</property>
+                        <property name="label">label.dublincore.source
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_source</widget>
+                </column>
+                <column name="coverage" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:coverage</property>
+                        <property name="label">label.dublincore.coverage
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_coverage</widget>
+                </column>
+                <column name="creation_date" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:created</property>
+                        <property name="label">label.dublincore.created
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_creation_date</widget>
+                </column>
+                <column name="format" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:format</property>
+                        <property name="label">label.dublincore.format
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_format</widget>
+                </column>
+                <column name="language" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:language</property>
+                        <property name="label">label.dublincore.language
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_language</widget>
+                </column>
+                <column name="expired_date" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:expired</property>
+                        <property name="label">label.dublincore.expired
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_expiration_date</widget>
+                </column>
+                <column name="contributors" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.dublincore.contributors
+                        </property>
+                    </properties>
+                    <widget>listing_contributors</widget>
+                </column>
+            </columns>
+        </layout>
+        
+        <layout name="document_listing_thumbnail" type="listingThumbnail">
+          <columns>
+            <column name="listing_version_and_visualized_type">
+                <properties mode="any">
+                    <property name="label">label.version</property>
+                </properties>
+                <widget>listing_version_and_visualized_type</widget>
+            </column>
+            <column name="lifecycle">
+                <properties mode="any">
+                    <property name="label">label.lifecycle</property>
+                </properties>
+                <widget>listing_colored_lifecycle_state</widget>
+            </column>
+            <column name="size_and_format">
+              <properties mode="any">
+                <property name="label">label.selection.column.size_and_format</property>
+              </properties>
+              <widget>listing_size_and_format</widget>
+            </column>
+          </columns>
+        </layout>
+        
+        <layout name="listing_thumbnail_header">
+          <templates>
+            <template mode="any">
+              /layouts/layout_div_template.xhtml
+            </template>
+          </templates>
+          <columns>
+            <column alwaysSelected="true" name="selection">
+              <widget>listing_ajax_selection_box</widget>
+            </column>
+            <column>
+              <widget>listing_thumbnail</widget>
+            </column>
+            <column>
+              <widget>listing_icon_reference_title</widget>
+            </column>
+          </columns>
+        </layout>
+
+        <layout name="dublincore">
+          <templates>
+            <template mode="any">/layouts/layout_default_template.xhtml
+            </template>
+          </templates>
+          <rows>
+           <!--  <row>
+              <widget>lastContributor</widget>
+              <widget>modified</widget>
+            </row>
+            <row>
+              <widget>locker</widget>
+              <widget>lockCreated</widget>
+            </row> -->
+            <row>
+              <widget>nature</widget>
+            </row>
+            <row>
+              <widget>subjects</widget>
+            </row>
+            <row>
+              <widget>rights</widget>
+            </row>
+            <row>
+              <widget>source</widget>
+            </row>
+            <row>
+              <widget>coverage</widget>
+            </row>
+            <row>
+              <widget>format</widget>
+            </row>
+            <row>
+              <widget>language</widget>
+            </row>
+            <row>
+              <widget>expired</widget>
+            </row>        
+          </rows>
+        </layout>
+        
+        <!--  New layout for displaying document type, 
+              CAD part type (if CAD document), 
+              and description in summary tab -->
+        <layout name="summary_current_document_types_and_description">
+          <templates>
+            <template mode="any">/layouts/layout_default_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>type_icon_and_text</widget>
+            </row>
+            <row>
+              <widget>cadType</widget>
+            </row>
+            <row>
+              <widget>cadClassification</widget>
+            </row>
+            <row>
+              <widget>description_if_schema_dc</widget>
+            </row>
+          </rows>
+        </layout>
+        
+      <!--  Override defaultInfoLayout@tabLayout in order to include infoViewTypesAndDescription section -->
+        <layout name="defaultInfoLayout@tabLayout">
+        <templates>
+          <template mode="any">
+            /layouts/layout_grid_template.xhtml
+          </template>
+        </templates>
+        <rows>
+          <row>
+            <widget>infoViewInfoBox</widget>
+          </row>
+          <row>
+            <widget>infoViewTypesAndDescription</widget>
+          </row>
+          <row>
+            <widget>infoViewMetadata</widget>
+          </row>
+          <row>
+            <widget>infoViewWorkflow</widget>
+          </row>
+          <row>
+            <widget>infoViewTags</widget>
+          </row>
+          <row>
+            <widget>infoViewCollections</widget>
+          </row>
+          <row>
+            <widget>infoViewComments</widget>
+          </row>
+        </rows>
+        <widget name="infoViewTypesAndDescription" type="container">
+          <subWidgets>
+            <widget name="infoTypesAndDescription" type="summary_current_document_types_and_description" />
+          </subWidgets>
+          <properties widgetMode="any">
+            <property name="hideSubLabels">true</property>
+          </properties>
+          <controls mode="any">
+            <control name="gridStyleClass">gridStyle12</control>
+          </controls>
+        </widget>
+        <widget name="infoViewInfoBox" type="container">
+          <subWidgets>
+            <widget name="infoBox" type="info_box" />
+          </subWidgets>
+          <properties widgetMode="any">
+            <property name="hideSubLabels">true</property>
+          </properties>
+          <controls mode="any">
+            <control name="gridStyleClass">gridStyle12</control>
+          </controls>
+        </widget>
+        <widget name="infoViewMetadata" type="container">
+          <labels>
+            <label mode="any">action.view.metadata</label>
+          </labels>
+          <translated>true</translated>
+          <subWidgets>
+            <widget name="metadata" type="documentLayout">
+              <properties widgetMode="view">
+                <property name="mode">view</property>
+                <property name="documentMode">view</property>
+                <property name="includeAnyMode">false</property>
+              </properties>
+              <controls mode="any">
+                <control name="requireSurroundingForm">true</control>
+              </controls>
+            </widget>
+          </subWidgets>
+          <controls mode="any">
+              <control name="handleLabels">true</control>
+            <control name="gridStyleClass">gridStyle12</control>
+          </controls>
+          <properties widgetMode="any">
+            <property name="hideSubLabels">true</property>
+          </properties>
+        </widget>
+        <widget name="infoViewWorkflow" type="container">
+          <labels>
+            <label mode="any">label.document.routing.workflow</label>
+          </labels>
+          <translated>true</translated>
+          <subWidgets>
+              <widget name="workflow" type="summary_document_route">
+              <controls mode="any">
+                <control name="requireSurroundingForm">true</control>
+              </controls>
+            </widget>
+          </subWidgets>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+            <control name="gridStyleClass">gridStyle12</control>
+          </controls>
+          <properties widgetMode="any">
+            <property name="hideSubLabels">true</property>
+          </properties>
+          <widgetModes>
+            <mode value="view">#{routingActions.filteredRouteModels.size() > 0 ?
+              'view' : 'hidden'}</mode>
+          </widgetModes>
+        </widget>
+        <widget name="infoViewTags" type="container">
+          <labels>
+            <label mode="any">action.view.tagging</label>
+            </labels>
+          <translated>true</translated>
+          <subWidgets>
+            <widget name="tags" type="summary_current_document_tagging">
+              <controls mode="any">
+                <control name="requireSurroundingForm">true</control>
+              </controls>
+              <properties widgetMode="any">
+                <property name="placeholder">
+                  #{messages['label.add.tag.placeholder']}
+                </property>
+              </properties>
+            </widget>
+          </subWidgets>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+            <control name="gridStyleClass">gridStyle12</control>
+          </controls>
+          <properties widgetMode="any">
+            <property name="hideSubLabels">true</property>
+          </properties>
+        </widget>
+        <widget name="infoViewCollections" type="container">
+          <labels>
+            <label mode="any">label.collections</label>
+          </labels>
+          <translated>true</translated>
+          <subWidgets>
+            <widget name="collections" type="summary_current_document_collections" />
+          </subWidgets>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+            <control name="gridStyleClass">gridStyle12</control>
+          </controls>
+          <properties widgetMode="any">
+            <property name="hideSubLabels">true</property>
+          </properties>
+          <widgetModes>
+            <mode value="view">#{collectionActions.hasCurrentDocumentVisibleCollection()
+              ? 'view' : 'hidden'}</mode>
+          </widgetModes>
+        </widget>
+        <widget name="infoViewComments" type="container">
+          <labels>
+            <label mode="any">#{nxu:translate('label.summary.comments',
+              documentThreadedComments.size)}</label>
+          </labels>
+          <translated>false</translated>
+          <subWidgets>
+            <widget name="comments" type="summary_current_document_comments">
+              <controls mode="any">
+                <control name="requireSurroundingForm">true</control>
+              </controls>
+            </widget>
+          </subWidgets>
+          <controls mode="any">
+            <control name="handleLabels">true</control>
+            <control name="gridStyleClass">gridStyle12</control>
+          </controls>
+          <properties widgetMode="any">
+            <property name="hideSubLabels">true</property>
+            </properties>
+          <widgetModes>
+            <mode value="view">#{documentThreadedComments.size() > 0 ? 'view' :
+              'hidden'}</mode>
+          </widgetModes>
+        </widget>
+      </layout>
+        
+        
+        <layout name="link_listing_table" type="listingTable">
+             
+            <columns>
+                <column name="icon_type">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.icon_type
+                        </property>
+                    </properties>
+                    <widget>listing_icon_type</widget>
+                </column>
+                <column name="title_link">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">elo:reference, dc:title</property>
+                        <property name="label">label.selection.column.title_link
+                        </property>
+                    </properties>
+                    <widget>listing_reference_title</widget>
+                </column>
+                
+                <column name="lock">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.lock
+                        </property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <properties mode="pdf">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>listing_version_lock_icon</widget>
+                </column>
+                <column name="modification_date">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:modified</property>
+                        <property name="label">label.dublincore.modificationDate
+                        </property>
+                    </properties>
+                    <widget>listing_modification_date</widget>
+                </column>
+                <column name="lastContributor">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:lastContributor
+                        </property>
+                        <property name="label">label.dublincore.lastContributor
+                        </property>
+                    </properties>
+                    <widget>listing_last_contributor</widget>
+                </column>
+                <column name="version_and_visualized_type">
+                    <properties mode="any">
+                        <property name="columnStyleClass">versionColumn</property>
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.version</property>
+                    </properties>
+                    <widget>listing_version_and_visualized_type</widget>
+                </column>
+                <column name="lifecycle">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">
+                            ecm:currentLifeCycleState
+                        </property>
+                        <property name="label">label.lifecycle
+                        </property>
+                    </properties>
+                    <widget>listing_colored_lifecycle_state</widget>
+                </column>
+                
+                <column name="path">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">eloraplm.label.path</property>
+                    </properties>
+                    <widget>listing_path</widget>
+                </column>
+                
+                <column name="livedit_link">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.livedit_link
+                        </property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <properties mode="pdf">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>listing_livedit_link</widget>
+                </column>
+                <column name="description" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:description
+                        </property>
+                        <property name="label">description</property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_description</widget>
+                </column>
+                <column name="nature" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:nature</property>
+                        <property name="label">label.dublincore.nature
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_nature</widget>
+                </column>
+                <column name="subjects" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.dublincore.subject
+                        </property>
+                    </properties>
+                    <widget>listing_subjects</widget>
+                </column>
+                <column name="rights" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:rights</property>
+                        <property name="label">label.dublincore.rights
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_rights</widget>
+                </column>
+                <column name="source" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:source</property>
+                        <property name="label">label.dublincore.source
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_source</widget>
+                </column>
+                <column name="coverage" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:coverage</property>
+                        <property name="label">label.dublincore.coverage
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_coverage</widget>
+                </column>
+                <column name="creation_date" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:created</property>
+                        <property name="label">label.dublincore.created
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_creation_date</widget>
+                </column>
+                <column name="format" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:format</property>
+                        <property name="label">label.dublincore.format
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_format</widget>
+                </column>
+                <column name="language" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:language</property>
+                        <property name="label">label.dublincore.language
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_language</widget>
+                </column>
+                <column name="expired_date" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:expired</property>
+                        <property name="label">label.dublincore.expired
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_expiration_date</widget>
+                </column>
+                <column name="contributors" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.dublincore.contributors
+                        </property>
+                    </properties>
+                    <widget>listing_contributors</widget>
+                </column>
+            </columns>
+        </layout>
+        
+        <layout name="elora_document_content_filter">
+          <templates>
+            <template mode="any">/layouts/layout_default_template.xhtml</template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_search_reference</widget>
+              <widget>elora_search_title</widget>
+            </row>
+            <row>
+              <widget>elora_search_current_lifecycle_state</widget>
+              <widget>elora_search_last_contributor</widget>
+            </row>
+            <row>
+              <widget>elora_search_modified_min</widget>
+              <widget>elora_search_modified_max</widget>
+            </row>
+          </rows>
+        </layout>
+        
+        
+        <!-- Elora documents should use elora_document_header instead of Nuxeo's default document_header -->
+        <layout name="elora_document_header">
+          <templates>
+            <template mode="any">/layouts/layout_div_template.xhtml</template>
+          </templates>
+          <rows>
+            <row>
+              <widget>header_title_and_permlink</widget>
+            </row>
+            <!--
+            <row>
+                <widget>elora_header_description</widget>
+            </row>
+            -->
+          </rows>
+        </layout>
+        
+    </extension>
+</component>

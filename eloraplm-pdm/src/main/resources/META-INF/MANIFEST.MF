@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.pdm
+Bundle-Name: eloraplm-pdm
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-pdm-checkin-CheckinPubli
+ sher-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-overwrite-TypeServi
+ ce-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-overwrite-ActionServi
+ ce-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-promote-WebLayoutMana
+ ger-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-webapp-ActionService
+ -contrib.xml
+

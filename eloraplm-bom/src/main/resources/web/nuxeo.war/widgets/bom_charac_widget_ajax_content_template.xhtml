@@ -1,0 +1,37 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:f="http://java.sun.com/jsf/core">
+  
+    <c:if test="#{currentDocument.type == 'BomPart'}">
+      <f:ajax
+        event="change" listener="#{bomPartCharacteristicsTreeBean.refreshNode(node, triggeredField)}"
+        render="#{treeWidgetId}" execute="@this" />
+    </c:if>
+        
+    <c:if test="#{currentDocument.type == 'BomTool'}">
+      <f:ajax
+        event="change" listener="#{bomToolCharacteristicsTreeBean.refreshNode(node, triggeredField)}"
+        render="#{treeWidgetId}" execute="@this" />
+    </c:if>
+        
+    <c:if test="#{currentDocument.type == 'BomPackaging'}">
+      <f:ajax
+        event="change" listener="#{bomPackagingCharacteristicsTreeBean.refreshNode(node, triggeredField)}"
+        render="#{treeWidgetId}" execute="@this" />
+    </c:if>
+        
+    <c:if test="#{currentDocument.type == 'BomSpecification'}">
+      <f:ajax
+        event="change" listener="#{bomSpecificationCharacteristicsTreeBean.refreshNode(node, triggeredField)}"
+        render="#{treeWidgetId}" execute="@this" />
+    </c:if>
+        
+    <c:if test="#{currentDocument.type == 'BomProduct'}">
+      <f:ajax
+        event="change" listener="#{bomProductCharacteristicsTreeBean.refreshNode(node, triggeredField)}"
+        render="#{treeWidgetId}" execute="@this" />
+    </c:if>
+              
+</ui:composition>

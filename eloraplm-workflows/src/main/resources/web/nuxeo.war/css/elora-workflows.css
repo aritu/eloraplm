@@ -1,0 +1,51 @@
+.workflowTasksMessage
+{
+    color: #fff;
+    display: block;
+    margin: 0.3em 0;
+    padding: 0.6em 2em 0.6em 1em;
+    background-color: #05a8e2;
+    border: none;
+    border-radius: 2px;
+    box-shadow: 1px 1px 1px rgba(0,50,100,1);
+    font-weight: bold;
+    clear: both;
+    border-left: 8px solid #369;
+    vertical-align: middle;
+}
+
+.workflowTasksMessage::before
+{
+    content: "☀ ";
+    color: #aef;
+    font-size: 1.9em;
+    vertical-align: middle;
+}
+
+.nx-page .workflowTasksMessage input[type="button"]
+{
+    color: #036;
+    border: none;
+    border-radius: 0;
+    margin: 0 0 0 1em;
+    vertical-align: middle;
+    background-color: #aef;
+}
+
+.nx-page .workflowTasksMessage input[type="button"]:hover,
+.nx-page .workflowTasksMessage input[type="button"]:focus
+{
+    color: #036;
+    border-color: #036;
+    box-shadow: 0 0 3px #036;
+    background-color: #eff;
+}
+
+#header_single_tasks_pane .single_tasks_block
+{
+    background-color: #fff;
+    padding: 0.5em 2em;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    margin: 0 1px;
+    border-left: 7px solid #ccc;
+}

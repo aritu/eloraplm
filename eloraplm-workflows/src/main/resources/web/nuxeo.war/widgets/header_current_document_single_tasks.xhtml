@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <ui:fragment rendered="#{not empty currentSingleTasks}">
+        <div class="workflowTasksMessage">
+            <span>#{messages['eloraplm.wf.label.tasksToDo']}</span>
+            <input type="button"
+                onclick="javascript: jQuery('#header_single_tasks_pane').toggle();"
+                value="#{messages['eloraplm.wf.label.showHideTasks']}" />
+        </div>
+        <div id="header_single_tasks_pane" style="display: none;">
+            <nxl:widget name="summary_current_document_single_tasks" mode="edit" value="#{currentDocument}" />
+        </div>
+    </ui:fragment>
+    
+</ui:composition>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.ecm.platform.enable.jsf.vocabularies.optims.config">
+
+  <require>org.nuxeo.ecm.platform.webapp.base.properties</require>
+
+  <extension target="org.nuxeo.runtime.ConfigurationService"
+    point="configuration">
+    <property name="nuxeo.jsf.vocabularies.useRepeatRenderTime">true</property>
+  </extension>
+
+</component>

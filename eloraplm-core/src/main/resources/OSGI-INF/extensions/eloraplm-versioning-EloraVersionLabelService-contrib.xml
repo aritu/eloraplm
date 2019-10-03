@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.versioning.EloraVersionLabelService.contrib">
+    
+    <implementation class="com.aritu.eloraplm.versioning.DefaultVersionLabelServiceImpl"/>
+    
+    <service>
+        <provide interface="com.aritu.eloraplm.versioning.EloraVersionLabelService"/>
+    </service>
+    
+</component>

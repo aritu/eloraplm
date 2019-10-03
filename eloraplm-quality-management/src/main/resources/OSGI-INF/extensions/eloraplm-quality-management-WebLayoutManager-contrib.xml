@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.qm.WebLayoutManager.contrib">
+    
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+        
+        <layout name="qm_product_process">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>qm_product_process_subject</widget>
+                </row>
+                <row>
+                    <widget>qm_product_classification</widget>
+                </row>
+            </rows>
+        </layout>
+        
+        <layout name="qm_part_process">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>qm_part_process_subject</widget>
+                </row>
+                <row>
+                    <widget>qm_part_classification</widget>
+                </row>
+            </rows>
+        </layout>
+        
+    </extension>
+    
+    
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+    
+        <widget name="qm_product_process_subject" type="multipleDocumentsSuggestion">
+            <labels>
+                <label mode="any">eloraplm.label.qm.productProcessSubject</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>qm:subject</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="pageProviderName">bom_product_wc_suggestion</property>
+                <property name="additionalOperationParameters">eloraPassQueryTermsTwice</property>
+                <property name="documentSchemas">dublincore,common,elora_object</property>
+            </properties>
+        </widget>
+        
+        <widget name="qm_part_process_subject" type="multipleDocumentsSuggestion">
+            <labels>
+                <label mode="any">eloraplm.label.qm.partProcessSubject</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>qm:subject</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="pageProviderName">bom_part_wc_suggestion</property>
+                <property name="additionalOperationParameters">eloraPassQueryTermsTwice</property>
+                <property name="documentSchemas">dublincore,common,elora_object</property>
+            </properties>
+        </widget>
+        
+        <widget name="qm_product_classification" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.bomprod.productClassification</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>prodclass:productClassification</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_bomProductClassHierarchical</property>
+                <property name="hideHelpLabel">true</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+        
+        <widget name="qm_part_classification" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.bompart.partClassification</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>partclass:partClassification</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_bomPartClassHierarchical</property>
+                <property name="hideHelpLabel">true</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+        
+    </extension>
+    
+</component>

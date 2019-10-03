@@ -1,0 +1,21 @@
+<div
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <h3 class="summaryTitle">
+        <h:outputText value="#{messages[widget.label]}" />
+    </h3>
+    
+    <h:form id="projectProgress">
+        
+        <nxl:widget name="progress" mode="edit" value="#{currentDocument}" />
+        
+        <h:commandButton value="#{messages['command.save']}"
+            styleClass="button"
+            action="#{projectActions.updateProgress}">
+        </h:commandButton>
+        
+    </h:form>
+    
+</div>

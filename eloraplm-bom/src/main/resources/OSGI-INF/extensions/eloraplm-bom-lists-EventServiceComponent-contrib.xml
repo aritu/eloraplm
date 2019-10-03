@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.lists.EventServiceComponent">
+    <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
+      <listener name="bomListRemovalListener" async="false" postCommit="false" class="com.aritu.eloraplm.bom.lists.listener.BomListsRemovalListener" priority="120">
+        <event>aboutToRemove</event>
+      </listener>
+    </extension>
+</component>

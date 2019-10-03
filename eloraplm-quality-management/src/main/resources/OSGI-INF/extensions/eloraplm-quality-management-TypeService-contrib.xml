@@ -1,0 +1,340 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.qm.TypeService.contrib">
+    
+    <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+        <schema name="qm_process" prefix="qm" src="schemas/qm_process.xsd" />
+    </extension>
+
+    <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+        
+        <!-- Facets -->
+        <facet name="QmProcess"/>
+        
+        <!-- Doctypes -->
+        <doctype extends="Folder" name="FolderArchivedQualityManagement">
+            <facet name="EloraStruct" />
+        </doctype>
+        
+        <doctype extends="Folder" name="ProductValidation">
+            <schema name="elora_object"/>
+            <schema name="planning"/>
+            <schema name="product_classification"/>
+            <schema name="qm_process"/>
+            <schema name="related_partaker"/>
+            <schema name="related_customer"/>
+            <schema name="related_manufacturer"/>
+            <schema name="responsible"/>
+            <facet name="AutomaticCode"/>
+            <facet name="Commentable"/>
+            <facet name="EloraWorkspace"/>
+            <facet name="SuperSpace"/>
+            <facet name="QmProcess" />
+            <facet name="LockRequiredToEdit" />
+        </doctype>
+        <doctype extends="Folder" name="ProductVerification">
+            <schema name="elora_object"/>
+            <schema name="planning"/>
+            <schema name="product_classification"/>
+            <schema name="qm_process"/>
+            <schema name="related_partaker"/>
+            <schema name="related_customer"/>
+            <schema name="related_manufacturer"/>
+            <schema name="responsible"/>
+            <facet name="AutomaticCode"/>
+            <facet name="Commentable"/>
+            <facet name="EloraWorkspace"/>
+            <facet name="SuperSpace"/>
+            <facet name="QmProcess" />
+            <facet name="LockRequiredToEdit" />
+        </doctype>
+        <doctype extends="Folder" name="ProductionProcessValidation">
+            <schema name="elora_object"/>
+            <schema name="planning"/>
+            <schema name="product_classification"/>
+            <schema name="qm_process"/>
+            <schema name="related_partaker"/>
+            <schema name="related_customer"/>
+            <schema name="related_manufacturer"/>
+            <schema name="responsible"/>
+            <facet name="AutomaticCode"/>
+            <facet name="Commentable"/>
+            <facet name="EloraWorkspace"/>
+            <facet name="SuperSpace"/>
+            <facet name="QmProcess" />
+            <facet name="LockRequiredToEdit" />
+        </doctype>
+        <doctype extends="Folder" name="ProductionPartApprovalProcess">
+            <schema name="elora_object"/>
+            <schema name="planning"/>
+            <schema name="part_classification"/>
+            <schema name="qm_process"/>
+            <schema name="related_partaker"/>
+            <schema name="related_customer"/>
+            <schema name="related_manufacturer"/>
+            <schema name="responsible"/>
+            <facet name="AutomaticCode"/>
+            <facet name="Commentable"/>
+            <facet name="EloraWorkspace"/>
+            <facet name="SuperSpace"/>
+            <facet name="QmProcess" />
+            <facet name="LockRequiredToEdit" />
+        </doctype>
+        
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
+    
+        <type id="StructArchived">
+            <subtypes>
+                <type>FolderArchivedQualityManagement</type>
+            </subtypes>
+        </type>
+        
+        <type id="FolderArchivedQualityManagement">
+            <label>FolderArchivedQualityManagement</label>
+            <icon>/icons/folder_archived_quality_management_16.gif</icon>
+            <bigIcon>/icons/folder_archived_quality_management_100.png</bigIcon>
+            <description>FolderArchivedQualityManagement.description
+            </description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        
+        <type id="ProductValidation">
+            <label>ProductValidation</label>
+            <icon>/icons/product_validation_16.gif</icon>
+            <bigIcon>/icons/product_validation_100.png</bigIcon>
+            <category>QualityManagement</category>
+            <description>ProductValidation.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>qm_product_process</layout>
+                <layout>responsible</layout>
+                <layout>planning</layout>
+                <layout>partaker</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_auto</layout>
+                <layout>heading</layout>
+                <layout>qm_product_process</layout>
+                <layout>responsible</layout>
+                <layout>planning</layout>
+                <layout>partaker</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Folder</type>
+                <type>File</type>
+                <type>Note</type>
+                <type>Picture</type>
+                <type>Video</type>
+                <type>Audio</type>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+                <type>BomPart</type>
+                <type>BomManufacturerPart</type>
+                <type>BomTool</type>
+                <type>BomPackaging</type>
+                <type>BomSpecification</type>
+                <type>BomProduct</type>
+                <type>BomCustomerProduct</type>
+            </subtypes>
+        </type>
+        
+        <type id="ProductVerification">
+            <label>ProductVerification</label>
+            <icon>/icons/product_verification_16.gif</icon>
+            <bigIcon>/icons/product_verification_100.png</bigIcon>
+            <category>QualityManagement</category>
+            <description>ProductVerification.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>qm_product_process</layout>
+                <layout>responsible</layout>
+                <layout>planning</layout>
+                <layout>partaker</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_auto</layout>
+                <layout>heading</layout>
+                <layout>qm_product_process</layout>
+                <layout>responsible</layout>
+                <layout>planning</layout>
+                <layout>partaker</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Folder</type>
+                <type>File</type>
+                <type>Note</type>
+                <type>Picture</type>
+                <type>Video</type>
+                <type>Audio</type>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+                <type>BomPart</type>
+                <type>BomManufacturerPart</type>
+                <type>BomTool</type>
+                <type>BomPackaging</type>
+                <type>BomSpecification</type>
+                <type>BomProduct</type>
+                <type>BomCustomerProduct</type>
+            </subtypes>
+        </type>
+        
+        <type id="ProductionProcessValidation">
+            <label>ProductionProcessValidation</label>
+            <icon>/icons/production_process_validation_16.gif</icon>
+            <bigIcon>/icons/production_process_validation_100.png</bigIcon>
+            <category>QualityManagement</category>
+            <description>ProductionProcessValidation.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>qm_product_process</layout>
+                <layout>responsible</layout>
+                <layout>planning</layout>
+                <layout>partaker</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_auto</layout>
+                <layout>heading</layout>
+                <layout>qm_product_process</layout>
+                <layout>responsible</layout>
+                <layout>planning</layout>
+                <layout>partaker</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Folder</type>
+                <type>File</type>
+                <type>Note</type>
+                <type>Picture</type>
+                <type>Video</type>
+                <type>Audio</type>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+                <type>BomPart</type>
+                <type>BomManufacturerPart</type>
+                <type>BomTool</type>
+                <type>BomPackaging</type>
+                <type>BomSpecification</type>
+                <type>BomProduct</type>
+                <type>BomCustomerProduct</type>
+            </subtypes>
+        </type>
+        
+        <type id="ProductionPartApprovalProcess">
+            <label>ProductionPartApprovalProcess</label>
+            <icon>/icons/production_part_approval_process_16.gif</icon>
+            <bigIcon>/icons/production_part_approval_process_100.png</bigIcon>
+            <category>QualityManagement</category>
+            <description>ProductionPartApprovalProcess.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="view">
+                <layout>qm_part_process</layout>
+                <layout>responsible</layout>
+                <layout>planning</layout>
+                <layout>partaker</layout>
+            </layouts>
+            <layouts mode="any">
+                <layout>elora_object_reference_auto</layout>
+                <layout>heading</layout>
+                <layout>qm_part_process</layout>
+                <layout>responsible</layout>
+                <layout>planning</layout>
+                <layout>partaker</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Folder</type>
+                <type>File</type>
+                <type>Note</type>
+                <type>Picture</type>
+                <type>Video</type>
+                <type>Audio</type>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+                <type>BomPart</type>
+                <type>BomManufacturerPart</type>
+                <type>BomTool</type>
+                <type>BomPackaging</type>
+                <type>BomSpecification</type>
+                <type>BomProduct</type>
+                <type>BomCustomerProduct</type>
+            </subtypes>
+        </type>
+        
+        <type id="WorkspaceRoot">
+            <subtypes>
+                <type>ProductValidation</type>
+                <type>ProductVerification</type>
+                <type>ProductionProcessValidation</type>
+                <type>ProductionPartApprovalProcess</type>
+            </subtypes>
+        </type>
+        
+    </extension>
+    
+</component>

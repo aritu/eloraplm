@@ -1,0 +1,52 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  >
+
+  <nxu:set var="needToBeRefreshed" value="#{currentDocument.cmbp.needToBeRefreshed eq true ? true : false}">
+    <c:if test="#{needToBeRefreshed}">
+    
+      <a4j:outputPanel id="batchProcessingStatePanel">
+        <h:panelGroup styleClass="textAlignL displayB" style="margin-bottom: 15px;">
+          <c:choose>
+            <c:when test="#{cmAsyncBatchProcessInfo.isBatchProcessInProgress(currentDocument.id)}">
+              <nxu:set var="processInfo" value="#{cmAsyncBatchProcessInfo.getBatchProcessInfo(currentDocument.id)}">
+                <h:outputFormat value="#{messages['eloraplm.message.warning.cm.batch.batchProcessInProgress']}" class="processMessage completeWarning">
+                  <f:param value="#{processInfo.processingAction}" />
+                  <f:param value="#{processInfo.processedCount}" />
+                  <f:param value="#{processInfo.totalCount}" />
+                </h:outputFormat>
+               </nxu:set>
+            </c:when>
+            <c:otherwise>
+              <c:if test="#{currentDocument.lockInfo.owner != currentUser}">
+                <h:outputText value="#{messages['eloraplm.message.info.cm.batch.batchProcessFinished']}"  class="processMessage completeInfo"/>
+              </c:if>
+              <c:if test="#{currentDocument.lockInfo.owner == currentUser}">
+                <nxu:set var="processInfo" value="#{cmAsyncBatchProcessInfo.getBatchProcessInfo(currentDocument.id)}">
+                  <h:form>
+                    <h:outputText value="#{messages['eloraplm.message.info.cm.batch.batchProcessFinished']} #{messages['eloraplm.message.info.cm.batch.refreshDocument']}"  class="processMessage completeInfo"/>
+                    <h:commandButton 
+                      value="#{messages['eloraplm.command.cm.batch.refreshDocument']}"
+                      styleClass="button"
+                      action="#{cmAsyncBatchProcessingHelper.refreshDocument(processInfo.itemType)}">
+                    </h:commandButton>
+                  </h:form>
+                </nxu:set>
+              </c:if>
+            </c:otherwise>
+          </c:choose>
+        </h:panelGroup>
+      </a4j:outputPanel>
+      <a4j:poll id="statePoll" interval="2000" enabled="#{cmAsyncBatchProcessInfo.needToRefreshBatchProcessInfo(currentDocument.id)}" 
+        timeout="60000" render="batchProcessingStatePanel,statePoll" ajaxSingle="true" />
+        
+    </c:if>
+  </nxu:set>
+
+</ui:composition>

@@ -1,0 +1,28 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+    <c:if test="#{widget.mode == 'csv'}">
+        <nxu:set var="avDoc" value="#{eloraDocument.getDocumentFromUid(field)}">
+            <h:outputText value="#{field eq currentDocument.versionSeriesId ? 'WC' : ( avDoc ne null ? avDoc.versionLabel : '' ) }" />
+        </nxu:set>
+    </c:if>
+    
+    <c:if test="#{widget.mode != 'csv'}">
+        <h:panelGroup styleClass="visualizedType">
+        
+            <h:outputText value="WC"
+                rendered="#{field eq currentDocument.versionSeriesId}" />
+            
+            <nxu:set var="avDoc" value="#{eloraDocument.getDocumentFromUid(field)}">
+                <h:outputText value="#{avDoc != null ? avDoc.versionLabel : '?'}"
+                    rendered="#{field ne currentDocument.versionSeriesId}" />
+            </nxu:set>
+        
+        </h:panelGroup>
+    </c:if>
+
+</ui:composition>

@@ -1,0 +1,56 @@
+<f:subview id="#{widget.id}"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxd="http://nuxeo.org/nxweb/document"
+  xmlns:nxdir="http://nuxeo.org/nxdirectory"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  >
+
+    <nxu:set var="typeLabel" value="#{nxd:typeLabel(field)}">
+    
+         <span id="docRefTarget:#{field_1}">
+        
+            <h:graphicImage value="/icons/badge_proxy_12.png"
+                styleClass="proxyBadge" rendered="#{field_0.isProxy()}"/>
+            
+            <span id="docRef:#{field_1}" class="cell" docRef="#{field_1}">
+            
+                <nxu:set var="predicate" value="#{widget.properties.showPredicateTooltip eq 'true' ?
+                        nxdir:directoryEntry(widget.properties.predicateVocabulary, field_2) : ''}">
+                <nxu:set var="iconTooltip" value="#{widget.properties.showPredicateTooltip eq 'true' ?
+                        messages[typeLabel].concat('&#10;&#10;(').concat(messages[predicate.vocabulary.label]).concat(')&#10;&#10;').concat(field_3)
+                        : messages[typeLabel]}">
+                    
+                    <h:graphicImage
+                            value="#{nxd:iconPath(field_0)}" alt="#{typeLabel}" title="#{iconTooltip}"
+                            rendered="#{!empty nxd:iconPath(field_0)}"
+                            styleClass="smallIcon" />
+                    
+                </nxu:set>
+                </nxu:set>
+            
+            </span>
+        </span>
+        
+        <c:if test="false">
+        <!-- If the document is in the same version as the working copy, link to WC, else, link to AV -->
+        </c:if>
+        
+        &#160;<h:outputText rendered="#{not empty field_4}" styleClass="eloraReference" value="#{field_4}" />&#160;
+        
+        <nxu:set var="linkTargetDoc" value="#{field_5.versionLabel eq field_0.versionLabel ? field_5 : field_0 }">
+    
+            <nxd:restDocumentLink document="#{linkTargetDoc}"
+                    tab="#{widgetProperty_tab}" subTab="#{widgetProperty_subTab}"
+                    target="#{widgetProperty_target}" styleClass="documentTitleLink" rendered="#{field_0 != null and !empty linkTargetDoc}">
+                
+                <span title="#{nxd:titleOrId(field_0)}">#{nxd:titleOrId(field_0)}</span>
+                
+            </nxd:restDocumentLink>
+            
+        </nxu:set>
+
+    </nxu:set>
+</f:subview>

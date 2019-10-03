@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.viewer.EventServiceComponent">
+    <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
+        <listener name="viewerFileCreationListener" async="false" postCommit="false"
+                class="com.aritu.eloraplm.viewer.listener.ViewerFileCreationListener" priority="200">
+            <event>PdmCheckedInEvent</event>
+            <event>PdmAboutToOverwriteEvent</event>
+            <event>PdmDemotedEvent</event>
+            <event>PdmPromotedEvent</event>
+            <event>PdmItemDocOverwrittenEvent</event>
+        </listener>
+        
+        <listener name="docOverwriteListener" async="false" postCommit="false"
+                class="com.aritu.eloraplm.viewer.listener.DocOverwriteListener" priority="300">
+            <event>PdmOverwrittenEvent</event>
+        </listener>
+    </extension>
+</component>

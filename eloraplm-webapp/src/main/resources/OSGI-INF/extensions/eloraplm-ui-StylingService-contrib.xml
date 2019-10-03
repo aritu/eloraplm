@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.ui.StylingService.contrib">
+    <require>org.nuxeo.theme.nuxeo.webapp</require>
+    
+    <extension target="org.nuxeo.theme.styling.service" point="flavors">
+        <flavor name="default">
+            <logo>
+                <path>/img/eloraplm_logo_animation.gif</path>
+                <previewPath>/img/eloraplm_logo_animation.gif</previewPath>
+                <width>113px</width>
+                <height>40px</height>
+                <title>EloraPLM</title>
+            </logo>
+        </flavor>
+    </extension>
+
+</component>

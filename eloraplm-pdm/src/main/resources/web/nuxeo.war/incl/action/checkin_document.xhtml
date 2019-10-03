@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+
+  <ui:include src="/incl/action/check_in_new.xhtml">
+    <ui:param name="actionBean" value="#{pdmAction}" />
+    <ui:param name="document" value="#{currentDocument}" />
+    <ui:param name="checkinComment" value="#{pdmAction.checkinComment}" />
+  </ui:include>
+
+</ui:composition>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.change.management.batch.processing.ActionService.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+  
+    <!--  #################################################### -->
+    <!--  Batch processing actions related with Impacted ITEMS -->
+    <!--  #################################################### -->
+    <action id="BtnLockBomImpactedItems" order="10" label="eloraplm.command.cm.batch.lockAll" type="link" link="#{cmItemsBatchProcessing.toggleLockAll(true)}" icon="/icons/action_lock_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmBomImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnUnlockBomImpactedItems" order="50" label="eloraplm.command.cm.batch.unlockAll" type="link" link="#{cmItemsBatchProcessing.toggleLockAll(false)}" icon="/icons/action_unlock_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmBomImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnExecuteActionsInBomImpactedItems" order="20" label="eloraplm.command.cm.batch.executeActions" type="link" link="#{cmItemsBatchProcessing.executeActions}" icon="/icons/action_check_out_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmBomImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnCheckinBomImpactedItems" order="30" label="eloraplm.command.cm.batch.checkin" type="link" link="#{cmItemsBatchProcessing.checkin}" icon="/icons/action_check_in_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmBomImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnOverwriteBomImpactedItems" order="35" label="eloraplm.command.cm.batch.overwrite" type="link" link="#{cmItemsBatchProcessing.overwrite}" icon="/icons/action_overwrite_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmBomImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnPromoteBomImpactedItems" order="40" label="eloraplm.command.cm.batch.promote" type="link" link="#{cmItemsBatchProcessing.promote}" icon="/icons/action_promote_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmBomImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnUndoCheckoutBomImpactedItems" order="45" label="eloraplm.command.cm.batch.undoCheckout" type="link" link="#{cmItemsBatchProcessing.undoCheckout}" icon="/icons/action_undo_checkout_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmBomImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <!--  #################################################### -->
+    <!--  Batch processing actions related with Impacted DOCS  -->
+    <!--  #################################################### -->
+    <action id="BtnLockDocImpactedItems" order="10" label="eloraplm.command.cm.batch.lockAll" type="link" link="#{cmDocsBatchProcessing.toggleLockAll(true)}" icon="/icons/action_lock_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmDocImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnUnlockDocImpactedItems" order="50" label="eloraplm.command.cm.batch.unlockAll" type="link" link="#{cmDocsBatchProcessing.toggleLockAll(false)}" icon="/icons/action_unlock_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmDocImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnPromoteDocImpactedItems" order="20" label="eloraplm.command.cm.batch.promote" type="link" link="#{cmDocsBatchProcessing.promote}" icon="/icons/action_promote_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmDocImpactedItemsTreeButtons</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+
+  </extension>
+  
+</component>

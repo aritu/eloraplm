@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.bom.characteristics.ActionService.contrib">
+  <require>org.nuxeo.ecm.platform.actions</require>
+  
+  <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+  
+    <!-- ######################################### -->
+    <!-- BOM Characteristic masters administration -->
+    <!-- ######################################### -->
+    <filter id="bomCharacteristicMastersAdminAccess">
+      <rule grant="true">
+        <condition>#{currentUser.administrator}</condition>
+        <condition>#{currentUser.isMemberOf('powerusers')}</condition>
+      </rule>
+    </filter>
+    
+    <filter id="isBomCharacteristicMaster">
+      <rule grant="true">
+        <facet>BomCharacteristicMaster</facet>
+      </rule>
+    </filter>
+    
+    <filter id="isNotBomCharacteristicMaster">
+      <rule grant="false">
+        <facet>BomCharacteristicMaster</facet>
+      </rule>
+    </filter>
+    
+    <filter id="disableActionInBomCharacteristicMastersAdminPage">
+      <rule grant="false">
+        <condition>#{adminViews.getCurrentView() eq 'AdminBomCharacteristicMasters'}</condition>
+      </rule>
+    </filter>
+    
+    <!-- ######################################## -->
+    <!-- BOM Characteristics                      -->
+    <!-- ######################################## -->
+    
+    <filter id="isBomDocumentWithCharacteristics">
+      <rule grant="true">
+        <type>BomPart</type>
+        <type>BomTool</type>
+        <type>BomPackaging</type>
+        <type>BomSpecification</type>
+        <type>BomProduct</type>
+      </rule>
+    </filter>
+    
+    <filter id="bomCharacteristicsTreeButtons">
+      <rule grant="true">
+        <type>BomPart</type>
+        <type>BomTool</type>
+        <type>BomPackaging</type>
+        <type>BomSpecification</type>
+        <type>BomProduct</type>
+        <condition>#{webActions.currentTabId eq 'TAB_BOM_CHARACTERISTICS'}</condition>
+      </rule>
+    </filter>
+  
+  </extension> 
+
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+
+    <!-- ######################################### -->
+    <!-- BOM Characteristic masters administration -->
+    <!-- ######################################### -->
+    
+    <!-- BomCharacteristicMasters administration pages -->
+    <action id="AdminBomCharacteristicMasters" link="view_admin-fragment.xhtml" label="title.admin.bomcharac.bomCharacteristicMasters"
+      type="admin_rest_document_link" order="200">
+      <category>NUXEO_ADMIN</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+    </action>
+    
+   <action id="AdminBomPartCharacteristicMasters" link="/incl/admin/tabs/view_bom_part_characteristic_masters.xhtml" label="label.admin.bomcharac.bomPartCharacteristicMasters"
+      type="admin_rest_document_link" order="10">
+      <category>AdminBomCharacteristicMasters_sub_tab</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+    </action>
+    
+    <action id="AdminBomToolCharacteristicMasters" link="/incl/admin/tabs/view_bom_tool_characteristic_masters.xhtml" label="label.admin.bomcharac.bomToolCharacteristicMasters"
+      type="admin_rest_document_link" order="20">
+      <category>AdminBomCharacteristicMasters_sub_tab</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+    </action>
+    
+    <action id="AdminBomProductCharacteristicMasters" link="/incl/admin/tabs/view_bom_product_characteristic_masters.xhtml" label="label.admin.bomcharac.bomProductCharacteristicMasters"
+      type="admin_rest_document_link" order="30">
+      <category>AdminBomCharacteristicMasters_sub_tab</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+    </action>
+    
+    <action id="AdminBomPackagingCharacteristicMasters" link="/incl/admin/tabs/view_bom_packaging_characteristic_masters.xhtml" label="label.admin.bomcharac.bomPackagingCharacteristicMasters"
+      type="admin_rest_document_link" order="40">
+      <category>AdminBomCharacteristicMasters_sub_tab</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+    </action>
+    
+    <action id="AdminBomSpecificationCharacteristicMasters" link="/incl/admin/tabs/view_bom_specification_characteristic_masters.xhtml" label="label.admin.bomcharac.bomSpecificationCharacteristicMasters"
+      type="admin_rest_document_link" order="50">
+      <category>AdminBomCharacteristicMasters_sub_tab</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+    </action>
+    
+    
+    <!-- BomCharacteristicMasters commands actions -->
+    <action id="createBomPartCharacteristicMasterAction"
+      label="command.create.bomcharac.bomPartCharacteristicMaster" type="fancybox">
+      <category>BOM_PART_CHARAC_MASTER_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_part_characteristic_master.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="createBomToolCharacteristicMasterAction"
+      label="command.create.bomcharac.bomToolCharacteristicMaster" type="fancybox">
+      <category>BOM_TOOL_CHARAC_MASTER_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_tool_characteristic_master.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="createBomProductCharacteristicMasterAction"
+      label="command.create.bomcharac.bomProductCharacteristicMaster" type="fancybox">
+      <category>BOM_PRODUCT_CHARAC_MASTER_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_product_characteristic_master.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="createBomPackagingCharacteristicMasterAction"
+      label="command.create.bomcharac.bomPackagingCharacteristicMaster" type="fancybox">
+      <category>BOM_PACKAGING_CHARAC_MASTER_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_packaging_characteristic_master.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="createBomSpecificationCharacteristicMasterAction"
+      label="command.create.bomcharac.bomSpecificationCharacteristicMaster" type="fancybox">
+      <category>BOM_SPECIFICATION_CHARAC_MASTER_ADMIN_ACTIONS</category>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+      <properties>
+        <property name="include">/incl/action/create_bom_specification_characteristic_master.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    
+    <!-- Keep EDIT_CURRENT_DOCUMENT action for NOT BomCharaceristic documents and
+         define new EDIT_BOM_CHARACTERISTIC_MASTER action for editing BomCharacteristicMaster documents -->
+    <action id="EDIT_CURRENT_DOCUMENT">
+      <filter-id>isNotBomCharacteristicMaster</filter-id>
+    </action>
+    
+    <action id="EDIT_BOM_CHARACTERISTIC_MASTER" link="#{bomCharacteristicMasters.updateBomCharacteristicMaster}"
+      order="0" label="command.save">
+      <category>EDIT_DOCUMENT_FORM</category>
+      <filter-id>isBomCharacteristicMaster</filter-id>
+      <filter-id>bomCharacteristicMastersAdminAccess</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+      </properties>
+    </action>
+    
+    
+    <!-- Disable default CURRENT_SELECTION_EDIT, CURRENT_SELECTION_TRASH, CURRENT_SELECTION_COPY, 
+          CURRENT_SELECTION_ADDTOLIST and addSelectedToCollectionAction 
+          actions in BomCharacteristicMaster Admin Page -->
+    <action id="CURRENT_SELECTION_EDIT">
+      <filter-id>disableActionInBomCharacteristicMastersAdminPage</filter-id>
+    </action>
+    
+    <action id="CURRENT_SELECTION_COPY">
+      <filter-id>disableActionInBomCharacteristicMastersAdminPage</filter-id>
+    </action>
+    
+    <action id="CURRENT_SELECTION_TRASH">
+      <filter-id>disableActionInBomCharacteristicMastersAdminPage</filter-id>
+    </action>
+    
+    <action id="CURRENT_SELECTION_ADDTOLIST">
+      <filter-id>disableActionInBomCharacteristicMastersAdminPage</filter-id>
+    </action>
+    
+    <action id="addSelectedToCollectionAction">
+      <filter-id>disableActionInBomCharacteristicMastersAdminPage</filter-id>
+    </action>
+    
+    <!-- Add selection duplicate and delete actions for each sub-tab -->
+    <action id="BOM_PART_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DUPLICATE" link="#{bomCharacteristicMasters.duplicateBomPartCharacteristicMasterCurrentSelection}" 
+      label="command.duplicate.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <filter id="canDuplicateBomPartCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDuplicateBomPartCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomPartCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_PART_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DELETE" link="#{bomCharacteristicMasters.deleteBomPartCharacteristicMasterCurrentSelection}" 
+      label="command.delete.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <filter id="canDeleteBomPartCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDeleteBomPartCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomPartCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_TOOL_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DUPLICATE" link="#{bomCharacteristicMasters.duplicateBomToolCharacteristicMasterCurrentSelection}" 
+      label="command.duplicate.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <filter id="canDuplicateBomToolCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDuplicateBomToolCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomToolCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_TOOL_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DELETE" link="#{bomCharacteristicMasters.deleteBomToolCharacteristicMasterCurrentSelection}" 
+      label="command.delete.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <filter id="canDeleteBomToolCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDeleteBomToolCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomToolCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_PRODUCT_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DUPLICATE" link="#{bomCharacteristicMasters.duplicateBomProductCharacteristicMasterCurrentSelection}" 
+      label="command.duplicate.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <!--  <filter-id>canPasteFromClipboardAsDuplicate</filter-id>  -->
+      <filter id="canDuplicateBomProductCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDuplicateBomProductCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomProductCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_PRODUCT_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DELETE" link="#{bomCharacteristicMasters.deleteBomProductCharacteristicMasterCurrentSelection}" 
+      label="command.delete.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <!--  <filter-id>canPasteFromClipboardAsDuplicate</filter-id>  -->
+      <filter id="canDeleteBomProductCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDeleteBomProductCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomProductCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_PACKAGING_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DUPLICATE" link="#{bomCharacteristicMasters.duplicateBomPackagingCharacteristicMasterCurrentSelection}" 
+      label="command.duplicate.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <filter id="canDuplicateBomPackagingCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDuplicateBomPackagingCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomPackagingCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_PACKAGING_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DELETE" link="#{bomCharacteristicMasters.deleteBomPackagingCharacteristicMasterCurrentSelection}" 
+      label="command.delete.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <filter id="canDeleteBomPackagingCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDeleteBomPackagingCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomPackagingCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_SPECIFICATION_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DUPLICATE" link="#{bomCharacteristicMasters.duplicateBomSpecificationCharacteristicMasterCurrentSelection}" 
+      label="command.duplicate.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <filter id="canDuplicateBomSpecificationCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDuplicateBomSpecificationCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomSpecificationCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+    <action id="BOM_SPECIFICATION_CHARACTERISCTIC_MASTER_CURRENT_SELECTION_DELETE" link="#{bomCharacteristicMasters.deleteBomSpecificationCharacteristicMasterCurrentSelection}" 
+      label="command.delete.bomcharac.bomCharacteristicMaster" icon="" order="25" enabled="true"> 
+      <category>CURRENT_SELECTION_LIST</category>
+      <filter id="canDeleteBomSpecificationCharacteristicMaster">
+        <rule grant="true">
+          <condition>#{bomCharacteristicMasters.canDeleteBomSpecificationCharacteristicMaster and adminViews.getCurrentSubView() eq 'AdminBomSpecificationCharacteristicMasters'}</condition>
+        </rule>
+      </filter>
+    </action>
+    
+
+
+    <!-- ######################################## -->
+    <!-- BOM Characteristics                      -->
+    <!-- ######################################## -->
+    
+     <action id="TAB_BOM_CHARACTERISTICS" label="label.tab.bom.characteristics" link="/incl/tabs/bom_characteristics.xhtml" order="22" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>isBomDocumentWithCharacteristics</filter-id>
+    </action>
+    
+    <!-- Bom Characteristics Treetable related buttons -->
+    <!-- BomPart Characteristics -->
+    <action id="BtnLoadBomPartCharacteristicMasters" order="10" label="eloraplm.command.bomcharac.bomCharacteristics.loadCharacteristicMasters" type="link" link="#{bomPartCharacteristicsTreeBean.loadCharacteristicMasters}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomPart</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnSaveBomPartCharacteristicsTreetable" order="20" label="command.save" type="link" link="#{bomPartCharacteristicsTreeBean.saveTree}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomPart</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    
+    <!-- BomTool Characteristics -->
+    <action id="BtnLoadBomToolCharacteristicMasters" order="10" label="eloraplm.command.bomcharac.bomCharacteristics.loadCharacteristicMasters" type="link" link="#{bomToolCharacteristicsTreeBean.loadCharacteristicMasters}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomTool</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnSaveBomToolCharacteristicsTreetable" order="20" label="command.save" type="link" link="#{bomToolCharacteristicsTreeBean.saveTree}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomTool</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    
+    <!-- BomPackaging Characteristics -->
+    <action id="BtnLoadBomPackagingCharacteristicMasters" order="10" label="eloraplm.command.bomcharac.bomCharacteristics.loadCharacteristicMasters" type="link" link="#{bomPackagingCharacteristicsTreeBean.loadCharacteristicMasters}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomPackaging</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnSaveBomPackagingCharacteristicsTreetable" order="20" label="command.save" type="link" link="#{bomPackagingCharacteristicsTreeBean.saveTree}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomPackaging</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    
+    <!-- BomSpecification Characteristics -->
+    <action id="BtnLoadBomSpecificationCharacteristicMasters" order="10" label="eloraplm.command.bomcharac.bomCharacteristics.loadCharacteristicMasters" type="link" link="#{bomSpecificationCharacteristicsTreeBean.loadCharacteristicMasters}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomSpecification</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnSaveBomSpecificationCharacteristicsTreetable" order="20" label="command.save" type="link" link="#{bomSpecificationCharacteristicsTreeBean.saveTree}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomSpecification</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    
+    <!-- BomProduct Characteristics -->
+    <action id="BtnLoadBomProductCharacteristicMasters" order="10" label="eloraplm.command.bomcharac.bomCharacteristics.loadCharacteristicMasters" type="link" link="#{bomProductCharacteristicsTreeBean.loadCharacteristicMasters}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomProduct</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnSaveBomProductCharacteristicsTreetable" order="20" label="command.save" type="link" link="#{bomProductCharacteristicsTreeBean.saveTree}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCharacteristicsTreeButtons</filter-id>
+      <filter-id>isBomProduct</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+
+  </extension>
+
+</component> 

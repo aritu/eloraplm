@@ -1,0 +1,46 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:p="http://primefaces.org/ui">
+    
+    <div class="contentViewTitle">
+    
+        <p:dataTable id="closedWorkflows"
+            var="wf"
+            value="#{closedRelatedRoutes}"
+            selectionMode="single"
+            selection="#{workflowActions.selectedWorkflow}"
+            rowKey="#{wf.id}"
+            tableStyleClass="datatable">
+            <f:facet name="header">
+                #{messages['eloraplm.wf.label.finishedProcesses']}
+            </f:facet>
+            <p:ajax event="rowSelect" listener="#{workflowActions.onRowSelect}" update="closed_workflow_result" />
+            <p:column headerText="#{messages['eloraplm.wf.label.title']}">
+                <h:outputText value="#{messages[wf.dc.title]}" />
+            </p:column>
+            <p:column headerText="#{messages['eloraplm.wf.label.initiator']}">
+                <h:outputText value="#{wf.docri.initiator}" />
+            </p:column>
+            <p:column headerText="#{messages['eloraplm.wf.label.created']}">
+                <h:outputText value="#{wf.dc.created}">
+                    <f:convertDateTime pattern="#{nxu:basicDateAndTimeFormatter()}" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="#{messages['eloraplm.wf.label.state']}">
+                <h:outputText value="#{messages['eloraplm.wf.state.'.concat(wf.currentLifeCycleState)]}" />
+            </p:column>
+            <p:column styleClass="selectColumn" />
+        </p:dataTable>
+        
+    </div>
+        
+    <h:panelGroup id="closed_workflow_result">
+        <nxl:widget name="closed_route_tasks" mode="view" value="#{currentDocument}" />
+    </h:panelGroup>
+
+</ui:composition>

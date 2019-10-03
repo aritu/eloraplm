@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+
+    <h:outputText value="#{field_0}" />
+    
+    <ui:fragment rendered="#{field_1}">
+         <h:graphicImage value="/icons/required.gif" style="vertical-align: middle; margin-left: 6px;">
+             <f:attribute name="title" value="#{messages['label.treetable.column.bomcharac.required']}" />
+             <f:attribute name="styleClass" value="tipsyShow" />
+        </h:graphicImage>
+    </ui:fragment>
+    
+    <ui:fragment rendered="#{field_2 != null and !empty field_2}">
+       <h:graphicImage value="/icons/comment.png" style="vertical-align: middle; margin-left: 6px;">
+             <f:attribute name="title" value="#{field_2}" />
+             <f:attribute name="styleClass" value="tipsyShow" />
+        </h:graphicImage>
+    </ui:fragment>
+
+</ui:composition>

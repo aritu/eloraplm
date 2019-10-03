@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.history.ActionService.contrib">
+
+    <require>org.nuxeo.ecm.platform.audit.web</require>
+
+    <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <!-- Disable default tabs to create new ones for live, version and proxy docs -->
+        <action id="TAB_VERSIONS" enabled="false" />
+        <action id="TAB_EVENTS" enabled="false" />
+        <action id="TAB_EVENTS_PROXY" enabled="false" />
+
+        <!-- Enable the new tabs -->
+        <action enabled="true" icon="/icons/file.gif" id="TAB_ELORA_VERSIONS" label="action.view.versions" link="/incl/tabs/document_versions.xhtml" order="50" type="rest_document_link">
+            <category>TAB_CONTENT_HISTORY_sub_tab</category>
+            <filter-id>view_file_history</filter-id>
+            <filter-id>view_file_history_versions</filter-id>
+        </action>
+        <action enabled="true" icon="/icons/file.gif" id="TAB_ELORA_EVENTS" label="action.view.events" link="/incl/tabs/document_events_cv.xhtml" order="100" type="rest_document_link">
+            <category>TAB_CONTENT_HISTORY_sub_tab</category>
+            <filter-id>view_file_history</filter-id>
+        </action>
+        
+        <action id="RESTORE_VERSION" enabled="false" />
+        <action id="CURRENT_VERSION_SELECTION_DELETE" enabled="false" />
+        
+        <!-- Version actions -->
+        <action id="ELORA_DELETE_VERSION" link="#{eloraVersionedActions.removeVersion}"
+            label="command.removeSelectedArchivedVersions" confirm="if(!confirmRemoveVersion()) return false;" order="10">
+            <category>BASE_VERSION_LIST_ITEM</category>
+            <filter-id>isEditable</filter-id>
+        </action>
+        
+        <action id="change_checkin_comments" type="fancybox" label="eloraplm.command.history.changeCheckinComments" order="15">
+            <filter-id>isEditable</filter-id>
+            <filter-id>isAtLeastOneVersionSelected</filter-id>
+            <properties>
+                <property name="include">/incl/action/change_checkin_comments.xhtml</property>
+                <property name="styleClass">button</property>
+            </properties>
+        </action>
+        
+    </extension>
+    
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+
+        <!-- Filter for Versionable (Live), Version and Proxy -->
+        <filter id="view_file_history">
+            <rule grant="true">
+                <condition>
+                    document != null
+                    &amp;&amp; (
+                        document.isVersion()
+                        || document.isProxy()
+                        || (
+                            document.hasFacet('Versionable')
+                            &amp;&amp; !document.hasFacet('Immutable')
+                        || document.hasFacet('EloraWorkspace')
+                        )
+                    ) 
+                </condition>
+            </rule>
+        </filter>
+        
+        <filter id="view_file_history_versions">
+            <rule grant="true">
+                <facet>Versionable</facet>
+            </rule>
+        </filter>
+        
+        <filter id="isBaseVersion">
+            <rule grant="true">
+                <condition>#{versionedActions.isBaseVersion(versionItemSelection.data.id)}
+                </condition>
+            </rule>
+        </filter>
+        
+        <filter id="isAtLeastOneVersionSelected">
+            <rule grant="true">
+                <condition>#{eloraPlmVersionHistoryActions.countSelectedVersions() ne 0}</condition>
+            </rule>
+        </filter>
+        
+    </extension>
+    
+</component>

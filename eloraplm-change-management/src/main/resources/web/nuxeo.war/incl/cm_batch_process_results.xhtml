@@ -1,0 +1,55 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:c="http://java.sun.com/jstl/core">
+  
+  <ui:fragment rendered="#{results != null and !empty results}">
+    <h:form>
+      <p:commandLink id="showResultsLink">
+        <c:choose>
+          <c:when test="#{resultType == 'success'}">
+            <h:graphicImage value="/icons/checked.gif"/>
+          </c:when>
+          <c:when test="#{resultType == 'error'}">
+            <h:graphicImage value="/icons/delete_red.png"/>
+          </c:when>
+        </c:choose>        
+      </p:commandLink>
+
+      <p:overlayPanel id="resultsPanel" for="showResultsLink" hideEffect="fade"  showCloseIcon="true">
+          <p:outputPanel id="resultDetail" style="text-align:center;">
+            <p:panelGrid style="margin-top:20px;margin-bottom:20px">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column><h:outputText value="#{messages['eloraplm.label.cm.batch.result.reference']}" /></p:column>
+                        <p:column><h:outputText value="#{messages['eloraplm.label.cm.batch.result.title']}" /></p:column>
+                        <p:column>
+                          <c:choose>
+                            <c:when test="#{resultType == 'success'}">
+                              <h:outputText value="#{messages['eloraplm.label.cm.batch.result.warningMessage']}" />
+                            </c:when>
+                            <c:when test="#{resultType == 'error'}">
+                              <h:outputText value="#{messages['eloraplm.label.cm.batch.result.errorMessage']}" />
+                            </c:when>
+                          </c:choose>
+                        </p:column>
+                    </p:row> 
+                </f:facet>
+                <c:forEach items="#{results}" var="result">
+                  <p:row>
+                    <p:column><h:outputText value="#{result.reference}"></h:outputText></p:column>
+                    <p:column><h:outputText value="#{result.title}"></h:outputText></p:column>
+                    <p:column><h:outputText value="#{result.message}"></h:outputText></p:column>
+                  </p:row>
+                </c:forEach>    
+            </p:panelGrid>
+          </p:outputPanel>
+      </p:overlayPanel>
+    </h:form>
+  </ui:fragment>
+
+</ui:composition>

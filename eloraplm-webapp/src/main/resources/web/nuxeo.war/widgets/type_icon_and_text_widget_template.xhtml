@@ -1,0 +1,15 @@
+<f:subview
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:nxd="http://nuxeo.org/nxweb/document"
+  xmlns:nxu="http://nuxeo.org/nxweb/util">
+  
+    <nxu:set var="currentDocumentTypeTranslated" value="#{messages[currentDocument.type]}">
+        <h:graphicImage class="smallIcon" value="#{nxd:typeInfo(currentDocument).icon}" 
+                                      title="#{currentDocumentTypeTranslated}"
+                                      rendered="#{!empty nxd:typeInfo(currentDocument).icon}"/>
+        #{currentDocumentTypeTranslated}
+    </nxu:set>
+  
+</f:subview>

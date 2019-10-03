@@ -1,0 +1,40 @@
+<f:subview
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    >
+    
+    <nxu:set var="percentage" value="#{not empty field ? field : 0}">
+        
+        <c:if test="#{nxl:isLikePlainMode(widget.mode)}">
+            <h:outputFormat value="#{messages['eloraplm.label.percentage']}">
+                <f:param value="#{percentage}" />
+            </h:outputFormat>
+        </c:if>
+    
+        <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+            <nxu:set var="style" value="#{ percentage lt 20 ?
+                'lowest' : ( percentage lt 40 ?
+                'low' : ( percentage lt 60 ?
+                'medium' : ( percentage lt 80 ?
+                'high' : 'highest' ) ) )}">
+                <h:outputFormat value="#{messages['eloraplm.label.percentage']}" styleClass="percentageLabel #{style}">
+                    <f:param value="#{percentage}" />
+                </h:outputFormat>
+            </nxu:set>
+        </c:if>
+        
+        <c:if test="#{widget.mode == 'edit'}">
+            <h:selectOneListbox size="1" id="percentage" value="#{field}">
+                <c:forEach begin="0" step="10" end="100" var="i">
+                    <f:selectItem itemValue="#{i}" itemLabel="#{nxu:translate('eloraplm.label.percentage', i)}" />
+                </c:forEach>
+            </h:selectOneListbox>
+            <h:message for="percentage" class="errorMessage" />
+        </c:if>
+        
+    </nxu:set>
+    
+</f:subview>

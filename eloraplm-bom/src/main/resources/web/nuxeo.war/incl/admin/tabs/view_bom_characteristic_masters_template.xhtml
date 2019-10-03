@@ -1,0 +1,21 @@
+<div 
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  >
+
+  <!--  Admin actions buttons -->
+  <nxl:widget name="#{actionWidgetName}" mode="view" value="#{currentDocument}" />
+
+  <!--  Content view -->
+  <nxu:set var="tabWidgetView" value="admin_view_documents">
+  <nxu:set var="tabWidgetPattern" value="admin">
+  <nxu:set var="useAjaxForm" value="true">
+  <nxu:set var="useAjaxPagination" value="true">
+    <ui:decorate template="/incl/content_view.xhtml" />
+  </nxu:set>
+  </nxu:set>
+  </nxu:set>
+  </nxu:set>
+
+</div>

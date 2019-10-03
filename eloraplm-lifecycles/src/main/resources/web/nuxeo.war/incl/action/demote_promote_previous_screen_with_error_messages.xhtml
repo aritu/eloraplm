@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:panelGroup style="padding: 3em;">
+        <p><strong>
+            <h:outputText value="#{messages['eloraplm.label.error.promoteDemote']}"
+                rendered="#{not empty lifecycleTransitionActions.getErrorList()}" />
+        </strong></p>
+        <ui:repeat var="errorMessage" value="#{lifecycleTransitionActions.getErrorList()}">
+            <div class="fullWidth processMessage completeError">
+                <h:outputText value="#{messages[errorMessage]}" />
+            </div>
+        </ui:repeat>
+    </h:panelGroup>
+
+</ui:composition>

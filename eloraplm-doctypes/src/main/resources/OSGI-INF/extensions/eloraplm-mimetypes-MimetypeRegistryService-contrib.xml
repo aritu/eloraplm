@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.mimetypes.MimetypeRegistryService.contrib">
+
+    <!-- File extensions -->
+    <extension target="org.nuxeo.ecm.platform.mimetype.service.MimetypeRegistryService" point="extension">
+    
+        <!-- AutoCAD -->
+        <fileExtension ambiguous="false" mimetype="image/vnd.dwg" name="dwg"/>
+        
+        <!-- SolidWorks -->
+        <fileExtension ambiguous="false" mimetype="application/sldasm" name="sldasm"/>
+        <fileExtension ambiguous="false" mimetype="application/sldprt" name="sldprt"/>
+        <fileExtension ambiguous="false" mimetype="application/slddrw" name="slddrw"/>
+        
+        <!-- Catia -->
+        <fileExtension ambiguous="false" mimetype="application/catproduct" name="catproduct"/>
+        <fileExtension ambiguous="false" mimetype="application/catpart" name="catpart"/>
+        <fileExtension ambiguous="false" mimetype="application/catdrawing" name="catdrawing"/>
+        
+        <!-- SolidEdge -->
+        <fileExtension ambiguous="false" mimetype="application/solidedge-asm" name="asm"/>
+        <fileExtension ambiguous="false" mimetype="application/solidedge-par" name="par"/>
+        <fileExtension ambiguous="false" mimetype="application/solidedge-dft" name="dft"/>
+        
+    </extension>
+
+    <!-- Mime types -->
+    <extension target="org.nuxeo.ecm.platform.mimetype.service.MimetypeRegistryService" point="mimetype">
+
+         <!-- AutoCAD -->
+        <mimetype binary="true" iconPath="dwg_16.png" normalized="image/vnd.dwg">
+            <mimetypes>
+                <mimetype>image/vnd.dwg</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>dwg</extension>
+            </extensions>
+        </mimetype>
+        
+        <!-- SolidWorks -->
+        <mimetype binary="true" iconPath="sldasm_16.png" normalized="application/sldasm">
+            <mimetypes>
+                <mimetype>application/sldasm</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>sldasm</extension>
+            </extensions>
+        </mimetype>
+        <mimetype binary="true" iconPath="sldprt_16.png" normalized="application/sldprt">
+            <mimetypes>
+                <mimetype>application/sldprt</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>sldprt</extension>
+            </extensions>
+        </mimetype>
+        <mimetype binary="true" iconPath="slddrw_16.png" normalized="application/slddrw">
+            <mimetypes>
+                <mimetype>application/slddrw</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>slddrw</extension>
+            </extensions>
+        </mimetype>
+       
+        <!-- Catia -->
+        <mimetype binary="true" iconPath="cad_assembly_16.gif" normalized="application/catproduct">
+            <mimetypes>
+                <mimetype>application/catia</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>catproduct</extension>
+            </extensions>
+        </mimetype>
+        <mimetype binary="true" iconPath="cad_part_16.gif" normalized="application/catpart">
+            <mimetypes>
+                <mimetype>application/catia</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>catpart</extension>
+            </extensions>
+        </mimetype>
+        <mimetype binary="true" iconPath="cad_drawing_16.gif" normalized="application/catdrawing">
+            <mimetypes>
+                <mimetype>application/catia</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>catdrawing</extension>
+            </extensions>
+        </mimetype>
+        
+        <!-- SolidEdge -->
+        <!-- These mimetypes do not really exist. System detects them as application/vnd.ms-office or application/x-ole-storage -->
+        <mimetype binary="true" iconPath="asm_16.png" normalized="application/solidedge-asm">
+            <mimetypes>
+                <mimetype>application/x-ole-storage</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>asm</extension>
+            </extensions>
+        </mimetype>
+        <mimetype binary="true" iconPath="par_16.png" normalized="application/solidedge-par">
+            <mimetypes>
+                <mimetype>application/x-ole-storage</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>par</extension>
+            </extensions>
+        </mimetype>
+        <mimetype binary="true" iconPath="dft_16.png" normalized="application/solidedge-dft">
+            <mimetypes>
+                <mimetype>application/x-ole-storage</mimetype>
+            </mimetypes>
+            <extensions>
+                <extension>dft</extension>
+            </extensions>
+        </mimetype>
+        
+    </extension>
+
+</component> 

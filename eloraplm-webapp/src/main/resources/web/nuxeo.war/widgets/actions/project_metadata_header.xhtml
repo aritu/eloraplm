@@ -1,0 +1,183 @@
+<div id="descriptionBlock"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxd="http://nuxeo.org/nxweb/document"
+  xmlns:p="http://primefaces.org/ui"
+  >
+
+
+<c:if test="#{currentDocument.hasSchema('dublincore')}">
+
+        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} workingCopy">
+        
+            <p:panelGrid styleClass="fullWidth">
+            
+                <p:row>
+                    
+                    <!-- Priority -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.widget.planning.priority']}" for="headerResponsible" />
+                    </p:column>
+                    <p:column>
+                        <h:graphicImage value="/icons/priority_#{currentDocument.plan.priority}_16.png"
+                            style="vertical-align: middle; margin-right: .5em;" rendered="#{not empty currentDocument.plan.priority}" />
+                        <nxl:widget id="headerResponsible" name="priority" value="#{currentDocument}" mode="view" />
+                    </p:column>
+                    
+                    <!-- LifeCycle State & Progress -->
+                    <p:column styleClass="textAlignC">
+                        <h:outputText value="#{messages[currentDocument.currentLifeCycleState]}"
+                            styleClass="lifeCycleStateLabel filled" style="background-color: #{lifecycleActions.getLifeCycleStateColor(currentDocument.currentLifeCycleState)}"/>
+                        
+                        <nxl:widget id="headerProgress" name="progress" value="#{currentDocument}" mode="view" />
+                    </p:column>
+                    
+                    <!-- Locked -->
+                    <p:column styleClass="textAlignC" style="width: 40px;">
+                        <nxl:widget id="headerLockIcon" name="version_lock_icon" value="#{currentDocument}" mode="view" />
+                    </p:column>
+                    
+                    <!-- Separator -->
+                    <p:column rowspan="3" styleClass="headerSeparator"></p:column>
+                    
+                    <!-- Creation info -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.summary.createdBy']}" for="creator" />
+                    </p:column>
+                    <p:column styleClass="textAlignC">
+                        <h:panelGroup styleClass="user creator">
+                            <h:outputLink id="creator" value="#{baseURL}user/#{currentDocument.dc.creator}">
+                                #{nxu:userFullName(currentDocument.dc.creator)}
+                            </h:outputLink>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column styleClass="textAlignC">
+                        <h:outputLabel value="#{messages['eloraplm.label.header.at']}" for="created" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText id="created" value="#{currentDocument.dc.created}">
+                            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
+                        </h:outputText>
+                    </p:column>
+                    
+                     <!-- Separator -->
+                    <p:column rowspan="3" styleClass="headerSeparator"></p:column>
+                    
+                    <!-- Comments -->
+                    <p:column style="width: 40px;" styleClass="textAlignC">
+                        <h:panelGroup>
+                            <c:if test="#{fieldOrValue.hasFacet('Commentable')}">
+                                <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
+                                    <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
+                                      <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
+                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
+                                            <h:graphicImage value="/icons/comments.png" />
+                                            <h:outputText value="#{commentsCount}" />
+                                          </div>
+                                      </nxu:set>
+                                    </nxu:set>
+                                </nxu:set>
+                            </c:if>
+                        </h:panelGroup>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <!-- Planned end date & Delayed -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.widget.planning.plannedEndDate']}" for="headerResponsible" />
+                    </p:column>
+                    <p:column colspan="2" styleClass="textAlignC">
+                        <nxu:set var="isDelayed" value="#{currentDocument.planning.plannedEndDate lt currentDate
+                            and currentDocument.currentLifeCycleState eq 'working' ? true : false}">
+                            <nxl:widget id="headerPlannedEndDate" name="plannedEndDate" value="#{currentDocument}" mode="view" styleClass="#{isDelayed ? 'delayedDate' : ''}" />
+                            
+                            &#160;
+                            <h:outputText value="#{messages['eloraplm.label.delayed']}" styleClass="delayedLabel" rendered="#{isDelayed}"/>
+                            
+                        </nxu:set>
+                    </p:column>
+                    
+                    <p:column></p:column>
+                    
+                    <!-- Last Contribution info -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.dublincore.lastContributor']}" for="lastContributor" />
+                    </p:column>
+                    <p:column styleClass="textAlignC">
+                        <h:panelGroup styleClass="user lastContributor">
+                            <h:outputLink id="lastContributor" value="#{baseURL}user/#{currentDocument.dc.lastContributor}">
+                                #{nxu:userFullName(currentDocument.dc.lastContributor)}
+                            </h:outputLink>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column styleClass="textAlignC">
+                        <h:outputLabel value="#{messages['eloraplm.label.header.at']}" for="modified" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText id="modified" value="#{currentDocument.dc.modified}">
+                            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
+                        </h:outputText>
+                    </p:column>
+                   
+                    <p:column></p:column>
+                </p:row>
+                
+                <p:row>
+                    <!-- Responsible -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.widget.responsible.responsible']}" for="headerResponsible" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <nxl:widget id="headerResponsible" name="responsible" value="#{currentDocument}" mode="view" />
+                    </p:column>
+                    
+                    <p:column></p:column>
+                    
+                    <!-- Lock info -->
+                    <c:if test="#{currentDocument.locked}">
+                        <nxu:set var="owner" value="#{not empty currentDocument.lockInfo ? currentDocument.lockInfo.owner : ''}">
+                        <nxu:set var="createdTime" value="#{not empty currentDocument.lockInfo ? currentDocument.lockInfo.created.time : ''}">
+
+                            <p:column>
+                                <h:outputLabel value="#{messages['eloraplm.label.header.lockedBy']}" for="locker" />
+                            </p:column>
+                            <p:column styleClass="textAlignC">
+                                <h:panelGroup styleClass="user locker">
+                                    <h:outputLink id="locker" value="#{baseURL}user/#{owner}">
+                                        #{nxu:userFullName(owner)}
+                                    </h:outputLink>
+                                </h:panelGroup>
+                            </p:column>
+                            <p:column styleClass="textAlignC">
+                                <h:outputLabel value="#{messages['eloraplm.label.header.at']}" for="locked" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText id="locked" value="#{createdTime}">
+                                    <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
+                                </h:outputText>
+                            </p:column>
+                            
+                        </nxu:set>
+                        </nxu:set>
+                    </c:if>
+                    
+                    <c:if test="#{not currentDocument.locked}">
+                        <p:column colspan="4"></p:column>
+                    </c:if>
+
+                    <p:column></p:column>
+                </p:row>
+                
+            </p:panelGrid>
+            
+        </h:panelGroup>
+
+      
+  </c:if>
+  
+</div>

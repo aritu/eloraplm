@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.treetable.WebResources.contrib">
+    <require>org.nuxeo.theme.nuxeo.webapp</require>
+
+    <extension target="org.nuxeo.ecm.platform.WebResources"
+        point="resources">
+        <resource name="eloraplm.treetable.css" type="css">
+            <uri>/css/eloraplm-treetable.css</uri>
+        </resource>
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.WebResources"
+        point="bundles">
+        <bundle name="nuxeo_sassCss">
+            <resources append="true">
+                <resource>eloraplm.treetable.css</resource>
+            </resources>
+        </bundle>
+    </extension>
+
+</component>

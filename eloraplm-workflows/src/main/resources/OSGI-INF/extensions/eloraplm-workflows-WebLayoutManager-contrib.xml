@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.workflows.WebLayoutManager.contrib">
+    
+    <require>org.nuxeo.ecm.platform.routing.layouts</require>
+    
+    <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <layout name="route_content_view_layout">
+          <templates>
+            <template mode="any">
+              /layouts/layout_listing_ajax_template.xhtml
+            </template>
+          </templates>
+          <properties mode="any">
+            <property name="showListingHeader">true</property>
+            <property name="showRowEvenOddClass">true</property>
+          </properties>
+          <columns>
+            <column>
+              <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+              </properties>
+              <widget>task_title</widget>
+            </column>
+            <column>
+              <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+              </properties>
+              <widget>task_assignee</widget>
+            </column>
+            <column>
+              <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+              </properties>
+              <widget>task_directive</widget>
+            </column>
+            <column>
+              <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+              </properties>
+              <widget>task_status</widget>
+            </column>
+            <column>
+              <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+              </properties>
+              <widget>task_comments</widget>
+            </column>
+            <column>
+              <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+              </properties>
+              <widget>task_start_date</widget>
+            </column>
+            <column>
+              <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+              </properties>
+              <widget>task_due_date</widget>
+            </column>
+          </columns>
+        </layout>
+        
+    </extension>
+
+    <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <widget name="task_status" type="template">
+            <labels>
+                <label mode="any">label.content.header.task.action</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/listing/task_status_widget_template.xhtml</property>
+            </properties>
+        </widget>
+        
+        <widget name="task_start_date" type="datetime">
+            <labels>
+                <label mode="any">label.workflow.task.startdate</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.dublincore.modified</field>
+            </fields>
+            <properties mode="view">
+                <property name="pattern">#{nxu:basicDateAndTimeFormatter()}</property>
+            </properties>
+        </widget>
+        
+        <widget name="task_due_date" type="datetime">
+            <labels>
+                <label mode="any">label.workflow.task.duedate</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.task.dueDate</field>
+            </fields>
+            <properties mode="view">
+                <property name="pattern">#{nxu:basicDateFormatter()}</property>
+            </properties>
+        </widget>
+        
+        <widget name="closed_route_tasks" type="contentViewWithForms">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>false</translated>
+            <properties widgetMode="any">
+                <property name="contentViewName">closed_route_steps</property>
+            </properties>
+        </widget>
+        
+    </extension>
+    
+</component>

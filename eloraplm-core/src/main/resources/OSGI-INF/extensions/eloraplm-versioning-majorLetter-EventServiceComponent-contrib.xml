@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<!-- TODO HAU LISTENER ESTANDAR BAT, EZ MAJOR LETTERerako BAKARRIK -->
+<component name="com.aritu.eloraplm.majorLetterVersioning.EventServiceComponent">    
+    <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
+      <listener name="majorLetterVersioningListener" async="false" postCommit="false" class="com.aritu.eloraplm.versioning.MajorLetterVersioningListener" priority="120">
+        <event>beforeDocumentModification</event>
+      </listener>
+    </extension>
+</component>

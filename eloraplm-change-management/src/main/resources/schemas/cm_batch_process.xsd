@@ -1,0 +1,41 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cm_bp" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_bp">
+
+
+  <xs:include schemaLocation="cm_batch_process_result_list_type.xsd" />
+    
+  <xs:element name="itemsLastBatchProcess" type="xs:string"/>
+  
+  <xs:element name="itemsLastBatchProcessExecutor" type="xs:string"/>
+
+  <xs:element name="itemsLastBatchProcessResultMsg" type="xs:string"/>
+  
+  <xs:element name="itemsLastBatchProcessSuccessResultList" type="nxs:cmBatchProcessResultListType"/>
+  
+  <xs:element name="itemsLastBatchProcessErrorResultList" type="nxs:cmBatchProcessResultListType"/>
+  
+  <xs:element name="itemsLastBatchProcessStarted" type="xs:date"/>
+  
+  <xs:element name="itemsLastBatchProcessFinished" type="xs:date"/>
+  
+  
+  <xs:element name="docsLastBatchProcess" type="xs:string"/>
+  
+  <xs:element name="docsLastBatchProcessExecutor" type="xs:string"/>
+  
+  <xs:element name="docsLastBatchProcessResultMsg" type="xs:string"/>
+  
+  <xs:element name="docsLastBatchProcessSuccessResultList" type="nxs:cmBatchProcessResultListType"/>
+  
+  <xs:element name="docsLastBatchProcessErrorResultList" type="nxs:cmBatchProcessResultListType"/>
+  
+  <xs:element name="docsLastBatchProcessStarted" type="xs:date"/>
+  
+  <xs:element name="docsLastBatchProcessFinished" type="xs:date"/>
+  
+  
+  <xs:element name="needToBeRefreshed" type="xs:boolean"/>
+  
+
+</xs:schema>

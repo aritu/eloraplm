@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.lists.SQLDirectoryFactory.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+
+    <directory name="elora_bom_list_types">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_list_types</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_bom_list_types.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_bom_lists">
+      <schema>eloraBomLists</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_bom_lists</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
+    </directory>
+        
+  </extension>
+  
+</component>

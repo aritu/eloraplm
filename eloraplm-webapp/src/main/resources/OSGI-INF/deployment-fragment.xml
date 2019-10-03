@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+
+<fragment version="1">
+
+    <require>org.nuxeo.admin.center</require>
+    <require>org.nuxeo.ecm.platform.audit.web</require>
+    <require>org.nuxeo.ecm.platform.contentview.jsf</require>
+    <require>org.nuxeo.ecm.platform.oauth</require>
+    <require>org.nuxeo.ecm.platform.ui.select2</require>
+    <require>org.nuxeo.ecm.relations.web</require>
+    <require>org.nuxeo.ecm.webapp.base</require>
+    <require>org.nuxeo.ecm.webapp.core</require>
+    <require>org.nuxeo.ecm.webapp.ui</require>
+    
+    <install>
+        <unzip from="${bundle.fileName}" to="/" prefix="web">
+          <include>web/nuxeo.war/**</include>
+        </unzip>
+        
+        <!-- Translation files -->
+        <delete path="${bundle.fileName}.tmp" />
+        <mkdir path="${bundle.fileName}.tmp" />
+        <unzip from="${bundle.fileName}" to="${bundle.fileName}.tmp" prefix="OSGI-INF/l10n">
+            <include>OSGI-INF/l10n/*.properties</include>
+        </unzip>
+        
+        <append from="${bundle.fileName}.tmp" pattern="*_en_US.properties"
+          to="nuxeo.war/WEB-INF/classes/messages.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_en_US.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_en.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_en_US.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_en_US.properties" addNewLine="true" />
+          
+        <append from="${bundle.fileName}.tmp" pattern="*_eu_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_eu_ES.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_eu_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_eu_FR.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_eu_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_eu.properties" addNewLine="true" />
+          
+        <append from="${bundle.fileName}.tmp" pattern="*_es_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_es_ES.properties" addNewLine="true" />
+        <append from="${bundle.fileName}.tmp" pattern="*_es_ES.properties"
+          to="nuxeo.war/WEB-INF/classes/messages_es.properties" addNewLine="true" />
+        
+        <delete path="${bundle.fileName}.tmp" />
+    </install>
+    
+    <extension target="faces-config#NAVIGATION">
+        <navigation-case>
+            <from-outcome>customer_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/customer_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>manufacturer_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/manufacturer_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>bomProductClass_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/bomProductClass_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>bomPartClass_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/bomPartClass_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>bomToolClass_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/bomToolClass_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>bomPackagingClass_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/bomPackagingClass_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>bomSpecificationClass_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/bomSpecificationClass_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+    </extension>
+    
+    <extension target="pages#PAGES">
+        <page view-id="/navigation/customer_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.customer
+        </page>
+        <page view-id="/navigation/manufacturer_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.manufacturer
+        </page>
+        <page view-id="/navigation/bomProductClass_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.bomProductClass
+        </page>
+        <page view-id="/navigation/bomPartClass_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.bomPartClass
+        </page>
+        <page view-id="/navigation/bomToolClass_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.bomToolClass
+        </page>
+        <page view-id="/navigation/bomPackagingClass_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.bomPackagingClass
+        </page>
+        <page view-id="/navigation/bomSpecificationClass_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.bomSpecificationClass
+        </page>
+    </extension>
+    
+</fragment>

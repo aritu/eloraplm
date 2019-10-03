@@ -1,0 +1,23 @@
+<div xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:c="http://java.sun.com/jstl/core">
+
+  
+    <h:selectOneListbox rendered="#{value.editableVersion}" value="#{field_0}" size="1">
+      <nxu:selectItems value="#{field_1}" var="item" itemValue="#{item.key}" itemLabel="#{item.value}"/>
+      <f:ajax listener="#{promoteTreeBean.refreshNode}" render="#{treeWidgetId} :#{component.namingContainer.parent.namingContainer.parent.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:demote_promote_buttons" />
+      <f:attribute value="#{node}" name="node" />
+    </h:selectOneListbox>
+    
+    <h:outputText value="" />
+    
+    <ui:fragment rendered="#{not value.editableVersion}">
+      <nxl:widgetType  name="listing_version_and_visualized_type" mode="view" field="#{node.data.data}"/>
+    </ui:fragment>
+
+</div>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.workflows.ActionService.contrib">
+
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
+    
+    <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <action id="TAB_HISTORY_WORKFLOWS" label="eloraplm.wf.tab.history.workflows" link="/incl/tabs/closed_workflows.xhtml" order="60" type="rest_document_link"> -->
+             <category>TAB_CONTENT_HISTORY_sub_tab</category>
+             <filter id="filter@TAB_HISTORY_WORKFLOWS">
+                 <rule grant="true">
+                    <condition>#{workflowActions.hasClosedRelatedRoutes()}</condition>
+                 </rule>
+             </filter>
+         </action>
+        
+        <!-- Move tasks block to top -->
+        <action id="summary_current_document_single_tasks" enabled="false" />
+        <action id="header_current_document_single_tasks" order="600" type="template">
+            <category>DOCUMENT_HEADER</category>
+            <properties>
+                <property name="template">/widgets/header_current_document_single_tasks.xhtml</property>
+            </properties>
+        </action>
+        
+    </extension>
+</component>

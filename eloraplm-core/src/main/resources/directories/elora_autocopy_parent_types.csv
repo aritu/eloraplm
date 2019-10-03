@@ -1,0 +1,12 @@
+"id"," label"," obsolete"
+"CadAssembly","FolderCadAssembly",0
+"CadPart","FolderCadPart",0
+"CadDrawing","FolderCadDrawing",0
+"PdfDrawing","FolderOtherDoc",0
+"BomManufacturerPart","FolderBomManufacturerPart",0
+"BomCustomerProduct","FolderBomCustomerProduct",0
+"BomProduct","FolderBomProduct",0
+"BomPart","FolderBomPart",0
+"BomPackaging","FolderBomPackaging",0
+"BomSpecification","FolderBomSpecification",0
+"BomTool","FolderBomTool",0

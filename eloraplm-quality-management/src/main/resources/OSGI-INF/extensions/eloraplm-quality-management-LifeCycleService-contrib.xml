@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.qm.LifeCycleService.contrib">
+    <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
+    
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
+        
+        <types>
+            <type name="ProductValidation">eloraWsLifeCycle</type>
+            <type name="ProductVerification">eloraWsLifeCycle</type>
+            <type name="ProductionProcessValidation">eloraWsLifeCycle</type>
+            <type name="ProductionPartApprovalProcess">eloraWsLifeCycle</type>
+            
+            <type name="FolderArchivedQualityManagement">default</type>
+        </types>
+        
+    </extension>
+    
+</component>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.container.relations.DirectoryUIManager.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
+    <directory name="elora_container_predicates" layout="vocabulary" sortField="label" />
+    <directory name="elora_container_inverse_predicates" layout="vocabulary" sortField="label" />
+  </extension>
+
+</component>

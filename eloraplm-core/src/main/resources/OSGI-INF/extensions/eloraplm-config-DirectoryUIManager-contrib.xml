@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.config.DirectoryUIManager.contrib">
+
+  <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
+    <directory name="elora_autocopy_parent_types" layout="vocabulary" sortField="label" />
+    <directory name="elora_default_config" layout="elora_default_config" sortField="id" />
+    <directory name="elora_general_config" layout="vocabulary" sortField="label" />
+    <directory name="elora_lifecycle_states" layout="elora_lifecycle_states" sortField="id" />
+    <directory name="elora_relation_propagation" layout="elora_relation_propagation" sortField="id" />
+    <directory name="elora_unit_conversion_mapping" layout="elora_unit_conversion_mapping" sortField="id" />
+    <directory name="elora_authoring_tools" layout="vocabulary" sortField="label" />
+    <directory name="elora_units_of_measure" layout="vocabulary" sortField="id" />
+    <directory name="elora_currency" layout="vocabulary" sortField="id" />
+    <directory name="elora_checkout_config" layout="elora_checkout_config" sortField="id" />
+  </extension>
+
+</component>

@@ -1,0 +1,20 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <h:form id="projectPhases">
+        
+        <nxl:widget name="projectPhaseList" mode="edit" value="#{currentDocument}" />
+        
+        <p class="buttonsPanel">
+            <h:commandButton value="#{messages['command.save']}"
+                styleClass="button mainAction"
+                action="#{projectActions.updatePhases}">
+            </h:commandButton>
+        </p>
+        
+    </h:form>
+    
+</ui:composition>

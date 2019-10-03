@@ -1,0 +1,18 @@
+<div  xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:h="http://java.sun.com/jsf/html">
+    
+    <h:selectBooleanCheckbox rendered="#{not value.isEnforced}" value="#{field_0}">
+    <p:ajax
+        listener="#{promoteTreeBean.refreshNodePropagation}"
+        process="@this"
+        partialSubmit="true"
+        update="#{treeWidgetId} :#{component.namingContainer.parent.namingContainer.parent.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:demote_promote_buttons"
+        onstart="PF('treeBlocker_#{treeWidgetId}').show();"
+        onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
+    <f:attribute value="#{node}" name="node" />
+  </h:selectBooleanCheckbox>
+  <!-- nxw_documentActionsUpperButtons_promoteAction_fancy_subview:promoteForm -->
+  <h:outputText rendered="#{value.isEnforced}" value="#{field_0 ? messages['label.yes'] : messages['label.no']}" />
+  
+</div>

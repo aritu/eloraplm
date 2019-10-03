@@ -1,0 +1,37 @@
+<ui:composition template="/pages/workspace_page.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxd="http://nuxeo.org/nxweb/document"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <ui:define name="page title">#{nuxeoApplicationName} - #{nxd:titleOrId(currentDocument)}</ui:define>
+    
+    <ui:define name="bookmark">
+        <link rel="bookmark" href="#{navigationContext.currentDocumentFullUrl}"/>
+    </ui:define>
+    
+    <ui:define name="body">
+        <div class="mainFragment">
+            
+            <h:panelGroup rendered="#{not eloraWebActions.isAny2PdfConverterAvailable}">
+                <h:outputText styleClass="processMessage completeError" value="#{messages['eloraplm.message.error.any2PdfConverterNotAvailable']}" />
+            </h:panelGroup>
+            
+            <h:form id="document_header_layout_form" class="titleBlock">
+                <nxl:documentLayout documentMode="header" mode="view"
+                    value="#{currentDocument}" defaultLayout="elora_document_header"
+                    includeAnyMode="false" />
+            </h:form>
+            
+            <ui:include src="/incl/document_actions_upperbuttons.xhtml"/>
+            <ui:include src="/incl/message_banner.xhtml"/>
+            
+            <nxl:widget name="documentHeaderActions" mode="view" value="#{currentDocument}" />
+            
+            <nxl:widget name="documentTabs" mode="view" value="#{currentDocument}" />
+            
+        </div>
+    </ui:define>
+    
+</ui:composition>

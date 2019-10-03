@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.history.PageProviderService.contrib">
+
+    <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService" point="providers">
+        
+        <genericPageProvider class="com.aritu.eloraplm.history.pageprovider.ESFullDocumentHistoryPageProvider" name="FULL_DOCUMENT_HISTORY_PROVIDER">
+          <whereClause docType="BasicAuditSearch">
+            <fixedPart>
+                {
+                    "filtered" : {
+                        "query" : {
+                            "match_all" : { }
+                        },
+                        "filter" : {
+                            "terms" : {
+                                "docUUID" : ?
+                            }
+                        }
+                    }
+                }
+            </fixedPart>
+            
+            <predicate operator="BETWEEN" parameter="eventDate">
+              <field name="startDate" schema="basicauditsearch"/>
+              <field name="endDate" schema="basicauditsearch"/>
+            </predicate>
+            <predicate operator="IN" parameter="category">
+              <field name="eventCategories" schema="basicauditsearch"/>
+            </predicate>
+            <predicate operator="IN" parameter="eventId">
+              <field name="eventIds" schema="basicauditsearch"/>
+            </predicate>
+            <predicate operator="IN" parameter="principalName">
+              <field name="principalNames" schema="basicauditsearch"/>
+            </predicate>                
+          </whereClause>
+          <sort ascending="false" column="eventDate"/>
+            <pageSize>10</pageSize>
+            <maxPageSize>1000</maxPageSize>
+        </genericPageProvider>
+    </extension>
+    
+</component>

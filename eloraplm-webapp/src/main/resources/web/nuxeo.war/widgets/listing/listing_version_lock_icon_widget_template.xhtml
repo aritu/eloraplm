@@ -1,0 +1,42 @@
+<f:subview id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core">
+    
+    <nxu:set var="wcDoc" value="#{eloraDocument.getWorkingCopy(fieldOrValue)}">
+    
+        <c:if test="#{nxl:isLikePlainMode(widget.mode)}">
+            <h:outputText value="#{messages['eloraplm.label.header.lockedBy']}: #{nxu:userFullName(wcDoc.lockInfo.owner)}"
+                rendered="#{wcDoc != null and wcDoc.locked and not empty wcDoc.lockInfo}" />
+        </c:if>
+        
+        <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+            <nxu:set var="hasWritePermission" value="#{nxd:hasPermission(field, 'Write')}">
+                
+                <h:graphicImage value="#{not empty wcDoc.lockInfo and wcDoc.lockInfo.owner ne currentUser ? '/icons/locked_by_other_16.gif' : '/icons/locked_by_me_16.gif'}"
+                    style="vertical-align: middle;"
+                     rendered="#{wcDoc != null and wcDoc.locked}">
+                    
+                    <nxu:set var="owner" value="#{not empty wcDoc.lockInfo ? nxu:userFullName(wcDoc.lockInfo.owner) : ''}">
+                    <nxu:set var="createdTime" value="#{not empty wcDoc.lockInfo ? wcDoc.lockInfo.created.time : ''}">
+                        <f:attribute name="title" value="#{messages['label.summary.by']} #{owner}, #{messages['label.summary.the']} #{createdTime}" />
+                        <f:attribute name="styleClass" value="tipsyShow" />
+                    </nxu:set>
+                    </nxu:set>
+                    
+                </h:graphicImage>
+                
+                <h:graphicImage value="/icons/badge_read_only_14.png"
+                    style="vertical-align: middle;" rendered="#{wcDoc != null and not wcDoc.locked and not hasWritePermission}"
+                    title="#{messages['label.readOnly']}"
+                />
+                
+            </nxu:set>
+            
+        </c:if>
+        
+    </nxu:set>
+
+</f:subview>

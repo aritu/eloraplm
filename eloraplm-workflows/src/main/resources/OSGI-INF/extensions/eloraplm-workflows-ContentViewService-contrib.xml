@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.workflows.ContentViewService.contrib">
+    
+    <extension point="contentViews" target="org.nuxeo.ecm.platform.ui.web.ContentViewService">
+
+        <contentView name="closed_route_steps">
+            <title>eloraplm.wf.label.processSteps</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>true</showTitle>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <parameter>#{currentDocument.id}</parameter>
+                <parameter>#{workflowActions.selectedWorkflow.id}</parameter>
+                <whereClause docType="TaskDoc">
+                    <fixedPart>
+                        nt:targetDocumentId = ? AND 
+                        nt:processId = ? AND
+                        ecm:currentLifeCycleState = 'ended'
+                    </fixedPart>
+                </whereClause>
+                <pageSize>10</pageSize>
+                <sort column="dc:modified" ascending="true" />
+            </coreQueryPageProvider>
+            <showFilterForm>false</showFilterForm>
+            <showRefreshCommand>false</showRefreshCommand>
+            <showPageSizeSelector>false</showPageSizeSelector>
+            <useGlobalPageSize>false</useGlobalPageSize>
+            <refresh>
+                <event>documentCreated</event>
+                <event>workflowTaskCompleted</event>
+                <event>tasksCacheReset</event>
+            </refresh>
+            <cacheSize>10</cacheSize>
+            <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
+            <resultLayouts>
+                <layout name="route_content_view_layout" title=""
+                    translateTitle="" iconPath="" showCSVExport="false"
+                    showPDFExport="false" />
+            </resultLayouts>
+        </contentView>
+        
+    </extension>
+    
+</component>

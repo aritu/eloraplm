@@ -1,0 +1,370 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.virtualnavigation.ContentViewService.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.ui.web.ContentViewService" point="contentViews">
+
+    <!-- ######## -->
+    <!-- Customer -->
+    <!-- ######## -->
+    <contentView name="byCustomerContentView_vnav">
+      <title>label.virtualnavigation.customer</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+          <fixedPart>
+            (
+            ((ecm:primaryType IN ('BomTool', 'BomPackaging') OR ecm:mixinType IN ('EloraWorkspace') )
+            AND cust:customers STARTSWITH  ? )
+            OR
+            (ecm:primaryType IN ('BomCustomerProduct') AND bomcustprod:customer STARTSWITH  ? )
+            )
+            AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+            AND ecm:isVersion = 0 
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+          </fixedPart>
+        </whereClause>
+        <parameter>#{searchDocument.vnav.cust_customer}</parameter>
+        <parameter>#{searchDocument.vnav.cust_customer}</parameter>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" />
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+
+
+    <!-- ############ -->
+    <!-- Manufacturer -->
+    <!-- ############ -->
+    <contentView name="byManufacturerContentView_vnav">
+      <title>label.virtualnavigation.manufacturer</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+        <fixedPart>
+            (
+            ((ecm:primaryType IN ('BomTool', 'BomPackaging') OR ecm:mixinType IN ('EloraWorkspace') )
+            AND manu:manufacturers STARTSWITH  ? )
+            OR
+            (ecm:primaryType IN ('BomManufacturerPart') AND bommanpart:manufacturer STARTSWITH  ? )
+            )
+            AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+          </fixedPart>
+        </whereClause>
+        <parameter>#{searchDocument.vnav.manu_manufacturer}</parameter>
+        <parameter>#{searchDocument.vnav.manu_manufacturer}</parameter>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" />
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+
+
+    <!-- ############### -->
+    <!-- BomProductClass -->
+    <!-- ############### -->
+    <contentView name="byBomProductClassContentView_vnav">
+      <title>label.virtualnavigation.bomProductClass</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+          <predicate parameter="prodclass:productClassification" operator="STARTSWITH">
+            <field schema="vnav" name="bom_productClass"/>
+          </predicate>
+          <fixedPart>
+            (ecm:primaryType = 'BomProduct' OR ecm:mixinType IN ('EloraWorkspace'))
+            AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND prodclass:productClassification IS NOT NULL
+          </fixedPart>
+        </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true"/>
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+
+
+    <!-- ############ -->
+    <!-- BomPartClass -->
+    <!-- ############ -->
+    <contentView name="byBomPartClassContentView_vnav">
+      <title>label.virtualnavigation.bomPartClass</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+          <predicate parameter="partclass:partClassification" operator="STARTSWITH">
+            <field schema="vnav" name="bom_partClass"/>
+          </predicate>
+          <fixedPart>
+            ecm:primaryType = 'BomPart'
+            AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND partclass:partClassification IS NOT NULL
+          </fixedPart>
+        </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true"/>
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+    
+    
+    <!-- ############ -->
+    <!-- BomToolClass -->
+    <!-- ############ -->
+    <contentView name="byBomToolClassContentView_vnav">
+      <title>label.virtualnavigation.bomToolClass</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+          <predicate parameter="bomtool:toolClassification" operator="STARTSWITH">
+            <field schema="vnav" name="bom_toolClass"/>
+          </predicate>
+          <fixedPart>
+            ecm:primaryType = 'BomTool'
+            AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND bomtool:toolClassification IS NOT NULL
+          </fixedPart>
+        </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true"/>
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+    
+    <!-- ################# -->
+    <!-- BomPackagingClass -->
+    <!-- ################# -->
+    <contentView name="byBomPackagingClassContentView_vnav">
+      <title>label.virtualnavigation.bomPackagingClass</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+          <predicate parameter="bompack:packagingClassification" operator="STARTSWITH">
+            <field schema="vnav" name="bom_packagingClass"/>
+          </predicate>
+          <fixedPart>
+            ecm:primaryType = 'BomPackaging'
+            AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND bompack:packagingClassification IS NOT NULL
+          </fixedPart>
+        </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true"/>
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+    
+    
+    <!-- ##################### -->
+    <!-- BomSpecificationClass -->
+    <!-- ##################### -->
+    <contentView name="byBomSpecificationClassContentView_vnav">
+      <title>label.virtualnavigation.bomSpecificationClass</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+          <predicate parameter="bomspec:specificationClassification" operator="STARTSWITH">
+            <field schema="vnav" name="bom_specificationClass"/>
+          </predicate>
+          <fixedPart>
+            ecm:primaryType = 'BomSpecification'
+            AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND bomspec:specificationClassification IS NOT NULL
+          </fixedPart>
+        </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true"/>
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+
+  </extension>
+
+</component>

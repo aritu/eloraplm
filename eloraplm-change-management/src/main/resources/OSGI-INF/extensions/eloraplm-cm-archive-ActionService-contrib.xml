@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.cm.archive.ActionService.contrib">
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+  
+    <action id="archiveEcoAction" order="0" label="eloraplm.command.archive.eco" type="link"
+            confirm="if(!confirmArchiveECO()) return false;" link="#{archiveEcoAction.archiveECO}" 
+            icon="/icons/action_archive_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="isArchivableEco">
+          <rule grant="false">
+            <filter-id>cannot_write</filter-id>
+            <condition>#{currentDocument.isLocked() and currentDocument.lockInfo.owner ne currentUser}</condition>
+            <condition>#{currentDocument.type ne 'CmEco'}</condition>
+            <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'WorkspaceRoot'}</condition>
+          </rule>
+      </filter>
+    </action>
+    
+    <action id="activateEcoAction" order="0" label="eloraplm.command.activate.eco" type="link"
+            confirm="if(!confirmActivateECO()) return false;" link="#{archiveEcoAction.activateEco}"
+            icon="/icons/action_activate_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="isRestorableEco">
+          <rule grant="false">
+            <condition>#{currentDocument.type ne 'CmEco'}</condition>
+            <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'FolderArchivedChangeManagement'}</condition>
+          </rule>
+      </filter>
+    </action>
+    
+  </extension>
+
+</component>

@@ -1,0 +1,14 @@
+<h:outputScript
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  target="#{pageJsTarget}">
+  
+  function confirmArchiveECO() {
+    return confirm("#{messages['eloraplm.label.documents.confirmArchiveECO']}");
+  }
+  
+  function confirmActivateECO() {
+    return confirm("#{messages['eloraplm.label.documents.confirmActivateECO']}");
+  }
+  
+</h:outputScript>

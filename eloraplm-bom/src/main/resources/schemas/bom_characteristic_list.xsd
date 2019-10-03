@@ -1,0 +1,102 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/bom_characteristics" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/bom_characteristics"
+xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+
+
+  <xs:complexType name="bomCharacListType">
+    <xs:sequence>
+      <xs:element name="listElement" type="nxs:bomCharacListElementType" minOccurs="0"
+        maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="bomCharacListElementType">
+    <xs:sequence>
+      <xs:element name="listValue" type="xs:string"/>
+      <xs:element name="listOrder" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="bomCharacteristicType">
+    <xs:sequence>
+      <xs:element name="bomCharacteristicId" type="xs:string"/>
+      
+      <!--  common fields -->
+      <xs:element name="classification" type="xs:string"/>
+  
+      <xs:element name="order" type="xs:integer" />
+  
+      <xs:element name="type" >
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bom_characteristic_types" />
+        </xs:simpleType>
+      </xs:element>
+    
+      <xs:element name="numberMaxIntegerPlaces" type="xs:integer"/>
+      <xs:element name="numberMaxDecimalPlaces" type="xs:integer"/>
+      <xs:element name="numberDefaultValue" type="xs:string"/>
+  
+      <xs:element name="stringMaxLength" type="xs:integer"/>
+      <xs:element name="stringDefaultValue" type="xs:string"/>
+  
+      <xs:element name="dateDefaultValue" type="xs:date"/>
+  
+      <xs:element name="booleanDefaultValue" type="xs:boolean"/>
+  
+      <xs:element name="listContent" type="nxs:bomCharacListType"/>
+      <xs:element name="listDefaultValue" type="xs:string"/>
+      
+      <xs:element name="unit" type="xs:string"/>
+   
+      <xs:element name="showInReport" type="xs:boolean" default="false"/>
+  
+      <xs:element name="required" type="xs:boolean" default="false"/>
+  
+      <xs:element name="includeInTitle" type="xs:boolean" default="false"/>
+  
+      <xs:element name="unmodifiable" type="xs:boolean" default="false"/>
+      
+      <!--  specific fields -->
+      <xs:element name="bomCharacMaster">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      
+      <xs:element name="bomCharacMasterLastModified" type="xs:date"/>
+      
+      <xs:element name="title" type="xs:string"/>
+      
+      <xs:element name="description" type="xs:string"/>
+      
+      <xs:element name="numberValue" type="xs:string"/>
+  
+      <xs:element name="stringValue" type="xs:string"/>
+  
+      <xs:element name="dateValue" type="xs:date"/>
+  
+      <xs:element name="booleanValue" type="xs:boolean"/>
+  
+      <xs:element name="listValue" type="xs:string"/>
+      
+      <xs:element name="orderInReport" type="xs:integer" />
+      
+      <xs:element name="messageType" type="xs:string"/>
+      
+      <xs:element name="message" type="xs:string"/>
+      
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="bomCharacteristicListType">
+    <xs:sequence>
+      <xs:element name="bomCharacteristic" type="nxs:bomCharacteristicType" minOccurs="0"
+        maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="bomCharacteristicList" type="nxs:bomCharacteristicListType"/>
+
+</xs:schema>

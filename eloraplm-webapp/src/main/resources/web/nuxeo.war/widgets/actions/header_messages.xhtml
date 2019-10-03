@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:nxd="http://nuxeo.org/nxweb/document">
+    
+    <ui:fragment rendered="#{not currentDocument.isImmutable()}">
+        <h:panelGroup styleClass="isObsoleteMessage" rendered="#{eloraWebActions.isWcObsolete()}">
+          #{messages['eloraplm.message.docIsObsolete']}
+        </h:panelGroup>
+    </ui:fragment>
+    
+    <ui:fragment rendered="#{currentDocument.isImmutable()}">
+        <h:panelGroup styleClass="isObsoleteMessage" rendered="#{eloraWebActions.isAvObsolete()}">
+          #{messages['eloraplm.message.docIsObsolete']}
+        </h:panelGroup>
+    
+        <h:panelGroup styleClass="goToWcMessage">
+          #{messages['eloraplm.message.docIsArchivedVersion']}
+          <nxd:restDocumentLink document="#{documentManager.getWorkingCopy(currentDocument.ref)}"
+              styleClass="button">#{messages['eloraplm.command.goToWorkingCopy']}</nxd:restDocumentLink>
+        </h:panelGroup>
+    </ui:fragment>
+    
+</ui:composition>

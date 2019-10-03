@@ -1,0 +1,179 @@
+<component name="com.aritu.eloraplm.pdm.promote.WebLayoutManager.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+
+    <!-- treetable layouts -->
+        
+    <layout name="prom_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+      </templates>
+      <columns>
+        <column name="promote_item">
+	        <properties mode="any">
+            <property name="columnStyle">width: 80%;</property>
+            <property name="columnHeading">label.content.header.title</property>
+	        </properties>
+	        <widget>listing_icon_reference_title</widget>
+        </column>
+        <column name="icon_only_relations">
+          <properties mode="any">
+            <property name="columnStyle">width: 40px; text-align: center;</property>
+          </properties>
+          <widget>icon_only_relations</widget>
+        </column>
+        <column name="lock">
+          <properties mode="any">
+            <property name="columnStyle">width: 3%; max-width: 20px; text-align: center;</property>
+          </properties>
+          <widget>listing_version_lock_icon</widget>
+        </column>
+        <column name="lifecycle_state">
+          <properties mode="any">
+            <property name="columnStyle">width: 5%;</property>
+            <property name="columnHeading">label.lifecycle</property>
+          </properties>
+          <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="select_version">
+          <properties mode="any">
+            <property name="columnStyle">width: 5%;</property>
+          </properties>
+          <widget>selectOneVersion</widget>
+        </column>
+        <column name="last_version">
+          <properties mode="any">
+            <property name="columnStyle">width: 5%;</property>
+            <property name="columnHeading">eloraplm.label.lastVersion</property>
+          </properties>
+          <widget>wcVersionLabel</widget>
+        </column>
+        <column name="is_promoted">
+          <properties mode="any">
+            <property name="columnStyle">width: 5%;</property>
+            <property name="columnHeading">eloraplm.label.promote.isPromoted</property>
+          </properties>
+          <widget>isPromoted</widget>
+        </column>
+        <column name="lifecycle_last_state">
+          <properties mode="any">
+            <property name="columnStyle">width: 5%;</property>
+            <property name="columnHeading">eloraplm.label.lastState</property>
+          </properties>
+          <widget>lifecycle_last_state</widget>
+        </column>
+        <column name="promote_result">
+          <properties mode="any">
+            <property name="columnStyle">width: 5%;</property>
+            <property name="columnHeading">eloraplm.label.result</property>
+          </properties>
+          <widget>promote_result</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="tableTitle">eloraplm.title.promoteItems</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isFancybox">true</property>
+        <property name="factory">#{promoteRoot}</property>
+      </properties>
+    </layout>
+    
+    <!-- end of treetable layouts -->
+    
+    </extension>
+
+    <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+
+	    <widget name="prom_tt" type="treetable">
+	        <labels>
+	            <label mode="any">eloraplm.label.promote</label>
+	        </labels>
+	        <fields>
+	            <field>data</field>
+	        </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
+	        <properties widgetMode="any">
+	            <property name="treetableLayout">prom_tt</property>
+	        </properties>
+	    </widget>
+	    
+	    <!-- TODO: Mirar si se puede poner el checkbox con ajax de esta forma y no utilizando un template -->
+      <widget name="isPropagatedOld" type="checkbox">
+	      <labels>
+	        <label mode="any">eloraplm.label.promote.isPromoted</label>
+	      </labels>
+	      <translated>true</translated>
+	      <fields>
+	        <field>isPropagated</field>
+	      </fields>
+ 	      <widgetModes>
+          <mode value="view">#{isEnforced?'view':'edit'}</mode>
+<!--           <mode value="any">'view'</mode> -->
+	      </widgetModes>
+	      <properties mode="edit">
+              <property name="valueChangeListener">#{lifecycleActions.getLifeCycleStateColor(value.finalState)}</property>
+        </properties>
+        <controls mode="any">
+          <!-- enable ajax submit on change/click/select on demo application -->
+          <control name="supportInsideInputWidgetEffects">true</control>
+        </controls>
+      </widget>
+      
+      <widget name="isPromoted" type="template">
+        <labels>
+          <label mode="any">eloraplm.label.promote.isPromoted</label>
+        </labels>
+        <translated>true</translated>
+        <fields>
+          <field>isPropagated</field>
+        </fields>
+        <widgetModes>
+          <mode value="view">#{isEnforced?'view':'edit'}</mode>
+<!--           <mode value="any">'view'</mode> -->
+        </widgetModes>
+        <properties mode="any">
+          <property name="template">
+            /widgets/promote_is_propagated.xhtml
+          </property>
+        </properties>
+      </widget>
+      
+      <widget name="lifecycle_last_state" type="text">
+	      <labels>
+	          <label mode="any">eloraplm.label.lastState</label>
+	      </labels>
+	      <fields>
+	        <field>finalState</field>
+	      </fields>
+          <properties widgetMode="any">
+            <property name="localize">true</property>
+            <property name="styleClass">lifeCycleStateLabel hollow</property>
+            <property name="style">
+                border-color: #{lifecycleActions.getLifeCycleStateColor(value.finalState)};
+                color: #{lifecycleActions.getLifeCycleStateColor(value.finalState)};
+            </property>
+          </properties>
+          <controls mode="any">
+	          <control name="supportInsideInputWidgetEffects">true</control>
+	        </controls>
+      </widget>
+      
+      <widget name="promote_result" type="template">
+        <labels>
+            <label mode="any">eloraplm.label.result</label>
+        </labels>
+        <fields>
+          <field>result</field>
+          <field>resultMsg</field>
+        </fields>
+        <properties mode="any">
+          <property name="template">
+            /widgets/promote_result_info.xhtml
+          </property>
+        </properties>
+      </widget>
+
+    </extension>
+</component>

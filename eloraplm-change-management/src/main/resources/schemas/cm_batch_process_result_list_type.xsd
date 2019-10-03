@@ -1,0 +1,26 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/">
+
+ <xs:complexType name="cmBatchProcessResultType">
+    <xs:sequence>
+      <xs:element name="document">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="reference" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="cmBatchProcessResultListType">
+    <xs:sequence>
+      <xs:element name="batchProcessError" type="cmBatchProcessResultType" minOccurs="0" 
+        maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  
+
+
+</xs:schema>

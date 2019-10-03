@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.container.archive.ActionService.contrib">
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+  
+    <action id="archiveWorkspaceAction" order="0" label="eloraplm.command.archive.workspace" type="link"
+            confirm="if(!confirmArchiveWS()) return false;" link="#{archiveWorkspaceAction.archiveWorkspace}" 
+            icon="/icons/action_archive_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="isArchivableWorkspace">
+          <rule grant="false">
+            <filter-id>cannot_write</filter-id>
+            <condition>#{currentDocument.isLocked() and currentDocument.lockInfo.owner ne currentUser}</condition>
+            <condition>#{currentDocument.type ne 'Workspace'}</condition>
+            <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'WorkspaceRoot'}</condition>
+          </rule>
+      </filter>
+    </action>
+    
+    <action id="archiveProjectAction" order="0" label="eloraplm.command.archive.project" type="link"
+            confirm="if(!confirmArchiveContainer()) return false;" link="#{archiveContainerAction.archiveProject}"
+            icon="/icons/action_archive_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="isArchivableProject">
+          <rule grant="false">
+            <filter-id>cannot_write</filter-id>
+            <condition>#{currentDocument.isLocked() and currentDocument.lockInfo.owner ne currentUser}</condition>
+            <condition>#{currentDocument.type ne 'Project'}</condition>
+            <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'WorkspaceRoot'}</condition>
+          </rule>
+      </filter>
+    </action>
+    
+    <!-- Activate actions -->
+    
+    <action id="activateWorkspaceAction" order="0" label="eloraplm.command.activate.workspace" type="link"
+            confirm="if(!confirmActivateWS()) return false;" link="#{archiveWorkspaceAction.activateWorkspace}"
+            icon="/icons/action_activate_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="isRestorableWorkspace">
+          <rule grant="false">
+            <condition>#{currentDocument.type ne 'Workspace'}</condition>
+            <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'FolderArchivedWorkspaces'}</condition>
+          </rule>
+      </filter>
+    </action>
+    
+    <action id="activateProjectAction" order="0" label="eloraplm.command.activate.project" type="link"
+            confirm="if(!confirmActivateContainer()) return false;" link="#{archiveContainerAction.activateContainer}"
+            icon="/icons/action_activate_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="isRestorableProject">
+          <rule grant="false">
+            <condition>#{currentDocument.type ne 'Project'}</condition>
+            <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'FolderArchivedProjects'}</condition>
+          </rule>
+      </filter>
+    </action>
+    
+  </extension>
+
+</component>

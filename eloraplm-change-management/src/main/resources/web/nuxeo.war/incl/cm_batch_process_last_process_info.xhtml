@@ -1,0 +1,70 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:c="http://java.sun.com/jstl/core">
+  
+
+  <ui:fragment rendered="#{lastBatchProcess != null and lastBatchProcess.length() > 0}">
+
+    <h1><h:outputText value="#{messages['eloraplm.label.cm.batch.lastBatchProcessInfo.title']}"/></h1>
+
+    <table class="cmBatchProcessInfoTable">
+      <thead>
+        <tr>
+            <th><h:outputText value="#{messages['eloraplm.label.cm.batch.lastBatchProcessInfo.process']}"/></th>
+            <th><h:outputText value="#{messages['eloraplm.label.cm.batch.lastBatchProcessInfo.executor']}"/></th>
+            <th><h:outputText value="#{messages['eloraplm.label.cm.batch.lastBatchProcessInfo.result']}"/></th>
+            <th colspan="2"><h:outputText value="#{messages['eloraplm.label.cm.batch.lastBatchProcessInfo.details']}"/></th>
+            <th><h:outputText value="#{messages['eloraplm.label.cm.batch.lastBatchProcessInfo.startDate']}"/></th>
+            <th><h:outputText value="#{messages['eloraplm.label.cm.batch.lastBatchProcessInfo.endDate']}"/></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td style="white-space:nowrap">
+                <h:outputText value="#{cmAsyncBatchProcessingHelper.getActionLabel(lastBatchProcess)}"/>
+              </td>
+               <td>
+                 <h:panelGroup styleClass="user lastContributor">
+                   <h:outputLink id="executor" value="#{baseURL}user/#{lastBatchProcessExecutor}">
+                     #{nxu:userFullName(lastBatchProcessExecutor)}
+                   </h:outputLink>
+                 </h:panelGroup>
+              </td>
+              <td>
+                <h:outputText value="#{lastBatchProcessResultMsg}"></h:outputText>
+              </td>
+              <!-- Success results -->
+              <td style="white-space:nowrap">
+                <ui:include src="/incl/cm_batch_process_results.xhtml">
+                      <ui:param name="resultType" value="success" />
+                      <ui:param name="results" value="#{lastBatchProcessSuccessResultList}" />
+                  </ui:include>
+              </td>
+              <!-- Error results -->
+              <td style="white-space:nowrap">
+                <ui:include src="/incl/cm_batch_process_results.xhtml">
+                	  <ui:param name="resultType" value="error" />
+                      <ui:param name="results" value="#{lastBatchProcessErrorResultList}" />
+                  </ui:include>
+              </td>
+              <td style="white-space:nowrap"> 
+                <h:outputText  value="#{lastBatchProcessStarted}">
+                  <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('medium')}" timeZone="#{timeZone}" />
+                </h:outputText>
+              </td>
+              <td style="white-space:nowrap">
+                <h:outputText  value="#{lastBatchProcessFinished}">
+                  <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('medium')}" timeZone="#{timeZone}" />
+                </h:outputText>
+              </td>
+          </tr>
+      </tbody>
+    </table>
+
+  </ui:fragment>
+</ui:composition>

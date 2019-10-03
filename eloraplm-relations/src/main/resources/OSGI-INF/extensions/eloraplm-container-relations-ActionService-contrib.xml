@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.container.relations.contrib">
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters" >
+  
+    <filter id="isEloraWorkspace">
+      <rule grant="true">
+        <facet>EloraWorkspace</facet>
+      </rule>
+    </filter>
+    
+    <filter id="addContainerRelationTreeButton">
+      <rule grant="true">
+        <condition>#{webActions.currentTabId eq 'TAB_CONTAINER_RELATIONS'}</condition>
+      </rule>
+    </filter>
+   
+  </extension>
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+
+    <!-- tabs -->
+    <action id="TAB_CONTAINER_RELATIONS" link="/incl/tabs/container_relations.xhtml"
+      order="40" label="label.com.aritu.eloraplm.container.relations.tab" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>isEloraWorkspace</filter-id>
+    </action>
+    <!-- end of tabs -->
+    
+    <action id="BtnCreateContainerInverseRelation" order="10" label="eloraplm.command.relation.create.container" type="fancybox" icon="">
+        <category>TREETABLE_INVERSE_BUTTON</category>
+        <filter-id>addContainerRelationTreeButton</filter-id>
+        <properties>
+          <property name="include">/incl/action/create_container_relation.xhtml</property>
+          <property name="ajaxSupport">true</property>
+          <property name="styleClass">button</property>
+        </properties>
+    </action>
+    
+    <action id="BtnSaveContainerInverseRelations" order="20" label="command.save" type="link" link="#{containerInverseTreeBean.save(currentDocument, currentDocument, false, true)}" icon="">
+      <category>TREETABLE_INVERSE_BUTTON</category>
+      <filter-id>addContainerRelationTreeButton</filter-id>
+      <filter-id>isEditable</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    
+
+  </extension>
+  
+
+</component> 

@@ -1,0 +1,11 @@
+id,authoring_tool,cad_doctype,plm_doctype,obsolete,ordering
+1,SolidWorks,FOLDER,Folder,0,0
+2,SolidWorks,SLDDTB,CadDesignTable,0,15
+3,SolidWorks,SLDPRT,CadPart,0,30
+4,SolidWorks,SLDDRW,CadDrawing,0,10
+5,SolidWorks,SLDASM,CadAssembly,0,20
+6,SolidEdge,FOLDER,Folder,0,40
+7,SolidEdge,DFT,CadDrawing,0,50
+8,SolidEdge,EDGEDTB,CadDesignTable,0,60
+9,SolidEdge,ASM,CadAssembly,0,70
+10,SolidEdge,PAR,CadPart,0,80

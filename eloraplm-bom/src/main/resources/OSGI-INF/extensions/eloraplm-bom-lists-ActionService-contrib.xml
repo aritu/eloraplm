@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.bom.lists.ActionService.contrib">
+
+  <require>com.aritu.eloraplm.bom.ActionService.contrib</require>
+  
+  
+  <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+    
+    <filter id="bomCompositionListTreeButtons">
+        <rule grant="true">
+            <condition>#{webActions.currentTabId eq 'TAB_BOM_COMPOSITION' and webActions.currentSubTabId ne 'TAB_BOM_COMPOSITION_EBOM'}</condition>
+        </rule>
+    </filter>
+    
+  </extension>
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    <!-- BOM List Treetable buttons -->
+    <action id="BtnImportBomList" order="0" label="eloraplm.command.bom.list.import" type="fancybox" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCompositionListTreeButtons</filter-id>
+      <properties>
+        <property name="include">/incl/action/bom_composition_list_import.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+        <property name="width">800</property>
+        <property name="height">400</property>
+        <property name="autoDimensions">false</property>
+      </properties>
+    </action>
+    
+    <action id="BtnAddBomListRelation" order="20" label="eloraplm.command.relation.add" type="fancybox" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCompositionListTreeButtons</filter-id>
+      <properties>
+        <property name="include">/incl/action/bom_composition_list_add_relation.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnSaveBomList" order="30" label="command.save" type="link" link="#{bomCompositionListTreeBean.save(currentDocument, bomList.currentBomList, false)}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>bomCompositionListTreeButtons</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    
+    
+  </extension>
+  
+  
+</component> 

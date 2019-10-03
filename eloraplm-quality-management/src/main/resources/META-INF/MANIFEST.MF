@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.qm;singleton:=true
+Bundle-Name: eloraplm-quality-management
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Aritu S Coop
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-quality-management-TypeS
+ ervice-contrib.xml,OSGI-INF/extensions/eloraplm-quality-management-Ac
+ tionService-contrib.xml,OSGI-INF/extensions/eloraplm-quality-manageme
+ nt-LifeCycleService-contrib.xml,OSGI-INF/extensions/eloraplm-quality-
+ management-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-
+ quality-management-ContentViewService-contrib.xml,OSGI-INF/extensions
+ /eloraplm-quality-management-ContentTemplateService-contrib.xml,OSGI-
+ INF/extensions/eloraplm-qm-archive-ActionService-contrib.xml,OSGI-INF
+ /extensions/eloraplm-qm-archive-WebResources-contrib.xml
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.templating.api.TemplatingService">
+    <documentation>
+        Template creation service. It uses nuxeo-template-rendering plugin to work.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.templating.api.TemplatingServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.templating.api.TemplatingService"/>
+    </service>
+
+    <extension-point name="templates">
+        <documentation>
+            Used to register the templates and their properties.
+            <code>
+                <template id="..." name="..." mimetype="..." />
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.templating.api.TemplateDescriptor" />
+    </extension-point>
+
+</component> 

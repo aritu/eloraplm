@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.dashboard.WebLayoutManager.contrib">
+  <require>org.nuxeo.ecm.user.center.dashboard.jsf.layouts.listing</require>
+  
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
+    point="layouts">
+
+    <layout name="dashboard_document_listing">
+      <templates>
+        <template mode="any">
+          /layouts/layout_listing_ajax_template.xhtml
+        </template>
+      </templates>
+      <properties mode="any">
+        <property name="showListingHeader">true</property>
+        <property name="showRowEvenOddClass">true</property>
+      </properties>
+      <columns>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+            <property name="columnStyleClass">iconColumn</property>
+          </properties>
+          <widget>listing_icon_type</widget>
+        </column>
+        <column name="title_link">
+          <properties mode="any">
+              <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+              <property name="sortPropertyName">elo:reference, dc:title</property>
+              <property name="label">label.selection.column.title_link</property>
+          </properties>
+          <widget>listing_reference_title</widget>
+        </column>
+        <column name="lock">
+          <properties mode="any">
+              <property name="columnStyleClass">iconColumn</property>
+              <property name="label">label.selection.column.lock
+              </property>
+          </properties>
+<!--                     <properties mode="csv"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="pdf"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+            <widget>listing_version_lock_icon</widget>
+        </column>
+        <column name="version_and_visualized_type">
+            <properties mode="any">
+                <property name="columnStyleClass">versionColumn</property>
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                <property name="label">label.version</property>
+            </properties>
+            <widget>listing_version_and_visualized_type</widget>
+        </column>
+        <column name="lifecycle">
+            <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                <property name="sortPropertyName">
+                    ecm:currentLifeCycleState
+                </property>
+                <property name="label">label.lifecycle
+                </property>
+            </properties>
+            <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column>
+          <properties mode="any">
+            <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+          </properties>
+          <widget>listing_modification_date</widget>
+        </column>
+      </columns>
+    </layout>
+  </extension>
+  
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+  
+    <widget name="dashboard_user_last_contrib_documents" type="contentViewWithForms">
+      <properties widgetMode="any">
+        <property name="contentViewName">user_last_contrib_documents</property>
+        <property name="foldable">true</property>
+        <property name="hideEmpty">true</property>
+        <property name="useAjaxPagination">true</property>
+      </properties>
+    </widget>
+    
+    <widget name="dashboard_user_locked_documents" type="contentViewWithForms">
+      <properties widgetMode="any">
+        <property name="contentViewName">user_locked_documents</property>
+        <property name="foldable">true</property>
+        <property name="hideEmpty">true</property>
+        <property name="useAjaxPagination">true</property>
+      </properties>
+    </widget>
+  
+  </extension>
+  
+  
+  
+</component>

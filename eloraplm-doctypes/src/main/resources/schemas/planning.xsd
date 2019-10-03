@@ -1,0 +1,19 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/planning" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/planning">
+
+
+  <xs:element name="priority" >
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_priority" />
+    </xs:simpleType>
+  </xs:element>
+  
+  <xs:element name="realStartDate" type="xs:date"/>
+  <xs:element name="plannedEndDate" type="xs:date"/>
+  <xs:element name="realEndDate" type="xs:date"/>
+  
+  <xs:element name="progress" type="xs:integer" default="0"/>
+
+</xs:schema>

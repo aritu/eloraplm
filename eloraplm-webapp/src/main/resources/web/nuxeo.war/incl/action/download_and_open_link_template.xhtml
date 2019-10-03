@@ -1,0 +1,15 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  >
+
+      <h:outputLink value="#{eloraWebActions.getEloraDownloadLink()}">
+        <h:graphicImage value="/icons/contextual_menu/download.png" styleClass="smallIcon tipsyShow tipsyGravitySE"
+          title="#{messages['eloraplm.label.downloadAndOpen']}"
+          alt="#{messages['eloraplm.label.downloadAndOpen']}" />
+        <f:ajax listener="#{eloraWebActions.registerDownloadAndOpenAction}" event="click" />
+      </h:outputLink>
+
+</ui:composition> 
