@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -44,7 +43,7 @@ import com.aritu.eloraplm.integration.get.factories.WorkspaceDataLoaderFactory;
 import com.aritu.eloraplm.integration.get.restoperations.util.GetWorkspaceResponse;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 
-@Operation(id = GetWorkspace.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Get Workspace", description = "Get workspace structure.")
+@Operation(id = GetWorkspace.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Get Workspace", description = "Get workspace structure.")
 public class GetWorkspace {
     public static final String ID = "Elora.PlmConnector.GetWorkspace";
 

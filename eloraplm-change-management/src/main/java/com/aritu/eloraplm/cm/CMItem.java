@@ -40,6 +40,8 @@ public abstract class CMItem {
 
     protected boolean isAnarchic;
 
+    protected boolean isDirectObject;
+
     protected String action;
 
     protected String destinationItem;
@@ -66,6 +68,7 @@ public abstract class CMItem {
      * @param predicate
      * @param quantity
      * @param isAnarchic
+     * @param isDirectObject
      * @param action
      * @param destinationItem
      * @param destinationItemWc
@@ -78,9 +81,9 @@ public abstract class CMItem {
     public CMItem(Long rowNumber, String nodeId, String parentNodeId,
             String parentItem, String originItem, String originItemWc,
             String predicate, String quantity, boolean isAnarchic,
-            String action, String destinationItem, String destinationItemWc,
-            boolean isManaged, boolean isManual, String type, String comment,
-            boolean isUpdated) {
+            boolean isDirectObject, String action, String destinationItem,
+            String destinationItemWc, boolean isManaged, boolean isManual,
+            String type, String comment, boolean isUpdated) {
         super();
         this.nodeId = nodeId;
         this.parentNodeId = parentNodeId;
@@ -90,6 +93,7 @@ public abstract class CMItem {
         this.predicate = predicate;
         this.quantity = quantity;
         this.isAnarchic = isAnarchic;
+        this.isDirectObject = isDirectObject;
         this.action = action;
         this.destinationItem = destinationItem;
         this.destinationItemWc = destinationItemWc;
@@ -100,48 +104,6 @@ public abstract class CMItem {
         this.isUpdated = isUpdated;
         this.rowNumber = rowNumber;
     }
-
-    /**
-     * @param nodeId
-     * @param parentNodeId
-     * @param parentItem
-     * @param originItem
-     * @param originItemWc
-     * @param predicate
-     * @param quantity
-     * @param isAnarchic
-     * @param action
-     * @param destinationItem
-     * @param destinationItemWc
-     * @param isManaged
-     * @param isManual
-     * @param type
-     * @param comment
-     * @param isUpdated
-     */
-    /*public CMItem(String nodeId, String parentNodeId, String parentItem,
-            String originItem, String originItemWc, String predicate,
-            String quantity, boolean isAnarchic, String action,
-            String destinationItem, String destinationItemWc, boolean isManaged,
-            boolean isManual, String type, String comment, boolean isUpdated) {
-        super();
-        this.nodeId = nodeId;
-        this.parentNodeId = parentNodeId;
-        this.parentItem = parentItem;
-        this.originItem = originItem;
-        this.originItemWc = originItemWc;
-        this.predicate = predicate;
-        this.quantity = quantity;
-        this.isAnarchic = isAnarchic;
-        this.action = action;
-        this.destinationItem = destinationItem;
-        this.destinationItemWc = destinationItemWc;
-        this.isManaged = isManaged;
-        this.isManual = isManual;
-        this.type = type;
-        this.comment = comment;
-        this.isUpdated = isUpdated;
-    }*/
 
     public Long getRowNumber() {
         return rowNumber;
@@ -213,6 +175,14 @@ public abstract class CMItem {
 
     public void setAnarchic(boolean isAnarchic) {
         this.isAnarchic = isAnarchic;
+    }
+
+    public boolean isDirectObject() {
+        return isDirectObject;
+    }
+
+    public void setDirectObject(boolean isDirectObject) {
+        this.isDirectObject = isDirectObject;
     }
 
     public String getAction() {

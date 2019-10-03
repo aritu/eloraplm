@@ -28,7 +28,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -76,7 +75,7 @@ import com.aritu.eloraplm.versioning.EloraVersionLabelService;
  * @author aritu
  *
  */
-@Operation(id = GetFileStructInfo.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Get File Structure Info", description = "Get information of the document and its child relations.")
+@Operation(id = GetFileStructInfo.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Get File Structure Info", description = "Get information of the document and its child relations.")
 public class GetFileStructInfo {
     public static final String ID = "Elora.PlmConnector.GetFileStructInfo";
 
@@ -583,6 +582,7 @@ public class GetFileStructInfo {
 
     }
 
+    @SuppressWarnings("deprecation")
     private DocumentModel getCorrectVersionDocument(int level,
             DocumentModel doc, Statement cadParentStatement,
             boolean isCadParentSelected) throws EloraException {
@@ -610,17 +610,15 @@ public class GetFileStructInfo {
             if (isInitialLoad) {
 
                 if (hasToSwitchVersions(level, isCadParentSelected)) {
-                    String previousDocId = doc.getId();
-                    doc = switchVersion(doc);
-                    String newDocId = doc.getId();
 
-                    if (!previousDocId.equals(newDocId)) {
-
+                    DocumentModel switchedDoc = switchVersion(doc);
+                    if (switchedDoc != null
+                            && !(doc.getId().equals(switchedDoc.getId()))) {
+                        doc = switchedDoc;
                         log.trace(logInitMsg + "Document version switched to |"
-                                + newDocId + "|.");
+                                + doc.getId() + "|.");
                     }
                 }
-
             }
         }
         return doc;
@@ -871,7 +869,6 @@ public class GetFileStructInfo {
 
         // We know that docRealRef is a version and not a proxy. We get the WC
         DocumentModel wcDoc = session.getSourceDocument(docRef);
-        DocumentRef wcDocRef = wcDoc.getRef();
 
         // TODO Hau queryan bertan egin beharko zan, iterazioetan
         // VersionItemetan sartu, gero berriro for bat erabili behar ez izateko.
@@ -1168,7 +1165,7 @@ public class GetFileStructInfo {
             }
 
             try {
-                checkThatCadChildIsCorrect(cadChild);
+                checkThatCadChildIsCorrect(cadChild, statement);
             } catch (EloraException e) {
                 // We ignore the children but continue processing the tree
                 continue;
@@ -1230,21 +1227,24 @@ public class GetFileStructInfo {
         }
     }
 
-    private void checkThatCadChildIsCorrect(DocumentModel cadChild)
-            throws EloraException {
+    private void checkThatCadChildIsCorrect(DocumentModel cadChild,
+            Statement stmt) throws EloraException {
         if (cadChild == null) {
             throw new EloraException(
-                    "The child document in the relation does not exist.");
+                    "The child document in the relation does not exist or the user has no right to read it. Statement: |"
+                            + stmt.toString() + "|");
         }
 
         if (cadChild.isProxy()) {
             throw new EloraException(
-                    "The child document in the relation is a proxy.");
+                    "The child document in the relation is a proxy. Statement: |"
+                            + stmt.toString() + "|");
         }
         if (!cadChild.isVersion()) {
             if (!isTargetWc || action.equals("Checkout")) {
                 throw new EloraException(
-                        "The child document in the relation is a working copy.");
+                        "The child document in the relation is a working copy. Statement: |"
+                                + stmt.toString() + "|");
             }
         }
     }

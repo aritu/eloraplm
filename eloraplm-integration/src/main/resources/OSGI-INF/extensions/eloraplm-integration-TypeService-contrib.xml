@@ -23,9 +23,9 @@
         <doctype extends="Folder" name="FolderDraft">
             <facet name="EloraDraft"/>
         </doctype>
-<!--         <doctype extends="OrderedFolder" name="OrderedFolderDraft"> -->
-<!--             <facet name="EloraDraft"/> -->
-<!--         </doctype> -->
+        <doctype extends="OrderedFolder" name="OrderedFolderDraft">
+            <facet name="EloraDraft"/>
+        </doctype>
 
     </extension>
 
@@ -39,7 +39,7 @@
                 <type>CadDrawingDraft</type>
                 <type>CadDesignTableDraft</type>
                 <type>FolderDraft</type>
-<!--                 <type>OrderedFolderDraft</type> -->
+                <type>OrderedFolderDraft</type>
             </subtypes>
         </type>
 
@@ -161,6 +161,30 @@
             </layouts>
             <contentViews category="content">
                 <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                  document_trash_content
+                </contentView>
+            </contentViews>
+        </type>
+        
+        <type id="OrderedFolderDraft">
+            <label>OrderedFolderDraft</label>
+            <icon>/icons/ordered_folder_draft_16.gif</icon>
+            <bigIcon>/icons/ordered_folder_draft_100.png</bigIcon>
+            <category>Collaborative</category>
+            <description>OrderedFolderDraft.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>orderable_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">

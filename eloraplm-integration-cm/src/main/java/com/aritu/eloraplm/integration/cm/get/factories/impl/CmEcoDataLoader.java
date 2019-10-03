@@ -34,7 +34,7 @@ public class CmEcoDataLoader extends AbstractWorkspaceDataLoader {
     protected void processCmProcessStructure() throws EloraException {
 
         CmProcessInfo structInfo = IntegrationCmHelper.getCmEcoProcessInfo(
-                workspaceDoc);
+                workspaceDoc, true);
 
         for (DocumentModel doc : structInfo.getRootItemDocuments()) {
             try {

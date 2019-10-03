@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: com.aritu.eloraplm.change.management;singleton:=t
- rue
+Bundle-SymbolicName: com.aritu.eloraplm.change.management
 Bundle-Name: eloraplm-change-management
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
@@ -9,16 +8,19 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-change-management-TypeSe
- rvice-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-Cont
- entTemplateService-contrib.xml,OSGI-INF/extensions/eloraplm-change-ma
- nagement-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-ch
- ange-management-ActionService-contrib.xml,OSGI-INF/extensions/elorapl
- m-change-management-LifeCycleService-contrib.xml,OSGI-INF/extensions/
- eloraplm-change-management-OperationServiceComponent-contrib.xml,OSGI
- -INF/extensions/eloraplm-change-management-RoutingService-contrib.xml
- ,OSGI-INF/extensions/eloraplm-change-management-SQLDirectoryFactory-c
- ontrib.xml,OSGI-INF/extensions/eloraplm-change-management-DirectoryUI
- Manager-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-We
- bResources-contrib.xml,OSGI-INF/extensions/eloraplm-change-management
- -ContentViewService-contrib.xml
+ rvice-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-WebL
+ ayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-change-manageme
+ nt-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-change-mana
+ gement-LifeCycleService-contrib.xml,OSGI-INF/extensions/eloraplm-chan
+ ge-management-SQLDirectoryFactory-contrib.xml,OSGI-INF/extensions/elo
+ raplm-change-management-DirectoryUIManager-contrib.xml,OSGI-INF/exten
+ sions/eloraplm-change-management-WebResources-contrib.xml,OSGI-INF/ex
+ tensions/eloraplm-change-management-ContentViewService-contrib.xml,OS
+ GI-INF/extensions/eloraplm-change-management-VersionRemoveCheckerServ
+ ice-contrib.xml,OSGI-INF/extensions/eloraplm-cm-batch-processing-Acti
+ onService-contrib.xml,OSGI-INF/extensions/eloraplm-cm-batch-processin
+ g-TypeService-contrib.xml,OSGI-INF/extensions/eloraplm-change-managem
+ ent-ContentTemplateService-contrib.xml,OSGI-INF/extensions/eloraplm-c
+ m-archive-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-cm-a
+ rchive-WebResources-contrib.xml
 

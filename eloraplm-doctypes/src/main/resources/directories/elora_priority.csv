@@ -1,4 +1,4 @@
 id,label,obsolete,ordering
-id_high,High,0,30
-id_normal,Normal,0,20
-id_low,Low,0,10
+low,Low,0,10
+normal,Normal,0,20
+high,High,0,30

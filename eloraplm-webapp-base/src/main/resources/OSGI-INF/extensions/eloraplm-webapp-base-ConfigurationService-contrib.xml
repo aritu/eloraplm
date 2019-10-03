@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<component name="com.aritu.eloraplm.webapp.base.ConfigurationService.contrib">
-
-    <extension point="configuration" target="org.nuxeo.runtime.ConfigurationService">
-        <property name="nuxeo.jsf.useAjaxTabs">false</property>
-    </extension>
-
-</component>

@@ -27,9 +27,9 @@ public class VocabularyInfo {
 
     private String timestamp;
 
-    boolean update;
+    private boolean update;
 
-    List<VocabularyContent> content;
+    private List<VocabularyContent> content;
 
     public VocabularyInfo() {
         super();

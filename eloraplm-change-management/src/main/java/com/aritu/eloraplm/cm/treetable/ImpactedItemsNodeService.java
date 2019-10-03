@@ -36,7 +36,7 @@ import com.aritu.eloraplm.cm.ImpactedItem;
 import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.cm.util.CMQueryFactory;
 import com.aritu.eloraplm.constants.CMConstants;
-import com.aritu.eloraplm.constants.CMDocTypeConstants;
+import com.aritu.eloraplm.constants.CMDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.treetable.NodeManager;
@@ -75,12 +75,12 @@ public class ImpactedItemsNodeService implements NodeManager {
 
         DocumentModel currentDoc = (DocumentModel) parentObject;
 
-        if (!(currentDoc.getType().equals(CMDocTypeConstants.CM_ECR)
-                || currentDoc.getType().equals(CMDocTypeConstants.CM_ECO))) {
+        if (!(currentDoc.getType().equals(CMDoctypeConstants.CM_ECR)
+                || currentDoc.getType().equals(CMDoctypeConstants.CM_ECO))) {
             throw new EloraException(
                     "First level document of the tree must be an "
-                            + CMDocTypeConstants.CM_ECR + " or an "
-                            + CMDocTypeConstants.CM_ECO + ".");
+                            + CMDoctypeConstants.CM_ECR + " or an "
+                            + CMDoctypeConstants.CM_ECO + ".");
         }
 
         int level = 0;
@@ -135,7 +135,7 @@ public class ImpactedItemsNodeService implements NodeManager {
 
                     if (it.size() > 0) {
 
-                        String pfx = CMHelper.getModifiedItemListPrefix(
+                        String pfx = CMHelper.getModifiedItemListMetadaName(
                                 itemType);
 
                         for (Map<String, Serializable> map : it) {
@@ -215,8 +215,8 @@ public class ImpactedItemsNodeService implements NodeManager {
                                                 rowNumber, currentNodeId,
                                                 parentNodeId, true, originItem,
                                                 null, originItem, originItemWc,
-                                                "", "", false, action, true,
-                                                destinationItem,
+                                                "", "", false, false, action,
+                                                true, destinationItem,
                                                 destinationItemWc, true,
                                                 isManaged, true, false, type,
                                                 comment, true, isUpdated);
@@ -322,7 +322,7 @@ public class ImpactedItemsNodeService implements NodeManager {
 
             if (it.size() > 0) {
 
-                String pfx = CMHelper.geImpactedItemListPrefix(itemType);
+                String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
 
                 for (Map<String, Serializable> map : it) {
                     Long rowNumber = (Long) map.get(pfx + "/*1/rowNumber");
@@ -339,6 +339,8 @@ public class ImpactedItemsNodeService implements NodeManager {
                     String quantity = (String) map.get(pfx + "/*1/quantity");
                     boolean isAnarchic = (boolean) map.get(
                             pfx + "/*1/isAnarchic");
+                    boolean isDirectObject = (boolean) map.get(
+                            pfx + "/*1/isDirectObject");
                     String action = (String) map.get(pfx + "/*1/action");
                     String destinationItemUid = (String) map.get(
                             pfx + "/*1/destinationItem");
@@ -356,9 +358,10 @@ public class ImpactedItemsNodeService implements NodeManager {
                         ImpactedItem impactedItem = new ImpactedItem(rowNumber,
                                 currentNodeId, parentNodeId, modifiedItemUid,
                                 parentItemUid, originItemUid, originItemWcUid,
-                                predicate, quantity, isAnarchic, action,
-                                destinationItemUid, destinationItemWcUid,
-                                isManaged, isManual, type, comment, isUpdated);
+                                predicate, quantity, isAnarchic, isDirectObject,
+                                action, destinationItemUid,
+                                destinationItemWcUid, isManaged, isManual, type,
+                                comment, isUpdated);
 
                         if (impactedItems.containsKey(parentNodeId)) {
                             impactedItems.get(parentNodeId).add(impactedItem);
@@ -465,7 +468,8 @@ public class ImpactedItemsNodeService implements NodeManager {
                         impactedItem.getParentNodeId(), false, modifiedItem,
                         parentItem, originItem, originItemWc,
                         impactedItem.getPredicate(), impactedItem.getQuantity(),
-                        impactedItem.isAnarchic(), impactedItem.getAction(),
+                        impactedItem.isAnarchic(),
+                        impactedItem.isDirectObject(), impactedItem.getAction(),
                         actionIsReadOnly, destinationItem, destinationItemWc,
                         destinationItemVersionIsReadOnly,
                         impactedItem.isManaged(), isManagedIsReadOnly,
@@ -730,21 +734,26 @@ public class ImpactedItemsNodeService implements NodeManager {
             for (TreeNode childNode : node.getChildren()) {
                 ImpactedItemsNodeData childNodeData = (ImpactedItemsNodeData) childNode.getData();
 
-                boolean propagateIgnoreAction = true;
+                // If childNode is already MANAGED and its action is NOT IGNORE,
+                // do not change it.
+                if (childNodeData.getIsManaged()
+                        && !childNodeData.getAction().equals(
+                                CMConstants.ACTION_IGNORE)) {
+                    // nothing to do
+                } else {
+                    boolean actionIsReadOnly = true;
+                    // EXCEPTION: if this child node is a CadDrawing,
+                    // action should always be editable
+                    if (childNodeData.getOriginItem() != null
+                            && childNodeData.getOriginItem().getType().equals(
+                                    EloraDoctypeConstants.CAD_DRAWING)) {
+                        actionIsReadOnly = false;
+                    }
 
-                // EXCEPTION: if this child node is a CadDrawing, don't
-                // propagate the IGNORE action
-                if (childNodeData.getOriginItem() != null
-                        && childNodeData.getOriginItem().getType().equals(
-                                EloraDoctypeConstants.CAD_DRAWING)) {
-                    propagateIgnoreAction = false;
-                }
-
-                if (propagateIgnoreAction) {
                     childNodeData.setIsModified(true);
                     childNodeData.setIsUpdated(true);
                     childNodeData.setAction(CMConstants.ACTION_IGNORE);
-                    childNodeData.setActionIsReadOnly(true);
+                    childNodeData.setActionIsReadOnly(actionIsReadOnly);
                     childNodeData.setDestinationItem(null);
                     childNodeData.setDestinationItemUid(null);
                     childNodeData.setDestinationItemVersionList(null);
@@ -754,39 +763,47 @@ public class ImpactedItemsNodeService implements NodeManager {
                     childNodeData.setIsManagedIsReadOnly(true);
                     childNodeData.setComment(
                             CMConstants.COMMENT_IGNORE_SINCE_ANCESTOR_IS_IGNORE);
-
-                    refreshChildNodes(childNode, action, comment);
                 }
+
+                refreshChildNodes(childNode, action, comment);
             }
         }
 
         if (action.equals(CMConstants.ACTION_CHANGE)) {
-
             // -- action = CHANGE and NOT readOnly
             // -- destinationItem = WC
             // -- isManaged = false and NOT readOnly
             for (TreeNode childNode : node.getChildren()) {
                 ImpactedItemsNodeData childNodeData = (ImpactedItemsNodeData) childNode.getData();
-                childNodeData.setIsModified(true);
-                childNodeData.setIsUpdated(true);
-                childNodeData.setAction(CMConstants.ACTION_CHANGE);
-                childNodeData.setActionIsReadOnly(false);
-                DocumentModel destinationItem = childNodeData.getOriginItemWc();
-                childNodeData.setDestinationItem(destinationItem);
-                childNodeData.setDestinationItemWc(destinationItem);
-                String destinationItemUid = destinationItem.getId();
-                childNodeData.setDestinationItemUid(destinationItemUid);
-                Map<String, String> destinationItemVersionList = new HashMap<String, String>();
-                destinationItemVersionList.put(destinationItemUid,
-                        destinationItem.getVersionLabel() + " (WC)");
-                childNodeData.setDestinationItemVersionList(
-                        destinationItemVersionList);
-                childNodeData.setDestinationItemVersionIsReadOnly(false);
-                childNodeData.setIsManaged(false);
-                boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
-                        action, childNodeData.getOriginItemWc());
-                childNodeData.setIsManagedIsReadOnly(isManagedIsReadOnly);
-                childNodeData.setComment(comment);
+
+                // If childNode is already MANAGED and its action is NOT IGNORE,
+                // do not change it.
+                if (childNodeData.getIsManaged()
+                        && !childNodeData.getAction().equals(
+                                CMConstants.ACTION_IGNORE)) {
+                    // nothing to do
+                } else {
+                    childNodeData.setIsModified(true);
+                    childNodeData.setIsUpdated(true);
+                    childNodeData.setAction(CMConstants.ACTION_CHANGE);
+                    childNodeData.setActionIsReadOnly(false);
+                    DocumentModel destinationItem = childNodeData.getOriginItemWc();
+                    childNodeData.setDestinationItem(destinationItem);
+                    childNodeData.setDestinationItemWc(destinationItem);
+                    String destinationItemUid = destinationItem.getId();
+                    childNodeData.setDestinationItemUid(destinationItemUid);
+                    Map<String, String> destinationItemVersionList = new HashMap<String, String>();
+                    destinationItemVersionList.put(destinationItemUid,
+                            destinationItem.getVersionLabel() + " (WC)");
+                    childNodeData.setDestinationItemVersionList(
+                            destinationItemVersionList);
+                    childNodeData.setDestinationItemVersionIsReadOnly(false);
+                    childNodeData.setIsManaged(false);
+                    boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
+                            action, childNodeData.getOriginItemWc());
+                    childNodeData.setIsManagedIsReadOnly(isManagedIsReadOnly);
+                    childNodeData.setComment(comment);
+                }
 
                 refreshChildNodes(childNode, action, comment);
             }

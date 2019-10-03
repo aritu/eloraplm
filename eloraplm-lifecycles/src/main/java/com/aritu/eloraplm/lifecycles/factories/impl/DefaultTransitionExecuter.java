@@ -13,6 +13,9 @@
  */
 package com.aritu.eloraplm.lifecycles.factories.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
@@ -42,6 +45,12 @@ public class DefaultTransitionExecuter implements TransitionExecuter {
     @Override
     public boolean canBeExecuted() {
         return true;
+    }
+
+    @Override
+    public List<String> getErrorList() {
+        // For now we don't use this method
+        return new ArrayList<String>();
     }
 
     @Override

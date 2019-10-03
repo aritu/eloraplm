@@ -26,6 +26,10 @@ import com.aritu.eloraplm.integration.util.ItemInfo;
  */
 public class GetFileInfoResponseDoc {
 
+    private String authoringTool;
+
+    private String authoringToolVersion;
+
     private String currentLifeCycleState;
 
     private VersionInfo currentVersionInfo;
@@ -70,7 +74,8 @@ public class GetFileInfoResponseDoc {
             String hash, String description, VersionInfo currentVersionInfo,
             String currentLifeCycleState, String latestVersionLabel,
             String path, EloraLockInfo eloraLockInfo, String lastContributor,
-            Date lastModified, String summaryUrl) {
+            Date lastModified, String summaryUrl, String authoringTool,
+            String authoringToolVersion) {
 
         this.realUid = realUid;
         this.wcUid = wcUid;
@@ -89,9 +94,27 @@ public class GetFileInfoResponseDoc {
         this.lastModified = lastModified;
         this.summaryUrl = summaryUrl;
         this.proxyUid = proxyUid;
+        this.authoringTool = authoringTool;
+        this.authoringToolVersion = authoringToolVersion;
 
         // Initialize the lists
         itemsInfo = new ArrayList<ItemInfo>();
+    }
+
+    public String getAuthoringTool() {
+        return authoringTool;
+    }
+
+    public void setAuthoringTool(String authoringTool) {
+        this.authoringTool = authoringTool;
+    }
+
+    public String getAuthoringToolVersion() {
+        return authoringToolVersion;
+    }
+
+    public void setAuthoringToolVersion(String authoringToolVersion) {
+        this.authoringToolVersion = authoringToolVersion;
     }
 
     public String getCurrentLifeCycleState() {

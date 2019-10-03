@@ -131,7 +131,7 @@ public class RelationNodeService implements NodeManager {
 
         RelationNodeData nodeData = saveRelationNodeData(String.valueOf(nodeId),
                 level, currentDoc.getId(), currentDoc, null, null, null, null,
-                null, null, null, null, false, false);
+                null, null, null, null, null, false, false);
 
         nodeId++;
 
@@ -344,8 +344,8 @@ public class RelationNodeService implements NodeManager {
 
         List<Statement> relatedStmts;
         if (inverse) {
-            relatedStmts = EloraRelationHelper.getSubjectStatementsByPredicateList(parentDoc,
-                    predicatesList);
+            relatedStmts = EloraRelationHelper.getSubjectStatementsByPredicateList(
+                    parentDoc, predicatesList);
         } else {
             relatedStmts = EloraRelationHelper.getStatements(parentDoc,
                     predicatesList);
@@ -464,6 +464,9 @@ public class RelationNodeService implements NodeManager {
             rootDoc = doc;
         } else {
             rootDoc = EloraDocumentHelper.getLatestVersion(doc);
+            if (rootDoc == null) {
+                rootDoc = doc;
+            }
         }
         return rootDoc;
     }
@@ -536,6 +539,7 @@ public class RelationNodeService implements NodeManager {
         Integer ordering = stmtInfo.getOrdering();
         Integer directorOrdering = stmtInfo.getDirectorOrdering();
         Integer viewerOrdering = stmtInfo.getViewerOrdering();
+        Integer inverseViewerOrdering = stmtInfo.getInverseViewerOrdering();
         boolean isSpecial = RelationsConfig.cadSpecialRelationsList.contains(
                 predicateUri);
         boolean isDirect = directRelationsList.contains(predicateUri);
@@ -549,8 +553,8 @@ public class RelationNodeService implements NodeManager {
 
         RelationNodeData node = saveRelationNodeData(String.valueOf(nodeId),
                 level, childUid, childDoc, wcDoc, stmt, predicateUri, quantity,
-                comment, ordering, directorOrdering, viewerOrdering, isSpecial,
-                isDirect);
+                comment, ordering, directorOrdering, viewerOrdering,
+                inverseViewerOrdering, isSpecial, isDirect);
 
         nodeId++;
         return node;
@@ -568,8 +572,8 @@ public class RelationNodeService implements NodeManager {
         log.trace(
                 logInitMsg + "About to get latest related version of document |"
                         + childDoc.getId() + "| ");
-        childDoc = EloraRelationHelper.getLatestRelatedVersion(
-                String.valueOf(majorVersion), uidList, session);
+        childDoc = EloraRelationHelper.getLatestRelatedVersion(session,
+                majorVersion, uidList, childDoc.getType());
 
         if (childDoc == null) {
             throw new EloraException(
@@ -604,7 +608,8 @@ public class RelationNodeService implements NodeManager {
             String docId, DocumentModel data, DocumentModel wcDoc,
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering, boolean isSpecial, boolean isDirect) {
+            Integer viewerOrdering, Integer inverseViewerOrdering,
+            boolean isSpecial, boolean isDirect) {
         // Do nothing
         return null;
     }

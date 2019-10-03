@@ -138,6 +138,13 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         resetEditModifiedItemFormValues(true);
     }
 
+    /**
+     * @return the itemType
+     */
+    public String getItemType() {
+        return itemType;
+    }
+
     @Override
     public void createRoot() {
         String logInitMsg = "[createRoot] ["

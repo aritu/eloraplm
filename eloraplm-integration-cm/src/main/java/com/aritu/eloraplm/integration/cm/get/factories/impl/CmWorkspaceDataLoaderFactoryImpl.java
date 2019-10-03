@@ -15,7 +15,7 @@ package com.aritu.eloraplm.integration.cm.get.factories.impl;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
 
-import com.aritu.eloraplm.constants.CMDocTypeConstants;
+import com.aritu.eloraplm.constants.CMDoctypeConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.integration.get.factories.WorkspaceDataLoader;
 import com.aritu.eloraplm.integration.get.factories.impl.WorkspaceDataLoaderFactoryImpl;
@@ -35,7 +35,7 @@ public class CmWorkspaceDataLoaderFactoryImpl
         if (dataLoader == null) {
 
             switch (doc.getType()) {
-            case CMDocTypeConstants.CM_ECO:
+            case CMDoctypeConstants.CM_ECO:
                 dataLoader = new CmEcoDataLoader(doc);
                 break;
             /*case CMDocTypeConstants.CM_ECR:

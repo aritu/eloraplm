@@ -81,17 +81,20 @@ public class CadCompositionNodeService extends RelationNodeService
             String docId, DocumentModel data, DocumentModel wcDoc,
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering, boolean isSpecial, boolean isDirect) {
+            Integer viewerOrdering, Integer inverseViewerOrdering,
+            boolean isSpecial, boolean isDirect) {
 
         CadRelationNodeData nodeData = new CadRelationNodeData(id, level, docId,
                 data, wcDoc, stmt, predicateUri, quantity, comment, ordering,
-                directorOrdering, viewerOrdering, isSpecial, isDirect);
+                directorOrdering, viewerOrdering, inverseViewerOrdering,
+                isSpecial, isDirect);
 
         nodeData = loadRelatedItems(nodeData);
 
         boolean isBasedOn = (predicateUri != null
                 && predicateUri.equals(EloraRelationConstants.CAD_BASED_ON))
-                        ? true : false;
+                        ? true
+                        : false;
         nodeData.setIsBasedOn(isBasedOn);
 
         boolean isSuppressed = false;
@@ -141,9 +144,10 @@ public class CadCompositionNodeService extends RelationNodeService
                                 docList);
                         Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
                                 docList);
+                        String type = docList.get(0).getType();
 
                         doc = EloraRelationHelper.getLatestRelatedVersion(
-                                String.valueOf(majorVersion), uidList, session);
+                                session, majorVersion, uidList, type);
                     }
                     // convertir a lista doc y meter abajo
                     // relatedItemList.removeAll(relatedItemList);

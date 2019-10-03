@@ -14,7 +14,6 @@
         <type>FolderCadAssembly</type>
         <type>FolderCadDrawing</type>
         <type>FolderOtherDoc</type>
-        <type>StructProject</type>
         <type>Project</type>
         <type>AdminRoot</type>
         <type>DocumentationRoot</type>
@@ -30,7 +29,6 @@
         <type>FolderCadAssembly</type>
         <type>FolderCadDrawing</type>
         <type>FolderOtherDoc</type>
-        <type>StructProject</type>
         <type>Project</type>
       </rule>
     </filter>

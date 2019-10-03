@@ -13,6 +13,7 @@
  */
 package com.aritu.eloraplm.lifecycles.factories.impl;
 
+import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuterFactory;
 
@@ -29,29 +30,24 @@ public class TransitionExecuterFactoryImpl
     public TransitionExecuter getTransitionExecuter(String transition,
             String lifecycle) {
         switch (transition) {
-
-        case "approve":
+        case EloraLifeCycleConstants.TRANS_APPROVE:
             switch (lifecycle) {
-            case "eloraCadLifeCycle":
-            case "eloraBomLifeCycle":
+            case EloraLifeCycleConstants.CAD_LIFE_CYCLE:
+            case EloraLifeCycleConstants.BOM_LIFE_CYCLE:
                 return new ApproveTransitionExecuter();
             default:
                 return new DefaultForVersionableTransitionExecuter(transition);
             }
-        case "makeObsolete":
+        case EloraLifeCycleConstants.TRANS_OBSOLETE:
             switch (lifecycle) {
-            case "eloraCadLifeCycle":
-            case "eloraBomLifeCycle":
+            case EloraLifeCycleConstants.CAD_LIFE_CYCLE:
+            case EloraLifeCycleConstants.BOM_LIFE_CYCLE:
                 return new MakeObsoleteForCadOrItemTransitionExecuter();
             default:
                 return new MakeObsoleteForSimpleDocTransitionExecuter();
             }
-
-        case "backToPreliminary":
+        case EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY:
             return new DefaultForVersionableTransitionExecuter(transition);
-        case "complete":
-        case "reject":
-        case "backToWorking":
         default:
             return new DefaultTransitionExecuter(transition);
         }

@@ -25,6 +25,8 @@ public class ImpactedItemContext {
 
     private DocumentModel modifiedItem;
 
+    private DocumentModel grandParentItem;
+
     private DocumentModel parentItem;
 
     private Long rowNumber;
@@ -41,6 +43,7 @@ public class ImpactedItemContext {
 
     /**
      * @param modifiedItem
+     * @param grandParentItem
      * @param parentItem
      * @param rowNumber
      * @param parentNodePath
@@ -50,11 +53,13 @@ public class ImpactedItemContext {
      * @param parentItemAction
      */
     public ImpactedItemContext(DocumentModel modifiedItem,
-            DocumentModel parentItem, Long rowNumber, String parentNodePath,
-            String parentNodeId, String modifiedItemAction,
-            String modifiedItemDestinationWcUid, String parentItemAction) {
+            DocumentModel grandParentItem, DocumentModel parentItem,
+            Long rowNumber, String parentNodePath, String parentNodeId,
+            String modifiedItemAction, String modifiedItemDestinationWcUid,
+            String parentItemAction) {
         super();
         this.modifiedItem = modifiedItem;
+        this.grandParentItem = grandParentItem;
         this.parentItem = parentItem;
         this.rowNumber = rowNumber;
         this.parentNodePath = parentNodePath;
@@ -66,6 +71,10 @@ public class ImpactedItemContext {
 
     public DocumentModel getModifiedItem() {
         return modifiedItem;
+    }
+
+    public DocumentModel getGrandParentItem() {
+        return grandParentItem;
     }
 
     public DocumentModel getParentItem() {

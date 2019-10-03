@@ -177,6 +177,8 @@ public class EloraCoreGraph extends CoreGraph {
 
             String viewerOrdering = getViewerOrdering(statement);
 
+            String inverseViewerOrdering = getInverseViewerOrdering(statement);
+
             // end of custom metadata
 
             String comment = getComment(statement);
@@ -247,6 +249,11 @@ public class EloraCoreGraph extends CoreGraph {
                         EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
                         Integer.parseInt(viewerOrdering));
             }
+            if (inverseViewerOrdering != null) {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
+                        Integer.parseInt(inverseViewerOrdering));
+            }
             // end of custom metadata
 
             return rel;
@@ -256,7 +263,7 @@ public class EloraCoreGraph extends CoreGraph {
     /**
      * Nuxeo has its own soft-delete functionality which is activated via config
      * templates. Documents are really deleted with a scheduler each 15 minutes.
-     * But all queries must have an extra where to avoid soft-delted docs to
+     * But all queries must have an extra where to avoid soft-deleted docs to
      * show, and we only need this functionality with relations. So, for now, we
      * have created our version that deletes files daily with another scheduler.
      *
@@ -439,6 +446,8 @@ public class EloraCoreGraph extends CoreGraph {
 
             String viewerOrdering = getViewerOrdering(statement);
 
+            String inverseViewerOrdering = getInverseViewerOrdering(statement);
+
             // end of custom metadata
 
             String comment = getComment(statement);
@@ -509,6 +518,12 @@ public class EloraCoreGraph extends CoreGraph {
                         EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
                         Integer.parseInt(viewerOrdering));
             }
+
+            if (inverseViewerOrdering != null) {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
+                        Integer.parseInt(inverseViewerOrdering));
+            }
             // end of custom metadata
 
             return rel;
@@ -542,6 +557,8 @@ public class EloraCoreGraph extends CoreGraph {
                     + EloraMetadataConstants.ELORA_RELEXT_ORDERING + ", "
                     + EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING
                     + ", " + EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING
+                    + ", "
+                    + EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING
                     + " FROM " + docType;
             query = whereBuilder(query, statement);
 
@@ -579,6 +596,8 @@ public class EloraCoreGraph extends CoreGraph {
                             EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING));
                     String viewerOrdering = String.valueOf(map.get(
                             EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING));
+                    String inverseViewerOrdering = String.valueOf(map.get(
+                            EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING));
                     // end of custom metadata
 
                     Resource predicate = NodeFactory.createResource(pred);
@@ -607,6 +626,7 @@ public class EloraCoreGraph extends CoreGraph {
                     setOrdering(statement, ordering);
                     setDirectorOrdering(statement, directorOrdering);
                     setViewerOrdering(statement, viewerOrdering);
+                    setInverseViewerOrdering(statement, inverseViewerOrdering);
                     // end of custom metadata
 
                     statements.add(statement);
@@ -666,6 +686,11 @@ public class EloraCoreGraph extends CoreGraph {
                 EloraRelationConstants.VIEWER_ORDERING);
     }
 
+    protected static String getInverseViewerOrdering(Statement statement) {
+        return getStringProperty(statement,
+                EloraRelationConstants.INVERSE_VIEWER_ORDERING);
+    }
+
     protected static void setQuantity(Statement statement, String quantity) {
         setStringProperty(statement, EloraRelationConstants.QUANTITY, quantity);
     }
@@ -684,6 +709,13 @@ public class EloraCoreGraph extends CoreGraph {
             String viewerOrdering) {
         setStringProperty(statement, EloraRelationConstants.VIEWER_ORDERING,
                 viewerOrdering);
+    }
+
+    protected static void setInverseViewerOrdering(Statement statement,
+            String inverseViewerOrdering) {
+        setStringProperty(statement,
+                EloraRelationConstants.INVERSE_VIEWER_ORDERING,
+                inverseViewerOrdering);
     }
 
     @Override

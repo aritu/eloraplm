@@ -6,10 +6,24 @@
 
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">  
 
-    <action id="eloraSearchContentView" order="1">
+    <action id="eloraGeneralSearchContentView" order="1">
       <category>SEARCH_CONTENT_VIEWS</category>
       <properties>
-        <property name="contentViewName">elora_search</property>
+        <property name="contentViewName">elora_general_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraCadDocumentsSearchContentView" order="2">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_cad_documents_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraBasicDocumentsSearchContentView" order="3">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_basic_documents_search</property>
       </properties>
     </action>
     

@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.change.management.ContentTemplateService.contrib">
-  <require>org.nuxeo.ecm.platform.content.template.service.ContentTemplateService.defaultContrib</require>
-
-  <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
-  
-    <factoryBinding name="StructChangeManagementFactory" factoryName="SimpleTemplateFactory" targetType="StructChangeManagement">
-      <template>
-        <templateItem typeName="FolderChangeManagementPR" id="changePRs" title="PRs" description="Problem reports."/>
-        <templateItem typeName="FolderChangeManagementECR" id="changeECRs" title="ECRs" description="Engineering change requests."/>
-        <templateItem typeName="FolderChangeManagementECO" id="changeECOs" title="ECOs" description="Engineering change orders."/>
-      </template>
-    </factoryBinding>
     
-  
-  </extension>
-
+    <require>com.aritu.eloraplm.doctypes.ContentTemplateService.contrib</require>
+    
+    <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
+    
+        <factoryBinding append="true" name="ArchivedCmFactory" factoryName="SimpleTemplateFactory" targetType="StructArchived">
+            <template>
+                <templateItem typeName="FolderArchivedChangeManagement" id="archivedCm" title="Change Management" description="Archived CM workspaces."/>
+            </template>
+        </factoryBinding>
+    </extension>
+    
 </component>

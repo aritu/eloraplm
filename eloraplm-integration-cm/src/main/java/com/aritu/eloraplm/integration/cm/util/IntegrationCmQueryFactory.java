@@ -41,31 +41,54 @@ public class IntegrationCmQueryFactory {
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
-                + "/*1/originItem, " + pfx + "/*1/action, " + pfx
-                + "/*1/destinationItem, " + pfx + "/*1/destinationItemWc, "
-                + pfx + "/*1/isManaged, " + pfx + "/*1/comment "
-                + "FROM CmEco, CmEcr WHERE ecm:uuid = '" + cmProcessUid
-                + "' AND " + pfx + "/*1/originItem IS NOT NULL AND " + pfx
-                + "/*1/action <> '" + CMConstants.ACTION_IGNORE + "' ORDER BY "
-                + pfx + "/*1/rowNumber";
+                + "/*1/originItem, " + pfx + "/*1/originItemWc, " + pfx
+                + "/*1/action, " + pfx + "/*1/destinationItem, " + pfx
+                + "/*1/destinationItemWc, " + pfx + "/*1/isManaged, " + pfx
+                + "/*1/comment " + "FROM CmEco, CmEcr WHERE ecm:uuid = '"
+                + cmProcessUid + "' AND " + pfx
+                + "/*1/originItem IS NOT NULL AND " + pfx + "/*1/action <> '"
+                + CMConstants.ACTION_IGNORE + "' ORDER BY " + pfx
+                + "/*1/rowNumber";
 
         return query;
     }
 
-    public static String getCmEcoSubitemsQuery(String cmProcessUid) {
+    public static String getCmEcoSubitemsByRootItemOriginUidQuery(
+            String cmProcessUid, String rootItemOriginUid) {
 
         String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
                 + "/*1/modifiedItem, " + pfx + "/*1/parentItem, " + pfx
-                + "/*1/originItem, " + pfx + "/*1/action, " + pfx
-                + "/*1/destinationItem, " + pfx + "/*1/destinationItemWc, "
-                + pfx + "/*1/isManaged, " + pfx + "/*1/comment "
-                + "FROM CmEco, CmEcr WHERE ecm:uuid = '" + cmProcessUid
-                + "' AND " + pfx + "/*1/originItem IS NOT NULL AND " + pfx
-                + "/*1/action <> '" + CMConstants.ACTION_IGNORE + "' ORDER BY "
-                + pfx + "/*1/rowNumber";
+                + "/*1/originItem, " + pfx + "/*1/originItemWc, " + pfx
+                + "/*1/action, " + pfx + "/*1/destinationItem, " + pfx
+                + "/*1/destinationItemWc, " + pfx + "/*1/isManaged, " + pfx
+                + "/*1/comment " + "FROM CmEco, CmEcr WHERE ecm:uuid = '"
+                + cmProcessUid + "' AND " + pfx + "/*1/modifiedItem = '"
+                + rootItemOriginUid + "' AND " + pfx
+                + "/*1/originItem IS NOT NULL ORDER BY " + pfx
+                + "/*1/rowNumber";
+
+        return query;
+    }
+
+    public static String getCmEcoSubitemsByParentNodeIdQuery(
+            String cmProcessUid, String parentNodeId) {
+
+        String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
+
+        String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
+                + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
+                + "/*1/modifiedItem, " + pfx + "/*1/parentItem, " + pfx
+                + "/*1/originItem, " + pfx + "/*1/originItemWc, " + pfx
+                + "/*1/action, " + pfx + "/*1/destinationItem, " + pfx
+                + "/*1/destinationItemWc, " + pfx + "/*1/isManaged, " + pfx
+                + "/*1/comment " + "FROM CmEco, CmEcr WHERE ecm:uuid = '"
+                + cmProcessUid + "' AND " + pfx + "/*1/parentNodeId = '"
+                + parentNodeId + "' AND " + pfx
+                + "/*1/originItem IS NOT NULL ORDER BY " + pfx
+                + "/*1/rowNumber";
 
         return query;
     }

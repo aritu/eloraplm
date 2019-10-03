@@ -17,7 +17,7 @@ package com.aritu.eloraplm.core.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.aritu.eloraplm.constants.CMDocTypeConstants;
+import com.aritu.eloraplm.constants.CMDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.constants.OrderingPriorityConstants;
@@ -103,13 +103,13 @@ public class EloraOrderingPriorityHelper {
         // --------------------------------------------------------------
         // ELORA WORKSPACES
         // --------------------------------------------------------------
-        case CMDocTypeConstants.CM_ECO:
+        case CMDoctypeConstants.CM_ECO:
             orderingPriority = OrderingPriorityConstants.CM_ECO;
             break;
-        case CMDocTypeConstants.CM_ECR:
+        case CMDoctypeConstants.CM_ECR:
             orderingPriority = OrderingPriorityConstants.CM_ECR;
             break;
-        case CMDocTypeConstants.CM_PR:
+        case CMDoctypeConstants.CM_PR:
             orderingPriority = OrderingPriorityConstants.CM_PR;
             break;
         // --------------------------------------------------------------

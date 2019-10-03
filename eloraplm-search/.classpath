@@ -5,10 +5,9 @@
 	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-core"/>
 	<classpathentry kind="con" path="org.nuxeo.ide.SDK_CONTAINER"/>
 	<classpathentry kind="con" path="org.nuxeo.ide.SDK_TEST_CONTAINER"/>
 	<classpathentry kind="con" path="org.nuxeo.ide.SDK_USERLIB_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-constants"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/eloraplm-core"/>
 	<classpathentry kind="output" path="bin/main"/>
 </classpath>

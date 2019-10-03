@@ -1,7 +1,0 @@
-id,status,isLockable,color,abbreviation,obsolete,ordering
-eloraDraftCreated,notReleased,1,#ccaa22,DC,0,1
-precreated,notReleased,1,#ccaa22,PC,0,10
-preliminary,notReleased,1,#3388aa,PR,0,20
-approved,released,1,#88aa33,AP,0,40
-obsolete,obsolete,0,#aa8833,OB,0,50
-deleted,obsolete,0,#555555,DL,0,10000000

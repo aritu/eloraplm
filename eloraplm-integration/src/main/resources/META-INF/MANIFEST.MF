@@ -13,5 +13,9 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-integration-OperationSer
  n-LifeCycleService-contrib.xml,OSGI-INF/extensions/eloraplm-integrati
  on-TypeService-contrib.xml,OSGI-INF/extensions/eloraplm-integration-R
  esourcePublisher-contrib.xml,OSGI-INF/extensions/eloraplm-integration
- -DraftServicePublisher-contrib.xml
+ -DraftServicePublisher-contrib.xml,OSGI-INF/extensions/eloraplm-integ
+ ration-config-DirectoryUIManager-contrib.xml,OSGI-INF/extensions/elor
+ aplm-integration-config-SQLDirectoryFactory-contrib.xml,OSGI-INF/exte
+ nsions/eloraplm-integration-config-TypeService-contrib.xml,OSGI-INF/e
+ xtensions/eloraplm-integration-config-WebLayoutManager-contrib.xml
 

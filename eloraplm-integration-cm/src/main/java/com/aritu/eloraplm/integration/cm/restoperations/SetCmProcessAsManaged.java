@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -47,7 +46,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
  * @author aritu
  *
  */
-@Operation(id = SetCmProcessAsManaged.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Set CM Process As Managed", description = "Set the entries of the CM process as managed.")
+@Operation(id = SetCmProcessAsManaged.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Set CM Process As Managed", description = "Set the entries of the CM process as managed.")
 public class SetCmProcessAsManaged {
 
     public static final String ID = "Elora.PlmConnector.SetCmProcessAsManaged";
@@ -90,7 +89,7 @@ public class SetCmProcessAsManaged {
                     managedDestinationUids);
 
             CmProcessInfo structInfo = IntegrationCmHelper.getCmEcoProcessInfo(
-                    cmProcess);
+                    cmProcess, false);
             response.setCmProcessStructure(structInfo.getStructure());
 
             response.setLastModified(getLastModified());

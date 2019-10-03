@@ -21,7 +21,6 @@ import java.util.GregorianCalendar;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -38,7 +37,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.integration.get.restoperations.util.CheckIfWorkspaceIsUpdatedResponse;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 
-@Operation(id = CheckIfWorkspaceIsUpdated.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Check If Workspace Is Updated", description = "Check if the provided workspace is up to date locally.")
+@Operation(id = CheckIfWorkspaceIsUpdated.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Check If Workspace Is Updated", description = "Check if the provided workspace is up to date locally.")
 public class CheckIfWorkspaceIsUpdated {
     public static final String ID = "Elora.PlmConnector.CheckIfWorkspaceIsUpdated";
 

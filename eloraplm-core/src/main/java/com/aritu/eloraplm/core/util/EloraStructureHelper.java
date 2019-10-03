@@ -19,7 +19,6 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 
 import com.aritu.eloraplm.config.util.EloraConfig;
-import com.aritu.eloraplm.constants.CMDocTypeConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
@@ -33,8 +32,6 @@ import com.aritu.eloraplm.exceptions.EloraException;
  *
  */
 public class EloraStructureHelper {
-
-    private static final String OTHER_CAD_DOCUMENTS_FOLDER = "FolderOtherDoc";
 
     /**
      *
@@ -212,7 +209,7 @@ public class EloraStructureHelper {
         String parentType = EloraConfig.autocopyParentTypesMap.get(type);
         if (parentType == null) {
             return getChildrenByType(documentsFolder.getRef(),
-                    OTHER_CAD_DOCUMENTS_FOLDER, session);
+                    EloraDoctypeConstants.OTHER_CAD_DOCUMENTS_FOLDER, session);
         } else {
             return getChildrenByType(documentsFolder.getRef(), parentType,
                     session);
@@ -276,78 +273,6 @@ public class EloraStructureHelper {
         }
 
         return docModel.getPathAsString();
-    }
-
-    /**
-     *
-     * @param structureRootRealRef
-     * @param cmProcessType
-     * @param session
-     * @return
-     * @throws EloraException
-     */
-    public static DocumentModel getCMDocModelByProcessType(
-            DocumentRef structureRootRealRef, String cmProcessType,
-            CoreSession session) throws EloraException {
-
-        if (structureRootRealRef == null) {
-            throw new EloraException("structureRootRealRef cannot be null.");
-        }
-
-        // Retrieve Change Management folder path
-        DocumentModel cmFolderDocModel = getChildrenByType(structureRootRealRef,
-                CMDocTypeConstants.STRUCTURE_CM, session);
-        if (cmFolderDocModel == null) {
-            throw new EloraException(
-                    "Change Mangement folder cannot be retrieved.");
-        }
-
-        // Retrieve the parent type in function of the CM process type
-        if (cmProcessType == null) {
-            throw new EloraException(
-                    "The Change Management process type must be defined.");
-        }
-        String cmProcessParentType = EloraConfig.autocopyParentTypesMap.get(
-                cmProcessType);
-        if (cmProcessParentType == null) {
-            throw new EloraException(
-                    "Change Management process parent type cannot be retrieved.");
-        }
-
-        // Retrieve the Change Management document model
-        DocumentModel docModel = getChildrenByType(cmFolderDocModel.getRef(),
-                cmProcessParentType, session);
-        if (docModel == null) {
-            throw new EloraException(
-                    "Change Management process folder cannot be retrieved.");
-        }
-
-        return docModel;
-    }
-
-    /**
-     * Retrieves the path of the Change Management process in function of the
-     * specified structure root and the process type.
-     *
-     * @param structureRootRealRef
-     * @param cmProcessType
-     * @param session
-     * @return
-     * @throws EloraException
-     */
-    public static String getCMPathByProcessType(
-            DocumentRef structureRootRealRef, String cmProcessType,
-            CoreSession session) throws EloraException {
-
-        DocumentModel cmDocModel = getCMDocModelByProcessType(
-                structureRootRealRef, cmProcessType, session);
-
-        if (cmDocModel == null) {
-            throw new EloraException(
-                    "Change Management path cannot be retrieved.");
-        }
-
-        return cmDocModel.getPathAsString();
     }
 
     /**

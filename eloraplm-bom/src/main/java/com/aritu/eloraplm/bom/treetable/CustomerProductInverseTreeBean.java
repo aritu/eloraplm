@@ -76,7 +76,7 @@ public class CustomerProductInverseTreeBean extends EditableRelationTreeBean
             setRoot(nodeService.getRoot(currentDoc));
             setIsDirty(false);
             log.trace(logInitMsg + "Tree created.");
-        } catch (EloraException e) {
+        } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.treetable.createRoot"));

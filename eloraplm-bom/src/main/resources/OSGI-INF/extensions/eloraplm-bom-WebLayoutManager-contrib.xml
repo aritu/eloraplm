@@ -149,26 +149,6 @@
       </rows>
     </layout>
     
-    <layout name="bom_dublincore">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml
-        </template>
-      </templates>
-      <rows>
-        <row>
-          <widget>expired</widget>
-        </row>
-        <!--
-        <row>
-          <widget>subjects</widget>
-        </row>
-         -->
-        <row>
-          <widget>rights</widget>
-        </row>
-      </rows>
-    </layout>
-
     <layout name="bom_part">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
@@ -1428,6 +1408,13 @@
             </properties>
             <widget>listing_quantity</widget>
         </column>
+        <column name="viewerOrdering">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">eloraplm.label.viewer.ordering</property>
+            </properties>
+            <widget>treewidget_editable_viewer_ordering</widget>
+        </column>
         <column name="remove">
             <properties mode="any">
                 <property name="columnStyle">width: 40px;</property>
@@ -1502,6 +1489,13 @@
                 <property name="columnHeading">label.content.header.quantity</property>
             </properties>
             <widget>listing_quantity</widget>
+        </column>
+        <column name="inverseViewerOrdering">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">eloraplm.label.viewer.ordering</property>
+            </properties>
+            <widget>treewidget_editable_inverse_viewer_ordering</widget>
         </column>
         <column name="remove">
             <properties mode="any">
@@ -1942,10 +1936,10 @@
       </labels>
       <translated>true</translated>
       <fields>
-        <field>bompart:partClassification</field>
+        <field>partclass:partClassification</field>
       </fields>
       <widgetModes>
-         <mode value="view_summary">#{currentDocument.hasSchema('bom_part')?'view':'hidden'}</mode>
+         <mode value="view_summary">#{currentDocument.hasSchema('part_classification')?'view':'hidden'}</mode>
       </widgetModes>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomPartClassHierarchical</property>
@@ -2100,7 +2094,7 @@
         <field>prodclass:productClassification</field>
       </fields>
       <widgetModes>
-        <mode value="view_summary">#{currentDocument.hasSchema('bom_product') or currentDocument.hasFacet('EloraWorkspace') ?'view':'hidden'}</mode>
+        <mode value="view_summary">#{currentDocument.hasSchema('product_classification') or currentDocument.hasFacet('EloraWorkspace') ?'view':'hidden'}</mode>
       </widgetModes>
       <properties widgetMode="any">
         <property name="directoryName">elora_bomProductClassHierarchical</property>
@@ -2292,7 +2286,7 @@
       </labels>
       <properties mode="any">
         <property name="documentRelations">#{outgoingBomHasBomRelations}</property>
-        <property name="docStatementsInfo">#{bomHasBomRelationBean.outgoingBomHasBomStatementsInfo}</property>
+        <property name="docStatementsInfo">#{eloraRelationActions.outgoingBomHasBomStatementsInfo}</property>
       </properties>
       <controls mode="any">
         <control name="requireSurroundingForm">true</control>
@@ -2437,8 +2431,6 @@
             <widgetModes>
                 <mode value="any">#{
                      nxd:hasPermission(currentDocument, 'Write')
-                     and currentDocument.isLocked()
-                     and currentDocumentLockDetails['document.locker'] eq currentUser
                      and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
             </widgetModes>
             <properties widgetMode="any">
@@ -2765,49 +2757,6 @@
     <widget name="bomCadDocumentsTreetableButtons" type="documentActionsWithForms">
       <properties widgetMode="view">
         <property name="category">BOM_CAD_DOCUMENTS_TREETABLE_BUTTON</property>
-        <property name="overallDisplay">horizontal_block</property>
-      </properties>
-      <controls mode="any">
-        <control name="requireSurroundingForm">false</control>
-        <control name="gridStyleClass">gridStyle12</control>
-      </controls>
-    </widget>
-    
-    <widget name="bomPartManufacturerRelationButton" type="documentActions">
-      <properties widgetMode="view">
-        <property name="category">BOM_PART_MANUFACTURER_RELATION_BUTTON</property>
-        <property name="overallDisplay">horizontal_block</property>
-      </properties>
-      <controls mode="any">
-        <control name="requireSurroundingForm">false</control>
-        <control name="gridStyleClass">gridStyle12</control>
-      </controls>
-    </widget>
-    
-    <widget name="bomProductCustomerRelationButton" type="documentActions">
-      <properties widgetMode="view">
-        <property name="category">BOM_PRODUCT_CUSTOMER_RELATION_BUTTON</property>
-        <property name="overallDisplay">horizontal_block</property>
-      </properties>
-      <controls mode="any">
-        <control name="requireSurroundingForm">false</control>
-        <control name="gridStyleClass">gridStyle12</control>
-      </controls>
-    </widget>
-    
-    <widget name="bomHasBomRelationButton" type="documentActions">
-      <properties widgetMode="view">
-        <property name="category">BOM_HAS_BOM_RELATION_BUTTON</property>
-        <property name="overallDisplay">horizontal_block</property>
-      </properties>
-      <controls mode="any">
-        <control name="requireSurroundingForm">false</control>
-        <control name="gridStyleClass">gridStyle12</control>
-      </controls>
-    </widget>
-    <widget name="bomHasSpecificationRelationButton" type="documentActions">
-      <properties widgetMode="view">
-        <property name="category">BOM_HAS_SPECIFICATION_RELATION_BUTTON</property>
         <property name="overallDisplay">horizontal_block</property>
       </properties>
       <controls mode="any">

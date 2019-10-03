@@ -18,8 +18,11 @@ targetNamespace="http://www.nuxeo.org/ecm/project/schemas/project">
           <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
         </xs:simpleType>
       </xs:element>
-      <xs:element name="phasePreviewDate" type="xs:date"/>
-      <xs:element name="phaseRealDate" type="xs:date"/>
+      <xs:element name="phaseRealStartDate" type="xs:date"/>
+      <xs:element name="phasePlannedEndDate" type="xs:date"/>
+      <xs:element name="phaseRealEndDate" type="xs:date"/>
+      <xs:element name="phaseProgress" type="xs:integer"/>
+      
     </xs:sequence>
   </xs:complexType>
 

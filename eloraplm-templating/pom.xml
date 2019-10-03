@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.aritu.eloraplm</groupId>
     <artifactId>eloraplm-parent</artifactId>
-    <version>20181120</version>
+    <version>20191003</version>
   </parent>  
   
   <artifactId>eloraplm-templating</artifactId>
@@ -40,26 +40,6 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
-    </dependency>    
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-constants</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-exceptions</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-queries</artifactId>
     </dependency>
     <dependency>
       <groupId>dom4j</groupId>
@@ -80,7 +60,13 @@
     <dependency>
         <groupId>org.nuxeo.template.rendering</groupId>
         <artifactId>nuxeo-template-rendering-core</artifactId>
-    </dependency>   
+    </dependency>
+    
+    <dependency>
+      <groupId>com.aritu.eloraplm</groupId>
+      <artifactId>eloraplm-core</artifactId>
+    </dependency>
+    
   </dependencies>
   
 </project>

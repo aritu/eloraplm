@@ -65,7 +65,7 @@
       <readOnly>false</readOnly>
       <dataFile>directories/elora_cad_class_hierarchical.csv</dataFile>
       <createTablePolicy>on_missing_columns</createTablePolicy>
-    </directory>        
+    </directory>
     
     <directory name="elora_erpCustomers">
       <schema>vocabulary</schema>

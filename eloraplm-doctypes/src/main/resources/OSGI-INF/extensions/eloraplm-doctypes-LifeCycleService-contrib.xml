@@ -6,36 +6,39 @@
 
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         <types>
-          <type name="CadAssembly">eloraCadLifeCycle</type>
-          <type name="CadPart">eloraCadLifeCycle</type>
-          <type name="CadDrawing">eloraCadLifeCycle</type>
-          <type name="CadDesignTable">eloraCadLifeCycle</type>
-          
-          <type name="CollaborationRoot">default</type>
-          <type name="LibraryRoot">default</type>
-          <type name="StructureRoot">default</type>
-          <type name="StructArchivedWS">default</type>
-          <type name="StructCadDoc">default</type>
-          <type name="FolderCadPart">default</type>
-          <type name="FolderCadAssembly">default</type>
-          <type name="FolderCadDrawing">default</type>
-          <type name="FolderOtherDoc">default</type>
-          <type name="StructEbom">default</type>
-          <type name="StructChangeManagement">default</type>
-          <type name="StructProject">default</type>
-          <type name="Project">default</type>
-          <type name="TempFolder">default</type>
-          
-          <type name="File">eloraDefaultLifeCycle</type>
-          <type name="Note">eloraDefaultLifeCycle</type>
-          <type name="Audio">eloraDefaultLifeCycle</type>
-          <type name="Picture">eloraDefaultLifeCycle</type>
-          <type name="Video">eloraDefaultLifeCycle</type>
-          
-          <type name="Workspace">eloraWsLifeCycle</type>
-          <type name="Project">eloraWsLifeCycle</type>
-          
-           <type name="AdminRoot">default</type>
+            
+            <type name="CadAssembly">eloraCadLifeCycle</type>
+            <type name="CadPart">eloraCadLifeCycle</type>
+            <type name="CadDrawing">eloraCadLifeCycle</type>
+            <type name="CadDesignTable">eloraCadLifeCycle</type>
+            
+            <type name="CollaborationRoot">default</type>
+            <type name="LibraryRoot">default</type>
+            <type name="StructureRoot">default</type>
+            
+            <type name="StructArchived">default</type>
+            <type name="FolderArchivedWorkspaces">default</type>
+            <type name="FolderArchivedProjects">default</type>
+            
+            <type name="StructCadDoc">default</type>
+            <type name="FolderCadPart">default</type>
+            <type name="FolderCadAssembly">default</type>
+            <type name="FolderCadDrawing">default</type>
+            <type name="FolderOtherDoc">default</type>
+            <type name="StructEbom">default</type>
+            
+            <type name="TempFolder">default</type>
+            
+            <type name="File">eloraDefaultLifeCycle</type>
+            <type name="Note">eloraDefaultLifeCycle</type>
+            <type name="Audio">eloraDefaultLifeCycle</type>
+            <type name="Picture">eloraDefaultLifeCycle</type>
+            <type name="Video">eloraDefaultLifeCycle</type>
+            
+            <type name="Workspace">eloraWsLifeCycle</type>
+            <type name="Project">eloraWsLifeCycle</type>
+            
+            <type name="AdminRoot">default</type>
           
         </types>
     </extension>

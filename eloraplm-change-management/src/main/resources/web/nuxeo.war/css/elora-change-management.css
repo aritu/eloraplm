@@ -1,5 +1,4 @@
-.cmItemTable
-{
+.cmItemTable {
     border-collapse: separate;
     border-spacing: 0px 20px;
 }
@@ -9,7 +8,30 @@
   white-space:nowrap;
 }
 
-.summaryCmItemsTable
+.summaryCmItemsTable {
+    font-size: 0.9em;
+}
+
+.cmBatchProcessInfoTable 
 {
     font-size: 0.9em;
+    width: 100%;
+    border-collapse: separate;
+    /*border-spacing: 2px;
+    border: 1px solid #e6e9ef;*/
+    margin-bottom: 20px;
+    
+}
+
+/*.cmBatchProcessInfoTable td,*/
+ .cmBatchProcessInfoTable th {
+    border: 1px solid #e6e9ef;
+    padding: 0px;
+    text-align: center;
+    background-color: #f8f9fb;
+}
+.cmBatchProcessInfoTable td {
+    border: 1px solid #e6e9ef;
+    padding: 0px;
+    text-align: center;
 }

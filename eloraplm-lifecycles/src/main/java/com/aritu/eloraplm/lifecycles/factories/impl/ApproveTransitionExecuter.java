@@ -52,6 +52,12 @@ public class ApproveTransitionExecuter implements TransitionExecuter {
     }
 
     @Override
+    public List<String> getErrorList() {
+        // For now we don't use this method
+        return new ArrayList<String>();
+    }
+
+    @Override
     public void execute(DocumentModel doc) {
         SeamComponentCallHelper.callSeamComponentByName("promoteTreeBean",
                 "runPromote", new ArrayList<Object>().toArray());

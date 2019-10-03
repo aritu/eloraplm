@@ -2,6 +2,7 @@
 
 <component name="com.aritu.eloraplm.change.management.ActionService.contrib">
   <require>org.nuxeo.ecm.platform.actions</require>
+  <require>com.aritu.eloraplm.webapp.base.ActionService.contrib</require>
 
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
 
@@ -17,7 +18,7 @@
       </rule>
     </filter>
 
-    <filter append="true" id="viewSummaryTab">
+    <filter append="true" id="viewCmSummaryTab">
       <rule grant="true">
         <type>CmPr</type>
         <type>CmEcr</type>
@@ -48,6 +49,13 @@
     <filter id="isCmEco">
       <rule grant="true">
         <type>CmEco</type>
+      </rule>
+    </filter>
+    
+    <filter id="isCmEcoOrCmEcr">
+      <rule grant="true">
+        <type>CmEco</type>
+        <type>CmEcr</type>
       </rule>
     </filter>
 
@@ -110,13 +118,17 @@
             <condition>#{webActions.currentTabId eq 'TAB_CM_DOC_IMPACTED_ITEMS_TREETABLE'}</condition>
         </rule>
     </filter>
-
-
-    <filter id="filter@wf@wf_CmPr">
-      <rule grant="true">
-        <permission>ReadWrite</permission>
-        <type>CmPr</type>
-      </rule>
+    
+    <filter id="hasCmHeader">
+        <rule grant="true">
+            <facet>CMProcess</facet>
+        </rule>
+    </filter>
+    
+    <filter id="hasWorkspaceHeader" append="true">
+        <rule grant="false">
+            <facet>CMProcess</facet>
+        </rule>
     </filter>
 
   </extension>
@@ -124,14 +136,15 @@
 
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
 
-    <action accessKey="v" icon="/icons/file.gif" id="TAB_CM" label="action.view.summary" link="/incl/tabs/document_view.xhtml" order="0" type="rest_document_link">
+    <action accessKey="v" icon="/icons/file.gif" id="TAB_CM_SUMMARY" label="action.view.summary" link="/incl/tabs/document_view.xhtml" order="0" type="rest_document_link">
       <category>VIEW_ACTION_LIST</category>
-      <filter-id>viewSummaryTab</filter-id>
+      <filter-id>viewCmSummaryTab</filter-id>
       <properties>
         <property name="ajaxSupport">true</property>
       </properties>
     </action>
     
+    <!-- Modified and impacted items tabs -->
     
     <action id="TAB_CM_BOM_MODIFIED_ITEMS_TREETABLE" link="/incl/tabs/cm_bom_modified_items.xhtml"
       order="30" label="label.com.aritu.eloraplm.cm.tab.bomModifiedItems" type="rest_document_link">
@@ -155,13 +168,6 @@
       order="35" label="label.com.aritu.eloraplm.cm.tab.docImpactedItems" type="rest_document_link">
       <category>VIEW_ACTION_LIST</category>
       <filter-id>viewDocsImpactMatrixTab</filter-id>
-    </action>
-    
-    
-    <action id="TAB_CM_RELATED_PROCESS" link="/incl/tabs/cm_related_process.xhtml" order="40" 
-      label="label.com.aritu.eloraplm.cm.tab.relatedProcess" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isCm</filter-id>
     </action>
     
     <!-- Treetable buttons -->
@@ -429,29 +435,28 @@
     
     <!-- End of Process relations Tab buttons -->
     
-    <!-- Default actions on summary right panel -->
-    
-    <action id="summary_cm_source_documents" type="widget" order="100">
-      <category>SUMMARY_PANEL_RIGHT</category>
-      <properties>
-        <property name="widgetName">summary_cm_source_documents</property>
-      </properties>
-      <filter-id>isCm</filter-id>
-<!--       TODO: Hay que filtrar por lo de abajo para que no cree una capa el action sin nada dentro. Por ahora no consegimos que funcione -->
-<!--       <filter id="filter@summary_cm_origin_documents"> -->
-<!--         <rule grant="true">#{empty cmECRRelationBean.incomingECRStatementsInfo}</rule> -->
-<!--       </filter> -->
+     <!-- CM tab -->
+     
+     <action id="TAB_CM" link="/incl/tabs/cm.xhtml" order="103" label="eloraplm.label.cm" type="rest_document_link">
+      <filter-id>isCadOrBomDocument</filter-id>
+      <category>VIEW_ACTION_LIST</category>
     </action>
     
-    <action id="summary_cm_target_documents" type="widget" order="200">
-      <category>SUMMARY_PANEL_RIGHT</category>
-      <properties>
-        <property name="widgetName">summary_cm_target_documents</property>
-      </properties>
-      <filter-id>isCm</filter-id>
+    <action id="cm_document_header" order="1" type="template">
+        <category>DOCUMENT_HEADER</category>
+        <filter-id>hasCmHeader</filter-id>
+        <properties>
+            <property name="template">/widgets/actions/cm_metadata_header.xhtml</property>
+        </properties>
     </action>
     
-    <!-- End of Default actions on summary right panel -->
+    <action id="cm_batch_current_process_info" order="10" type="template">
+        <category>DOCUMENT_HEADER</category>
+        <filter-id>isCmEcoOrCmEcr</filter-id>
+        <properties>
+            <property name="template">/incl/cm_batch_current_process_info.xhtml</property>
+        </properties>
+    </action>
 
   </extension>
   

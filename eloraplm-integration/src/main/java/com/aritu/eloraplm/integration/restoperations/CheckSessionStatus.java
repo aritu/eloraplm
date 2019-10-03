@@ -13,7 +13,6 @@
  */
 package com.aritu.eloraplm.integration.restoperations;
 
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -29,7 +28,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
  * @author aritu
  *
  */
-@Operation(id = CheckSessionStatus.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - CheckSessionStatus", description = "Check if session is active.")
+@Operation(id = CheckSessionStatus.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - CheckSessionStatus", description = "Check if session is active.")
 public class CheckSessionStatus {
 
     public static final String ID = "Elora.PlmConnector.CheckSessionStatus";

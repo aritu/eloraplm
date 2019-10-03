@@ -1,7 +1,21 @@
-id,label,obsolete,ordering
-eloraDraftCreated,label.eloras.lifecycle.eloraDraftCreated,0,10
-precreated,label.eloras.lifecycle.precreated,0,20
-preliminary,label.eloras.lifecycle.preliminary,0,30
-approved,label.eloras.lifecycle.approved,0,40
-obsolete,label.eloras.lifecycle.obsolete,0,50
-deleted,label.eloras.lifecycle.deleted,0,60
+id,label,obsolete
+approved,approved,0
+asyncProcessing,asyncProcessing,0
+commercial reviewed,commercial reviewed,0
+completed,completed,0
+created,created,0
+economical reviewed,economical reviewed,0
+eloraDraftCreated,eloraDraftCreated,0
+evaluated,evaluated,0
+manufacturing reviewed,manufacturing reviewed,0
+obsolete,obsolete,0
+outmanaged,outmanaged,0
+precreated,precreated,0
+preliminary,preliminary,0
+project,project,0
+purchasing reviewed,purchasing reviewed,0
+rejected,rejected,0
+reviewed,reviewed,0
+technical reviewed,technical reviewed,0
+validated,validated,0
+working,working,0

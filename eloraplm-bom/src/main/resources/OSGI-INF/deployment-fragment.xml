@@ -3,9 +3,7 @@
 <fragment version="1">
 
     <require>org.nuxeo.ecm.webapp.ui</require>
-    <require>com.aritu.eloraplm.l10n</require>
-    <require>com.aritu.eloraplm.webapp.base</require>
-    <require>com.aritu.eloraplm.treetable</require>
+    <require>com.aritu.eloraplm.webapp</require>
   
     <install>
         <unzip from="${bundle.fileName}" to="/" prefix="web">

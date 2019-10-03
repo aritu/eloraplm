@@ -117,6 +117,8 @@ public class DraftCreator {
             return "CadDesignTableDraft";
         case "Folder":
             return "FolderDraft";
+        case "OrderedFolder":
+            return "OrderedFolderDraft";
         default:
             throw new EloraException("Document with type |"
                     + originDoc.getType() + "| can't have a draft.");

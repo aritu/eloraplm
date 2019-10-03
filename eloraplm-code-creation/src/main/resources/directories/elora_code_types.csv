@@ -3,8 +3,8 @@ CadDrawing,A_full,0
 CadPart,B_full,0
 CadAssembly,B_full,0
 Project,PRO_full,0
+ProductValidation,VAL_full,0
+ProductVerification,VER_full,0
+ProductionProcessValidation,PPV_full,0
+ProductionPartApprovalProcess,PAP_full,0
 CmEco,ECO_full,0
-CmPre,PRE_full,0
-CmHom,HOM_full,0
-CmSample,SAM_full,0
-CmComm,COM_full,0

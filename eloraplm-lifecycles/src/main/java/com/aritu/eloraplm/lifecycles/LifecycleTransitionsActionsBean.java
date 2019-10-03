@@ -100,6 +100,13 @@ public abstract class LifecycleTransitionsActionsBean implements Serializable {
         return false;
     }
 
+    public List<String> getErrorList() {
+        if (transition != null) {
+            return getTransitionExecuter().getErrorList();
+        }
+        return new ArrayList<String>();
+    }
+
     public void execute() {
 
         String logInitMsg = "[execute] ["
@@ -111,9 +118,8 @@ public abstract class LifecycleTransitionsActionsBean implements Serializable {
 
             navigationContext.invalidateCurrentDocument();
 
-            facesMessages.add(StatusMessage.Severity.INFO,
-                    messages.get(
-                            "eloraplm.message.success.lifecycles.transition.execute"),
+            facesMessages.add(StatusMessage.Severity.INFO, messages.get(
+                    "eloraplm.message.success.lifecycles.transition.execute"),
                     messages.get(transition));
 
             log.info(logInitMsg + "Document |" + doc.getId()
@@ -126,16 +132,14 @@ public abstract class LifecycleTransitionsActionsBean implements Serializable {
             log.error(logInitMsg + e.getMessage(), e);
 
         } catch (TransitionNotAllowedException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(
-                            "eloraplm.message.error.lifecycles.transition.execute.notAllowed"),
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.lifecycles.transition.execute.notAllowed"),
                     messages.get(transition));
             log.error(logInitMsg + e.getMessage(), e);
 
         } catch (Exception e) {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(
-                            "eloraplm.message.error.lifecycles.transition.execute"),
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.lifecycles.transition.execute"),
                     messages.get(transition));
             log.error(
                     logInitMsg + "Uncontrolled exception: "

@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.aritu.eloraplm</groupId>
     <artifactId>eloraplm-parent</artifactId>
-    <version>20181120</version>
+    <version>20191003</version>
   </parent>  
   
   <artifactId>eloraplm-relations</artifactId>
@@ -42,34 +42,6 @@
       <artifactId>org.osgi.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-webapp-base</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-constants</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-exceptions</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-queries</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-treetable</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.sun.faces</groupId>
       <artifactId>jsf-api</artifactId>
     </dependency>
@@ -89,6 +61,16 @@
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>com.aritu.eloraplm</groupId>
+      <artifactId>eloraplm-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.aritu.eloraplm</groupId>
+      <artifactId>eloraplm-webapp</artifactId>
+    </dependency>
+    
   </dependencies>
   
 </project>

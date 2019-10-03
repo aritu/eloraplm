@@ -109,4 +109,22 @@ public class EloraStatementInfoImpl extends StatementInfoImpl
         }
         return null;
     }
+    
+    @Override
+    public Integer getInverseViewerOrdering() {
+        String inverseViewerOrdering = null;
+        Node node = statement.getProperty(
+                EloraRelationConstants.INVERSE_VIEWER_ORDERING);
+        if (node != null && node.isLiteral()) {
+            inverseViewerOrdering = ((Literal) node).getValue();
+            if (inverseViewerOrdering != null) {
+                try {
+                    return Integer.parseInt(inverseViewerOrdering);
+                } catch (NumberFormatException e) {
+                    // TODO Logak jarri
+                }
+            }
+        }
+        return null;
+    }
 }

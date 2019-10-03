@@ -10,3 +10,6 @@ The Nuxeo Platform is developed and supported by Nuxeo, with contributions from 
 ## Licensing
 
 The code in EloraPLM is copyright Aritu S. Coop., and licensed under the GNU Lesser General Public License v2.1.
+
+Icons are based on Font Awesome licensed under Creative Commons Attribution 4.0 International
+(license: https://fontawesome.com/license), and modified to fit our needs.

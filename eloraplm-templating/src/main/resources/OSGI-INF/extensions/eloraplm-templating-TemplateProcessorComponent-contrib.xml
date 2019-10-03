@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.templating.TemplateProcessorComponent.contrib">
+  <require>org.nuxeo.template.service.defaultContrib</require>
   
   <extension target="org.nuxeo.template.service.TemplateProcessorComponent" point="contextExtension">
 
@@ -8,6 +9,10 @@
      <aliasName>elo</aliasName>
      <aliasName>Elo</aliasName>
     </contextFactory>
+    
+    <!-- We have to disable auditEntries factory because it causes an error with
+    ElasticSearch audit logs + creation log missing (https://jira.nuxeo.com/browse/NXP-21860) -->
+    <contextFactory name="auditEntries" enabled="false" />
 
   </extension>
   

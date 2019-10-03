@@ -6,7 +6,7 @@
   >
   
     <nxu:set var="classification" value="#{
-        field_0.getType() eq 'BomPart' ? field_0.bompart.partClassification :
+        field_0.getType() eq 'BomPart' ? field_0.partclass.partClassification :
         ( field_0.getType() eq 'BomTool' ? field_0.bomtool.toolClassification :
         ( field_0.getType() eq 'BomPackaging' ? field_0.bompack.packagingClassification :
         ( field_0.getType() eq 'BomSpecification' ? field_0.bomspec.specificationClassification :

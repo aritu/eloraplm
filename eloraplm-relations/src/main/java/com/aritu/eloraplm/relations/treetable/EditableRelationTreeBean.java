@@ -78,6 +78,8 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
 
     private Integer viewerOrdering;
 
+    private Integer inverseViewerOrdering;
+
     private boolean addDirectRelations = false;
 
     @BypassInterceptors
@@ -153,6 +155,15 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
     }
 
     @BypassInterceptors
+    public Integer getInverseViewerOrdering() {
+        return inverseViewerOrdering;
+    }
+
+    public void setInverseViewerOrdering(Integer inverseViewerOrdering) {
+        this.inverseViewerOrdering = inverseViewerOrdering;
+    }
+
+    @BypassInterceptors
     public boolean getAddDirectRelations() {
         return addDirectRelations;
     }
@@ -211,8 +222,9 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                         TreeNode node = createNewTreeNode(nextNodeId, 1,
                                 objectDocumentUid, objectDoc, wcDoc, null,
                                 predicateUri, quantity, comment, ordering,
-                                directorOrdering, viewerOrdering, false, false,
-                                true, false);
+                                directorOrdering, viewerOrdering,
+                                inverseViewerOrdering, false, false, true,
+                                false);
 
                         // Set node's initial expanded state
                         node.setExpanded(false);
@@ -277,13 +289,13 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, String comment,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            boolean isSpecial, boolean isDirect, boolean isNew,
-            boolean isRemoved) {
+            Integer inverseViewerOrdering, boolean isSpecial, boolean isDirect,
+            boolean isNew, boolean isRemoved) {
 
         RelationNodeData newNodeData = nodeService.saveRelationNodeData(id,
                 level, docId, data, wcDoc, stmt, predicateUri, quantity,
-                comment, ordering, directorOrdering, viewerOrdering, isSpecial,
-                isDirect);
+                comment, ordering, directorOrdering, viewerOrdering,
+                inverseViewerOrdering, isSpecial, isDirect);
 
         newNodeData.setIsNew(isNew);
         newNodeData.setIsRemoved(isRemoved);
@@ -443,7 +455,8 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                                 log.trace(logInitMsg + "Removed related child |"
                                         + subjectDoc.getId() + "|.");
                             } else if (nodeData.getIsModified()) {
-                                updateRelation(nodeData, subjectDoc);
+                                updateRelation(nodeData, subjectDoc, isAnarchic,
+                                        isInverse);
                                 log.trace(logInitMsg + "Updated related child |"
                                         + subjectDoc.getId() + "|.");
                             }
@@ -516,7 +529,8 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                         isInverse, false, nodeData.getComment(),
                         nodeData.getQuantity(), nodeData.getOrdering(),
                         nodeData.getDirectorOrdering(),
-                        nodeData.getViewerOrdering());
+                        nodeData.getViewerOrdering(),
+                        nodeData.getInverseViewerOrdering());
             } else {
                 if (!objectDoc.isLocked()
                         || objectDoc.getLockInfo().getOwner().equals(
@@ -526,7 +540,8 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                             isInverse, false, nodeData.getComment(),
                             nodeData.getQuantity(), nodeData.getOrdering(),
                             nodeData.getDirectorOrdering(),
-                            nodeData.getViewerOrdering());
+                            nodeData.getViewerOrdering(),
+                            nodeData.getInverseViewerOrdering());
                 } else {
                     facesMessages.add(StatusMessage.Severity.ERROR,
                             messages.get(
@@ -557,7 +572,8 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                             nodeData.getComment(), nodeData.getQuantity(),
                             nodeData.getOrdering(),
                             nodeData.getDirectorOrdering(),
-                            nodeData.getViewerOrdering());
+                            nodeData.getViewerOrdering(),
+                            nodeData.getInverseViewerOrdering());
                 } else {
                     throw new EloraException(messages.get(
                             "label.archived.relations.not.created"));
@@ -687,7 +703,16 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
 
     }
 
-    private void updateRelation(RelationNodeData nodeData,
+    private void updateRelation(RelationNodeData nodeData, DocumentModel doc,
+            boolean isAnarchic, boolean isInverse) throws EloraException {
+        if (isAnarchic) {
+            updateAnarchicRelation(nodeData, doc, isInverse);
+        } else {
+            updateNormalRelation(nodeData, doc);
+        }
+    }
+
+    private void updateNormalRelation(RelationNodeData nodeData,
             DocumentModel subjectDoc) throws EloraException {
 
         // TODO Ezin da hau beste moduren baten atara?
@@ -700,7 +725,8 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                     subjectDoc, nodeData.getData(), nodeData.getPredicateUri(),
                     false, false, nodeData.getComment(), nodeData.getQuantity(),
                     nodeData.getOrdering(), nodeData.getDirectorOrdering(),
-                    nodeData.getViewerOrdering());
+                    nodeData.getViewerOrdering(),
+                    nodeData.getInverseViewerOrdering());
 
         } else {
 
@@ -715,8 +741,69 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                     subjectDoc, nodeData.getPredicateUri(), objectDoc,
                     nodeData.getData(), nodeData.getQuantity(),
                     nodeData.getOrdering(), nodeData.getDirectorOrdering(),
-                    nodeData.getViewerOrdering());
+                    nodeData.getViewerOrdering(),
+                    nodeData.getInverseViewerOrdering());
         }
+    }
+
+    private void updateAnarchicRelation(RelationNodeData nodeData,
+            DocumentModel currentWcDoc, boolean isInverse)
+            throws EloraException {
+
+        // For the moment, we consider that we only change simple relation
+        // properties (ordering, ...) in anarchic relations.
+
+        DocumentModel currentBaseDoc = EloraDocumentHelper.getBaseVersion(
+                currentWcDoc);
+        DocumentModel relatedDoc = nodeData.getData();
+
+        DocumentModel relatedWcDoc = documentManager.getWorkingCopy(
+                nodeData.getData().getRef());
+
+        // Current base - AV relations
+        if (!isInverse) {
+            eloraDocumentRelationManager.updateRelation(documentManager,
+                    currentBaseDoc, nodeData.getPredicateUri(), relatedDoc,
+                    relatedDoc, nodeData.getQuantity(), nodeData.getOrdering(),
+                    nodeData.getDirectorOrdering(),
+                    nodeData.getViewerOrdering(),
+                    nodeData.getInverseViewerOrdering());
+        } else {
+            eloraDocumentRelationManager.updateRelation(documentManager,
+                    relatedDoc, nodeData.getPredicateUri(), currentBaseDoc,
+                    currentBaseDoc, nodeData.getQuantity(),
+                    nodeData.getOrdering(), nodeData.getDirectorOrdering(),
+                    nodeData.getViewerOrdering(),
+                    nodeData.getInverseViewerOrdering());
+        }
+
+        // Current WC - Related WC
+        DocumentModel relatedBaseDoc = EloraDocumentHelper.getBaseVersion(
+                relatedWcDoc);
+        if (relatedBaseDoc != null) {
+            if (relatedBaseDoc.getId().equals(relatedDoc.getId())) {
+
+                if (!isInverse) {
+                    eloraDocumentRelationManager.updateRelation(documentManager,
+                            currentWcDoc, nodeData.getPredicateUri(),
+                            relatedWcDoc, relatedWcDoc, nodeData.getQuantity(),
+                            nodeData.getOrdering(),
+                            nodeData.getDirectorOrdering(),
+                            nodeData.getViewerOrdering(),
+                            nodeData.getInverseViewerOrdering());
+                } else {
+                    eloraDocumentRelationManager.updateRelation(documentManager,
+                            relatedWcDoc, nodeData.getPredicateUri(),
+                            currentWcDoc, currentWcDoc, nodeData.getQuantity(),
+                            nodeData.getOrdering(),
+                            nodeData.getDirectorOrdering(),
+                            nodeData.getViewerOrdering(),
+                            nodeData.getInverseViewerOrdering());
+                }
+
+            }
+        }
+
     }
 
     protected void addDirectRelations(DocumentModel currentDoc,
@@ -865,6 +952,7 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
         ordering = null;
         directorOrdering = null;
         viewerOrdering = null;
+        inverseViewerOrdering = null;
         addDirectRelations = false;
     }
 

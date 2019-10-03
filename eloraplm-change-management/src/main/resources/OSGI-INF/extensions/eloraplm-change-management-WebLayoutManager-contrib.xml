@@ -4,14 +4,14 @@
 
   <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
     
-    <layout name="summary_priority">
+    <layout name="summary_planning">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml
         </template>
       </templates>
       <rows>
         <row>
-          <widget>expectedEndDate</widget>
+          <widget>plannedEndDate</widget>
         </row>
         <row>
           <widget>realEndDate</widget>
@@ -130,109 +130,6 @@
             </row>
           </rows>
         </layout>
-
-
-    <layout name="CmPr_Task100@taskLayout">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml</template>
-      </templates>
-      <rows>
-        <row>
-          <properties mode="any">
-            <property name="nxl_colspan_0">1</property>
-          </properties>
-          <widget>participants</widget>
-        </row>
-        <row>
-          <properties mode="any">
-            <property name="nxl_colspan_0">1</property>
-          </properties>
-          <widget>comment</widget>
-        </row>
-      </rows>
-      <widget name="participants" type="multipleUsersSuggestion">
-        <labels>
-          <label mode="any">wf.parallelDocumentReview.ParticipantsOnTheReview</label>
-        </labels>
-        <translated>true</translated>
-        <fields>
-          <field>['participants']</field>
-        </fields>
-        <properties widgetMode="edit">
-<!--           <property name="operationId">UserGroup.Suggestion</property> -->
-          <property name="orderable">true</property>
-          <property name="placeholder">label.security.search</property>
-          <property name="width">70%</property>
-          <property name="prefixed">true</property>
-          <property name="required">#{request.getParameter('button') == 'start_review'}</property>
-        </properties>
-      </widget>
-      <widget name="comment" type="textarea">
-        <labels>
-          <label mode="any">wf.parallelDocumentReview.comment</label>
-        </labels>
-        <translated>true</translated>
-        <fields>
-          <field>['comment']</field>
-        </fields>
-      </widget>
-    </layout>
-
-    <layout name="CmPr_Task200@taskLayout">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml</template>
-      </templates>
-      <rows>
-        <row>
-          <properties mode="any">
-            <property name="nxl_colspan_0">1</property>
-          </properties>
-          <widget>initiatorComment</widget>
-        </row>
-        <row>
-          <properties mode="any">
-            <property name="nxl_colspan_0">1</property>
-          </properties>
-          <widget>comment</widget>
-        </row>
-        <row>
-          <properties mode="any">
-            <property name="nxl_colspan_0">1</property>
-          </properties>
-          <widget/>
-        </row>
-        <row>
-          <properties mode="any">
-            <property name="nxl_colspan_0">1</property>
-          </properties>
-          <widget/>
-        </row>
-      </rows>
-      <widget name="initiatorComment" type="textarea">
-        <labels>
-          <label mode="any">wf.parallelDocumentReview.initiatorComment</label>
-        </labels>
-        <translated>true</translated>
-        <fields>
-          <field>['initiatorComment']</field>
-        </fields>
-        <widgetModes>
-          <mode value="edit">view</mode>
-        </widgetModes>
-      </widget>
-      <widget name="comment" type="textarea">
-        <labels>
-          <label mode="any">wf.parallelDocumentReview.reviewerComment</label>
-        </labels>
-        <translated>true</translated>
-        <fields>
-          <field>['comment']</field>
-        </fields>
-      </widget>
-    </layout>
-
-   
-    
     
     <!-- treetable layouts - Modified Items, Impacted Items  -->
     <layout name="cm_mod_tt">
@@ -447,71 +344,6 @@
 
   <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgettypes">
   
-    <!-- New header for CM process documents summary tab -->
-    <widgetType name="cm_summary_document_header">
-      <configuration>
-        <title>CM Header</title>
-        <description>
-          <p>
-            This widget displays the header of CM documents in the summary tab.
-          </p>
-          <p>
-            It requires the following variables to be present in the EL context:
-            <ul>
-              <li>currentDocument: the current document</li>
-              <li>currentDocumentVersionInfo: the current document version information</li>
-            </ul>
-          </p>
-        </description>
-        <handlingLabels>true</handlingLabels>
-        <categories>
-          <category>summary</category>
-        </categories>
-        <supportedModes>
-          <mode>view</mode>
-        </supportedModes>
-        <!-- no configurable properties -->
-      </configuration>
-      <handler-class>
-        org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
-      </handler-class>
-      <property name="template">
-        /widgets/summary/cm_metadata_header_widget_template.xhtml
-      </property>
-    </widgetType>
-    
-    <widgetType name="ws_summary_document_header">
-      <configuration>
-        <title>WS Header</title>
-        <description>
-          <p>
-            This widget displays the header of WS documents in the summary tab.
-          </p>
-          <p>
-            It requires the following variables to be present in the EL context:
-            <ul>
-              <li>currentDocument: the current document</li>
-              <li>currentDocumentVersionInfo: the current document version information</li>
-            </ul>
-          </p>
-        </description>
-        <handlingLabels>true</handlingLabels>
-        <categories>
-          <category>summary</category>
-        </categories>
-        <supportedModes>
-          <mode>view</mode>
-        </supportedModes>
-        <!-- no configurable properties -->
-      </configuration>
-      <handler-class>
-        org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
-      </handler-class>
-      <property name="template">
-        /widgets/summary/ws_metadata_header_widget_template.xhtml
-      </property>
-    </widgetType>
-    
     <widgetType name="cm_summary_modified_items_list">
       <handler-class>
         org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
@@ -1265,64 +1097,5 @@
     </widget>
     <!-- end of treetable widgets -->
     
-    
-    <widget name="cm_summary_document_header" type="cm_summary_document_header">
-      <widgetModes>
-        <mode value="any">
-          #{currentDocument.hasFacet('CMProcess')?'view':'hidden'}
-        </mode>
-      </widgetModes>
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <controls mode="any">
-        <control name="handleLabels">true</control>
-      </controls>
-    </widget>
-    
-    <widget name="ws_summary_document_header" type="ws_summary_document_header">
-      <widgetModes>
-        <mode value="any">
-          #{currentDocument.hasFacet('EloraWorkspace')?'view':'hidden'}
-        </mode>
-      </widgetModes>
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <controls mode="any">
-        <control name="handleLabels">true</control>
-      </controls>
-    </widget>
-    
-    <!-- Summary right panel widgets -->
-    
-    <widget name="summary_cm_source_documents" type="summary_related_inverse_documents">
-      <labels>
-        <label mode="any">label.widget.CM.title.source</label>
-      </labels>
-      <properties mode="any">
-        <property name="documentRelations">#{incomingCmRelations}</property>
-      </properties>
-      <controls mode="any">
-        <control name="requireSurroundingForm">true</control>
-        <control name="handleLabels">true</control>
-      </controls>
-    </widget>
-    
-    <widget name="summary_cm_target_documents" type="summary_related_documents">
-      <labels>
-        <label mode="any">label.widget.CM.title.target</label>
-      </labels>
-      <properties mode="any">
-        <property name="documentRelations">#{outgoingCmRelations}</property>
-      </properties>
-      <controls mode="any">
-        <control name="requireSurroundingForm">true</control>
-        <control name="handleLabels">true</control>
-      </controls>
-    </widget>
-    
-    <!-- End of Summary right panel widgets -->
-
   </extension>
 </component>

@@ -2,10 +2,23 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:ui="http://java.sun.com/jsf/facelets"
   xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:c="http://java.sun.com/jstl/core">
+
+
+
+
+    <c:if test="#{currentDocument.lockInfo.owner != currentUser and currentDocument.currentLifeCycleState == 'asyncProcessing'}">
+      <div class="processMessage completeWarning"><h:outputText value="#{messages['eloraplm.message.warning.cm.batch.batchProcessInProgressByAnotherUser']}"/></div>
+    </c:if>
+
+
+    <c:if test="#{(currentDocument.lockInfo.owner != currentUser and currentDocument.currentLifeCycleState != 'asyncProcessing')
+                  or (currentDocument.lockInfo.owner == currentUser and not currentDocument.cmbp.needToBeRefreshed == true)}">
+      <ui:include src="document_not_editable_warning.xhtml"/>
  
-    <ui:include src="document_not_editable_warning.xhtml"/>
- 
-    <nxl:widget name="cm_bom_mod_tt" mode="view" value="#{cmBomModifiedItemsTreeBean}" />
-    
+      <nxl:widget name="cm_bom_mod_tt" mode="view" value="#{cmBomModifiedItemsTreeBean}" />
+    </c:if>
+
+
 </ui:composition>

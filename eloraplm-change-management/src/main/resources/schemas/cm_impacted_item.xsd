@@ -30,6 +30,7 @@ xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/">
       <xs:element name="predicate" type="xs:string"/>
       <xs:element name="quantity" type="xs:string"/>
       <xs:element name="isAnarchic" type="xs:boolean" default="false"/>
+      <xs:element name="isDirectObject" type="xs:boolean" default="false"/>
       <xs:element name="action" type="xs:string" default="id_change"/>
       <xs:element name="destinationItem">
         <xs:simpleType>

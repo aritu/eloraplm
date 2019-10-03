@@ -13,35 +13,31 @@
     <schema name="cm_doc_impacted_items" prefix="docimp" src="schemas/cm_doc_impacted_item_list.xsd"/>
     <schema name="cm_bom_impacted_items" prefix="bomimp" src="schemas/cm_bom_impacted_item_list.xsd"/>
     <schema name="eloraCmDoctypeActionsImpact" src="schemas/elora_cm_doctype_actions_impact.xsd"/>
-
-    <schema name="var_CmPr" prefix="var_CmPr" src="schemas/var_CmPr.xsd"/>
-    <schema name="var_CmPr_Task000Start" prefix="var_CmPr_Task000Start" src="schemas/var_CmPr_Task000Start.xsd"/>
-    <schema name="var_CmPr_Task100" prefix="var_CmPr_Task100" src="schemas/var_CmPr_Task100.xsd"/>
-    <schema name="var_CmPr_Task200" prefix="var_CmPr_Task200" src="schemas/var_CmPr_Task200.xsd"/>
-    <schema name="var_CmPr_Task999StopAccepted" prefix="var_CmPr_Task999StopAccepted" src="schemas/var_CmPr_Task999StopAccepted.xsd"/>
-    <schema name="var_CmPr_Task999StopRejected" prefix="var_CmPr_Task999StopRejected" src="schemas/var_CmPr_Task999StopRejected.xsd"/>
-    <schema name="var_CmPr_Task999StopOutManaged" prefix="var_CmPr_Task999StopOutManaged" src="schemas/var_CmPr_Task999StopOutManaged.xsd"/>
   </extension>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
-  
-    <!-- CMProcess -->
+    
     <facet name="CMProcess" />
+    
+    <doctype extends="Folder" name="FolderArchivedChangeManagement">
+        <facet name="EloraStruct" />
+    </doctype>
 
     <doctype extends="Folder" name="CmPr">
         <schema name="elora_object"/>
-        <schema name="priority"/>
+        <schema name="planning"/>
         <schema name="cm_pr"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
         <facet name="SuperSpace"/>
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
+        <facet name="AutomaticCode"/>
     </doctype>
 
     <doctype extends="Folder" name="CmEcr">
         <schema name="elora_object"/>
-        <schema name="priority"/>
+        <schema name="planning"/>
         <schema name="cm_ecr"/>
         <schema name="cm_doc_modified_items"/>
         <schema name="cm_bom_modified_items"/>
@@ -52,11 +48,12 @@
         <facet name="SuperSpace"/>
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
+        <facet name="AutomaticCode"/>
     </doctype>
 
     <doctype extends="Folder" name="CmEco">
         <schema name="elora_object"/>
-        <schema name="priority"/>
+        <schema name="planning"/>
         <schema name="cm_eco"/>
         <schema name="cm_doc_modified_items"/>
         <schema name="cm_bom_modified_items"/>
@@ -67,52 +64,14 @@
         <facet name="SuperSpace"/>
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
+        <facet name="AutomaticCode"/>
     </doctype>
     
-    <doctype extends="Folder" name="StructChangeManagement">
-      <facet name="EloraStruct"/>
-    </doctype>
-
-    <doctype extends="Folder" name="FolderChangeManagementPR">
-      <facet name="EloraStruct"/>
-    </doctype>
-
-    <doctype extends="Folder" name="FolderChangeManagementECR">
-      <facet name="EloraStruct"/>
-    </doctype>
-
-    <doctype extends="Folder" name="FolderChangeManagementECO">
-      <facet name="EloraStruct"/>
-    </doctype>
-
-
-    <facet name="facet-var_CmPr">
-      <schema name="var_CmPr"/>
-    </facet>
-    <facet name="facet-var_CmPr_Task000Start">
-      <schema name="var_CmPr_Task000Start"/>
-    </facet>
-    <facet name="facet-var_CmPr_Task100">
-      <schema name="var_CmPr_Task100"/>
-    </facet>
-    <facet name="facet-var_CmPr_Task200">
-      <schema name="var_CmPr_Task200"/>
-    </facet>
-    <facet name="facet-var_CmPr_Task999StopAccepted">
-      <schema name="var_CmPr_Task999StopAccepted"/>
-    </facet>
-    <facet name="facet-var_CmPr_Task999StopRejected">
-      <schema name="var_CmPr_Task999StopRejected"/>
-    </facet>
-    <facet name="facet-var_CmPr_Task999StopOutManaged">
-      <schema name="var_CmPr_Task999StopOutManaged"/>
-    </facet>
-
   </extension>
 
   
   <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
-
+    
     <type id="WorkspaceRoot">
       <subtypes>
         <type>CmPr</type>
@@ -120,92 +79,36 @@
         <type>CmEco</type>
       </subtypes>
     </type>
-
-   <type id="StructChangeManagement">
+    
+    <type id="StructArchived">
       <subtypes>
-        <type>FolderChangeManagementPR</type>
-        <type>FolderChangeManagementECR</type>
-        <type>FolderChangeManagementECO</type>
+        <type>FolderArchivedChangeManagement</type>
       </subtypes>
-   </type>
-
-   <type id="FolderChangeManagementPR">
-      <label>FolderChangeManagementPR</label>
-      <icon>/icons/folder_change_management_pr_16.gif</icon>
-      <bigIcon>/icons/folder_change_management_pr_100.png</bigIcon>
-      <description>FolderChangeManagementPR.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>Folder</type>
-      </subtypes>
-   </type>
-
-   <type id="FolderChangeManagementECR">
-      <label>FolderChangeManagementECR</label>
-      <icon>/icons/folder_change_management_ecr_16.gif</icon>
-      <bigIcon>/icons/folder_change_management_ecr_100.png</bigIcon>
-      <description>FolderChangeManagementECR.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>Folder</type>
-      </subtypes>      
-   </type>
-
-   <type id="FolderChangeManagementECO">
-      <label>FolderChangeManagementECO</label>
-      <icon>/icons/folder_change_management_eco_16.gif</icon>
-      <bigIcon>/icons/folder_change_management_eco_100.png</bigIcon>
-      <description>FolderChangeManagementECO.description</description>
-      <default-view>view_documents</default-view>
-      <layouts mode="any">
-        <layout>heading</layout>
-      </layouts>
-      <layouts mode="edit">
-        <layout>heading</layout>
-        <layout>dublincore</layout>
-      </layouts>
-      <contentViews category="content">
-        <contentView>document_content</contentView>
-      </contentViews>
-      <contentViews category="trash_content">
-        <contentView showInExportView="false">
-          document_trash_content
-        </contentView>
-      </contentViews>
-      <subtypes>
-        <type>Folder</type>
-      </subtypes>
-   </type>
+    </type>
+    
+    <type id="FolderArchivedChangeManagement">
+        <label>FolderArchivedChangeManagement</label>
+        <icon>/icons/folder_archived_change_management_16.gif</icon>
+        <bigIcon>/icons/folder_archived_change_management_100.png</bigIcon>
+        <description>FolderArchivedChangeManagement.description
+        </description>
+        <default-view>view_documents</default-view>
+        <layouts mode="any">
+            <layout>heading</layout>
+        </layouts>
+        <layouts mode="edit">
+            <layout>heading</layout>
+            <layout>dublincore</layout>
+        </layouts>
+        <contentViews category="content">
+            <contentView>document_content</contentView>
+        </contentViews>
+        <contentViews category="trash_content">
+            <contentView showInExportView="false">
+                document_trash_content
+            </contentView>
+        </contentViews>
+    </type>
 
    <type id="CmPr">
       <label>CmPr</label>
@@ -216,7 +119,7 @@
       <default-view>view_documents</default-view>
       <layouts mode="view">
         <layout>cm_pr</layout>
-        <layout>summary_priority</layout>
+        <layout>summary_planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
       </layouts>
@@ -225,9 +128,12 @@
         <layout>heading</layout>
         <layout>cm_pr</layout>
         <layout>responsible</layout>
-        <layout>priority</layout>
+        <layout>planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
       <contentViews category="content">
         <contentView>document_content</contentView>
@@ -253,7 +159,7 @@
       <default-view>view_documents</default-view>
       <layouts mode="view">
         <layout>cm_ecr</layout>
-        <layout>summary_priority</layout>
+        <layout>summary_planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
         <layout>cm_modified</layout>
@@ -263,9 +169,12 @@
         <layout>heading</layout>
         <layout>cm_ecr</layout>
         <layout>responsible</layout>
-        <layout>priority</layout>
+        <layout>planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
       <contentViews category="content">
         <contentView>document_content</contentView>
@@ -291,7 +200,7 @@
       <default-view>view_documents</default-view>
       <layouts mode="view">
         <layout>cm_eco</layout>
-        <layout>summary_priority</layout>
+        <layout>summary_planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
         <layout>cm_modified</layout>
@@ -301,9 +210,12 @@
         <layout>heading</layout>
         <layout>cm_eco</layout>
         <layout>responsible</layout>
-        <layout>priority</layout>
+        <layout>planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
       <contentViews category="content">
         <contentView>document_content</contentView>

@@ -1,19 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <component name="com.aritu.eloraplm.integration.PageProviderService.contrib">
-  <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService" point="providers">
-    <coreQueryPageProvider name="default_favorite_content">
-      <pattern escapeParameters="true" quoteParameters="false">
-        SELECT * FROM Document 
-        WHERE ecm:mixinType != 'HiddenInNavigation'
-        AND ecm:isVersion = 0
-        AND ecm:currentLifeCycleState != 'deleted'
-        AND ecm:isProxy = 0
-        AND ecm:primaryType IN (?)
-        AND collectionMember:collectionIds/* = ?
-      </pattern>
-      <sort column="elo:orderingPriority" ascending="true" />
-      <sort column="elo:reference" ascending="true" />
-      <sort column="dc:title" ascending="true" />
-    </coreQueryPageProvider>
-  </extension>
+
+    <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService" point="providers">
+        
+        <coreQueryPageProvider name="default_favorite_content">
+            <pattern escapeParameters="true" quoteParameters="false">
+                SELECT * FROM Document 
+                WHERE ecm:mixinType != 'HiddenInNavigation'
+                AND ecm:isVersion = 0
+                AND ecm:currentLifeCycleState != 'deleted'
+                AND ecm:isProxy = 0
+                AND ecm:primaryType IN (?)
+                AND collectionMember:collectionIds/* = ?
+            </pattern>
+            <sort column="elo:orderingPriority" ascending="true" />
+            <sort column="elo:reference" ascending="true" />
+            <sort column="dc:title" ascending="true" />
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="int_cad_item_wc_suggestion">
+            <property name="maxResults">PAGE_SIZE</property>
+            <pattern escapeParameters="true" quoteParameters="false">
+                SELECT * FROM Document
+                WHERE ecm:mixinType IN ('CadDocument', 'BomDocument')
+                AND ecm:mixinType != 'HiddenInNavigation'
+                AND ecm:isProxy = 0
+                AND ecm:isVersion = 0
+                AND ecm:parentId IS NOT NULL
+                AND ecm:currentLifeCycleState != 'deleted'
+                AND (elo:reference ILIKE '?' OR ecm:fulltext.dc:title LIKE '?')
+            </pattern>
+            <sort column="elo:orderingPriority" ascending="true" />
+            <sort column="elo:reference" ascending="true" />
+            <sort column="dc:title" ascending="true" />
+            <pageSize>10</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="int_workspace_suggestion">
+            <property name="maxResults">PAGE_SIZE</property>
+            <pattern escapeParameters="true" quoteParameters="false">
+                SELECT * FROM Document
+                WHERE ecm:mixinType = 'EloraWorkspace'
+                AND ecm:mixinType != 'HiddenInNavigation'
+                AND ecm:isProxy = 0
+                AND ecm:isVersion = 0
+                AND ecm:parentId IS NOT NULL
+                AND ecm:currentLifeCycleState != 'deleted' 
+                AND (elo:reference ILIKE '?' OR ecm:fulltext.dc:title LIKE '?')
+            </pattern>
+            <sort column="elo:orderingPriority" ascending="true" />
+            <sort column="elo:reference" ascending="true" />
+            <sort column="dc:title" ascending="true" />
+            <pageSize>10</pageSize>
+        </coreQueryPageProvider>
+        
+    </extension>
+    
 </component>

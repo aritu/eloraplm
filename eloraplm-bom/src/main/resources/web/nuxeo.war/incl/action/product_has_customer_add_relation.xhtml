@@ -7,8 +7,9 @@
   <ui:include src="add_relation_template.xhtml">
     <ui:param name="isEditablePredicate" value="false" />
     <ui:param name="isEditableOrdering" value="false" />
-    <ui:param name="isEditableQuantity" value="true" />
+    <ui:param name="isEditableQuantity" value="false" />
     <ui:param name="isAnarchic" value="true" />
+    <ui:param name="isInverse" value="true" />
     <ui:param name="treeBean" value="#{customerProductInverseTreeBean}" />
     <ui:param name="placeholder" value="eloraplm.placeholder.suggestion.relation.searchByReferenceOrTitle" />
     <ui:param name="pageProviderName" value="bom_customer_product_wc_suggestion" />

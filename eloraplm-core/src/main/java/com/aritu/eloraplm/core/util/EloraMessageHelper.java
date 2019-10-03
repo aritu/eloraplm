@@ -119,10 +119,10 @@ public class EloraMessageHelper {
      * @param key
      * @return
      */
-    public static String getTranslatedMessageFromOperation(CoreSession session,
+    public static String getTranslatedMessage(CoreSession session,
             String key) {
 
-        return getTranslatedMessageFromOperation(session, key, new Object[0]);
+        return getTranslatedMessage(session, key, new Object[0]);
     }
 
     /**
@@ -131,7 +131,7 @@ public class EloraMessageHelper {
      * @param params
      * @return
      */
-    public static String getTranslatedMessageFromOperation(CoreSession session,
+    public static String getTranslatedMessage(CoreSession session,
             String key, Object[] params) {
 
         if (key == null) {

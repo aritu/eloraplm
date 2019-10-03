@@ -47,12 +47,14 @@ public class DocCreationInitialActionsProcessor implements EventListener {
                 DocumentEventContext docEventContext = (DocumentEventContext) eventContext;
                 DocumentModel doc = docEventContext.getSourceDocument();
 
-                // TODO: Hau hobeto ulertu.
                 if (docEventContext.getPrincipal() instanceof SystemPrincipal) {
                     return;
                 }
 
                 // Only execute for WC of certain facets
+                // CAUTION! At the moment, we have no way to limit BasicDocument
+                // to REAL basic documents, so CAD and BOM docs also have this
+                // facet
                 if (doc.isVersion() || doc.isProxy() || !(doc.hasFacet(
                         EloraFacetConstants.FACET_CAD_DOCUMENT)
                         || doc.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)

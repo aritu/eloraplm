@@ -81,6 +81,9 @@ public class WorkspaceBomActionsBean implements Serializable {
         DocumentModelList relatedDocs = new DocumentModelListImpl();
 
         for (DocumentModel doc : docsList) {
+            // CAUTION! At the moment, we have no way to limit BasicDocument
+            // to REAL basic documents, so CAD and BOM docs also have this
+            // facet
             if (doc.hasFacet(EloraFacetConstants.FACET_CAD_DOCUMENT)
                     || doc.hasFacet(EloraFacetConstants.FACET_BASIC_DOCUMENT)) {
                 relatedDocs.addAll(processRelatedDoc(doc, TARGET_BOM));

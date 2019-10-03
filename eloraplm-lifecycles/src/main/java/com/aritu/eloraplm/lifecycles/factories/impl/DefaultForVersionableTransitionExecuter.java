@@ -13,10 +13,14 @@
  */
 package com.aritu.eloraplm.lifecycles.factories.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
 
 /**
@@ -47,7 +51,13 @@ public class DefaultForVersionableTransitionExecuter
     }
 
     @Override
-    public void execute(DocumentModel doc) {
+    public List<String> getErrorList() {
+        // For now we don't use this method
+        return new ArrayList<String>();
+    }
+
+    @Override
+    public void execute(DocumentModel doc) throws EloraException {
 
         CoreSession session = doc.getCoreSession();
 
@@ -55,6 +65,10 @@ public class DefaultForVersionableTransitionExecuter
             doc.followTransition(transition);
         } else {
             DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(doc);
+            if (baseDoc == null) {
+                throw new EloraException("The document |" + doc.getId()
+                        + "| has no base version.");
+            }
             baseDoc.followTransition(transition);
 
             // We cannot follow transition instead of restoring, because it

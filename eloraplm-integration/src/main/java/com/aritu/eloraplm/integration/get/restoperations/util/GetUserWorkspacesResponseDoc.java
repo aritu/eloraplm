@@ -38,6 +38,10 @@ public class GetUserWorkspacesResponseDoc {
 
     private String path;
 
+    private String lifecycleState;
+
+    private String description;
+
     public String getRealUid() {
         return realUid;
     }
@@ -101,4 +105,21 @@ public class GetUserWorkspacesResponseDoc {
     public void setDomainRealUid(String domainRealUid) {
         this.domainRealUid = domainRealUid;
     }
+
+    public String getLifecycleState() {
+        return lifecycleState;
+    }
+
+    public void setLifecycleState(String lifecycleState) {
+        this.lifecycleState = lifecycleState;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

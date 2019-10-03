@@ -14,6 +14,8 @@
 package com.aritu.eloraplm.core.util.json;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,7 +70,7 @@ public class EloraJsonHelper {
      */
     public static String getJsonFieldAsString(JsonNode item, String fieldName,
             boolean isMandatory, boolean canBeNull, boolean canBeEmpty)
-                    throws EloraException {
+            throws EloraException {
         String value = null;
         String errorMsg = null;
 
@@ -289,6 +291,57 @@ public class EloraJsonHelper {
                         throw new EloraException(errorMsg);
                     }
                     value = item.get(fieldName).getValueAsLong();
+                }
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Returns the Date value stored in the specified JsonNode field name, in
+     * ISO8601 format.
+     *
+     * @param item
+     * @param fieldName
+     * @param isMandatory
+     * @return
+     * @throws EloraException
+     */
+    public static Date getJsonFieldAsDate(JsonNode item, String fieldName,
+            boolean isMandatory) throws EloraException {
+
+        Date value = null;
+
+        String errorMsg = null;
+
+        if (isItemValid(item) && isFieldNameValid(item, fieldName)) {
+            if (isMandatory) {
+                if (!item.has(fieldName)) {
+                    errorMsg = fieldName + " is missing.";
+                    throw new EloraException(errorMsg);
+                }
+
+                try {
+                    String inst = item.get(fieldName).getTextValue();
+                    Instant i = Instant.parse(inst);
+                    value = Date.from(i);
+                } catch (Exception e) {
+                    errorMsg = "Error parsing " + fieldName + " as datetime: "
+                            + e.getMessage();
+                    throw new EloraException(errorMsg, e);
+                }
+
+            } else {
+                if (item.has(fieldName)) {
+                    try {
+                        String inst = item.get(fieldName).getTextValue();
+                        Instant i = Instant.parse(inst);
+                        value = Date.from(i);
+                    } catch (Exception e) {
+                        errorMsg = "Error parsing " + fieldName
+                                + " as datetime: " + e.getMessage();
+                        throw new EloraException(errorMsg, e);
+                    }
                 }
             }
         }

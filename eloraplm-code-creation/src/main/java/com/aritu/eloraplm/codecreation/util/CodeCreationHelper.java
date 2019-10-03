@@ -29,6 +29,8 @@ import org.nuxeo.runtime.api.Framework;
 import com.aritu.eloraplm.config.util.CodeCreationConfigHelper;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
 import com.aritu.eloraplm.constants.CodeCreationConfigConstants;
+import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -171,5 +173,31 @@ public class CodeCreationHelper {
         m.appendTail(sb);
 
         return sb.toString();
+    }
+
+    public static boolean isGenerateAutomaticCode(DocumentModel doc,
+            String value) {
+
+        if (!doc.hasFacet(EloraFacetConstants.FACET_AUTOMATIC_CODE)) {
+            return false;
+        }
+
+        if (value != null && !value.isEmpty()) {
+            return false;
+        }
+
+        if (doc.getContextData(
+                EloraGeneralConstants.CONTEXT_SKIP_AUTOMATIC_CODE_CREATION) != null) {
+
+            boolean skipAutoCodeCreation = (boolean) doc.getContextData(
+                    EloraGeneralConstants.CONTEXT_SKIP_AUTOMATIC_CODE_CREATION);
+
+            if (skipAutoCodeCreation) {
+                return false;
+            }
+        }
+
+        return true;
+
     }
 }

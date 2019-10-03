@@ -61,7 +61,7 @@ public class EloraDocumentRelationService extends DocumentRelationService
             DocumentModel to, String predicate, String comment,
             String quantity) {
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
-                false, false, comment, quantity, null, null, null);
+                false, false, comment, quantity, null, null, null, null);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class EloraDocumentRelationService extends DocumentRelationService
             String quantity) {
 
         addRelation(session, from, toResource, predicate, false, false, comment,
-                quantity, null, null, null);
+                quantity, null, null, null, null);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class EloraDocumentRelationService extends DocumentRelationService
             DocumentModel to, String predicate, String comment, String quantity,
             Integer ordering) {
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
-                false, false, comment, quantity, ordering, null, null);
+                false, false, comment, quantity, ordering, null, null, null);
     }
 
     @Override
@@ -87,65 +87,49 @@ public class EloraDocumentRelationService extends DocumentRelationService
             Integer ordering) {
 
         addRelation(session, from, toResource, predicate, false, false, comment,
-                quantity, ordering, null, null);
-    }
-
-    @Override
-    public void addRelation(CoreSession session, DocumentModel from,
-            DocumentModel to, String predicate, String comment, String quantity,
-            Integer directorOrdering, Integer viewerOrdering) {
-        addRelation(session, from, getNodeFromDocumentModel(to), predicate,
-                false, false, comment, quantity, null, directorOrdering,
-                viewerOrdering);
+                quantity, ordering, null, null, null);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
             Node toResource, String predicate, String comment, String quantity,
-            Integer directorOrdering, Integer viewerOrdering) {
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            Integer inverseViewerOrdering) {
 
         addRelation(session, from, toResource, predicate, false, false, comment,
-                quantity, null, directorOrdering, viewerOrdering);
+                quantity, ordering, directorOrdering, viewerOrdering,
+                inverseViewerOrdering);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
             DocumentModel to, String predicate, String comment, String quantity,
-            Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering) {
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            Integer inverseViewerOrdering) {
+
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
                 false, false, comment, quantity, ordering, directorOrdering,
-                viewerOrdering);
-    }
-
-    @Override
-    public void addRelation(CoreSession session, DocumentModel from,
-            Node toResource, String predicate, String comment, String quantity,
-            Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering) {
-
-        addRelation(session, from, toResource, predicate, false, false, comment,
-                quantity, ordering, directorOrdering, viewerOrdering);
+                viewerOrdering, inverseViewerOrdering);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
             DocumentModel to, String predicate, boolean inverse,
             boolean includeStatementsInEvents, String comment, String quantity,
-            Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering) {
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            Integer inverseViewerOrdering) {
 
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
                 inverse, includeStatementsInEvents, comment, quantity, ordering,
-                directorOrdering, viewerOrdering);
+                directorOrdering, viewerOrdering, inverseViewerOrdering);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
             Node toResource, String predicate, boolean inverse,
             boolean includeStatementsInEvents, String comment, String quantity,
-            Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering) {
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            Integer inverseViewerOrdering) {
         Graph graph = getRelationManager().getGraph(
                 EloraRelationConstants.ELORA_GRAPH_NAME, session);
         QNameResource fromResource = getNodeFromDocumentModel(from);
@@ -220,6 +204,14 @@ public class EloraDocumentRelationService extends DocumentRelationService
                         new LiteralImpl(String.valueOf(viewerOrdering)));
             }
         }
+
+        if (inverseViewerOrdering != null) {
+            if (stmt.getProperties(
+                    EloraRelationConstants.INVERSE_VIEWER_ORDERING) == null) {
+                stmt.addProperty(EloraRelationConstants.INVERSE_VIEWER_ORDERING,
+                        new LiteralImpl(String.valueOf(inverseViewerOrdering)));
+            }
+        }
         // end of custom metadata
 
         // notifications
@@ -256,17 +248,18 @@ public class EloraDocumentRelationService extends DocumentRelationService
             String predicate, DocumentModel to, DocumentModel newTo) {
 
         updateRelation(session, from, predicate, to, null, null, newTo, null,
-                null, null, null, true);
+                null, null, null, null, true);
     }
 
     @Override
     public void updateRelation(CoreSession session, DocumentModel from,
             String predicate, DocumentModel to, DocumentModel newTo,
             String quantity, Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering) {
+            Integer viewerOrdering, Integer inverseViewerOrdering) {
 
         updateRelation(session, from, predicate, to, null, null, newTo,
-                quantity, ordering, directorOrdering, viewerOrdering, true);
+                quantity, ordering, directorOrdering, viewerOrdering,
+                inverseViewerOrdering, true);
     }
 
     @Override
@@ -274,7 +267,7 @@ public class EloraDocumentRelationService extends DocumentRelationService
             String predicate, DocumentModel to, DocumentModel newFrom,
             String newPredicate, DocumentModel newTo, String quantity,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            boolean checkIfNewRelationExists) {
+            Integer inverseViewerOrdering, boolean checkIfNewRelationExists) {
 
         EloraCoreGraph graph = (EloraCoreGraph) getRelationManager().getGraph(
                 EloraRelationConstants.ELORA_GRAPH_NAME, session);
@@ -335,6 +328,11 @@ public class EloraDocumentRelationService extends DocumentRelationService
         if (viewerOrdering != null) {
             newStmt.setProperty(EloraRelationConstants.VIEWER_ORDERING,
                     new LiteralImpl(String.valueOf(viewerOrdering)));
+        }
+
+        if (inverseViewerOrdering != null) {
+            newStmt.setProperty(EloraRelationConstants.INVERSE_VIEWER_ORDERING,
+                    new LiteralImpl(String.valueOf(inverseViewerOrdering)));
         }
 
         // Send notifications and apply the update
@@ -416,4 +414,5 @@ public class EloraDocumentRelationService extends DocumentRelationService
         options.put(RelationEvents.STATEMENTS_EVENT_KEY,
                 (Serializable) statements);
     }
+
 }

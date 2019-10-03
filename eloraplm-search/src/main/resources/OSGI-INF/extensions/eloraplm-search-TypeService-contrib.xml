@@ -9,36 +9,83 @@
   </extension>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
-    <doctype extends="DefaultSearch" name="EloraSearch">
+    <doctype extends="DefaultSearch" name="EloraGeneralSearch">
       <schema name="elora_search" />
     </doctype>
+    
+     <doctype extends="DefaultSearch" name="EloraCadDocsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
+    <doctype extends="DefaultSearch" name="EloraBasicDocsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
   </extension>
   
   <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
     <types>
-      <type name="EloraSearch">default</type>
+      <type name="EloraGeneralSearch">default</type>
+      <type name="EloraCadDocsSearch">default</type>
     </types>
   </extension>
   
   <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
 
-    <type id="EloraSearch">
-      <label>EloraSearch</label>
+    <type id="EloraGeneralSearch">
+      <label>EloraGeneralSearch</label>
       <icon>/icons/search.png</icon>
       <bigIcon>/icons/search_100.png</bigIcon>
-      <description>EloraSearch.description</description>
+      <description>EloraGeneralSearch.description</description>
       <default-view>home_view_documents</default-view>
       <layouts mode="any">
-        <layout>elora_search_layout</layout>
+        <layout>elora_general_search_layout</layout>
         <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
         <layout>content_view_display</layout>
         -->
       </layouts>
       <layouts mode="edit">
         <layout>heading</layout>
-        <layout>elora_search_layout</layout>
+        <layout>elora_general_search_layout</layout>
       </layouts>
     </type>
+    
+    <type id="EloraCadDocsSearch">
+      <label>EloraCadDocsSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraCadDocsSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_cad_documents_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_cad_documents_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraBasicDocsSearch">
+      <label>EloraBasicDocsSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraBasicDocsSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_basic_documents_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_basic_documents_search_layout</layout>
+      </layouts>
+    </type>
+    
     
     <!--  Override DefaultSearch in order to:
             - Don't display heading layout (Title and Description repeated)

@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.aritu.eloraplm</groupId>
     <artifactId>eloraplm-parent</artifactId>
-    <version>20181120</version>
+    <version>20191003</version>
   </parent>
   <artifactId>eloraplm-lifecycles</artifactId>
   <name>eloraplm-lifecycles</name>
@@ -39,20 +39,8 @@
       <artifactId>org.osgi.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-config</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.seam</groupId>
       <artifactId>jboss-seam</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-constants</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-exceptions</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -63,16 +51,18 @@
       <artifactId>nuxeo-platform-actions-jsf</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.nuxeo.ecm.platform</groupId>
+      <artifactId>nuxeo-platform-relations-api</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>com.aritu.eloraplm</groupId>
       <artifactId>eloraplm-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-promote-constants</artifactId>
+      <artifactId>eloraplm-pdm</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.nuxeo.ecm.platform</groupId>
-      <artifactId>nuxeo-platform-relations-api</artifactId>
-    </dependency>
+    
   </dependencies>
 </project>

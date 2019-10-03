@@ -20,7 +20,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -44,7 +43,7 @@ import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
  * @author aritu
  *
  */
-@Operation(id = CancelCheckin.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Cancel Checkin", description = "Cancel the checkin process of documents from the Elora Plm Connector and unlock docs.")
+@Operation(id = CancelCheckin.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Cancel Checkin", description = "Cancel the checkin process of documents from the Elora Plm Connector and unlock docs.")
 public class CancelCheckin {
 
     public static final String ID = "Elora.PlmConnector.CancelCheckin";

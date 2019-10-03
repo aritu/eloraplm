@@ -20,7 +20,6 @@ import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
-import com.aritu.eloraplm.exceptions.EloraException;
 
 @Name("cadCompositionTreeBean")
 @Scope(ScopeType.CONVERSATION)
@@ -95,7 +94,7 @@ public class CadCompositionTreeBean extends EditableRelationTreeBean
             setRoot(nodeService.getRoot(currentDoc));
             setIsDirty(false);
             log.trace(logInitMsg + "Tree created.");
-        } catch (EloraException e) {
+        } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.treetable.createRoot"));

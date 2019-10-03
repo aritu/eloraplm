@@ -392,7 +392,7 @@
         
         <widget name="summary_cad_drawing_of_documents" type="summary_related_documents">
           <labels>
-            <label mode="any">label.widgetBlock.title.CadDocuments</label>
+            <label mode="any">title.relation.outgoing</label>
           </labels>
           <properties mode="any">
             <property name="documentRelations">#{outgoingCadSpecialRelations}</property>
@@ -406,7 +406,7 @@
         
         <widget name="summary_cad_drawing_of_inverse_documents" type="summary_related_inverse_documents">
           <labels>
-            <label mode="any">label.widgetBlock.title.CadDocuments</label>
+            <label mode="any">title.relation.incoming</label>
           </labels>
           <properties mode="any">
             <property name="documentRelations">#{incomingCadSpecialRelations}</property>

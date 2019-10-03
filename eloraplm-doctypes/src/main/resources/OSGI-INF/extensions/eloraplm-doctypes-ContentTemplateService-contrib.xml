@@ -10,9 +10,7 @@
     
     <factoryBinding name="StructureRootFactory" factoryName="SimpleTemplateFactory" targetType="StructureRoot">
       <template>
-        <templateItem typeName="StructArchivedWS" id="archivedWS" title="Archived workspaces" description="Archived Workspaces."/>
-        <templateItem typeName="StructChangeManagement" id="changeManagement" title="Archived Change Management" description="Archived Change Management."/>
-        <templateItem typeName="StructProject" id="projects" title="Archived Projects" description="Archived Projects."/>
+      	<templateItem typeName="StructArchived" id="archived" title="Archived" description="Archived Workspaces"/>
         <templateItem typeName="StructCadDoc" id="documents" title="Documents" description="CAD documents."/>
         <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering BOMs."/>
         <templateItem typeName="WorkspaceRoot" id="workspaces" title="Workspaces" description="Workspaces."/>
@@ -22,10 +20,9 @@
 
     <factoryBinding name="CollaborationRootFactory" factoryName="SimpleTemplateFactory" targetType="CollaborationRoot">
       <template>
-        <templateItem typeName="StructArchivedWS" id="archivedWS" title="Archived workspaces" description="Archived Workspaces."/>
-        <templateItem typeName="StructProject" id="projects" title="Archived Projects" description="Archived Projects."/>
+        <templateItem typeName="StructArchived" id="archived" title="Archived" description="Archived Workspaces."/>
         <templateItem typeName="StructCadDoc" id="documents" title="Documents" description="CAD documents."/>
-        <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering BOMs."/>
+        <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering items."/>
         <templateItem typeName="WorkspaceRoot" id="workspaces" title="Workspaces" description="Workspaces."/>
         <templateItem typeName="TempFolder" id="temp" title="Temp folder" description="Temporary files."/>
       </template>
@@ -36,6 +33,13 @@
         <templateItem typeName="StructCadDoc" id="documents" title="Documents" description="CAD documents."/>
         <templateItem typeName="StructEbom" id="designs" title="Designs" description="Engineering BOMs."/>
         <templateItem typeName="TempFolder" id="temp" title="Temp folder" description="Temporary files."/>
+      </template>
+    </factoryBinding>
+    
+    <factoryBinding name="StructArchivedFactory" factoryName="SimpleTemplateFactory" targetType="StructArchived">
+      <template>
+        <templateItem typeName="FolderArchivedProjects" id="archivedProjects" title="Projects" description="Archived projects."/>
+        <templateItem typeName="FolderArchivedWorkspaces" id="archivedWorkspaces" title="Workspaces" description="Archived workspaces."/>
       </template>
     </factoryBinding>
 

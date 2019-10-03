@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.aritu.eloraplm</groupId>
     <artifactId>eloraplm-packages</artifactId>
-    <version>20181120</version>
+    <version>20191003</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -21,27 +21,7 @@
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-bom-autostructure</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-bom-characteristics</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-bom-lists</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
       <artifactId>eloraplm-change-management</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-change-management-batch-processing</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-checkin</artifactId>
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
@@ -49,47 +29,11 @@
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-constants</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-container-archive</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-container-relations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
       <artifactId>eloraplm-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-dashboard</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-demo</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
       <artifactId>eloraplm-doctypes</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-exceptions</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-export</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-history-min</artifactId>
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
@@ -101,51 +45,15 @@
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-integration-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-l10n</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
       <artifactId>eloraplm-lifecycles</artifactId>
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-major-letter-versioning</artifactId>
+      <artifactId>eloraplm-pdm</artifactId>
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-mimetypes</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-oauth</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-overwrite-version</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-pdf-thumbnails</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-primefaces</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-promote</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-promote-constants</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-queries</artifactId>
+      <artifactId>eloraplm-quality-management</artifactId>
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
@@ -161,35 +69,11 @@
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-treetable</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-ui</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-versioning</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
       <artifactId>eloraplm-viewer</artifactId>
     </dependency>
     <dependency>
       <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-virtual-navigation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-webapp-base</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-webapp-clipboard</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-webapp-pdm</artifactId>
+      <artifactId>eloraplm-webapp</artifactId>
     </dependency>
   </dependencies>
 

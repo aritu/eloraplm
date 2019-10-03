@@ -15,5 +15,9 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-relations-ActionService-
  rib.xml,OSGI-INF/extensions/eloraplm-relations-RelationService-contri
  b.xml,OSGI-INF/extensions/eloraplm-relations-SchedulerService-contrib
  .xml,OSGI-INF/extensions/eloraplm-relations-EventServiceComponent-con
- trib.xml
+ trib.xml,OSGI-INF/extensions/eloraplm-container-relations-ActionServi
+ ce-contrib.xml,OSGI-INF/extensions/eloraplm-container-relations-Direc
+ toryUIManager-contrib.xml,OSGI-INF/extensions/eloraplm-container-rela
+ tions-SQLDirectoryFactory-contrib.xml,OSGI-INF/extensions/eloraplm-co
+ ntainer-relations-WebLayoutManager-contrib.xml
 

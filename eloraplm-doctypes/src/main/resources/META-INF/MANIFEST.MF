@@ -17,5 +17,10 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-doctypes-ActionService-c
  ntrib.xml,OSGI-INF/extensions/eloraplm-doctypes-SecurityService-contr
  ib.xml,OSGI-INF/extensions/eloraplm-doctypes-NotificationService-cont
  rib.xml,OSGI-INF/extensions/eloraplm-doctypes-LifeCycleService-contri
- b.xml
+ b.xml,OSGI-INF/extensions/eloraplm-mimetypes-MimetypeRegistryService-
+ contrib.xml,OSGI-INF/extensions/eloraplm-thumbnails-ActionService-con
+ trib.xml,OSGI-INF/extensions/eloraplm-thumbnails-OperationServiceComp
+ onent-contrib.xml,OSGI-INF/extensions/eloraplm-thumbnails-PreviewAdap
+ terManagerComponent-contrib.xml,OSGI-INF/extensions/eloraplm-thumbnai
+ ls-ThumbnailService.xml
 

@@ -31,7 +31,9 @@ public class CmProcessNode {
 
     private String originUid;
 
-    private String destinationRealUid;
+    private String originWcUid;
+
+    private String destinationUid;
 
     private String destinationWcUid;
 
@@ -43,15 +45,16 @@ public class CmProcessNode {
 
     public CmProcessNode(String nodeId, String parentNodeId, String rootItemUid,
             boolean isRootItem, String parentUid, String originUid,
-            String destinationRealUid, String destinationWcUid, String action,
-            boolean isManaged, String comment) {
+            String originWcUid, String destinationUid, String destinationWcUid,
+            String action, boolean isManaged, String comment) {
         this.nodeId = nodeId;
         this.parentNodeId = parentNodeId;
         this.rootItemUid = rootItemUid;
         this.isRootItem = isRootItem;
         this.parentUid = parentUid;
         this.originUid = originUid;
-        this.destinationRealUid = destinationRealUid;
+        this.originWcUid = originWcUid;
+        this.destinationUid = destinationUid;
         this.destinationWcUid = destinationWcUid;
         this.action = action;
         this.isManaged = isManaged;
@@ -106,12 +109,20 @@ public class CmProcessNode {
         this.originUid = originUid;
     }
 
-    public String getDestinationRealUid() {
-        return destinationRealUid;
+    public String getOriginWcUid() {
+        return originWcUid;
     }
 
-    public void setDestinationRealUid(String destinationRealUid) {
-        this.destinationRealUid = destinationRealUid;
+    public void setOriginWcUid(String originWcUid) {
+        this.originWcUid = originWcUid;
+    }
+
+    public String getDestinationUid() {
+        return destinationUid;
+    }
+
+    public void setDestinationUid(String destinationUid) {
+        this.destinationUid = destinationUid;
     }
 
     public String getDestinationWcUid() {

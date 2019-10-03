@@ -25,7 +25,7 @@
       <dataFile>directories/eloras_doctype.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
-
+    
     <directory name="eloras_lifeCycle">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
@@ -34,6 +34,52 @@
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
       <dataFile>directories/eloras_lifecycle.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <!--  CAD documents search related vocabularies -->
+    <directory name="eloras_cadDocuments_docType">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_cadDocuments_docType</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_caddocuments_doctype.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="eloras_cadDocuments_lifeCycle">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_caddocuments_lifecycle</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_caddocuments_lifecycle.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <!--  Basic documents search related vocabularies -->
+    <directory name="eloras_basicDocuments_docType">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_basicDocuments_docType</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_basicdocuments_doctype.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+
+    <directory name="eloras_basicDocuments_lifeCycle">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_basicdocuments_lifecycle</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_basicdocuments_lifecycle.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
 

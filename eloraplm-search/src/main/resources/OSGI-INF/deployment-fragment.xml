@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <fragment version="1">
 
-    <require>com.aritu.eloraplm.l10n</require>
+    <require>com.aritu.eloraplm.webapp</require>
   
     <install>
         <unzip from="${bundle.fileName}" to="/" prefix="web">

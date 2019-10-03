@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.aritu.eloraplm</groupId>
     <artifactId>eloraplm-parent</artifactId>
-    <version>20181120</version>
+    <version>20191003</version>
   </parent>
 
   <artifactId>eloraplm-bom</artifactId>
@@ -42,34 +42,6 @@
       <artifactId>org.osgi.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-constants</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-exceptions</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-relations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-treetable</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-versioning</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.seam</groupId>
       <artifactId>jboss-seam</artifactId>
     </dependency>
@@ -78,9 +50,27 @@
       <artifactId>nuxeo-platform-relations-api</artifactId>
     </dependency>
     <dependency>
+        <groupId>org.nuxeo.ecm.platform</groupId>
+        <artifactId>nuxeo-admin-center</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>com.aritu.eloraplm</groupId>
+      <artifactId>eloraplm-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.aritu.eloraplm</groupId>
+      <artifactId>eloraplm-relations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.aritu.eloraplm</groupId>
+      <artifactId>eloraplm-webapp</artifactId>
+    </dependency>
+    
   </dependencies>
 
 </project>

@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -44,7 +43,7 @@ import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 /**
  * @author aritu
  */
-@Operation(id = GetNavigationFolder.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Get navigation folder", description = "")
+@Operation(id = GetNavigationFolder.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Get navigation folder", description = "")
 public class GetNavigationFolder {
 
     public static final String ID = "Elora.PlmConnector.GetNavigationFolder";

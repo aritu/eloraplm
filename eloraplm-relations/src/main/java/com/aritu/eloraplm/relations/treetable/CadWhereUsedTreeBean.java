@@ -17,7 +17,6 @@ import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalid
 import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextInvalidation;
 import org.primefaces.model.TreeNode;
 
-import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.treetable.CoreTreeBean;
 
 @Name("cadWhereUsedTreeBean")
@@ -92,7 +91,7 @@ public class CadWhereUsedTreeBean extends CoreTreeBean implements Serializable {
                     showObsoleteStateDocuments, showUniqueVersionsPerDocument);
             setRoot(nodeService.getRoot(currentDoc));
             log.trace(logInitMsg + "Tree created.");
-        } catch (EloraException e) {
+        } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.treetable.createRoot"));

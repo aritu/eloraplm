@@ -84,56 +84,7 @@ public interface EloraDocumentRelationManager extends DocumentRelationManager {
             Integer ordering);
 
     /**
-     * Add link between two documents (for ITEM - CAD relations)
-     *
-     * @param from the document to link from
-     * @param to the document to link to
-     * @param predicate is the type of link
-     * @param comment of the relation
-     * @param quantity is the amount of objects
-     * @param directorOrdering
-     * @param viewerOrdering
-     * @throws RelationAlreadyExistsException
-     */
-    void addRelation(CoreSession session, DocumentModel from, DocumentModel to,
-            String predicate, String comment, String quantity,
-            Integer directorOrdering, Integer viewerOrdering);
-
-    /**
-     * Add link between two documents (for ITEM - CAD relations)
-     *
-     * @param from the document to link from
-     * @param to the node to link to
-     * @param predicate is the type of link
-     * @param comment of the relation
-     * @param quantity is the amount of objects
-     * @param directorOrdering
-     * @param viewerOrdering
-     * @throws RelationAlreadyExistsException
-     */
-    void addRelation(CoreSession session, DocumentModel from, Node to,
-            String predicate, String comment, String quantity,
-            Integer directorOrdering, Integer viewerOrdering);
-
-    /**
-     * Add link between two documents with all the properties
-     *
-     * @param from the document to link from
-     * @param to the document to link to
-     * @param predicate is the type of link
-     * @param comment of the relation
-     * @param quantity is the amount of objects
-     * @param ordering
-     * @param directorOrdering
-     * @param viewerOrdering
-     * @throws RelationAlreadyExistsException
-     */
-    void addRelation(CoreSession session, DocumentModel from, DocumentModel to,
-            String predicate, String comment, String quantity, Integer ordering,
-            Integer directorOrdering, Integer viewerOrdering);
-
-    /**
-     * Add link between two documents with all the properties
+     * Add link between two document with quantity and all orderings
      *
      * @param from the document to link from
      * @param to the node to link to
@@ -143,14 +94,35 @@ public interface EloraDocumentRelationManager extends DocumentRelationManager {
      * @param ordering
      * @param directorOrdering
      * @param viewerOrdering
+     * @param inverseViewerOrdering
      * @throws RelationAlreadyExistsException
      */
     void addRelation(CoreSession session, DocumentModel from, Node to,
             String predicate, String comment, String quantity, Integer ordering,
-            Integer directorOrdering, Integer viewerOrdering);
+            Integer directorOrdering, Integer viewerOrdering,
+            Integer inverseViewerOrdering);
 
     /**
-     * Add link between two documents (all parameters and properties)
+     * Add link between two document with quantity and all orderings
+     *
+     * @param from the document to link from
+     * @param to the node to link to
+     * @param predicate is the type of link
+     * @param comment of the relation
+     * @param quantity is the amount of objects
+     * @param ordering
+     * @param directorOrdering
+     * @param viewerOrdering
+     * @param inverseViewerOrdering
+     * @throws RelationAlreadyExistsException
+     */
+    void addRelation(CoreSession session, DocumentModel from, DocumentModel to,
+            String predicate, String comment, String quantity, Integer ordering,
+            Integer directorOrdering, Integer viewerOrdering,
+            Integer inverseViewerOrdering);
+
+    /**
+     * Add inverse link between two documents (all parameters and properties)
      *
      * @param from the document to link from
      * @param to the node to link to
@@ -165,12 +137,14 @@ public interface EloraDocumentRelationManager extends DocumentRelationManager {
      * @param ordering
      * @param directorOrdering
      * @param viewerOrdering
+     * @param inverseViewerOrdering
      * @throws RelationAlreadyExistsException
      */
     void addRelation(CoreSession session, DocumentModel from, Node to,
             String predicate, boolean inverse,
             boolean includeStatementsInEvents, String comment, String quantity,
-            Integer ordering, Integer directorOrdering, Integer viewerOrdering);
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            Integer inverseViewerOrdering);
 
     /**
      * Add link between two documents (all parameters and properties)
@@ -188,13 +162,15 @@ public interface EloraDocumentRelationManager extends DocumentRelationManager {
      * @param ordering
      * @param directorOrdering
      * @param viewerOrdering
+     * @param inverseViewerOrdering
      * @throws RelationAlreadyExistsException
      */
 
     public void addRelation(CoreSession session, DocumentModel from,
             DocumentModel to, String predicate, boolean inverse,
             boolean includeStatementsInEvents, String comment, String quantity,
-            Integer ordering, Integer directorOrdering, Integer viewerOrdering);
+            Integer ordering, Integer directorOrdering, Integer viewerOrdering,
+            Integer inverseViewerOrdering);
 
     /**
      * Update relation's object
@@ -218,11 +194,12 @@ public interface EloraDocumentRelationManager extends DocumentRelationManager {
      * @param ordering
      * @param directorOrdering
      * @param viewerOrdering
+     * @param inverseViewerOrdering
      */
     void updateRelation(CoreSession session, DocumentModel from,
             String predicate, DocumentModel to, DocumentModel newTo,
             String quantity, Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering);
+            Integer viewerOrdering, Integer inverseViewerOrdering);
 
     /**
      * Update relation, base method
@@ -237,13 +214,14 @@ public interface EloraDocumentRelationManager extends DocumentRelationManager {
      * @param ordering
      * @param directorOrdering
      * @param viewerOrdering
+     * @param inverseViewerOrdering
      * @param checkIfNewRelationExists
      */
     void updateRelation(CoreSession session, DocumentModel from,
             String predicate, DocumentModel to, DocumentModel newFrom,
             String newPredicate, DocumentModel newTo, String quantity,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            boolean checkIfNewRelationExists);
+            Integer inverseViewerOrdering, boolean checkIfNewRelationExists);
 
     /**
      * Mark relation to remove later, updating from, predicate and to fields

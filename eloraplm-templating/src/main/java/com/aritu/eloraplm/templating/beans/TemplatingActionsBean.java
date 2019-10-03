@@ -29,9 +29,8 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.ui.web.util.ComponentUtils;
-import org.nuxeo.template.api.adapters.TemplateBasedDocument;
-
-import com.aritu.eloraplm.templating.adapters.FakeTemplateBasedDocumentAdapter;
+import org.nuxeo.runtime.api.Framework;
+import com.aritu.eloraplm.templating.api.TemplatingService;
 
 /**
  * @author aritu
@@ -55,17 +54,22 @@ public class TemplatingActionsBean implements Serializable {
     @In(create = true)
     protected Map<String, String> messages;
 
-    public String render(String templateName) {
-        DocumentModel currentDocument = navigationContext.getCurrentDocument();
-        TemplateBasedDocument doc = new FakeTemplateBasedDocumentAdapter(
-                currentDocument, "HistoryAndEbomTemplate");
+    public String render(String templateId) {
         try {
-            Blob rendition = doc.renderWithTemplate(templateName);
+            DocumentModel currentDocument = navigationContext.getCurrentDocument();
+            TemplatingService ts = Framework.getService(
+                    TemplatingService.class);
+            Blob rendition = ts.processTemplate(templateId, currentDocument);
             String filename = rendition.getFilename();
             ComponentUtils.download(currentDocument, null, rendition, filename,
                     "templateRendition");
             return null;
         } catch (NuxeoException e) {
+            // log.error("Unable to render template ", e);
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("label.template.err.renderingFailed"));
+            return null;
+        } catch (Exception e) {
             // log.error("Unable to render template ", e);
             facesMessages.add(StatusMessage.Severity.ERROR,
                     messages.get("label.template.err.renderingFailed"));

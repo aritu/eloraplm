@@ -26,8 +26,6 @@ import org.jboss.seam.annotations.intercept.BypassInterceptors;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
-import com.aritu.eloraplm.constants.EloraFacetConstants;
-import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.sun.faces.util.MessageFactory;
 
 /**
@@ -52,7 +50,8 @@ public class CodeCreationConverter implements Converter {
         DocumentModel doc = (DocumentModel) component.getAttributes().get(
                 "document");
 
-        boolean generateAutomaticCode = isGenerateAutomaticCode(doc, value);
+        boolean generateAutomaticCode = CodeCreationHelper.isGenerateAutomaticCode(
+                doc, value);
 
         if (generateAutomaticCode) {
             CoreSession session = doc.getCoreSession();
@@ -73,36 +72,6 @@ public class CodeCreationConverter implements Converter {
         }
 
         return value;
-
-    }
-
-    /**
-     * @param doc
-     * @param value
-     * @return
-     */
-    private boolean isGenerateAutomaticCode(DocumentModel doc, String value) {
-
-        if (!doc.hasFacet(EloraFacetConstants.FACET_AUTOMATIC_CODE)) {
-            return false;
-        }
-
-        if (value != null && !value.isEmpty()) {
-            return false;
-        }
-
-        if (doc.getContextData(
-                EloraGeneralConstants.CONTEXT_SKIP_AUTOMATIC_CODE_CREATION) != null) {
-
-            boolean skipAutoCodeCreation = (boolean) doc.getContextData(
-                    EloraGeneralConstants.CONTEXT_SKIP_AUTOMATIC_CODE_CREATION);
-
-            if (skipAutoCodeCreation) {
-                return false;
-            }
-        }
-
-        return true;
 
     }
 

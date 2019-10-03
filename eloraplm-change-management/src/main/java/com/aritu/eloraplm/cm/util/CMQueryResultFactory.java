@@ -56,7 +56,7 @@ public class CMQueryResultFactory {
 
             if (it.size() > 0) {
 
-                String pfx = CMHelper.getModifiedItemListPrefix(itemType);
+                String pfx = CMHelper.getModifiedItemListMetadaName(itemType);
 
                 for (Map<String, Serializable> map : it) {
                     String originItemUid = (String) map.get(
@@ -83,6 +83,52 @@ public class CMQueryResultFactory {
                         + derivedModifiedItems.size() + "|");
 
         return derivedModifiedItems;
+    }
+
+    public static List<String> getDistinctImpacteItemsActionsByOriginList(
+            CoreSession session, String cmProcessUid, String itemType,
+            List<String> originItemUids) throws EloraException {
+
+        String logInitMsg = "[getDistinctImpacteItemsActionsByOriginList] ["
+                + session.getPrincipal().getName() + "] ";
+
+        log.trace(logInitMsg + "--- ENTER --- itemType = |" + itemType + "|");
+
+        List<String> distinctActions = new ArrayList<String>();
+
+        IterableQueryResult it = null;
+        try {
+            String query = CMQueryFactory.getDistinctImpacteItemsActionsByOriginListQuery(
+                    cmProcessUid, itemType, originItemUids);
+            it = session.queryAndFetch(query, NXQL.NXQL);
+
+            if (it.size() > 0) {
+
+                String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
+
+                for (Map<String, Serializable> map : it) {
+                    String action = (String) map.get(pfx + "/*1/action");
+
+                    distinctActions.add(action);
+
+                }
+            }
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Exception thrown: |" + e.getMessage() + "|");
+        } finally {
+            it.close();
+        }
+
+        log.trace(logInitMsg + "--- EXIT --- with distinctActions.size() = |"
+                + distinctActions.size() + "|");
+
+        return distinctActions;
     }
 
 }

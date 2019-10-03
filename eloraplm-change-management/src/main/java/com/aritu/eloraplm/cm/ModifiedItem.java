@@ -25,31 +25,17 @@ public class ModifiedItem extends CMItem {
 
     protected boolean includeInImpactMatrix;
 
-    /*public ModifiedItem(String nodeId, String parentNodeId, String derivedFrom,
-            String parentItem, String originItem, String originItemWc,
-            String predicate, String quantity, boolean isAnarchic,
-            String action, String destinationItem, String destinationItemWc,
-            boolean isManaged, boolean isManual, String type, String comment,
-            boolean isUpdated, boolean includeInImpactMatrix) {
-        super(nodeId, parentNodeId, parentItem, originItem, originItemWc,
-                predicate, quantity, isAnarchic, action, destinationItem,
-                destinationItemWc, isManaged, isManual, type, comment,
-                isUpdated);
-        this.derivedFrom = derivedFrom;
-        this.includeInImpactMatrix = includeInImpactMatrix;
-    }*/
-
     public ModifiedItem(Long rowNumber, String nodeId, String parentNodeId,
             String derivedFrom, String parentItem, String originItem,
             String originItemWc, String predicate, String quantity,
-            boolean isAnarchic, String action, String destinationItem,
-            String destinationItemWc, boolean isManaged, boolean isManual,
-            String type, String comment, boolean isUpdated,
+            boolean isAnarchic, boolean isDirectObject, String action,
+            String destinationItem, String destinationItemWc, boolean isManaged,
+            boolean isManual, String type, String comment, boolean isUpdated,
             boolean includeInImpactMatrix) {
         super(rowNumber, nodeId, parentNodeId, parentItem, originItem,
-                originItemWc, predicate, quantity, isAnarchic, action,
-                destinationItem, destinationItemWc, isManaged, isManual, type,
-                comment, isUpdated);
+                originItemWc, predicate, quantity, isAnarchic, isDirectObject,
+                action, destinationItem, destinationItemWc, isManaged, isManual,
+                type, comment, isUpdated);
         this.derivedFrom = derivedFrom;
         this.includeInImpactMatrix = includeInImpactMatrix;
     }

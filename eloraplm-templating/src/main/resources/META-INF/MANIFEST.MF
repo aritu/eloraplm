@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bundle-SymbolicName: eloraplm-templating
+Bundle-SymbolicName: com.aritu.eloraplm.templating
 Bundle-Name: eloraplm-templating
 Bundle-Version: 1.0.qualifier
 Bundle-ClassPath: .
@@ -7,9 +7,10 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-templating-TemplateProce
- ssorComponent-contrib.xml,OSGI-INF/extensions/eloraplm-templating-Typ
- eService-contrib.xml,OSGI-INF/extensions/eloraplm-templating-ContentT
- emplateService-contrib.xml,OSGI-INF/extensions/eloraplm-templating-Ac
- tionService-contrib.xml
+Nuxeo-Component: OSGI-INF/extensions/TemplatingService.xml,OSGI-INF/ex
+ tensions/eloraplm-templating-TemplatingService-contrib.xml,OSGI-INF/e
+ xtensions/eloraplm-templating-ActionService-contrib.xml,OSGI-INF/exte
+ nsions/eloraplm-templating-ContentTemplateService-contrib.xml,OSGI-IN
+ F/extensions/eloraplm-templating-TemplateProcessorComponent-contrib.x
+ ml,OSGI-INF/extensions/eloraplm-templating-TypeService-contrib.xml
 

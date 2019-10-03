@@ -13,6 +13,8 @@
  */
 package com.aritu.eloraplm.lifecycles.factories;
 
+import java.util.List;
+
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
@@ -28,6 +30,8 @@ public interface TransitionExecuter {
     void init(DocumentModel doc);
 
     boolean canBeExecuted();
+
+    List<String> getErrorList();
 
     void execute(DocumentModel doc) throws Exception;
 

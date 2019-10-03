@@ -44,15 +44,6 @@
                 <condition>#{empty promoteActions.transitions}</condition>
             </rule>
         </filter>
-        
-        <filter append="true" id="hasWsLifeCycle">
-          <rule grant="true">
-            <type>CmSample</type>
-            <type>CmComm</type>
-            <type>Workspace</type>
-            <type>Project</type>
-          </rule>
-        </filter>
 
     </extension>
 

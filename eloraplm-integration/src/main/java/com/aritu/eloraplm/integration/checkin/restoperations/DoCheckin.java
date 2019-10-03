@@ -17,16 +17,12 @@ package com.aritu.eloraplm.integration.checkin.restoperations;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.codehaus.jackson.JsonNode;
-//import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -38,11 +34,12 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
+import org.nuxeo.ecm.core.api.validation.DocumentValidationService;
+import org.nuxeo.ecm.platform.dublincore.listener.DublinCoreListener;
 import org.nuxeo.ecm.platform.relations.api.exceptions.RelationAlreadyExistsException;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
-import com.aritu.eloraplm.checkin.api.CheckinManager;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
@@ -50,8 +47,7 @@ import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
-import com.aritu.eloraplm.constants.PdmEventNames;
-import com.aritu.eloraplm.constants.ViewerActionConstants;
+import com.aritu.eloraplm.constants.PdmActionConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
@@ -70,16 +66,18 @@ import com.aritu.eloraplm.integration.checkin.restoperations.util.DoCheckinReque
 import com.aritu.eloraplm.integration.checkin.restoperations.util.DoCheckinResponse;
 import com.aritu.eloraplm.integration.checkin.restoperations.util.DoCheckinResponseDoc;
 import com.aritu.eloraplm.integration.checkin.restoperations.util.DoCheckinResponseFolder;
-import com.aritu.eloraplm.integration.util.EloraCheckinHelper;
+import com.aritu.eloraplm.integration.checkin.restoperations.util.ForceMetadataInfo;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 import com.aritu.eloraplm.integration.util.IntegrationEventTypes;
-import com.aritu.eloraplm.viewer.ViewerPdfUpdater;
+import com.aritu.eloraplm.lifecycles.util.LifecycleHelper;
+import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
+import com.aritu.eloraplm.pdm.overwrite.helper.OverwriteVersionHelper;
 
 /**
  * @author aritu
  *
  */
-@Operation(id = DoCheckin.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Do Checkin", description = "Check in documents from the Elora Plm Connector.")
+@Operation(id = DoCheckin.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Do Checkin", description = "Check in documents from the Elora Plm Connector.")
 public class DoCheckin {
 
     public static final String ID = "Elora.PlmConnector.DoCheckin";
@@ -88,6 +86,9 @@ public class DoCheckin {
 
     private CheckinManager checkinManager = Framework.getService(
             CheckinManager.class);
+
+    private DocumentValidationService validator = Framework.getService(
+            DocumentValidationService.class);
 
     private DoCheckinResponse doCheckinResponse;
 
@@ -117,6 +118,9 @@ public class DoCheckin {
 
     @Param(name = "relations", required = false)
     private ArrayList<JsonNode> relations;
+
+    @Param(name = "isBatchProcess", required = true)
+    private boolean isBatchProcess;
 
     private DraftManager draftManager;
 
@@ -161,18 +165,22 @@ public class DoCheckin {
                 }
                 log.info(logInitMsg + requestDocs.size()
                         + " documents processed.");
-            } else {
-                log.info(logInitMsg + "No document to process.");
-            }
 
-            if (!requestDocs.isEmpty()) {
                 for (DoCheckinRequestDoc requestDoc : requestDocs) {
-                    checkInSingleDocument(checkinManager, requestDoc);
+                    DocumentModel doc;
+                    if (requestDoc.isOverwrite()) {
+                        doc = overwriteSingleDocument(requestDoc);
+                        addDocumentToResponse(requestDoc, doc);
+                    } else {
+                        doc = checkInSingleDocument(checkinManager, requestDoc);
+                        addDocumentToResponse(requestDoc, doc);
+                    }
                 }
                 log.info(logInitMsg + requestDocs.size()
-                        + " documents checked in.");
+                        + " documents checked in or overwritten.");
+
             } else {
-                log.info(logInitMsg + "No documents to check in.");
+                log.info(logInitMsg + "No documents to process.");
             }
 
             // Process relations
@@ -190,13 +198,6 @@ public class DoCheckin {
 
             session.save();
 
-            // TODO: Esto es temporal para hacer una presentacion
-            // Process the BOMs
-            /*
-             * if (documents != null) { for (RequestDocument docItem :
-             * docStruct) { processSingleBOM(docItem); } for (RequestDocument
-             * docItem : docStruct) { processSingleBOMRelation(docItem); } }
-             */
             doCheckinResponse.setResult(
                     EloraGeneralConstants.RESPONSE_STATUS_SUCCESS);
 
@@ -240,6 +241,102 @@ public class DoCheckin {
         return doCheckinResponse.convertToJson();
     }
 
+    private DocumentModel processForceMetadata(DocumentModel doc,
+            ForceMetadataInfo forceMetadata, boolean isNew)
+            throws EloraException {
+
+        if (forceMetadata.getLastContributor() != null
+                || forceMetadata.getModified() != null) {
+            doc = processForceDublinCoreMetadata(doc, forceMetadata, isNew);
+
+        }
+
+        if (forceMetadata.getVersionLabel() != null) {
+            doc = processForceVersionLabel(doc,
+                    forceMetadata.getVersionLabel());
+        }
+
+        if (forceMetadata.getInitialLifeCycleState() != null && isNew) {
+            processForceInitialLifeCycleState(doc,
+                    forceMetadata.getInitialLifeCycleState());
+        }
+
+        return doc;
+    }
+
+    private void processForceInitialLifeCycleState(DocumentModel doc,
+            String initialLifeCycleState) throws EloraException {
+        // TODO egoera daukagu, eta trantsizioa kalkulatu behar dugu
+        //
+        String transition = LifecycleHelper.getTransitionToDestinationState(doc,
+                initialLifeCycleState);
+        if (transition == null) {
+            throw new EloraException(
+                    "Could not force initial lifecycle state. Document |"
+                            + doc.getId()
+                            + "| has no transition to follow that gets to state |"
+                            + initialLifeCycleState + "|.");
+        }
+
+        session.followTransition(doc.getRef(), transition);
+
+    }
+
+    private DocumentModel processForceDublinCoreMetadata(DocumentModel doc,
+            ForceMetadataInfo forceMetadata, boolean isNew) {
+
+        // We have to process both DC metadata together, because if we want to
+        // force any of them, we need to disable DC listener
+        doc.putContextData(DublinCoreListener.DISABLE_DUBLINCORE_LISTENER,
+                Boolean.TRUE);
+
+        String lastContributor = null;
+        if (forceMetadata.getLastContributor() != null) {
+            lastContributor = forceMetadata.getLastContributor();
+        } else {
+            lastContributor = session.getPrincipal().getName();
+        }
+
+        EloraDocumentHelper.addContributor(doc, lastContributor, isNew);
+
+        Date modified = null;
+        if (forceMetadata.getModified() != null) {
+            modified = forceMetadata.getModified();
+        } else {
+            modified = new Date();
+        }
+
+        doc.setPropertyValue(NuxeoMetadataConstants.NX_DC_MODIFIED, modified);
+        if (isNew) {
+            doc.setPropertyValue(NuxeoMetadataConstants.NX_DC_CREATED,
+                    modified);
+        }
+
+        return doc;
+    }
+
+    private DocumentModel processForceVersionLabel(DocumentModel doc,
+            String versionLabel) throws EloraException {
+
+        return EloraDocumentHelper.setForcedDocVersionLabel(doc, versionLabel);
+    }
+
+    private void addDocumentToResponse(DoCheckinRequestDoc requestDoc,
+            DocumentModel doc) throws EloraException {
+        DoCheckinResponseDoc responseDoc = doCheckinResponse.getDocument(
+                requestDoc.getLocalId());
+
+        DocumentModel latestVersion = EloraDocumentHelper.getLatestVersion(doc);
+        if (latestVersion == null) {
+            throw new EloraException("Document |" + doc.getId()
+                    + "| has no latest version after checkin or it is unreadable.");
+        }
+
+        responseDoc.setRealUid(latestVersion.getId());
+        responseDoc.setVersionLabel(doc.getVersionLabel());
+        doCheckinResponse.addDocument(requestDoc.getLocalId(), responseDoc);
+    }
+
     private void loadRequestDocs() throws EloraException {
         String logInitMsg = "[loadRequestDocs] ["
                 + session.getPrincipal().getName() + "] ";
@@ -273,9 +370,30 @@ public class DoCheckin {
             DocumentRef structureRootRealRef = EloraJsonHelper.getJsonFieldAsDocumentRef(
                     docItem, "structureRootRealUid", false);
 
+            boolean overwrite = EloraJsonHelper.getJsonFieldAsBoolean(docItem,
+                    "overwrite", true);
+
             DoCheckinRequestDoc requestDoc = new DoCheckinRequestDoc(dbId,
                     localId, wcRef, parentRealRef, comment, unlock,
-                    structureRootRealRef);
+                    structureRootRealRef, overwrite);
+
+            // Get force metadata
+            JsonNode forceMetadata = EloraJsonHelper.getJsonNode(docItem,
+                    "forceMetadata", false);
+            if (forceMetadata != null) {
+                String initialLifeCycleState = EloraJsonHelper.getJsonFieldAsString(
+                        forceMetadata, "initialLifeCycleState", false);
+                Date modified = EloraJsonHelper.getJsonFieldAsDate(
+                        forceMetadata, "modified", false);
+                String lastContributor = EloraJsonHelper.getJsonFieldAsString(
+                        forceMetadata, "lastContributor", false);
+                String versionLabel = EloraJsonHelper.getJsonFieldAsString(
+                        forceMetadata, "versionLabel", false);
+                ForceMetadataInfo fmi = new ForceMetadataInfo(
+                        initialLifeCycleState, modified, lastContributor,
+                        versionLabel);
+                requestDoc.setForceMetadata(fmi);
+            }
 
             // Get content file
             JsonNode mainFile = EloraJsonHelper.getJsonNode(docItem,
@@ -442,11 +560,14 @@ public class DoCheckin {
 
         draftManager.copyDraftDataAndRemoveIt(session, wcDoc);
 
-        Map<String, Serializable> options = new HashMap<String, Serializable>();
+        String action = requestDoc.isOverwrite()
+                ? PdmActionConstants.ACTION_OVERWRITE
+                : PdmActionConstants.ACTION_CHECK_IN;
+
         wcDoc.putContextData("workspaceType", workspaceDoc.getType());
-        EloraCheckinHelper.notifyEvent(
-                IntegrationEventTypes.AFTER_DRAFT_PROPERTIES_COPIED, wcDoc,
-                options, true, session);
+        wcDoc.putContextData("action", action);
+        EloraEventHelper.fireEvent(
+                IntegrationEventTypes.AFTER_DRAFT_PROPERTIES_COPIED, wcDoc);
 
         // Check if it is a new document
         if (session.getVersionsRefs(wcDoc.getRef()).isEmpty()) {
@@ -467,20 +588,15 @@ public class DoCheckin {
                 + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
 
-        // TODO: Mira si dependiendo de alguna configuracion el estado no tiene
-        // que ser "create"
-        // Change document state to project
         if (wcDoc.getCurrentLifeCycleState().equals(
-                EloraLifeCycleConstants.PRECREATED)) {
-            if (session.getAllowedStateTransitions(wcDoc.getRef()).contains(
-                    EloraLifeCycleConstants.TRANS_CREATE)) {
-                session.followTransition(wcDoc.getRef(),
-                        EloraLifeCycleConstants.TRANS_CREATE);
-            }
+                EloraLifeCycleConstants.PRECREATED)
+                && session.getAllowedStateTransitions(wcDoc.getRef()).contains(
+                        EloraLifeCycleConstants.TRANS_CREATE)) {
+            session.followTransition(wcDoc.getRef(),
+                    EloraLifeCycleConstants.TRANS_CREATE);
         }
 
         relateDocumentWithBinaries(wcDoc, requestDoc);
-        updateViewerBlobWithDocInfo(wcDoc);
         wcDoc = session.saveDocument(wcDoc);
 
         // Move document to the classification folder
@@ -547,15 +663,16 @@ public class DoCheckin {
                     predicate, null);
         }
 
+        // We have to save the document before relating its binaries, or after
+        // the checkin the working copy won't have the main and viewer files.
         wcDoc = session.saveDocument(wcDoc);
-
         relateDocumentWithBinaries(wcDoc, requestDoc);
-        updateViewerBlobWithDocInfo(wcDoc);
         wcDoc = session.saveDocument(wcDoc);
 
         String proxyUid = null;
         if (requestDoc.getParentRealRef() != null) {
-            proxyUid = createDocumentProxy(requestDoc, wcDoc, false);
+            boolean createIfNotExist = !isBatchProcess;
+            proxyUid = createDocumentProxy(requestDoc, wcDoc, createIfNotExist);
         }
 
         session.save();
@@ -573,12 +690,6 @@ public class DoCheckin {
         log.trace(logInitMsg + "--- EXIT --- ");
 
         return responseDoc;
-    }
-
-    private void updateViewerBlobWithDocInfo(DocumentModel wcDoc)
-            throws COSVisitorException, IOException {
-        ViewerPdfUpdater.createViewer(wcDoc,
-                ViewerActionConstants.ACTION_CHECK_IN);
     }
 
     private String createDocumentProxy(DoCheckinRequestDoc requestDoc,
@@ -660,8 +771,11 @@ public class DoCheckin {
                 EloraLifeCycleConstants.PRECREATED)) {
             throw new EloraException(
                     "subjectWcUid is null or is not checked in");
-        } else {
-            subjectDoc = EloraDocumentHelper.getLatestVersion(subjectWcDoc);
+        }
+        subjectDoc = EloraDocumentHelper.getLatestVersion(subjectWcDoc);
+        if (subjectDoc == null) {
+            throw new EloraException("Document |" + subjectWcDoc.getId()
+                    + "| has no latest version or is unreadable.");
         }
 
         // Get the object from wc or realUid
@@ -758,7 +872,44 @@ public class DoCheckin {
         log.trace(logInitMsg + "--- EXIT --- ");
     }
 
-    private void checkInSingleDocument(CheckinManager checkinManager,
+    private DocumentModel overwriteSingleDocument(
+            DoCheckinRequestDoc requestDoc) throws EloraException {
+        String logInitMsg = "[checkInSingleDocument] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "About to overwrite document |"
+                + requestDoc.getWcRef() + "|");
+
+        DocumentModel wcDoc = session.getDocument(requestDoc.getWcRef());
+        if (wcDoc == null) {
+            throw new EloraException("Provided document |"
+                    + requestDoc.getWcRef() + "| does not exist.");
+        }
+        DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(wcDoc);
+        if (baseDoc == null) {
+            throw new EloraException("Provided document |"
+                    + requestDoc.getWcRef()
+                    + "| has no base version. Probably because it has no AVs.");
+        }
+        String justification = requestDoc.getComment();
+
+        try {
+            OverwriteVersionHelper.overwriteDocument(wcDoc, baseDoc,
+                    eloraDocumentRelationManager, validator, session,
+                    justification, plmConnectorClient, null);
+
+            log.trace(logInitMsg + "Document |" + requestDoc.getWcRef()
+                    + "| overwritten.");
+
+            return wcDoc;
+        } catch (CheckinNotAllowedException
+                | BomCharacteristicsValidatorException | EloraException e) {
+            throw new EloraException("Error overwriting document |"
+                    + requestDoc.getWcRef() + "|.", e);
+        }
+
+    }
+
+    private DocumentModel checkInSingleDocument(CheckinManager checkinManager,
             DoCheckinRequestDoc requestDoc) throws EloraException,
             CheckinNotAllowedException, DocumentNotCheckedOutException,
             BomCharacteristicsValidatorException {
@@ -768,25 +919,27 @@ public class DoCheckin {
 
         DocumentModel doc = session.getDocument(requestDoc.getWcRef());
 
-        doc = checkinManager.checkinDocument(doc, requestDoc.getComment(),
-                requestDoc.isUnlock());
-
-        // Nuxeo Event
-        String comment = doc.getVersionLabel();
-        if (requestDoc.getComment() != null) {
-            comment += " " + requestDoc.getComment();
+        String workspaceReference = null;
+        if (isBatchProcess && workspaceDoc != null) {
+            Serializable referenceProperty = workspaceDoc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE);
+            if (referenceProperty != null) {
+                workspaceReference = referenceProperty.toString();
+            }
         }
-        EloraEventHelper.fireEvent(PdmEventNames.PDM_INT_CHECKED_IN_EVENT, doc,
-                comment);
 
-        DoCheckinResponseDoc responseDoc = doCheckinResponse.getDocument(
-                requestDoc.getLocalId());
-        responseDoc.setRealUid(
-                EloraDocumentHelper.getLatestVersion(doc).getId());
-        responseDoc.setVersionLabel(doc.getVersionLabel());
-        doCheckinResponse.addDocument(requestDoc.getLocalId(), responseDoc);
+        if (requestDoc.getForceMetadata() != null) {
+            boolean isNew = session.getVersionsRefs(doc.getRef()).isEmpty();
+            doc = processForceMetadata(doc, requestDoc.getForceMetadata(),
+                    isNew);
+        }
+
+        doc = checkinManager.checkinDocument(doc, requestDoc.getComment(),
+                plmConnectorClient, workspaceReference, requestDoc.isUnlock());
 
         log.trace(logInitMsg + "--- EXIT --- ");
+
+        return doc;
     }
 
     private DocumentRef getDocumentTargetFolder(DocumentModel doc,

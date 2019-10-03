@@ -9,5 +9,19 @@ Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-core-ResourcePublisher-c
  ontrib.xml,OSGI-INF/extensions/eloraplm-core-EventServiceComponent-co
- ntrib.xml
+ ntrib.xml,OSGI-INF/extensions/eloraplm-queries-PageProviderService-co
+ ntrib.xml,OSGI-INF/extensions/eloraplm-config-ResourcePublisher-contr
+ ib.xml,OSGI-INF/extensions/eloraplm-config-DirectoryUIManager-contrib
+ .xml,OSGI-INF/extensions/eloraplm-config-TypeService-contrib.xml,OSGI
+ -INF/extensions/eloraplm-config-SQLDirectoryFactory-contrib.xml,OSGI-
+ INF/extensions/eloraplm-config-WebLayoutManager-contrib.xml,OSGI-INF/
+ extensions/eloraplm-versioning-ActionService-contrib.xml,OSGI-INF/ext
+ ensions/eloraplm-versioning-VersioningService-contrib.xml,OSGI-INF/ex
+ tensions/eloraplm-versioning-majorLetter-TypeService-contrib.xml,OSGI
+ -INF/extensions/eloraplm-versioning-majorLetter-EventServiceComponent
+ -contrib.xml,OSGI-INF/extensions/eloraplm-versioning-EloraVersionLabe
+ lService-contrib.xml,OSGI-INF/extensions/eloraplm-core-OperationServi
+ ceComponent-contrib.xml,OSGI-INF/extensions/eloraplm-core-Notificatio
+ nService-contrib.xml,OSGI-INF/extensions/eloraplm-core-SchedulerServi
+ ce-contrib.xml
 

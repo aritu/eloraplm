@@ -9,10 +9,7 @@
           <type name="CmEcr">eloraCmEcrLifeCycle</type>
           <type name="CmEco">eloraCmEcoLifeCycle</type>
           
-          <type name="StructChangeManagement">default</type>
-          <type name="FolderChangeManagementPR">default</type>
-          <type name="FolderChangeManagementECR">default</type>
-          <type name="FolderChangeManagementECO">default</type>
+          <type name="FolderArchivedChangeManagement">default</type>
         </types>
     </extension>
 
@@ -179,6 +176,12 @@
             <transition destinationState="created" name="undelete">
               <description>Recover the document from trash</description>
             </transition>
+            <transition name="startAsyncProcess" destinationState="asyncProcessing">
+              <description>An asynchronous process is running</description>
+            </transition>
+            <transition name="backToCreated" destinationState="created">
+              <description>Back to created state</description>
+            </transition>
           </transitions>
 
           <states>
@@ -186,6 +189,7 @@
               <transitions>
                 <transition>technical review</transition>
                 <transition>manufacturing review</transition>
+                <transition>startAsyncProcess</transition>
                 <transition>delete</transition>
               </transitions>
             </state>
@@ -193,6 +197,7 @@
               <transitions>
                 <transition>complete</transition>
                 <transition>reject</transition>
+                <transition>startAsyncProcess</transition>
                 <transition>delete</transition>
               </transitions>
             </state>
@@ -200,6 +205,7 @@
               <transitions>
                 <transition>purchaser review</transition>
                 <transition>reject</transition>
+                <transition>startAsyncProcess</transition>
                 <transition>delete</transition>
               </transitions>
             </state>
@@ -207,6 +213,7 @@
               <transitions>
                 <transition>commercial review</transition>
                 <transition>reject</transition>
+                <transition>startAsyncProcess</transition>
                 <transition>delete</transition>
               </transitions>
             </state>
@@ -214,6 +221,7 @@
               <transitions>
                 <transition>complete</transition>
                 <transition>reject</transition>
+                <transition>startAsyncProcess</transition>
                 <transition>delete</transition>
                 <transition>economical review</transition>
               </transitions>
@@ -222,7 +230,18 @@
               <transitions>
                 <transition>complete</transition>
                 <transition>reject</transition>
+                <transition>startAsyncProcess</transition>
                 <transition>delete</transition>
+              </transitions>
+            </state>
+            <state name="asyncProcessing" description="There is an asynchronous process running">
+              <transitions>
+                <transition>backToCreated</transition>
+                <transition>technical review</transition>
+                <transition>manufacturing review</transition>
+                <transition>purchaser review</transition>
+                <transition>commercial review</transition>
+                <transition>economical review</transition>
               </transitions>
             </state>
             <state description="ECO is completed" name="completed">

@@ -35,7 +35,7 @@ import com.aritu.eloraplm.cm.ModifiedItem;
 import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.cm.util.CMQueryFactory;
 import com.aritu.eloraplm.constants.CMConstants;
-import com.aritu.eloraplm.constants.CMDocTypeConstants;
+import com.aritu.eloraplm.constants.CMDoctypeConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.treetable.NodeManager;
 
@@ -73,12 +73,12 @@ public class ModifiedItemsNodeService implements NodeManager {
 
         DocumentModel currentDoc = (DocumentModel) parentObject;
 
-        if (!(currentDoc.getType().equals(CMDocTypeConstants.CM_ECR)
-                || currentDoc.getType().equals(CMDocTypeConstants.CM_ECO))) {
+        if (!(currentDoc.getType().equals(CMDoctypeConstants.CM_ECR)
+                || currentDoc.getType().equals(CMDoctypeConstants.CM_ECO))) {
             throw new EloraException(
                     "First level document of the tree must be an "
-                            + CMDocTypeConstants.CM_ECR + " or an "
-                            + CMDocTypeConstants.CM_ECO + ".");
+                            + CMDoctypeConstants.CM_ECR + " or an "
+                            + CMDoctypeConstants.CM_ECO + ".");
         }
 
         int level = 0;
@@ -113,7 +113,7 @@ public class ModifiedItemsNodeService implements NodeManager {
 
             if (it.size() > 0) {
 
-                String pfx = CMHelper.getModifiedItemListPrefix(itemType);
+                String pfx = CMHelper.getModifiedItemListMetadaName(itemType);
 
                 for (Map<String, Serializable> map : it) {
                     Long rowNumber = (Long) map.get(pfx + "/*1/rowNumber");
@@ -190,8 +190,8 @@ public class ModifiedItemsNodeService implements NodeManager {
                                 String.valueOf(nodeId), level, rowNumber,
                                 currentNodeId, parentNodeId, derivedFrom,
                                 parentItem, originItem, originItemWc, null,
-                                null, false, action, true, destinationItem,
-                                destinationItemWc,
+                                null, false, false, action, true,
+                                destinationItem, destinationItemWc,
                                 destinationItemVersionIsReadOnly, isManaged,
                                 isManagedIsReadOnly, isManual, type, comment,
                                 false, isUpdated, isImpactable,
@@ -246,8 +246,8 @@ public class ModifiedItemsNodeService implements NodeManager {
         ModifiedItemsNodeData newNodeData = new ModifiedItemsNodeData(
                 String.valueOf(nodeId), 1, true, false, false, null,
                 currentNodeId, null, null, null, originItem, originItemWc, null,
-                null, false, action, true, destinationItem, destinationItemWc,
-                destinationItemVersionIsReadOnly, isManaged,
+                null, false, false, action, true, destinationItem,
+                destinationItemWc, destinationItemVersionIsReadOnly, isManaged,
                 isManagedIsReadOnly, true, originItemType, comment, false,
                 false, isImpactable, includeInImpactMatrix);
 
@@ -438,50 +438,14 @@ public class ModifiedItemsNodeService implements NodeManager {
                 nodeData.getNodeId(), nodeData.getParentNodeId(),
                 derivedFromUid, parentItemUid, originItemUid, originItemWcUid,
                 nodeData.getPredicate(), nodeData.getQuantity(),
-                nodeData.getIsAnarchic(), nodeData.getAction(),
-                destinationItemUid, destinationItemWcUid,
+                nodeData.getIsAnarchic(), nodeData.getIsDirectObject(),
+                nodeData.getAction(), destinationItemUid, destinationItemWcUid,
                 nodeData.getIsManaged(), nodeData.getIsManual(),
                 nodeData.getType(), nodeData.getComment(),
                 nodeData.getIsUpdated(), nodeData.getIncludeInImpactMatrix());
 
         return modifiedItem;
     }
-
-    /* private List<ModifiedItem> getModifiedItemsListFromTree(TreeNode node) {
-
-    List<ModifiedItem> modifiedItems = new ArrayList<ModifiedItem>();
-
-    for (TreeNode childNode : node.getChildren()) {
-        CmModifiedItemsNodeData nodeData = (CmModifiedItemsNodeData) childNode.getData();
-
-        String originItemUid = null;
-        if (nodeData.getOriginItem() != null) {
-            originItemUid = nodeData.getOriginItem().getId();
-        }
-
-        String originItemWcUid = null;
-        if (nodeData.getOriginItemWc() != null) {
-            originItemWcUid = nodeData.getOriginItemWc().getId();
-        }
-
-        String destinationItemUid = null;
-        if (nodeData.getDestinationItem() != null) {
-            destinationItemUid = nodeData.getDestinationItem().getId();
-        }
-
-        ModifiedItem modifiedItem = new ModifiedItem(
-                nodeData.getRowNumber(), originItemUid, originItemWcUid,
-                nodeData.getAction(), destinationItemUid,
-                nodeData.getIsManaged(), nodeData.getType());
-
-        modifiedItems.add(modifiedItem);
-
-        modifiedItems.addAll(getModifiedItemsListFromTree(childNode));
-
-    }
-
-    return modifiedItems;
-    }*/
 
     public void refreshNode(TreeNode node, String trigger)
             throws EloraException {

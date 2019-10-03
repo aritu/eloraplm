@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -63,7 +62,7 @@ import com.aritu.eloraplm.integration.util.FolderInfo;
  * @author aritu
  *
  */
-@Operation(id = DoGetOrCheckout.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Do Get Or Checkout", description = "Gets or checks out the selected documents and returns necessary information for the client.")
+@Operation(id = DoGetOrCheckout.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Do Get Or Checkout", description = "Gets or checks out the selected documents and returns necessary information for the client.")
 public class DoGetOrCheckout {
     public static final String ID = "Elora.PlmConnector.DoGetOrCheckout";
 

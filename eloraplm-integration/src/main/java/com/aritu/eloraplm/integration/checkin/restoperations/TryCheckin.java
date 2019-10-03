@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -58,6 +57,7 @@ import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.VersionStatusConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.EloraEventTypes;
 import com.aritu.eloraplm.core.util.EloraLockInfo;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
@@ -76,9 +76,9 @@ import com.aritu.eloraplm.integration.checkin.restoperations.util.TryCheckinResp
 import com.aritu.eloraplm.integration.checkin.restoperations.util.TryCheckinResponseDoc;
 import com.aritu.eloraplm.integration.checkin.restoperations.util.TryCheckinResponseFolder;
 import com.aritu.eloraplm.integration.get.restoperations.util.VersionInfo;
-import com.aritu.eloraplm.integration.util.EloraCheckinHelper;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 import com.aritu.eloraplm.integration.util.ItemInfo;
+import com.aritu.eloraplm.pdm.checkin.util.EloraCheckinHelper;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 
@@ -86,7 +86,7 @@ import com.aritu.eloraplm.versioning.EloraVersionLabelService;
  * @author aritu
  *
  */
-@Operation(id = TryCheckin.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Try Checkin", description = "Try to check in documents from the Elora Plm Connector.")
+@Operation(id = TryCheckin.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Try Checkin", description = "Try to check in documents from the Elora Plm Connector.")
 public class TryCheckin {
     public static final String ID = "Elora.PlmConnector.TryCheckin";
 
@@ -499,10 +499,8 @@ public class TryCheckin {
         session.save();
 
         // Raise BEFORE_TCI_FOLDER_VALIDATION event
-        Map<String, Serializable> options = new HashMap<String, Serializable>();
-        EloraCheckinHelper.notifyEvent(
-                EloraEventTypes.BEFORE_TCI_FOLDER_VALIDATION, draftFolder,
-                options, true, session);
+        EloraEventHelper.fireEvent(EloraEventTypes.BEFORE_TCI_FOLDER_VALIDATION,
+                draftFolder);
 
         TryCheckinResponseFolder responseFolder = new TryCheckinResponseFolder(
                 requestFolder.getLocalId(), newFolder.getId(),
@@ -542,6 +540,18 @@ public class TryCheckin {
         if (session.exists(requestFolder.getWcRef())) {
             DocumentModel existingFolder = session.getDocument(
                     requestFolder.getWcRef());
+            if (existingFolder == null) {
+                throw new EloraException("Folder with uid |"
+                        + requestFolder.getWcRef().toString()
+                        + "| does not exist.");
+            }
+            if (!existingFolder.isFolder()) {
+                throw new EloraException(
+                        "Provided folder |" + existingFolder.getId()
+                                + "| is not of a folderish type. Its type is |"
+                                + existingFolder.getType() + "|");
+            }
+
             DocumentModel draftFolder = draftManager.getDraftForDocument(
                     session, existingFolder, session.getPrincipal().getName(),
                     false);
@@ -553,10 +563,8 @@ public class TryCheckin {
             }
 
             // Raise BEFORE_TCI_FOLDER_VALIDATION event
-            Map<String, Serializable> options = new HashMap<String, Serializable>();
-            EloraCheckinHelper.notifyEvent(
-                    EloraEventTypes.BEFORE_TCI_FOLDER_VALIDATION, draftFolder,
-                    options, true, session);
+            EloraEventHelper.fireEvent(
+                    EloraEventTypes.BEFORE_TCI_FOLDER_VALIDATION, draftFolder);
 
             TryCheckinResponseFolder responseFolder = new TryCheckinResponseFolder(
                     requestFolder.getLocalId(), existingFolder.getId(),
@@ -963,10 +971,8 @@ public class TryCheckin {
         }
 
         // Raise BEFORE_TCI_DOC_VALIDATION event
-        Map<String, Serializable> options = new HashMap<String, Serializable>();
-        EloraCheckinHelper.notifyEvent(
-                EloraEventTypes.BEFORE_TCI_DOC_VALIDATION, draftDoc, options,
-                true, session);
+        EloraEventHelper.fireEvent(EloraEventTypes.BEFORE_TCI_DOC_VALIDATION,
+                draftDoc);
 
         // Check that reference + type is unique, if not => KO
         String reference = draftDoc.getPropertyValue(

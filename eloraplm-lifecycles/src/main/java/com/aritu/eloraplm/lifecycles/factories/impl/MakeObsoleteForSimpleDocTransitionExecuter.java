@@ -27,7 +27,7 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.TransitionNotAllowedException;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
-import com.aritu.eloraplm.promote.constants.util.PromoteHelper;
+import com.aritu.eloraplm.pdm.promote.util.PromoteHelper;
 
 /**
  * @author aritu
@@ -48,6 +48,12 @@ public class MakeObsoleteForSimpleDocTransitionExecuter
     @Override
     public boolean canBeExecuted() {
         return true;
+    }
+
+    @Override
+    public List<String> getErrorList() {
+        // For now we don't use this method
+        return new ArrayList<String>();
     }
 
     @Override
@@ -73,6 +79,10 @@ public class MakeObsoleteForSimpleDocTransitionExecuter
             doc.followTransition(transition);
         } else {
             DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(doc);
+            if (baseDoc == null) {
+                throw new EloraException("The document |" + doc.getId()
+                        + "| has no base version.");
+            }
             baseDoc.followTransition(transition);
 
             // We cannot follow transition instead of restoring, because it

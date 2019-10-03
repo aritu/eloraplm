@@ -45,6 +45,10 @@
           <h:message for="viewerOrdering" class="errorMessage" />
         </c:if>
         
+        <c:if test="#{not isEditableInverseViewerOrdering}">
+          <h:inputHidden id="inverseViewerOrdering" value="#{treeBean.inverseViewerOrdering}" />
+          <h:message for="inverseViewerOrdering" class="errorMessage" />
+        </c:if>
         
         <h:panelGroup styleClass="content" layout="block">
             <h:panelGrid columns="2" styleClass="dataInput"
@@ -96,14 +100,19 @@
                     </h:panelGroup>
                 </c:if>
                 
-
+                
                 <c:if test="#{isEditableQuantity}">
                     <h:outputLabel for="quantity"
                         value="#{messages['eloraplm.label.relation.quantity']}"
                         class="required relationQuantityLabel" />
-                    <nxl:widget name="quantity" value="#{treeBean}" mode="edit" required="true" styleClass="dataInputText" />
+                    <h:panelGroup>
+                        <nxl:widget name="quantity" value="#{treeBean}" mode="edit" required="true" styleClass="dataInputText numberInput" />
+                        <ui:fragment rendered="#{isInverse}">
+                            <p class="detail">#{messages['eloraplm.label.relation.detail.'.concat(subjectDoctype).concat(currentDocument.type)]}</p>
+                        </ui:fragment>
+                    </h:panelGroup>
                 </c:if>
-
+                
                 
                 <c:if test="#{isEditableAddDirectRelations}">
                   <h:outputLabel for="addDirectRelations"
@@ -151,6 +160,17 @@
                     <h:inputText styleClass="dataInputText numberInput" id="viewerOrdering"
                         value="#{treeBean.viewerOrdering}" required="false" />
                     <h:message for="viewerOrdering" class="errorMessage" />
+                  </h:panelGroup>
+                </c:if>
+                
+                <c:if test="#{isEditableInverseViewerOrdering}">
+                  <h:outputLabel for="inverseViewerOrdering"
+                    value="#{messages['eloraplm.label.bom.viewer.ordering']}"
+                    class="orderingLabel" />
+                  <h:panelGroup>
+                    <h:inputText styleClass="dataInputText numberInput" id="inverseViewerOrdering"
+                        value="#{treeBean.inverseViewerOrdering}" required="false" />
+                    <h:message for="inverseViewerOrdering" class="errorMessage" />
                   </h:panelGroup>
                 </c:if>
                 

@@ -46,9 +46,13 @@ public class DoCheckinRequestDoc {
 
     private DocumentRef structureRootRealRef;
 
+    private boolean overwrite;
+
+    private ForceMetadataInfo forceMetadata;
+
     public DoCheckinRequestDoc(int dbId, int localId, DocumentRef wcRef,
             DocumentRef parentRealRef, String comment, boolean unlock,
-            DocumentRef structureRootRealRef) {
+            DocumentRef structureRootRealRef, boolean overwrite) {
         this.dbId = dbId;
         this.localId = localId;
         this.parentRealRef = parentRealRef;
@@ -56,6 +60,7 @@ public class DoCheckinRequestDoc {
         this.comment = comment;
         this.unlock = unlock;
         this.structureRootRealRef = structureRootRealRef;
+        this.overwrite = overwrite;
         cadAttachments = new ArrayList<EloraFileInfo>();
     }
 
@@ -141,4 +146,21 @@ public class DoCheckinRequestDoc {
     public void setStructureRootRealRef(DocumentRef structureRootRealRef) {
         this.structureRootRealRef = structureRootRealRef;
     }
+
+    public boolean isOverwrite() {
+        return overwrite;
+    }
+
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
+    }
+
+    public ForceMetadataInfo getForceMetadata() {
+        return forceMetadata;
+    }
+
+    public void setForceMetadata(ForceMetadataInfo forceMetadata) {
+        this.forceMetadata = forceMetadata;
+    }
+
 }

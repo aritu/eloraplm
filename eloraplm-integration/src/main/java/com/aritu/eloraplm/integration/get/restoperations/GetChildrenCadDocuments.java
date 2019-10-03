@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -47,7 +46,7 @@ import com.aritu.eloraplm.integration.util.ItemInfo;
 /**
  * @author
  */
-@Operation(id = GetChildrenCadDocuments.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Get children cad documents", description = "")
+@Operation(id = GetChildrenCadDocuments.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Get children cad documents", description = "")
 public class GetChildrenCadDocuments {
 
     public static final String ID = "Elora.PlmConnector.GetChildrenCadDocuments";

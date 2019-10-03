@@ -2,8 +2,8 @@ id,prefix,suffix,digits,minValue,maxValue,sequenceKey,obsolete
 A_full,A,,7,1,9999999,cad_sequence,0
 B_full,B,,7,1,9999999,cad_sequence,0
 PRO_full,PRO${yy},,5,1,99999,pro_sequence,0
+VAL_full,VAL${yy},,5,1,99999,val_sequence,0
+VER_full,VER${yy},,5,1,99999,ver_sequence,0
+PPV_full,PPV${yy},,5,1,99999,ppv_sequence,0
+PAP_ful,PAP${yy},,5,1,99999,pap_sequence,0
 ECO_full,ECO${yy},,5,1,99999,eco_sequence,0
-PRE_full,PRE${yy},,5,1,99999,pre_sequence,0
-HOM_full,HOM${yy},,5,1,99999,hom_sequence,0
-SAM_full,SAM${yy},,5,1,99999,sam_sequence,0
-COM_full,COM${yy},,5,1,99999,com_sequence,0

@@ -70,6 +70,10 @@ public class EloraRelationHelper {
                 + doc.getId() + "|");
         DocumentModel subjectLastVersion = EloraDocumentHelper.getLatestVersion(
                 doc);
+        if (subjectLastVersion == null) {
+            throw new EloraException("Document |" + doc.getId()
+                    + "| has no latest version or it is unreadable.");
+        }
         log.trace(logInitMsg + "Last version retrieved |"
                 + subjectLastVersion.getId() + "|");
         log.trace(logInitMsg + "Getting statements of document |" + doc.getId()
@@ -128,6 +132,9 @@ public class EloraRelationHelper {
             throws CheckinNotAllowedException, EloraException {
 
         CoreSession session = from.getCoreSession();
+        String logInitMsg = "[copyAllRelationsButAnarchicsToVersion] ["
+                + session.getPrincipal().getName() + "] ";
+
         List<Statement> stmts = RelationHelper.getStatements(
                 EloraRelationConstants.ELORA_GRAPH_NAME, from, null);
         for (Statement stmt : stmts) {
@@ -135,6 +142,15 @@ public class EloraRelationHelper {
                     stmt.getPredicate().getUri())) {
                 DocumentModel object = RelationHelper.getDocumentModel(
                         stmt.getObject(), session);
+                if (object == null) {
+                    log.error(logInitMsg
+                            + "Object is null. Relation is broken or unreadable. predicateUri = |"
+                            + stmt.getPredicate().getUri()
+                            + "|, subject docId = |" + from.getId() + "|");
+                    throw new EloraException(
+                            "Object is null. Relation is broken or unreadable.");
+                }
+
                 if (!object.isCheckedOut() && EloraDocumentHelper.isSupported(
                         to.getCurrentLifeCycleState(),
                         object.getCurrentLifeCycleState())) {
@@ -175,7 +191,8 @@ public class EloraRelationHelper {
                     stmt.getPredicate().getUri(), eloraStmtInfo.getComment(),
                     eloraStmtInfo.getQuantity(), eloraStmtInfo.getOrdering(),
                     eloraStmtInfo.getDirectorOrdering(),
-                    eloraStmtInfo.getViewerOrdering());
+                    eloraStmtInfo.getViewerOrdering(),
+                    eloraStmtInfo.getInverseViewerOrdering());
             log.trace(logInitMsg + "Relation added from |"
                     + subjectLastVersion.getId() + "| to |"
                     + stmt.getObject().toString() + "| with predicate |"
@@ -221,7 +238,8 @@ public class EloraRelationHelper {
                 predicate, eloraStmtInfo.getComment(),
                 eloraStmtInfo.getQuantity(), eloraStmtInfo.getOrdering(),
                 eloraStmtInfo.getDirectorOrdering(),
-                eloraStmtInfo.getViewerOrdering());
+                eloraStmtInfo.getViewerOrdering(),
+                eloraStmtInfo.getInverseViewerOrdering());
     }
 
     private static void addDocumentRelation(DocumentModel subjectLastVersion,
@@ -238,7 +256,8 @@ public class EloraRelationHelper {
                     stmt.getPredicate().getUri(), eloraStmtInfo.getComment(),
                     eloraStmtInfo.getQuantity(), eloraStmtInfo.getOrdering(),
                     eloraStmtInfo.getDirectorOrdering(),
-                    eloraStmtInfo.getViewerOrdering());
+                    eloraStmtInfo.getViewerOrdering(),
+                    eloraStmtInfo.getInverseViewerOrdering());
             log.trace(logInitMsg + "Relation added from |"
                     + subjectLastVersion.getId() + "| to |"
                     + objectLastVersion.getId() + "| with predicate |"
@@ -295,6 +314,10 @@ public class EloraRelationHelper {
 
         // TODO: Mirar la forma de chequear si el objeto es 'nuevo'
         DocumentModel objectBaseDoc = EloraDocumentHelper.getLatestVersion(doc);
+        if (objectBaseDoc == null) {
+            throw new EloraException("Document |" + doc.getId()
+                    + "| has no latest version or it is unreadable.");
+        }
         log.trace(logInitMsg + "Base document |" + objectBaseDoc.getId()
                 + "| retrieved from document |" + doc.getId() + "|");
 
@@ -312,6 +335,15 @@ public class EloraRelationHelper {
             for (Statement stmt : stmts) {
                 DocumentModel subject = RelationHelper.getDocumentModel(
                         stmt.getSubject(), session);
+                if (subject == null) {
+                    log.error(logInitMsg
+                            + "Subject is null. Relation is broken or unreadable. predicateUri = |"
+                            + predicateUri + "|, object docId = |" + doc.getId()
+                            + "|");
+                    throw new EloraException(
+                            "Subject is null. Relation is broken or unreadable.");
+                }
+
                 EloraStatementInfo eloraStmtInfo = new EloraStatementInfoImpl(
                         stmt);
                 DocumentModel subjectBaseDoc = EloraDocumentHelper.getLatestVersion(
@@ -327,7 +359,8 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getQuantity(),
                             eloraStmtInfo.getOrdering(),
                             eloraStmtInfo.getDirectorOrdering(),
-                            eloraStmtInfo.getViewerOrdering());
+                            eloraStmtInfo.getViewerOrdering(),
+                            eloraStmtInfo.getInverseViewerOrdering());
                     log.trace(logInitMsg + "Relation added from |"
                             + subjectBaseDoc.getId() + "| to |"
                             + objectBaseDoc.getId() + "| with predicate |"
@@ -431,7 +464,8 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getQuantity(),
                             eloraStmtInfo.getOrdering(),
                             eloraStmtInfo.getDirectorOrdering(),
-                            eloraStmtInfo.getViewerOrdering());
+                            eloraStmtInfo.getViewerOrdering(),
+                            eloraStmtInfo.getInverseViewerOrdering());
                 } catch (RelationAlreadyExistsException e) {
                     log.trace(logInitMsg
                             + "Anarchic relation already exists but is ignored");
@@ -480,6 +514,15 @@ public class EloraRelationHelper {
         for (Statement stmt : stmts) {
             DocumentModel object = RelationHelper.getDocumentModel(
                     stmt.getObject(), session);
+            if (object == null) {
+                log.error(logInitMsg
+                        + "Object is null. Relation is broken or unreadable. predicateUri = |"
+                        + stmt.getPredicate().getUri() + "|, subject docId = |"
+                        + from.getId() + "|");
+                throw new EloraException(
+                        "Object is null. Relation is broken or unreadable.");
+            }
+
             if (object.isProxy()) {
                 throw new EloraException(
                         "Relation to a proxy document is not possible");
@@ -496,7 +539,8 @@ public class EloraRelationHelper {
                         eloraStmtInfo.getComment(), eloraStmtInfo.getQuantity(),
                         eloraStmtInfo.getOrdering(),
                         eloraStmtInfo.getDirectorOrdering(),
-                        eloraStmtInfo.getViewerOrdering());
+                        eloraStmtInfo.getViewerOrdering(),
+                        eloraStmtInfo.getInverseViewerOrdering());
             } else {
                 DocumentModel objectWc = session.getSourceDocument(
                         object.getRef());
@@ -510,7 +554,8 @@ public class EloraRelationHelper {
                                 eloraStmtInfo.getQuantity(),
                                 eloraStmtInfo.getOrdering(),
                                 eloraStmtInfo.getDirectorOrdering(),
-                                eloraStmtInfo.getViewerOrdering());
+                                eloraStmtInfo.getViewerOrdering(),
+                                eloraStmtInfo.getInverseViewerOrdering());
                     } catch (RelationAlreadyExistsException e) {
                         log.trace(logInitMsg
                                 + "Anarchic relation already exists but is ignored");
@@ -522,7 +567,8 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getQuantity(),
                             eloraStmtInfo.getOrdering(),
                             eloraStmtInfo.getDirectorOrdering(),
-                            eloraStmtInfo.getViewerOrdering());
+                            eloraStmtInfo.getViewerOrdering(),
+                            eloraStmtInfo.getInverseViewerOrdering());
                 }
             }
         }
@@ -647,8 +693,7 @@ public class EloraRelationHelper {
 
         DocumentModel latestReleased = null;
 
-        String versionVersionableId = session.getWorkingCopy(
-                subject.getRef()).getId();
+        String versionVersionableId = subject.getVersionSeriesId();
 
         // TODO: Mirar si hay otra forma de sacar relaciones. Una consulta al
         // schema Relation...
@@ -662,7 +707,7 @@ public class EloraRelationHelper {
         }
 
         String query = EloraQueryFactory.getRelatedReleasedDocQuery(
-                versionVersionableId, uidList);
+                subject.getType(), versionVersionableId, uidList);
 
         DocumentModelList relatedReleasedDocs = session.query(query);
         if (relatedReleasedDocs.size() > 0) {
@@ -670,7 +715,7 @@ public class EloraRelationHelper {
         } else {
             // Get latest related version
             query = EloraQueryFactory.getLatestRelatedDocQuery(
-                    versionVersionableId, uidList, true);
+                    subject.getType(), versionVersionableId, uidList, true);
             relatedReleasedDocs = session.query(query);
             if (relatedReleasedDocs.size() > 0) {
                 latestReleased = relatedReleasedDocs.get(0);
@@ -679,64 +724,47 @@ public class EloraRelationHelper {
         return latestReleased;
     }
 
-    public static DocumentModel getLatestRelatedReleasedVersion(
-            String versionVersionableId, List<String> uidList,
-            CoreSession session) throws EloraException {
-
-        DocumentModel latestReleased = null;
-
-        String query = EloraQueryFactory.getRelatedReleasedDocQuery(
-                versionVersionableId, uidList);
-
-        DocumentModelList relatedReleasedDocs = session.query(query);
-        if (relatedReleasedDocs.size() > 0) {
-            latestReleased = relatedReleasedDocs.get(0);
-        } else {
-            // Get latest related version
-            // TODO: Mira si ahora hace falta pasar el parametro
-            // versionVersionableId
-            query = EloraQueryFactory.getLatestRelatedDocQuery(
-                    versionVersionableId, uidList, false);
-            relatedReleasedDocs = session.query(query);
-            if (relatedReleasedDocs.size() > 0) {
-                latestReleased = relatedReleasedDocs.get(0);
-            }
-        }
-
-        return latestReleased;
-    }
-
-    public static DocumentModel getLatestRelatedVersion(String majorVersion,
-            List<String> uidList, CoreSession session) {
+    public static DocumentModel getLatestRelatedVersion(CoreSession session,
+            Long majorVersion, List<String> uidList, String type) {
 
         DocumentModel latestDoc = getLatestReleasedOrObsoleteInMajorVersion(
-                majorVersion, uidList, session);
+                session, majorVersion, uidList, type);
         if (latestDoc == null) {
-            latestDoc = EloraQueryFactory.getLatestInMajorVersion(majorVersion,
-                    uidList, session);
+            latestDoc = EloraQueryFactory.getLatestInMajorVersion(session,
+                    majorVersion, uidList, type);
         }
         return latestDoc;
     }
 
     private static DocumentModel getLatestReleasedOrObsoleteInMajorVersion(
-            String majorVersion, List<String> uidList, CoreSession session) {
+            CoreSession session, Long majorVersion, List<String> uidList,
+            String type) {
 
         List<String> stateList = new ArrayList<>();
         stateList.addAll(LifecyclesConfig.releasedStatesList);
         stateList.addAll(LifecyclesConfig.obsoleteStatesList);
 
-        return EloraQueryFactory.getLatestByStatesInMajorVersion(majorVersion,
-                stateList, uidList, session);
+        return EloraQueryFactory.getLatestByStatesInMajorVersion(session,
+                majorVersion, stateList, uidList, type);
     }
 
     public static DocumentModelList getSpecialRelatedReleased(
             DocumentRef subjectRef, Statement stmt, CoreSession session)
             throws EloraException {
 
+        String logInitMsg = "[getSpecialRelatedReleased] ["
+                + session.getPrincipal().getName() + "] ";
+
         DocumentModelList relatedDocs = new DocumentModelListImpl();
 
-        String versionVersionableId = session.getWorkingCopy(
-                subjectRef).getId();
+        DocumentModel wcDoc = session.getWorkingCopy(subjectRef);
+        if (wcDoc == null) {
+            log.error(logInitMsg + "Working copy of |" + subjectRef.toString()
+                    + "| is null. It does not exist or is unreadable.");
+            throw new EloraException(
+                    "Document does not exist or is unreadable.");
+        }
+        String versionVersionableId = wcDoc.getId();
 
         List<Statement> stmts = getRelationManager().getGraphByName(
                 RelationConstants.GRAPH_NAME).getStatements(null,
@@ -755,7 +783,7 @@ public class EloraRelationHelper {
         }
 
         String query = EloraQueryFactory.getRelatedReleasedDocQuery(
-                versionVersionableId, uidList);
+                wcDoc.getType(), versionVersionableId, uidList);
 
         DocumentModelList relatedReleasedDocs = session.query(query);
         if (relatedReleasedDocs.size() > 0) {

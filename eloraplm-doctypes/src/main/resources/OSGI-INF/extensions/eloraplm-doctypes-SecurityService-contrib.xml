@@ -12,6 +12,7 @@
       <include>Read</include>
       <include>Write</include>
       <include>Remove</include>
+      <include>ReadWrite</include>
     </permission>
   </extension>
 

@@ -1,5 +1,0 @@
-id,cad_type_name,data_type,comment,obsolete
-PRP,Property,Unique,Objetos de tipo Propiedad.,0
-SUM,Summary,Unique,Campos de información de resumen del fichero.,0
-PRT,Property Table,Tabular,"Datos tabulares con un número de registros limitados y que se mapean con propiedades. El mapeo se realiza siguiendo un patrón NAME#N, donde NAME representa al campo, y N al número de registro.",0
-FIX,Fixed,Unique,Metadatos especiales a obtener del documento CAD.,0

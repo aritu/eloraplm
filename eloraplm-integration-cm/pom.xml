@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.aritu.eloraplm</groupId>
     <artifactId>eloraplm-parent</artifactId>
-    <version>20181120</version>
+    <version>20191003</version>
   </parent>  
   
   <artifactId>eloraplm-integration-cm</artifactId>
@@ -42,28 +42,21 @@
       <artifactId>org.osgi.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-constants</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-exceptions</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aritu.eloraplm</groupId>
-      <artifactId>eloraplm-integration</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-core-asl</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.aritu.eloraplm</groupId>
+      <artifactId>eloraplm-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.aritu.eloraplm</groupId>
+      <artifactId>eloraplm-integration</artifactId>
     </dependency>
   </dependencies>
   

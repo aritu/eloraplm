@@ -32,6 +32,15 @@
                 </excludes>
             </artifact:set>
         </copy>
+        
+        <!-- Third party libraries -->
+        <copy todir="${outdir}/marketplace/install/lib" overwrite="true">
+            <artifact:set>
+                <includes>
+                    <artifact groupId="com.aritu.eloraplm.lib*" />
+                </includes>
+            </artifact:set>
+        </copy>
 
         <!-- Generate install.xml content -->
         <!-- See documentation at http://doc.nuxeo.com/x/IgIz -->
@@ -39,14 +48,29 @@
         <if>
             <available file="${outdir}/marketplace/install/bundles" />
             <then>
-                <var name="install.bundles" value="${line.separator}
-  &lt;update file=&quot;${package.root}/install/bundles&quot; todir=&quot;${env.bundles}&quot; /&gt;" />
+                <var name="install.bundles" value="${line.separator}  &lt;update file=&quot;${package.root}/install/bundles&quot; todir=&quot;${env.bundles}&quot; /&gt;" />
             </then>
         </if>
 
         <var name="install.libs" value="" />
+        <if>
+            <available file="${outdir}/marketplace/install/lib"/>
+            <then>
+                <var name="install.libs" value="${line.separator}  &lt;update file=&quot;${package.root}/install/lib&quot; todir=&quot;${env.lib}&quot; /&gt;"/>
+            </then>
+        </if>
+        
         <var name="install.properties" value="" />
+        <!--TODO Configure properties installation -->
+        
         <var name="install.templates" value="" />
+        <if>
+            <available file="${outdir}/marketplace/install/templates" />
+            <then>
+                <var name="install.templates" value="${line.separator}  &lt;copy dir=&quot;${package.root}/install/templates&quot; todir=&quot;${env.templates}&quot; overwrite=&quot;true&quot; /&gt;
+                    ${line.separator}  &lt;config addtemplate=&quot;eloraplm&quot; /&gt;${line.separator}" />
+            </then>
+        </if>
 
         <copy file="src/main/resources/install.xml" todir="${outdir}/marketplace" overwrite="true">
             <filterset>

@@ -76,11 +76,13 @@ public class CadWhereUsedNodeService extends RelationNodeService
             String docId, DocumentModel data, DocumentModel wcDoc,
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering, boolean isSpecial, boolean isDirect) {
+            Integer viewerOrdering, Integer inverseViewerOrdering,
+            boolean isSpecial, boolean isDirect) {
 
         CadRelationNodeData nodeData = new CadRelationNodeData(id, level, docId,
                 data, wcDoc, stmt, predicateUri, quantity, comment, ordering,
-                directorOrdering, viewerOrdering, isSpecial, isDirect);
+                directorOrdering, viewerOrdering, inverseViewerOrdering,
+                isSpecial, isDirect);
 
         nodeData = loadRelatedItems(nodeData);
 

@@ -24,7 +24,6 @@ import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationChain;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationParameters;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -50,7 +49,7 @@ import com.aritu.eloraplm.integration.get.restoperations.util.GetWorkspacesRespo
 import com.aritu.eloraplm.integration.get.restoperations.util.GetWorkspacesResponseDoc;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 
-@Operation(id = GetFavoriteWorkspaces.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Get Favorite Workspaces", description = "Get the list of "
+@Operation(id = GetFavoriteWorkspaces.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Get Favorite Workspaces", description = "Get the list of "
         + "visible workspaces for the currentUser")
 public class GetFavoriteWorkspaces {
 

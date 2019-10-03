@@ -21,7 +21,6 @@ import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -36,6 +35,7 @@ import org.nuxeo.ecm.platform.suggestbox.service.SuggestionContext;
 import org.nuxeo.ecm.platform.suggestbox.service.SuggestionException;
 import org.nuxeo.ecm.platform.suggestbox.service.SuggestionService;
 
+import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 
@@ -47,7 +47,7 @@ import com.aritu.eloraplm.constants.EloraSchemaConstants;
  *
  * @since 6.0
  */
-@Operation(id = EloraSuggestOperation.ID, category = Constants.CAT_UI, label = "Suggesters launcher **** Elora", description = "Get and launch the suggesters defined and return a list of Suggestion objects.", addToStudio = false)
+@Operation(id = EloraSuggestOperation.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_DEFAULT, label = "Suggesters launcher **** Elora", description = "Get and launch the suggesters defined and return a list of Suggestion objects.", addToStudio = false)
 public class EloraSuggestOperation {
 
     public static final String ID = "Elora.Search.SuggestersLauncher";

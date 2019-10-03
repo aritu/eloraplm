@@ -40,7 +40,7 @@ public class BomHelper {
 
         switch (bomType) {
         case EloraDoctypeConstants.BOM_PART:
-            classificationMetadata = EloraMetadataConstants.ELORA_BOMPART_PARTCLASSIFICATION;
+            classificationMetadata = EloraMetadataConstants.ELORA_PARTCLASS_PARTCLASSIFICATION;
             break;
         case EloraDoctypeConstants.BOM_PRODUCT:
             classificationMetadata = EloraMetadataConstants.ELORA_PRODCLASS_PRODUCTCLASSIFICATION;

@@ -2,6 +2,7 @@
 
 <component name="com.aritu.eloraplm.bom.ActionService.contrib">
   <require>org.nuxeo.ecm.platform.actions</require>
+  <require>com.aritu.eloraplm.webapp.base.ActionService.contrib</require>
 
   <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
   
@@ -98,6 +99,7 @@
     <filter id="bomAddPartTreeButton">
         <rule grant="true">
           <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
+          <type>BomPackaging</type>
           <type>BomTool</type>
           <type>BomSpecification</type>
         </rule>
@@ -201,7 +203,14 @@
     <filter id="showBringRelatedXButtons">
         <rule grant="false">
             <condition>#{not eloraWebActions.isInAWorkspace()}</condition>
+            <condition>#{not mainTabsActions.isOnMainTab('documents')}</condition>
             <condition>#{selectedDocuments.size() eq 0}</condition>
+        </rule>
+    </filter>
+    
+    <filter id="hasDefaultHeader" append="true">
+        <rule grant="true">
+            <facet>BomDocument</facet>
         </rule>
     </filter>
     
@@ -412,18 +421,6 @@
     
     <!-- end of Documents Tab buttons -->
     
-    <!-- Source Tab buttons -->
-    
-    <action id="BtnAddPartManufacturerRelation" order="20" label="eloraplm.command.relation.add.manufacturerPart" type="fancybox" icon="">
-      <category>BOM_PART_MANUFACTURER_RELATION_BUTTON</category>
-      <properties>
-        <property name="include">/incl/action/bom_part_manufacturer_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <!-- end of Source Tab buttons -->
     
     <!-- Customer Tab buttons -->    
      <!-- Customer Product Treetable buttons -->
@@ -543,50 +540,6 @@
      <!-- end of Manufacturer Part Treetable buttons -->    
     <!-- end of Sourcing Tab buttons -->
     
-    
-    <!-- Items Tab buttons ¿Se utilizan? -->
-    
-    <action id="BtnAddToolHasBomRelation" order="20" label="eloraplm.command.relation.add.relatedBom" type="fancybox" icon="">
-      <category>BOM_HAS_BOM_RELATION_BUTTON</category>
-      <filter-id>isBomTool</filter-id>
-      <properties>
-        <property name="include">/incl/action/tool_has_bom_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddPackagingHasBomRelation" order="20" label="eloraplm.command.relation.add.relatedBom" type="fancybox" icon="">
-      <category>BOM_HAS_BOM_RELATION_BUTTON</category>
-      <filter-id>isBomPackaging</filter-id>
-      <properties>
-        <property name="include">/incl/action/packaging_has_bom_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddSpecificationHasBomRelation" order="20" label="eloraplm.command.relation.add.relatedBom" type="fancybox" icon="">
-      <category>BOM_HAS_BOM_RELATION_BUTTON</category>
-      <filter-id>isBomSpecification</filter-id>
-      <properties>
-        <property name="include">/incl/action/specification_has_bom_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddBomHasSpecificationRelation" order="20" label="eloraplm.command.relation.add.specification" type="fancybox" icon="">
-      <category>BOM_HAS_SPECIFICATION_RELATION_BUTTON</category>
-      <filter-id>isNotBomSpecification</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_specification_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <!-- end of Items Tab buttons -->
     
     <!-- Ebom composition Treetable buttons -->
     

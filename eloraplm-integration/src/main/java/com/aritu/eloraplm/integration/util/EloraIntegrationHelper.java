@@ -109,6 +109,25 @@ public class EloraIntegrationHelper {
         return wcDoc;
     }
 
+    public static DocumentModel getRealOrWcDoc(DocumentRef docRef,
+            CoreSession session) throws EloraException {
+
+        DocumentModel doc = null;
+        try {
+            doc = session.getDocument(docRef);
+        } catch (DocumentNotFoundException e) {
+            throw new EloraException(
+                    "Document |" + docRef.toString() + "| does not exist");
+        }
+
+        if (doc.isProxy()) {
+            throw new EloraException(
+                    "Document |" + docRef.toString() + "| is a proxy");
+        }
+
+        return doc;
+    }
+
     // TODO Konstanteak erabili. LifeCycleState hola ondo dau??
     /**
      * @param session
@@ -183,7 +202,7 @@ public class EloraIntegrationHelper {
 
         // TODO: queda por definir si hay que buscar los item de un documento
         // según lo definido en las configuraciones
-        
+
         if (!doc.isImmutable()) {
             DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(doc);
             if (baseDoc != null) {
@@ -248,8 +267,9 @@ public class EloraIntegrationHelper {
         List<String> uidList = EloraDocumentHelper.getUidListFromDocList(docs);
         Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(docs);
 
+        String type = docs.get(0).getType();
         DocumentModel latestRelatedDoc = EloraRelationHelper.getLatestRelatedVersion(
-                String.valueOf(majorVersion), uidList, session);
+                session, majorVersion, uidList, type);
 
         if (latestRelatedDoc == null) {
             throw new EloraException(
@@ -283,7 +303,7 @@ public class EloraIntegrationHelper {
         String statusMessage = status.equals(
                 VersionStatusConstants.VERSION_STATUS_NORMAL)
                         ? ""
-                        : EloraMessageHelper.getTranslatedMessageFromOperation(
+                        : EloraMessageHelper.getTranslatedMessage(
                                 currentDoc.getCoreSession(),
                                 "eloraplm.message.versionStatus." + status);
 

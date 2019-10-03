@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -41,7 +40,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
  * @author aritu
  *
  */
-@Operation(id = GetCmProcessStructure.ID, category = Constants.CAT_DOCUMENT, label = "EloraPlmConnector - Get CM Process Structure", description = "Get the structure of a CM process.")
+@Operation(id = GetCmProcessStructure.ID, category = EloraGeneralConstants.OPERATIONS_CATEGORY_INTEGRATION, label = "EloraPlmConnector - Get CM Process Structure", description = "Get the structure of a CM process.")
 public class GetCmProcessStructure {
 
     public static final String ID = "Elora.PlmConnector.GetCmProcessStructure";
@@ -73,7 +72,7 @@ public class GetCmProcessStructure {
 
             loadCmProcess();
             CmProcessInfo structInfo = IntegrationCmHelper.getCmEcoProcessInfo(
-                    cmProcess);
+                    cmProcess, false);
             response.setCmProcessStructure(structInfo.getStructure());
 
             response.setLastModified(getLastModified());

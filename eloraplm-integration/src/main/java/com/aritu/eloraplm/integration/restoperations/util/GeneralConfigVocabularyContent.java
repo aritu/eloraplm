@@ -43,7 +43,7 @@ public class GeneralConfigVocabularyContent implements VocabularyContent {
 
     }
 
-    public String geLabel() {
+    public String getLabel() {
         return label;
     }
 

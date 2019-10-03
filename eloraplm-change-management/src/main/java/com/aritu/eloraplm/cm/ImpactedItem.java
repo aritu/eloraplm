@@ -26,13 +26,13 @@ public class ImpactedItem extends CMItem {
     public ImpactedItem(Long rowNumber, String nodeId, String parentNodeId,
             String modifiedItem, String parentItem, String originItem,
             String originItemWc, String predicate, String quantity,
-            boolean isAnarchic, String action, String destinationItem,
-            String destinationItemWc, boolean isManaged, boolean isManual,
-            String type, String comment, boolean isUpdated) {
+            boolean isAnarchic, boolean isDirectObject, String action,
+            String destinationItem, String destinationItemWc, boolean isManaged,
+            boolean isManual, String type, String comment, boolean isUpdated) {
         super(rowNumber, nodeId, parentNodeId, parentItem, originItem,
-                originItemWc, predicate, quantity, isAnarchic, action,
-                destinationItem, destinationItemWc, isManaged, isManual, type,
-                comment, isUpdated);
+                originItemWc, predicate, quantity, isAnarchic, isDirectObject,
+                action, destinationItem, destinationItemWc, isManaged, isManual,
+                type, comment, isUpdated);
 
         this.modifiedItem = modifiedItem;
     }

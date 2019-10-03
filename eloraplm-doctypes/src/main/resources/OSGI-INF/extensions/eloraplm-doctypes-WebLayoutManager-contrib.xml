@@ -117,7 +117,9 @@
                 <row>
                     <widget>volume</widget>
                 </row>
-                <!-- <row> <widget>surface</widget> </row> -->
+                <row>
+                    <widget>surface</widget>
+                </row>
             </rows>
         </layout>
 
@@ -139,7 +141,9 @@
                 <row>
                     <widget>volume</widget>
                 </row>
-                <!-- <row> <widget>surface</widget> </row> -->
+                <row>
+                    <widget>surface</widget>
+                </row>
             </rows>
         </layout>
 
@@ -164,7 +168,9 @@
                 <row>
                     <widget>volume</widget>
                 </row>
-                <!-- <row> <widget>surface</widget> </row> -->
+                <row>
+                    <widget>surface</widget>
+                </row>
             </rows>
         </layout>
 
@@ -183,7 +189,9 @@
                 <row>
                     <widget>volume</widget>
                 </row>
-                <!-- <row> <widget>surface</widget> </row> -->
+                <row>
+                    <widget>surface</widget>
+                </row>
             </rows>
         </layout>
 
@@ -209,6 +217,24 @@
                 </row>
             </rows>
         </layout>
+        
+        <layout name="summary_cad_drawing">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>sheetFormat</widget>
+                    <widget>scale</widget>
+                    <widget>numberOfSheets</widget>
+                </row>
+                <row>
+                    <widget>templateName</widget>
+                </row>
+            </rows>
+        </layout>
+        
 
         <layout name="cad_design_table">
             <templates>
@@ -230,6 +256,23 @@
                 </row>
             </rows>
         </layout>
+        
+        
+        <layout name="summary_cad_design_table">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>sourceDT</widget>
+                </row>
+                <row>
+                    <widget>allowUpdateFromModel</widget>
+                </row>
+            </rows>
+        </layout>
+        
 
         <layout name="owner">
             <templates>
@@ -261,7 +304,7 @@
             </columns>
         </layout>
 
-        <layout name="priority">
+        <layout name="planning">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
                 </template>
@@ -269,8 +312,98 @@
             <rows>
                 <row>
                     <widget>priority</widget>
-                    <widget>expectedEndDate</widget>
+                    <widget>plannedEndDate</widget>
                     <widget>realEndDate</widget>
+                </row>
+            </rows>
+        </layout>
+        
+        <layout name="planning_all_dates">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>realStartDate</widget>
+                </row>
+                <row>
+                    <widget>plannedEndDate</widget>
+                </row>
+                <row>
+                    <widget>realEndDate</widget>
+                </row>
+            </rows>
+        </layout>
+        
+        <layout name="project_type">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>projectType</widget>
+                </row>
+            </rows>
+        </layout>
+        
+        <layout name="project_edit">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>projectType</widget>
+                    <widget>priority</widget>
+                </row>
+                <row>
+                    <widget>responsible</widget>
+                </row>
+                <row>
+                    <widget>realStartDate</widget>
+                    <widget>plannedEndDate</widget>
+                    <widget>realEndDate</widget>
+                </row>
+                <row>
+                    <widget>progress</widget>
+                </row>
+            </rows>
+        </layout>
+        
+        <layout name="rights">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>rights</widget>
+                </row>
+            </rows>
+        </layout>
+        
+        <layout name="expired">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>expired</widget>
+                </row>
+            </rows>
+        </layout>
+        
+        <layout name="subjects">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>subjects</widget>
                 </row>
             </rows>
         </layout>
@@ -287,19 +420,7 @@
             </rows>
         </layout>
 
-        <layout name="project">
-            <templates>
-                <template mode="any">/layouts/layout_default_template.xhtml
-                </template>
-            </templates>
-            <rows>
-                <row>
-                    <widget>projectType</widget>
-                </row>
-            </rows>
-        </layout>
-
-        <layout name="projectPhase">
+        <layout name="projectPhases" >
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
                 </template>
@@ -307,24 +428,6 @@
             <rows>
                 <row>
                     <widget>projectPhaseList</widget>
-                </row>
-            </rows>
-        </layout>
-
-        <layout name="cad_dublincore">
-            <templates>
-                <template mode="any">/layouts/layout_default_template.xhtml
-                </template>
-            </templates>
-            <rows>
-                <row>
-                    <widget>subjects</widget>
-                </row>
-                <row>
-                    <widget>rights</widget>
-                </row>
-                <row>
-                    <widget>expired</widget>
                 </row>
             </rows>
         </layout>
@@ -603,6 +706,7 @@
             <properties widgetMode="any">
                 <property name="directoryName">elora_cadType</property>
                 <property name="required">true</property>
+                <property name="localize">true</property>
             </properties>
         </widget>
 
@@ -659,10 +763,16 @@
             </fields>
         </widget>
 
-        <!-- <widget name="surface" type="measure_value_and_unit"> <labels> 
-            <label mode="any">label.widget.cad.surface</label> </labels> <translated>true</translated> 
-            <fields> <field>cad:surface</field> <field>cad:surfaceUnit</field> </fields> 
-            </widget> -->
+        <widget name="surface" type="measure_value_and_unit">
+            <labels> 
+                <label mode="any">label.widget.cad.surface</label>
+            </labels>
+            <translated>true</translated> 
+            <fields>
+                <field>cad:surface</field>
+                <field>cad:surfaceUnit</field>
+            </fields> 
+        </widget>
 
 
         <widget name="sheetFormat" type="text">
@@ -781,60 +891,79 @@
 
         <widget name="priority" type="selectOneDirectory">
             <labels>
-                <label mode="any">label.widget.priority.priority</label>
+                <label mode="any">label.widget.planning.priority</label>
             </labels>
             <translated>true</translated>
             <fields>
-                <field>prio:priority</field>
+                <field>plan:priority</field>
             </fields>
             <properties widgetMode="any">
                 <property name="directoryName">elora_priority</property>
                 <property name="required">false</property>
             </properties>
         </widget>
-
-        <widget name="expectedEndDate" type="datetime">
+        
+        <widget name="realStartDate" type="datetime">
             <labels>
-                <label mode="any">label.widget.priority.expectedEndDate
-                </label>
+                <label mode="any">label.widget.planning.realStartDate</label>
             </labels>
             <translated>true</translated>
             <fields>
-                <field>prio:expectedEndDate</field>
+                <field>plan:realStartDate</field>
             </fields>
+        </widget>
+
+        <widget name="plannedEndDate" type="datetime">
+            <labels>
+                <label mode="any">label.widget.planning.plannedEndDate</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>plan:plannedEndDate</field>
+            </fields>
+            <properties mode="view">
+                <property name="pattern">#{nxu:basicDateFormatter()}</property>
+            </properties>
         </widget>
 
         <widget name="realEndDate" type="datetime">
             <labels>
-                <label mode="any">label.widget.priority.realEndDate
-                </label>
+                <label mode="any">label.widget.planning.realEndDate</label>
             </labels>
             <translated>true</translated>
             <fields>
-                <field>prio:realEndDate</field>
+                <field>plan:realEndDate</field>
+            </fields>
+            <properties mode="view">
+                <property name="pattern">#{nxu:basicDateFormatter()}</property>
+            </properties>
+        </widget>
+        
+        <widget name="progress" type="colored_percentage">
+            <labels>
+                <label mode="any">label.widget.planning.progress</label>
+            </labels>
+            <fields>
+                <field>plan:progress</field>
             </fields>
         </widget>
 
         <widget name="projectPhaseList" type="list">
             <labels>
-                <label mode="any">label.widget.project.projectPhaseList
-                </label>
+                <label mode="any">label.widget.project.projectPhaseList</label>
             </labels>
+            <handlingLabels>true</handlingLabels>
             <translated>true</translated>
             <fields>
                 <field>prj:projectPhaseList</field>
             </fields>
-            <properties widgetMode="view">
+            <properties widgetMode="any">
                 <property name="display">table</property>
-            </properties>
-            <properties widgetMode="edit">
-                <property name="display">block_left</property>
             </properties>
             <subWidgets>
                 <widget name="phaseDescription" type="text">
                     <labels>
-                        <label mode="any">label.widget.project.phaseDescription
-                        </label>
+                        <label mode="any">label.widget.project.phaseDescription</label>
                     </labels>
                     <fields>
                         <field>phaseDescription</field>
@@ -845,8 +974,7 @@
                 </widget>
                 <widget name="phaseManager" type="singleUserSuggestion">
                     <labels>
-                        <label mode="any">label.widget.project.phaseManager
-                        </label>
+                        <label mode="any">label.widget.project.phaseManager</label>
                     </labels>
                     <fields>
                         <field>phaseManager</field>
@@ -854,31 +982,58 @@
                     <properties mode="any">
                         <property name="userSuggestionSearchType">USER_TYPE</property>
                         <property name="minChars">1</property>
+                        <property name="hideHelpLabel">true</property>
                     </properties>
                 </widget>
-                <widget name="phasePreviewDate" type="datetime">
+                <widget name="phaseRealStartDate" type="datetime">
                     <labels>
-                        <label mode="any">label.widget.project.phasePreviewDate
-                        </label>
+                        <label mode="any">label.widget.project.phaseRealStartDate</label>
                     </labels>
                     <fields>
-                        <field>phasePreviewDate</field>
+                        <field>phaseRealStartDate</field>
                     </fields>
                     <properties mode="edit">
                         <property name="styleClass">dataInputText</property>
                     </properties>
+                    <properties mode="view">
+                        <property name="pattern">#{nxu:basicDateFormatter()}</property>
+                    </properties>
                 </widget>
-                <widget name="phaseRealDate" type="datetime">
+                <widget name="phasePlannedEndDate" type="datetime">
                     <labels>
-                        <label mode="any">label.widget.project.phaseRealDate
-                        </label>
+                        <label mode="any">label.widget.project.phasePlannedEndDate</label>
                     </labels>
                     <fields>
-                        <field>phaseRealDate</field>
+                        <field>phasePlannedEndDate</field>
                     </fields>
                     <properties mode="edit">
                         <property name="styleClass">dataInputText</property>
                     </properties>
+                    <properties mode="view">
+                        <property name="pattern">#{nxu:basicDateFormatter()}</property>
+                    </properties>
+                </widget>
+                <widget name="phaseRealEndDate" type="datetime">
+                    <labels>
+                        <label mode="any">label.widget.project.phaseRealEndDate</label>
+                    </labels>
+                    <fields>
+                        <field>phaseRealEndDate</field>
+                    </fields>
+                    <properties mode="edit">
+                        <property name="styleClass">dataInputText</property>
+                    </properties>
+                    <properties mode="view">
+                        <property name="pattern">#{nxu:basicDateFormatter()}</property>
+                    </properties>
+                </widget>
+                <widget name="phaseProgress" type="colored_percentage">
+                    <labels>
+                        <label mode="any">label.widget.project.phaseProgress</label>
+                    </labels>
+                    <fields>
+                        <field>phaseProgress</field>
+                    </fields>
                 </widget>
             </subWidgets>
         </widget>
@@ -936,8 +1091,7 @@
                 </property>
             </properties>
         </widget>
-
-
+        
     </extension>
 
 </component>  

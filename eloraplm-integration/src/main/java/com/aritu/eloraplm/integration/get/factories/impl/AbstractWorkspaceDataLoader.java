@@ -160,13 +160,15 @@ public abstract class AbstractWorkspaceDataLoader
             String parentUid = item.getParentRef().toString();
             try {
                 DocumentModel realAvItem = getNonProxyArchivedVersion(item);
-                for (DocumentModel doc : getAllRelatedCadDocsForItem(
-                        realAvItem)) {
-                    try {
-                        processDocument(0, SOURCE_CONTENT, doc, true, parentUid,
-                                contentChildrenVersions);
-                    } catch (DocumentWithoutArchivedVersionsException e) {
-                        continue;
+                if (realAvItem != null) {
+                    for (DocumentModel doc : getAllRelatedCadDocsForItem(
+                            realAvItem)) {
+                        try {
+                            processDocument(0, SOURCE_CONTENT, doc, true,
+                                    parentUid, contentChildrenVersions);
+                        } catch (DocumentWithoutArchivedVersionsException e) {
+                            continue;
+                        }
                     }
                 }
             } catch (DocumentWithoutArchivedVersionsException e) {
@@ -241,33 +243,37 @@ public abstract class AbstractWorkspaceDataLoader
 
         DocumentModel realAvDoc = getNonProxyArchivedVersion(doc);
 
-        realAvDoc = switchDocVersionIfNeeded(realAvDoc, source, level,
-                isRootSpecial);
+        if (realAvDoc != null) {
+            realAvDoc = switchDocVersionIfNeeded(realAvDoc, source, level,
+                    isRootSpecial);
+            if (realAvDoc != null) {
+                if (!isAlreadyProcessed(realAvDoc)
+                        || mustUpdateVersion(level, isRootSpecial, isStructure,
+                                tempDocMap, realAvDoc.getVersionSeriesId())) {
+                    GetWorkspaceResponseDoc responseDoc = getDocData(realAvDoc);
+                    responseDoc.setSource(source);
+                    responseDoc.setSaveInWorkspace(saveInWorkspace);
+                    if (parentUid != null) {
+                        responseDoc.addParentRealUid(parentUid);
+                    }
 
-        if (!isAlreadyProcessed(realAvDoc)
-                || mustUpdateVersion(level, isRootSpecial, isStructure,
-                        tempDocMap, realAvDoc.getVersionSeriesId())) {
-            GetWorkspaceResponseDoc responseDoc = getDocData(realAvDoc);
-            responseDoc.setSource(source);
-            responseDoc.setSaveInWorkspace(saveInWorkspace);
-            if (parentUid != null) {
-                responseDoc.addParentRealUid(parentUid);
-            }
+                    tempDocMap.put(realAvDoc.getVersionSeriesId(), responseDoc);
+                    response.addDocument(realAvDoc.getVersionSeriesId(),
+                            responseDoc);
 
-            tempDocMap.put(realAvDoc.getVersionSeriesId(), responseDoc);
-            response.addDocument(realAvDoc.getVersionSeriesId(), responseDoc);
-
-            if (isStructure) {
-                processRelations(level, source, realAvDoc, childrenVersions,
-                        isRootSpecial);
-            }
-        } else {
-            if (saveInWorkspace) {
-                GetWorkspaceResponseDoc responseDoc = response.getDocument(
-                        realAvDoc.getVersionSeriesId());
-                if (!responseDoc.hasParentRealUid(parentUid)) {
-                    responseDoc.addParentRealUid(parentUid);
-                    responseDoc.setSaveInWorkspace(true);
+                    if (isStructure) {
+                        processRelations(level, source, realAvDoc,
+                                childrenVersions, isRootSpecial);
+                    }
+                } else {
+                    if (saveInWorkspace) {
+                        GetWorkspaceResponseDoc responseDoc = response.getDocument(
+                                realAvDoc.getVersionSeriesId());
+                        if (!responseDoc.hasParentRealUid(parentUid)) {
+                            responseDoc.addParentRealUid(parentUid);
+                            responseDoc.setSaveInWorkspace(true);
+                        }
+                    }
                 }
             }
         }
@@ -439,15 +445,18 @@ public abstract class AbstractWorkspaceDataLoader
 
                 if (cadChild == null) {
                     throw new EloraException(
-                            "The child document in the relation does not exist.");
+                            "The child document in the relation does not exist or the user has no right to read it. Statement: |"
+                                    + statement.toString() + "|");
                 }
                 if (cadChild.isProxy()) {
                     throw new EloraException(
-                            "The child document in the relation is a proxy.");
+                            "The child document in the relation is a proxy. Statement: |"
+                                    + statement.toString() + "|");
                 }
                 if (!cadChild.isVersion()) {
                     throw new EloraException(
-                            "The child document in the relation is a working copy.");
+                            "The child document in the relation is a working copy. Statement: |"
+                                    + statement.toString() + "|");
                 }
 
                 processDocAndRelations(level, source, cadChild, false, null,

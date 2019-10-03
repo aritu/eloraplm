@@ -16,6 +16,7 @@ package com.aritu.eloraplm.integration.cm.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +44,20 @@ public class IntegrationCmHelper {
 
     private static final Log log = LogFactory.getLog(IntegrationCmHelper.class);
 
-    public static CmProcessInfo getCmEcoProcessInfo(DocumentModel doc)
-            throws EloraException {
+    /**
+     * Gets the information related to a given ECO. The information is completed
+     * by the structure of the ECO, the modified documents list and the impacted
+     * documents list.
+     *
+     * @param doc The ECO document.
+     * @param includeDocuments If false, it only retrieves the structure of the
+     *            ECO. If true, it retrieves the structure, the
+     *            rootItemDocuments list and the subitemDocuments list.
+     * @return Information of the ECO
+     * @throws EloraException
+     */
+    public static CmProcessInfo getCmEcoProcessInfo(DocumentModel doc,
+            boolean includeDocuments) throws EloraException {
 
         String logInitMsg = "[getCmEcoProcessInfo] ["
                 + doc.getCoreSession().getPrincipal().getName() + "] ";
@@ -55,9 +68,11 @@ public class IntegrationCmHelper {
         List<DocumentModel> rootItemDocuments = new ArrayList<DocumentModel>();
         List<DocumentModel> subitemDocuments = new ArrayList<DocumentModel>();
 
-        fillCmEcoRootItems(doc, structure, rootItemDocuments);
+        List<String> rootItemsOriginItemUids = fillCmEcoRootItems(doc,
+                structure, rootItemDocuments, includeDocuments);
 
-        fillCmEcoSubitems(doc, structure, subitemDocuments);
+        fillCmEcoSubitems(doc, rootItemsOriginItemUids, structure,
+                subitemDocuments, includeDocuments);
 
         CmProcessInfo processInfo = new CmProcessInfo();
         processInfo.setStructure(structure);
@@ -71,7 +86,6 @@ public class IntegrationCmHelper {
         return processInfo;
     }
 
-    // *********************************************************
     /**
      * @param doc The ECO document.
      * @param managedDestinationUids This Map contains managed destination
@@ -137,14 +151,17 @@ public class IntegrationCmHelper {
         log.trace(logInitMsg + "--- EXIT --- ");
     }
 
-    private static void fillCmEcoRootItems(DocumentModel doc,
+    private static List<String> fillCmEcoRootItems(DocumentModel doc,
             List<CmProcessNode> structure,
-            List<DocumentModel> rootItemDocuments) throws EloraException {
+            List<DocumentModel> rootItemDocuments, boolean includeDocuments)
+            throws EloraException {
 
         String logInitMsg = "[fillCmEcoRootItems] ["
                 + doc.getCoreSession().getPrincipal().getName() + "] ";
 
         log.trace(logInitMsg + "--- ENTER ---");
+
+        List<String> rootItemsOriginItemUids = new ArrayList<String>();
 
         IterableQueryResult it = null;
         try {
@@ -165,6 +182,8 @@ public class IntegrationCmHelper {
                             pfx + "/*1/parentNodeId");
                     String originItemUid = (String) map.get(
                             pfx + "/*1/originItem");
+                    String originItemWcUid = (String) map.get(
+                            pfx + "/*1/originItemWc");
                     String action = (String) map.get(pfx + "/*1/action");
                     String destinationItemUid = (String) map.get(
                             pfx + "/*1/destinationItem");
@@ -174,49 +193,50 @@ public class IntegrationCmHelper {
                             pfx + "/*1/isManaged");
                     String comment = (String) map.get(pfx + "/*1/comment");
 
-                    String destinationRealUid = null;
-                    String destinationWcUid = null;
-                    if (destinationItemUid != null) {
-                        if (destinationItemUid.equals(destinationWcItemUid)) {
-                            destinationWcUid = destinationItemUid;
-                        } else {
-                            destinationRealUid = destinationItemUid;
-                        }
+                    // If action is IGNORE, set destinationWc as originWc
+                    if (action.equals(CMConstants.ACTION_IGNORE)) {
+                        destinationWcItemUid = originItemWcUid;
                     }
 
                     CmProcessNode cmProcessNode = new CmProcessNode(nodeId,
                             parentNodeId, originItemUid, true, null,
-                            originItemUid, destinationRealUid, destinationWcUid,
-                            action, isManaged, comment);
+                            originItemUid, originItemWcUid, destinationItemUid,
+                            destinationWcItemUid, action, isManaged, comment);
                     structure.add(cmProcessNode);
+                    rootItemsOriginItemUids.add(originItemUid);
 
-                    try {
-                        if (action.equals(CMConstants.ACTION_REMOVE)
-                                || action.equals(CMConstants.ACTION_REPLACE)) {
-                            if (originItemUid != null
-                                    && !rootItemsDocumentsIds.contains(
-                                            originItemUid)) {
-                                DocumentModel originItem = session.getDocument(
-                                        new IdRef(originItemUid));
-                                rootItemsDocumentsIds.add(originItemUid);
-                                rootItemDocuments.add(originItem);
+                    if (includeDocuments) {
+                        try {
+                            if (action.equals(CMConstants.ACTION_REMOVE)
+                                    || action.equals(
+                                            CMConstants.ACTION_REPLACE)) {
+                                if (originItemUid != null
+                                        && !rootItemsDocumentsIds.contains(
+                                                originItemUid)) {
+                                    DocumentModel originItem = session.getDocument(
+                                            new IdRef(originItemUid));
+                                    rootItemsDocumentsIds.add(originItemUid);
+                                    rootItemDocuments.add(originItem);
+                                }
                             }
-                        }
-                        if (action.equals(CMConstants.ACTION_CHANGE)
-                                || action.equals(CMConstants.ACTION_REPLACE)) {
+                            if (action.equals(CMConstants.ACTION_CHANGE)
+                                    || action.equals(
+                                            CMConstants.ACTION_REPLACE)) {
 
-                            if (destinationItemUid != null
-                                    && !rootItemsDocumentsIds.contains(
-                                            destinationItemUid)) {
-                                DocumentModel destinationItem = session.getDocument(
-                                        new IdRef(destinationItemUid));
-                                rootItemsDocumentsIds.add(destinationItemUid);
-                                rootItemDocuments.add(destinationItem);
+                                if (destinationItemUid != null
+                                        && !rootItemsDocumentsIds.contains(
+                                                destinationItemUid)) {
+                                    DocumentModel destinationItem = session.getDocument(
+                                            new IdRef(destinationItemUid));
+                                    rootItemsDocumentsIds.add(
+                                            destinationItemUid);
+                                    rootItemDocuments.add(destinationItem);
+                                }
                             }
+                        } catch (DocumentNotFoundException e) {
+                            log.error(logInitMsg + "Exception thrown: "
+                                    + e.getClass() + ": " + e.getMessage());
                         }
-                    } catch (DocumentNotFoundException e) {
-                        log.error(logInitMsg + "Exception thrown: "
-                                + e.getClass() + ": " + e.getMessage());
                     }
                 }
             }
@@ -233,11 +253,24 @@ public class IntegrationCmHelper {
         }
 
         log.trace(logInitMsg + "--- EXIT ---");
+
+        return rootItemsOriginItemUids;
     }
 
     private static void fillCmEcoSubitems(DocumentModel doc,
-            List<CmProcessNode> structure, List<DocumentModel> subitemDocuments)
+            List<String> rootItemsOriginItemUids, List<CmProcessNode> structure,
+            List<DocumentModel> subitemDocuments, boolean includeDocuments)
             throws EloraException {
+
+        // ################################################################
+        // Changes related to JIRA ELO-806:
+        //
+        // - Fill structure with all impacted items (also items with IGNORE
+        // action)
+        // - For impacted items with IGNORE action, add the originWc to the
+        // documents list
+        //
+        // ################################################################
 
         String logInitMsg = "[fillCmEcoSubitems] ["
                 + doc.getCoreSession().getPrincipal().getName() + "] ";
@@ -249,65 +282,105 @@ public class IntegrationCmHelper {
 
             CoreSession session = doc.getCoreSession();
 
-            String query = IntegrationCmQueryFactory.getCmEcoSubitemsQuery(
-                    doc.getId());
-            it = session.queryAndFetch(query, NXQL.NXQL);
+            // structure should contain modified items structure (root items)
+            for (Iterator<String> iterator = rootItemsOriginItemUids.iterator(); iterator.hasNext();) {
+                String rootItemOriginUid = iterator.next();
 
-            if (it.size() > 0) {
-                List<String> subitemsDocumentsIds = new ArrayList<String>();
+                String query = IntegrationCmQueryFactory.getCmEcoSubitemsByRootItemOriginUidQuery(
+                        doc.getId(), rootItemOriginUid);
+                it = session.queryAndFetch(query, NXQL.NXQL);
 
-                String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
-                for (Map<String, Serializable> map : it) {
-                    String nodeId = (String) map.get(pfx + "/*1/nodeId");
-                    String parentNodeId = (String) map.get(
-                            pfx + "/*1/parentNodeId");
-                    String modifiedItemUid = (String) map.get(
-                            pfx + "/*1/modifiedItem");
-                    String parentItemUid = (String) map.get(
-                            pfx + "/*1/parentItem");
-                    String originItemUid = (String) map.get(
-                            pfx + "/*1/originItem");
-                    String action = (String) map.get(pfx + "/*1/action");
-                    String destinationItemUid = (String) map.get(
-                            pfx + "/*1/destinationItem");
-                    String destinationWcItemUid = (String) map.get(
-                            pfx + "/*1/destinationItemWc");
-                    boolean isManaged = (boolean) map.get(
-                            pfx + "/*1/isManaged");
-                    String comment = (String) map.get(pfx + "/*1/comment");
+                if (it.size() > 0) {
+                    List<String> subitemsDocumentsIds = new ArrayList<String>();
 
-                    String destinationRealUid = null;
-                    String destinationWcUid = null;
-                    if (destinationItemUid.equals(destinationWcItemUid)) {
-                        destinationWcUid = destinationItemUid;
-                    } else {
-                        destinationRealUid = destinationItemUid;
-                    }
+                    String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
+                    for (Map<String, Serializable> map : it) {
+                        String nodeId = (String) map.get(pfx + "/*1/nodeId");
+                        String parentNodeId = (String) map.get(
+                                pfx + "/*1/parentNodeId");
+                        String modifiedItemUid = (String) map.get(
+                                pfx + "/*1/modifiedItem");
+                        String parentItemUid = (String) map.get(
+                                pfx + "/*1/parentItem");
+                        String originItemUid = (String) map.get(
+                                pfx + "/*1/originItem");
+                        String originWcItemUid = (String) map.get(
+                                pfx + "/*1/originItemWc");
+                        String action = (String) map.get(pfx + "/*1/action");
+                        String destinationItemUid = (String) map.get(
+                                pfx + "/*1/destinationItem");
+                        String destinationWcItemUid = (String) map.get(
+                                pfx + "/*1/destinationItemWc");
+                        boolean isManaged = (boolean) map.get(
+                                pfx + "/*1/isManaged");
+                        String comment = (String) map.get(pfx + "/*1/comment");
 
-                    CmProcessNode cmProcessNode = new CmProcessNode(nodeId,
-                            parentNodeId, modifiedItemUid, false, parentItemUid,
-                            originItemUid, destinationRealUid, destinationWcUid,
-                            action, isManaged, comment);
-                    structure.add(cmProcessNode);
-
-                    try {
+                        boolean includeInStructure = false;
                         if (action.equals(CMConstants.ACTION_CHANGE)) {
+                            includeInStructure = true;
+                        } else {
+                            // if action is ignore, check if it has at least one
+                            // change in its children nodes
+                            includeInStructure = checkIfIgnoreMustBeIncluded(
+                                    doc.getId(), nodeId, session);
+                        }
 
-                            if (destinationItemUid != null
-                                    && !subitemsDocumentsIds.contains(
-                                            destinationItemUid)) {
-                                DocumentModel destinationItem = session.getDocument(
-                                        new IdRef(destinationItemUid));
-                                subitemsDocumentsIds.add(destinationItemUid);
-                                subitemDocuments.add(destinationItem);
+                        if (includeInStructure) {
+
+                            // If action is IGNORE, set destinationWc as
+                            // originWc
+                            if (action.equals(CMConstants.ACTION_IGNORE)) {
+                                destinationWcItemUid = originWcItemUid;
+                            }
+
+                            CmProcessNode cmProcessNode = new CmProcessNode(
+                                    nodeId, parentNodeId, modifiedItemUid,
+                                    false, parentItemUid, originItemUid,
+                                    originWcItemUid, destinationItemUid,
+                                    destinationWcItemUid, action, isManaged,
+                                    comment);
+                            structure.add(cmProcessNode);
+
+                            if (includeDocuments) {
+                                try {
+                                    if (action.equals(
+                                            CMConstants.ACTION_CHANGE)) {
+                                        if (destinationItemUid != null
+                                                && !subitemsDocumentsIds.contains(
+                                                        destinationItemUid)) {
+                                            DocumentModel destinationItem = session.getDocument(
+                                                    new IdRef(
+                                                            destinationItemUid));
+                                            subitemsDocumentsIds.add(
+                                                    destinationItemUid);
+                                            subitemDocuments.add(
+                                                    destinationItem);
+                                        }
+                                    }
+                                    if (action.equals(
+                                            CMConstants.ACTION_IGNORE)) {
+                                        if (originWcItemUid != null
+                                                && !subitemsDocumentsIds.contains(
+                                                        originWcItemUid)) {
+                                            DocumentModel originWcItem = session.getDocument(
+                                                    new IdRef(originWcItemUid));
+                                            subitemsDocumentsIds.add(
+                                                    originWcItemUid);
+                                            subitemDocuments.add(originWcItem);
+                                        }
+                                    }
+                                } catch (DocumentNotFoundException e) {
+                                    log.error(logInitMsg + "Exception thrown: "
+                                            + e.getClass() + ": "
+                                            + e.getMessage());
+                                }
                             }
                         }
-                    } catch (DocumentNotFoundException e) {
-                        log.error(logInitMsg + "Exception thrown: "
-                                + e.getClass() + ": " + e.getMessage());
                     }
                 }
+                it.close();
             }
+
         } catch (NuxeoException e) {
             log.error(logInitMsg + e.getMessage(), e);
             throw new EloraException(
@@ -317,10 +390,55 @@ public class IntegrationCmHelper {
             throw new EloraException(
                     "Exception thrown: |" + e.getMessage() + "|");
         } finally {
-            it.close();
+            if (it != null && it.mustBeClosed()) {
+                it.close();
+            }
+
         }
 
         log.trace(logInitMsg + "--- EXIT ---");
+    }
+
+    private static boolean checkIfIgnoreMustBeIncluded(String cmProcessUid,
+            String nodeId, CoreSession session) {
+
+        boolean mustBeIncluded = false;
+
+        String query = IntegrationCmQueryFactory.getCmEcoSubitemsByParentNodeIdQuery(
+                cmProcessUid, nodeId);
+
+        IterableQueryResult it = session.queryAndFetch(query, NXQL.NXQL);
+
+        if (it.size() > 0) {
+            List<String> childNodeIds = new ArrayList<String>();
+
+            String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
+            for (Map<String, Serializable> map : it) {
+                String childNodeId = (String) map.get(pfx + "/*1/nodeId");
+                String childAction = (String) map.get(pfx + "/*1/action");
+
+                if (childAction.equals(CMConstants.ACTION_CHANGE)) {
+                    mustBeIncluded = true;
+                    break;
+                }
+
+                childNodeIds.add(childNodeId);
+            }
+
+            // If direct children are not change, verify recursively
+            if (!mustBeIncluded) {
+                for (String childNodeId : childNodeIds) {
+                    mustBeIncluded = checkIfIgnoreMustBeIncluded(cmProcessUid,
+                            childNodeId, session);
+                    if (mustBeIncluded) {
+                        break;
+                    }
+                }
+            }
+        }
+        it.close();
+
+        return mustBeIncluded;
     }
 
     private static boolean setCmEcoItemsAsManaged(

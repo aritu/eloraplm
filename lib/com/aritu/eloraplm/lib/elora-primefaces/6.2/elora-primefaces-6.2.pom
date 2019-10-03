@@ -5,5 +5,5 @@
   <groupId>con.aritu.eloraplm.lib</groupId>
   <artifactId>elora-primefaces</artifactId>
   <version>6.2</version>
-  <description>POM was created from install:install-file</description>
+  <description>PrimeFaces 6.2 library with changes to make it work with EloraPLM</description>
 </project>

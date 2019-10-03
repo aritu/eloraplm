@@ -1,3 +1,0 @@
-id,value,enforce, obsolete
-switch_children_versions_on_checkout,LatestVersions,1,0
-switch_children_versions_on_open,AsStored,0,0

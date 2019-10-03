@@ -20,6 +20,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.primefaces.model.TreeNode;
 
+import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMEventNames;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
@@ -30,7 +31,7 @@ import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
 import com.aritu.eloraplm.exceptions.DocumentLockRightsException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.UnlockCheckedOutDocumentException;
-import com.aritu.eloraplm.promote.treetable.PromoteTreeBean;
+import com.aritu.eloraplm.pdm.promote.treetable.PromoteTreeBean;
 
 @Name("cmDocModifiedItemsTreeBean")
 @Scope(ScopeType.CONVERSATION)
@@ -78,20 +79,32 @@ public class DocModifiedItemsTreeBean extends ModifiedItemsTreeBean
         log.trace(logInitMsg + "--- EXIT ---");
     }
 
+    // If this method is changed, we will have to change derived methods too
+    // (<Client>DocModifiedItemsActionBean)
     @Override
     public void calculateImpactMatrix() {
         String logInitMsg = "[calculateImpactMatrix] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
 
-        super.calculateImpactMatrix();
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
 
-        Events.instance().raiseEvent(
-                CMEventNames.CM_DOC_IMPACT_MATRIX_CALCULATED);
+            super.calculateImpactMatrix();
 
-        // Nuxeo event
-        EloraEventHelper.fireEvent(CMEventNames.CM_DOC_IMPACT_MATRIX_CALCULATED,
-                navigationContext.getCurrentDocument());
+            Events.instance().raiseEvent(
+                    CMEventNames.CM_DOC_IMPACT_MATRIX_CALCULATED);
+
+            // Nuxeo event
+            EloraEventHelper.fireEvent(
+                    CMEventNames.CM_DOC_IMPACT_MATRIX_CALCULATED,
+                    navigationContext.getCurrentDocument());
+
+        } else {
+            log.trace(logInitMsg + "Unsaved changes.");
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
+        }
 
         log.trace(logInitMsg + "--- EXIT ---");
     }
@@ -112,10 +125,14 @@ public class DocModifiedItemsTreeBean extends ModifiedItemsTreeBean
     }
 
     public void lock() throws EloraException {
-        if (getSelectedNode() != null) {
-            ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
-            if (isNodeStateAllowed(selectedNodeData)) {
-                DocumentModel selectedDoc = selectedNodeData.getDestinationItem();
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
+
+            if (getSelectedNode() != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
+                DocumentModel selectedDoc = (selectedNodeData.getDestinationItem() != null
+                        ? selectedNodeData.getDestinationItem()
+                        : selectedNodeData.getOriginItem());
                 try {
                     EloraDocumentHelper.lockDocument(selectedDoc);
                     reloadTree();
@@ -140,19 +157,24 @@ public class DocModifiedItemsTreeBean extends ModifiedItemsTreeBean
                                     EloraMetadataConstants.ELORA_ELO_REFERENCE),
                             e.getDocument().getTitle());
                 }
+            } else {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.cm.emptyItemSelection"));
             }
         } else {
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.cm.emptyItemSelection"));
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
         }
     }
 
     public void unlock() throws EloraException {
-        if (getSelectedNode() != null) {
-            ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
-            if (isNodeStateAllowed(selectedNodeData)) {
-                DocumentModel selectedDoc = selectedNodeData.getDestinationItem();
-
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
+            if (getSelectedNode() != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
+                DocumentModel selectedDoc = (selectedNodeData.getDestinationItem() != null
+                        ? selectedNodeData.getDestinationItem()
+                        : selectedNodeData.getOriginItem());
                 try {
                     EloraDocumentHelper.unlockDocument(selectedDoc);
                     reloadTree();
@@ -165,39 +187,36 @@ public class DocModifiedItemsTreeBean extends ModifiedItemsTreeBean
                     facesMessages.add(StatusMessage.Severity.WARN, messages.get(
                             "eloraplm.message.error.unlock.checkedOut"));
                 }
-            }
-        } else {
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.cm.emptyItemSelection"));
-        }
-    }
-
-    private boolean isNodeStateAllowed(ModifiedItemsNodeData selectedNodeData) {
-        if (!selectedNodeData.getIsManaged()) {
-            if (!selectedNodeData.getAction().equals(CMConstants.ACTION_IGNORE)
-                    && !selectedNodeData.getAction().equals(
-                            CMConstants.ACTION_REMOVE)) {
-                if (!selectedNodeData.getIsDirty()) {
-                    return true;
-                } else {
-                    facesMessages.add(StatusMessage.Severity.ERROR,
-                            messages.get(
-                                    "eloraplm.message.error.cm.nodeIsDirty"));
-                }
             } else {
                 facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                        "eloraplm.message.error.cm.incorrectAction"));
+                        "eloraplm.message.error.cm.emptyItemSelection"));
             }
+
         } else {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get("eloraplm.message.error.cm.isManaged"));
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
         }
-        return false;
     }
 
     public void runPromote() throws EloraException {
-        promoteTreeBean.runPromoteAction();
-        reloadTree();
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
+            if (getSelectedNode() != null) {
+                promoteTreeBean.runPromoteAction();
+
+                // Set as managed
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
+                if (!selectedNodeData.getIsManaged()) {
+                    CMHelper.setAsManagedModifiedItemByNodeId(documentManager,
+                            navigationContext.getCurrentDocument(),
+                            getItemType(), selectedNodeData.getNodeId());
+                }
+                reloadTree();
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
+        }
     }
 
     @Override

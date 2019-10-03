@@ -11,8 +11,7 @@
     <require>org.nuxeo.ecm.platform.picture.jsf.types</require>
     <require>org.nuxeo.ecm.platform.types</require>
     
-    <extension target="org.nuxeo.ecm.core.schema.TypeService"
-        point="schema">
+    <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
         <schema name="elora_object" prefix="elo"
             src="schemas/elora_object.xsd" />
         <schema name="elora_viewer" prefix="elovwr"
@@ -25,7 +24,7 @@
             src="schemas/cad_design_table.xsd" />
         <schema name="owner" prefix="own"
             src="schemas/owner.xsd" />
-        <schema name="priority" prefix="prio" src="schemas/priority.xsd" />
+        <schema name="planning" prefix="plan" src="schemas/planning.xsd" />
         <schema name="project" prefix="prj" src="schemas/project.xsd" />
         <schema name="related_partaker" prefix="ptk"
             src="schemas/related_partaker.xsd" />
@@ -41,8 +40,8 @@
         <schema name="cad_attachments" prefix="cadatts"
             src="schemas/cad_attachments.xsd" />
     </extension>
-    <extension target="org.nuxeo.ecm.core.schema.TypeService"
-        point="configuration">
+    
+    <extension point="configuration" target="org.nuxeo.ecm.core.schema.TypeService">
         <configuration>
             <!-- <prefetch>common.icon, dc:title, dc:description, dc:created, 
                 dc:modified, dc:lastContributor, dc:creator</prefetch> -->
@@ -52,8 +51,9 @@
             </prefetch>
         </configuration>
     </extension>
-    <extension target="org.nuxeo.ecm.core.schema.TypeService"
-        point="doctype">
+    
+    <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService" >
+        
         <!-- Facets -->
         <facet name="CadDocument" />
         <facet name="EloraWorkspace">
@@ -63,6 +63,8 @@
             <schema name="responsible" />
         </facet>
         <facet name="EloraStruct" />
+        
+        <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet -->
         <facet name="BasicDocument" />
         <facet name="WorkableDomainChild" />
         <facet name="LockRequiredToEdit" />
@@ -97,9 +99,6 @@
         </doctype>
         <doctype append="true" name="Domain">
             <facet name="Orderable" />
-        </doctype>
-        <doctype extends="WorkspaceRoot" name="StructArchivedWS">
-            <facet name="EloraStruct" />
         </doctype>
         <doctype extends="File" name="CadDocument">
             <schema name="cad_document" />
@@ -138,6 +137,15 @@
             <facet name="Orderable" />
             <facet name="EloraStruct" />
         </doctype>
+        <doctype extends="WorkspaceRoot" name="StructArchived">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="FolderArchivedProjects">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="FolderArchivedWorkspaces">
+            <facet name="EloraStruct" />
+        </doctype>
         <doctype extends="Folder" name="StructCadDoc">
             <facet name="EloraStruct" />
         </doctype>
@@ -156,15 +164,9 @@
         <doctype extends="Folder" name="StructEbom">
             <facet name="EloraStruct" />
         </doctype>
-        <doctype extends="Folder" name="StructChangeManagement">
-            <facet name="EloraStruct" />
-        </doctype>
-        <doctype extends="Folder" name="StructProject">
-            <facet name="EloraStruct" />
-        </doctype>
         <doctype extends="Folder" name="Project">
             <schema name="elora_object" />
-            <schema name="priority" />
+            <schema name="planning" />
             <schema name="project" />
             <facet name="Commentable" />
             <facet name="EloraWorkspace" />
@@ -188,8 +190,9 @@
             <facet name="EloraStruct" />
         </doctype>
     </extension>
-    <extension target="org.nuxeo.ecm.platform.types.TypeService"
-        point="types">
+    
+    <extension point="types" target="org.nuxeo.ecm.platform.types.TypeService">
+        
         <type id="Domain">
             <icon>/icons/domain_16.gif</icon>
             <bigIcon>/icons/domain_100.png</bigIcon>
@@ -234,11 +237,6 @@
                 <type>Workspace</type>
             </deniedSubtypes>
         </type>
-        <type id="StructArchivedWS">
-            <subtypes>
-                <type>Workspace</type>
-            </subtypes>
-        </type>
         <type id="Folder">
             <icon>/icons/folder_16.gif</icon>
             <bigIcon>/icons/folder_100.png</bigIcon>
@@ -263,9 +261,6 @@
                 <layout>file</layout>
                 <layout>dublincore</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <type id="Forum">
             <icon>/icons/forum_16.gif</icon>
@@ -285,9 +280,6 @@
                 <layout>note</layout>
                 <layout>dublincore</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <!-- DAM doctypes -->
         <type id="Audio">
@@ -304,9 +296,6 @@
                 <layout>audio_file</layout>
                 <layout>dublincore</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <type id="Picture">
             <icon>/icons/picture_16.gif</icon>
@@ -322,9 +311,6 @@
                 <layout>picture</layout>
                 <layout>dublincore</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <type id="Video">
             <icon>/icons/video_16.gif</icon>
@@ -340,9 +326,6 @@
                 <layout>video_file</layout>
                 <layout>dublincore</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <!-- End of DAM doctypes -->
         <type id="OrderedFolder">
@@ -367,17 +350,16 @@
                 <layout>cad_document</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_auto</layout>
+                <layout>elora_object_reference_required</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
                 <layout>cad_document</layout>
                 <layout>cad_assembly</layout>
-                <layout>cad_dublincore</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <type id="CadPart">
             <label>CadPart</label>
@@ -391,17 +373,16 @@
                 <layout>cad_document</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_auto</layout>
+                <layout>elora_object_reference_required</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
                 <layout>cad_document</layout>
                 <layout>cad_part</layout>
-                <layout>cad_dublincore</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <type id="CadDrawing">
             <label>CadDrawing</label>
@@ -411,21 +392,20 @@
             <description>CadDrawing.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="view">
-                <layout>cad_drawing</layout>
+                <layout>summary_cad_drawing</layout>
                 <layout>cad_document</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_auto</layout>
+                <layout>elora_object_reference_required</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_base_viewer</layout>
                 <layout>cad_document</layout>
                 <layout>cad_drawing</layout>
-                <layout>cad_dublincore</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <type id="CadDesignTable">
             <label>CadDesignTable</label>
@@ -435,26 +415,25 @@
             <description>CadDesignTable.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="view">
-                <layout>cad_design_table</layout>
+                <layout>summary_cad_design_table</layout>
                 <layout>cad_document</layout>
             </layouts>
             <layouts mode="any">
                 <layout>elora_object_reference_required</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
-                <layout>cad_dublincore</layout>
                 <layout>cad_document</layout>
                 <layout>cad_design_table</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
             </layouts>
-            <contentViews category="eloraplm_link_content_category">
-                <contentView>eloraplm_link_content</contentView>
-            </contentViews>
         </type>
         <type id="StructureRoot">
             <label>StructureRoot</label>
             <icon>/icons/structure_root_16.gif</icon>
             <bigIcon>/icons/structure_root_100.png</bigIcon>
-            <category>SuperDocument</category>
+            <category>DocumentRoot</category>
             <description>StructureRoot.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">
@@ -477,7 +456,7 @@
             <label>CollaborationRoot</label>
             <icon>/icons/collaboration_root_16.gif</icon>
             <bigIcon>/icons/collaboration_root_100.png</bigIcon>
-            <category>SuperDocument</category>
+            <category>DocumentRoot</category>
             <description>CollaborationRoot.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">
@@ -500,7 +479,7 @@
             <label>LibraryRoot</label>
             <icon>/icons/library_root_16.gif</icon>
             <bigIcon>/icons/library_root_100.png</bigIcon>
-            <category>SuperDocument</category>
+            <category>DocumentRoot</category>
             <description>LibraryRoot.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">
@@ -519,11 +498,64 @@
                 </contentView>
             </contentViews>
         </type>
-        <type id="StructArchivedWS">
-            <label>StructArchivedWS</label>
-            <icon>/icons/struct_archived_ws_16.gif</icon>
-            <bigIcon>/icons/struct_archived_ws_100.png</bigIcon>
-            <description>StructArchivedWS.description</description>
+        <type id="StructArchived">
+            <label>StructArchived</label>
+            <icon>/icons/struct_archived_16.gif</icon>
+            <bigIcon>/icons/struct_archived_100.png</bigIcon>
+            <description>StructArchived.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>FolderArchivedProjects</type>
+                <type>FolderArchivedWorkspaces</type>
+            </subtypes>
+        </type>
+        
+        <type id="FolderArchivedProjects">
+            <label>FolderArchivedProjects</label>
+            <icon>/icons/folder_archived_projects_16.gif</icon>
+            <bigIcon>/icons/folder_archived_projects_100.png</bigIcon>
+            <description>FolderArchivedProjects.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>Project</type>
+            </subtypes>
+        </type>
+        
+        <type id="FolderArchivedWorkspaces">
+            <label>FolderArchivedWorkspaces</label>
+            <icon>/icons/folder_archived_workspaces_16.gif</icon>
+            <bigIcon>/icons/folder_archived_workspaces_100.png</bigIcon>
+            <description>FolderArchivedWorkspaces.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">
                 <layout>heading</layout>
@@ -683,71 +715,37 @@
                 <type>Audio</type>
             </subtypes>
         </type>
-        <type id="StructChangeManagement">
-            <label>StructChangeManagement</label>
-            <icon>/icons/struct_change_management_16.gif</icon>
-            <bigIcon>/icons/struct_change_management_100.png</bigIcon>
-            <description>StructChangeManagement.description
-            </description>
-            <default-view>view_documents</default-view>
-            <layouts mode="any">
-                <layout>heading</layout>
-            </layouts>
-            <layouts mode="edit">
-                <layout>heading</layout>
-                <layout>dublincore</layout>
-            </layouts>
-            <contentViews category="content">
-                <contentView>document_content</contentView>
-            </contentViews>
-            <contentViews category="trash_content">
-                <contentView showInExportView="false">
-                    document_trash_content
-                </contentView>
-            </contentViews>
-        </type>
-        <type id="StructProject">
-            <label>StructProject</label>
-            <icon>/icons/struct_project_16.gif</icon>
-            <bigIcon>/icons/struct_project_100.png</bigIcon>
-            <description>StructProject.description</description>
-            <default-view>view_documents</default-view>
-            <layouts mode="any">
-                <layout>heading</layout>
-            </layouts>
-            <layouts mode="edit">
-                <layout>heading</layout>
-                <layout>dublincore</layout>
-            </layouts>
-            <contentViews category="content">
-                <contentView>document_content</contentView>
-            </contentViews>
-            <contentViews category="trash_content">
-                <contentView showInExportView="false">
-                    document_trash_content
-                </contentView>
-            </contentViews>
-        </type>
         <type id="Project">
             <label>Project</label>
             <icon>/icons/project_16.gif</icon>
             <bigIcon>/icons/project_100.png</bigIcon>
+            <category>Collaborative</category>
             <description>Project.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="view">
-                <layout>project</layout>
-                <layout>summary_priority</layout>
+                <layout>project_type</layout>
+                <layout>planning_all_dates</layout>
                 <layout>partaker</layout>
-                <layout>projectPhase</layout>
+                <layout>projectPhases</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>elora_object_reference_required</layout>
+                <layout>heading</layout>
+                <layout>project_edit</layout>
+                <layout>partaker</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_auto</layout>
+                <layout>elora_object_reference_required</layout>
                 <layout>heading</layout>
-                <layout>project</layout>
-                <layout>responsible</layout>
-                <layout>priority</layout>
+                <layout>project_edit</layout>
                 <layout>partaker</layout>
-                <layout>projectPhase</layout>
+                <layout>projectPhases</layout>
+                <layout>subjects</layout>
+                <layout>rights</layout>
+                <layout>expired</layout>
             </layouts>
             <contentViews category="content">
                 <contentView>document_content</contentView>
@@ -830,7 +828,6 @@
             <label>AdminRoot</label>
             <icon>/icons/admin_root_16.gif</icon>
             <bigIcon>/icons/admin_root_100.png</bigIcon>
-            <category>SuperDocument</category>
             <description>AdminRoot.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">
@@ -853,7 +850,6 @@
             <label>DocumentationRoot</label>
             <icon>/icons/documentation_root_16.gif</icon>
             <bigIcon>/icons/documentation_root_100.png</bigIcon>
-            <category>SuperDocument</category>
             <description>DocumentationRoot.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">

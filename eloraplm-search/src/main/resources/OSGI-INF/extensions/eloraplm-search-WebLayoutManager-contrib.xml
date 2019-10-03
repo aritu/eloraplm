@@ -4,13 +4,14 @@
 
   <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
 
-    <layout name="elora_search_layout">
+    <layout name="elora_general_search_layout">
       <templates>
-        <template mode="any">
-          /layouts/layout_default_template.xhtml
-        </template>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
       </templates>
       <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
         <row>
           <widget>elora_reference_search</widget>
         </row>
@@ -18,27 +19,13 @@
           <widget>elora_title_fulltext_search</widget>
         </row>
         <row>
-          <widget>default_text_search</widget>
-        </row>
-        <row>
           <widget>elora_currentLifeCycleState_search</widget>
         </row>
         <row>
-          <widget>elora_partClassification_search</widget>
-        </row>
-         <row>
-          <widget>elora_productClassification_search</widget>
-        </row>
-       <!-- Commented for the instance, since it is not used.  
-       <row>
           <widget>elora_mixinType_search</widget>
         </row>
-         -->
-         <row>
-          <widget>elora_primaryType_search</widget>
-        </row>
         <row>
-          <widget>elora_bomItemType_search</widget>
+          <widget>elora_primaryType_search</widget>
         </row>
         <row>
           <widget>elora_customer_search</widget>
@@ -50,7 +37,10 @@
           <widget>elora_responsible_search</widget>
         </row>
         <row>
-          <widget>elora_owner_search</widget>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
         </row>
         <row>
           <widget>elora_lastContributor_search</widget>
@@ -59,16 +49,115 @@
           <widget>elora_modified_search</widget>
         </row>
         <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    
+    <layout name="elora_cad_documents_search_layout">
+      <templates>
+        <template mode="any">
+          /layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_cad_documents_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_cad_documents_primaryType_search</widget>
+        </row>
+        <row>
+          <widget>elora_cadType_search</widget>
+        </row>
+        <row>
+          <widget>elora_cadClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
           <widget>elora_created_search</widget>
         </row>
-        <!-- <row>
-          <widget>default_collection_search</widget>
-        </row> -->
         <row>
-          <widget>default_location_search</widget>
+          <widget>elora_lastContributor_search</widget>
         </row>
         <row>
-          <widget>default_tags_search</widget>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_basic_documents_search_layout">
+      <templates>
+        <template mode="any">
+          /layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_basic_documents_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_basic_documents_primaryType_search</widget>
+        </row>
+        <row>
+          <widget>elora_nature_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
         </row>
       </rows>
     </layout>
@@ -78,65 +167,78 @@
 
   <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
   
-    <widget name="elora_reference_search" type="container">
+  
+    <widget name="elora_text_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">eloraplm.label.search.reference</label>
-      </labels>
-<!--       <translated>true</translated> -->
+          <label mode="any"></label>
+        </labels>
+        <translated>false</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
       </properties>
       <subWidgets>
+        <widget name="ecm_fulltext" type="text">
+        <labels>
+            <label mode="any">label.search.textSearch</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>defaults:ecm_fulltext</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="placeholder">
+              #{messages['label.search.text.placeholder']}
+            </property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+  
+    <widget name="elora_reference_search" type="container">
+       <handlingLabels>true</handlingLabels>
+       <labels>
+          <label mode="any"></label>
+        </labels>
+        <translated>false</translated>
+      <subWidgets>
         <widget name="elo_reference" type="text">
+         <labels>
+            <label mode="any">eloraplm.label.search.reference</label>
+          </labels>
+          <translated>true</translated>
           <fields>
             <field>eloras:elo_reference</field>
           </fields>
           <properties widgetMode="any">
-            <property name="converter">ilikeSearchValueConverter</property>
+            <property name="converter">ilikeSearchValueConverter</property>       
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
           </properties>
         </widget>
       </subWidgets>
     </widget>
     
     
+    
     <widget name="elora_title_fulltext_search" type="container">
-      <handlingLabels>true</handlingLabels>
-      <labels>
-        <label mode="any">eloraplm.label.search.titleFulltext</label>
-      </labels>
-<!--       <translated>true</translated> -->
-      <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
-      </properties>
+       <handlingLabels>true</handlingLabels>
+       <labels>
+          <label mode="any"></label>
+        </labels>
+        <translated>false</translated>
       <subWidgets>
         <widget name="dc_title" type="text">
-          <fields>
-            <field>eloras:dc_title_fulltext</field>
+            <labels>
+                <label mode="any">eloraplm.label.search.titleFulltext</label>
+            </labels>
+            <translated>true</translated>  
+            <fields>
+                <field>eloras:dc_title_fulltext</field>
           </fields>
-        </widget>
-      </subWidgets>
-    </widget>
-    
-    <widget name="elora_bomItemType_search" type="container">
-      <handlingLabels>true</handlingLabels>
-      <labels>
-        <label mode="any">eloraplm.label.search.bomItemType</label>
-      </labels>
-<!--       <translated>true</translated> -->
-      <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
-      </properties>
-      <subWidgets>
-        <widget name="bomitem_bomItemType" type="suggestManyDirectory">
-          <fields>
-            <field>eloras:bomitem_bomItemType</field>
-          </fields>
-          <properties widgetMode="any">
-            <property name="minChars">0</property>
-            <property name="hideHelpLabel">true</property>
-            <property name="directoryName">elora_bomItemTypes</property>
-<!--             <property name="localize">true</property> -->
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
           </properties>
         </widget>
       </subWidgets>
@@ -145,14 +247,15 @@
     <widget name="elora_customer_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">label.widget.cust.customers</label>
+        <label mode="any"></label>
       </labels>
-<!--       <translated>true</translated> -->
-      <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
-      </properties>
+      <translated>false</translated>
       <subWidgets>
         <widget name="cust_customer" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.widget.cust.customers</label>
+          </labels>
+          <translated>true</translated>
           <fields>
             <field>eloras:search_customer</field>
           </fields>
@@ -161,6 +264,9 @@
             <property name="hideHelpLabel">true</property>
             <property name="directoryName">elora_erpCustomers</property>
           </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
         </widget>
       </subWidgets>
     </widget>
@@ -168,14 +274,15 @@
     <widget name="elora_manufacturer_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">label.widget.manu.manufacturers</label>
+        <label mode="any"></label>
       </labels>
-<!--       <translated>true</translated> -->
-      <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
-      </properties>
+      <translated>false</translated>
       <subWidgets>
         <widget name="manu_manufacturer" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.widget.manu.manufacturers</label>
+          </labels>
+          <translated>true</translated>
           <fields>
             <field>eloras:search_manufacturer</field>
           </fields>
@@ -184,6 +291,9 @@
             <property name="hideHelpLabel">true</property>
             <property name="directoryName">elora_erpManufacturers</property>
           </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
         </widget>
       </subWidgets>
     </widget>
@@ -191,14 +301,18 @@
     <widget name="elora_mixinType_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">label.elora_mixinType_search.title</label>
+        <label mode="any"></label>
       </labels>
-      <translated>true</translated>
+      <translated>false</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
       </properties>
       <subWidgets>
         <widget name="system_mixinType" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_mixinType_search.title</label>
+          </labels>
+          <translated>true</translated>
           <fields>
             <field>eloras:system_mixinType</field>
           </fields>
@@ -208,6 +322,9 @@
             <property name="directoryName">eloras_facetType</property>
             <property name="localize">true</property>
           </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
         </widget>
       </subWidgets>
     </widget>
@@ -215,14 +332,18 @@
     <widget name="elora_primaryType_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">label.elora_primaryType_search.title</label>
+        <label mode="any"></label>
       </labels>
-      <translated>true</translated>
+      <translated>false</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
       </properties>
       <subWidgets>
         <widget name="system_primaryType" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_primaryType_search.title</label>
+          </labels>
+          <translated>true</translated>
           <fields>
             <field>eloras:system_primaryType</field>
           </fields>
@@ -232,21 +353,28 @@
             <property name="directoryName">eloras_docType</property>
             <property name="localize">true</property>
           </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
         </widget>
       </subWidgets>
     </widget>
-
+    
     <widget name="elora_currentLifeCycleState_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">label.elora_currentLifeCycleState_search.title</label>
+        <label mode="any"></label>
       </labels>
-      <translated>true</translated>
+      <translated>false</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
       </properties>
       <subWidgets>
         <widget name="system_currentLifeCycleState" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_currentLifeCycleState_search.title</label>
+          </labels>
+          <translated>true</translated>
           <fields>
             <field>eloras:system_currentLifeCycleState</field>
           </fields>
@@ -254,25 +382,30 @@
             <property name="minChars">0</property>
             <property name="hideHelpLabel">true</property>
             <property name="directoryName">eloras_lifeCycle</property>
-           <!--  <property name="directoryName">elora_lifecycle_states</property>
-            <property name="labelFieldName">id</property> -->
             <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
           </properties>
         </widget>
       </subWidgets>
     </widget>
-
+    
     <widget name="elora_lastContributor_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">label.dublincore.lastContributor</label>
+        <label mode="any"></label>
       </labels>
-      <translated>true</translated>
+      <translated>false</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
       </properties>
       <subWidgets>
         <widget name="dc_lastContributor" type="multipleUsersSuggestion">
+          <labels>
+            <label mode="any">label.dublincore.lastContributor</label>
+          </labels>
+          <translated>true</translated>
           <fields>
             <field>eloras:dc_lastContributor</field>
           </fields>
@@ -280,6 +413,7 @@
             <property name="userSuggestionSearchType">USER_TYPE</property>
             <property name="minChars">1</property>
             <property name="hideHelpLabel">true</property>
+            <property name="width">270px</property>
           </properties>
         </widget>
       </subWidgets>
@@ -292,17 +426,108 @@
       </labels>
       <translated>true</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
+        <property name="display">inline</property>
+        <property name="subLabelStyleClass">tinyLabel</property>
       </properties>
       <subWidgets>
-        <widget name="dc_modificationDate" type="datetimeRange">
+        <widget name="dc_modificationDate_Min" type="datetime">
           <fields>
-            <field>defaults:dc_modified_min</field>
             <field>defaults:dc_modified_max</field>
           </fields>
+          <labels>
+            <label mode="any">label.search.between</label>
+          </labels>
+          <translated>true</translated>
           <properties widgetMode="edit">
             <property name="styleClass">dataInputTextDate</property>
             <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+             <property name="style">width:140px;</property>
+          </properties>
+        </widget>
+        <widget name="dc_modificationDate_Max" type="datetime">
+          <fields>
+            <field>defaults:dc_modified_max</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.and</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+             <property name="style">width:140px;</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_expired_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">label.dublincore.expired</label>
+      </labels>
+      <translated>true</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">falase</property>
+        <property name="display">inline</property>
+        <property name="subLabelStyleClass">tinyLabel</property>
+      </properties>
+      <subWidgets>
+        <widget name="dc_expirationDate_Min" type="datetime">
+          <fields>
+            <field>eloras:dc_expired_min</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.between</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
+          </properties>
+        </widget>
+        <widget name="dc_expirationDate_Max" type="datetime">
+          <fields>
+            <field>eloras:dc_expired_max</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.and</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_createdBy_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+          <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="dc_creator" type="multipleUsersSuggestion">
+          <labels>
+            <label mode="any">eloraplm.label.search.createdBy</label>
+          </labels>
+          <translated>true</translated>     
+          <fields>
+            <field>eloras:dc_creator</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="userSuggestionSearchType">USER_TYPE</property>
+            <property name="minChars">1</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="width">270px</property>
           </properties>
         </widget>
       </subWidgets>
@@ -315,61 +540,37 @@
       </labels>
       <translated>true</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
+        <property name="display">inline</property>
+        <property name="subLabelStyleClass">tinyLabel</property>
       </properties>
       <subWidgets>
-        <widget name="dc_creationDate" type="datetimeRange">
+        <widget name="dc_creationDate_Min" type="datetime">
           <fields>
             <field>defaults:dc_created_min</field>
-            <field>defaults:dc_created_max</field>
           </fields>
+          <labels>
+            <label mode="any">label.search.between</label>
+          </labels>
+          <translated>true</translated>
           <properties widgetMode="edit">
             <property name="styleClass">dataInputTextDate</property>
             <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
           </properties>
         </widget>
-      </subWidgets>
-    </widget>
-    
-    <widget name="elora_partClassification_search" type="container">
-      <handlingLabels>true</handlingLabels>
-      <labels>
-        <label mode="any">label.search.partClassification</label>
-      </labels>
-      <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
-      </properties>
-      <subWidgets>
-        <widget name="bompart_partClassification" type="suggestManyDirectory">
+        <widget name="dc_creationDate_Max" type="datetime">
           <fields>
-            <field>eloras:search_partClassification</field>
+            <field>defaults:dc_created_max</field>
           </fields>
-          <properties widgetMode="any">
-            <property name="minChars">0</property>
-            <property name="hideHelpLabel">true</property>
-            <property name="directoryName">elora_bomPartClassHierarchical</property>
-          </properties>
-        </widget>
-      </subWidgets>
-    </widget>
-    
-    <widget name="elora_productClassification_search" type="container">
-      <handlingLabels>true</handlingLabels>
-      <labels>
-        <label mode="any">label.search.productClassification</label>
-      </labels>
-      <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
-      </properties>
-      <subWidgets>
-        <widget name="bomprod_productClassification" type="suggestManyDirectory">
-          <fields>
-            <field>eloras:search_productClassification</field>
-          </fields>
-          <properties widgetMode="any">
-            <property name="minChars">0</property>
-            <property name="hideHelpLabel">true</property>
-            <property name="directoryName">elora_bomProductClassHierarchical</property>
+          <labels>
+            <label mode="any">label.search.and</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
           </properties>
         </widget>
       </subWidgets>
@@ -378,48 +579,315 @@
     <widget name="elora_responsible_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">label.widget.responsible.responsible</label>
+          <label mode="any"></label>
       </labels>
-      <translated>true</translated>
+      <translated>false</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
       </properties>
       <subWidgets>
-        <widget name="resp_responsible" type="multipleUsersSuggestion"> 
+        <widget name="resp_responsible" type="multipleUsersSuggestion">
+          <labels>
+            <label mode="any">label.widget.responsible.responsible</label>
+          </labels>
+          <translated>true</translated>
           <fields>
             <field>eloras:search_responsible</field>
           </fields>
           <properties widgetMode="edit">
-            <property name="userSuggestionSearchType">USER_TYPE</property>
+            <property name="searchType">USER_TYPE</property>
             <property name="minChars">1</property>
             <property name="hideHelpLabel">true</property>
+            <property name="width">270px</property>
           </properties>
         </widget>
       </subWidgets>
     </widget>
     
-    <widget name="elora_owner_search" type="container">
+    <widget name="elora_location_search" type="container">
       <handlingLabels>true</handlingLabels>
       <labels>
-        <label mode="any">eloraplm.label.owner</label>
+          <label mode="any"></label>
       </labels>
-      <translated>true</translated>
+      <translated>false</translated>
       <properties widgetMode="any">
-        <property name="hideSubLabels">true</property>
+        <property name="hideSubLabels">false</property>
       </properties>
+      <translated>true</translated>
       <subWidgets>
-        <widget name="own_owner" type="suggestManyDirectory"> 
+        <widget name="ecm_path" type="select_path_tree">
+          <labels>
+            <label mode="any">label.search.locationSearch</label>
+          </labels>
+          <translated>true</translated>
           <fields>
-            <field>eloras:search_owner</field>
+            <field>defaults:ecm_path</field>
           </fields>
+          <properties widgetMode="any">
+            <property name="showAllDomains">true</property>
+          </properties>
           <properties widgetMode="edit">
-            <property name="width">100%</property>
-            <property name="minChars">3</property>
-            <property name="directoryName">elora_erpCustomers</property>
+            <property name="width">270px</property>
           </properties>
         </widget>
       </subWidgets>
     </widget>
+    
+    <widget name="elora_tags_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+          <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="tags" type="select_tags">
+            <labels>
+            <label mode="any">label.search.tagSearch</label>
+          </labels>
+          <translated>true</translated>
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>defaults:ecm_tags</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="placeholder">
+              #{messages['label.search.tags.placeholder']}
+            </property>
+            <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_nature_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_mixinType" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.dublincore.nature</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>defaults:dc_nature</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">nature</property>
+            <!-- <property name="localize">true</property>  -->
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    
+    
+    <!--  CAD documents search related widgets -->
+    <widget name="elora_cad_documents_currentLifeCycleState_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_currentLifeCycleState" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_currentLifeCycleState_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_currentLifeCycleState</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_cadDocuments_lifeCycle</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_cad_documents_primaryType_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_primaryType" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_primaryType_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_primaryType</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_cadDocuments_docType</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_cadType_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="cad_cadType" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.widget.cad.cadType</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:cad_cadType</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_cadType</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_cadClassification_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="cad_cadType" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.widget.cad.cadClassification</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:cad_cadClassification</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_cadClassHierarchical</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <!--  Basic documents search related widgets -->
+    <widget name="elora_basic_documents_currentLifeCycleState_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_currentLifeCycleState" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_currentLifeCycleState_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_currentLifeCycleState</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_basicDocuments_lifeCycle</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_basic_documents_primaryType_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_primaryType" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_primaryType_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_primaryType</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_basicDocuments_docType</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
 
   </extension>
 

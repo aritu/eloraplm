@@ -29,11 +29,8 @@ import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.EloraDocContextBoundActionBean;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
-import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
-import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.Factory;
@@ -41,10 +38,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.contexts.Context;
-import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -53,10 +47,7 @@ import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.Subject;
 import org.nuxeo.ecm.platform.relations.api.RelationManager;
-import org.nuxeo.ecm.platform.relations.api.exceptions.RelationAlreadyExistsException;
-import org.nuxeo.ecm.platform.relations.api.impl.QNameResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
-import org.nuxeo.ecm.platform.relations.api.util.RelationConstants;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.relations.web.NodeInfo;
 import org.nuxeo.ecm.platform.relations.web.NodeInfoImpl;
@@ -92,6 +83,10 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     protected List<StatementInfo> outgoingCadSpecialStatementsInfo;
 
+    protected List<Statement> outgoingBomHasBomStatements;
+
+    protected List<StatementInfo> outgoingBomHasBomStatementsInfo;
+
     protected List<Statement> incomingBomDocumentStatements;
 
     protected List<StatementInfo> incomingBomDocumentStatementsInfo;
@@ -99,6 +94,10 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
     protected List<Statement> incomingCadSpecialStatements;
 
     protected List<StatementInfo> incomingCadSpecialStatementsInfo;
+
+    protected List<Statement> incomingBomHasBomStatements;
+
+    protected List<StatementInfo> incomingBomHasBomStatementsInfo;
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -133,6 +132,8 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
     protected Integer directorOrdering;
 
     protected Integer viewerOrdering;
+
+    protected Integer inverseViewerOrdering;
 
     protected Boolean showCreateForm = false;
 
@@ -202,6 +203,14 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     public void setViewerOrdering(Integer viewerOrdering) {
         this.viewerOrdering = viewerOrdering;
+    }
+
+    public Integer getInverseViewerOrdering() {
+        return inverseViewerOrdering;
+    }
+
+    public void setInverseViewerOrdering(Integer inverseViewerOrdering) {
+        this.inverseViewerOrdering = inverseViewerOrdering;
     }
 
     public Boolean getShowCreateForm() {
@@ -310,6 +319,8 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         }
         List<Resource> predicates = new ArrayList<>();
         predicates.add(new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF));
+        predicates.add(
+                new ResourceImpl(EloraRelationConstants.CAD_HAS_DESIGN_TABLE));
 
         outgoingCadSpecialStatements = new ArrayList<>();
         for (Resource predicate : predicates) {
@@ -347,6 +358,8 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         }
         List<Resource> predicates = new ArrayList<>();
         predicates.add(new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF));
+        predicates.add(
+                new ResourceImpl(EloraRelationConstants.CAD_HAS_DESIGN_TABLE));
 
         getLatestStatements(currentDoc, predicates);
 
@@ -404,10 +417,12 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
             for (Map.Entry<String, List<String>> entry : idMap.entrySet()) {
                 List<String> relatedUids = entry.getValue();
                 if (relatedUids.size() > 1) {
-                    String majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
-                            docMap.get(entry.getKey())).toString();
+                    Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
+                            docMap.get(entry.getKey()));
+                    String type = docMap.get(entry.getKey()).get(0).getType();
+
                     DocumentModel latestDoc = EloraRelationHelper.getLatestRelatedVersion(
-                            majorVersion, relatedUids, documentManager);
+                            documentManager, majorVersion, relatedUids, type);
                     incomingCadSpecialStatements.add(
                             stmtMap.get(latestDoc.getId()));
                 } else {
@@ -458,6 +473,69 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         return incomingBomDocumentStatementsInfo;
     }
 
+    @Factory(value = "outgoingBomHasBomRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getOutgoingBomHasBomStatementsInfo() {
+        if (outgoingBomHasBomStatementsInfo != null) {
+            return outgoingBomHasBomStatementsInfo;
+        }
+
+        DocumentModel currentDoc = getCurrentDocument();
+        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
+            // Get last version to show its relations
+            currentDoc = documentManager.getLastDocumentVersion(
+                    currentDoc.getRef());
+        }
+
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_BOM);
+        outgoingBomHasBomStatements = RelationHelper.getStatements(currentDoc,
+                predicate);
+
+        if (outgoingBomHasBomStatements.isEmpty()) {
+            outgoingBomHasBomStatements = Collections.emptyList();
+            outgoingBomHasBomStatementsInfo = Collections.emptyList();
+        } else {
+            outgoingBomHasBomStatementsInfo = getStatementsInfo(
+                    outgoingBomHasBomStatements);
+            // sort by modification date, reverse
+            Comparator<StatementInfo> comp = Collections.reverseOrder(
+                    new StatementInfoComparator());
+            Collections.sort(outgoingBomHasBomStatementsInfo, comp);
+        }
+        return outgoingBomHasBomStatementsInfo;
+    }
+
+    @Factory(value = "incomingBomHasBomRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getIncomingBomHasBomStatementsInfo() {
+        if (incomingBomHasBomStatementsInfo != null) {
+            return incomingBomHasBomStatementsInfo;
+        }
+
+        DocumentModel currentDoc = getCurrentDocument();
+        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
+            // Get last version to show its relations
+            currentDoc = documentManager.getLastDocumentVersion(
+                    currentDoc.getRef());
+        }
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_BOM);
+        incomingBomHasBomStatements = EloraRelationHelper.getSubjectStatements(
+                currentDoc, predicate);
+
+        if (incomingBomHasBomStatements.isEmpty()) {
+            incomingBomHasBomStatements = Collections.emptyList();
+            incomingBomHasBomStatementsInfo = Collections.emptyList();
+        } else {
+            incomingBomHasBomStatementsInfo = getStatementsInfo(
+                    incomingBomHasBomStatements);
+            // sort by modification date, reverse
+            Comparator<StatementInfo> comp = Collections.reverseOrder(
+                    new StatementInfoComparator());
+            Collections.sort(incomingBomHasBomStatementsInfo, comp);
+        }
+        return incomingBomHasBomStatementsInfo;
+    }
+
     public List<DocumentModel> getCurrentDocumentRelatedBoms()
             throws EloraException {
 
@@ -471,8 +549,11 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
             if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
                 // Get last version to show its relations
                 currentDoc = EloraDocumentHelper.getLatestVersion(currentDoc);
-                // currentDoc =
-                // documentManager.getLastDocumentVersion(currentDoc.getRef());
+                if (currentDoc == null) {
+                    throw new EloraException("Document |"
+                            + getCurrentDocument().getId()
+                            + "| has no latest version or it is unreadable.");
+                }
             }
 
             String predicateUri;
@@ -525,9 +606,9 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
                         Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
                                 docList);
 
+                        String type = docList.get(0).getType();
                         doc = EloraRelationHelper.getLatestRelatedVersion(
-                                String.valueOf(majorVersion), uidList,
-                                documentManager);
+                                documentManager, majorVersion, uidList, type);
                     }
                     relatedBoms.removeAll(relatedBoms);
                     relatedBoms.add(doc);
@@ -539,121 +620,6 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         }
 
         return relatedBoms;
-    }
-
-    // TODO: Mira si esto todavia se utiliza. Es la forma que tenia Nuxeo de
-    // crear relaciones
-    public String addStatement() {
-        resetEventContext();
-
-        // Check that the subject is locked
-        DocumentModel currentDoc = getCurrentDocument();
-        if (currentDoc.isProxy()) {
-            currentDoc = documentManager.getWorkingCopy(currentDoc.getRef());
-        }
-        if (currentDoc.isLocked()) {
-            if (currentDoc.getLockInfo().getOwner().equals(
-                    documentManager.getPrincipal().getName())) {
-
-                Node object = null;
-
-                objectDocumentUid = objectDocumentUid.trim();
-                String repositoryName = navigationContext.getCurrentServerLocation().getName();
-                String localName = repositoryName + "/" + objectDocumentUid;
-                object = new QNameResourceImpl(
-                        RelationConstants.DOCUMENT_NAMESPACE, localName);
-                try {
-                    eloraDocumentRelationManager.addRelation(documentManager,
-                            currentDoc, object, predicateUri, false,
-                            includeStatementsInEvents,
-                            StringUtils.trim(comment), quantity, ordering,
-                            directorOrdering, viewerOrdering);
-                    facesMessages.add(StatusMessage.Severity.INFO,
-                            messages.get("label.relation.created"));
-                    resetCreateFormValues();
-
-                    // Set subject document as checked out; relations have
-                    // changed.
-                    EloraDocumentHelper.checkOutDocument(currentDoc);
-
-                } catch (RelationAlreadyExistsException e) {
-                    facesMessages.add(StatusMessage.Severity.WARN,
-                            messages.get("label.relation.already.exists"));
-                }
-            } else {
-                facesMessages.add(StatusMessage.Severity.ERROR,
-                        messages.get("label.relation.documentLockedByOther"));
-            }
-        } else {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get("label.relation.documentNotLocked"));
-        }
-
-        resetStatements();
-        return null;
-    }
-
-    public String deleteStatement(StatementInfo stmtInfo) {
-        resetEventContext();
-
-        // Check that the subject is locked
-        DocumentModel currentDoc = getCurrentDocument();
-        if (currentDoc.isLocked()) {
-            if (currentDoc.getLockInfo().getOwner().equals(
-                    documentManager.getPrincipal().getName())) {
-                DocumentModel subject = RelationHelper.getDocumentModel(
-                        stmtInfo.getSubject(), documentManager);
-                DocumentModel object = RelationHelper.getDocumentModel(
-                        stmtInfo.getObject(), documentManager);
-
-                if (currentDoc.isCheckedOut()) {
-                    // RelationHelper.removeRelation(subject,
-                    // stmtInfo.getPredicate(), object);
-                    eloraDocumentRelationManager.softDeleteRelation(
-                            documentManager, subject,
-                            stmtInfo.getPredicate().getUri(), object);
-                } else {
-                    // Get working copy stmt data and delete
-                    DocumentModel subjectWc = documentManager.getWorkingCopy(
-                            subject.getRef());
-                    DocumentModel objectWc;
-                    if (object.isImmutable()) {
-                        objectWc = documentManager.getWorkingCopy(
-                                object.getRef());
-                    } else {
-                        objectWc = object;
-                    }
-                    // RelationHelper.removeRelation(subjectWc,
-                    // stmtInfo.getPredicate(), objectWc);
-                    eloraDocumentRelationManager.softDeleteRelation(
-                            documentManager, subjectWc,
-                            stmtInfo.getPredicate().getUri(), objectWc);
-                }
-                facesMessages.add(StatusMessage.Severity.INFO,
-                        messages.get("label.relation.deleted"));
-
-                // Set subject document as checked out; relations have changed.
-                EloraDocumentHelper.checkOutDocument(currentDoc);
-
-            } else {
-                facesMessages.add(StatusMessage.Severity.ERROR,
-                        messages.get("label.relation.documentLockedByOther"));
-            }
-        } else {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get("label.relation.documentNotLocked"));
-        }
-        resetStatements();
-        return null;
-    }
-
-    protected void resetEventContext() {
-        Context evtCtx = Contexts.getEventContext();
-        if (evtCtx != null) {
-            evtCtx.remove("outgoingBomDocumentRelations");
-            evtCtx.remove("outgoingBomCadDocumentRelations");
-            evtCtx.remove("incomingBomDocumentRelations");
-        }
     }
 
     // TODO: Tener en cuenta que utilizamos este Bean para todas las pesatañas
@@ -668,19 +634,6 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         outgoingBomCadDocumentStatementsInfo = null;
         incomingBomDocumentStatements = null;
         incomingBomDocumentStatementsInfo = null;
-    }
-
-    private void resetCreateFormValues() {
-        predicateUri = "";
-        objectDocumentUid = "";
-        objectDocumentTitle = "";
-        comment = "";
-        quantity = "1";
-        ordering = null;
-        directorOrdering = null;
-        viewerOrdering = null;
-        showCreateForm = false;
-        popupDisplayed = false;
     }
 
     public List<StatementInfo> getStatementsInfo(List<Statement> statements) {
@@ -708,83 +661,8 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         return infoList;
     }
 
-    // public List<StatementInfo> getLatestVersionStatementsInfo(
-    // List<Statement> statements) {
-    // if (statements == null) {
-    // return null;
-    // }
-    // List<StatementInfo> infoList = new ArrayList<StatementInfo>();
-    //
-    // for (Statement statement : statements) {
-    //
-    // // SACAR EL OBJECT DOC, SACAR SU ULTIMA VERSION, GUARDAR EL UID PARA
-    // // IGNORAR LOS SIGUENTES IGUALES, UTILIZAR ESE OBJECT
-    // //
-    // //
-    // // Node object = statement.getObject();
-    // // NodeInfo objectInfo = new NodeInfoImpl(object,
-    // // RelationHelper.getDocumentModel(object, documentManager),
-    // // true);
-    // //
-    // // objectInfo.getDocumentModel()
-    //
-    // Subject subject = statement.getSubject();
-    // // TODO: filter on doc visibility (?)
-    // NodeInfo subjectInfo = new NodeInfoImpl(subject,
-    // RelationHelper.getDocumentModel(subject, documentManager),
-    // true);
-    // Resource predicate = statement.getPredicate();
-    //
-    // StatementInfo info = new StatementInfoImpl(statement, subjectInfo,
-    // new NodeInfoImpl(predicate), objectInfo);
-    // infoList.add(info);
-    // }
-    // return infoList;
-    // }
-
-    protected List<EloraStatementInfo> getEloraStatementsInfo(
-            List<Statement> statements) {
-        if (statements == null) {
-            return null;
-        }
-        List<EloraStatementInfo> infoList = new ArrayList<>();
-
-        for (Statement statement : statements) {
-            Subject subject = statement.getSubject();
-
-            // TODO: filter on doc visibility (?)
-            NodeInfo subjectInfo = new NodeInfoImpl(subject,
-                    RelationHelper.getDocumentModel(subject, documentManager),
-                    true);
-            Resource predicate = statement.getPredicate();
-            Node object = statement.getObject();
-            NodeInfo objectInfo = new NodeInfoImpl(object,
-                    RelationHelper.getDocumentModel(object, documentManager),
-                    true);
-
-            EloraStatementInfo info = new EloraStatementInfoImpl(statement,
-                    subjectInfo, new NodeInfoImpl(predicate), objectInfo);
-            infoList.add(info);
-        }
-        return infoList;
-    }
-
     @Override
     protected void resetBeanCache(DocumentModel newCurrentDocumentModel) {
         resetStatements();
     }
-
-    // public void restoreRelations() throws EloraException {
-    // resetEventContext();
-    //
-    // DocumentModel doc = getCurrentDocument();
-    // VersionModel version = new VersionModelImpl();
-    // version.setId(documentManager.getLastDocumentVersion(doc.getRef()).getId());
-    //
-    // EloraRelationHelper.restoreRelations(doc, version,
-    // eloraDocumentRelationManager, documentManager);
-    //
-    // resetStatements();
-    // }
-
 }

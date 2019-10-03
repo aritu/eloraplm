@@ -14,6 +14,7 @@
         <operation class="com.aritu.eloraplm.integration.get.restoperations.GetFavoriteWorkspaces" replace="true" />
         <operation class="com.aritu.eloraplm.integration.get.restoperations.GetFileInfo" replace="true"/>
         <operation class="com.aritu.eloraplm.integration.get.restoperations.GetFileStructInfo" replace="true"/>
+        <operation class="com.aritu.eloraplm.integration.get.restoperations.GetItemCadDocuments" replace="true"/>
         <operation class="com.aritu.eloraplm.integration.get.restoperations.GetNavigationFolder" replace="true" />
         <operation class="com.aritu.eloraplm.integration.get.restoperations.GetWorkspace" replace="true" />
         <operation class="com.aritu.eloraplm.integration.get.restoperations.UpdateFavoriteWorkspaces" replace="true" />
@@ -25,6 +26,10 @@
         
         <operation class="com.aritu.eloraplm.integration.restoperations.CheckSessionStatus" replace="true" />
         <operation class="com.aritu.eloraplm.integration.restoperations.SyncVocabulary" replace="true" />
+        
+        <operation class="com.aritu.eloraplm.integration.importer.restoperations.CreateProxies" replace="true" />
+        
+        <operation class="com.aritu.eloraplm.integration.admin.restoperations.MakeItemsObsolete" replace="true" />
     </extension>
     
 </component>

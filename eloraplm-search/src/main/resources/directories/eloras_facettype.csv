@@ -1,5 +1,4 @@
 id,label,obsolete,ordering
-BasicDocument,label.eloras.facettype.basicdocument,0,10
 CadDocument,label.eloras.facettype.caddocument,0,20
 BomDocument,label.eloras.facettype.bomdocument,0,30
 EloraWorkspace,label.eloras.facettype.eloraworkspace,0,40

@@ -1,16 +1,13 @@
 <?xml version="1.0"?>
 
 <component name="com.aritu.eloraplm.change.management.ContentViewService.contrib">
-
-  <require>com.aritu.eloraplm.webapp.base.ContentViewService.contrib</require>
   
   <extension target="org.nuxeo.ecm.platform.ui.web.ContentViewService"
     point="contentViews">
+    
+    <contentView name="eloraplm_cm_content">
 
-    <!-- Override ELORAPLM LINK CONTENT -->
-    <contentView name="eloraplm_link_content">
-
-      <title>eloraplm.label.contentview.link_content</title>
+      <title>eloraplm.label.contentview.cm_content</title>
       <translateTitle>true</translateTitle>
       <showTitle>false</showTitle>
 
@@ -31,9 +28,6 @@
           <predicate parameter="elo:reference" operator="ILIKE">
             <field schema="elora_advanced_search" name="reference" />
           </predicate>
-          <predicate parameter="ecm:primaryType" operator="=">
-            <field schema="elora_advanced_search" name="primaryType" />
-          </predicate>
           <predicate parameter="ecm:currentLifeCycleState" operator="=">
             <field schema="elora_advanced_search" name="currentLifeCycleState" />
           </predicate>
@@ -41,12 +35,12 @@
             ecm:uuid IN (?)
           </fixedPart>
         </whereClause>
-        <parameter>#{eloraCmLinks.getLinks()}</parameter>
+        <parameter>#{eloraCmContent.getUidList()}</parameter>
         <sort ascending="false" column="dc:created"/>
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
 
-      <searchLayout name="eloraplm_link_content_filter" />
+      <searchLayout name="elora_document_content_filter" />
       <showFilterForm>true</showFilterForm>
 
       <showPageSizeSelector>true</showPageSizeSelector>

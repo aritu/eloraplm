@@ -14,6 +14,7 @@
        <schema name="bom_product" prefix="bomprod" src="schemas/bom_product.xsd"/>
        <schema name="bom_customer_product" prefix="bomcustprod" src="schemas/bom_customer_product.xsd"/>
        <schema name="product_classification" prefix="prodclass" src="schemas/product_classification.xsd"/>
+       <schema name="part_classification" prefix="partclass" src="schemas/part_classification.xsd"/>
   </extension>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
@@ -37,7 +38,9 @@
       <schema name="responsible"/>
       <schema name="bom_item"/>
       <schema name="bom_part"/>
+      <schema name="part_classification"/>
       <facet name="BomDocument" />
+      <facet name="AutomaticCode"/>
     </doctype>
 
     <doctype extends="File" name="BomManufacturerPart">
@@ -57,6 +60,7 @@
       <schema name="related_customer"/>
       <schema name="related_manufacturer"/>
       <facet name="BomDocument" />
+      <facet name="AutomaticCode"/>
     </doctype>
 
     <doctype extends="File" name="BomPackaging">
@@ -68,6 +72,7 @@
       <schema name="related_customer"/>
       <schema name="related_manufacturer"/>
       <facet name="BomDocument" />
+      <facet name="AutomaticCode"/>
     </doctype>
 
     <doctype extends="File" name="BomSpecification">
@@ -77,6 +82,7 @@
       <schema name="bom_item"/>
       <schema name="bom_specification"/>
       <facet name="BomDocument" />
+      <facet name="AutomaticCode"/>
     </doctype>
 
     <doctype extends="File" name="BomProduct">
@@ -86,6 +92,7 @@
       <schema name="product_classification"/>
       <schema name="bom_product"/>
       <facet name="BomDocument" />
+      <facet name="AutomaticCode"/>
     </doctype>
 
     <doctype extends="File" name="BomCustomerProduct">
@@ -353,11 +360,10 @@
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_part</layout>
-        <layout>bom_dublincore</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>
    </type>
  
    <type id="BomManufacturerPart">
@@ -377,7 +383,9 @@
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>responsible</layout>
-        <layout>bom_dublincore</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
    </type>
  
@@ -409,11 +417,10 @@
         <layout>owner</layout>
         <layout>related_customer</layout>
         <layout>related_manufacturer</layout>
-        <layout>bom_dublincore</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>
    </type>
  
     <type id="BomPackaging">
@@ -442,11 +449,10 @@
         <layout>related_partaker</layout>
         <layout>related_customer</layout>
         <layout>related_manufacturer</layout>
-        <layout>bom_dublincore</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>
    </type>
 
     <type id="BomSpecification">
@@ -464,17 +470,16 @@
       <layouts mode="any">
         <layout>elora_object_reference_required</layout>
         <layout>heading</layout>
-        <layout>note</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_item</layout>
         <layout>responsible</layout>
         <layout>bom_specification</layout>
-        <layout>bom_dublincore</layout>
+        <layout>subjects</layout>
+        <layout>note</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>
    </type>
   
      <type id="BomProduct">
@@ -498,11 +503,10 @@
         <layout>responsible</layout>
         <layout>product_classification</layout>
         <layout>bom_product</layout>
-        <layout>bom_dublincore</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>
    </type>
 
    <type id="BomCustomerProduct">
@@ -522,11 +526,10 @@
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>responsible</layout>
-        <layout>bom_dublincore</layout>
+        <layout>subjects</layout>
+        <layout>rights</layout>
+        <layout>expired</layout>
       </layouts>
-      <contentViews category="eloraplm_link_content_category">
-        <contentView>eloraplm_link_content</contentView>
-      </contentViews>
    </type>
    
    <type id="Workspace">

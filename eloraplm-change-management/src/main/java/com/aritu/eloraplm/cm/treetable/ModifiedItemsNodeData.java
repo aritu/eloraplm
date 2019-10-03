@@ -33,16 +33,17 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
     public ModifiedItemsNodeData(String id, int level) {
 
         this(id, level, null, null, null, null, null, null, null, null, null,
-                false, null, false, null, null, false, false, false, false,
-                null, null, false, false, false, false);
+                false, false, null, false, null, null, false, false, false,
+                false, null, null, false, false, false, false);
     }
 
     public ModifiedItemsNodeData(String id, int level, Long rowNumber,
             String nodeId, String parentNodeId, DocumentModel derivedFrom,
             DocumentModel parentItem, DocumentModel originItem,
             DocumentModel originItemWc, String predicate, String quantity,
-            boolean isAnarchic, String action, boolean actionIsReadOnly,
-            DocumentModel destinationItem, DocumentModel destinationItemWc,
+            boolean isAnarchic, boolean isDirectObject, String action,
+            boolean actionIsReadOnly, DocumentModel destinationItem,
+            DocumentModel destinationItemWc,
             boolean destinationItemVersionIsReadOnly, boolean isManaged,
             boolean isManagedIsReadOnly, boolean isManual, String type,
             String comment, boolean commentIsReadOnly, boolean isUpdated,
@@ -50,8 +51,9 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
 
         this(id, level, false, false, false, rowNumber, nodeId, parentNodeId,
                 derivedFrom, parentItem, originItem, originItemWc, predicate,
-                quantity, isAnarchic, action, actionIsReadOnly, destinationItem,
-                destinationItemWc, destinationItemVersionIsReadOnly, isManaged,
+                quantity, isAnarchic, isDirectObject, action, actionIsReadOnly,
+                destinationItem, destinationItemWc,
+                destinationItemVersionIsReadOnly, isManaged,
                 isManagedIsReadOnly, isManual, type, comment, commentIsReadOnly,
                 isUpdated, isImpactable, includeInImpactMatrix);
     }
@@ -61,8 +63,9 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
             String nodeId, String parentNodeId, DocumentModel derivedFrom,
             DocumentModel parentItem, DocumentModel originItem,
             DocumentModel originItemWc, String predicate, String quantity,
-            boolean isAnarchic, String action, boolean actionIsReadOnly,
-            DocumentModel destinationItem, DocumentModel destinationItemWc,
+            boolean isAnarchic, boolean isDirectObject, String action,
+            boolean actionIsReadOnly, DocumentModel destinationItem,
+            DocumentModel destinationItemWc,
             boolean destinationItemVersionIsReadOnly, boolean isManaged,
             boolean isManagedIsReadOnly, boolean isManual, String type,
             String comment, boolean commentIsReadOnly, boolean isUpdated,
@@ -72,8 +75,8 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
         // true.
         super(id, level, isNew, isRemoved, isModified, rowNumber, nodeId,
                 parentNodeId, true, parentItem, originItem, originItemWc,
-                predicate, quantity, isAnarchic, action, actionIsReadOnly,
-                destinationItem, destinationItemWc,
+                predicate, quantity, isAnarchic, isDirectObject, action,
+                actionIsReadOnly, destinationItem, destinationItemWc,
                 destinationItemVersionIsReadOnly, isManaged,
                 isManagedIsReadOnly, isManual, type, comment, commentIsReadOnly,
                 isUpdated);

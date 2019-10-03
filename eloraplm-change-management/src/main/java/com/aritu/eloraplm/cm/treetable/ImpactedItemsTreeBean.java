@@ -217,9 +217,15 @@ public abstract class ImpactedItemsTreeBean extends CoreTreeBean
                     if (!selectedNodeData.getIsModifiedItem()
                             && !selectedNodeData.getActionIsReadOnly()) {
 
-                        // if the selected node action is not the same as the
-                        // new one, then, change it.
-                        if (!selectedNodeData.getAction().equals(action)) {
+                        // if the selected node action the same as the new one
+                        // OR it is already MANAGED and it is not IGNORE,
+                        // do not change it.
+                        if (selectedNodeData.getAction().equals(action)
+                                || (selectedNodeData.getIsManaged()
+                                        && !selectedNodeData.getAction().equals(
+                                                CMConstants.ACTION_IGNORE))) {
+                            // nothing to do
+                        } else {
                             selectedNodeData.setAction(action);
 
                             selectedNodeData.setIsModified(true);
@@ -243,8 +249,7 @@ public abstract class ImpactedItemsTreeBean extends CoreTreeBean
                             }
                             if (action.equals(CMConstants.ACTION_CHANGE)) {
                                 // set as destinationItem and destinationItemWc
-                                // the
-                                // originWC
+                                // the originWC
                                 DocumentModel destinationItem = selectedNodeData.getOriginItemWc();
                                 selectedNodeData.setDestinationItem(
                                         destinationItem);
@@ -372,35 +377,42 @@ public abstract class ImpactedItemsTreeBean extends CoreTreeBean
 
                 ImpactedItemsNodeData childNodeData = (ImpactedItemsNodeData) childNode.getData();
 
-                // if the child node action is not the same as the
-                // new one, then, change it.
-                if (!childNodeData.getAction().equals(action)) {
-
-                    // EXCEPTION: if this child node is a CadDrawing, don't
-                    // propagate the IGNORE action
+                // if the child node action the same as the new one
+                // OR it is already MANAGED and it is not IGNORE,
+                // do not change it.
+                if (childNodeData.getAction().equals(action)
+                        || (childNodeData.getIsManaged()
+                                && !childNodeData.getAction().equals(
+                                        CMConstants.ACTION_IGNORE))) {
+                    // nothing to do
+                } else {
+                    boolean actionIsReadOnly = true;
+                    // EXCEPTION: if this child node is a CadDrawing,
+                    // action should always be editable
                     if (childNodeData.getOriginItem() != null
-                            && !childNodeData.getOriginItem().getType().equals(
+                            && childNodeData.getOriginItem().getType().equals(
                                     EloraDoctypeConstants.CAD_DRAWING)) {
-
-                        childNodeData.setIsModified(true);
-                        childNodeData.setIsUpdated(true);
-                        childNodeData.setAction(CMConstants.ACTION_IGNORE);
-                        childNodeData.setActionIsReadOnly(true);
-                        childNodeData.setDestinationItem(null);
-                        childNodeData.setDestinationItemUid(null);
-                        childNodeData.setDestinationItemVersionList(null);
-                        childNodeData.setDestinationItemWc(null);
-                        childNodeData.setDestinationItemVersionIsReadOnly(true);
-                        childNodeData.setIsManaged(true);
-                        childNodeData.setIsManagedIsReadOnly(true);
-                        childNodeData.setComment(
-                                CMConstants.COMMENT_IGNORE_SINCE_ANCESTOR_IS_IGNORE);
-
-                        processedNodes.add(childNodeData.getNodeId());
-
-                        refreshEditedImpactedItemChildNodes(processedNodes,
-                                childNode, action, comment);
+                        actionIsReadOnly = false;
                     }
+
+                    childNodeData.setIsModified(true);
+                    childNodeData.setIsUpdated(true);
+                    childNodeData.setAction(CMConstants.ACTION_IGNORE);
+                    childNodeData.setActionIsReadOnly(actionIsReadOnly);
+                    childNodeData.setDestinationItem(null);
+                    childNodeData.setDestinationItemUid(null);
+                    childNodeData.setDestinationItemVersionList(null);
+                    childNodeData.setDestinationItemWc(null);
+                    childNodeData.setDestinationItemVersionIsReadOnly(true);
+                    childNodeData.setIsManaged(true);
+                    childNodeData.setIsManagedIsReadOnly(true);
+                    childNodeData.setComment(
+                            CMConstants.COMMENT_IGNORE_SINCE_ANCESTOR_IS_IGNORE);
+
+                    processedNodes.add(childNodeData.getNodeId());
+
+                    refreshEditedImpactedItemChildNodes(processedNodes,
+                            childNode, action, comment);
                 }
             }
         }
