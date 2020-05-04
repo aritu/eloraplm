@@ -7,6 +7,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
+Nuxeo-WebModule: org.nuxeo.ecm.webengine.jaxrs.scan.DynamicApplicationFactory;package=com/aritu/eloraplm/search/tools/
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-search-ActionService-con
  trib.xml,OSGI-INF/extensions/eloraplm-search-ContentViewService-contr
  ib.xml,OSGI-INF/extensions/eloraplm-search-WebLayoutManager-contrib.x

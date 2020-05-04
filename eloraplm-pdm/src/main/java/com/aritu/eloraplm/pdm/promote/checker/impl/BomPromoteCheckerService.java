@@ -218,8 +218,8 @@ public class BomPromoteCheckerService extends PromoteCheckerService {
                                 hierarchicalAndDirectPredicates,
                                 childFinalState, stmt, messages);
                         if (resultMsg.equals("")) {
-                            if (PromoteHelper.checkReleasedAndObsoleteInMajor(
-                                    doc, session)) {
+                            if (PromoteHelper.checkReleasedInMajor(doc,
+                                    session)) {
                                 if (!PromoteHelper.isTransitionAllowsConfig(
                                         promoteTransition)) {
                                     resultMsg = checkRelatedDocs(doc,

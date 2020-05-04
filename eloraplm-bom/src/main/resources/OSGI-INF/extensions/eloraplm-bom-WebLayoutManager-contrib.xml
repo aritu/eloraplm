@@ -1025,6 +1025,13 @@
             </properties>
             <widget>treewidget_editable_ordering</widget>
         </column>
+        <column name="is_manual">
+            <properties mode="any">
+                <property name="columnStyle">width: 5em;</property>
+                <property name="columnHeading">eloraplm.label.bom.isManual</property>
+            </properties>
+            <widget>treewidget_editable_isManual</widget>
+        </column>        
         <column name="remove">
             <properties mode="any">
                 <property name="columnStyle">width: 40px;</property>
@@ -1517,158 +1524,6 @@
       </properties>
     </layout>
     
-    <layout name="cust_prod_tt">
-      <templates>
-        <template mode="any">/layouts/layout_treetable_template.xhtml
-        </template>
-      </templates>
-      <columns>
-        <column name="icon_reference_title">
-          <properties mode="any">
-            <property name="columnStyleClass">ellipsisWhenOverflow</property>
-            <property name="columnHeading">label.content.header.title</property>
-          </properties>
-          <widget>treewidget_bom_icon_reference_title</widget>
-        </column>
-        <column name="bom_classification">
-            <properties mode="any">
-                <property name="columnStyle">width: 20%;</property>
-                <property name="columnStyleClass">ellipsisWhenOverflow</property>
-                <property name="columnHeading">eloraplm.label.bomClassification</property>
-            </properties>
-            <widget>listing_bom_classification</widget>
-        </column>
-        <column name="download_link">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>listing_viewer_file_download_link</widget>
-        </column>
-        <column name="lock">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>treewidget_lock_icon</widget>
-        </column>
-        <column name="version">
-            <properties mode="any">
-                <property name="columnStyle">width: 7em;</property>
-                <property name="columnHeading">label.version</property>
-            </properties>
-            <widget>treewidget_version_wc_av</widget>
-        </column>
-        <column name="lifecycle_state">
-            <properties mode="any">
-                <property name="columnStyle">width: 9em;</property>
-                <property name="columnHeading">label.lifecycle</property>
-            </properties>
-            <widget>listing_colored_lifecycle_state</widget>
-        </column>
-        <column name="quantity">
-            <properties mode="any">
-                <property name="columnStyle">width: 6em;</property>
-                <property name="columnHeading">label.content.header.quantity</property>
-            </properties>
-            <widget>listing_quantity</widget>
-        </column>
-        <column name="remove">
-            <properties mode="any">
-                <property name="columnStyle">width: 40px;</property>
-                <property name="columnStyleClass">alignCenter</property>
-            </properties>
-            <widget>customer_product_remove_relation</widget>
-        </column>
-      </columns>
-      <properties mode="any">
-        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
-        <property name="tableTitle">title.treetable.products</property>
-        <property name="tableStyle">table-layout: auto;</property>
-        <property name="isSortable">true</property>
-        <property name="isInverse">false</property>
-        <property name="sortBy">ordering</property>
-        <property name="sortOrder">ascending</property>
-        <property name="factory">#{customerProductRoot}</property>
-      </properties>
-    </layout>
-    
-    <layout name="cust_prod_inv_tt">
-      <templates>
-        <template mode="any">/layouts/layout_treetable_template.xhtml
-        </template>
-      </templates>
-      <columns>
-        <column name="icon_reference_title">
-          <properties mode="any">
-            <property name="columnStyleClass">ellipsisWhenOverflow</property>
-            <property name="columnHeading">label.content.header.title</property>
-          </properties>
-          <widget>treewidget_bom_icon_reference_title</widget>
-        </column>
-        <column name="bom_classification">
-            <properties mode="any">
-                <property name="columnStyle">width: 20%;</property>
-                <property name="columnStyleClass">ellipsisWhenOverflow</property>
-                <property name="columnHeading">eloraplm.label.bomClassification</property>
-            </properties>
-            <widget>listing_bom_classification</widget>
-        </column>
-        <column name="download_link">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>listing_viewer_file_download_link</widget>
-        </column>
-        <column name="lock">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>treewidget_lock_icon</widget>
-        </column>
-        <column name="version">
-            <properties mode="any">
-                <property name="columnStyle">width: 7em;</property>
-                <property name="columnHeading">label.version</property>
-            </properties>
-            <widget>treewidget_version_wc_av</widget>
-        </column>
-        <column name="lifecycle_state">
-            <properties mode="any">
-                <property name="columnStyle">width: 9em;</property>
-                <property name="columnHeading">label.lifecycle</property>
-            </properties>
-            <widget>listing_colored_lifecycle_state</widget>
-        </column>
-        <column name="quantity">
-            <properties mode="any">
-                <property name="columnStyle">width: 6em;</property>
-                <property name="columnHeading">label.content.header.quantity</property>
-            </properties>
-            <widget>listing_quantity</widget>
-        </column>
-        <column name="remove">
-            <properties mode="any">
-                <property name="columnStyle">width: 40px;</property>
-                <property name="columnStyleClass">alignCenter</property>
-            </properties>
-            <widget>customer_product_remove_inverse_relation</widget>
-        </column>
-      </columns>
-      <properties mode="any">
-        <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
-        <property name="tableTitle">title.treetable.customerProducts</property>
-        <property name="tableStyle">table-layout: auto;</property>
-        <property name="isSortable">true</property>
-        <property name="isInverse">true</property>
-        <property name="sortBy">ordering</property>
-        <property name="sortOrder">ascending</property>
-        <property name="factory">#{customerProductInverseRoot}</property>
-      </properties>
-    </layout>
-    
     <layout name="man_part_tt">
       <templates>
         <template mode="any">/layouts/layout_treetable_template.xhtml
@@ -1822,6 +1677,83 @@
     </layout>
     
     <!-- end of treetable layouts -->
+    
+    <!-- datatable layouts -->
+    
+    <layout name="item_customers_dt">
+        <templates>
+            <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+        </templates>
+        <columns>
+            <column name="customer">
+                <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                    <property name="columnHeading">eloraplm.column.dt.customer</property>
+                </properties>
+                <widget>tableWidget_customer</widget>
+            </column>
+            <column name="customer_product">
+                <properties mode="any">
+                    <property name="columnHeading">eloraplm.column.dt.customerProduct</property>
+                </properties>
+                <widget>tableWidget_customer_product</widget>
+            </column>
+        </columns>
+        <properties mode="any">
+            <property name="headerFiltersTemplate"></property>
+            <property name="tableTitle">eloraplm.title.item.customers</property>
+            <property name="tableStyle">table-layout: auto;</property>
+            <property name="removeRows">true</property>
+            <property name="factory">#{itemCustomersData}</property>
+        </properties>
+        
+        <widget name="tableWidget_customer" type="selectOneDirectory">
+            <labels>
+                <label mode="any">Customer</label>
+            </labels>
+            <fields>
+                <field>id</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">view</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="directoryName">elora_erpCustomers</property>
+            </properties>
+        </widget>
+        <widget name="tableWidget_customer_product" type="template">
+            <labels>
+                <label mode="any">Customer Product</label>
+            </labels>
+            <fields>
+                <field>customerProductDoc</field>
+                <field>id</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">
+                    /widgets/datatable/create_customer_product_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        <widget name="item_remove_customer" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <widgetModes>
+                <mode value="edit">view</mode>
+                <mode value="any">hidden</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="template">
+                    /widgets/datatable/remove_item_customer_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        
+    </layout>
+    
+    <!-- end of datatable layouts -->
     
     <layout name="product_classification">
       <templates>
@@ -2314,7 +2246,7 @@
       </labels>
       <properties mode="any">
         <property name="documentRelations">#{outgoingCustomerProductRelations}</property>
-        <property name="docStatementsInfo">#{EloraCustomerRelationBean.outgoingCustomerProductStatementsInfo}</property>
+        <property name="docStatementsInfo">#{eloraRelationActions.outgoingCustomerProductStatementsInfo}</property>
       </properties>
       <controls mode="any">
         <control name="requireSurroundingForm">true</control>
@@ -2455,42 +2387,6 @@
             </properties>
         </widget>
         
-        <widget name="cust_prod_tt" type="treetable">
-            <labels>
-                <label mode="any">label.treetable.bom.items</label>
-            </labels>
-            <fields>
-                <field>data</field>
-            </fields>
-            <widgetModes>
-                <mode value="any">#{
-                     nxd:hasPermission(currentDocument, 'Write')
-                     and currentDocument.isLocked()
-                     and currentDocumentLockDetails['document.locker'] eq currentUser
-                     and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
-            </widgetModes>
-            <properties widgetMode="any">
-                <property name="treetableLayout">cust_prod_tt</property>
-            </properties>
-        </widget>
-        
-        <widget name="cust_prod_inv_tt" type="treetable">
-            <labels>
-                <label mode="any">label.treetable.bom.items</label>
-            </labels>
-            <fields>
-                <field>data</field>
-            </fields>
-            <widgetModes>
-                <mode value="any">#{
-                    nxd:hasPermission(currentDocument, 'Read')
-                    and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
-            </widgetModes>
-            <properties widgetMode="any">
-                <property name="treetableLayout">cust_prod_inv_tt</property>
-            </properties>
-        </widget>
-        
         <widget name="man_part_tt" type="treetable">
             <labels>
                 <label mode="any">label.treetable.bom.items</label>
@@ -2529,6 +2425,28 @@
     
     <!-- end of treetable widgets -->
     
+    <!-- datatable widgets -->
+    
+    <widget name="item_customers_dt" type="datatable">
+        <labels>
+            <label mode="any">label.datatable.bom.composition</label>
+        </labels>
+        <fields>
+            <field>data</field>
+        </fields>
+        <widgetModes>
+            <mode value="any">#{
+                     nxd:hasPermission(currentDocument, 'Write')
+                     and (not currentDocument.isLocked()
+                        or currentDocumentLockDetails['document.locker'] eq currentUser)
+                     and not currentDocument.isVersion() ? 'edit' : 'view'}</mode>
+        </widgetModes>
+        <properties widgetMode="any">
+            <property name="datatableLayout">item_customers_dt</property>
+        </properties>
+    </widget>
+    
+    <!-- end of datatable widgets -->
     
     <widget name="bom_composition_ebom_remove_relation" type="template">
       <labels>
@@ -2644,46 +2562,6 @@
       <properties mode="any">
         <property name="template">
               /widgets/bom_item_remove_inverse_relation_widget.xhtml
-        </property>
-      </properties>
-    </widget>
-    
-    <widget name="customer_product_remove_relation" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>level</field>
-        <field>isSpecial</field>
-      </fields>
-      <widgetModes>
-          <mode value="edit">view</mode>
-          <mode value="any">hidden</mode>
-      </widgetModes>
-      <properties mode="any">
-        <property name="template">
-              /widgets/customer_product_remove_relation_widget.xhtml
-        </property>
-      </properties>
-    </widget>
-    
-    <widget name="customer_product_remove_inverse_relation" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>level</field>
-        <field>isSpecial</field>
-      </fields>
-      <widgetModes>
-          <mode value="edit">view</mode>
-          <mode value="any">hidden</mode>
-      </widgetModes>
-      <properties mode="any">
-        <property name="template">
-              /widgets/customer_product_remove_inverse_relation_widget.xhtml
         </property>
       </properties>
     </widget>

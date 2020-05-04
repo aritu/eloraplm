@@ -17,7 +17,10 @@ import org.jboss.seam.international.StatusMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentNotFoundException;
+import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.primefaces.component.treetable.TreeTable;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.constants.CMConstants;
@@ -66,15 +69,25 @@ public abstract class ImpactedItemsTreeBean extends CoreTreeBean
 
         try {
             DocumentModel currentDoc = getCurrentDocument();
-
             nodeService = new ImpactedItemsNodeService(documentManager,
                     itemType);
             setRoot(nodeService.getRoot(currentDoc));
-
             setIsDirty(false);
-
+            setHasUnreadableNodes(false);
+            setIsInvalid(false);
+        } catch (DocumentNotFoundException | DocumentSecurityException e) {
+            log.error(logInitMsg + e.getMessage());
+            // empty root attribute and set hasUnreadableNodes attribute to true
+            setRoot(new DefaultTreeNode());
+            setHasUnreadableNodes(true);
+            setIsInvalid(false);
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty root attribute and set isInvalid attribute to true
+            setRoot(new DefaultTreeNode());
+            setIsInvalid(true);
+            setHasUnreadableNodes(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.treetable.createRoot"));
         }

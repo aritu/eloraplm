@@ -127,7 +127,7 @@ public class GetFavoriteWorkspaces {
             for (DocumentModel fav : favs) {
                 GetWorkspacesResponseDoc responseDoc = new GetWorkspacesResponseDoc(
                         fav.getId(), fav.getType(),
-                        EloraStructureHelper.getStructureRootUid(fav, session),
+                        EloraStructureHelper.getEloraRootFolderUid(fav, session),
                         fav.getTitle(), true, fav.getPathAsString());
 
                 getWorkspacesResponse.addDocument(responseDoc);

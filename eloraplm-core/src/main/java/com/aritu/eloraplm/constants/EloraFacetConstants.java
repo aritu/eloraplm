@@ -19,6 +19,10 @@ package com.aritu.eloraplm.constants;
  */
 public class EloraFacetConstants {
 
+    // For root documents that are under the domain level: StructureRoot,
+    // CollaborationRoot, LibraryRoot, AdminRoot, etc.
+    public static final String FACET_ELORA_ROOT_FOLDER = "EloraRootFolder";
+
     // For documents derived from CadDocument: CadAssembly, CadPart, CadDrawing,
     // Design Table,...
     public static final String FACET_CAD_DOCUMENT = "CadDocument";
@@ -47,6 +51,9 @@ public class EloraFacetConstants {
 
     // For Change Management processes
     public static final String FACET_CM_PROCESS = "CMProcess";
+
+    // For Quality Management processes
+    public static final String FACET_QM_PROCESS = "QmProcess";
 
     // For Non-Versionable documents than must be locked to edit
     public static final String FACET_LOCK_REQUIRED_TO_EDIT = "LockRequiredToEdit";

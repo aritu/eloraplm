@@ -21,6 +21,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.runtime.transaction.TransactionHelper;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
@@ -30,6 +31,7 @@ import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.exceptions.DocumentAlreadyLockedException;
 import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
 import com.aritu.eloraplm.exceptions.DocumentLockRightsException;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.promote.checker.PromoteCheckerFactory;
 import com.aritu.eloraplm.pdm.promote.checker.PromoteCheckerManager;
@@ -62,6 +64,9 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
 
     protected Map<String, String> promoteOptions;
 
+    // this is a temporal patch for avoid doing make obsolete from an ECO
+    protected Map<String, String> promoteOptionsForEco;
+
     protected Map<String, String> relationOptions;
 
     private String selectedPromoteOption;
@@ -86,6 +91,11 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
                 EloraLifeCycleConstants.TRANS_APPROVE);
         promoteOptions.put(EloraLifeCycleConstants.TRANS_OBSOLETE,
                 EloraLifeCycleConstants.TRANS_OBSOLETE);
+
+        // this is a temporal patch for avoid doing make obsolete from an ECO
+        promoteOptionsForEco = new HashMap<String, String>();
+        promoteOptionsForEco.put(EloraLifeCycleConstants.TRANS_APPROVE,
+                EloraLifeCycleConstants.TRANS_APPROVE);
 
         // Default value
         // selectedPromoteOption = EloraLifeCycleConstants.CAD_OBSOLETE;
@@ -133,11 +143,24 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
                     eloraDocumentRelationManager, promoteCheckerManager,
                     promoteExecuterManager, firstLoad, rootIsSpecial, messages);
             setRoot(nodeService.getRoot(currentDoc));
+            setHasUnreadableNodes(false);
+            setIsInvalid(false);
 
             allOK = promoteCheckerManager.isTopLevelOK();
             log.trace(logInitMsg + "Tree created.");
+        } catch (DocumentUnreadableException e) {
+            log.error(logInitMsg + e.getMessage());
+            // empty root attribute and set hasUnreadableNodes attribute to true
+            setRoot(new DefaultTreeNode());
+            setHasUnreadableNodes(true);
+            setIsInvalid(false);
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty root attribute and set isInvalid attribute to true
+            setRoot(new DefaultTreeNode());
+            setIsInvalid(true);
+            setHasUnreadableNodes(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.treetable.createRoot"));
         }
@@ -167,13 +190,13 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
         // createRoot();
     }
 
-    public void runPromote() throws EloraException {
+    public void runPromote() {
         runPromoteAction();
         navigationContext.invalidateCurrentDocument();
         webActions.resetTabList();
     }
 
-    public void runPromoteAction() throws EloraException {
+    public void runPromoteAction() {
         String logInitMsg = "[runPromoteAction] ["
                 + documentManager.getPrincipal().getName() + "] ";
 
@@ -258,22 +281,66 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
         }
     }
 
-    public void refreshNode(AjaxBehaviorEvent event) throws EloraException {
-        promoteCheckerManager.resetValues();
-        TreeNode node = (TreeNode) event.getComponent().getAttributes().get(
-                "node");
+    public void refreshNode(AjaxBehaviorEvent event) {
+        String logInitMsg = "[refreshNode] ["
+                + documentManager.getPrincipal().getName() + "] ";
 
-        nodeService.processPartialTreeNode(super.getRoot(), node);
-        allOK = promoteCheckerManager.isTopLevelOK();
+        try {
+            promoteCheckerManager.resetValues();
+            TreeNode node = (TreeNode) event.getComponent().getAttributes().get(
+                    "node");
+
+            nodeService.processPartialTreeNode(super.getRoot(), node);
+
+            allOK = promoteCheckerManager.isTopLevelOK();
+
+        } catch (DocumentUnreadableException e) {
+            log.error(logInitMsg + e.getMessage());
+            // set hasUnreadableNodes attribute to true.
+            // In this case, we don't empty the tree, because we don't know how
+            // to refresh the entire tree.
+            setHasUnreadableNodes(true);
+            setIsInvalid(false);
+
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.treetable.refreshNode"));
+
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+
+            // In this case, we don't empty the tree, because we don't know how
+            // to refresh the entire tree.
+            setIsInvalid(true);
+            setHasUnreadableNodes(false);
+
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.treetable.refreshNode"));
+        }
     }
 
-    public void refreshNodePropagation(AjaxBehaviorEvent event)
-            throws EloraException {
-        TreeNode node = (TreeNode) event.getComponent().getAttributes().get(
-                "node");
+    public void refreshNodePropagation(AjaxBehaviorEvent event) {
+        String logInitMsg = "[refreshNodePropagation] ["
+                + documentManager.getPrincipal().getName() + "] ";
 
-        nodeService.processPartialTreeNodePropagation(super.getRoot(), node);
-        allOK = promoteCheckerManager.isTopLevelOK();
+        try {
+            TreeNode node = (TreeNode) event.getComponent().getAttributes().get(
+                    "node");
+
+            nodeService.processPartialTreeNodePropagation(super.getRoot(),
+                    node);
+            allOK = promoteCheckerManager.isTopLevelOK();
+
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            // set isInvalid attribute to true
+            // In this case, we don't empty the tree, because we don't know how
+            // to refresh the entire tree.
+            setIsInvalid(true);
+            setHasUnreadableNodes(false);
+
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.treetable.refreshNode"));
+        }
     }
 
     public Map<String, String> getPromoteOptions() {
@@ -282,6 +349,15 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
 
     public void setPromoteOptions(Map<String, String> promoteOptions) {
         this.promoteOptions = promoteOptions;
+    }
+
+    public Map<String, String> getPromoteOptionsForEco() {
+        return promoteOptionsForEco;
+    }
+
+    public void setPromoteOptionsForEco(
+            Map<String, String> promoteOptionsForEco) {
+        this.promoteOptionsForEco = promoteOptionsForEco;
     }
 
     public Map<String, String> getRelationOptions() {
@@ -305,6 +381,10 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
     }
 
     public boolean getAllOK() {
+        if (getIsInvalid() || getHasUnreadableNodes()) {
+            return false;
+        }
+
         return allOK;
     }
 

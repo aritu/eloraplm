@@ -404,7 +404,7 @@ public class TryCheckin {
 
             DocumentModel wcDoc = session.getWorkingCopy(realRef);
 
-            String structureRootRealUid = EloraStructureHelper.getStructureRootUid(
+            String structureRootRealUid = EloraStructureHelper.getEloraRootFolderUid(
                     wcDoc, session);
             structureRootRealRef = new IdRef(structureRootRealUid);
         }

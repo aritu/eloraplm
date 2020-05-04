@@ -92,7 +92,7 @@ public class LinksBean implements Serializable {
             // if current document is a AV
             if (currentDoc.isImmutable()) {
                 // Retrieve the proxies related to the current document (AV)
-                query = EloraQueryFactory.getDocProxiesQuery(
+                query = EloraQueryFactory.getDocProxyParentsQuery(
                         currentDoc.getType(), currentDoc.getId());
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
@@ -110,7 +110,7 @@ public class LinksBean implements Serializable {
                         versionsUids.add(versionDoc.getId());
                     }
                 }
-                query = EloraQueryFactory.getDocProxiesQuery(
+                query = EloraQueryFactory.getDocProxyParentsQuery(
                         currentDoc.getType(), versionsUids);
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);

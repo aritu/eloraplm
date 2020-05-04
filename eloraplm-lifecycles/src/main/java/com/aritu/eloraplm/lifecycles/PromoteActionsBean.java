@@ -12,6 +12,7 @@ import org.jboss.seam.core.Events;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 import com.aritu.eloraplm.config.util.LifecyclesConfig;
+import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 
@@ -48,17 +49,22 @@ public class PromoteActionsBean extends LifecycleTransitionsActionsBean {
         super.execute();
 
         DocumentModel doc = navigationContext.getCurrentDocument();
-        
+
         if (hasToFireDefaultEvent()) {
             // Seam event
-            Events.instance().raiseEvent(PdmEventNames.PDM_PROMOTED_EVENT,
-                    doc);
+            Events.instance().raiseEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc);
 
             // Nuxeo Event
             doc.refresh();
             String comment = doc.getVersionLabel();
             EloraEventHelper.fireEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc,
                     comment);
+
+            // Fire Approved event
+            if (transition.equals(EloraLifeCycleConstants.TRANS_APPROVE)) {
+                EloraEventHelper.fireEvent(PdmEventNames.PDM_APPROVED_EVENT,
+                        doc);
+            }
         }
 
         navigationContext.invalidateCurrentDocument();

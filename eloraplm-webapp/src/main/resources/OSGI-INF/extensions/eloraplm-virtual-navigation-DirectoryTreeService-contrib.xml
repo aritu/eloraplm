@@ -8,31 +8,29 @@
     <!-- Disable virtual navigation for subjects and coverage -->
     <directoryTree name="bySubjectsNavigation" enabled="false" />
     <directoryTree name="byCoverageNavigation" enabled="false" />
-<!--   <directoryTree name="bySubjectsNavigation" isNavigationTree="false" /> -->
-<!--   <directoryTree name="byCoverageNavigation" isNavigationTree="false" /> -->
-
+    
 
     <!--  Customer virtual navigation -->
-    <directoryTree name="1_byCustomer" label="label.vnav.customer"
+    <directoryTree name="byCustomerNavigation" label="label.vnav.customer"
       contentView="byCustomerContentView_vnav" field="cust_customer" schema="vnav"
-      outcome="customer_virtual_navigation" enabled="true">
+      outcome="customer_virtual_navigation" enabled="true" order="210">
       <directory>elora_erpCustomers</directory>
     </directoryTree>
 
 
     <!--  Manufacturer virtual navigation -->
-    <directoryTree name="2_byManufacturer" label="label.vnav.manufacturer"
+    <directoryTree name="byManufacturerNavigation" label="label.vnav.manufacturer"
       contentView="byManufacturerContentView_vnav" field="manu_manufacturer" schema="vnav"
-      outcome="manufacturer_virtual_navigation" enabled="true">
+      outcome="manufacturer_virtual_navigation" enabled="true" order="220">
       <directory>elora_erpManufacturers</directory>
     </directoryTree>
     
 
 
     <!--  BOM Product Classification virtual navigation -->
-    <directoryTree name="3_byBomProductClass" label="label.vnav.bomProductClass"
+    <directoryTree name="byBomProductClassNavigation" label="label.vnav.bomProductClass"
       contentView="byBomProductClassContentView_vnav" field="bom_productClass" schema="vnav"
-      outcome="bomProductClass_virtual_navigation" enabled="true">
+      outcome="bomProductClass_virtual_navigation" enabled="true" order="500">
       <directory>elora_bomProductClassLevel1</directory>
       <directory>elora_bomProductClassLevel2</directory>
       <directory>elora_bomProductClassLevel3</directory>
@@ -40,9 +38,9 @@
 
 
     <!--  BOM Part Classification virtual navigation -->
-    <directoryTree name="4_byBomPartClass" label="label.vnav.bomPartClass"
+    <directoryTree name="byBomPartClassNavigation" label="label.vnav.bomPartClass"
       contentView="byBomPartClassContentView_vnav" field="bom_partClass" schema="vnav"
-      outcome="bomPartClass_virtual_navigation" enabled="true">
+      outcome="bomPartClass_virtual_navigation" enabled="true" order="510">
       <directory>elora_bomPartClassLevel1</directory>
       <directory>elora_bomPartClassLevel2</directory>
       <directory>elora_bomPartClassLevel3</directory>
@@ -50,9 +48,9 @@
     
     
     <!--  BOM Tool Classification virtual navigation -->
-    <directoryTree name="5_byBomToolClass" label="label.vnav.bomToolClass"
+    <directoryTree name="byBomToolClassNavigation" label="label.vnav.bomToolClass"
       contentView="byBomToolClassContentView_vnav" field="bom_toolClass" schema="vnav"
-      outcome="bomToolClass_virtual_navigation" enabled="true">
+      outcome="bomToolClass_virtual_navigation" enabled="true" order="520">
       <directory>elora_bomToolClassLevel1</directory>
       <directory>elora_bomToolClassLevel2</directory>
       <directory>elora_bomToolClassLevel3</directory>
@@ -60,9 +58,9 @@
     
     
     <!--  BOM Packaging Classification virtual navigation -->
-    <directoryTree name="6_byBomPackagingClass" label="label.vnav.bomPackagingClass"
+    <directoryTree name="byBomPackagingClassNavigation" label="label.vnav.bomPackagingClass"
       contentView="byBomPackagingClassContentView_vnav" field="bom_packagingClass" schema="vnav"
-      outcome="bomPackagingClass_virtual_navigation" enabled="true">
+      outcome="bomPackagingClass_virtual_navigation" enabled="true" order="530">
       <directory>elora_bomPackagingClassLevel1</directory>
       <directory>elora_bomPackagingClassLevel2</directory>
       <directory>elora_bomPackagingClassLevel3</directory>
@@ -70,12 +68,29 @@
     
     
     <!--  BOM Specification Classification virtual navigation -->
-    <directoryTree name="7_byBomSpecificationClass" label="label.vnav.bomSpecificationClass"
+    <directoryTree name="byBomSpecificationClassNavigation" label="label.vnav.bomSpecificationClass"
       contentView="byBomSpecificationClassContentView_vnav" field="bom_specificationClass" schema="vnav"
-      outcome="bomSpecificationClass_virtual_navigation" enabled="true">
+      outcome="bomSpecificationClass_virtual_navigation" enabled="true" order="540">
       <directory>elora_bomSpecificationClassLevel1</directory>
       <directory>elora_bomSpecificationClassLevel2</directory>
       <directory>elora_bomSpecificationClassLevel3</directory>
+    </directoryTree>
+    
+    
+    <!--  CAD Classification virtual navigation -->
+    <directoryTree name="byCadClassNavigation" label="label.vnav.cadClass"
+      contentView="byCadClassContentView_vnav" field="cad_cadClass" schema="vnav"
+      outcome="cadClass_virtual_navigation" enabled="true" order="300">
+      <directory>elora_cadClassLevel1</directory>
+      <directory>elora_cadClassLevel2</directory>
+      <directory>elora_cadClassLevel3</directory>
+    </directoryTree>
+    
+    <!--  Nature virtual navigation -->
+    <directoryTree name="byNatureNavigation" label="label.vnav.nature"
+      contentView="byNatureContentView_vnav" field="dc_nature" schema="vnav"
+      outcome="nature_virtual_navigation" enabled="true" order="400">
+      <directory>nature</directory>
     </directoryTree>
 
 

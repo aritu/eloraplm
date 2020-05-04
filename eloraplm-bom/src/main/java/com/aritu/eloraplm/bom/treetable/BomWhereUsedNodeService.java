@@ -74,11 +74,12 @@ public class BomWhereUsedNodeService extends RelationNodeService
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
             Integer viewerOrdering, Integer inverseViewerOrdering,
-            boolean isSpecial, boolean isDirect) {
+            Boolean isManual, boolean isSpecial, boolean isDirect) {
 
         return new BaseRelationNodeData(id, level, docId, data, wcDoc, stmt,
                 predicateUri, quantity, comment, ordering, directorOrdering,
-                viewerOrdering, inverseViewerOrdering, isSpecial, isDirect);
+                viewerOrdering, inverseViewerOrdering, isManual, isSpecial,
+                isDirect);
     }
 
     private void loadConfigurations() throws EloraException {

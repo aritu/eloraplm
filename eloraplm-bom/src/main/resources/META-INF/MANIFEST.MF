@@ -16,24 +16,23 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-bom-ActionService-contri
  raplm-bom-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-b
  om-PreviewAdapterManagerComponent-contrib.xml,OSGI-INF/extensions/elo
  raplm-bom-ThumbnailService.xml,OSGI-INF/extensions/eloraplm-bom-autos
- tructure-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-bom-a
- utostructure-WebResources-contrib.xml,OSGI-INF/extensions/eloraplm-bo
- m-characteristics-ActionService-contrib.xml,OSGI-INF/extensions/elora
- plm-bom-characteristics-ContentTemplateService-contrib.xml,OSGI-INF/e
- xtensions/eloraplm-bom-characteristics-ContentViewService-contrib.xml
- ,OSGI-INF/extensions/eloraplm-bom-characteristics-DirectoryUIManager-
- contrib.xml,OSGI-INF/extensions/eloraplm-bom-characteristics-Document
- sLists-contrib.xml,OSGI-INF/extensions/eloraplm-bom-characteristics-E
- ventServiceComponent-contrib.xml,OSGI-INF/extensions/eloraplm-bom-cha
- racteristics-SQLDirectoryFactory-contrib.xml,OSGI-INF/extensions/elor
- aplm-bom-characteristics-TypeService-contrib.xml,OSGI-INF/extensions/
- eloraplm-bom-characteristics-WebLayoutManager-contrib.xml,OSGI-INF/ex
- tensions/eloraplm-bom-lists-ActionService-contrib.xml,OSGI-INF/extens
- ions/eloraplm-bom-lists-DirectoryUIManager-contrib.xml,OSGI-INF/exten
- sions/eloraplm-bom-lists-EventServiceComponent-contrib.xml,OSGI-INF/e
- xtensions/eloraplm-bom-lists-SQLDirectoryFactory-contrib.xml,OSGI-INF
- /extensions/eloraplm-bom-lists-TypeService-contrib.xml,OSGI-INF/exten
- sions/eloraplm-bom-lists-WebLayoutManager-contrib.xml,OSGI-INF/extens
- ions/eloraplm-bom-lists-WebResources-contrib.xml,OSGI-INF/extensions/
- eloraplm-bom-characteristics-LifeCycleService-contrib.xml
+ tructure-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-bom-c
+ haracteristics-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm
+ -bom-characteristics-ContentTemplateService-contrib.xml,OSGI-INF/exte
+ nsions/eloraplm-bom-characteristics-ContentViewService-contrib.xml,OS
+ GI-INF/extensions/eloraplm-bom-characteristics-DirectoryUIManager-con
+ trib.xml,OSGI-INF/extensions/eloraplm-bom-characteristics-DocumentsLi
+ sts-contrib.xml,OSGI-INF/extensions/eloraplm-bom-characteristics-Even
+ tServiceComponent-contrib.xml,OSGI-INF/extensions/eloraplm-bom-charac
+ teristics-SQLDirectoryFactory-contrib.xml,OSGI-INF/extensions/elorapl
+ m-bom-characteristics-TypeService-contrib.xml,OSGI-INF/extensions/elo
+ raplm-bom-characteristics-WebLayoutManager-contrib.xml,OSGI-INF/exten
+ sions/eloraplm-bom-lists-ActionService-contrib.xml,OSGI-INF/extension
+ s/eloraplm-bom-lists-DirectoryUIManager-contrib.xml,OSGI-INF/extensio
+ ns/eloraplm-bom-lists-EventServiceComponent-contrib.xml,OSGI-INF/exte
+ nsions/eloraplm-bom-lists-SQLDirectoryFactory-contrib.xml,OSGI-INF/ex
+ tensions/eloraplm-bom-lists-TypeService-contrib.xml,OSGI-INF/extensio
+ ns/eloraplm-bom-lists-WebLayoutManager-contrib.xml,OSGI-INF/extension
+ s/eloraplm-bom-lists-WebResources-contrib.xml,OSGI-INF/extensions/elo
+ raplm-bom-characteristics-LifeCycleService-contrib.xml
 

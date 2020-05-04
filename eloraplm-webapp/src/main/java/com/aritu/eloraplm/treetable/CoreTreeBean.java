@@ -37,6 +37,14 @@ public abstract class CoreTreeBean extends EloraDocContextBoundActionBean
 
     private TreeNode[] selectedNodes;
 
+    private int firstLevelChildrenCount;
+
+    private int childrenCount;
+
+    private boolean hasUnreadableNodes;
+
+    private boolean isInvalid;
+
     public CoreTreeBean() {
     }
 
@@ -48,6 +56,24 @@ public abstract class CoreTreeBean extends EloraDocContextBoundActionBean
 
     public void setRoot(TreeNode root) {
         this.root = root;
+        firstLevelChildrenCount = root.getChildCount();
+        childrenCount = countChildren(root, 0);
+    }
+
+    private int countChildren(TreeNode node, int count) {
+        count += node.getChildCount();
+        for (TreeNode child : node.getChildren()) {
+            count = countChildren(child, count);
+        }
+        return count;
+    }
+
+    public int getFirstLevelChildrenCount() {
+        return firstLevelChildrenCount;
+    }
+
+    public int getChildrenCount() {
+        return childrenCount;
     }
 
     public TreeNode getSelectedNode() {
@@ -98,6 +124,22 @@ public abstract class CoreTreeBean extends EloraDocContextBoundActionBean
 
     public void setIsDirty(boolean isDirty) {
         this.isDirty = isDirty;
+    }
+
+    public boolean getHasUnreadableNodes() {
+        return hasUnreadableNodes;
+    }
+
+    public void setHasUnreadableNodes(boolean hasUnreadableNodes) {
+        this.hasUnreadableNodes = hasUnreadableNodes;
+    }
+
+    public boolean getIsInvalid() {
+        return isInvalid;
+    }
+
+    public void setIsInvalid(boolean isInvalid) {
+        this.isInvalid = isInvalid;
     }
 
     protected abstract TreeNode getRootFromFactory();

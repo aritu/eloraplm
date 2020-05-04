@@ -66,6 +66,7 @@ import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
 import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
 import com.aritu.eloraplm.pdm.overwrite.helper.OverwriteVersionHelper;
@@ -161,11 +162,9 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 TransactionHelper.setTransactionRollbackOnly();
             }
         } catch (Exception e) {
-            log.error(
-                    logInitMsg
-                            + "Uncontrolled exception processing ExecuteActions: "
-                            + e.getClass().getName() + ". " + e.getMessage(),
-                    e);
+            log.error(logInitMsg
+                    + "Uncontrolled exception processing ExecuteActions: "
+                    + e.getClass().getName() + ". " + e.getMessage(), e);
             exceptionErrorMsg = (e.getMessage() != null) ? e.getMessage()
                     : (e.getCause() != null) ? e.getCause().toString()
                             : e.getClass().getName();
@@ -683,6 +682,14 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 for (Statement bomStmt : bomStmts) {
                     DocumentModel objectBomDoc = RelationHelper.getDocumentModel(
                             bomStmt.getObject(), documentManager);
+                    if (objectBomDoc == null) {
+                        log.trace(logInitMsg
+                                + "Throw DocumentUnreadableException  since objectBomDoc is null. bomStmt = |"
+                                + bomStmt.toString() + "|");
+                        throw new DocumentUnreadableException(
+                                "Error getting document from statement |"
+                                        + bomStmt.toString() + "|");
+                    }
                     if (!relatedTreeObjectList.contains(objectBomDoc.getId())) {
                         log.trace("Item |" + objectBomDoc.getId()
                                 + "| not in tree");
@@ -1205,8 +1212,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 // TODO: cambiar este 'check' por un 'is' para que se
                 // entienda
                 // mejor. También convendría moverlo de promotehelper...
-                if (PromoteHelper.checkReleasedAndObsoleteInMajor(doc,
-                        documentManager)) {
+                if (PromoteHelper.checkReleasedInMajor(doc, documentManager)) {
                     log.trace(logInitMsg
                             + "Finished checking release or obsolete in major of document |"
                             + docId + "|");
@@ -1249,10 +1255,15 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                                         eloraDocumentRelationManager,
                                         documentManager);
                             } else {
-                                documentManager.restoreToVersion(wcDoc.getRef(),
-                                        doc.getRef(), true, true);
+                                EloraDocumentHelper.restoreToVersion(
+                                        wcDoc.getRef(), doc.getRef(), true,
+                                        true, documentManager);
                             }
                             documentManager.removeLock(wcDoc.getRef());
+                            // Fire Approved event
+                            EloraEventHelper.fireEvent(
+                                    PdmEventNames.PDM_APPROVED_EVENT, doc);
+
                             destinationWcUidList.add(wcDoc.getId());
                             /*
                              * managedNodeIdList.add(
@@ -1301,7 +1312,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                     }
                 } else {
                     log.error(logInitMsg
-                            + "Document has another released or obsolete document in the same major. docId = |"
+                            + "Document has another released document in the same major. docId = |"
                             + docId + "|, reference =|" + reference
                             + "|, title=|" + title + "|");
 
@@ -1353,7 +1364,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
     }
 
     private boolean areRelatedCadDocsReleased(DocumentModel doc,
-            CoreSession documentManager) {
+            CoreSession documentManager) throws DocumentUnreadableException {
         try {
             checkRelatedCadDocsReleased(doc, documentManager);
             return true;
@@ -1363,7 +1374,8 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
     }
 
     private void checkRelatedCadDocsReleased(DocumentModel doc,
-            CoreSession documentManager) throws EloraException {
+            CoreSession documentManager)
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[checkRelatedCadDocsReleased] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(
@@ -1376,6 +1388,14 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
         for (Statement cadStmt : cadStmts) {
             DocumentModel cadDoc = RelationHelper.getDocumentModel(
                     cadStmt.getObject(), documentManager);
+            if (cadDoc == null) {
+                log.trace(logInitMsg
+                        + "Throw DocumentUnreadableException  since cadDoc is null. cadStmt = |"
+                        + cadStmt.toString() + "|");
+                throw new DocumentUnreadableException(
+                        "Error getting document from statement |"
+                                + cadStmt.toString() + "|");
+            }
             if (!EloraDocumentHelper.isReleased(cadDoc)) {
                 throw new EloraException("Related doc is not released");
             }
@@ -1394,7 +1414,8 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
     private void checkDocumentChildrenStates(DocumentModel doc, DAG dag,
             Map<String, List<String>> childrenVersionSeriesMap,
             List<String> bomHierarchicalAndDirectRelations,
-            CoreSession documentManager) throws EloraException {
+            CoreSession documentManager)
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[checkDocumentChildrenStates] ["
                 + documentManager.getPrincipal().getName() + "] ";
         List<Statement> bomStmts = getBomHierarchicalStmts(doc,
@@ -1407,6 +1428,14 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
         for (Statement bomStmt : bomStmts) {
             DocumentModel objectBomDoc = RelationHelper.getDocumentModel(
                     bomStmt.getObject(), documentManager);
+            if (objectBomDoc == null) {
+                log.trace(logInitMsg
+                        + "Throw DocumentUnreadableException  since objectBomDoc is null. bomStmt = |"
+                        + bomStmt.toString() + "|");
+                throw new DocumentUnreadableException(
+                        "Error getting document from statement |"
+                                + bomStmt.toString() + "|");
+            }
             log.trace(logInitMsg + "Retrieved object |" + objectBomDoc.getId()
                     + "|");
             List<String> childrenInTreeVersionSeriesIdList = childrenVersionSeriesMap.get(
@@ -1563,11 +1592,9 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 TransactionHelper.setTransactionRollbackOnly();
             }
         } catch (Exception e) {
-            log.error(
-                    logInitMsg
-                            + "Uncontrolled exception processing Undo Checkout: "
-                            + e.getClass().getName() + ". " + e.getMessage(),
-                    e);
+            log.error(logInitMsg
+                    + "Uncontrolled exception processing Undo Checkout: "
+                    + e.getClass().getName() + ". " + e.getMessage(), e);
             exceptionErrorMsg = (e.getMessage() != null) ? e.getMessage()
                     : (e.getCause() != null) ? e.getCause().toString()
                             : e.getClass().getName();

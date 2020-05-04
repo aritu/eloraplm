@@ -1,37 +1,65 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
-xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/project" 
-targetNamespace="http://www.nuxeo.org/ecm/project/schemas/project">
-
-
-  <xs:element name="projectType" >
-    <xs:simpleType>
-      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_projectType" />
-    </xs:simpleType>
-  </xs:element>
-  
-  <xs:complexType name="projectPhaseType">
-    <xs:sequence>
-      <xs:element name="phaseDescription" type="xs:string"/>
-      <xs:element name="phaseManager">
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/project" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/project">
+    
+    <!-- Deliverables complex types -->
+    
+    <xs:complexType name="deliverableType">
+        <xs:sequence>
+            <xs:element name="isRequired" type="xs:boolean"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="document">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="deliverableListType">
+        <xs:sequence>
+            <xs:element name="item" type="nxs:deliverableType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Phases complex types -->
+    
+    <xs:complexType name="projectPhaseType">
+        <xs:sequence>
+            <xs:element name="phaseId" type="xs:string"/>
+            <xs:element name="parentId" type="xs:string"/>
+            <xs:element name="type" type="xs:string"/>
+            <xs:element name="phaseDescription" type="xs:string"/>
+            <xs:element name="phaseManager">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="deliverables" type="nxs:deliverableListType"/>
+            <xs:element name="phaseRealStartDate" type="xs:date"/>
+            <xs:element name="phasePlannedEndDate" type="xs:date"/>
+            <xs:element name="phaseRealEndDate" type="xs:date"/>
+            <xs:element name="phaseProgress" type="xs:integer"/>
+            <xs:element name="comment" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="projectPhaseListType">
+        <xs:sequence>
+            <xs:element name="item" type="nxs:projectPhaseType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <!-- Actual fields -->
+    
+    <xs:element name="projectType" >
         <xs:simpleType>
-          <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
+            <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_projectType" />
         </xs:simpleType>
-      </xs:element>
-      <xs:element name="phaseRealStartDate" type="xs:date"/>
-      <xs:element name="phasePlannedEndDate" type="xs:date"/>
-      <xs:element name="phaseRealEndDate" type="xs:date"/>
-      <xs:element name="phaseProgress" type="xs:integer"/>
-      
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:element name="projectPhaseList" type="nxs:projectPhaseListType"/>
-  <xs:complexType name="projectPhaseListType">
-    <xs:sequence>
-      <xs:element name="item" type="nxs:projectPhaseType" minOccurs="0"
-        maxOccurs="unbounded" />
-    </xs:sequence>
-  </xs:complexType>
-
+    </xs:element>
+    
+    <xs:element name="externalLink" type="xs:string"/>
+    
+    <xs:element name="projectPhaseList" type="nxs:projectPhaseListType"/>
+    
 </xs:schema>

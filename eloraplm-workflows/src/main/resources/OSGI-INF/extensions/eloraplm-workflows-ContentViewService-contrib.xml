@@ -19,7 +19,7 @@
                         ecm:currentLifeCycleState = 'ended'
                     </fixedPart>
                 </whereClause>
-                <pageSize>10</pageSize>
+                <pageSize>15</pageSize>
                 <sort column="dc:modified" ascending="true" />
             </coreQueryPageProvider>
             <showFilterForm>false</showFilterForm>
@@ -31,7 +31,7 @@
                 <event>workflowTaskCompleted</event>
                 <event>tasksCacheReset</event>
             </refresh>
-            <cacheSize>10</cacheSize>
+            <cacheSize>15</cacheSize>
             <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
             <resultLayouts>
                 <layout name="route_content_view_layout" title=""

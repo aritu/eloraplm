@@ -17,6 +17,7 @@ import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.platform.ui.web.directory.ChainSelect;
 
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
+import com.aritu.eloraplm.constants.BomCharacteristicsDoctypeConstants;
 import com.aritu.eloraplm.constants.BomCharacteristicsMetadataConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
@@ -62,14 +63,32 @@ public class BomCharacteristicMastersQueryFactory {
         }
         classificationCondition += ")";
 
-        String query = "SELECT * FROM " + bomCharacteristicMasterDocType + " WHERE "
-                + NXQL.ECM_PRIMARYTYPE + " = '" + bomCharacteristicMasterDocType
-                + "' AND "
+        String query = "SELECT * FROM " + bomCharacteristicMasterDocType
+                + " WHERE " + NXQL.ECM_PRIMARYTYPE + " = '"
+                + bomCharacteristicMasterDocType + "' AND "
                 + BomCharacteristicsMetadataConstants.BOM_CHARAC_MASTER_OBSOLETE
                 + " = 0 " + classificationCondition + " ORDER BY "
                 + BomCharacteristicsMetadataConstants.BOM_CHARAC_MASTER_CLASSIFICATION
                 + ", "
                 + BomCharacteristicsMetadataConstants.BOM_CHARAC_MASTER_ORDER;
+        return query;
+    }
+
+    public static String getCountBomCharacteristicMastersQuery() {
+
+        String query = "SELECT COUNT(" + NXQL.ECM_UUID + ") FROM DOCUMENT "
+                + " WHERE " + NXQL.ECM_PRIMARYTYPE + " IN ('"
+                + BomCharacteristicsDoctypeConstants.BOM_PART_CHARAC_MASTER_DOCUMENT_TYPE
+                + "', '"
+                + BomCharacteristicsDoctypeConstants.BOM_PRODUCT_CHARAC_MASTER_DOCUMENT_TYPE
+                + "', '"
+                + BomCharacteristicsDoctypeConstants.BOM_TOOL_CHARAC_MASTER_DOCUMENT_TYPE
+                + "', '"
+                + BomCharacteristicsDoctypeConstants.BOM_PACKAGING_CHARAC_MASTER_DOCUMENT_TYPE
+                + "', '"
+                + BomCharacteristicsDoctypeConstants.BOM_SPECIFICATION_CHARAC_MASTER_DOCUMENT_TYPE
+                + "')";
+
         return query;
     }
 

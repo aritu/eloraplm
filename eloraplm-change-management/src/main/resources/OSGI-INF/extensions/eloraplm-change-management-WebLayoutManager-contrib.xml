@@ -4,21 +4,6 @@
 
   <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
     
-    <layout name="summary_planning">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml
-        </template>
-      </templates>
-      <rows>
-        <row>
-          <widget>plannedEndDate</widget>
-        </row>
-        <row>
-          <widget>realEndDate</widget>
-        </row>
-      </rows>
-    </layout>
-    
     <layout name="cm_modified">
       <templates>
         <template mode="any">/layouts/layout_default_template.xhtml

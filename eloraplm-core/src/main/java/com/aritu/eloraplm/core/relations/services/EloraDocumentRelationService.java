@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.event.CoreEventConstants;
@@ -52,6 +54,9 @@ import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 public class EloraDocumentRelationService extends DocumentRelationService
         implements EloraDocumentRelationManager {
 
+    private static final Log log = LogFactory.getLog(
+            EloraDocumentRelationService.class);
+
     // TODO: Los campos personales se pasan como string porque por ahora no
     // sabemos gestionarlos si pasamos integer, boolean etc. Esto es debido a la
     // clase Literal de nuxeo
@@ -61,7 +66,7 @@ public class EloraDocumentRelationService extends DocumentRelationService
             DocumentModel to, String predicate, String comment,
             String quantity) {
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
-                false, false, comment, quantity, null, null, null, null);
+                false, false, comment, quantity, null, null, null, null, null);
     }
 
     @Override
@@ -70,7 +75,7 @@ public class EloraDocumentRelationService extends DocumentRelationService
             String quantity) {
 
         addRelation(session, from, toResource, predicate, false, false, comment,
-                quantity, null, null, null, null);
+                quantity, null, null, null, null, null);
     }
 
     @Override
@@ -78,7 +83,8 @@ public class EloraDocumentRelationService extends DocumentRelationService
             DocumentModel to, String predicate, String comment, String quantity,
             Integer ordering) {
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
-                false, false, comment, quantity, ordering, null, null, null);
+                false, false, comment, quantity, ordering, null, null, null,
+                null);
     }
 
     @Override
@@ -87,29 +93,37 @@ public class EloraDocumentRelationService extends DocumentRelationService
             Integer ordering) {
 
         addRelation(session, from, toResource, predicate, false, false, comment,
-                quantity, ordering, null, null, null);
+                quantity, ordering, null, null, null, null);
+    }
+
+    @Override
+    public void addRelation(CoreSession session, DocumentModel from,
+            DocumentModel to, String predicate, String comment, String quantity,
+            Integer ordering, Boolean isManual) {
+        // TODO Auto-generated method stub
+
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
             Node toResource, String predicate, String comment, String quantity,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering) {
+            Integer inverseViewerOrdering, Boolean isManual) {
 
         addRelation(session, from, toResource, predicate, false, false, comment,
                 quantity, ordering, directorOrdering, viewerOrdering,
-                inverseViewerOrdering);
+                inverseViewerOrdering, isManual);
     }
 
     @Override
     public void addRelation(CoreSession session, DocumentModel from,
             DocumentModel to, String predicate, String comment, String quantity,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering) {
+            Integer inverseViewerOrdering, Boolean isManual) {
 
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
                 false, false, comment, quantity, ordering, directorOrdering,
-                viewerOrdering, inverseViewerOrdering);
+                viewerOrdering, inverseViewerOrdering, isManual);
     }
 
     @Override
@@ -117,11 +131,12 @@ public class EloraDocumentRelationService extends DocumentRelationService
             DocumentModel to, String predicate, boolean inverse,
             boolean includeStatementsInEvents, String comment, String quantity,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering) {
+            Integer inverseViewerOrdering, Boolean isManual) {
 
         addRelation(session, from, getNodeFromDocumentModel(to), predicate,
                 inverse, includeStatementsInEvents, comment, quantity, ordering,
-                directorOrdering, viewerOrdering, inverseViewerOrdering);
+                directorOrdering, viewerOrdering, inverseViewerOrdering,
+                isManual);
     }
 
     @Override
@@ -129,7 +144,9 @@ public class EloraDocumentRelationService extends DocumentRelationService
             Node toResource, String predicate, boolean inverse,
             boolean includeStatementsInEvents, String comment, String quantity,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering) {
+            Integer inverseViewerOrdering, Boolean isManual) {
+        String logInitMsg = "[addRelation] [" + session.getPrincipal().getName()
+                + "] ";
         Graph graph = getRelationManager().getGraph(
                 EloraRelationConstants.ELORA_GRAPH_NAME, session);
         QNameResource fromResource = getNodeFromDocumentModel(from);
@@ -143,6 +160,9 @@ public class EloraDocumentRelationService extends DocumentRelationService
             statements = graph.getStatements(toResource, predicateResource,
                     fromResource);
             if (statements != null && statements.size() > 0) {
+                log.error(logInitMsg + "Relation already exists. Source: |"
+                        + toResource.toString() + "| Predicate: |" + predicate
+                        + "| Target: |" + from.getId() + "|");
                 throw new RelationAlreadyExistsException();
             }
         } else {
@@ -151,6 +171,9 @@ public class EloraDocumentRelationService extends DocumentRelationService
             statements = graph.getStatements(fromResource, predicateResource,
                     toResource);
             if (statements != null && statements.size() > 0) {
+                log.error(logInitMsg + "Relation already exists. Source: |"
+                        + from.getId() + "| Predicate: |" + predicate
+                        + "| Target: |" + toResource.toString() + "|");
                 throw new RelationAlreadyExistsException();
             }
         }
@@ -212,6 +235,14 @@ public class EloraDocumentRelationService extends DocumentRelationService
                         new LiteralImpl(String.valueOf(inverseViewerOrdering)));
             }
         }
+
+        if (isManual != null) {
+            if (stmt.getProperties(EloraRelationConstants.IS_MANUAL) == null) {
+                stmt.addProperty(EloraRelationConstants.IS_MANUAL,
+                        new LiteralImpl(String.valueOf(isManual)));
+            }
+        }
+
         // end of custom metadata
 
         // notifications
@@ -248,18 +279,29 @@ public class EloraDocumentRelationService extends DocumentRelationService
             String predicate, DocumentModel to, DocumentModel newTo) {
 
         updateRelation(session, from, predicate, to, null, null, newTo, null,
-                null, null, null, null, true);
+                null, null, null, null, null, true);
+    }
+
+    @Override
+    public void updateRelation(CoreSession session, DocumentModel from,
+            String predicate, DocumentModel to, DocumentModel newTo,
+            String quantity, Integer ordering, Boolean isManual) {
+
+        updateRelation(session, from, predicate, to, null, null, newTo,
+                quantity, ordering, null, null, null, isManual, true);
+
     }
 
     @Override
     public void updateRelation(CoreSession session, DocumentModel from,
             String predicate, DocumentModel to, DocumentModel newTo,
             String quantity, Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering, Integer inverseViewerOrdering) {
+            Integer viewerOrdering, Integer inverseViewerOrdering,
+            Boolean isManual) {
 
         updateRelation(session, from, predicate, to, null, null, newTo,
                 quantity, ordering, directorOrdering, viewerOrdering,
-                inverseViewerOrdering, true);
+                inverseViewerOrdering, isManual, true);
     }
 
     @Override
@@ -267,7 +309,10 @@ public class EloraDocumentRelationService extends DocumentRelationService
             String predicate, DocumentModel to, DocumentModel newFrom,
             String newPredicate, DocumentModel newTo, String quantity,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering, boolean checkIfNewRelationExists) {
+            Integer inverseViewerOrdering, Boolean isManual,
+            boolean checkIfNewRelationExists) {
+        String logInitMsg = "[updateRelation] ["
+                + session.getPrincipal().getName() + "] ";
 
         EloraCoreGraph graph = (EloraCoreGraph) getRelationManager().getGraph(
                 EloraRelationConstants.ELORA_GRAPH_NAME, session);
@@ -305,6 +350,9 @@ public class EloraDocumentRelationService extends DocumentRelationService
                 List<Statement> newStatementCopies = graph.getStatements(
                         newStmt);
                 if (!newStatementCopies.isEmpty()) {
+                    log.error(logInitMsg + "Relation already exists. Source: |"
+                            + from.getId() + "| Predicate: |" + predicate
+                            + "| Target: |" + to.getId() + "|");
                     throw new RelationAlreadyExistsException();
                 }
             }
@@ -333,6 +381,11 @@ public class EloraDocumentRelationService extends DocumentRelationService
         if (inverseViewerOrdering != null) {
             newStmt.setProperty(EloraRelationConstants.INVERSE_VIEWER_ORDERING,
                     new LiteralImpl(String.valueOf(inverseViewerOrdering)));
+        }
+
+        if (isManual != null) {
+            newStmt.setProperty(EloraRelationConstants.IS_MANUAL,
+                    new LiteralImpl(String.valueOf(isManual)));
         }
 
         // Send notifications and apply the update

@@ -58,6 +58,10 @@
               </h:outputText> 
               <h:outputText value="|"/>
             </c:if>
+            <h:outputText value=" "/>
+            <c:if test="#{contentView.searchDocumentModel.getPropertyValue('eloadvsrch:searchInSubfolders')}">
+              <h:outputText value="#{messages['eloraplm.label.search.searchInSubfolders']}=|#{messages['label.yes']}|" />
+            </c:if>
           </span>
         </c:if>
       </c:if>

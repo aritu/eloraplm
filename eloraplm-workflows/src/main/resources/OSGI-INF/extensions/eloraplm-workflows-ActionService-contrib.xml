@@ -10,7 +10,7 @@
              <category>TAB_CONTENT_HISTORY_sub_tab</category>
              <filter id="filter@TAB_HISTORY_WORKFLOWS">
                  <rule grant="true">
-                    <condition>#{workflowActions.hasClosedRelatedRoutes()}</condition>
+                    <condition>#{workflowActions.hasClosedRelatedRoutes(currentDocument.id)}</condition>
                  </rule>
              </filter>
          </action>

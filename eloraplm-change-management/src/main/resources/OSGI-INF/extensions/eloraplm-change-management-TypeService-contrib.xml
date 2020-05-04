@@ -117,9 +117,10 @@
       <category>CMGroup</category>
       <description>CmPr.description</description>
       <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
       <layouts mode="view">
         <layout>cm_pr</layout>
-        <layout>summary_planning</layout>
+        <layout>planning_dates</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
       </layouts>
@@ -157,9 +158,10 @@
       <category>CMGroup</category>
       <description>CmEcr.description</description>
       <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
       <layouts mode="view">
         <layout>cm_ecr</layout>
-        <layout>summary_planning</layout>
+        <layout>planning_dates</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
         <layout>cm_modified</layout>
@@ -198,9 +200,10 @@
       <category>CMGroup</category>
       <description>CmEco.description</description>
       <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
       <layouts mode="view">
         <layout>cm_eco</layout>
-        <layout>summary_planning</layout>
+        <layout>planning_dates</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
         <layout>cm_modified</layout>

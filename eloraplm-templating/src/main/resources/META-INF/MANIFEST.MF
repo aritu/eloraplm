@@ -8,9 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/TemplatingService.xml,OSGI-INF/ex
- tensions/eloraplm-templating-TemplatingService-contrib.xml,OSGI-INF/e
- xtensions/eloraplm-templating-ActionService-contrib.xml,OSGI-INF/exte
- nsions/eloraplm-templating-ContentTemplateService-contrib.xml,OSGI-IN
- F/extensions/eloraplm-templating-TemplateProcessorComponent-contrib.x
- ml,OSGI-INF/extensions/eloraplm-templating-TypeService-contrib.xml
+ tensions/eloraplm-templating-ActionService-contrib.xml,OSGI-INF/exten
+ sions/eloraplm-templating-ContentTemplateService-contrib.xml,OSGI-INF
+ /extensions/eloraplm-templating-TemplateProcessorComponent-contrib.xm
+ l,OSGI-INF/extensions/eloraplm-templating-TypeService-contrib.xml
 

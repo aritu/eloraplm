@@ -1,64 +1,74 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>com.aritu.eloraplm</groupId>
         <artifactId>eloraplm-parent</artifactId>
-        <version>20191003</version>
+        <version>20200422</version>
     </parent>
-    
+
+    <properties>
+        <main.basedir>${project.basedir}${file.separator}..</main.basedir>
+    </properties>
+
     <artifactId>eloraplm-workflows</artifactId>
     <name>eloraplm-workflows</name>
-    
+
     <dependencies>
-        
+
         <dependency>
             <groupId>org.nuxeo.common</groupId>
             <artifactId>nuxeo-common</artifactId>
         </dependency>
-    
+
         <dependency>
             <groupId>org.nuxeo.runtime</groupId>
             <artifactId>nuxeo-runtime</artifactId>
         </dependency>
-    
+
         <dependency>
             <groupId>org.nuxeo.ecm.core</groupId>
             <artifactId>nuxeo-core</artifactId>
         </dependency>
-    
+
         <dependency>
             <groupId>org.nuxeo.ecm.core</groupId>
             <artifactId>nuxeo-core-api</artifactId>
         </dependency>
-    
+
         <dependency>
             <groupId>org.nuxeo.ecm.core</groupId>
             <artifactId>nuxeo-core-query</artifactId>
         </dependency>
-    
+
         <dependency>
             <groupId>org.nuxeo.ecm.core</groupId>
             <artifactId>nuxeo-core-schema</artifactId>
         </dependency>
-    
+
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.nuxeo.ecm.routing</groupId>
             <artifactId>nuxeo-routing-api</artifactId>
         </dependency>
         
         <dependency>
+            <groupId>org.nuxeo.ecm.routing</groupId>
+            <artifactId>nuxeo-routing-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.aritu.eloraplm.lib</groupId>
             <artifactId>elora-primefaces</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.aritu.eloraplm</groupId>
             <artifactId>eloraplm-core</artifactId>

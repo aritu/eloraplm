@@ -2,3 +2,5 @@ id,label,obsolete,ordering
 CadDocument,label.eloras.facettype.caddocument,0,20
 BomDocument,label.eloras.facettype.bomdocument,0,30
 EloraWorkspace,label.eloras.facettype.eloraworkspace,0,40
+CMProcess,label.eloras.facettype.cmprocess,0,40
+QmProcess,label.eloras.facettype.qmprocess,0,40

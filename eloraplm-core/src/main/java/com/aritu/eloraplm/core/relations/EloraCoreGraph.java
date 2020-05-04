@@ -179,6 +179,8 @@ public class EloraCoreGraph extends CoreGraph {
 
             String inverseViewerOrdering = getInverseViewerOrdering(statement);
 
+            String isManual = getIsManual(statement);
+
             // end of custom metadata
 
             String comment = getComment(statement);
@@ -253,6 +255,11 @@ public class EloraCoreGraph extends CoreGraph {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
                         Integer.parseInt(inverseViewerOrdering));
+            }
+            if (isManual != null) {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_ISMANUAL,
+                        Boolean.parseBoolean(isManual));
             }
             // end of custom metadata
 
@@ -448,6 +455,8 @@ public class EloraCoreGraph extends CoreGraph {
 
             String inverseViewerOrdering = getInverseViewerOrdering(statement);
 
+            String isManual = getIsManual(statement);
+
             // end of custom metadata
 
             String comment = getComment(statement);
@@ -524,6 +533,12 @@ public class EloraCoreGraph extends CoreGraph {
                         EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
                         Integer.parseInt(inverseViewerOrdering));
             }
+
+            if (isManual != null) {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_ISMANUAL,
+                        Boolean.parseBoolean(isManual));
+            }
             // end of custom metadata
 
             return rel;
@@ -559,6 +574,7 @@ public class EloraCoreGraph extends CoreGraph {
                     + ", " + EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING
                     + ", "
                     + EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING
+                    + ", " + EloraMetadataConstants.ELORA_RELEXT_ISMANUAL
                     + " FROM " + docType;
             query = whereBuilder(query, statement);
 
@@ -598,6 +614,8 @@ public class EloraCoreGraph extends CoreGraph {
                             EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING));
                     String inverseViewerOrdering = String.valueOf(map.get(
                             EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING));
+                    Boolean isManual = Boolean.parseBoolean(String.valueOf(
+                            map.get(EloraMetadataConstants.ELORA_RELEXT_ISMANUAL)));
                     // end of custom metadata
 
                     Resource predicate = NodeFactory.createResource(pred);
@@ -627,6 +645,7 @@ public class EloraCoreGraph extends CoreGraph {
                     setDirectorOrdering(statement, directorOrdering);
                     setViewerOrdering(statement, viewerOrdering);
                     setInverseViewerOrdering(statement, inverseViewerOrdering);
+                    setIsManual(statement, isManual);
                     // end of custom metadata
 
                     statements.add(statement);
@@ -691,6 +710,10 @@ public class EloraCoreGraph extends CoreGraph {
                 EloraRelationConstants.INVERSE_VIEWER_ORDERING);
     }
 
+    protected static String getIsManual(Statement statement) {
+        return getStringProperty(statement, EloraRelationConstants.IS_MANUAL);
+    }
+
     protected static void setQuantity(Statement statement, String quantity) {
         setStringProperty(statement, EloraRelationConstants.QUANTITY, quantity);
     }
@@ -716,6 +739,11 @@ public class EloraCoreGraph extends CoreGraph {
         setStringProperty(statement,
                 EloraRelationConstants.INVERSE_VIEWER_ORDERING,
                 inverseViewerOrdering);
+    }
+
+    protected static void setIsManual(Statement statement, Boolean isManual) {
+        setStringProperty(statement, EloraRelationConstants.IS_MANUAL,
+                isManual.toString());
     }
 
     @Override

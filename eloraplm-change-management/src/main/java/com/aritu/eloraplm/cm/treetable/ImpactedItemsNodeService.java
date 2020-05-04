@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentNotFoundException;
-import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -186,69 +186,59 @@ public class ImpactedItemsNodeService implements NodeManager {
                                     boolean isUpdated = (boolean) map.get(
                                             pfx + "/*1/isUpdated");
 
-                                    try {
-                                        DocumentModel originItem = null;
-                                        if (originItemUid != null) {
-                                            originItem = session.getDocument(
-                                                    new IdRef(originItemUid));
-                                        }
-                                        DocumentModel originItemWc = null;
-                                        if (originItemWcUid != null) {
-                                            originItemWc = session.getDocument(
-                                                    new IdRef(originItemWcUid));
-                                        }
-                                        DocumentModel destinationItem = null;
-                                        if (destinationItemUid != null) {
-                                            destinationItem = session.getDocument(
-                                                    new IdRef(
-                                                            destinationItemUid));
-                                        }
-                                        DocumentModel destinationItemWc = null;
-                                        if (destinationItemWcUid != null) {
-                                            destinationItemWc = session.getDocument(
-                                                    new IdRef(
-                                                            destinationItemWcUid));
-                                        }
-
-                                        ImpactedItemsNodeData nodeData = new ImpactedItemsNodeData(
-                                                String.valueOf(nodeId), level,
-                                                rowNumber, currentNodeId,
-                                                parentNodeId, true, originItem,
-                                                null, originItem, originItemWc,
-                                                "", "", false, false, action,
-                                                true, destinationItem,
-                                                destinationItemWc, true,
-                                                isManaged, true, false, type,
-                                                comment, true, isUpdated);
-
-                                        nodeId++;
-
-                                        TreeNode node = new DefaultTreeNode(
-                                                nodeData, root);
-                                        node.setExpanded(true);
-
-                                        level++;
-                                        root = createImpactedItemsChildNodesTree(
-                                                currentDoc, itemType,
-                                                originItemUid, action,
-                                                destinationItemWcUid,
-                                                currentNodeId, root, node,
-                                                level);
-
-                                    } catch (DocumentNotFoundException e) {
-                                        log.error(logInitMsg
-                                                + "Exception thrown: "
-                                                + e.getClass() + ": "
-                                                + e.getMessage());
+                                    DocumentModel originItem = null;
+                                    if (originItemUid != null) {
+                                        originItem = session.getDocument(
+                                                new IdRef(originItemUid));
                                     }
+                                    DocumentModel originItemWc = null;
+                                    if (originItemWcUid != null) {
+                                        originItemWc = session.getDocument(
+                                                new IdRef(originItemWcUid));
+                                    }
+                                    DocumentModel destinationItem = null;
+                                    if (destinationItemUid != null) {
+                                        destinationItem = session.getDocument(
+                                                new IdRef(destinationItemUid));
+                                    }
+                                    DocumentModel destinationItemWc = null;
+                                    if (destinationItemWcUid != null) {
+                                        destinationItemWc = session.getDocument(
+                                                new IdRef(
+                                                        destinationItemWcUid));
+                                    }
+
+                                    ImpactedItemsNodeData nodeData = new ImpactedItemsNodeData(
+                                            String.valueOf(nodeId), level,
+                                            rowNumber, currentNodeId,
+                                            parentNodeId, true, originItem,
+                                            null, originItem, originItemWc, "",
+                                            "", false, false, action, true,
+                                            destinationItem, destinationItemWc,
+                                            true, isManaged, true, false, type,
+                                            comment, true, isUpdated);
+
+                                    nodeId++;
+
+                                    TreeNode node = new DefaultTreeNode(
+                                            nodeData, root);
+                                    node.setExpanded(true);
+
+                                    level++;
+                                    root = createImpactedItemsChildNodesTree(
+                                            currentDoc, itemType, originItemUid,
+                                            action, destinationItemWcUid,
+                                            currentNodeId, root, node, level);
                                 }
                             }
                             countMIIt.close();
                         }
                     }
                 }
-
             }
+        } catch (DocumentNotFoundException | DocumentSecurityException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw (e);
         } catch (NuxeoException e) {
             log.error(logInitMsg + e.getMessage(), e);
             throw new EloraException(
@@ -354,29 +344,21 @@ public class ImpactedItemsNodeService implements NodeManager {
                     boolean isUpdated = (boolean) map.get(
                             pfx + "/*1/isUpdated");
 
-                    try {
-                        ImpactedItem impactedItem = new ImpactedItem(rowNumber,
-                                currentNodeId, parentNodeId, modifiedItemUid,
-                                parentItemUid, originItemUid, originItemWcUid,
-                                predicate, quantity, isAnarchic, isDirectObject,
-                                action, destinationItemUid,
-                                destinationItemWcUid, isManaged, isManual, type,
-                                comment, isUpdated);
+                    ImpactedItem impactedItem = new ImpactedItem(rowNumber,
+                            currentNodeId, parentNodeId, modifiedItemUid,
+                            parentItemUid, originItemUid, originItemWcUid,
+                            predicate, quantity, isAnarchic, isDirectObject,
+                            action, destinationItemUid, destinationItemWcUid,
+                            isManaged, isManual, type, comment, isUpdated);
 
-                        if (impactedItems.containsKey(parentNodeId)) {
-                            impactedItems.get(parentNodeId).add(impactedItem);
-                        } else {
-                            ArrayList<ImpactedItem> impactedItemListByParentNodeId = new ArrayList<ImpactedItem>();
-                            impactedItemListByParentNodeId.add(impactedItem);
-                            impactedItems.put(parentNodeId,
-                                    impactedItemListByParentNodeId);
-                        }
-
-                    } catch (DocumentNotFoundException e) {
-                        log.error(logInitMsg + "Exception thrown: "
-                                + e.getClass() + ": " + e.getMessage());
+                    if (impactedItems.containsKey(parentNodeId)) {
+                        impactedItems.get(parentNodeId).add(impactedItem);
+                    } else {
+                        ArrayList<ImpactedItem> impactedItemListByParentNodeId = new ArrayList<ImpactedItem>();
+                        impactedItemListByParentNodeId.add(impactedItem);
+                        impactedItems.put(parentNodeId,
+                                impactedItemListByParentNodeId);
                     }
-
                 }
             }
         } catch (NuxeoException e) {
@@ -526,115 +508,6 @@ public class ImpactedItemsNodeService implements NodeManager {
 
             impactedItems.addAll(getImpactedItemsListFromTree(childNode));
         }
-
-        return impactedItems;
-    }
-
-    public void setAsManaged(DocumentModel currentDoc, TreeNode root,
-            List<String> destinationWcUidList) throws EloraException {
-
-        String logInitMsg = "[setAsManaged] ["
-                + session.getPrincipal().getName() + "] ";
-        log.trace(logInitMsg + "--- ENTER --- ");
-
-        if (destinationWcUidList == null || destinationWcUidList.size() == 0) {
-            log.trace(
-                    "destinationWcUidList is empty. Nothing has to be set as managed");
-        } else {
-            List<ImpactedItem> impactedItems = getImpactedItemsListFromTreeAndSetAsManaged(
-                    root, destinationWcUidList);
-
-            CMHelper.saveImpactedItemListInCMProcess(session, currentDoc,
-                    itemType, impactedItems);
-        }
-
-        log.trace(logInitMsg + "--- EXIT ---");
-    }
-
-    private List<ImpactedItem> getImpactedItemsListFromTreeAndSetAsManaged(
-            TreeNode node, List<String> destinationWcUidList)
-            throws EloraException {
-        String logInitMsg = "[getImpactedItemsListFromTreeAndSetAsManaged] ["
-                + session.getPrincipal().getName() + "] ";
-
-        log.trace(logInitMsg + "--- ENTER --- ");
-
-        List<ImpactedItem> impactedItems = new ArrayList<ImpactedItem>();
-
-        for (TreeNode childNode : node.getChildren()) {
-            ImpactedItemsNodeData nodeData = (ImpactedItemsNodeData) childNode.getData();
-
-            // Do not take into account modified items. They are only displayed
-            // in the tree for information.
-            if (!nodeData.getIsModifiedItem()) {
-
-                ImpactedItem impactedItem = nodeData.convertToImpactedItem();
-
-                // if impactedItem is not already managed and destinationWc is
-                // contained in the specified destinationWcUidList
-                if (!impactedItem.isManaged() && destinationWcUidList.contains(
-                        impactedItem.getDestinationItemWc())) {
-                    log.trace("set as Managed impactedItem with nodeId = |"
-                            + impactedItem.getNodeId()
-                            + "|,  destinationItemWc = |"
-                            + impactedItem.getDestinationItemWc()
-                            + "| and  originItem = |"
-                            + impactedItem.getOriginItem() + "|");
-
-                    // change destinationItem to its AV and set the impacted
-                    // item as managed
-                    String currentDestinationItemUid = impactedItem.getDestinationItem();
-                    if (currentDestinationItemUid == null
-                            || currentDestinationItemUid.isEmpty()) {
-                        log.error(logInitMsg
-                                + "destinationItem shouldn't be null.");
-                        throw new EloraException(
-                                "destinationItem shouldn't be null.");
-                    }
-                    DocumentModel currentDestinationItem = session.getDocument(
-                            new IdRef(currentDestinationItemUid));
-
-                    if (currentDestinationItem == null
-                            || currentDestinationItem.isVersion()) {
-                        log.error(logInitMsg
-                                + "destinationItem should be a working copy. Current destinationItem = |"
-                                + currentDestinationItemUid + "|");
-                        throw new EloraException(
-                                "destinationItem should be a working copy.");
-                    }
-
-                    // Get document version working copy is based on
-                    DocumentRef newDestinationItemRef = session.getBaseVersion(
-                            currentDestinationItem.getRef());
-                    if (newDestinationItemRef == null) {
-                        log.error(logInitMsg
-                                + "Base Version shouldn't be null. Current destinationItem = |"
-                                + currentDestinationItemUid + "|");
-                        throw new EloraException(
-                                "Base Version shouldn't be null.");
-                    }
-
-                    log.trace("current destinationItem (WC) = |"
-                            + currentDestinationItemUid
-                            + "| new destinationItem (AV) = |"
-                            + newDestinationItemRef.toString() + "|");
-
-                    impactedItem.setDestinationItem(
-                            newDestinationItemRef.toString());
-
-                    impactedItem.setManaged(true);
-
-                    impactedItem.setUpdated(true);
-                }
-
-                impactedItems.add(impactedItem);
-            }
-
-            impactedItems.addAll(getImpactedItemsListFromTreeAndSetAsManaged(
-                    childNode, destinationWcUidList));
-        }
-
-        log.trace(logInitMsg + "--- EXIT ---");
 
         return impactedItems;
     }

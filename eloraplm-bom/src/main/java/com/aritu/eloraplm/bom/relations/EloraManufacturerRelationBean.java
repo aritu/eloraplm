@@ -202,11 +202,11 @@ public class EloraManufacturerRelationBean
 
     private DocumentModel createManufacturerPart(DocumentModel doc)
             throws EloraException {
-        String structureRootId = EloraStructureHelper.getStructureRootUid(doc,
+        String eloraRootFolderId = EloraStructureHelper.getEloraRootFolderUid(doc,
                 documentManager);
 
         String targetFolderPath = EloraStructureHelper.getPathByType(
-                new IdRef(structureRootId),
+                new IdRef(eloraRootFolderId),
                 EloraDoctypeConstants.BOM_MANUFACTURER_PART,
                 EloraDoctypeConstants.STRUCTURE_EBOM, documentManager);
 

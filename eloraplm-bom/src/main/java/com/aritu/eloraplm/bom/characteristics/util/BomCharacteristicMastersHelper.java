@@ -13,6 +13,7 @@
  */
 package com.aritu.eloraplm.bom.characteristics.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,7 +25,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.IterableQueryResult;
+import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.ecm.core.query.sql.NXQL;
 
 import com.aritu.eloraplm.bom.characteristics.BomCharacteristic;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
@@ -380,6 +385,46 @@ public class BomCharacteristicMastersHelper {
         log.trace(logInitMsg + "--- EXIT ---");
 
         return listContent;
+    }
+
+    public static int countBomCharacteristicMasters(CoreSession session)
+            throws EloraException {
+
+        String logInitMsg = "[countBomCharacteristicMasters] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        int resultCount = 0;
+
+        IterableQueryResult queryResult = null;
+        try {
+            String query = BomCharacteristicMastersQueryFactory.getCountBomCharacteristicMastersQuery();
+
+            queryResult = session.queryAndFetch(query, NXQL.NXQL);
+
+            if (queryResult.iterator().hasNext()) {
+                Map<String, Serializable> map = queryResult.iterator().next();
+                String resultCountStr = map.get(
+                        "COUNT(" + NXQL.ECM_UUID + ")").toString();
+                resultCount = Integer.valueOf(resultCountStr);
+
+                log.trace(logInitMsg + "DB query resultCount = |" + resultCount
+                        + "|");
+            }
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        } finally {
+            if (queryResult != null) {
+                queryResult.close();
+            }
+        }
+
+        log.trace(logInitMsg + "--- EXIT --- with resultCount = |" + resultCount
+                + "|");
+
+        return resultCount;
     }
 
 }

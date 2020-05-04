@@ -20,12 +20,12 @@
                     
                     <!-- Priority -->
                     <p:column>
-                        <h:outputLabel value="#{messages['label.widget.planning.priority']}" for="headerResponsible" />
+                        <h:outputLabel value="#{messages['label.widget.planning.priority']}" for="headerPriority" />
                     </p:column>
                     <p:column>
                         <h:graphicImage value="/icons/priority_#{currentDocument.plan.priority}_16.png"
                             style="vertical-align: middle; margin-right: .5em;" rendered="#{not empty currentDocument.plan.priority}" />
-                        <nxl:widget id="headerResponsible" name="priority" value="#{currentDocument}" mode="view" />
+                        <nxl:widget id="headerPriority" name="priority" value="#{currentDocument}" mode="view" />
                     </p:column>
                     
                     <!-- LifeCycle State & Progress -->
@@ -74,7 +74,7 @@
                                 <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
                                     <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
                                       <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
-                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
+                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityE" style="white-space: nowrap;">
                                             <h:graphicImage value="/icons/comments.png" />
                                             <h:outputText value="#{commentsCount}" />
                                           </div>
@@ -89,7 +89,7 @@
                 <p:row>
                     <!-- Planned end date & Delayed -->
                     <p:column>
-                        <h:outputLabel value="#{messages['label.widget.planning.plannedEndDate']}" for="headerResponsible" />
+                        <h:outputLabel value="#{messages['label.widget.planning.plannedEndDate']}" for="headerPlannedEndDate" />
                     </p:column>
                     <p:column colspan="2" styleClass="textAlignC">
                         <nxu:set var="isDelayed" value="#{currentDocument.planning.plannedEndDate lt currentDate
@@ -170,7 +170,14 @@
                         <p:column colspan="4"></p:column>
                     </c:if>
 
-                    <p:column></p:column>
+                    <p:column>
+                        <h:outputLink value="#{currentDocument.prj.externalLink}"
+                            target="_blank"
+                            title="#{messages['eloraplm.label.prj.externalLink']}" styleClass="tipsyShow tipsyGravityE"
+                            rendered="#{not empty currentDocument.prj.externalLink}">
+                            <h:graphicImage value="/icons/external_link_16.png" style="vertical-align: middle; margin-left: .3em;" />
+                        </h:outputLink>
+                    </p:column>
                 </p:row>
                 
             </p:panelGrid>

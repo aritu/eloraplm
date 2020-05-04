@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>com.aritu.eloraplm</groupId>
         <artifactId>eloraplm-parent</artifactId>
-        <version>20191003</version>
-    </parent>  
-    
-      <artifactId>eloraplm-pdm</artifactId>
-      <name>eloraplm-pdm</name>
-    
+        <version>20200422</version>
+    </parent>
+
+    <properties>
+        <main.basedir>${project.basedir}${file.separator}..</main.basedir>
+    </properties>
+
+    <artifactId>eloraplm-pdm</artifactId>
+    <name>eloraplm-pdm</name>
+
     <dependencies>
         <dependency>
             <groupId>org.nuxeo.common</groupId>
@@ -49,7 +54,7 @@
             <groupId>org.jboss.seam</groupId>
             <artifactId>jboss-seam</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.aritu.eloraplm</groupId>
             <artifactId>eloraplm-bom</artifactId>
@@ -66,7 +71,7 @@
             <groupId>com.aritu.eloraplm</groupId>
             <artifactId>eloraplm-viewer</artifactId>
         </dependency>
-        
+
     </dependencies>
-    
+
 </project>

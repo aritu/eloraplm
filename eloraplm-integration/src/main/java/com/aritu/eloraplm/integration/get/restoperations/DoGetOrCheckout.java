@@ -57,6 +57,7 @@ import com.aritu.eloraplm.integration.get.restoperations.util.DoGetOrCheckoutRes
 import com.aritu.eloraplm.integration.get.restoperations.util.DoGetOrCheckoutResponseDoc;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 import com.aritu.eloraplm.integration.util.FolderInfo;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 /**
  * @author aritu
@@ -212,11 +213,14 @@ public class DoGetOrCheckout {
             boolean selected = EloraJsonHelper.getJsonFieldAsBoolean(docItem,
                     "selected", true);
 
+            boolean lock = EloraJsonHelper.getJsonFieldAsBoolean(docItem,
+                    "lock", true);
+
             boolean isRootElement = EloraJsonHelper.getJsonFieldAsBoolean(
                     docItem, "isRootElement", true);
 
             DoGetOrCheckoutRequestDoc requestDoc = new DoGetOrCheckoutRequestDoc(
-                    proxyRef, realRef, selected, isRootElement);
+                    proxyRef, realRef, selected, lock, isRootElement);
             requestDocs.put(realRef.toString(), requestDoc);
 
             if (isRootElement) {
@@ -261,7 +265,8 @@ public class DoGetOrCheckout {
             wcDocRef = session.getSourceDocument(realDoc.getRef()).getRef();
         }
 
-        // If action is Checkout, Lock and check out the document
+        // If document is selected, get proxies and send as selected; if it is
+        // locked, also lock the document
         DocumentModel wcDoc = session.getDocument(wcDocRef);
         boolean docWasCheckedOut = wcDoc.isCheckedOut();
         String result = RESULT_OK;
@@ -273,7 +278,7 @@ public class DoGetOrCheckout {
 
         if (requestDoc.getSelected()) {
 
-            if (action.equals(ACTION_CHECKOUT)) {
+            if (requestDoc.getLock()) {
 
                 // Lock document
                 try {
@@ -313,7 +318,7 @@ public class DoGetOrCheckout {
             // Get parents from proxies
             DocumentRef proxyRef = requestDoc.getProxyRef();
             if (proxyRef == null) {
-                DocumentModel foundProxy = findProxyForDocument(wcDocRef);
+                DocumentModel foundProxy = findProxyForDocument(wcDoc);
                 if (foundProxy != null) {
                     parentRealUid = foundProxy.getParentRef().toString();
                     proxyUid = foundProxy.getId();
@@ -413,10 +418,11 @@ public class DoGetOrCheckout {
         log.trace(logInitMsg + "Document |" + realUid + "| processed.");
     }
 
-    private DocumentModel findProxyForDocument(DocumentRef wcDocRef) {
+    private DocumentModel findProxyForDocument(DocumentModel wcDoc) {
         if (workspaceRealUid != null) {
-            DocumentRef wsRef = new IdRef(workspaceRealUid);
-            DocumentModelList proxies = session.getProxies(wcDocRef, wsRef);
+            String query = EloraQueryFactory.getDocProxiesQuery(wcDoc.getType(),
+                    wcDoc.getId(), workspaceRealUid);
+            DocumentModelList proxies = session.query(query);
             if (!proxies.isEmpty()) {
                 // We get the first, even if there are more
                 return proxies.get(0);

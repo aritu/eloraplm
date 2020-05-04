@@ -28,7 +28,6 @@ import org.jboss.seam.core.Events;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
@@ -37,9 +36,7 @@ import org.nuxeo.ecm.webapp.base.InputController;
 import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
-import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
  * @author aritu
@@ -99,19 +96,6 @@ public class EloraDocumentActionsBean extends InputController
                     new PathRef(parentDocumentPath));
         }
 
-        boolean moveToStructureAndCreateProxy = false;
-        // CAUTION! At the moment, we have no way to limit BasicDocument
-        // to REAL basic documents, so CAD and BOM docs also have this
-        // facet
-        if (newDocument.hasFacet(EloraFacetConstants.FACET_BASIC_DOCUMENT)
-                || newDocument.hasFacet(EloraFacetConstants.FACET_CAD_DOCUMENT)
-                || newDocument.hasFacet(
-                        EloraFacetConstants.FACET_BOM_DOCUMENT)) {
-            if (EloraStructureHelper.isDocUnderWorkspaceRoot(parentDoc)) {
-                moveToStructureAndCreateProxy = true;
-            }
-        }
-
         newDocument.setPathInfo(parentDocumentPath,
                 pss.generatePathSegment(newDocument));
 
@@ -119,29 +103,20 @@ public class EloraDocumentActionsBean extends InputController
         try {
             newDocument = documentManager.createDocument(newDocument);
             returnDoc = newDocument;
-            if (moveToStructureAndCreateProxy) {
-                PathRef targetDocPath = null;
-                try {
-                    targetDocPath = obtainTargetDocPath(newDocument,
-                            documentManager);
-                } catch (EloraException e) {
-                    log.error("Could not obtain target doc path for document |"
-                            + newDocument.getId() + "|");
-                }
-                if (targetDocPath != null
-                        && documentManager.exists(targetDocPath)) {
-                    DocumentRef initialParentRef = newDocument.getParentRef();
-                    documentManager.move(newDocument.getRef(), targetDocPath,
-                            newDocument.getName());
-                    returnDoc = documentManager.createProxy(
-                            newDocument.getRef(), initialParentRef);
-                }
+
+            // Check if the new document has to be moved to its position in
+            // Elora Structure.
+            // If yes, move it to the Elora Structure and create a Proxy
+            // pointing to the moved document.
+            if (EloraStructureHelper.hasToBeMovedToEloraStructure(newDocument,
+                    parentDoc)) {
+                returnDoc = EloraStructureHelper.moveToEloraStructureAndCreateProxy(
+                        newDocument);
             }
 
         } catch (DocumentValidationException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(
-                            "label.schema.constraint.violation.documentValidation"),
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "label.schema.constraint.violation.documentValidation"),
                     e.getMessage());
             return null;
         }
@@ -157,22 +132,4 @@ public class EloraDocumentActionsBean extends InputController
         return navigationContext.navigateToDocument(returnDoc, "after-create");
     }
 
-    private PathRef obtainTargetDocPath(DocumentModel doc, CoreSession session)
-            throws EloraException {
-        String docPath = null;
-
-        DocumentModel structureRoot;
-        structureRoot = EloraStructureHelper.getWorkableDomainChildDocModel(doc,
-                session);
-
-        if (doc.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)) {
-            docPath = EloraStructureHelper.getBomPathByType(
-                    structureRoot.getRef(), doc.getType(), session);
-        } else {
-            docPath = EloraStructureHelper.getCadPathByType(
-                    structureRoot.getRef(), doc.getType(), session);
-        }
-
-        return new PathRef(docPath);
-    }
 }

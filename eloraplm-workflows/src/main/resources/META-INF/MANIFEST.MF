@@ -11,5 +11,7 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-workflows-WebLayoutManag
  er-contrib.xml,OSGI-INF/extensions/eloraplm-workflows-ActionService-c
  ontrib.xml,OSGI-INF/extensions/eloraplm-workflows-WebResources-contri
  b.xml,OSGI-INF/extensions/eloraplm-workflows-ContentViewService-contr
- ib.xml
+ ib.xml,OSGI-INF/extensions/eloraplm-workflows-OperationServiceCompone
+ nt-contrib.xml,OSGI-INF/extensions/eloraplm-workflows-EventServiceCom
+ ponent-contrib.xml
 

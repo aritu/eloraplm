@@ -23,4 +23,6 @@ public class NuxeoSchemaConstants {
 
     public static final String DUBLINCORE = "dublincore";
 
+    public static final String MAIN_BLOB_SCHEMA = "file";
+
 }

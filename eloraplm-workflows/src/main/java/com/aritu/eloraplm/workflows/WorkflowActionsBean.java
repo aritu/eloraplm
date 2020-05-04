@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -59,12 +58,18 @@ public class WorkflowActionsBean extends InputController
     @In(create = true)
     protected Map<String, String> messages;
 
+    private String storedDocId;
+
+    private List<DocumentModel> closedRelatedRoutes;
+
     private DocumentModel selectedWorkflow;
 
     public DocumentModel getSelectedWorkflow() {
         if (selectedWorkflow == null) {
-            if (hasClosedRelatedRoutes()) {
-                selectedWorkflow = findClosedRelatedRoutes().get(0);
+            String docId = storedDocId != null ? storedDocId
+                    : navigationContext.getCurrentDocument().getId();
+            if (hasClosedRelatedRoutes(docId)) {
+                selectedWorkflow = findClosedRelatedRoutes(docId).get(0);
             }
         }
         return selectedWorkflow;
@@ -97,38 +102,31 @@ public class WorkflowActionsBean extends InputController
         return status;
     }
 
-    @Factory(value = "closedRelatedRoutes")
-    public List<DocumentModel> findClosedRelatedRoutes() {
-        DocumentModel currentDoc = navigationContext.getCurrentDocument();
-        if (currentDoc != null) {
-            return findClosedRelatedRoutes(currentDoc.getId());
-        }
-        return new ArrayList<DocumentModel>();
-    }
-
     public List<DocumentModel> findClosedRelatedRoutes(String documentId) {
-        List<DocumentModel> docs = new ArrayList<DocumentModel>();
-        if (documentId == null || "".equals(documentId)) {
-            return docs;
-        }
-        List<DocumentRouteElement.ElementLifeCycleState> closedStates = new ArrayList<DocumentRouteElement.ElementLifeCycleState>();
-        closedStates.add(ElementLifeCycleState.canceled);
-        closedStates.add(ElementLifeCycleState.done);
+        DocumentModel currentDoc = navigationContext.getCurrentDocument();
+        if (storedDocId == null || currentDoc.getId() != storedDocId) {
+            List<DocumentModel> docs = new ArrayList<DocumentModel>();
+            if (currentDoc == null || "".equals(documentId)) {
+                return docs;
+            }
+            List<DocumentRouteElement.ElementLifeCycleState> closedStates = new ArrayList<DocumentRouteElement.ElementLifeCycleState>();
+            closedStates.add(ElementLifeCycleState.canceled);
+            closedStates.add(ElementLifeCycleState.done);
 
-        List<DocumentRoute> closedRelatedRoutes = getDocumentRoutingService().getDocumentRoutesForAttachedDocument(
-                documentManager, documentId, closedStates);
-        for (DocumentRoute documentRoute : closedRelatedRoutes) {
-            docs.add(documentRoute.getDocument());
+            List<DocumentRoute> documentRoutes = getDocumentRoutingService().getDocumentRoutesForAttachedDocument(
+                    documentManager, documentId, closedStates);
+            for (DocumentRoute documentRoute : documentRoutes) {
+                docs.add(0, documentRoute.getDocument());
+            }
+            closedRelatedRoutes = docs;
+
         }
-        return docs;
+        return closedRelatedRoutes;
+
     }
 
     public boolean hasClosedRelatedRoutes(String documentId) {
         return !findClosedRelatedRoutes(documentId).isEmpty();
-    }
-
-    public boolean hasClosedRelatedRoutes() {
-        return !findClosedRelatedRoutes().isEmpty();
     }
 
     public DocumentRoutingService getDocumentRoutingService() {

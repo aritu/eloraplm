@@ -91,6 +91,7 @@
       <schema name="bom_item"/>
       <schema name="product_classification"/>
       <schema name="bom_product"/>
+      <schema name="related_customer"/>
       <facet name="BomDocument" />
       <facet name="AutomaticCode"/>
     </doctype>
@@ -551,12 +552,6 @@
     </type>
     
     <type id="Project">
-      <layouts mode="view" append="true">
-        <layout>product_classification</layout>
-      </layouts>
-      <layouts mode="any" append="true">
-        <layout>product_classification</layout>
-      </layouts>
       <subtypes>
         <type>BomPart</type>
         <type>BomManufacturerPart</type>

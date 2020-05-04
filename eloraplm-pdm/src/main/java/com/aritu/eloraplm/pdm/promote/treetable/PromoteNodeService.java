@@ -39,6 +39,7 @@ import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.promote.checker.PromoteCheckerManager;
 import com.aritu.eloraplm.pdm.promote.constants.PromoteConstants;
@@ -131,7 +132,8 @@ public class PromoteNodeService implements NodeManager {
     }
 
     @Override
-    public TreeNode getRoot(Object parentObject) throws EloraException {
+    public TreeNode getRoot(Object parentObject)
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[getRoot] [" + session.getPrincipal().getName()
                 + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -206,8 +208,7 @@ public class PromoteNodeService implements NodeManager {
 
     private TreeNode processTree(TreeNode rootNode, TreeNode parentNode,
             PromoteNodeData nodeData, int nodeIndex, int level)
-            throws EloraException {
-
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[processTree] [" + session.getPrincipal().getName()
                 + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -250,18 +251,19 @@ public class PromoteNodeService implements NodeManager {
             // }
 
             // processAllResults(rootNode);
-
-            log.trace(logInitMsg + "--- EXIT --- ");
-            return rootNode;
         } catch (Exception e) {
             log.trace(logInitMsg + "Error with doc |" + nodeData.getDocId()
-                    + "|");
+                    + "|.");
+            log.error(logInitMsg + e.getMessage(), e);
             throw e;
         }
+        log.trace(logInitMsg + "--- EXIT --- ");
+        return rootNode;
     }
 
     private void processTreeNode(TreeNode parentNode, PromoteNodeData nodeData,
-            int nodeIndex, int level) throws EloraException {
+            int nodeIndex, int level)
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[processTreeNode] ["
                 + session.getPrincipal().getName() + "] ";
         // log.trace(logInitMsg + "--- ENTER --- ");
@@ -291,16 +293,17 @@ public class PromoteNodeService implements NodeManager {
                     }
                 }
             }
-            // log.trace(logInitMsg + "--- EXIT --- ");
         } catch (Exception e) {
             log.trace(logInitMsg + "Error with doc |" + nodeData.getDocId()
                     + "|");
+            log.error(logInitMsg + e.getMessage(), e);
             throw e;
         }
+        // log.trace(logInitMsg + "--- EXIT --- ");
     }
 
     private List<PromoteNodeData> getChildrenNodeData(PromoteNodeData nodeData,
-            int level) throws EloraException {
+            int level) throws EloraException, DocumentUnreadableException {
         List<PromoteNodeData> childList = new ArrayList<PromoteNodeData>();
         childList = getSpecialChildrenNodeList(nodeData, level,
                 promoteCheckerManager.getSpecialPredicates());
@@ -312,7 +315,7 @@ public class PromoteNodeService implements NodeManager {
 
     protected List<PromoteNodeData> getChildrenNodeList(
             PromoteNodeData nodeData, int level, List<Resource> predicateList)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[getChildrenNodeList] ["
                 + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -334,7 +337,7 @@ public class PromoteNodeService implements NodeManager {
 
     protected List<PromoteNodeData> getSpecialChildrenNodeList(
             PromoteNodeData nodeData, int level, List<Resource> predicateList)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[getSpecialChildrenNodeList] ["
                 + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -370,12 +373,23 @@ public class PromoteNodeService implements NodeManager {
     // isSpecial
     private void treatSpecialDocs(PromoteNodeData nodeData, int level,
             DocumentModel doc, List<PromoteNodeData> childrenNodeList,
-            List<Statement> subjectStmts) throws EloraException {
+            List<Statement> subjectStmts)
+            throws EloraException, DocumentUnreadableException {
+        String logInitMsg = "[treatSpecialDocs] ["
+                + session.getPrincipal().getName() + "] ";
         Map<String, List<DocumentModel>> relatedDocs = new HashMap<String, List<DocumentModel>>();
         Map<String, Statement> stmtMap = new HashMap<String, Statement>();
         for (Statement subjectStmt : subjectStmts) {
             DocumentModel subject = RelationHelper.getDocumentModel(
                     subjectStmt.getSubject(), session);
+            if (subject == null) {
+                log.trace(logInitMsg
+                        + "Throw DocumentUnreadableException since subject is null. stmt = |"
+                        + subjectStmt.toString() + "|");
+                throw new DocumentUnreadableException(
+                        "Error getting document from statement |"
+                                + subjectStmt.toString() + "|");
+            }
             if (relatedDocs.containsKey(subject.getVersionSeriesId())) {
                 List<DocumentModel> subjectList = relatedDocs.get(
                         subject.getVersionSeriesId());
@@ -401,12 +415,21 @@ public class PromoteNodeService implements NodeManager {
     private void treatDocs(PromoteNodeData nodeData, int level,
             String logInitMsg, DocumentModel doc,
             List<PromoteNodeData> childrenNodeList,
-            List<Statement> specialObjectStmts) throws EloraException {
+            List<Statement> specialObjectStmts)
+            throws EloraException, DocumentUnreadableException {
         Map<String, List<DocumentModel>> relatedDocs = new HashMap<String, List<DocumentModel>>();
         Map<String, Statement> stmtMap = new HashMap<String, Statement>();
         for (Statement specialObjectStmt : specialObjectStmts) {
             DocumentModel object = RelationHelper.getDocumentModel(
                     specialObjectStmt.getObject(), session);
+            if (object == null) {
+                log.trace(logInitMsg
+                        + "Throw DocumentUnreadableException since object is null. stmt = |"
+                        + specialObjectStmt.toString() + "|");
+                throw new DocumentUnreadableException(
+                        "Error getting document from statement |"
+                                + specialObjectStmt.toString() + "|");
+            }
             if (relatedDocs.containsKey(object.getVersionSeriesId())) {
                 List<DocumentModel> objectList = relatedDocs.get(
                         object.getVersionSeriesId());
@@ -437,7 +460,7 @@ public class PromoteNodeService implements NodeManager {
             Map<String, List<DocumentModel>> relatedDocs,
             Map<String, Statement> stmtMap, DocumentModel parentDoc,
             PromoteNodeData parentNodeData, int level, boolean isSpecial)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
 
         String logInitMsg = "[treatRelatedDocs] ["
                 + session.getPrincipal().getName() + "] ";
@@ -457,6 +480,15 @@ public class PromoteNodeService implements NodeManager {
                     Statement parentStmt = parentNodeData.getStmt();
                     DocumentModel grandParentDoc = RelationHelper.getDocumentModel(
                             parentStmt.getSubject(), session);
+                    if (grandParentDoc == null) {
+                        log.trace(logInitMsg
+                                + "Throw DocumentUnreadableException since grandParentDoc is null. stmt = |"
+                                + parentStmt.toString() + "|");
+                        throw new DocumentUnreadableException(
+                                "Error getting document from statement |"
+                                        + parentStmt.toString() + "|");
+                    }
+
                     String grandParentVersionSeriesId = grandParentDoc.getVersionSeriesId();
                     if (grandParentVersionSeriesId.equals(entry.getKey())) {
                         for (DocumentModel childDoc : docList) {
@@ -652,7 +684,7 @@ public class PromoteNodeService implements NodeManager {
     }
 
     public void processPartialTreeNode(TreeNode rootNode, TreeNode partialNode)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
 
         // Get parent data
         // TODO: Empezar a coger cosas de nodeInfo cuando lo meta en

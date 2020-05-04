@@ -39,4 +39,8 @@ public class PdmEventNames {
 
     public static final String PDM_RESTORED_EVENT = "PdmRestoredEvent";
 
+    // This event is thrown after the viewer has been created and document has
+    // been saved
+    public static final String PDM_APPROVED_EVENT = "PdmApprovedEvent";
+
 }

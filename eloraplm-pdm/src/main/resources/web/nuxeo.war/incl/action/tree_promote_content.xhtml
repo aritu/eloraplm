@@ -15,7 +15,7 @@
       </c:when>
       <c:otherwise>
             <h:panelGroup id="tree">
-              <nxl:widget name="prom_tt" mode="view" value="#{promoteTreeBean}" />
+              <nxl:widget name="prom_tt" mode="view" value="#{promoteTreeBean}" reloadRerender="nxw_promote_after_view_fancy_subview:demote_promote_buttons:executeButton" />
             </h:panelGroup>
       
 		    <!-- The treetable conflicts with h:commandButton, so we have to separate the form in two, but this does not cause any error

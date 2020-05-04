@@ -12,5 +12,7 @@
   <xs:element name="primaryType" type="xs:string" />
   <!-- dc:lastContributor -->
   <xs:element name="lastContributor" type="xs:string" />
+  <!-- search using ecm:ancestorId, not ecm:parentId -->
+  <xs:element name="searchInSubfolders" type="xs:boolean" default="false" />
 
 </xs:schema>

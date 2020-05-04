@@ -82,10 +82,9 @@ public class ContainerArchiveHelper {
     public static DocumentModel archiveAndUnlock(DocumentModel currentDoc,
             String destStruct, String destStructFolder, CoreSession session)
             throws EloraException {
+
         updateWorkingCopyProxies(currentDoc, session);
 
-        DocumentModel sourceFolder = session.getDocument(
-                currentDoc.getParentRef());
         DocumentModel destinationFolder = null;
         if (destStructFolder == null) {
             destinationFolder = getDestinationFolderByType(currentDoc,
@@ -97,12 +96,6 @@ public class ContainerArchiveHelper {
 
         new UnrestrictedArchiver(currentDoc.getRef(),
                 destinationFolder.getRef(), session).runUnrestricted();
-
-        Events.instance().raiseEvent(DOCUMENT_CHILDREN_CHANGED, sourceFolder);
-        Events.instance().raiseEvent(DOCUMENT_CHILDREN_CHANGED,
-                destinationFolder);
-
-        session.removeLock(currentDoc.getRef());
 
         return destinationFolder;
     }
@@ -151,10 +144,11 @@ public class ContainerArchiveHelper {
         return destinationFolderList.get(0);
     }
 
-    public static void navigateToArchivedFolder(DocumentModel destinationFolder,
-            NavigationContext navigationContext, TreeActionsBean treeActions,
+    public static void navigateToArchivedDoc(DocumentModel doc,
+            CoreSession session, NavigationContext navigationContext,
+            TreeActionsBean treeActions,
             ContentViewActions contentViewActions) {
-        navigationContext.navigateToDocument(destinationFolder);
+        navigationContext.navigateToDocument(session.getDocument(doc.getRef()));
         refreshUI(treeActions, contentViewActions);
     }
 

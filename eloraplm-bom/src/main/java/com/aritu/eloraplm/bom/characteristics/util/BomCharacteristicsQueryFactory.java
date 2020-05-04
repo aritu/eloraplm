@@ -30,8 +30,6 @@ public class BomCharacteristicsQueryFactory {
 
         String pfx = BomCharacteristicsMetadataConstants.BOM_CHARAC_LIST;
 
-        // listContent: nola atera???
-
         String query = "SELECT " + NXQL.ECM_UUID + ", " + pfx
                 + "/*1/bomCharacteristicId, " + pfx + "/*1/classification, "
                 + pfx + "/*1/order, " + pfx + "/*1/bomCharacMaster, " + pfx
@@ -70,18 +68,5 @@ public class BomCharacteristicsQueryFactory {
 
         return query;
     }
-
-    // TODO:: TO BE REMOVED
-    /* public static String getDistinctBomCharacteristicMastersByDocumentQuery(
-            String documentId) {
-
-        String pfx = BomCharacteristicsMetadataConstants.BOM_CHARAC_LIST;
-
-        String query = "SELECT DISTINCT " + pfx + "/*1/bomCharacMaster "
-                + "FROM Document WHERE ecm:uuid = '" + documentId + "' AND "
-                + pfx + "/*1/bomCharacMaster IS NOT NULL";
-
-        return query;
-    }*/
 
 }

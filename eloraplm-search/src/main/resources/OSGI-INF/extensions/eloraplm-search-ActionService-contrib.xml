@@ -6,28 +6,84 @@
 
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">  
 
-    <action id="eloraGeneralSearchContentView" order="1">
+    <action id="eloraGeneralSearchContentView" order="5">
       <category>SEARCH_CONTENT_VIEWS</category>
       <properties>
         <property name="contentViewName">elora_general_search</property>
       </properties>
     </action>
     
-    <action id="eloraCadDocumentsSearchContentView" order="2">
+    <action id="eloraCadDocumentsSearchContentView" order="10">
       <category>SEARCH_CONTENT_VIEWS</category>
       <properties>
         <property name="contentViewName">elora_cad_documents_search</property>
       </properties>
     </action>
     
-    <action id="eloraBasicDocumentsSearchContentView" order="3">
+    <action id="eloraBasicDocumentsSearchContentView" order="15">
       <category>SEARCH_CONTENT_VIEWS</category>
       <properties>
         <property name="contentViewName">elora_basic_documents_search</property>
       </properties>
     </action>
     
-    <action id="defaultSearchContentView">
+    <action id="eloraBomProductsSearchContentView" order="20">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_bom_products_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraBomSpecificationsSearchContentView" order="25">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_bom_specifications_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraBomPackagingsSearchContentView" order="30">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_bom_packagings_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraBomToolsSearchContentView" order="35">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_bom_tools_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraBomPartsSearchContentView" order="40">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_bom_parts_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraCmEcosSearchContentView" order="45">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_cm_ecos_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraProjectsSearchContentView" order="50">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_projects_search</property>
+      </properties>
+    </action>
+    
+    <action id="eloraQmDocumentsSearchContentView" order="55">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_qm_documents_search</property>
+      </properties>
+    </action>
+    
+    <action id="defaultSearchContentView" order="90">
         <filter-id>only_for_manager</filter-id>
     </action>
 

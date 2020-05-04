@@ -53,7 +53,7 @@ public class EloraVersioningService extends StandardVersioningService {
                 EloraGeneralConstants.CONTEXT_KEY_DOC_VERSION_LABEL)) {
             String label = (String) options.get(
                     EloraGeneralConstants.CONTEXT_KEY_DOC_VERSION_LABEL);
-            return doc.checkIn(label, checkinComment); // auto-label
+            return doc.checkIn(label, checkinComment);
 
         } else {
             if (isPostSaveDoingCheckIn(doc, option, options)) {

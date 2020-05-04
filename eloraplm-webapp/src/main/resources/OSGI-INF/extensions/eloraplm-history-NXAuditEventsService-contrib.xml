@@ -39,8 +39,7 @@
         <event name="CmDocsBatchPromoteEvent" />
         <event name="documentLocked" />
         <event name="documentUnlocked" />
-        
-        <event name="CmCopreciCreateProcessInPltsEvent" />
+        <event name="DocumentEloraRootFolderSwitched" />
         
         <!-- Disable events enabled by default -->
         <event name="documentModified" enabled="false" />

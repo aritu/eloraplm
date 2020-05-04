@@ -26,6 +26,7 @@ import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.config.util.EloraConfigTable;
+import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
@@ -96,6 +97,10 @@ public abstract class PromoteExecuterService implements PromoteExecuterManager {
         // otros documentos sin que otro usuario que este utilizando ese
         // documento se de cuenta
 
+        // Fire Approved event
+        if (promoteTransition.equals(EloraLifeCycleConstants.TRANS_APPROVE)) {
+            EloraEventHelper.fireEvent(PdmEventNames.PDM_APPROVED_EVENT, doc);
+        }
     }
 
     private boolean isMajorVersionEqual(DocumentModel doc,

@@ -121,10 +121,11 @@
             <category>QualityManagement</category>
             <description>ProductValidation.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>qm_product_process</layout>
                 <layout>responsible</layout>
-                <layout>planning</layout>
+                <layout>planning_dates</layout>
                 <layout>partaker</layout>
             </layouts>
             <layouts mode="any">
@@ -174,10 +175,11 @@
             <category>QualityManagement</category>
             <description>ProductVerification.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>qm_product_process</layout>
                 <layout>responsible</layout>
-                <layout>planning</layout>
+                <layout>planning_dates</layout>
                 <layout>partaker</layout>
             </layouts>
             <layouts mode="any">
@@ -227,10 +229,11 @@
             <category>QualityManagement</category>
             <description>ProductionProcessValidation.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>qm_product_process</layout>
                 <layout>responsible</layout>
-                <layout>planning</layout>
+                <layout>planning_dates</layout>
                 <layout>partaker</layout>
             </layouts>
             <layouts mode="any">
@@ -280,10 +283,11 @@
             <category>QualityManagement</category>
             <description>ProductionPartApprovalProcess.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>qm_part_process</layout>
                 <layout>responsible</layout>
-                <layout>planning</layout>
+                <layout>planning_dates</layout>
                 <layout>partaker</layout>
             </layouts>
             <layouts mode="any">

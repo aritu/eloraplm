@@ -150,8 +150,20 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 
 .nx-page .nxMainContainer .nxSearchResults
 {
-    margin-left: 440px;
-    width: calc(100% - 440px);
+    flex-grow: 1;
+    -ms-flex: 1 0 auto;
+    width: 100%;
+    margin-left: 0;
+    overflow-x: auto;
+}
+
+.nxMainContainer #nxSearchGrid .column
+{
+    padding-top: 20px;
+    position: static;
+    flex-shrink: 0;
+    flex-grow: 0;
+    -ms-flex: 0 0 auto;
 }
 
 .nxMainContainer .nxSearchResults .bubbleBox
@@ -180,14 +192,28 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 .nxHeader + .nxMainContainer
 {
     margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    -ms-flex-direction: column;
+}
+
+.nx-page .nxMainContainer #nxSearchGrid
+{
+    display: flex;
+    flex-grow: 1;
+    -ms-flex: 1 0 auto;
 }
 
 .nx-page .nxMainContainer .nxSearchForm
 {
-    padding-top: 60px;
     background-color: #f4f4f4;
     border-right: 1px solid #8cd600;
     width: 440px;
+    position: static;
+    padding-top: 0;
+    flex-shrink: 0;
+    flex-grow: 0;
+    -ms-flex: 0 0 auto;
 }
 
 .nxSearchForm.compactLayout .widgetTable .boldLabel, 
@@ -199,9 +225,6 @@ h1, h2, h3, h4, h5, h6, .mainTitle
     color: #42444e;
     font-size: 1em;
 }
-
-
-
 
 
 .nxHeader .content
@@ -336,6 +359,12 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 .tipsy
 {
     font-size: 0.8em;
+}
+
+/* PrimeFaces tooltips */
+.nx-page .ui-tooltip-text
+{
+    font-size: 0.7em;
 }
 
 #ambiance-notification {

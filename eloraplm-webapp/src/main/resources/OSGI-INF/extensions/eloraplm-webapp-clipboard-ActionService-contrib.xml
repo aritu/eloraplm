@@ -127,9 +127,17 @@
       <filter-id>canPastePopupAsDuplicate</filter-id>
     </action>
     
-    <!-- Disable default POPUP_MOVE action -->
-    <action id="POPUP_MOVE"  enabled="false" />
-      
+    <!-- Modified POPUP_MOVE action -->
+    <action id="POPUP_MOVE" icon="/icons/action_move_all.gif" label="command.clipboard.moveAll" link="javascript:doMove">
+        <category>POPUP</category>
+        <filter id="filter@POPUP_MOVE">
+            <rule grant="true">
+                <condition>
+                    #{clipboardActions.getCanMoveFromClipboardInside(document)}
+                </condition>
+            </rule>
+        </filter>
+    </action>
     
   </extension>
 

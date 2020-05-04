@@ -7,7 +7,7 @@
 
     <factoryBinding name="AdminRootFactory" factoryName="SimpleTemplateFactory" targetType="AdminRoot" append="true">
       <template>
-        <templateItem typeName="TemplateRoot" id="TemplateRoot" title="Templates" description="Templates directory."/>
+        <templateItem typeName="TemplateRoot" id="templates" title="Templates" description="Templates directory."/>
       </template>
     </factoryBinding>
 

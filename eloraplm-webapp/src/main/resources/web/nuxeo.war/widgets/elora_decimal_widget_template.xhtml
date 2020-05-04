@@ -5,9 +5,13 @@
   xmlns:c="http://java.sun.com/jstl/core"
   xmlns:ui="http://java.sun.com/jsf/facelets">
 
-
-    <!-- EDIT MODE -->
-    <c:if test="#{widget.mode == 'edit'}">
+  <c:if test="#{(widget.mode == 'view') or (nxl:isLikePlainMode(widget.mode))}">
+    <h:outputText value="#{field}">
+        <f:converter converterId="#{widget.properties.converter}" />
+    </h:outputText>
+  </c:if>
+  
+  <c:if test="#{widget.mode == 'edit'}">
 
         <h:panelGroup rendered="#{not widget.properties.editableOnlyOnFirstLevel or value.level == '1'}">
             <h:inputText id="value_field" value="#{field}" size="50" maxlength="50" styleClass="#{empty widget.properties.styleClass ? 'numberInput' : widget.properties.styleClass }">
@@ -37,13 +41,6 @@
                 <f:converter converterId="#{widget.properties.converter}" />
             </h:outputText>
         </h:panelGroup>
-  </c:if>
-  
-  <!-- VIEW MODE -->
-  <c:if test="#{widget.mode == 'view'}">
-    <h:outputText value="#{field}">
-        <f:converter converterId="#{widget.properties.converter}" />
-    </h:outputText>
   </c:if>
   
 </f:subview>

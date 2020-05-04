@@ -36,6 +36,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.impl.VersionModelImpl;
@@ -177,19 +178,73 @@ public class EloraVersionedActionsBean implements Serializable {
         if (baseDoc.getId().equals(latestVersionDoc.getId())) {
             List<DocumentModel> documentModelList = documentManager.getVersions(
                     doc.getRef());
-            DocumentModel previousDoc = documentModelList.get(
-                    documentModelList.size() - 2);
+            if (documentModelList != null && documentModelList.size() > 0) {
 
-            Long majorVersion = (Long) baseDoc.getPropertyValue(
-                    NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
-            Long prevMajorVersion = (Long) previousDoc.getPropertyValue(
-                    NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
+                try {
 
-            if (prevMajorVersion.equals(majorVersion)) {
-                newBaseDoc = previousDoc;
-            } else {
-                newBaseDoc = EloraDocumentHelper.getMajorReleasedOrObsoleteVersion(
-                        previousDoc);
+                    DocumentModel previousDoc = documentModelList.get(
+                            documentModelList.size() - 2);
+
+                    Long majorVersion = (Long) baseDoc.getPropertyValue(
+                            NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
+                    Long prevMajorVersion = (Long) previousDoc.getPropertyValue(
+                            NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
+
+                    // if previous document is in the same major version as the
+                    // base document
+                    if (prevMajorVersion.equals(majorVersion)) {
+
+                        // If there are Not Released documents in the same
+                        // major, take the latest Not Released document (except
+                        // the base document itself).
+                        DocumentModelList notReleasedDocs = EloraDocumentHelper.getNotReleasedDocListInMajorVersion(
+                                previousDoc);
+                        if (notReleasedDocs != null
+                                && notReleasedDocs.size() > 0) {
+                            DocumentModel latestNotReleasedDoc = notReleasedDocs.get(
+                                    0);
+                            if (!latestNotReleasedDoc.getId().equals(
+                                    baseDoc.getId())) {
+                                newBaseDoc = latestNotReleasedDoc;
+                            } else {
+                                if (notReleasedDocs.size() > 1) {
+                                    latestNotReleasedDoc = notReleasedDocs.get(
+                                            1);
+                                    newBaseDoc = latestNotReleasedDoc;
+                                }
+                            }
+                        }
+
+                        if (newBaseDoc == null) {
+                            newBaseDoc = previousDoc;
+                        }
+                    } else {
+                        // First, check if there is a Released document in that
+                        // major. If there is one, take that.
+                        newBaseDoc = EloraDocumentHelper.getMajorReleasedVersion(
+                                previousDoc);
+
+                        if (newBaseDoc == null) {
+                            // If there is not any Released doc, check if there
+                            // is any Not Released document in that major. If
+                            // there is at least one, take the latest one.
+                            DocumentModelList notReleasedDocs = EloraDocumentHelper.getNotReleasedDocListInMajorVersion(
+                                    previousDoc);
+                            if (notReleasedDocs != null
+                                    && notReleasedDocs.size() > 0) {
+                                newBaseDoc = notReleasedDocs.get(0);
+                            }
+
+                            // Otherwise, take the previous one
+                            if (newBaseDoc == null) {
+                                newBaseDoc = previousDoc;
+                            }
+                        }
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    log.error(e.getMessage());
+                    throw new EloraException(e);
+                }
             }
         } else {
             newBaseDoc = latestVersionDoc;

@@ -220,11 +220,11 @@
           </fields>
           <widgetModes>
             <mode value="create">edit</mode>
-            <mode value="edit">view</mode>
+            <mode value="edit">#{empty layoutValue.elo.reference ? 'edit' : 'view'}</mode>
           </widgetModes>
           <properties widgetMode="edit">
-            <property name="converter">#{layout.mode == 'create' ? 'codeCreationConverter' : ''}</property>
-            <property name="isHidden">#{layout.mode == 'create' ? true : false}</property>
+            <property name="converter">codeCreationConverter</property>
+            <property name="isHidden">#{layout.mode == 'create' ? true : empty layoutValue.elo.reference ? true : false}</property>
           </properties>
           <properties widgetMode="any">
             <property name="template">/widgets/reference_widget_template.xhtml</property>

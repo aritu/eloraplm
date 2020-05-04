@@ -60,7 +60,6 @@
       </rows>
     </layout>
     
-    
     <layout name="elora_cad_documents_search_layout">
       <templates>
         <template mode="any">
@@ -161,6 +160,448 @@
         </row>
       </rows>
     </layout>
+    
+    <layout name="elora_bom_products_search_layout">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_boms_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_bomItemType_search</widget>
+        </row>
+        <row>
+          <widget>elora_productClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_customer_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_bom_specifications_search_layout">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_boms_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_bomItemType_search</widget>
+        </row>
+        <row>
+          <widget>elora_specificationClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_bom_packagings_search_layout">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_boms_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_bomItemType_search</widget>
+        </row>
+        <row>
+          <widget>elora_packagingClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_customer_search</widget>
+        </row>
+        <row>
+          <widget>elora_manufacturer_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_bom_tools_search_layout">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_boms_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_bomItemType_search</widget>
+        </row>
+        <row>
+          <widget>elora_toolClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_owner_search</widget>
+        </row>
+        <row>
+          <widget>elora_customer_search</widget>
+        </row>
+        <row>
+          <widget>elora_manufacturer_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_bom_parts_search_layout">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_boms_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_bomItemType_search</widget>
+        </row>
+        <row>
+          <widget>elora_partClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_cm_ecos_search_layout">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_cmEcos_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_ecoType_search</widget>
+        </row>
+        <row>
+          <widget>elora_productClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_customer_search</widget>
+        </row>
+        <row>
+          <widget>elora_manufacturer_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_projects_search_layout">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_projects_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_projectType_search</widget>
+        </row>
+        <row>
+          <widget>elora_productClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_customer_search</widget>
+        </row>
+        <row>
+          <widget>elora_manufacturer_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
+    
+    <layout name="elora_qm_documents_search_layout">
+      <templates>
+        <template mode="any">
+          /layouts/layout_default_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>
+        <row>
+          <widget>elora_qm_documents_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_qm_documents_primaryType_search</widget>
+        </row>
+         <row>
+          <widget>elora_productClassification_search</widget>
+        </row>
+        <row>
+          <widget>elora_partClassification_search</widget>
+        </row>
+        <!-- TODO: HEMEN FALTA DA ITEM SUBJECT -->
+        <row>
+          <widget>elora_customer_search</widget>
+        </row>
+        <row>
+          <widget>elora_manufacturer_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row>
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
 
   </extension>
 
@@ -204,7 +645,7 @@
       <subWidgets>
         <widget name="elo_reference" type="text">
          <labels>
-            <label mode="any">eloraplm.label.search.reference</label>
+            <label mode="any">label.widget.elo.reference</label>
           </labels>
           <translated>true</translated>
           <fields>
@@ -433,7 +874,7 @@
       <subWidgets>
         <widget name="dc_modificationDate_Min" type="datetime">
           <fields>
-            <field>defaults:dc_modified_max</field>
+            <field>defaults:dc_modified_min</field>
           </fields>
           <labels>
             <label mode="any">label.search.between</label>
@@ -698,6 +1139,35 @@
       </subWidgets>
     </widget>
     
+    <widget name="elora_owner_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="own_owner" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">eloraplm.label.owner</label>
+          </labels>
+          <fields>
+            <field>eloras:search_owner</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_erpCustomers</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
     
     
     <!--  CAD documents search related widgets -->
@@ -888,6 +1358,384 @@
       </subWidgets>
     </widget>
     
+    <!--  BOMs search related widgets -->
+    <widget name="elora_boms_currentLifeCycleState_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_currentLifeCycleState" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_currentLifeCycleState_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_currentLifeCycleState</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_boms_lifeCycle</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_bomItemType_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="bomitem_bomItemType" type="suggestManyDirectory">
+         <labels>
+            <label mode="any">label.widget.bomitem.itemType</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:bomitem_bomItemType</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_bomItemTypes</property>
+            <property name="localize">false</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_productClassification_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="bomprod_productClassification" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">eloraplm.label.bomClassification</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:search_productClassification</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_bomProductClassHierarchical</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_partClassification_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="bompart_partClassification" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">eloraplm.label.bomClassification</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:search_partClassification</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_bomPartClassHierarchical</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_specificationClassification_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="bompart_partClassification" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">eloraplm.label.bomClassification</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:search_specificationClassification</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_bomSpecificationClassHierarchical</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_packagingClassification_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="bompart_partClassification" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">eloraplm.label.bomClassification</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:search_packagingClassification</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_bomPackagingClassHierarchical</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_toolClassification_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="bompart_partClassification" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">eloraplm.label.bomClassification</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:search_toolClassification</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_bomToolClassHierarchical</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <!--  CM search related widgets -->
+    <widget name="elora_cmEcos_currentLifeCycleState_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_currentLifeCycleState" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_currentLifeCycleState_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_currentLifeCycleState</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_ecos_lifeCycle</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_ecoType_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="bomitem_bomItemType" type="suggestManyDirectory">
+         <labels>
+            <label mode="any">label.widget.CM.EcoEcoType</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:cmeco_ecoType</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_cmEcoType</property>
+            <property name="localize">false</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <!--  Projects search related widgets -->
+    <widget name="elora_projects_currentLifeCycleState_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_currentLifeCycleState" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_currentLifeCycleState_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_currentLifeCycleState</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_projects_lifeCycle</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_projectType_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="bomitem_bomItemType" type="suggestManyDirectory">
+         <labels>
+            <label mode="any">label.widget.project.projectType</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:prj_projectType</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">elora_projectType</property>
+            <property name="localize">false</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <!--  QM documents search related widgets -->
+    <widget name="elora_qm_documents_currentLifeCycleState_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_currentLifeCycleState" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_currentLifeCycleState_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_currentLifeCycleState</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_qmDocuments_lifeCycle</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_qm_documents_primaryType_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="system_primaryType" type="suggestManyDirectory">
+          <labels>
+            <label mode="any">label.elora_primaryType_search.title</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:system_primaryType</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="minChars">0</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="directoryName">eloras_qmDocuments_docType</property>
+            <property name="localize">true</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+
 
   </extension>
 

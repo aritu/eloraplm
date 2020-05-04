@@ -64,11 +64,17 @@ public class EloraDocumentBean implements Serializable {
         return null;
     }
 
+    public boolean existsUid(String uid) {
+        if (uid != null && !uid.isEmpty()) {
+            return documentManager.exists(new IdRef(uid));
+        }
+        return false;
+    }
+
     public DocumentModel getDocumentFromUid(String uid) {
         if (uid != null && !uid.isEmpty()) {
             return documentManager.getDocument(new IdRef(uid));
-        } else {
-            return null;
         }
+        return null;
     }
 }

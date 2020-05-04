@@ -40,6 +40,7 @@ import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.runtime.transaction.TransactionHelper;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.bom.lists.BomListBean;
@@ -49,6 +50,7 @@ import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.relations.treetable.EditableRelationTreeBean;
 
 /**
@@ -121,9 +123,22 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
                     documentManager, bomList.getId());
             setRoot(nodeService.getRoot(currentDoc));
             setIsDirty(false);
+            setHasUnreadableNodes(false);
+            setIsInvalid(false);
             log.trace(logInitMsg + "Tree created.");
+        } catch (DocumentUnreadableException e) {
+            log.error(logInitMsg + e.getMessage());
+            // empty root attribute and set hasUnreadableNodes attribute to true
+            setRoot(new DefaultTreeNode());
+            setHasUnreadableNodes(true);
+            setIsInvalid(false);
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty root attribute and set isInvalid attribute to true
+            setRoot(new DefaultTreeNode());
+            setIsInvalid(true);
+            setHasUnreadableNodes(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.treetable.createRoot"));
         }

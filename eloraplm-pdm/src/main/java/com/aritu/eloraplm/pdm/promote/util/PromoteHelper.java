@@ -26,11 +26,11 @@ public class PromoteHelper {
     private PromoteHelper() {
     }
 
-    public static boolean checkReleasedAndObsoleteInMajor(DocumentModel doc,
+    public static boolean checkReleasedInMajor(DocumentModel doc,
             CoreSession session) throws EloraException {
         boolean ok = false;
 
-        DocumentModel releasedDoc = EloraDocumentHelper.getMajorReleasedOrObsoleteVersion(
+        DocumentModel releasedDoc = EloraDocumentHelper.getMajorReleasedVersion(
                 doc);
         if (releasedDoc != null) {
             if (releasedDoc.getVersionLabel().equals(doc.getVersionLabel())) {
@@ -190,7 +190,7 @@ public class PromoteHelper {
         return msg;
     }
 
-    private static boolean isTransitionAllowedConfig(String transition)
+    public static boolean isTransitionAllowedConfig(String transition)
             throws EloraException {
         /*
          * EloraConfigTable transitionConfigs =

@@ -35,7 +35,8 @@
             ecm:uuid IN (?)
           </fixedPart>
         </whereClause>
-        <parameter>#{eloraCmContent.getUidList()}</parameter>
+        <!-- Fix for when we use UUID type, the UUID with zeros means null -->
+        <parameter>#{empty eloraCmContent.getUidList() ? '00000000-0000-0000-0000-000000000000' : eloraCmContent.getUidList()}</parameter>
         <sort ascending="false" column="dc:created"/>
         <pageSize>20</pageSize>
       </coreQueryPageProvider>

@@ -82,6 +82,21 @@
             <to-view-id>/navigation/bomSpecificationClass_virtual_navigation.xhtml</to-view-id>
             <redirect />
         </navigation-case>
+        <navigation-case>
+            <from-outcome>cadClass_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/cadClass_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>nature_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/nature_virtual_navigation.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+          <from-outcome>create_doc_from_template</from-outcome>
+          <to-view-id>/create_doc_from_template.xhtml</to-view-id>
+          <redirect />
+        </navigation-case>
     </extension>
     
     <extension target="pages#PAGES">
@@ -105,6 +120,12 @@
         </page>
         <page view-id="/navigation/bomSpecificationClass_virtual_navigation.xhtml">
             breadcrumb=label.virtualnavigation.bomSpecificationClass
+        </page>
+        <page view-id="/navigation/cadClass_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.cadClass
+        </page>
+        <page view-id="/navigation/nature_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.nature
         </page>
     </extension>
     

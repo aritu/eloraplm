@@ -9,9 +9,6 @@
     <filter append="true" id="create">
       <rule grant="true">
         <permission>AddChildren</permission>
-        <type>FolderChangeManagementPR</type>
-        <type>FolderChangeManagementECR</type>
-        <type>FolderChangeManagementECO</type>
         <type>CmPr</type>
         <type>CmEcr</type>
         <type>CmEco</type>

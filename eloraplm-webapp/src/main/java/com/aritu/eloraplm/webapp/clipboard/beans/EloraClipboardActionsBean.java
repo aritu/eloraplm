@@ -16,9 +16,11 @@ package com.aritu.eloraplm.webapp.clipboard.beans;
 import static org.jboss.seam.ScopeType.SESSION;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +33,7 @@ import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession.CopyOption;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.LifeCycleConstants;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -420,6 +423,60 @@ public class EloraClipboardActionsBean extends ClipboardActionsBean {
             }
             return false;
         } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean getCanMoveFromClipboardInside(DocumentModel document) {
+        return getCanMoveInside(DocumentsListsManager.CLIPBOARD, document);
+    }
+
+    /**
+     * Checks if the Move action is available in the context of the document
+     * document. Conditions:
+     * <p>
+     * <ul>
+     * <li>list is not empty
+     * <li>user has the needed permissions on the document
+     * <li>an element in the list is proxy, can be removed from its folder and
+     * added as child of the current document
+     * </ul>
+     */
+    @Override
+    public boolean getCanMoveInside(String listName, DocumentModel document) {
+        if (documentsListsManager.isWorkingListEmpty(listName)
+                || document == null) {
+            return false;
+        }
+        DocumentRef destFolderRef = document.getRef();
+        DocumentModel destFolder = document;
+        if (!documentManager.hasPermission(destFolderRef,
+                SecurityConstants.ADD_CHILDREN)) {
+            return false;
+        } else {
+            // filter on allowed content types
+            // see if at least one doc can be removed and pasted
+            for (DocumentModel docModel : documentsListsManager.getWorkingList(
+                    listName)) {
+                // skip deleted documents
+                if (!exists(docModel.getRef())) {
+                    continue;
+                }
+                DocumentRef sourceFolderRef = docModel.getParentRef();
+                String sourceType = docModel.getType();
+                boolean canRemoveDoc = documentManager.hasPermission(
+                        sourceFolderRef, SecurityConstants.REMOVE_CHILDREN);
+                boolean canPasteInCurrentFolder = typeManager.isAllowedSubType(
+                        sourceType, destFolder.getType(),
+                        navigationContext.getCurrentDocument());
+                boolean sameFolder = sourceFolderRef.equals(destFolderRef);
+                boolean isProxy = docModel.isProxy();
+                if (canRemoveDoc && canPasteInCurrentFolder && !sameFolder
+                        && isProxy) {
+                    return true;
+                }
+            }
             return false;
         }
     }
@@ -890,4 +947,89 @@ public class EloraClipboardActionsBean extends ClipboardActionsBean {
         return null;
     }
 
+    @Override
+    @WebRemote
+    public String moveClipboardInside(String docId) {
+        moveDocumentList(DocumentsListsManager.CLIPBOARD, docId);
+        return null;
+    }
+
+    @Override
+    public String moveDocumentList(String listName, String docId) {
+        List<DocumentModel> docs = documentsListsManager.getWorkingList(
+                listName);
+        DocumentModel targetDoc = documentManager.getDocument(new IdRef(docId));
+        // Get all parent folders
+        Set<DocumentRef> parentRefs = new HashSet<DocumentRef>();
+        for (DocumentModel doc : docs) {
+            parentRefs.add(doc.getParentRef());
+        }
+
+        List<DocumentModel> newDocs = moveDocumentsToNewParent(targetDoc, docs);
+
+        documentsListsManager.resetWorkingList(listName);
+
+        Object[] params = { newDocs.size() };
+        facesMessages.add(StatusMessage.Severity.INFO,
+                "#0 " + messages.get("n_moved_docs"), params);
+
+        EventManager.raiseEventsOnDocumentSelected(targetDoc);
+        Events.instance().raiseEvent(EventNames.DOCUMENT_CHILDREN_CHANGED,
+                targetDoc);
+
+        // Send event to all initial parents
+        for (DocumentRef docRef : parentRefs) {
+            Events.instance().raiseEvent(EventNames.DOCUMENT_CHILDREN_CHANGED,
+                    documentManager.getDocument(docRef));
+        }
+
+        log.debug("Elements moved and created into the backend...");
+
+        return null;
+    }
+
+    @Override
+    public List<DocumentModel> moveDocumentsToNewParent(
+            DocumentModel destFolder, List<DocumentModel> docs) {
+        DocumentRef destFolderRef = destFolder.getRef();
+        boolean destinationIsDeleted = LifeCycleConstants.DELETED_STATE.equals(
+                destFolder.getCurrentLifeCycleState());
+        List<DocumentModel> newDocs = new ArrayList<DocumentModel>();
+        StringBuilder sb = new StringBuilder();
+        for (DocumentModel docModel : docs) {
+            DocumentRef sourceFolderRef = docModel.getParentRef();
+
+            String sourceType = docModel.getType();
+            boolean canRemoveDoc = documentManager.hasPermission(
+                    sourceFolderRef, SecurityConstants.REMOVE_CHILDREN);
+            boolean canPasteInCurrentFolder = typeManager.isAllowedSubType(
+                    sourceType, destFolder.getType(),
+                    navigationContext.getCurrentDocument());
+            boolean sameFolder = sourceFolderRef.equals(destFolderRef);
+            boolean isProxy = docModel.isProxy();
+            if (canRemoveDoc && canPasteInCurrentFolder && !sameFolder
+                    && isProxy) {
+                if (destinationIsDeleted) {
+                    if (checkDeletedState(docModel)) {
+                        DocumentModel newDoc = documentManager.move(
+                                docModel.getRef(), destFolderRef, null);
+                        setDeleteState(newDoc);
+                        newDocs.add(newDoc);
+                    } else {
+                        addWarnMessage(sb, docModel);
+                    }
+                } else {
+                    DocumentModel newDoc = documentManager.move(
+                            docModel.getRef(), destFolderRef, null);
+                    newDocs.add(newDoc);
+                }
+            }
+        }
+        documentManager.save();
+
+        if (sb.length() > 0) {
+            facesMessages.add(StatusMessage.Severity.WARN, sb.toString());
+        }
+        return newDocs;
+    }
 }

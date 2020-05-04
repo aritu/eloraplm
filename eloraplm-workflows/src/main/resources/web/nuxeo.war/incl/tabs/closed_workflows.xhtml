@@ -11,9 +11,11 @@
     
         <p:dataTable id="closedWorkflows"
             var="wf"
-            value="#{closedRelatedRoutes}"
+            value="#{workflowActions.findClosedRelatedRoutes(currentDocument.id)}"
             selectionMode="single"
             selection="#{workflowActions.selectedWorkflow}"
+            scrollable="true"
+            scrollHeight="100"
             rowKey="#{wf.id}"
             tableStyleClass="datatable">
             <f:facet name="header">
@@ -34,7 +36,6 @@
             <p:column headerText="#{messages['eloraplm.wf.label.state']}">
                 <h:outputText value="#{messages['eloraplm.wf.state.'.concat(wf.currentLifeCycleState)]}" />
             </p:column>
-            <p:column styleClass="selectColumn" />
         </p:dataTable>
         
     </div>

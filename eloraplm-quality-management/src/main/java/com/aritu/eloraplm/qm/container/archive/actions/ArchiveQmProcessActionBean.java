@@ -25,6 +25,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.collections.jsf.actions.FavoritesActionBean;
@@ -74,6 +75,10 @@ public class ArchiveQmProcessActionBean implements Serializable {
     protected FavoritesActionBean favoritesActions;
 
     public void archiveQmProcess() throws EloraException {
+        archiveQmProcess(navigationContext.getCurrentDocument());
+    }
+
+    public void archiveQmProcess(DocumentModel doc) throws EloraException {
         String logInitMsg = "[archiveQmProcess] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -82,18 +87,30 @@ public class ArchiveQmProcessActionBean implements Serializable {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
 
-            DocumentModel currentDoc = navigationContext.getCurrentDocument();
+            doc = replaceSubjectsWithArchivedVersion(doc);
 
-            currentDoc = replaceSubjectsWithArchivedVersion(currentDoc);
-
+            // TODO: This helper must be a service. Try to configure so it can
+            // work for all container types
             DocumentModel destinationFolder = ContainerArchiveHelper.archiveAndUnlock(
-                    currentDoc, EloraDoctypeConstants.STRUCTURE_ARCHIVED,
+                    doc, EloraDoctypeConstants.STRUCTURE_ARCHIVED,
                     EloraDoctypeConstants.FOLDER_ARCHIVED_QUALITY_MANAGEMENT,
                     documentManager);
 
+            // TODO: This calls could change when we create the service
+            // mentioned above
+            DocumentModel sourceFolder = documentManager.getDocument(
+                    doc.getParentRef());
+
+            Events.instance().raiseEvent(
+                    ContainerArchiveHelper.DOCUMENT_CHILDREN_CHANGED,
+                    sourceFolder);
+            Events.instance().raiseEvent(
+                    ContainerArchiveHelper.DOCUMENT_CHILDREN_CHANGED,
+                    destinationFolder);
+
             removeFromFavorites();
 
-            ContainerArchiveHelper.navigateToArchivedFolder(destinationFolder,
+            ContainerArchiveHelper.navigateToArchivedDoc(doc, documentManager,
                     navigationContext, treeActions, contentViewActions);
 
             facesMessages.add(StatusMessage.Severity.INFO, messages.get(
@@ -170,10 +187,11 @@ public class ArchiveQmProcessActionBean implements Serializable {
         log.trace(logInitMsg + "--- ENTER --- ");
         try {
             DocumentModel currentDoc = navigationContext.getCurrentDocument();
-            DocumentModel destinationFolder = ContainerArchiveHelper.moveToWSRoot(
-                    currentDoc, documentManager);
-            ContainerArchiveHelper.navigateToArchivedFolder(destinationFolder,
-                    navigationContext, treeActions, contentViewActions);
+            ContainerArchiveHelper.moveToWSRoot(currentDoc, documentManager);
+            ContainerArchiveHelper.navigateToArchivedDoc(currentDoc,
+                    documentManager, navigationContext, treeActions,
+                    contentViewActions);
+
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR,

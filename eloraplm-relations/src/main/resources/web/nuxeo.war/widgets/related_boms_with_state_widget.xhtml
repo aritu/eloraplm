@@ -2,20 +2,40 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
     xmlns:fn="http://java.sun.com/jsp/jstl/functions">
-
+    
+    
+    
     <h:outputText value="#{messages['eloraplm.message.relations.moreThanOneBomRelated']}"
         rendered="#{fn:length(field_0) gt 1}" />
-        
+    
     <h:panelGroup rendered="#{fn:length(field_0) eq 1}">
-        <nxl:widget name="icon_reference_title" mode="view"
-            value="#{field_0[0]}" />
-        <h:outputText value=" "/>
-        <nxl:widget name="version_and_visualized_type" mode="view"
-            value="#{field_0[0]}" />
-        <h:outputText value=" "/>
-        <nxl:widget name="colored_short_lifecycle_state" mode="view"
-            value="#{field_0[0]}" />
+        
+        <h:panelGroup rendered="#{value[0].subjectInfo.documentVisible}">
+        
+            <nxu:set var="relatedBom" value="#{value[0].subjectInfo.documentModel}">
+            
+                <nxl:widget name="icon_reference_title" mode="view"
+                    value="#{relatedBom}" />
+                <h:outputText value=" "/>
+                <nxl:widget name="version_and_visualized_type" mode="view"
+                    value="#{relatedBom}" />
+                <h:outputText value=" "/>
+                <nxl:widget name="colored_short_lifecycle_state" mode="view"
+                    value="#{relatedBom}" />
+            
+            </nxu:set>
+        </h:panelGroup>
+        
+        <h:panelGroup rendered="#{not value[0].subjectInfo.documentVisible}">
+        
+            <h:graphicImage  value="/icons/relation_not_visible.png" style="vertical-align: middle; margin-right: 1em;" />
+            <h:outputText value="#{messages['label.relation.document.not.visible']}" />
+        
+        </h:panelGroup>
+
     </h:panelGroup>
+
     
 </ui:composition>

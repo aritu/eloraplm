@@ -21,6 +21,38 @@
       <schema name="elora_search" />
     </doctype>
     
+    <doctype extends="DefaultSearch" name="EloraBomProductsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
+    <doctype extends="DefaultSearch" name="EloraBomSpecificationsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
+    <doctype extends="DefaultSearch" name="EloraBomPackagingsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
+    <doctype extends="DefaultSearch" name="EloraBomToolsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
+    <doctype extends="DefaultSearch" name="EloraBomPartsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
+    <doctype extends="DefaultSearch" name="EloraCmEcosSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
+    <doctype extends="DefaultSearch" name="EloraProjectsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
+    <doctype extends="DefaultSearch" name="EloraQmDocsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
   </extension>
   
   <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
@@ -83,6 +115,150 @@
       <layouts mode="edit">
         <layout>heading</layout>
         <layout>elora_basic_documents_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraBomProductsSearch">
+      <label>EloraBomProductsSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraBomProductsSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_bom_products_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_bom_products_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraBomSpecificationsSearch">
+      <label>EloraBomSpecificationSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraBomSpecificationSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_bom_specifications_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_bom_specifications_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraBomPackagingsSearch">
+      <label>EloraBomPackagingSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraBomPackagingSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_bom_packagings_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_bom_packagings_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraBomToolsSearch">
+      <label>EloraBomToolSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraBomToolSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_bom_tools_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_bom_tools_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraBomPartsSearch">
+      <label>EloraBomPartSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraBomPartSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_bom_parts_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_bom_parts_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraCmEcosSearch">
+      <label>EloraCmEcoSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraCmEcoSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_cm_ecos_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_cm_ecos_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraProjectsSearch">
+      <label>EloraProjectSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraProjectSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_projects_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_projects_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraQmDocsSearch">
+      <label>EloraQmDocsSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraQmDocsSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_qm_documents_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_qm_documents_search_layout</layout>
       </layouts>
     </type>
     

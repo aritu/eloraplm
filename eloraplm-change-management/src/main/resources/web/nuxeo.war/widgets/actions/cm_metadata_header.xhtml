@@ -18,7 +18,17 @@
             
             
                 <p:row>
-                  <!-- State -->
+                    <!-- Priority -->
+                    <p:column>
+                        <h:outputLabel value="#{messages['label.widget.planning.priority']}" for="headerResponsible" />
+                    </p:column>
+                    <p:column>
+                        <h:graphicImage value="/icons/priority_#{currentDocument.plan.priority}_16.png"
+                            style="vertical-align: middle; margin-right: .5em;" rendered="#{not empty currentDocument.plan.priority}" />
+                        <nxl:widget id="headerResponsible" name="priority" value="#{currentDocument}" mode="view" />
+                    </p:column>
+                    
+                    <!-- LifeCycle State -->
                     <p:column styleClass="textAlignC">
                         <h:outputText value="#{messages[currentDocument.currentLifeCycleState]}"
                             styleClass="lifeCycleStateLabel filled" style="background-color: #{lifecycleActions.getLifeCycleStateColor(currentDocument.currentLifeCycleState)}"/>
@@ -55,21 +65,37 @@
                      <!-- Separator -->
                     <p:column rowspan="3" styleClass="headerSeparator"></p:column>
                     
-                    <p:column></p:column>
-                    
-                    <!-- last column -->
-                    <p:column rowspan="3" styleClass="headerThumbnail">  </p:column>
+                    <!-- Comments -->
+                    <p:column style="width: 40px;" styleClass="textAlignC">
+                        <h:panelGroup>
+                            <c:if test="#{fieldOrValue.hasFacet('Commentable')}">
+                                <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
+                                    <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
+                                      <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
+                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
+                                            <h:graphicImage value="/icons/comments.png" />
+                                            <h:outputText value="#{commentsCount}" />
+                                          </div>
+                                      </nxu:set>
+                                    </nxu:set>
+                                </nxu:set>
+                            </c:if>
+                        </h:panelGroup>
+                    </p:column>
                 </p:row>
 
 
                 <p:row>
-                    <!-- Priority -->
+                    <!-- Responsible -->
                     <p:column>
-                        <h:outputLabel value="#{messages['label.widget.planning.priority']}" for="headerResponsible" />
+                        <h:outputLabel value="#{messages['label.widget.responsible.responsible']}" for="headerResponsible" />
                     </p:column>
-                    <p:column>
-                        <nxl:widget id="headerResponsible" name="priority" value="#{currentDocument}" mode="view" />
+                    <p:column colspan="2">
+                        <nxl:widget id="headerResponsible" name="responsible" value="#{currentDocument}" mode="view" />
                     </p:column>
+                    
+                    <p:column></p:column>
+                   
                     
                     <!-- Last Contribution info -->
                     <p:column>
@@ -90,35 +116,18 @@
                             <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
                         </h:outputText>
                     </p:column>
+                    
+                    <p:column></p:column>
                    
-                    <!-- Comments -->
-                    <p:column style="width: 40px;" styleClass="textAlignC">
-                        <h:panelGroup>
-                            <c:if test="#{fieldOrValue.hasFacet('Commentable')}">
-                                <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
-                                    <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
-                                      <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
-                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
-                                            <h:graphicImage value="/icons/comments.png" />
-                                            <h:outputText value="#{commentsCount}" />
-                                          </div>
-                                      </nxu:set>
-                                    </nxu:set>
-                                </nxu:set>
-                            </c:if>
-                        </h:panelGroup>
-                    </p:column>
+                    
                 </p:row>
                 
                 
                 <p:row>
-                    <!-- Responsible -->
-                    <p:column>
-                        <h:outputLabel value="#{messages['label.widget.responsible.responsible']}" for="headerResponsible" />
-                    </p:column>
-                    <p:column>
-                        <nxl:widget id="headerResponsible" name="responsible" value="#{currentDocument}" mode="view" />
-                    </p:column>
+                    
+                    <p:column></p:column>
+                    <p:column colspan="2"></p:column>
+                    <p:column></p:column>
                     
                     <!-- Lock info -->
                     <c:if test="#{currentDocument.locked}">

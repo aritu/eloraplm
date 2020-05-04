@@ -58,6 +58,10 @@ public interface RelationNodeData extends NodeData {
 
     void setInverseViewerOrdering(Integer inverseViewerOrdering);
 
+    Boolean getIsManual();
+
+    void setIsManual(Boolean isManual);
+
     boolean getIsSpecial();
 
     boolean getIsDirect();

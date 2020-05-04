@@ -146,8 +146,9 @@ public class PdmActionBean implements Serializable {
                 throw new EloraException(e.getMessage());
 
             } catch (BomCharacteristicsValidatorException e) {
-                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                        "eloraplm.message.error.pdm.characteristicsRequired"),
+                facesMessages.add(StatusMessage.Severity.ERROR,
+                        messages.get(
+                                "eloraplm.message.error.pdm.characteristicsRequired"),
                         e.getDocument().getPropertyValue(
                                 EloraMetadataConstants.ELORA_ELO_REFERENCE),
                         e.getDocument().getTitle());
@@ -399,7 +400,8 @@ public class PdmActionBean implements Serializable {
                             stmtInfo.getQuantity(), stmtInfo.getOrdering(),
                             stmtInfo.getDirectorOrdering(),
                             stmtInfo.getViewerOrdering(),
-                            stmtInfo.getInverseViewerOrdering());
+                            stmtInfo.getInverseViewerOrdering(),
+                            stmtInfo.getIsManual());
 
                     log.trace(logInitMsg
                             + "Switched relation's object for document |"

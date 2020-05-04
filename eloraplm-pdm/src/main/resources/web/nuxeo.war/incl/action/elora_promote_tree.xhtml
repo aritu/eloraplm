@@ -22,7 +22,7 @@
         <h:form id="#{fancyboxFormId}">
           <h:panelGroup styleClass="content" layout="block">
             <h:selectOneMenu id="selectedPromoteOption" value="#{promoteTreeBean.selectedPromoteOption}" required="true">
-              <nxu:selectItems value="#{promoteTreeBean.promoteOptions}" var="item" itemValue="#{item.key}" itemLabel="#{item.value}"/>
+              <nxu:selectItems value="#{promoteTreeBean.promoteOptionsForEco}" var="item" itemValue="#{item.key}" itemLabel="#{item.value}"/>
             </h:selectOneMenu>
             <h:message for="selectedPromoteOption" class="errorMessage" />
           

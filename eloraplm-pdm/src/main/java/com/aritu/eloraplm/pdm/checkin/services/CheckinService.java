@@ -186,8 +186,12 @@ public class CheckinService implements CheckinManager {
     private String calculateNextVersionIncrement(
             EloraVersionLabelService versionLabelService, DocumentModel doc) {
 
-        long major = ((Long) doc.getPropertyValue(
-                VersioningService.MAJOR_VERSION_PROP)).longValue();
+        long major = 0;
+        if (doc.getPropertyValue(
+                VersioningService.MAJOR_VERSION_PROP) != null) {
+            major = ((Long) doc.getPropertyValue(
+                    VersioningService.MAJOR_VERSION_PROP)).longValue();
+        }
 
         String nextIncrement = "minor";
 

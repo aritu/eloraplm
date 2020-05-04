@@ -6,6 +6,6 @@
 
     <h:outputScript library="js" name="treetable_scripts.js" target="#{pageJsTarget}" />
 
-    <nxl:layout name="#{widget.properties.treetableLayout}" mode="#{widget.mode}" value="#{value}" />
+    <nxl:layout name="#{widget.properties.treetableLayout}" mode="#{widget.mode}" value="#{value}" reloadRerender="#{widget.properties.reloadRerender}" />
 
 </f:subview>

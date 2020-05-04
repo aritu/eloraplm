@@ -41,6 +41,10 @@ public class LifecyclesConfig {
 
     public static final List<String> releasedStatesList = initReleasedStatesList();
 
+    public static final EloraConfigTable notReleasedStatesConfig = initNotReleasedStatesConfig();
+
+    public static final List<String> notReleasedStatesList = initNotReleasedStatesList();
+
     public static final EloraConfigTable obsoleteStatesConfig = initObsoleteStatesConfig();
 
     public static final List<String> obsoleteStatesList = initObsoleteStatesList();
@@ -105,6 +109,35 @@ public class LifecyclesConfig {
 
         List<String> configList = Collections.unmodifiableList(
                 releasedStatesConfig.extractConfigTablePropertyValuesAsList(
+                        "id"));
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
+    }
+
+    private static EloraConfigTable initNotReleasedStatesConfig() {
+        String logInitMsg = "[initNotReleasedStatesConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = LifecyclesConfigHelper.getNotReleasedStatesConfig();
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initNotReleasedStatesList() {
+        String logInitMsg = "[initNotReleasedStatesList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = Collections.unmodifiableList(
+                notReleasedStatesConfig.extractConfigTablePropertyValuesAsList(
                         "id"));
 
         log.trace("********************************* EXIT FROM " + logInitMsg);

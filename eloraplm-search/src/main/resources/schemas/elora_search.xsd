@@ -30,10 +30,15 @@
   <xs:element name="system_mixinType" type="nxs:stringList"/>
   <xs:element name="search_partClassification" type="nxs:stringList"/>
   <xs:element name="search_productClassification" type="nxs:stringList"/>
+  <xs:element name="search_specificationClassification" type="nxs:stringList"/>
+  <xs:element name="search_packagingClassification" type="nxs:stringList"/>
+  <xs:element name="search_toolClassification" type="nxs:stringList"/>
   <xs:element name="search_responsible" type="nxs:stringList"/>
   <xs:element name="search_owner" type="nxs:stringList"/>
   <xs:element name="cad_cadType" type="nxs:stringList"/>
   <xs:element name="cad_cadClassification" type="nxs:stringList"/>
+  <xs:element name="cmeco_ecoType" type="nxs:stringList"/>
+  <xs:element name="prj_projectType" type="nxs:stringList"/>
   
   <!-- aggregates field-->
   <xs:element name="system_primaryType_agg" type="nxs:stringList"/>

@@ -8,32 +8,75 @@
     
     <nxu:set var="percentage" value="#{not empty field ? field : 0}">
         
-        <c:if test="#{nxl:isLikePlainMode(widget.mode)}">
-            <h:outputFormat value="#{messages['eloraplm.label.percentage']}">
-                <f:param value="#{percentage}" />
-            </h:outputFormat>
-        </c:if>
-    
-        <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
-            <nxu:set var="style" value="#{ percentage lt 20 ?
+        <nxu:set var="style" value="#{ percentage lt 10 ?
                 'lowest' : ( percentage lt 40 ?
-                'low' : ( percentage lt 60 ?
-                'medium' : ( percentage lt 80 ?
+                'low' : ( percentage lt 70 ?
+                'medium' : ( percentage lt 100 ?
                 'high' : 'highest' ) ) )}">
+            
+            <c:if test="#{nxl:isLikePlainMode(widget.mode)}">
+                <h:outputFormat value="#{messages['eloraplm.label.percentage']}">
+                    <f:param value="#{percentage}" />
+                </h:outputFormat>
+            </c:if>
+            
+            <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
                 <h:outputFormat value="#{messages['eloraplm.label.percentage']}" styleClass="percentageLabel #{style}">
                     <f:param value="#{percentage}" />
                 </h:outputFormat>
-            </nxu:set>
-        </c:if>
-        
-        <c:if test="#{widget.mode == 'edit'}">
-            <h:selectOneListbox size="1" id="percentage" value="#{field}">
-                <c:forEach begin="0" step="10" end="100" var="i">
-                    <f:selectItem itemValue="#{i}" itemLabel="#{nxu:translate('eloraplm.label.percentage', i)}" />
-                </c:forEach>
-            </h:selectOneListbox>
-            <h:message for="percentage" class="errorMessage" />
-        </c:if>
+            </c:if>
+            
+            <c:if test="#{widget.mode == 'edit'}">
+                <h:selectOneListbox size="1" id="percentage" value="#{field}" styleClass="percentageSelect #{style}">
+                    <c:forEach begin="0" step="10" end="100" var="i">
+                        <f:selectItem itemValue="#{i}" itemLabel="#{nxu:translate('eloraplm.label.percentage', i)}" />
+                    </c:forEach>
+                </h:selectOneListbox>
+                <h:message for="percentage" class="errorMessage" />
+                
+                
+                <script type="text/javascript">
+                    jQuery('select.percentageSelect').change(
+                        function() {
+                            switch(jQuery(this).val()) {
+                            case '0':
+                                jQuery(this).removeAttr('class');
+                                jQuery(this).addClass('percentageSelect');
+                                jQuery(this).addClass('lowest');
+                                break;
+                            case '10':
+                            case '20':
+                            case '30':
+                                jQuery(this).removeAttr('class');
+                                jQuery(this).addClass('percentageSelect');
+                                jQuery(this).addClass('low');
+                                break;
+                            case '40':
+                            case '50':
+                            case '60':
+                                jQuery(this).removeAttr('class');
+                                jQuery(this).addClass('percentageSelect');
+                                jQuery(this).addClass('medium');
+                                break;
+                            case '70':
+                            case '80':
+                            case '90':
+                                jQuery(this).removeAttr('class');
+                                jQuery(this).addClass('percentageSelect');
+                                jQuery(this).addClass('high');
+                                break;
+                            case '100':
+                                jQuery(this).removeAttr('class');
+                                jQuery(this).addClass('percentageSelect');
+                                jQuery(this).addClass('highest');
+                                break;
+                            }
+                        }
+                    );
+                </script>
+            </c:if>
+            
+        </nxu:set>
         
     </nxu:set>
     

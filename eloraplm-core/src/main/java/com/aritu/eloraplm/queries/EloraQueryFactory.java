@@ -91,12 +91,33 @@ public class EloraQueryFactory {
 
     }
 
+    // TODO Reference bilaketak beti izan behar dira case insensitive? (ILIKE
+    // erabilita)
     public static String getWcDocsByTypeAndReferenceQuery(String type,
             String reference) {
 
         String query = "SELECT * FROM " + type + " WHERE "
                 + NXQL.ECM_PRIMARYTYPE + " = '" + type + "' AND "
                 + EloraMetadataConstants.ELORA_ELO_REFERENCE + " = '"
+                + reference + "' " + " AND " + NXQL.ECM_ISVERSION + " = 0 AND "
+                + NXQL.ECM_ISPROXY + " = 0 ";
+
+        return query;
+    }
+
+    /**
+     * Case insensitive reference
+     *
+     * @param type
+     * @param reference
+     * @return
+     */
+    public static String getWcDocsByTypeAndIReferenceQuery(String type,
+            String reference) {
+
+        String query = "SELECT * FROM " + type + " WHERE "
+                + NXQL.ECM_PRIMARYTYPE + " = '" + type + "' AND "
+                + EloraMetadataConstants.ELORA_ELO_REFERENCE + " ILIKE '"
                 + reference + "' " + " AND " + NXQL.ECM_ISVERSION + " = 0 AND "
                 + NXQL.ECM_ISPROXY + " = 0 ";
 
@@ -194,23 +215,19 @@ public class EloraQueryFactory {
         return query;
     }
 
-    public static String getMajorReleasedOrObsoleteVersionQuery(String type,
+    public static String getNotReleasedDocListInMajorVersion(String type,
             String versionVersionableId, Long majorVersion) {
 
-        List<String> releasedAndObsoleteStates = new ArrayList<>(
-                LifecyclesConfig.releasedStatesList);
-        releasedAndObsoleteStates.addAll(LifecyclesConfig.obsoleteStatesList);
-        String releasedAndObsoleteStatesList = EloraQueryHelper.formatList(
-                releasedAndObsoleteStates);
+        String notReleasedStates = EloraQueryHelper.formatList(
+                LifecyclesConfig.notReleasedStatesList);
 
-        String query = String.format(
-                "SELECT * FROM %s WHERE " + NXQL.ECM_LIFECYCLESTATE
-                        + " IN (%s) AND "
-                        + NuxeoMetadataConstants.NX_UID_MAJOR_VERSION
-                        + " = %d AND " + NXQL.ECM_ISPROXY + " = 0 AND "
-                        + NXQL.ECM_VERSION_VERSIONABLEID + " = '%s' ",
-                type, releasedAndObsoleteStatesList, majorVersion,
-                versionVersionableId);
+        String query = String.format("SELECT * FROM %s WHERE "
+                + NXQL.ECM_LIFECYCLESTATE + " IN (%s) AND "
+                + NuxeoMetadataConstants.NX_UID_MAJOR_VERSION + " = %d AND "
+                + NXQL.ECM_ISPROXY + " = 0 AND "
+                + NXQL.ECM_VERSION_VERSIONABLEID + " = '%s' ORDER BY %s DESC",
+                type, notReleasedStates, majorVersion, versionVersionableId,
+                NuxeoMetadataConstants.NX_UID_MINOR_VERSION);
 
         return query;
     }
@@ -292,10 +309,12 @@ public class EloraQueryFactory {
             String versionVersionableId, Long majorVersion,
             boolean includeObsoletes, String sortOrder) {
 
-        String query = String.format("SELECT * FROM %s WHERE "
-                + NuxeoMetadataConstants.NX_UID_MAJOR_VERSION + " = %d AND "
-                + NXQL.ECM_VERSION_VERSIONABLEID + " = '%s' ", type,
-                majorVersion, versionVersionableId);
+        String query = String.format(
+                "SELECT * FROM %s WHERE "
+                        + NuxeoMetadataConstants.NX_UID_MAJOR_VERSION
+                        + " = %d AND " + NXQL.ECM_VERSION_VERSIONABLEID
+                        + " = '%s' AND " + NXQL.ECM_ISPROXY + "= 0 ",
+                type, majorVersion, versionVersionableId);
 
         if (!includeObsoletes) {
             String obsoleteStatesList = EloraQueryHelper.formatList(
@@ -318,7 +337,8 @@ public class EloraQueryFactory {
 
         String query = String.format(
                 "SELECT * FROM %s WHERE " + NXQL.ECM_VERSION_VERSIONABLEID
-                        + " = '%s' AND " + NXQL.ECM_ISVERSION + " = 1",
+                        + " = '%s' AND " + NXQL.ECM_ISPROXY + " = 0 AND "
+                        + NXQL.ECM_ISVERSION + " = 1",
                 type, versionVersionableId);
 
         if (!includeObsoletes) {
@@ -436,12 +456,32 @@ public class EloraQueryFactory {
     }
 
     /**
-     * Returns the list of proxies of the specified document.
+     * Returns the list of proxies of the specified document under the specified
+     * ancestor.
      *
+     * @param type document type
+     * @param uid document id
+     * @param ancestorId ancestor document id
+     * @return
+     */
+    public static String getDocProxiesQuery(String type, String uid,
+            String ancestorId) {
+
+        String query = "SELECT * FROM " + type + " WHERE " + NXQL.ECM_ISPROXY
+                + " = 1 AND " + NXQL.ECM_PROXY_TARGETID + " = '" + uid
+                + "' AND " + NXQL.ECM_ANCESTORID + " = '" + ancestorId + "'";
+
+        return query;
+    }
+
+    /**
+     * Returns the list of parents of the specified document's proxies.
+     *
+     * @param type document type
      * @param uid document id
      * @return
      */
-    public static String getDocProxiesQuery(String type, String uid) {
+    public static String getDocProxyParentsQuery(String type, String uid) {
 
         String query = "SELECT " + NXQL.ECM_PARENTID + " FROM " + type
                 + " WHERE " + NXQL.ECM_ISPROXY + " = 1 AND "
@@ -451,12 +491,14 @@ public class EloraQueryFactory {
     }
 
     /**
-     * Returns the list of proxies of the specified documents list.
+     * Returns the list of parents of the specified documents list proxies.
      *
+     * @param type document type
      * @param uids list of document ids
      * @return
      */
-    public static String getDocProxiesQuery(String type, List<String> uids) {
+    public static String getDocProxyParentsQuery(String type,
+            List<String> uids) {
 
         String uidList = EloraQueryHelper.formatList(uids);
 
@@ -768,6 +810,22 @@ public class EloraQueryFactory {
 
         return EloraQueryHelper.executeCountQuery(query, NXQL.ECM_UUID,
                 session);
+    }
+
+    public static String countDocumentContentByTypeList(CoreSession session,
+            String docId, List<String> lstTypes) {
+
+        String quotedTypeList = EloraQueryHelper.formatList(lstTypes);
+
+        String query = String.format(
+                "SELECT * FROM Document WHERE " + NXQL.ECM_PARENTID
+                        + " = '%s' AND " + NXQL.ECM_PRIMARYTYPE + " IN (%s)",
+                docId, quotedTypeList);
+
+        return query;
+
+        // return EloraQueryHelper.executeCountQuery(query, NXQL.ECM_UUID,
+        // session);
     }
 
     public static String getTaskStatusByTaskDocId(String taskDocId) {

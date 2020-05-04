@@ -22,6 +22,7 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.PartialViewContext;
 
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.model.TreeNode;
 
@@ -135,6 +136,30 @@ public final class EloraAjax {
             updateTreeTableRowChildCells(table, node, tableId, separator,
                     renderIds, cell);
 
+        }
+    }
+
+    public static void updateDataTableRow(DataTable table, String index) {
+        if (index == null || table.getRowCount() < 1) {
+            return;
+        }
+
+        updateDataTableRowCells(table, index);
+    }
+
+    private static void updateDataTableRowCells(DataTable table, String index) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String tableId = table.getClientId(context);
+        char separator = UINamingContainer.getSeparatorChar(context);
+        Collection<String> renderIds = getContext().getRenderIds();
+
+        for (UIComponent column : table.getChildren()) {
+            if (column instanceof UIColumn) {
+                for (UIComponent cell : column.getChildren()) {
+                    renderIds.add(format("%s%c%s%c%s", tableId, separator,
+                            index, separator, cell.getId()));
+                }
+            }
         }
     }
 

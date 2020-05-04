@@ -266,7 +266,8 @@ public abstract class AbstractRelationPdmBean implements Serializable {
         eloraDocumentRelationManager.addRelation(documentManager, subjectDoc,
                 objectDoc, predicateUri, nodeData.getComment(),
                 nodeData.getQuantity(), nodeData.getOrdering(),
-                nodeData.getDirectorOrdering(), nodeData.getViewerOrdering(), nodeData.getInverseViewerOrdering());
+                nodeData.getDirectorOrdering(), nodeData.getViewerOrdering(),
+                nodeData.getInverseViewerOrdering(), nodeData.getIsManual());
     }
 
 }

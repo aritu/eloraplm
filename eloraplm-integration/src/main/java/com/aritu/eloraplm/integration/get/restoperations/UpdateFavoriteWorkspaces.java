@@ -149,7 +149,7 @@ public class UpdateFavoriteWorkspaces {
             for (DocumentModel favorite : newFavorites) {
                 getWorkspacesResponse.addDocument(new GetWorkspacesResponseDoc(
                         favorite.getId(), favorite.getType(),
-                        EloraStructureHelper.getStructureRootUid(favorite,
+                        EloraStructureHelper.getEloraRootFolderUid(favorite,
                                 session),
                         favorite.getTitle(), true, favorite.getPathAsString()));
             }

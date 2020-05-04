@@ -12,5 +12,7 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-pdm-checkin-CheckinPubli
  ce-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-overwrite-ActionServi
  ce-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-promote-WebLayoutMana
  ger-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-webapp-ActionService
- -contrib.xml
+ -contrib.xml,OSGI-INF/extensions/eloraplm-pdm-makeobsolete-MakeObsole
+ teService-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-makeobsolete-W
+ ebLayoutManager-contrib.xml
 

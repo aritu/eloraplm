@@ -246,11 +246,13 @@
             </state>
             <state description="ECO is completed" name="completed">
               <transitions>
+                <transition>backToCreated</transition>
                 <transition>delete</transition>
               </transitions>
             </state>
             <state description="ECO is rejected" name="rejected">
               <transitions>
+                <transition>backToCreated</transition>
                 <transition>delete</transition>
               </transitions>
             </state>

@@ -30,7 +30,9 @@ public interface EloraStatementInfo extends StatementInfo {
     Integer getDirectorOrdering();
 
     Integer getViewerOrdering();
-    
+
     Integer getInverseViewerOrdering();
+
+    Boolean getIsManual();
 
 }

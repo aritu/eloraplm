@@ -82,19 +82,18 @@ public class CadCompositionNodeService extends RelationNodeService
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
             Integer viewerOrdering, Integer inverseViewerOrdering,
-            boolean isSpecial, boolean isDirect) {
+            Boolean isManual, boolean isSpecial, boolean isDirect) {
 
         CadRelationNodeData nodeData = new CadRelationNodeData(id, level, docId,
                 data, wcDoc, stmt, predicateUri, quantity, comment, ordering,
                 directorOrdering, viewerOrdering, inverseViewerOrdering,
-                isSpecial, isDirect);
+                isManual, isSpecial, isDirect);
 
         nodeData = loadRelatedItems(nodeData);
 
         boolean isBasedOn = (predicateUri != null
                 && predicateUri.equals(EloraRelationConstants.CAD_BASED_ON))
-                        ? true
-                        : false;
+                        ? true : false;
         nodeData.setIsBasedOn(isBasedOn);
 
         boolean isSuppressed = false;

@@ -1,7 +1,7 @@
 <ui:composition
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets">
-
-     #{workflowActions.getTaskStatus(field.id)}
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html">
+    <h:outputText value="#{workflowActions.getTaskStatus(field.id)}" converter="taskStatusConverter" escape="false" />
     
 </ui:composition>

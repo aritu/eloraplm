@@ -9,6 +9,10 @@ The Nuxeo Platform is an open source customizable and extensible content managem
 
 The Nuxeo Platform is developed and supported by Nuxeo, with contributions from the community.
 
+## Building EloraPLM
+
+To create EloraPLM package we have to build it as any other Nuxeo package, using the latest hotfix of Nuxeo Platform LTS 2015. In case you are not a Nuxeo subscriber, you will have to build the latest hotfix from source, following the process described here: https://doc.nuxeo.com/corg/compiling-nuxeo-from-sources/
+
 ## Licensing
 
 The code in EloraPLM is copyright Aritu S. Coop., and licensed under the GNU Lesser General Public License v2.1.

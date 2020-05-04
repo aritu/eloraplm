@@ -152,9 +152,21 @@ img.selectionActionsIndicator
     display: inline-block;
     float: left;
     text-align: left;
-    padding-top: 0.6em;
-    font-size: 1.1em;
+    padding-top: 0.1em;
+    font-size: 1.15em;
     color: #000;
+}
+
+.ui-treetable .ui-treetable-header .treeHeaderTitle img
+{
+    vertical-align: middle;
+}
+
+.ui-treetable .treeInfo
+{
+    color: #555;
+    font-weight: normal;
+    font-size: .9em;
 }
 
 .ui-treetable .ui-treetable-header .treeHeaderButtons

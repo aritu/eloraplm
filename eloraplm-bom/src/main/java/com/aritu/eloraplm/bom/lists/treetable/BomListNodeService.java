@@ -16,6 +16,8 @@ package com.aritu.eloraplm.bom.lists.treetable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -35,6 +37,7 @@ import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.relations.treetable.BaseRelationNodeData;
 import com.aritu.eloraplm.relations.treetable.RelationNodeData;
 import com.aritu.eloraplm.treetable.NodeManager;
@@ -44,6 +47,8 @@ import com.aritu.eloraplm.treetable.NodeManager;
  *
  */
 public class BomListNodeService implements NodeManager {
+
+    private static final Log log = LogFactory.getLog(BomListNodeService.class);
 
     public static final String TREE_DIRECTION_COMPOSITION = "Composition";
 
@@ -76,7 +81,8 @@ public class BomListNodeService implements NodeManager {
      * @see com.aritu.eloraplm.treetable.NodeService#getRoot(java.lang.Object)
      */
     @Override
-    public TreeNode getRoot(Object parentObject) throws EloraException {
+    public TreeNode getRoot(Object parentObject)
+            throws EloraException, DocumentUnreadableException {
 
         // TODO Hemen WC dala bakarrik gabitz konsideratzen!!!!!
 
@@ -106,9 +112,11 @@ public class BomListNodeService implements NodeManager {
      * @param nodeData
      * @return
      * @throws EloraException
+     * @throws DocumentUnreadableException
      */
     private TreeNode processTreeNode(TreeNode rootNode, TreeNode parentNode,
-            RelationNodeData nodeData, int level) throws EloraException {
+            RelationNodeData nodeData, int level)
+            throws EloraException, DocumentUnreadableException {
 
         TreeNode node = new DefaultTreeNode(nodeData, parentNode);
         // Set nodes initial expanded state
@@ -151,9 +159,11 @@ public class BomListNodeService implements NodeManager {
      * @param level
      * @return
      * @throws EloraException
+     * @throws DocumentUnreadableException
      */
     private List<RelationNodeData> getChildrenNodeData(
-            RelationNodeData nodeData, int level) throws EloraException {
+            RelationNodeData nodeData, int level)
+            throws EloraException, DocumentUnreadableException {
         List<RelationNodeData> childNodeList = new ArrayList<>();
         DocumentModel parentDoc = nodeData.getData();
 
@@ -199,6 +209,15 @@ public class BomListNodeService implements NodeManager {
                             childDoc = EloraDocumentHelper.getDocumentModel(
                                     relationManager, session,
                                     stmt.getSubject());
+                        }
+
+                        if (childDoc == null) {
+                            log.trace(
+                                    "Throw DocumentUnreadableException since childDoc is null. stmt = |"
+                                            + stmt.toString() + "|");
+                            throw new DocumentUnreadableException(
+                                    "Error getting document from statement |"
+                                            + stmt.toString() + "|");
                         }
 
                         String quantity = stmtInfo.getQuantity();

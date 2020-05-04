@@ -48,7 +48,7 @@
       <dataFile>directories/eloras_caddocuments_doctype.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
-
+    
     <directory name="eloras_cadDocuments_lifeCycle">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
@@ -80,6 +80,65 @@
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
       <dataFile>directories/eloras_basicdocuments_lifecycle.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <!--  BOMs search related vocabularies -->
+    <directory name="eloras_boms_lifeCycle">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_boms_lifecycle</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_boms_lifecycle.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <!--  CM search related vocabularies -->
+    <directory name="eloras_ecos_lifeCycle">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_ecos_lifecycle</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_ecos_lifecycle.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <!--  Projects search related vocabularies -->
+    <directory name="eloras_projects_lifeCycle">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_projects_lifecycle</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_projects_lifecycle.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <!--  QM documents search related vocabularies -->
+    <directory name="eloras_qmDocuments_docType">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_qmDocuments_docType</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_qmdocuments_doctype.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="eloras_qmDocuments_lifeCycle">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_qmdocuments_lifecycle</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_qmdocuments_lifecycle.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
 

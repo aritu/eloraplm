@@ -289,10 +289,16 @@ table.treetable tbody td.ellipsisWhenOverflow
 
 .iconColumn img.proxyBadge
 {
+    display: inline-block;
     position: relative;
     margin-left: -16px;
-    left: 4px;
+    left: 8px;
     top: 3px;
+}
+
+.iconColumn .documentIcon
+{
+    display: inline-block;
 }
 
 
@@ -390,6 +396,10 @@ table.treetable tbody td.ellipsisWhenOverflow
     display: initial;
 }
 */
+
+html.nx-page input.button.disabled[type="submit"]:disabled {
+    display: initial;
+}
 
 .suppressedRelation
 {
@@ -495,6 +505,7 @@ table.treetable tbody td.ellipsisWhenOverflow
 }
 
 /* Colored percentage */
+
 .percentageLabel
 {
     border-radius: 3px;
@@ -510,164 +521,98 @@ table.treetable tbody td.ellipsisWhenOverflow
     color: #000;
 }
 
-.percentageLabel.lowest
+table.dataTable .percentageLabel
 {
-    background-color: #f88;
-    color: #600;
-}
-
-.percentageLabel.low
-{
-    background-color: #fa8;
-    color: #820;
-}
-
-.percentageLabel.medium
-{
-    background-color: #fe8;
-    color: #440;
-}
-
-.percentageLabel.high
-{
-    background-color: #de8;
-    color: #240;
-}
-.percentageLabel.highest
-{
-    background-color: #ae8;
-    color: #040;
-}
-
-/* PF DataTables */
-.ui-datatable table.datatable
-{
+    display: inline-block;
     width: 100%;
+    text-align: center;
 }
 
-.ui-datatable table.datatable,
-.ui-datatable table.datatable tbody,
-.ui-datatable table.datatable tbody tr
+.percentageLabel.lowest,
+.percentageSelect.lowest
 {
-    border: 1px solid #e6e9ef;
+    background-color: #faa;
+    color: #600;
+    border: 1px solid #d88;
+    /* background: linear-gradient(to left, #d66, #faa); */
 }
 
-.ui-datatable table.datatable tbody td
+.percentageLabel.low,
+.percentageSelect.low
 {
-    border-width: 1px 0;
-    border-color: #e6e9ef;
-    border-style: solid;
-    white-space: normal;
+    background-color: #fca;
+    color: #820;
+    border: 1px solid #da8;
+    /* background: linear-gradient(to left, #ea6, #fca); */
 }
 
-.ui-datatable
+.percentageLabel.medium,
+.percentageSelect.medium
 {
-    font-size: 0.9em;
+    background-color: #ffb;
+    color: #440;
+    border: 1px solid #dd9;
+    /* background: linear-gradient(to left, #ed8, #ffa); */
 }
 
-.ui-datatable-smallFont
+.percentageLabel.high,
+.percentageSelect.high
 {
-    font-size: 0.8em;
+    background-color: #efb;
+    color: #240;
+    border: 1px solid #cd9;
+    /* background: linear-gradient(to left, #de8, #ffb); */
 }
 
-.ui-datatable tr > td
+.percentageLabel.highest,
+.percentageSelect.highest
+{
+    background-color: #dfa;
+    color: #040;
+    /* background: linear-gradient(to left, #ae8, #dfa); */
+    border: 1px solid #040;
+    font-weight: bold;
+}
+
+/* Project phases row styles */
+
+.ui-datatable table.datatable tr.rowphase
+{
+    border-bottom: 2px solid #ddd;
+}
+.ui-datatable tr.rowphase > td
 {
     background-color: transparent;
-    padding: 0.7em 0.6em 0.7em 0.7em;
 }
-
-.ui-datatable tr.ui-state-hover,
-.ui-datatable tr.ui-widget-content.ui-state-hover
+.ui-datatable tr.rowsubphase > td
 {
-    background-color: #eee;
-    box-shadow: none;
+    background-color: #fafafa;
 }
-
-.ui-datatable tr.ui-state-highlight,
-.ui-datatable tr.ui-widget-content.ui-state-highlight
+.ui-datatable tr.rowgate > td
 {
-    color: initial;
-    background: unset;
-    text-shadow: unset;
-    border-color: #5cf;
+    background-color: #fffaf0;
 }
 
-/*
-.ui-datatable tr.ui-state-highlight > td:last-child,
-.ui-datatable .ui-widget-content tr.ui-state-highlight > td:last-child,
-.ui-datatable .ui-widget-header tr.ui-state-highlight > td:last-child
+.ui-datatable td .required-deliverables-empty
 {
-    background-image: url(/nuxeo/icons/badge_selected_row_12.png);
-    background-position: 12px center;
-    background-repeat: no-repeat;
-    background-color: #5cf;
-    color: transparent;
+    background-color: #fad;
+    padding: 7px;
+    border-radius: 50%;
 }
-*/
 
-.ui-datatable tr.ui-state-highlight > td,
-.ui-datatable tr.ui-widget-content.ui-state-highlight > td
+.ui-datatable td .required-deliverables-added
 {
-    border-color: #5cf;
-    border-width: 2px 0;
+    background-color: #afd;
+    padding: 7px;
+    border-radius: 50%;
 }
 
-.ui-datatable tr.ui-state-highlight > td:first-child,
-.ui-datatable tr.ui-widget-content.ui-state-highlight > td:first-child
-{
-    border-left-width: 2px;
+.eloraFancyBoxTable {
+    border-collapse: separate;
+    border-spacing: 0px 20px;
 }
 
-.ui-datatable .ui-widget-header.ui-datatable-header
-{
-    background-image: none;
-    background-color: #f8f9fb;
-    border: 1px solid #e6e9ef;
-    border-bottom: none;
-    text-align: left;
-    padding-top: 0.6em;
-    font-size: 1.1em;
-    color: #000;
+#fancybox-content .eloraFancyBoxTable .labelColumn {
+  width: 12em;
+  white-space:nowrap;
 }
-
-.ui-datatable .ui-state-default
-{
-    background-image: none;
-    background-color: #f8f9fb;
-    border: 1px solid #e6e9ef;
-    color: #000;
-}
-
-.ui-datatable thead th
-{
-    text-align: left;
-}
-
-.nx-page table.datatable tbody tr:hover
-{
-    background-color: #f8f9fb;
-}
-
-.ui-datatable tr.ui-datatable-even,
-.ui-datatable tr.ui-datatable-odd {
-    background-color: #fff;
-}
-
-
-.ui-datatable tr.ui-state-highlight > td.selectColumn,
-.ui-datatable .ui-widget-content tr.ui-state-highlight > td.selectColumn,
-.ui-datatable .ui-widget-header tr.ui-state-highlight > td.selectColumn
-{
-    background-image: url(/nuxeo/icons/badge_selected_row_12.png);
-    background-position: 12px center;
-    background-repeat: no-repeat;
-    background-color: #5cf;
-    color: transparent;
-}
-
-.ui-datatable th.selectColumn,
-.ui-datatable td.selectColumn
-{
-    width: 35px;
-}
-/***/

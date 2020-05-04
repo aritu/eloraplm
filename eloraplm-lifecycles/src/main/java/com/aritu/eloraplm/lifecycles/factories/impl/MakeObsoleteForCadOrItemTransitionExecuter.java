@@ -19,35 +19,29 @@ import java.util.List;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.util.SeamComponentCallHelper;
 
-import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
 
 /**
  * @author aritu
  *
  */
+
 public class MakeObsoleteForCadOrItemTransitionExecuter
         implements TransitionExecuter {
 
     @Override
     public String getPreviousScreen() {
-        return "/incl/action/tree_promote_wrapper.xhtml";
+        return "/incl/action/make_obsolete_tree.xhtml";
     }
 
     @Override
     public void init(DocumentModel doc) {
-
-        List<Object> params = new ArrayList<Object>();
-        params.add(EloraLifeCycleConstants.TRANS_OBSOLETE);
-        params.add(doc);
-        SeamComponentCallHelper.callSeamComponentByName("promoteTreeBean",
-                "setTransitionAndCreateRoot", params.toArray());
     }
 
     @Override
     public boolean canBeExecuted() {
         Object reply = SeamComponentCallHelper.callSeamComponentByName(
-                "promoteTreeBean", "getAllOK",
+                "makeObsoleteTreeBean", "canBeExecuted",
                 new ArrayList<Object>().toArray());
         return (boolean) reply;
     }
@@ -60,8 +54,15 @@ public class MakeObsoleteForCadOrItemTransitionExecuter
 
     @Override
     public void execute(DocumentModel doc) {
-        SeamComponentCallHelper.callSeamComponentByName("promoteTreeBean",
-                "runPromote", new ArrayList<Object>().toArray());
+        try {
+
+            SeamComponentCallHelper.callSeamComponentByName(
+                    "makeObsoleteTreeBean", "makeObsolete",
+                    new ArrayList<Object>().toArray());
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override

@@ -323,37 +323,28 @@ public class EloraDocumentHelper {
         return releasedDoc;
     }
 
-    public static DocumentModel getMajorReleasedOrObsoleteVersion(
+    public static DocumentModelList getNotReleasedDocListInMajorVersion(
             DocumentModel doc) throws EloraException {
 
-        DocumentModel releasedDoc = null;
         Long majorVersion = (Long) doc.getPropertyValue(
                 NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
 
-        if (LifecyclesConfig.releasedStatesList.isEmpty()) {
+        // We guess there is at least one not released state in configuration.
+        // If not it will crash
+        if (LifecyclesConfig.notReleasedStatesList.isEmpty()) {
             throw new EloraException(
-                    "There must be at least one released state in configuration");
-        }
-        if (LifecyclesConfig.obsoleteStatesList.isEmpty()) {
-            throw new EloraException(
-                    "There must be at least one obsolete state in configuration");
+                    "There must be at least one not released state in configuration");
         }
 
         CoreSession session = doc.getCoreSession();
         String versionVersionableId = session.getWorkingCopy(
                 doc.getRef()).getId();
-        String query = EloraQueryFactory.getMajorReleasedOrObsoleteVersionQuery(
+        String query = EloraQueryFactory.getNotReleasedDocListInMajorVersion(
                 doc.getType(), versionVersionableId, majorVersion);
 
-        DocumentModelList releasedDocs = session.query(query);
-        if (releasedDocs.size() > 1) {
-            throw new EloraException(
-                    "There are multiple released docs in the same major version");
-        }
-        if (releasedDocs.size() > 0) {
-            releasedDoc = releasedDocs.get(0);
-        }
-        return releasedDoc;
+        DocumentModelList notReleasedDocs = session.query(query);
+
+        return notReleasedDocs;
     }
 
     public static QNameResource getDocumentResource(
@@ -1054,11 +1045,23 @@ public class EloraDocumentHelper {
     }
 
     public static void copyProperties(DocumentModel from, DocumentModel to) {
-        copyProperties(from, to, null);
+        copyProperties(from, to, null, false);
+    }
+
+    public static void copyProperties(DocumentModel from, DocumentModel to,
+            boolean excludeEmptyProperties) {
+        copyProperties(from, to, null, excludeEmptyProperties);
     }
 
     public static void copyProperties(DocumentModel from, DocumentModel to,
             Map<String, List<String>> excludedProperties) {
+        copyProperties(from, to, excludedProperties, false);
+
+    }
+
+    public static void copyProperties(DocumentModel from, DocumentModel to,
+            Map<String, List<String>> excludedProperties,
+            boolean excludeEmptyProperties) {
 
         for (String schema : to.getSchemas()) {
             // TODO: En un futuro ver la forma de evitar los schemas que no nos
@@ -1071,6 +1074,46 @@ public class EloraDocumentHelper {
                 // We create a shallow copy so we don't alter the "from" doc
                 Map<String, Object> schemaProps = new HashMap<String, Object>(
                         from.getProperties(schema));
+
+                if (excludeEmptyProperties) {
+                    for (Map.Entry<String, Object> schemaProp : schemaProps.entrySet()) {
+                        boolean isEmpty = false;
+
+                        Object schemaPropValueObject = schemaProp.getValue();
+                        if (schemaPropValueObject == null) {
+                            isEmpty = true;
+                        } else if (schemaPropValueObject instanceof List) {
+                            Object[] schemaPropValueArray = ((List<?>) schemaPropValueObject).toArray();
+                            if (schemaPropValueArray.length == 0) {
+                                isEmpty = true;
+                            }
+                        } else if (schemaPropValueObject instanceof Long) {
+                            long longValue = ((Long) schemaPropValueObject).longValue();
+                            if (longValue == 0) {
+                                isEmpty = true;
+                            }
+                        }
+                        if (isEmpty) {
+                            if (excludedProperties == null) {
+                                excludedProperties = new HashMap<String, List<String>>();
+                                List<String> excludedMetadataList = new ArrayList<String>();
+                                excludedMetadataList.add(schemaProp.getKey());
+                                excludedProperties.put(schema,
+                                        excludedMetadataList);
+                            } else if (!excludedProperties.containsKey(schema)
+                                    || excludedProperties.get(schema) == null) {
+                                List<String> excludedMetadataList = new ArrayList<String>();
+                                excludedMetadataList.add(schemaProp.getKey());
+                                excludedProperties.put(schema,
+                                        excludedMetadataList);
+                            } else if (!excludedProperties.get(schema).contains(
+                                    schemaProp.getKey())) {
+                                excludedProperties.get(schema).add(
+                                        schemaProp.getKey());
+                            }
+                        }
+                    }
+                }
 
                 if (excludedProperties != null
                         && !excludedProperties.isEmpty()) {

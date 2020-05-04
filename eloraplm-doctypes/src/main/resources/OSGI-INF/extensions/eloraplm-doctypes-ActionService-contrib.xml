@@ -1,95 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.doctypes.ActionService.contrib">
-  <require>org.nuxeo.ecm.platform.actions</require>
-  
-  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
-
-    <filter id="create" append="true">
-      <rule grant="true">
-        <permission>AddChildren</permission>
-        <type>Domain</type>
-        <type>WorkspaceRoot</type>
-        <type>FolderCadPart</type>
-        <type>FolderCadAssembly</type>
-        <type>FolderCadDrawing</type>
-        <type>FolderOtherDoc</type>
-        <type>Project</type>
-        <type>AdminRoot</type>
-        <type>DocumentationRoot</type>
-      </rule>
-    </filter>
+    <require>org.nuxeo.ecm.platform.actions</require>
     
-    <filter id="importFile" append="true">
-      <rule grant="true">
-        <permission>AddChildren</permission>
-        <type>Domain</type>
-        <type>WorkspaceRoot</type>
-        <type>FolderCadPart</type>
-        <type>FolderCadAssembly</type>
-        <type>FolderCadDrawing</type>
-        <type>FolderOtherDoc</type>
-        <type>Project</type>
-      </rule>
-    </filter>
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <filter id="create" append="true">
+            <rule grant="true">
+                <permission>AddChildren</permission>
+                <type>Domain</type>
+                <type>WorkspaceRoot</type>
+                <type>FolderCadPart</type>
+                <type>FolderCadAssembly</type>
+                <type>FolderCadDrawing</type>
+                <type>FolderOtherDoc</type>
+                <type>Project</type>
+                <type>AdminRoot</type>
+                <type>DocumentationRoot</type>
+            </rule>
+        </filter>
+        
+        <filter id="importFile" append="true">
+            <rule grant="true">
+                <permission>AddChildren</permission>
+                <type>Domain</type>
+                <type>WorkspaceRoot</type>
+                <type>FolderCadPart</type>
+                <type>FolderCadAssembly</type>
+                <type>FolderCadDrawing</type>
+                <type>FolderOtherDoc</type>
+                <type>Project</type>
+            </rule>
+        </filter>
+        
+        <filter id="isNormalDocument">
+            <rule grant="true">
+                <type>File</type>
+                <type>Note</type>
+                <type>Audio</type>
+                <type>Video</type>
+                <type>Picture</type>
+            </rule>
+        </filter>
+        
+        <filter id="isCadDocument">
+            <rule grant="true">
+                <facet>CadDocument</facet>
+            </rule>
+        </filter>
+        
+        <filter id="isNotCadDocument">
+            <rule grant="false">
+                <facet>CadDocument</facet>
+            </rule>
+        </filter>
+        
+        <filter id="isNotCadDesignTable">
+            <rule grant="false">
+                <type>CadDesignTable</type>
+            </rule>
+        </filter>
+        <filter id="isNotSpecial">
+            <rule grant="false">
+              <type>CadDrawing</type>
+            </rule>
+        </filter>
+        
+        <filter id="isCheckedOut">
+            <rule grant="false"> 
+                <condition>#{not currentDocument.isCheckedOut()}</condition>
+            </rule>
+        </filter>
+        
+        <filter id="isNotCheckedOut">
+            <rule grant="false">
+                <condition>#{currentDocument.isCheckedOut()}</condition>
+            </rule>
+        </filter>
+        
+        <filter id="isLocked">
+            <rule grant="false">
+                <condition>#{not currentDocument.locked}</condition>
+            </rule>
+        </filter>
+        
+        <filter id="isNotLocked">
+            <rule grant="false">
+                <condition>#{currentDocument.locked}</condition>
+            </rule>
+        </filter>
+        
+        <filter id="projectPhasesTableButtons">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_PROJECT_PHASES'}</condition>
+            </rule>
+        </filter>
+        
+    </extension>
     
-    <filter id="isNormalDocument">
-        <rule grant="true">
-            <type>File</type>
-            <type>Note</type>
-            <type>Audio</type>
-            <type>Video</type>
-            <type>Picture</type>
-        </rule>
-    </filter>
     
-    <filter id="isCadDocument">
-        <rule grant="true">
-            <facet>CadDocument</facet>
-        </rule>
-    </filter>
-
-    <filter id="isNotCadDocument">
-        <rule grant="false">
-            <facet>CadDocument</facet>
-        </rule>
-    </filter>
-
-    <filter id="isNotCadDesignTable">
-        <rule grant="false">
-            <type>CadDesignTable</type>
-        </rule>
-    </filter>
-    <filter id="isNotSpecial">
-        <rule grant="false">
-          <type>CadDrawing</type>
-        </rule>
-    </filter>
-
-    <filter id="isCheckedOut">
-        <rule grant="false"> 
-            <condition>#{not currentDocument.isCheckedOut()}</condition>
-        </rule>
-    </filter>
+    <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <action id="TAB_PROJECT_PHASES" link="/incl/tabs/project_phases.xhtml"
+            order="25" label="eloraplm.label.project.phases" type="rest_document_link">
+            <filter id="filter@projectPhasesTab">
+                <rule grant="true">
+                    <type>Project</type>
+                </rule>
+            </filter>
+            <category>VIEW_ACTION_LIST</category>
+        </action>
+        
+        <!-- Datatable buttons -->
+        
+        <action id="BtnAddProjectPhase" order="20" label="eloraplm.command.project.phase.add" type="fancybox" icon="">
+          <category>DATATABLE_BUTTON</category>
+          <filter-id>projectPhasesTableButtons</filter-id>
+          <properties>
+            <property name="include">/incl/action/add_project_phase.xhtml</property>
+            <property name="ajaxSupport">true</property>
+            <property name="styleClass">button</property>
+          </properties>
+        </action>
+        
+        <action id="BtnSaveProjectPhases" order="30" label="command.save" type="link" link="#{projectPhasesTableBean.save()}" icon="">
+          <category>DATATABLE_BUTTON</category>
+          <filter-id>projectPhasesTableButtons</filter-id>
+          <properties>
+            <property name="ajaxSupport">true</property>
+            <property name="styleClass">button mainAction</property>
+          </properties>
+        </action>
+        
+    </extension>
     
-    <filter id="isNotCheckedOut">
-        <rule grant="false">
-            <condition>#{currentDocument.isCheckedOut()}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="isLocked">
-        <rule grant="false">
-            <condition>#{not currentDocument.locked}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="isNotLocked">
-        <rule grant="false">
-            <condition>#{currentDocument.locked}</condition>
-        </rule>
-    </filter>
-    
-  </extension>
-  
 </component> 

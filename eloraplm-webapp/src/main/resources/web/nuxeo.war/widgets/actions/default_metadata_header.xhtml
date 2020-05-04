@@ -157,10 +157,7 @@
                           <label for="related_boms">#{messages['eloraplm.label.header.bom']}</label>
                         </p:column>
                         <p:column colspan="3">
-                          <nxu:set var="relatedBoms" value="#{eloraRelationActions.getCurrentDocumentRelatedBoms()}" cache="true">
-                            <nxl:widget id="related_boms" name="related_boms" mode="view" 
-                              value="#{relatedBoms}" />
-                          </nxu:set>
+                          <nxl:widget id="related_boms" name="related_boms" mode="view" value="#{relatedBomStatements}" />
                         </p:column>
                       </c:otherwise>
                     </c:choose>

@@ -16,6 +16,7 @@ package com.aritu.eloraplm.treetable;
 import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 
 /**
  * @author aritu
@@ -25,9 +26,12 @@ public interface NodeManager {
     /**
      * Receives the parent document, and returns all the TreeNode structure
      *
-     * @param parentDoc
+     * @param parentObject
      * @return
+     * @throws EloraException
+     * @throws DocumentUnreadableException
      */
-    TreeNode getRoot(Object parentObject) throws EloraException;
+    TreeNode getRoot(Object parentObject)
+            throws EloraException, DocumentUnreadableException;
 
 }

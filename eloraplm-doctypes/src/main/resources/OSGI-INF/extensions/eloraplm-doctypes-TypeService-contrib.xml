@@ -62,6 +62,7 @@
             <schema name="related_manufacturer" />
             <schema name="responsible" />
         </facet>
+        <facet name="EloraRootFolder"/>
         <facet name="EloraStruct" />
         
         <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet -->
@@ -124,18 +125,21 @@
             <facet name="SuperSpace" />
             <facet name="Orderable" />
             <facet name="EloraStruct" />
+            <facet name="EloraRootFolder"/>
             <facet name="WorkableDomainChild" />
         </doctype>
         <doctype extends="Folder" name="CollaborationRoot">
             <facet name="SuperSpace" />
             <facet name="Orderable" />
             <facet name="EloraStruct" />
+            <facet name="EloraRootFolder"/>
             <facet name="WorkableDomainChild" />
         </doctype>
         <doctype extends="Folder" name="LibraryRoot">
             <facet name="SuperSpace" />
             <facet name="Orderable" />
             <facet name="EloraStruct" />
+            <facet name="EloraRootFolder"/>
         </doctype>
         <doctype extends="WorkspaceRoot" name="StructArchived">
             <facet name="EloraStruct" />
@@ -164,7 +168,7 @@
         <doctype extends="Folder" name="StructEbom">
             <facet name="EloraStruct" />
         </doctype>
-        <doctype extends="Folder" name="Project">
+        <doctype extends="OrderedFolder" name="Project">
             <schema name="elora_object" />
             <schema name="planning" />
             <schema name="project" />
@@ -183,15 +187,33 @@
         <doctype extends="Folder" name="AdminRoot">
             <facet name="SuperSpace" />
             <facet name="EloraStruct" />
+            <facet name="EloraRootFolder"/>
         </doctype>
         <doctype extends="Folder" name="DocumentationRoot">
             <facet name="SuperSpace" />
             <facet name="Orderable" />
             <facet name="EloraStruct" />
+            <facet name="EloraRootFolder"/>
         </doctype>
     </extension>
     
     <extension point="types" target="org.nuxeo.ecm.platform.types.TypeService">
+        
+        <!--  create documents from template ### BEGIN ### -->
+        <type id="TemplateRoot">
+          <subtypes>
+            <type>File</type>
+            <type>Project</type>
+            <type>CmPr</type>
+            <type>CmEcr</type>
+            <type>CmEco</type>
+            <type>ProductValidation</type>
+            <type>ProductVerification</type>
+            <type>ProductionProcessValidation</type>
+            <type>ProductionPartApprovalProcess</type>
+          </subtypes>
+        </type>
+        <!--  create documents from template ### END ### -->
         
         <type id="Domain">
             <icon>/icons/domain_16.gif</icon>
@@ -214,6 +236,7 @@
         <type id="Workspace">
             <icon>/icons/workspace_16.gif</icon>
             <bigIcon>/icons/workspace_100.png</bigIcon>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="any">
                 <layout>elora_object</layout>
                 <layout>heading</layout>
@@ -250,6 +273,7 @@
         <type id="File">
             <icon>/icons/file_16.gif</icon>
             <bigIcon>/icons/file_100.png</bigIcon>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="any">
                 <layout>elora_object</layout>
                 <layout>heading</layout>
@@ -722,17 +746,19 @@
             <category>Collaborative</category>
             <description>Project.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>project_type</layout>
-                <layout>planning_all_dates</layout>
+                <layout>planning_dates</layout>
                 <layout>partaker</layout>
-                <layout>projectPhases</layout>
+                <layout>product_classification</layout>
             </layouts>
             <layouts mode="edit">
                 <layout>elora_object_reference_required</layout>
                 <layout>heading</layout>
                 <layout>project_edit</layout>
                 <layout>partaker</layout>
+                <layout>product_classification</layout>
                 <layout>subjects</layout>
                 <layout>rights</layout>
                 <layout>expired</layout>
@@ -742,13 +768,13 @@
                 <layout>heading</layout>
                 <layout>project_edit</layout>
                 <layout>partaker</layout>
-                <layout>projectPhases</layout>
+                <layout>product_classification</layout>
                 <layout>subjects</layout>
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>document_content</contentView>
+                <contentView>orderable_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">

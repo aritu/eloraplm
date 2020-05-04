@@ -17,6 +17,8 @@ import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
 
@@ -29,7 +31,9 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.convert.api.ConversionService;
 import org.nuxeo.ecm.core.convert.api.ConverterNotRegistered;
@@ -113,10 +117,24 @@ public class EloraWebActionsBean implements Serializable {
     }
 
     public DocumentModel getDocument(DocumentRef docRef) {
+        String logInitMsg = "[getDocument] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
         if (docRef == null) {
             return null;
         }
-        DocumentModel docM = documentManager.getDocument(docRef);
+        DocumentModel docM = null;
+        try {
+
+            docM = documentManager.getDocument(docRef);
+
+        } catch (DocumentNotFoundException | DocumentSecurityException e) {
+            log.error(logInitMsg + "Document with docRef = |" + docRef
+                    + "| cannot be retrieved. It does not exist any more or the user has no permission to read it. Exception message = |"
+                    + e.getMessage() + "|");
+
+            return null;
+        }
 
         return docM;
     }
@@ -269,5 +287,17 @@ public class EloraWebActionsBean implements Serializable {
             return false;
         }
 
+    }
+
+    public Map<Object, Object> getEloraPlmProperties() {
+        Properties props = Framework.getProperties();
+        Map<Object, Object> eloraProps = new TreeMap<Object, Object>();
+        props.forEach((key, value) -> {
+            if (key.toString().startsWith("com.aritu.eloraplm.")) {
+                eloraProps.put(key, value);
+            }
+        });
+
+        return eloraProps;
     }
 }

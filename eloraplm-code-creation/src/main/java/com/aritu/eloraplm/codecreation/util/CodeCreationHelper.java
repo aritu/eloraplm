@@ -53,11 +53,25 @@ public class CodeCreationHelper {
      * @throws Exception
      */
     public static String createCode(DocumentModel doc, String username)
-            throws Exception {
+            throws EloraException {
+
+        return createCode(doc.getType(), username);
+    }
+
+    /**
+     * Create the code automatically
+     *
+     * @param doctype
+     * @param username
+     * @return
+     * @throws Exception
+     */
+    public static String createCode(String doctype, String username)
+            throws EloraException {
 
         String logInitMsg = "[createCode] [" + username + "] ";
 
-        CodeCreationInfo cci = getCodeCreationInfoForDoctype(doc.getType());
+        CodeCreationInfo cci = getCodeCreationInfoForDoctype(doctype);
         int nextValue = incrementAndReturnNextValue(cci.getSequenceKey());
         String code = buildCode(cci, nextValue);
         log.trace(logInitMsg + "Code created for new document: |" + code + "|");

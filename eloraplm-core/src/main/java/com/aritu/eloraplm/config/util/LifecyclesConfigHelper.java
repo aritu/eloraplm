@@ -44,6 +44,19 @@ public class LifecyclesConfigHelper {
     }
 
     /**
+     * Returns the NOT RELEASED states configurationn, ignoring the obsolete
+     * items.
+     *
+     * @return
+     * @throws EloraException
+     */
+    public static EloraConfigTable getNotReleasedStatesConfig()
+            throws EloraException {
+        return getStatesConfig(EloraLifeCycleConstants.STATUS_NOT_RELEASED,
+                false);
+    }
+
+    /**
      * Returns OBSOLETE states configuration, ignoring the obsolete items.
      *
      * @return

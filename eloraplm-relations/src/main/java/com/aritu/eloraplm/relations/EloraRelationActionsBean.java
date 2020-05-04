@@ -70,7 +70,8 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     protected static boolean includeStatementsInEvents = false;
 
-    // statements lists
+    // Outgoing
+
     protected List<Statement> outgoingBomDocumentStatements;
 
     protected List<StatementInfo> outgoingBomDocumentStatementsInfo;
@@ -87,6 +88,12 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     protected List<StatementInfo> outgoingBomHasBomStatementsInfo;
 
+    protected List<Statement> outgoingCustomerProductStatements;
+
+    protected List<StatementInfo> outgoingCustomerProductStatementsInfo;
+
+    // Incoming
+
     protected List<Statement> incomingBomDocumentStatements;
 
     protected List<StatementInfo> incomingBomDocumentStatementsInfo;
@@ -98,6 +105,15 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
     protected List<Statement> incomingBomHasBomStatements;
 
     protected List<StatementInfo> incomingBomHasBomStatementsInfo;
+
+    protected List<Statement> incomingCustomerProductStatements;
+
+    protected List<StatementInfo> incomingCustomerProductStatementsInfo;
+
+    // Related Boms
+    protected List<Statement> relatedBomsStatements;
+
+    protected List<StatementInfo> relatedBomsStatementsInfo;
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -116,6 +132,8 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     @In(create = true, required = false)
     protected FacesMessages facesMessages;
+
+    // TODO HONEIK ERABILTZEN DIE??
 
     protected String predicateUri;
 
@@ -229,159 +247,208 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         this.popupDisplayed = popupDisplayed;
     }
 
+    // ------------
+    // Outgoing
+    // ------------
+
     @Factory(value = "outgoingBomDocumentRelations", scope = ScopeType.EVENT)
     public List<StatementInfo> getOutgoingBomDocStatementsInfo() {
-        // if (outgoingBomDocumentStatementsInfo != null) {
-        // return outgoingBomDocumentStatementsInfo;
-        // }
+        if (outgoingBomDocumentStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(
+                    new ResourceImpl(EloraRelationConstants.BOM_HAS_DOCUMENT));
 
-        DocumentModel currentDoc = getCurrentDocument();
-        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
-            // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(
-                    currentDoc.getRef());
-        }
-        List<Resource> predicates = new ArrayList<>();
-        predicates.add(
-                new ResourceImpl(EloraRelationConstants.BOM_HAS_DOCUMENT));
-
-        outgoingBomDocumentStatements = new ArrayList<>();
-        for (Resource predicate : predicates) {
-            // We don't need EloraCoreGraph if we don't use quantity
-            List<Statement> stmts = RelationHelper.getStatements(currentDoc,
-                    predicate);
-            outgoingBomDocumentStatements.addAll(stmts);
+            outgoingBomDocumentStatementsInfo = getOutgoingStatementsInfo(
+                    predicates, outgoingBomDocumentStatements);
         }
 
-        if (outgoingBomDocumentStatements.isEmpty()) {
-            outgoingBomDocumentStatements = Collections.emptyList();
-            outgoingBomDocumentStatementsInfo = Collections.emptyList();
-        } else {
-            outgoingBomDocumentStatementsInfo = getStatementsInfo(
-                    outgoingBomDocumentStatements);
-            // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(
-                    new StatementInfoComparator());
-            Collections.sort(outgoingBomDocumentStatementsInfo, comp);
-        }
         return outgoingBomDocumentStatementsInfo;
     }
 
     @Factory(value = "outgoingBomCadDocumentRelations", scope = ScopeType.EVENT)
     public List<StatementInfo> getOutgoingBomCadDocStatementsInfo() {
-        if (outgoingBomCadDocumentStatementsInfo != null) {
-            return outgoingBomCadDocumentStatementsInfo;
+        if (outgoingBomCadDocumentStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(new ResourceImpl(
+                    EloraRelationConstants.BOM_HAS_CAD_DOCUMENT));
+
+            outgoingBomCadDocumentStatementsInfo = getOutgoingStatementsInfo(
+                    predicates, outgoingBomCadDocumentStatements);
         }
 
-        DocumentModel currentDoc = getCurrentDocument();
-        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
-            // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(
-                    currentDoc.getRef());
-        }
-        List<Resource> predicates = new ArrayList<>();
-        predicates.add(
-                new ResourceImpl(EloraRelationConstants.BOM_HAS_CAD_DOCUMENT));
-
-        outgoingBomCadDocumentStatements = new ArrayList<>();
-        for (Resource predicate : predicates) {
-            // We don't need EloraCoreGraph if we don't use quantity
-            List<Statement> stmts = RelationHelper.getStatements(currentDoc,
-                    predicate);
-            outgoingBomCadDocumentStatements.addAll(stmts);
-        }
-
-        if (outgoingBomCadDocumentStatements.isEmpty()) {
-            outgoingBomCadDocumentStatements = Collections.emptyList();
-            outgoingBomCadDocumentStatementsInfo = Collections.emptyList();
-        } else {
-            outgoingBomCadDocumentStatementsInfo = getStatementsInfo(
-                    outgoingBomCadDocumentStatements);
-            // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(
-                    new StatementInfoComparator());
-            Collections.sort(outgoingBomCadDocumentStatementsInfo, comp);
-        }
         return outgoingBomCadDocumentStatementsInfo;
     }
 
     @Factory(value = "outgoingCadSpecialRelations", scope = ScopeType.EVENT)
     public List<StatementInfo> getOutgoingCadSpecialStatementsInfo() {
-        if (outgoingCadSpecialStatementsInfo != null) {
-            return outgoingCadSpecialStatementsInfo;
+        if (outgoingCadSpecialStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(
+                    new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF));
+            predicates.add(new ResourceImpl(
+                    EloraRelationConstants.CAD_HAS_DESIGN_TABLE));
+
+            outgoingCadSpecialStatementsInfo = getOutgoingStatementsInfo(
+                    predicates, outgoingCadSpecialStatements);
         }
 
+        return outgoingCadSpecialStatementsInfo;
+    }
+
+    @Factory(value = "outgoingBomHasBomRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getOutgoingBomHasBomStatementsInfo() {
+        if (outgoingBomHasBomStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(
+                    new ResourceImpl(EloraRelationConstants.BOM_HAS_BOM));
+
+            outgoingBomHasBomStatementsInfo = getOutgoingStatementsInfo(
+                    predicates, outgoingBomHasBomStatements);
+        }
+
+        return outgoingBomHasBomStatementsInfo;
+    }
+
+    @Factory(value = "outgoingCustomerProductRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getOutgoingCustomerProductStatementsInfo() {
+        if (outgoingCustomerProductStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(new ResourceImpl(
+                    EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT));
+
+            outgoingCustomerProductStatementsInfo = getOutgoingStatementsInfo(
+                    predicates, outgoingCustomerProductStatements);
+        }
+
+        return outgoingCustomerProductStatementsInfo;
+    }
+
+    private List<StatementInfo> getOutgoingStatementsInfo(
+            List<Resource> predicates, List<Statement> stmts) {
         DocumentModel currentDoc = getCurrentDocument();
         if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
             // Get last version to show its relations
             currentDoc = documentManager.getLastDocumentVersion(
                     currentDoc.getRef());
         }
-        List<Resource> predicates = new ArrayList<>();
-        predicates.add(new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF));
-        predicates.add(
-                new ResourceImpl(EloraRelationConstants.CAD_HAS_DESIGN_TABLE));
-
-        outgoingCadSpecialStatements = new ArrayList<>();
+        List<StatementInfo> stmtsInfo = new ArrayList<StatementInfo>();
+        stmts = new ArrayList<Statement>();
         for (Resource predicate : predicates) {
-            // We don't need EloraCoreGraph if we don't use quantity
-            List<Statement> stmts = RelationHelper.getStatements(currentDoc,
-                    predicate);
-            outgoingCadSpecialStatements.addAll(stmts);
+            stmts.addAll(RelationHelper.getStatements(currentDoc, predicate));
         }
 
-        if (outgoingCadSpecialStatements.isEmpty()) {
-            outgoingCadSpecialStatements = Collections.emptyList();
-            outgoingCadSpecialStatementsInfo = Collections.emptyList();
-        } else {
-            outgoingCadSpecialStatementsInfo = getStatementsInfo(
-                    outgoingCadSpecialStatements);
+        if (!stmts.isEmpty()) {
+            stmtsInfo = getStatementsInfo(stmts);
             // sort by modification date, reverse
             Comparator<StatementInfo> comp = Collections.reverseOrder(
                     new StatementInfoComparator());
-            Collections.sort(outgoingCadSpecialStatementsInfo, comp);
+            Collections.sort(stmtsInfo, comp);
         }
-        return outgoingCadSpecialStatementsInfo;
+        return stmtsInfo;
+    }
+
+    // ------------
+    // Incoming
+    // ------------
+
+    @Factory(value = "incomingBomDocumentRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getIncomingBomDocStatementsInfo() {
+        if (incomingBomDocumentStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(new ResourceImpl(
+                    EloraRelationConstants.BOM_HAS_CAD_DOCUMENT));
+            predicates.add(
+                    new ResourceImpl(EloraRelationConstants.BOM_HAS_DOCUMENT));
+
+            // onlyLatest??
+            incomingBomDocumentStatementsInfo = getIncomingStatementsInfo(
+                    predicates, incomingBomDocumentStatements, false);
+        }
+
+        return incomingBomDocumentStatementsInfo;
     }
 
     @Factory(value = "incomingCadSpecialRelations", scope = ScopeType.EVENT)
     public List<StatementInfo> getIncomingCadSpecialStatementsInfo() {
-        if (incomingCadSpecialStatementsInfo != null) {
-            return incomingCadSpecialStatementsInfo;
+        if (incomingCadSpecialStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(
+                    new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF));
+            predicates.add(new ResourceImpl(
+                    EloraRelationConstants.CAD_HAS_DESIGN_TABLE));
+
+            incomingCadSpecialStatementsInfo = getIncomingStatementsInfo(
+                    predicates, incomingCadSpecialStatements, true);
         }
 
+        return incomingCadSpecialStatementsInfo;
+    }
+
+    @Factory(value = "incomingBomHasBomRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getIncomingBomHasBomStatementsInfo() {
+        if (incomingBomHasBomStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(
+                    new ResourceImpl(EloraRelationConstants.BOM_HAS_BOM));
+
+            // onlyLatest??
+            incomingBomHasBomStatementsInfo = getIncomingStatementsInfo(
+                    predicates, incomingBomHasBomStatements, false);
+        }
+
+        return incomingBomHasBomStatementsInfo;
+    }
+
+    @Factory(value = "incomingCustomerProductRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getIncomingCustomerProductStatementsInfo() {
+        if (incomingCustomerProductStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(new ResourceImpl(
+                    EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT));
+
+            // onlyLatest??
+            incomingCustomerProductStatementsInfo = getIncomingStatementsInfo(
+                    predicates, incomingCustomerProductStatements, false);
+        }
+
+        return incomingCustomerProductStatementsInfo;
+    }
+
+    private List<StatementInfo> getIncomingStatementsInfo(
+            List<Resource> predicates, List<Statement> stmts,
+            boolean onlyLatest) {
         DocumentModel currentDoc = getCurrentDocument();
         if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
             // Get last version to show its relations
             currentDoc = documentManager.getLastDocumentVersion(
                     currentDoc.getRef());
         }
-        List<Resource> predicates = new ArrayList<>();
-        predicates.add(new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF));
-        predicates.add(
-                new ResourceImpl(EloraRelationConstants.CAD_HAS_DESIGN_TABLE));
+        List<StatementInfo> stmtsInfo = new ArrayList<StatementInfo>();
+        stmts = new ArrayList<Statement>();
 
-        getLatestStatements(currentDoc, predicates);
-
-        if (incomingCadSpecialStatements.isEmpty()) {
-            incomingCadSpecialStatements = Collections.emptyList();
-            incomingCadSpecialStatementsInfo = Collections.emptyList();
+        if (onlyLatest) {
+            getLatestStatements(currentDoc, predicates, stmts);
         } else {
-            incomingCadSpecialStatementsInfo = getStatementsInfo(
-                    incomingCadSpecialStatements);
+            for (Resource predicate : predicates) {
+                stmts.addAll(EloraRelationHelper.getSubjectStatements(
+                        currentDoc, predicate));
+            }
+        }
+
+        if (!stmts.isEmpty()) {
+            stmtsInfo = getStatementsInfo(stmts);
             // sort by modification date, reverse
             Comparator<StatementInfo> comp = Collections.reverseOrder(
                     new StatementInfoComparator());
-            Collections.sort(incomingCadSpecialStatementsInfo, comp);
+            Collections.sort(stmtsInfo, comp);
         }
-        return incomingCadSpecialStatementsInfo;
+        return stmtsInfo;
     }
 
     // TODO: Txapuza para sacar los ultimos statements relacionados. En un
     // futuro puede que hagamos estas cosas de otra manera
     private void getLatestStatements(DocumentModel currentDoc,
-            List<Resource> predicates) {
-        incomingCadSpecialStatements = new ArrayList<>();
+            List<Resource> predicates, List<Statement> incomingStmts) {
         for (Resource predicate : predicates) {
             // We don't need EloraCoreGraph if we don't use quantity
             List<Statement> stmts = EloraRelationHelper.getSubjectStatements(
@@ -395,23 +462,29 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
                 DocumentModel subjectDoc = RelationHelper.getDocumentModel(
                         stmt.getSubject(), documentManager);
 
-                String versionSeriesId = subjectDoc.getVersionSeriesId();
-                String docId = subjectDoc.getId();
+                if (subjectDoc != null) {
 
-                if (idMap.containsKey(versionSeriesId)) {
-                    idMap.get(versionSeriesId).add(docId);
-                    docMap.get(versionSeriesId).add(subjectDoc);
+                    String versionSeriesId = subjectDoc.getVersionSeriesId();
+                    String docId = subjectDoc.getId();
+
+                    if (idMap.containsKey(versionSeriesId)) {
+                        idMap.get(versionSeriesId).add(docId);
+                        docMap.get(versionSeriesId).add(subjectDoc);
+                    } else {
+                        List<String> idList = new ArrayList<String>();
+                        idList.add(docId);
+                        idMap.put(versionSeriesId, idList);
+
+                        List<DocumentModel> docList = new ArrayList<DocumentModel>();
+                        docList.add(subjectDoc);
+                        docMap.put(versionSeriesId, docList);
+                    }
+
+                    stmtMap.put(docId, stmt);
                 } else {
-                    List<String> idList = new ArrayList<String>();
-                    idList.add(docId);
-                    idMap.put(versionSeriesId, idList);
-
-                    List<DocumentModel> docList = new ArrayList<DocumentModel>();
-                    docList.add(subjectDoc);
-                    docMap.put(versionSeriesId, docList);
+                    // Add not visible statements
+                    incomingStmts.add(stmt);
                 }
-
-                stmtMap.put(docId, stmt);
             }
 
             for (Map.Entry<String, List<String>> entry : idMap.entrySet()) {
@@ -423,203 +496,54 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
                     DocumentModel latestDoc = EloraRelationHelper.getLatestRelatedVersion(
                             documentManager, majorVersion, relatedUids, type);
-                    incomingCadSpecialStatements.add(
-                            stmtMap.get(latestDoc.getId()));
+                    incomingStmts.add(stmtMap.get(latestDoc.getId()));
                 } else {
-                    incomingCadSpecialStatements.add(
-                            stmtMap.get(relatedUids.get(0)));
+                    incomingStmts.add(stmtMap.get(relatedUids.get(0)));
                 }
             }
         }
     }
 
-    @Factory(value = "incomingBomDocumentRelations", scope = ScopeType.EVENT)
-    public List<StatementInfo> getIncomingBomDocStatementsInfo() {
-        if (incomingBomDocumentStatementsInfo != null) {
-            return incomingBomDocumentStatementsInfo;
-        }
-
-        DocumentModel currentDoc = getCurrentDocument();
-        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
-            // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(
-                    currentDoc.getRef());
-        }
-        List<Resource> predicates = new ArrayList<>();
-        predicates.add(
-                new ResourceImpl(EloraRelationConstants.BOM_HAS_CAD_DOCUMENT));
-        predicates.add(
-                new ResourceImpl(EloraRelationConstants.BOM_HAS_DOCUMENT));
-
-        incomingBomDocumentStatements = new ArrayList<>();
-        for (Resource predicate : predicates) {
-            // We don't need EloraCoreGraph if we don't use quantity
-            List<Statement> stmts = EloraRelationHelper.getSubjectStatements(
-                    currentDoc, predicate);
-            incomingBomDocumentStatements.addAll(stmts);
-        }
-
-        if (incomingBomDocumentStatements.isEmpty()) {
-            incomingBomDocumentStatements = Collections.emptyList();
-            incomingBomDocumentStatementsInfo = Collections.emptyList();
-        } else {
-            incomingBomDocumentStatementsInfo = getStatementsInfo(
-                    incomingBomDocumentStatements);
-            // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(
-                    new StatementInfoComparator());
-            Collections.sort(incomingBomDocumentStatementsInfo, comp);
-        }
-        return incomingBomDocumentStatementsInfo;
-    }
-
-    @Factory(value = "outgoingBomHasBomRelations", scope = ScopeType.EVENT)
-    public List<StatementInfo> getOutgoingBomHasBomStatementsInfo() {
-        if (outgoingBomHasBomStatementsInfo != null) {
-            return outgoingBomHasBomStatementsInfo;
-        }
-
-        DocumentModel currentDoc = getCurrentDocument();
-        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
-            // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(
-                    currentDoc.getRef());
-        }
-
-        Resource predicate = new ResourceImpl(
-                EloraRelationConstants.BOM_HAS_BOM);
-        outgoingBomHasBomStatements = RelationHelper.getStatements(currentDoc,
-                predicate);
-
-        if (outgoingBomHasBomStatements.isEmpty()) {
-            outgoingBomHasBomStatements = Collections.emptyList();
-            outgoingBomHasBomStatementsInfo = Collections.emptyList();
-        } else {
-            outgoingBomHasBomStatementsInfo = getStatementsInfo(
-                    outgoingBomHasBomStatements);
-            // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(
-                    new StatementInfoComparator());
-            Collections.sort(outgoingBomHasBomStatementsInfo, comp);
-        }
-        return outgoingBomHasBomStatementsInfo;
-    }
-
-    @Factory(value = "incomingBomHasBomRelations", scope = ScopeType.EVENT)
-    public List<StatementInfo> getIncomingBomHasBomStatementsInfo() {
-        if (incomingBomHasBomStatementsInfo != null) {
-            return incomingBomHasBomStatementsInfo;
-        }
-
-        DocumentModel currentDoc = getCurrentDocument();
-        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
-            // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(
-                    currentDoc.getRef());
-        }
-        Resource predicate = new ResourceImpl(
-                EloraRelationConstants.BOM_HAS_BOM);
-        incomingBomHasBomStatements = EloraRelationHelper.getSubjectStatements(
-                currentDoc, predicate);
-
-        if (incomingBomHasBomStatements.isEmpty()) {
-            incomingBomHasBomStatements = Collections.emptyList();
-            incomingBomHasBomStatementsInfo = Collections.emptyList();
-        } else {
-            incomingBomHasBomStatementsInfo = getStatementsInfo(
-                    incomingBomHasBomStatements);
-            // sort by modification date, reverse
-            Comparator<StatementInfo> comp = Collections.reverseOrder(
-                    new StatementInfoComparator());
-            Collections.sort(incomingBomHasBomStatementsInfo, comp);
-        }
-        return incomingBomHasBomStatementsInfo;
-    }
-
-    public List<DocumentModel> getCurrentDocumentRelatedBoms()
+    @Factory(value = "relatedBomStatements", scope = ScopeType.EVENT)
+    public List<StatementInfo> getRelatedBomsStatementsInfo()
             throws EloraException {
-
-        String logInitMsg = "[getCurrentDocumentRelatedBoms] ["
+        String logInitMsg = "[getRelatedBomsStatementsInfo] ["
                 + documentManager.getPrincipal().getName() + "] ";
-
-        List<DocumentModel> relatedBoms = new ArrayList<>();
-
         try {
-            DocumentModel currentDoc = getCurrentDocument();
-            if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
-                // Get last version to show its relations
-                currentDoc = EloraDocumentHelper.getLatestVersion(currentDoc);
-                if (currentDoc == null) {
-                    throw new EloraException("Document |"
-                            + getCurrentDocument().getId()
-                            + "| has no latest version or it is unreadable.");
-                }
-            }
-
-            String predicateUri;
-
-            if (currentDoc.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)) {
-                return relatedBoms;
-            } else if (currentDoc.hasFacet(
-                    EloraFacetConstants.FACET_CAD_DOCUMENT)) {
-                predicateUri = EloraRelationConstants.BOM_HAS_CAD_DOCUMENT;
-            } else {
-                predicateUri = EloraRelationConstants.BOM_HAS_DOCUMENT;
-            }
-
-            Resource predicateResource = new ResourceImpl(predicateUri);
-
-            relatedBoms = RelationHelper.getSubjectDocuments(predicateResource,
-                    currentDoc);
-
-            if (currentDoc.isVersion() && relatedBoms.size() > 1) {
-                // It is possible to have different versions of the same bom
-                // item pointing to current document version. Take latest.
-                // related
-                Map<String, List<DocumentModel>> docListByVersionSerieId = new HashMap<>();
-                for (DocumentModel relatedBom : relatedBoms) {
-                    // TODO: Poner control de permisos.
-                    // We consider that when relatedDoc is null user doesn't
-                    // have any permission on the document
-                    String versionSeriesId = documentManager.getVersionSeriesId(
-                            relatedBom.getRef());
-                    if (docListByVersionSerieId.containsKey(versionSeriesId)) {
-                        docListByVersionSerieId.get(versionSeriesId).add(
-                                relatedBom);
-                    } else {
-                        List<DocumentModel> docList = new ArrayList<>();
-                        docList.add(relatedBom);
-                        docListByVersionSerieId.put(versionSeriesId, docList);
+            if (relatedBomsStatementsInfo == null) {
+                DocumentModel currentDoc = getCurrentDocument();
+                if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
+                    // Get last version to show its relations
+                    currentDoc = EloraDocumentHelper.getLatestVersion(
+                            currentDoc);
+                    if (currentDoc == null) {
+                        throw new EloraException("Document |"
+                                + getCurrentDocument().getId()
+                                + "| has no latest version or it is unreadable.");
                     }
                 }
 
-                if (docListByVersionSerieId.size() == 1) {
-                    DocumentModel doc = null;
-                    // There are different versions of the same bom item
-                    // related. Take the latest version.
-                    for (Map.Entry<String, List<DocumentModel>> entry : docListByVersionSerieId.entrySet()) {
-                        String versionSeriesId = entry.getKey();
-                        List<DocumentModel> docList = docListByVersionSerieId.get(
-                                versionSeriesId);
-                        List<String> uidList = EloraDocumentHelper.getUidListFromDocList(
-                                docList);
-                        Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
-                                docList);
-
-                        String type = docList.get(0).getType();
-                        doc = EloraRelationHelper.getLatestRelatedVersion(
-                                documentManager, majorVersion, uidList, type);
-                    }
-                    relatedBoms.removeAll(relatedBoms);
-                    relatedBoms.add(doc);
+                List<Resource> predicates = new ArrayList<>();
+                if (currentDoc.hasFacet(
+                        EloraFacetConstants.FACET_BOM_DOCUMENT)) {
+                    return relatedBomsStatementsInfo;
+                } else if (currentDoc.hasFacet(
+                        EloraFacetConstants.FACET_CAD_DOCUMENT)) {
+                    predicates.add(new ResourceImpl(
+                            EloraRelationConstants.BOM_HAS_CAD_DOCUMENT));
+                } else {
+                    predicates.add(new ResourceImpl(
+                            EloraRelationConstants.BOM_HAS_DOCUMENT));
                 }
+                relatedBomsStatementsInfo = getIncomingStatementsInfo(
+                        predicates, relatedBomsStatements, true);
             }
         } catch (NuxeoException e) {
-            log.error(logInitMsg + "getCurrentDocumentRelatedBoms failed"
+            log.error(logInitMsg + "getRelatedBomsStatementsInfo failed"
                     + e.getMessage(), e);
         }
 
-        return relatedBoms;
+        return relatedBomsStatementsInfo;
     }
 
     // TODO: Tener en cuenta que utilizamos este Bean para todas las pesatañas
@@ -632,8 +556,22 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         outgoingBomDocumentStatementsInfo = null;
         outgoingBomCadDocumentStatements = null;
         outgoingBomCadDocumentStatementsInfo = null;
+        outgoingCadSpecialStatements = null;
+        outgoingCadSpecialStatementsInfo = null;
+        outgoingBomHasBomStatements = null;
+        outgoingBomHasBomStatementsInfo = null;
+        outgoingCustomerProductStatements = null;
+        outgoingCustomerProductStatementsInfo = null;
         incomingBomDocumentStatements = null;
         incomingBomDocumentStatementsInfo = null;
+        incomingCadSpecialStatements = null;
+        incomingCadSpecialStatementsInfo = null;
+        incomingBomHasBomStatements = null;
+        incomingBomHasBomStatementsInfo = null;
+        incomingCustomerProductStatements = null;
+        incomingCustomerProductStatementsInfo = null;
+        relatedBomsStatements = null;
+        relatedBomsStatementsInfo = null;
     }
 
     public List<StatementInfo> getStatementsInfo(List<Statement> statements) {

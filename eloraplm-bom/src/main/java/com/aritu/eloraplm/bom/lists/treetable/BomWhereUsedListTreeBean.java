@@ -31,9 +31,11 @@ import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextInvalidation;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.bom.lists.BomListBean;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.treetable.CoreTreeBean;
 
 /**
@@ -71,9 +73,22 @@ public class BomWhereUsedListTreeBean extends CoreTreeBean
             BomWhereUsedListNodeService nodeService = new BomWhereUsedListNodeService(
                     documentManager, bomList.getId());
             setRoot(nodeService.getRoot(currentDoc));
+            setHasUnreadableNodes(false);
+            setIsInvalid(false);
             log.trace(logInitMsg + "Tree created.");
+        } catch (DocumentUnreadableException e) {
+            log.error(logInitMsg + e.getMessage());
+            // empty root attribute and set hasUnreadableNodes attribute to true
+            setRoot(new DefaultTreeNode());
+            setHasUnreadableNodes(true);
+            setIsInvalid(false);
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty root attribute and set isInvalid attribute to true
+            setRoot(new DefaultTreeNode());
+            setIsInvalid(true);
+            setHasUnreadableNodes(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.treetable.createRoot"));
         }

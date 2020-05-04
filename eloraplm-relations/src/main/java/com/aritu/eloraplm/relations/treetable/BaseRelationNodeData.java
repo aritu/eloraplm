@@ -57,6 +57,8 @@ public class BaseRelationNodeData extends BaseNodeData
 
     private Integer inverseViewerOrdering;
 
+    private Boolean isManual;
+
     private List<String> iconOnlyRelations;
 
     private boolean isSpecial;
@@ -73,7 +75,7 @@ public class BaseRelationNodeData extends BaseNodeData
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
             boolean isSpecial, boolean isDirect) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
-                comment, ordering, directorOrdering, viewerOrdering, null,
+                comment, ordering, directorOrdering, viewerOrdering, null, null,
                 isSpecial, isDirect, false, false);
     }
 
@@ -81,11 +83,12 @@ public class BaseRelationNodeData extends BaseNodeData
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, String comment,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering, boolean isSpecial,
+            Integer inverseViewerOrdering, Boolean isManual, boolean isSpecial,
             boolean isDirect) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering,
-                inverseViewerOrdering, isSpecial, isDirect, false, false);
+                inverseViewerOrdering, isManual, isSpecial, isDirect, false,
+                false);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
@@ -95,7 +98,7 @@ public class BaseRelationNodeData extends BaseNodeData
             boolean isSpecial, boolean isDirect, boolean isNew,
             boolean isRemoved) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
-                comment, ordering, directorOrdering, viewerOrdering, null,
+                comment, ordering, directorOrdering, viewerOrdering, null, null,
                 isSpecial, isDirect, isNew, isRemoved);
     }
 
@@ -103,8 +106,8 @@ public class BaseRelationNodeData extends BaseNodeData
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, String comment,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering, boolean isSpecial, boolean isDirect,
-            boolean isNew, boolean isRemoved) {
+            Integer inverseViewerOrdering, Boolean isManual, boolean isSpecial,
+            boolean isDirect, boolean isNew, boolean isRemoved) {
         super(id, level, isNew, isRemoved);
 
         this.docId = docId;
@@ -118,6 +121,7 @@ public class BaseRelationNodeData extends BaseNodeData
         this.directorOrdering = directorOrdering;
         this.viewerOrdering = viewerOrdering;
         this.inverseViewerOrdering = inverseViewerOrdering;
+        this.isManual = isManual;
         this.isSpecial = isSpecial;
         this.isDirect = isDirect;
 
@@ -241,6 +245,16 @@ public class BaseRelationNodeData extends BaseNodeData
     @Override
     public void setInverseViewerOrdering(Integer inverseViewerOrdering) {
         this.inverseViewerOrdering = inverseViewerOrdering;
+    }
+
+    @Override
+    public Boolean getIsManual() {
+        return isManual;
+    }
+
+    @Override
+    public void setIsManual(Boolean isManual) {
+        this.isManual = isManual;
     }
 
     @Override

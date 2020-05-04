@@ -37,12 +37,12 @@ public class CadRelationNodeData extends BaseRelationNodeData {
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, String comment,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering, boolean isSpecial,
+            Integer inverseViewerOrdering, Boolean isManual, boolean isSpecial,
             boolean isDirect) {
 
         super(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering,
-                inverseViewerOrdering, isSpecial, isDirect);
+                inverseViewerOrdering, isManual, isSpecial, isDirect);
 
         relatedBoms = new ArrayList<DocumentModel>();
     }

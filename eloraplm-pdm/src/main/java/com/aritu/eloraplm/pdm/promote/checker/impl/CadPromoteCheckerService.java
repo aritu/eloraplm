@@ -34,6 +34,7 @@ import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.config.util.LifecyclesConfig;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.promote.constants.PromoteConstants;
 import com.aritu.eloraplm.pdm.promote.treetable.PromoteNodeData;
@@ -205,8 +206,14 @@ public class CadPromoteCheckerService extends PromoteCheckerService {
                                 hierarchicalAndDirectPredicates,
                                 childFinalState, stmt, messages);
                         if (resultMsg.equals("")) {
-                            if (!PromoteHelper.checkReleasedAndObsoleteInMajor(
-                                    doc, session)) {
+                            if (PromoteHelper.checkReleasedInMajor(doc,
+                                    session)) {
+                                if (!PromoteHelper.isTransitionAllowedConfig(
+                                        promoteTransition)) {
+                                    resultMsg = checkRelatedDocs(doc,
+                                            childFinalState, messages);
+                                }
+                            } else {
                                 resultMsg = messages.get(
                                         "eloraplm.message.promote.error.released.in.major");
                             }
@@ -228,6 +235,24 @@ public class CadPromoteCheckerService extends PromoteCheckerService {
                     "eloraplm.message.error.promote.noWritePermisssion");
         }
         return resultMsg;
+    }
+
+    private String checkRelatedDocs(DocumentModel doc, String docFinalState,
+            Map<String, String> messages) throws EloraException {
+        Resource predicateResource = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
+        DocumentModelList subjectDocList = RelationHelper.getSubjectDocuments(
+                predicateResource, doc);
+        String msg = "";
+        for (DocumentModel subjectDoc : subjectDocList) {
+            if (!EloraDocumentHelper.isSupported(
+                    subjectDoc.getCurrentLifeCycleState(), docFinalState)) {
+                msg = messages.get(
+                        "eloraplm.message.error.state.not.supported.by.related.item");
+                break;
+            }
+        }
+        return msg;
     }
 
     private String getChildFinalState(boolean isPropagated,

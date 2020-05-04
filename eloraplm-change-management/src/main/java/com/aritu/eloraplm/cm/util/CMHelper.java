@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
@@ -61,12 +61,13 @@ import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
-import com.aritu.eloraplm.constants.QueriesConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
+import com.aritu.eloraplm.constants.QueriesConstants;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 /**
@@ -269,7 +270,8 @@ public class CMHelper {
             String derivedModifiedItemQuantity,
             boolean derivedModifiedItemIsAnarchic,
             boolean derivedModifiedItemIsDirectObject,
-            String derivedModifiedItemType) throws EloraException {
+            String derivedModifiedItemType)
+            throws EloraException, DocumentUnreadableException {
 
         String modifiedItemOriginUid = modifiedItemOriginItem.getId();
 
@@ -1441,7 +1443,7 @@ public class CMHelper {
             CoreSession session, DocumentModel modifiedItemOriginItem,
             DocumentModel modifiedItemDestinationItem,
             String modifiedItemAction, String modifiedItemComment)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
 
         List<ModifiedItem> derivedDocModifiedItemsList = new ArrayList<ModifiedItem>();
 
@@ -1492,7 +1494,7 @@ public class CMHelper {
             CoreSession session, DocumentModel modifiedItemOriginItem,
             DocumentModel modifiedItemDestinationItem,
             String modifiedItemAction, String modifiedItemComment)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
 
         List<ModifiedItem> derivedBomModifiedItemsList = new ArrayList<ModifiedItem>();
 
@@ -1531,7 +1533,7 @@ public class CMHelper {
             CoreSession session, DocumentModel modifiedItemOriginItem,
             DocumentModel modifiedItemDestinationItem,
             String modifiedItemAction, String modifiedItemComment)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
 
         List<ModifiedItem> derivedDocModifiedItemsList = new ArrayList<ModifiedItem>();
 
@@ -1599,7 +1601,11 @@ public class CMHelper {
             CoreSession session, DocumentModel modifiedItemDestination,
             DocumentModel modifiedItemOriginItem,
             String derivedModifiedItemPredicate,
-            boolean derivedModifiedItemIsSubject) throws EloraException {
+            boolean derivedModifiedItemIsSubject)
+            throws EloraException, DocumentUnreadableException {
+
+        String logInitMsg = "[calculateDerivedDestinationItem] ["
+                + session.getPrincipal().getName() + "] ";
 
         DocumentModel destinationItem = null;
 
@@ -1639,6 +1645,13 @@ public class CMHelper {
                     } else if (dType.equals(modifiedItemOriginItemType)) {
                         destinationItemsList.add(d);
                     }
+                } else {
+                    log.trace(logInitMsg
+                            + "Throw DocumentUnreadableException since relatedItem is null. stmt = |"
+                            + stmt.toString() + "|");
+                    throw new DocumentUnreadableException(
+                            "Error getting document from statement |"
+                                    + stmt.toString() + "|");
                 }
             }
         }
@@ -1997,35 +2010,29 @@ public class CMHelper {
                     String modifiedItemDestinationItemWcUid = (String) modifiedItem.get(
                             "destinationItemWc");
 
-                    try {
+                    DocumentModel modifiedItemOriginItem = session.getDocument(
+                            new IdRef(modifiedItemOriginItemUid));
 
-                        DocumentModel modifiedItemOriginItem = session.getDocument(
-                                new IdRef(modifiedItemOriginItemUid));
+                    String modifiedItemNodePath = modifiedItemOriginItem.getId();
 
-                        String modifiedItemNodePath = modifiedItemOriginItem.getId();
+                    // ??????????????? granParent = null
+                    ImpactedItemContext impactContext = new ImpactedItemContext(
+                            modifiedItemOriginItem, null,
+                            modifiedItemOriginItem, new Long(0),
+                            modifiedItemNodePath, modifiedItemNodeId,
+                            modifiedItemAction,
+                            modifiedItemDestinationItemWcUid,
+                            modifiedItemAction);
 
-                        // ??????????????? granParent = null
-                        ImpactedItemContext impactContext = new ImpactedItemContext(
-                                modifiedItemOriginItem, null,
-                                modifiedItemOriginItem, new Long(0),
-                                modifiedItemNodePath, modifiedItemNodeId,
-                                modifiedItemAction,
-                                modifiedItemDestinationItemWcUid,
-                                modifiedItemAction);
+                    if (itemType.equals(CMConstants.ITEM_TYPE_BOM)) {
 
-                        if (itemType.equals(CMConstants.ITEM_TYPE_BOM)) {
+                        impactedItems.addAll(calculateImpactedItemsForBom(
+                                session, cmProcess, impactContext));
 
-                            impactedItems.addAll(calculateImpactedItemsForBom(
-                                    session, cmProcess, impactContext));
+                    } else if (itemType.equals(CMConstants.ITEM_TYPE_DOC)) {
 
-                        } else if (itemType.equals(CMConstants.ITEM_TYPE_DOC)) {
-
-                            impactedItems.addAll(calculateImpactedItemsForDoc(
-                                    session, cmProcess, impactContext));
-                        }
-                    } catch (DocumentNotFoundException e) {
-                        log.error(logInitMsg + "Exception thrown: "
-                                + e.getClass() + ": " + e.getMessage());
+                        impactedItems.addAll(calculateImpactedItemsForDoc(
+                                session, cmProcess, impactContext));
                     }
                 }
             }
@@ -2037,6 +2044,10 @@ public class CMHelper {
                 newImpactMatrix.add(impactedItemType);
             }
 
+        } catch (DocumentUnreadableException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Permission exception thrown: |" + e.getMessage() + "|");
         } catch (NuxeoException e) {
             log.error(logInitMsg + e.getMessage(), e);
             throw new EloraException(
@@ -2361,7 +2372,8 @@ public class CMHelper {
 
     private static List<ImpactedItem> calculateImpactedItemsForBom(
             CoreSession session, DocumentModel cmProcess,
-            ImpactedItemContext impactContext) throws EloraException {
+            ImpactedItemContext impactContext)
+            throws EloraException, DocumentUnreadableException {
 
         String logInitMsg = "[calculateImpactedItemsForBom] ["
                 + session.getPrincipal().getName() + "] ";
@@ -2397,7 +2409,8 @@ public class CMHelper {
 
     private static List<ImpactedItem> calculateImpactedItemsForDoc(
             CoreSession session, DocumentModel cmProcess,
-            ImpactedItemContext impactContext) throws EloraException {
+            ImpactedItemContext impactContext)
+            throws EloraException, DocumentUnreadableException {
 
         String logInitMsg = "[calculateImpactedItemsForDoc] ["
                 + session.getPrincipal().getName() + "] ";
@@ -2599,7 +2612,8 @@ public class CMHelper {
 
     private static List<ImpactedItem> calculateImpactedDirectBomsForBom(
             CoreSession session, DocumentModel cmProcess,
-            ImpactedItemContext impactContext) throws EloraException {
+            ImpactedItemContext impactContext)
+            throws EloraException, DocumentUnreadableException {
 
         List<ImpactedItem> impactedDirectCads = new ArrayList<ImpactedItem>();
 
@@ -2666,7 +2680,8 @@ public class CMHelper {
 
     private static List<ImpactedItem> calculateImpactedDirectAnarchicAndHierarchicalBomsForBom(
             CoreSession session, DocumentModel cmProcess,
-            ImpactedItemContext impactContext) throws EloraException {
+            ImpactedItemContext impactContext)
+            throws EloraException, DocumentUnreadableException {
 
         List<ImpactedItem> impactedDirectAnarchicAndHierarchicalBomsList = new ArrayList<ImpactedItem>();
 
@@ -2771,7 +2786,8 @@ public class CMHelper {
 
     private static List<ImpactedItem> calculateImpactedSpecialCadsForCadDocument(
             CoreSession session, DocumentModel cmProcess,
-            ImpactedItemContext impactContext) throws EloraException {
+            ImpactedItemContext impactContext)
+            throws EloraException, DocumentUnreadableException {
 
         List<ImpactedItem> impactedSpecialCads = new ArrayList<ImpactedItem>();
 
@@ -2836,7 +2852,8 @@ public class CMHelper {
 
     private static List<ImpactedItem> calculateImpactedDirectCadsForCadDocument(
             CoreSession session, DocumentModel cmProcess,
-            ImpactedItemContext impactContext) throws EloraException {
+            ImpactedItemContext impactContext)
+            throws EloraException, DocumentUnreadableException {
 
         List<ImpactedItem> impactedDirectCads = new ArrayList<ImpactedItem>();
 
@@ -2900,7 +2917,8 @@ public class CMHelper {
 
     private static List<ImpactedItem> calculateImpactedHierarchicalCadsForCadDocument(
             CoreSession session, DocumentModel cmProcess,
-            ImpactedItemContext impactContext) throws EloraException {
+            ImpactedItemContext impactContext)
+            throws EloraException, DocumentUnreadableException {
 
         List<ImpactedItem> hierarchicalCads = new ArrayList<ImpactedItem>();
 
@@ -3009,7 +3027,10 @@ public class CMHelper {
             Resource predicate, DocumentModel sourceDocument,
             boolean retrieveSubject, boolean filterByLatestVersion,
             boolean filterByGrandParent, DocumentModel grandParentDocument)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
+
+        String logInitMsg = "[getRelatedItems] ["
+                + session.getPrincipal().getName() + "] ";
 
         List<RelatedItemData> relatedItems = null;
 
@@ -3031,12 +3052,10 @@ public class CMHelper {
 
                 Node node = retrieveSubject ? stmt.getSubject()
                         : stmt.getObject();
-
                 DocumentModel d = RelationHelper.getDocumentModel(node,
                         sourceDocument.getCoreSession());
 
                 if (d != null) {
-
                     // Check that retrieved document is not the same as the
                     // grandparent, in order to avoid circular dependences
                     if (!filterByGrandParent || grandParentDocument == null
@@ -3048,6 +3067,13 @@ public class CMHelper {
                                 stmtInfo.getQuantity());
                         relatedItems.add(impSubject);
                     }
+                } else {
+                    log.trace(logInitMsg
+                            + "Throw DocumentUnreadableException since relatedItem is null. stmt = |"
+                            + stmt.toString() + "|");
+                    throw new DocumentUnreadableException(
+                            "Error getting document from statement |"
+                                    + stmt.toString() + "|");
                 }
             }
         }
@@ -3362,7 +3388,8 @@ public class CMHelper {
                         for (DocumentModel releasedDoc : releasedDocs) {
                             String releasedDocMajor = releasedDoc.getPropertyValue(
                                     NuxeoMetadataConstants.NX_UID_MAJOR_VERSION).toString();
-                            if (releasedDocMajor.equals(wcMajorVersion)) {
+                            if (releasedDocMajor.equals(
+                                    wcMajorVersion.toString())) {
                                 // If one of them has majorVersion then finish
                                 completed = true;
                                 break;

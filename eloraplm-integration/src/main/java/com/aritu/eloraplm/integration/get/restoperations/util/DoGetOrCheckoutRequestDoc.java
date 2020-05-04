@@ -29,13 +29,16 @@ public class DoGetOrCheckoutRequestDoc {
 
     private boolean selected;
 
+    private boolean lock;
+
     private boolean isRootElement;
 
     public DoGetOrCheckoutRequestDoc(DocumentRef proxyRef, DocumentRef realRef,
-            boolean selected, boolean isRootElement) {
+            boolean selected, boolean lock, boolean isRootElement) {
         this.proxyRef = proxyRef;
         this.realRef = realRef;
         this.selected = selected;
+        this.lock = lock;
         this.isRootElement = isRootElement;
     }
 
@@ -61,6 +64,14 @@ public class DoGetOrCheckoutRequestDoc {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean getLock() {
+        return lock;
+    }
+
+    public void setLock(boolean lock) {
+        this.lock = lock;
     }
 
     public boolean getIsRootElement() {

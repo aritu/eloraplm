@@ -32,6 +32,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationService;
@@ -157,6 +158,11 @@ public class DoCheckin {
 
             if (documents != null) {
                 loadRequestDocs();
+            }
+
+            if (workspaceDoc == null) {
+                throw new EloraException(
+                        "Could not determine which is the workspace. Probably because all documents in the checkin are from the local store. At least one document must be in the workspace.");
             }
 
             if (!requestDocs.isEmpty()) {
@@ -605,7 +611,15 @@ public class DoCheckin {
         // We recalculate the name to avoid timestamps
         PathSegmentService pss = Framework.getService(PathSegmentService.class);
         String nameForPath = pss.generatePathSegment(wcDoc.getTitle());
-        session.move(wcDoc.getRef(), targetFolder, nameForPath);
+        try {
+            session.move(wcDoc.getRef(), targetFolder, nameForPath);
+        } catch (DocumentSecurityException e) {
+            throw new EloraException(
+                    "Could not checkin document. Maybe the workspace is locked by another user, or you have no write permissions in the workspace. Document: |"
+                            + wcDoc.getId() + "| Workspace: |"
+                            + targetFolder.toString() + "|.",
+                    e);
+        }
 
         String proxyUid = null;
         if (requestDoc.getParentRealRef() != null) {

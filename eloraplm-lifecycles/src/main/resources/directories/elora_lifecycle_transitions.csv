@@ -11,3 +11,7 @@ id,lifecycle,state,demoteTransitions,promoteTransitions,obsolete
 9,eloraBomLifeCycle,preliminary,,"approve,makeObsolete",0
 10,eloraBomLifeCycle,approved,backToPreliminary,makeObsolete,0
 11,eloraBomLifeCycle,obsolete,backToPreliminary,,0
+12,eloraCmEcoLifeCycle,created,,technical review,0
+13,eloraCmEcoLifeCycle,"technical reviewed",,"complete,reject",0
+14,eloraCmEcoLifeCycle,completed,backToCreated,,0
+15,eloraCmEcoLifeCycle,rejected,backToCreated,,0

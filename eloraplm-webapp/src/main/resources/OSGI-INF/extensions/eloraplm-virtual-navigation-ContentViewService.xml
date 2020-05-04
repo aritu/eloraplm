@@ -20,10 +20,9 @@
         <whereClause docType="VNav">
           <fixedPart>
             (
-            ((ecm:primaryType IN ('BomTool', 'BomPackaging') OR ecm:mixinType IN ('EloraWorkspace') )
-            AND cust:customers STARTSWITH  ? )
-            OR
-            (ecm:primaryType IN ('BomCustomerProduct') AND bomcustprod:customer STARTSWITH  ? )
+                (ecm:primaryType != 'BomCustomerProduct' AND cust:customers LIKE  ?)
+                OR
+                (ecm:primaryType = 'BomCustomerProduct' AND bomcustprod:customer LIKE  ?)
             )
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0 
@@ -31,8 +30,8 @@
             AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
-        <parameter>#{searchDocument.vnav.cust_customer}</parameter>
-        <parameter>#{searchDocument.vnav.cust_customer}</parameter>
+        <parameter>#{(searchDocument.vnav.cust_customer).concat('%')}</parameter>
+        <parameter>#{(searchDocument.vnav.cust_customer).concat('%')}</parameter>
         <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />
         <sort column="dc:title" ascending="true" />
@@ -74,10 +73,10 @@
         <whereClause docType="VNav">
         <fixedPart>
             (
-            ((ecm:primaryType IN ('BomTool', 'BomPackaging') OR ecm:mixinType IN ('EloraWorkspace') )
-            AND manu:manufacturers STARTSWITH  ? )
+            ((ecm:primaryType IN ('BomTool', 'BomPackaging') OR ecm:mixinType IN ('EloraWorkspace'))
+            AND manu:manufacturers LIKE ?)
             OR
-            (ecm:primaryType IN ('BomManufacturerPart') AND bommanpart:manufacturer STARTSWITH  ? )
+            (ecm:primaryType IN ('BomManufacturerPart') AND bommanpart:manufacturer LIKE  ?)
             )
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
@@ -85,8 +84,8 @@
             AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
-        <parameter>#{searchDocument.vnav.manu_manufacturer}</parameter>
-        <parameter>#{searchDocument.vnav.manu_manufacturer}</parameter>
+        <parameter>#{(searchDocument.vnav.manu_manufacturer).concat('%')}</parameter>
+        <parameter>#{(searchDocument.vnav.manu_manufacturer).concat('%')}</parameter>
         <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />
         <sort column="dc:title" ascending="true" />
@@ -339,6 +338,105 @@
             AND ecm:isProxy = 0
             AND ecm:currentLifeCycleState != 'deleted'
             AND bomspec:specificationClassification IS NOT NULL
+          </fixedPart>
+        </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true"/>
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+    
+    
+    <!-- ##################### -->
+    <!-- CADClass -->
+    <!-- ##################### -->
+    <contentView name="byCadClassContentView_vnav">
+      <title>label.virtualnavigation.cadClass</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+          <predicate parameter="cad:cadClassification" operator="STARTSWITH">
+            <field schema="vnav" name="cad_cadClass"/>
+          </predicate>
+          <fixedPart>
+            ecm:mixinType = 'CadDocument'
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND cad:cadClassification IS NOT NULL
+          </fixedPart>
+        </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true"/>
+        <pageSize>10</pageSize>
+      </coreQueryPageProvider>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>only_one_cache</cacheKey>
+      <cacheSize>1</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+    </contentView>
+    
+     <!-- ##################### -->
+    <!-- Nature -->
+    <!-- ##################### -->
+    <contentView name="byNatureContentView_vnav">
+      <title>label.virtualnavigation.nature</title>
+      <translateTitle>true</translateTitle>
+      <iconPath>/icons/document_listing_icon.png</iconPath>
+      <showTitle>true</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <!-- search doc maintained here -->
+        <whereClause docType="VNav">
+          <predicate parameter="dc:nature" operator="STARTSWITH">
+            <field schema="vnav" name="dc_nature"/>
+          </predicate>
+          <fixedPart>
+            ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND dc:nature IS NOT NULL
           </fixedPart>
         </whereClause>
         <sort column="elo:orderingPriority" ascending="true" />

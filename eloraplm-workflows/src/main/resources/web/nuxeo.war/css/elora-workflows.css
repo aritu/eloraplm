@@ -49,3 +49,18 @@
     margin: 0 1px;
     border-left: 7px solid #ccc;
 }
+
+.taskStatusOk
+{
+    color: #480;
+}
+
+.taskStatusKo
+{
+    color: #d22;
+}
+
+.taskStatusNormal
+{
+    color: #04d;
+}

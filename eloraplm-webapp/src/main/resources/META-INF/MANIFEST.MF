@@ -39,5 +39,8 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-dashboard-ContentViewSer
  WebResources-contrib.xml,OSGI-INF/extensions/eloraplm-virtual-navigat
  ion-ContentViewService.xml,OSGI-INF/extensions/eloraplm-virtual-navig
  ation-DirectoryTreeService-contrib.xml,OSGI-INF/extensions/eloraplm-v
- irtual-navigation-TypeService-contrib.xml
+ irtual-navigation-TypeService-contrib.xml,OSGI-INF/extensions/elorapl
+ m-webapp-templateCreation-config.xml,OSGI-INF/extensions/eloraplm-dat
+ atable-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-data
+ table-WebResources-contrib.xml
 

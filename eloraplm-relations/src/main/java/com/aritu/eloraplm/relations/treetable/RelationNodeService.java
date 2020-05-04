@@ -42,6 +42,7 @@ import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.relations.treetable.RelationNodeData;
 import com.aritu.eloraplm.treetable.NodeManager;
 
@@ -118,7 +119,8 @@ public class RelationNodeService implements NodeManager {
      * @see com.aritu.eloraplm.treetable.NodeManager#getRoot(java.lang.Object)
      */
     @Override
-    public TreeNode getRoot(Object parentObject) throws EloraException {
+    public TreeNode getRoot(Object parentObject)
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[getRoot] [" + session.getPrincipal().getName()
                 + "] ";
         log.trace(logInitMsg + "--- ENTER ---");
@@ -131,7 +133,7 @@ public class RelationNodeService implements NodeManager {
 
         RelationNodeData nodeData = saveRelationNodeData(String.valueOf(nodeId),
                 level, currentDoc.getId(), currentDoc, null, null, null, null,
-                null, null, null, null, null, false, false);
+                null, null, null, null, null, false, false, false);
 
         nodeId++;
 
@@ -152,9 +154,11 @@ public class RelationNodeService implements NodeManager {
      * @param nodeData
      * @return
      * @throws EloraException
+     * @throws DocumentUnreadableException
      */
     private TreeNode processTreeNode(TreeNode rootNode, TreeNode parentNode,
-            RelationNodeData nodeData, int level) throws EloraException {
+            RelationNodeData nodeData, int level)
+            throws EloraException, DocumentUnreadableException {
 
         TreeNode node = new DefaultTreeNode(nodeData, parentNode);
         // Set nodes initial expanded state
@@ -234,9 +238,11 @@ public class RelationNodeService implements NodeManager {
      * @param nodeData
      * @return
      * @throws EloraException
+     * @throws DocumentUnreadableException
      */
     private List<RelationNodeData> getSpecialInLevel0ChildrenNodeData(
-            RelationNodeData nodeData) throws EloraException {
+            RelationNodeData nodeData)
+            throws EloraException, DocumentUnreadableException {
 
         docList = new LinkedHashMap<String, List<DocumentModel>>();
         stmtList = new HashMap<String, Statement>();
@@ -266,9 +272,11 @@ public class RelationNodeService implements NodeManager {
      * @param level
      * @return
      * @throws EloraException
+     * @throws DocumentUnreadableException
      */
     private List<RelationNodeData> getChildrenNodeData(
-            RelationNodeData nodeData, int level) throws EloraException {
+            RelationNodeData nodeData, int level)
+            throws EloraException, DocumentUnreadableException {
         List<RelationNodeData> childNodeList = new ArrayList<>();
         DocumentModel parentDoc = nodeData.getData();
 
@@ -282,7 +290,8 @@ public class RelationNodeService implements NodeManager {
     }
 
     private List<RelationNodeData> getSpecialChildrenNodeData(int level,
-            DocumentModel parentDoc) throws EloraException {
+            DocumentModel parentDoc)
+            throws EloraException, DocumentUnreadableException {
 
         List<RelationNodeData> specialChildren = new ArrayList<>();
 
@@ -308,7 +317,8 @@ public class RelationNodeService implements NodeManager {
     }
 
     private List<RelationNodeData> getNormalChildrenNodeData(int level,
-            DocumentModel parentDoc) throws EloraException {
+            DocumentModel parentDoc)
+            throws EloraException, DocumentUnreadableException {
 
         List<RelationNodeData> normalChildren = new ArrayList<>();
 
@@ -331,7 +341,7 @@ public class RelationNodeService implements NodeManager {
 
     private List<RelationNodeData> getChildNodes(DocumentModel parentDoc,
             int level, boolean inverse, boolean isSpecial)
-            throws EloraException {
+            throws EloraException, DocumentUnreadableException {
 
         // Empty lists
         docList = new LinkedHashMap<String, List<DocumentModel>>();
@@ -361,7 +371,8 @@ public class RelationNodeService implements NodeManager {
     }
 
     private void processStatementsAndPopulateLists(List<Statement> stmts,
-            boolean inverse) throws EloraException {
+            boolean inverse)
+            throws EloraException, DocumentUnreadableException {
         String logInitMsg = "[processStatementsAndPopulateLists] ["
                 + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER ---");
@@ -383,8 +394,11 @@ public class RelationNodeService implements NodeManager {
             }
 
             if (relatedDoc == null) {
-                throw new EloraException(
-                        "Error with permissions getting document from statement |"
+                log.trace(logInitMsg
+                        + "Throw DocumentUnreadableException since relatedDoc is null. stmt = |"
+                        + stmt.toString() + "|");
+                throw new DocumentUnreadableException(
+                        "Error getting document from statement |"
                                 + stmt.toString() + "|");
             }
 
@@ -540,6 +554,7 @@ public class RelationNodeService implements NodeManager {
         Integer directorOrdering = stmtInfo.getDirectorOrdering();
         Integer viewerOrdering = stmtInfo.getViewerOrdering();
         Integer inverseViewerOrdering = stmtInfo.getInverseViewerOrdering();
+        Boolean isManual = stmtInfo.getIsManual();
         boolean isSpecial = RelationsConfig.cadSpecialRelationsList.contains(
                 predicateUri);
         boolean isDirect = directRelationsList.contains(predicateUri);
@@ -554,7 +569,7 @@ public class RelationNodeService implements NodeManager {
         RelationNodeData node = saveRelationNodeData(String.valueOf(nodeId),
                 level, childUid, childDoc, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering,
-                inverseViewerOrdering, isSpecial, isDirect);
+                inverseViewerOrdering, isManual, isSpecial, isDirect);
 
         nodeId++;
         return node;
@@ -609,7 +624,7 @@ public class RelationNodeService implements NodeManager {
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
             Integer viewerOrdering, Integer inverseViewerOrdering,
-            boolean isSpecial, boolean isDirect) {
+            Boolean isManual, boolean isSpecial, boolean isDirect) {
         // Do nothing
         return null;
     }

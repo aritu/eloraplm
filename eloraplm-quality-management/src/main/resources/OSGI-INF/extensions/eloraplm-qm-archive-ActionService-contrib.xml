@@ -1,35 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.qm.archive.ActionService.contrib">
-  
-  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
-  
-    <action id="archiveQmProcessAction" order="0" label="eloraplm.command.archive.qm.process" type="link"
-            confirm="if(!confirmArchiveQmProcess()) return false;" link="#{archiveQmProcessAction.archiveQmProcess}" 
-            icon="/icons/action_archive_16.png">
-      <category>DOCUMENT_UPPER_ACTION</category>
-      <filter id="isArchivableQmProcess">
-          <rule grant="false">
-            <filter-id>cannot_write</filter-id>
-            <condition>#{currentDocument.isLocked() and currentDocument.lockInfo.owner ne currentUser}</condition>
-            <condition>#{not currentDocument.hasFacet('QmProcess')}</condition>
-            <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'WorkspaceRoot'}</condition>
-          </rule>
-      </filter>
-    </action>
     
-    <action id="activateQmProcessAction" order="0" label="eloraplm.command.activate.qm.process" type="link"
-            confirm="if(!confirmActivateQmProcess()) return false;" link="#{archiveQmProcessAction.activateQmProcess}"
-            icon="/icons/action_activate_16.png">
-      <category>DOCUMENT_UPPER_ACTION</category>
-      <filter id="isRestorableQmProcess">
-          <rule grant="false">
-            <condition>#{not currentDocument.hasFacet('QmProcess')}</condition>
-            <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'FolderArchivedQualityManagement'}</condition>
-          </rule>
-      </filter>
-    </action>
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+        <filter id="isArchivableQmProcess">
+            <rule grant="false">
+                <filter-id>cannot_write</filter-id>
+                <condition>#{currentDocument.isLocked() and currentDocument.lockInfo.owner ne currentUser}</condition>
+                <condition>#{not currentDocument.hasFacet('QmProcess')}</condition>
+                <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'WorkspaceRoot'}</condition>
+            </rule>
+        </filter>
+        
+        <filter id="isRestorableQmProcess">
+            <rule grant="false">
+                <condition>#{not currentDocument.hasFacet('QmProcess')}</condition>
+                <condition>#{documentManager.getDocument(currentDocument.getParentRef()).type ne 'FolderArchivedQualityManagement'}</condition>
+            </rule>
+        </filter>
+    </extension>
     
-  </extension>
+    <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <action id="archiveQmProcessAction" order="0" label="eloraplm.command.archive.qm.process" type="link"
+                confirm="if(!confirmArchiveQmProcess()) return false;" link="#{archiveQmProcessAction.archiveQmProcess}" 
+                icon="/icons/action_archive_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter-id>isArchivableQmProcess</filter-id>
+        </action>
+        
+        <action id="activateQmProcessAction" order="0" label="eloraplm.command.activate.qm.process" type="link"
+                confirm="if(!confirmActivateQmProcess()) return false;" link="#{archiveQmProcessAction.activateQmProcess}"
+                icon="/icons/action_activate_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter-id>isRestorableQmProcess</filter-id>
+        </action>
+    
+    </extension>
 
 </component>

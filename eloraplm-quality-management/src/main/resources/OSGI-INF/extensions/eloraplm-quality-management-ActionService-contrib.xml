@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <component name="com.aritu.eloraplm.qm.ActionService.contrib">
     <require>org.nuxeo.ecm.platform.actions</require>
+    <require>com.aritu.eloraplm.webapp.base.ActionService.contrib</require>
     
     <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
         
@@ -22,6 +23,18 @@
             </rule>
         </filter>
         
+        <filter id="hasQmHeader">
+            <rule grant="true">
+                <facet>QmProcess</facet>
+            </rule>
+        </filter>
+    
+        <filter id="hasWorkspaceHeader" append="true">
+            <rule grant="false">
+                <facet>QmProcess</facet>
+            </rule>
+        </filter>
+
     </extension>
     
     <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
@@ -38,6 +51,14 @@
         <action id="TAB_QM" link="/incl/tabs/qm.xhtml" order="104" label="eloraplm.label.qm" type="rest_document_link">
             <filter-id>isBomDocument</filter-id>
             <category>VIEW_ACTION_LIST</category>
+        </action>
+        
+        <action id="qm_document_header" order="1" type="template">
+            <category>DOCUMENT_HEADER</category>
+            <filter-id>hasQmHeader</filter-id>
+            <properties>
+                <property name="template">/widgets/actions/qm_metadata_header.xhtml</property>
+            </properties>
         </action>
         
     </extension>

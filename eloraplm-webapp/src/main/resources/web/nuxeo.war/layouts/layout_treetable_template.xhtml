@@ -39,7 +39,7 @@
                           tableStyleClass="treetable #{layout.properties.tableStyleClass}"
                           tableStyle="#{layout.properties.tableStyle}"
                           rowStyleClass="#{rowStyleClass}"
-                          emptyMessage="#{messages['eloraplm.message.info.treetable.noRecordsFound']}"
+                          emptyMessage="#{value.isInvalid ? messages['eloraplm.message.info.treetable.isInvalid'] : (value.hasUnreadableNodes ? messages['eloraplm.message.info.treetable.hasUnreadableNodes'] : messages['eloraplm.message.info.treetable.noRecordsFound'])}"
                           skipChildren="true"
                           selectionMode="#{layout.properties.selectionMode}"
                           paginator="#{not empty layout.properties.paginate ? layout.properties.paginate : 'false'}"
@@ -56,7 +56,13 @@
                           
                           <f:facet name="header" style="overflow: hidden;">
                               
-                              <span class="treeHeaderTitle">#{messages[eloraWebActions.evaluateString(layout.properties.tableTitle)]}</span>
+                              <span class="treeHeaderTitle">
+                                #{messages[eloraWebActions.evaluateString(layout.properties.tableTitle)]}
+                                <br /><span class="treeInfo">
+                                    <strong>#{value.firstLevelChildrenCount}</strong> #{messages['eloraplm.label.treetable.info.children.firstlevel']},
+                                    <strong>#{value.childrenCount}</strong> #{messages['eloraplm.label.treetable.info.children.total']}
+                                </span>
+                              </span>
                               <span class="treeHeaderButtons">
                                   <h:panelGroup styleClass="headerFilters" rendered="#{not empty layout.properties.headerFiltersTemplate}">
                                       <ui:include src="#{layout.properties.headerFiltersTemplate}" />
@@ -111,7 +117,7 @@
                                           listener="#{value.reloadTree}"
                                           process="@this"
                                           partialSubmit="true"
-                                          update="#{treeWidgetId}"
+                                          update="#{treeWidgetId} #{layout.properties.reloadRerender}"
                                           onstart="PF('treeBlocker_#{treeWidgetId}').show();"
                                           oncomplete="PF('treeBlocker_#{treeWidgetId}').hide();"
                                           onerror="jQuery('#treeActionErrorMsg').show();"
@@ -170,7 +176,7 @@
       
       </h:form>
       
-      <h:panelGroup id="ttButtonsPanel" styleClass="ttButtonsPanel" layout="block" rendered="#{layout.mode eq 'edit'}">
+      <h:panelGroup id="ttButtonsPanel" styleClass="ttButtonsPanel" layout="block" rendered="#{layout.mode eq 'edit' and not value.isInvalid and not value.hasUnreadableNodes}">
       
           <c:if test="#{not layout.properties.isFancybox}" >
             <nxu:set var="nonProxyDocument" value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}">

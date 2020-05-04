@@ -12,24 +12,35 @@
           <tr>
             <nxu:set var="originDocumentRef" value="#{eloraWebActions.getDocumentRefFromId(modifiedItem.originItem)}">
             <nxu:set var="originDocument" value="#{eloraWebActions.getDocument(originDocumentRef)}">
-              <td style="white-space: nowrap">
-                <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{originDocument}"/>
-              </td>
-              <td style="white-space: nowrap">
-                <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{originDocument}"/>
-              </td>
-              <td style="white-space: nowrap">
-                <nxl:widgetType name="listing_version_lock_icon" mode="view" field="#{originDocument}"/>
-              </td>
-              <td style="white-space: nowrap">
-                <nxl:widget name="itemState" mode="view" value="#{originDocument}"/>
-              </td>
-              <td style="white-space: nowrap">
-                <nxl:widgetType name="selectOneDirectory" mode="view" value="#{modifiedItem.action}" directoryName="elora_cmActionModified" localize="true" />
-              </td>
-               <td style="white-space: nowrap">
-                <h:outputText value="#{modifiedItem.isManaged ? messages['eloraplm.label.cm.isManaged'] : ''}" />
-              </td>
+            
+              <h:panelGroup rendered="#{originDocument != null}">
+                <td style="white-space: nowrap">
+                  <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{originDocument}"/>
+                </td>
+                <td style="white-space: nowrap">
+                  <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{originDocument}"/>
+                </td>
+                <td style="white-space: nowrap">
+                  <nxl:widgetType name="listing_version_lock_icon" mode="view" field="#{originDocument}"/>
+                </td>
+                <td style="white-space: nowrap">
+                  <nxl:widget name="itemState" mode="view" value="#{originDocument}"/>
+                </td>
+                <td style="white-space: nowrap">
+                  <nxl:widgetType name="selectOneDirectory" mode="view" value="#{modifiedItem.action}" directoryName="elora_cmActionModified" localize="true" />
+                </td>
+                 <td style="white-space: nowrap">
+                  <h:outputText value="#{modifiedItem.isManaged ? messages['eloraplm.label.cm.isManaged'] : ''}" />
+                </td>
+              </h:panelGroup>
+              
+              <h:panelGroup rendered="#{originDocument == null}">
+                <td  colspan="6">
+                  <h:graphicImage  value="/icons/relation_not_visible.png" style="vertical-align: middle; margin-right: 1em;" />
+                  <h:outputText value="#{messages['label.relation.document.not.visible']}" />
+                </td>
+              </h:panelGroup>
+              
             </nxu:set>
             </nxu:set>
           </tr>

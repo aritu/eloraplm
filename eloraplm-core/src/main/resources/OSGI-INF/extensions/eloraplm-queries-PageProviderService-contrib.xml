@@ -467,6 +467,57 @@
           <pageSize>5</pageSize>
         </coreQueryPageProvider>
         
+        <coreQueryPageProvider name="structure_collaboration_root_wc_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM StructureRoot, CollaborationRoot
+            WHERE ecm:primaryType IN ('StructureRoot', 'CollaborationRoot')
+            AND ecm:mixinType != 'HiddenInNavigation'
+            AND ecm:isProxy = 0
+            AND ecm:isVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND (elo:reference ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
+          </pattern>
+          <sort column="elo:orderingPriority" ascending="true" />
+          <sort column="elo:reference" ascending="true" />
+          <sort column="dc:title" ascending="true" />
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
         
+        <coreQueryPageProvider name="structure_collaboration_library_root_wc_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM StructureRoot, CollaborationRoot, LibraryRoot
+            WHERE ecm:primaryType IN ('StructureRoot', 'CollaborationRoot', 'LibraryRoot')
+            AND ecm:mixinType != 'HiddenInNavigation'
+            AND ecm:isProxy = 0
+            AND ecm:isVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND (elo:reference ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
+          </pattern>
+          <sort column="elo:orderingPriority" ascending="true" />
+          <sort column="elo:reference" ascending="true" />
+          <sort column="dc:title" ascending="true" />
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="other_document_proxy_in_content_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document
+            WHERE ecm:mixinType NOT IN ('HiddenInNavigation','Folderish','BomDocument', 'CadDocument')
+            AND ecm:isProxy = 1
+            AND ecm:isVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND (elo:reference ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
+            AND ecm:ancestorId = '?'
+          </pattern>
+          <parameter>#{currentDocument.id}</parameter>
+          <sort column="elo:orderingPriority" ascending="true" />
+          <sort column="elo:reference" ascending="true" />
+          <sort column="dc:title" ascending="true" />
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
+
     </extension>
 </component>

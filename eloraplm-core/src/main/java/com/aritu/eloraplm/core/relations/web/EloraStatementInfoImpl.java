@@ -109,7 +109,7 @@ public class EloraStatementInfoImpl extends StatementInfoImpl
         }
         return null;
     }
-    
+
     @Override
     public Integer getInverseViewerOrdering() {
         String inverseViewerOrdering = null;
@@ -123,6 +123,19 @@ public class EloraStatementInfoImpl extends StatementInfoImpl
                 } catch (NumberFormatException e) {
                     // TODO Logak jarri
                 }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean getIsManual() {
+        String isManual = null;
+        Node node = statement.getProperty(EloraRelationConstants.IS_MANUAL);
+        if (node != null && node.isLiteral()) {
+            isManual = ((Literal) node).getValue();
+            if (isManual != null) {
+                return Boolean.parseBoolean(isManual);
             }
         }
         return null;

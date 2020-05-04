@@ -9,5 +9,7 @@
   <xs:element name="bom_toolClass" type="xs:string" />
   <xs:element name="bom_packagingClass" type="xs:string" />
   <xs:element name="bom_specificationClass" type="xs:string" />
+  <xs:element name="cad_cadClass" type="xs:string" />
+  <xs:element name="dc_nature" type="xs:string" />
 
 </xs:schema>

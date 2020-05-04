@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentNotFoundException;
+import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -143,70 +144,66 @@ public class ModifiedItemsNodeService implements NodeManager {
                     boolean includeInImpactMatrix = (boolean) map.get(
                             pfx + "/*1/includeInImpactMatrix");
 
-                    try {
-                        DocumentModel derivedFrom = null;
-                        if (derivedFromUid != null) {
-                            derivedFrom = session.getDocument(
-                                    new IdRef(derivedFromUid));
-                        }
-                        DocumentModel parentItem = null;
-                        if (parentItemUid != null) {
-                            parentItem = session.getDocument(
-                                    new IdRef(parentItemUid));
-                        }
-                        DocumentModel originItem = null;
-                        if (originItemUid != null) {
-                            originItem = session.getDocument(
-                                    new IdRef(originItemUid));
-                        }
-                        DocumentModel originItemWc = null;
-                        if (originItemWcUid != null) {
-                            originItemWc = session.getDocument(
-                                    new IdRef(originItemWcUid));
-                        }
-                        DocumentModel destinationItem = null;
-                        if (destinationItemUid != null) {
-                            destinationItem = session.getDocument(
-                                    new IdRef(destinationItemUid));
-                        }
-                        DocumentModel destinationItemWc = null;
-                        if (destinationItemWcUid != null) {
-                            destinationItemWc = session.getDocument(
-                                    new IdRef(destinationItemWcUid));
-                        }
-                        // Calculate if editable fields are editable or not in
-                        // function of the item values
-                        boolean destinationItemVersionIsReadOnly = CMTreeBeanHelper.calculateDestinationItemVersionListIsReadOnlyValue(
-                                action, isManaged);
-
-                        boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
-                                action, destinationItem);
-
-                        boolean isImpactable = CMHelper.getIsImpactable(
-                                originItem.getType(), action,
-                                destinationItemUid);
-
-                        ModifiedItemsNodeData nodeData = new ModifiedItemsNodeData(
-                                String.valueOf(nodeId), level, rowNumber,
-                                currentNodeId, parentNodeId, derivedFrom,
-                                parentItem, originItem, originItemWc, null,
-                                null, false, false, action, true,
-                                destinationItem, destinationItemWc,
-                                destinationItemVersionIsReadOnly, isManaged,
-                                isManagedIsReadOnly, isManual, type, comment,
-                                false, isUpdated, isImpactable,
-                                includeInImpactMatrix);
-
-                        nodeId++;
-
-                        TreeNode node = new DefaultTreeNode(nodeData, root);
-                        node.setExpanded(true);
-                    } catch (DocumentNotFoundException e) {
-                        log.error(logInitMsg + "Exception thrown: "
-                                + e.getClass() + ": " + e.getMessage());
+                    DocumentModel derivedFrom = null;
+                    if (derivedFromUid != null) {
+                        derivedFrom = session.getDocument(
+                                new IdRef(derivedFromUid));
                     }
+                    DocumentModel parentItem = null;
+                    if (parentItemUid != null) {
+                        parentItem = session.getDocument(
+                                new IdRef(parentItemUid));
+                    }
+                    DocumentModel originItem = null;
+                    if (originItemUid != null) {
+                        originItem = session.getDocument(
+                                new IdRef(originItemUid));
+                    }
+                    DocumentModel originItemWc = null;
+                    if (originItemWcUid != null) {
+                        originItemWc = session.getDocument(
+                                new IdRef(originItemWcUid));
+                    }
+                    DocumentModel destinationItem = null;
+                    if (destinationItemUid != null) {
+                        destinationItem = session.getDocument(
+                                new IdRef(destinationItemUid));
+                    }
+                    DocumentModel destinationItemWc = null;
+                    if (destinationItemWcUid != null) {
+                        destinationItemWc = session.getDocument(
+                                new IdRef(destinationItemWcUid));
+                    }
+                    // Calculate if editable fields are editable or not in
+                    // function of the item values
+                    boolean destinationItemVersionIsReadOnly = CMTreeBeanHelper.calculateDestinationItemVersionListIsReadOnlyValue(
+                            action, isManaged);
+
+                    boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
+                            action, destinationItem);
+
+                    boolean isImpactable = CMHelper.getIsImpactable(
+                            originItem.getType(), action, destinationItemUid);
+
+                    ModifiedItemsNodeData nodeData = new ModifiedItemsNodeData(
+                            String.valueOf(nodeId), level, rowNumber,
+                            currentNodeId, parentNodeId, derivedFrom,
+                            parentItem, originItem, originItemWc, null, null,
+                            false, false, action, true, destinationItem,
+                            destinationItemWc, destinationItemVersionIsReadOnly,
+                            isManaged, isManagedIsReadOnly, isManual, type,
+                            comment, false, isUpdated, isImpactable,
+                            includeInImpactMatrix);
+
+                    nodeId++;
+
+                    TreeNode node = new DefaultTreeNode(nodeData, root);
+                    node.setExpanded(true);
                 }
             }
+        } catch (DocumentNotFoundException | DocumentSecurityException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw (e);
         } catch (NuxeoException e) {
             log.error(logInitMsg + e.getMessage(), e);
             throw new EloraException(

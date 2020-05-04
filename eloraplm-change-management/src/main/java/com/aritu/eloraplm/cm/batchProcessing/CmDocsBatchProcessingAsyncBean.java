@@ -54,6 +54,7 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.pdm.promote.util.PromoteHelper;
 
 @AutoCreate
@@ -164,7 +165,7 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
             TreeNode root, List<String> sortedIds, DAG dag,
             Map<String, List<String>> childrenVersionSeriesMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager) throws EloraException {
+            CoreSession documentManager) {
         String logInitMsg = "[processPromoteDocs] ["
                 + documentManager.getPrincipal().getName() + "] ";
 
@@ -203,8 +204,7 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
                 log.trace(logInitMsg
                         + "Start checking release or obsolete in major of document |"
                         + docId + "|");
-                if (PromoteHelper.checkReleasedAndObsoleteInMajor(doc,
-                        documentManager)) {
+                if (PromoteHelper.checkReleasedInMajor(doc, documentManager)) {
                     log.trace(logInitMsg
                             + "Finished checking release or obsolete in major of document |"
                             + docId + "|");
@@ -221,6 +221,14 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
                     for (Statement bomStmt : bomStmts) {
                         DocumentModel objectBomDoc = RelationHelper.getDocumentModel(
                                 bomStmt.getObject(), documentManager);
+                        if (objectBomDoc == null) {
+                            log.trace(logInitMsg
+                                    + "Throw DocumentUnreadableException  since objectBomDoc is null. bomStmt = |"
+                                    + bomStmt.toString() + "|");
+                            throw new DocumentUnreadableException(
+                                    "Error getting document from statement |"
+                                            + bomStmt.toString() + "|");
+                        }
                         List<String> childrenInTreeVersionSeriesIdList = childrenVersionSeriesMap.get(
                                 docId);
                         if (childrenInTreeVersionSeriesIdList != null
@@ -355,6 +363,10 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
                                         true, documentManager);
                             }
                             documentManager.removeLock(wcDoc.getRef());
+                            // Fire Approved event
+                            EloraEventHelper.fireEvent(
+                                    PdmEventNames.PDM_APPROVED_EVENT, doc);
+
                             destinationWcUidList.add(wcDoc.getId());
 
                             ResultType success = new ResultType(docId,
@@ -387,7 +399,7 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
                     log.error(logInitMsg + "Document  with docId = |" + docId
                             + "|, reference =|" + reference + "|, title=|"
                             + title
-                            + "| has another released or obsolete document in the same major");
+                            + "| has another released document in the same major");
 
                     String message = EloraMessageHelper.getTranslatedMessage(
                             documentManager,

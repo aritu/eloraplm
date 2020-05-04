@@ -33,7 +33,7 @@ public class UnrestrictedArchiver extends UnrestrictedSessionRunner {
     @Override
     public void run() {
         session.move(docRef, destFolderRef, null);
-        // session.save();
+        session.removeLock(docRef);
     }
 
 }

@@ -137,7 +137,7 @@
     
     <filter id="bomAddCustomerProductTreeButton">
         <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_CUSTOMER'}</condition>
+          <condition>#{webActions.currentTabId eq 'TAB_ITEM_CUSTOMERS'}</condition>
           <type>BomProduct</type>
         </rule>
     </filter>
@@ -160,6 +160,13 @@
         <rule grant="true">
           <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS_MANUFACTURER_PART'}</condition>
           <type>BomManufacturerPart</type>
+        </rule>
+    </filter>
+    
+    <filter id="itemCustomersTableButton">
+        <rule grant="true">
+            <condition>#{webActions.currentTabId eq 'TAB_ITEM_CUSTOMERS'}</condition>
+            <type>BomProduct</type>
         </rule>
     </filter>
     
@@ -247,7 +254,7 @@
     
     <!-- default actions on right panel -->
     
-    <action id="summary_bom_cad_documents" type="widget" order="200">
+    <action id="summary_bom_cad_documents" type="widget" order="100">
       <category>SUMMARY_PANEL_RIGHT</category>
       <properties>
         <property name="widgetName">summary_bom_cad_documents</property>
@@ -255,7 +262,7 @@
       <filter-id>isBomDocument</filter-id>
     </action>
     
-    <action id="summary_bom_documents" type="widget" order="250">
+    <action id="summary_bom_documents" type="widget" order="150">
       <category>SUMMARY_PANEL_RIGHT</category>
       <properties>
         <property name="widgetName">summary_bom_documents</property>
@@ -263,7 +270,7 @@
       <filter-id>isBomDocument</filter-id>
     </action>
     
-    <action id="summary_bom_has_bom_documents" type="widget" order="300">
+    <action id="summary_bom_has_bom_documents" type="widget" order="200">
       <category>SUMMARY_PANEL_RIGHT</category>
       <properties>
         <property name="widgetName">summary_bom_has_bom_documents</property>
@@ -330,8 +337,8 @@
       <filter-id>isBomPart</filter-id>
     </action>
     
-    <action id="TAB_BOM_CUSTOMER" link="/incl/tabs/bom_customer_content.xhtml"
-      order="70" label="label.com.aritu.eloraplm.relations.tab.bomCustomer" type="rest_document_link">
+    <action id="TAB_ITEM_CUSTOMERS" link="/incl/tabs/item_customers_content.xhtml"
+      order="70" label="eloraplm.tab.item.customers" type="rest_document_link">
       <category>VIEW_ACTION_LIST</category>
       <filter-id>isBomProduct</filter-id>
     </action>
@@ -342,12 +349,6 @@
       <filter-id>isBomDocument</filter-id>
       <filter-id>isNotCustomerProduct</filter-id>
       <filter-id>isNotManufacturerPart</filter-id>
-    </action>
-    
-    <action id="TAB_BOM_ITEMS_CUSTOMER_PRODUCT" link="/incl/tabs/customer_product_items_content.xhtml"
-      order="80" label="label.com.aritu.eloraplm.relations.tab.items" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isCustomerProduct</filter-id>
     </action>
     
     <action id="TAB_BOM_ITEMS_MANUFACTURER_PART" link="/incl/tabs/manufacturer_part_items_content.xhtml"
@@ -422,61 +423,30 @@
     <!-- end of Documents Tab buttons -->
     
     
-    <!-- Customer Tab buttons -->    
-     <!-- Customer Product Treetable buttons -->
-     
-     <action id="BtnCreateCustomerProductRelation" order="20" label="eloraplm.command.relation.create.customerProduct" type="fancybox" icon="">
-        <category>TREETABLE_INVERSE_BUTTON</category>
-	      <filter-id>bomAddCustomerProductTreeButton</filter-id>
-	      <filter-id>isNotZeroVersion</filter-id>
-	      <properties>
-	        <property name="include">/incl/action/product_create_customer_relation.xhtml</property>
-	        <property name="ajaxSupport">true</property>
-	        <property name="styleClass">button</property>
-	      </properties>
-    </action>
+    <!-- Customer Tab buttons -->
+    <!-- Customers DataTable buttons -->
     
-    <action id="BtnAddCustomerProductRelation" order="20" label="eloraplm.command.relation.add.customerProduct" type="fancybox" icon="">
-        <category>TREETABLE_INVERSE_BUTTON</category>
-        <filter-id>bomAddCustomerProductTreeButton</filter-id>
-        <filter-id>isNotZeroVersion</filter-id>
-        <properties>
-          <property name="include">/incl/action/product_has_customer_add_relation.xhtml</property>
-          <property name="ajaxSupport">true</property>
-          <property name="styleClass">button</property>
-        </properties>
-    </action>
+        <action id="BtnAddCustomer" order="20" label="eloraplm.command.item.customers.add" type="fancybox" icon="">
+            <category>DATATABLE_BUTTON</category>
+            <filter-id>itemCustomersTableButton</filter-id>
+            <properties>
+                <property name="include">/incl/action/datatable/add_item_customer.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+            </properties>
+        </action>
+        
+        <action id="BtnSaveCustomers" order="30" label="command.save" type="link" link="#{itemCustomersTableBean.save()}" icon="">
+            <category>DATATABLE_BUTTON</category>
+            <filter-id>itemCustomersTableButton</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+        
+    <!-- End of Customers DataTable buttons -->
     
-    <action id="BtnCustomerAddProductTreeButton" order="20" label="eloraplm.command.relation.add.product" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>customerAddProductTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/customer_has_product_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveCustomerProductRelations" order="30" label="command.save" type="link" link="#{customerProductTreeBean.save(currentDocument, currentDocument, true)}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>customerAddProductTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveCustomerProductInverseRelations" order="30" label="command.save" type="link" link="#{customerProductInverseTreeBean.save(currentDocument, currentDocument, true, true)}" icon="">
-      <category>TREETABLE_INVERSE_BUTTON</category>
-      <filter-id>bomAddCustomerProductTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
      
      <!-- end of Customer Product Treetable buttons -->    
     <!-- end of Customer Tab buttons -->

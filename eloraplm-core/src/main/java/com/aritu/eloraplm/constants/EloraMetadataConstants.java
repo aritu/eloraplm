@@ -44,6 +44,12 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_OVERWRITE_OVERWRITTEN = "ovw:overwritten";
 
+    public static final String ELORA_CUST_CUSTOMERS = "cust:customers";
+
+    public static final String ELORA_PLANNING_REAL_END_DATE = "plan:realEndDate";
+
+    public static final String ELORA_PRJ_PROJECTPHASELIST = "prj:projectPhaseList";
+
     // BOM metadata
 
     public static final String ELORA_BOMMANPART_MANUFACTURER = "bommanpart:manufacturer";

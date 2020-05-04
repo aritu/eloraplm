@@ -52,6 +52,10 @@ public class EloraDoctypeConstants {
 
     public static final String STRUCTURE_ROOT = "StructureRoot";
 
+    public static final String LIBRARY_ROOT = "LibraryRoot";
+
+    public static final String COLLABORATION_ROOT = "CollaborationRoot";
+
     public static final String STRUCTURE_ARCHIVED = "StructArchived";
 
     public static final String STRUCTURE_CAD_DOCS = "StructCadDoc";

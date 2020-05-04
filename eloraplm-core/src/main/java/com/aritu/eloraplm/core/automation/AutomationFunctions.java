@@ -27,9 +27,6 @@ import org.nuxeo.ecm.automation.core.scripting.CoreFunctions;
  */
 public class AutomationFunctions extends CoreFunctions {
 
-    // private static final Log log =
-    // LogFactory.getLog(AutomationFunctions.class);
-
     public <T> List<T> removeDuplicatedElementsFromList(List<T> list) {
 
         if (list == null) {
@@ -82,22 +79,5 @@ public class AutomationFunctions extends CoreFunctions {
 
         return list;
     }
-
-    // public <K, V> List<Map<K, V>> addValuesToMap(List<Map<K, V>> list,
-    // Map<K, V> values) {
-    //
-    // if (list == null) {
-    // throw new IllegalArgumentException(
-    // "First parameter must not be null");
-    // }
-    // if (values == null) {
-    // throw new IllegalArgumentException(
-    // "Second parameter must not be null");
-    // }
-    //
-    // list.add(values);
-    //
-    // return list;
-    // }
 
 }

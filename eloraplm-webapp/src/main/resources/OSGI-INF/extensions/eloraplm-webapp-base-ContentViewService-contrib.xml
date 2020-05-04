@@ -38,12 +38,13 @@
             <field schema="elora_advanced_search" name="lastContributor" />
           </predicate>
           <fixedPart>
-            ecm:parentId = ? AND ecm:isVersion = 0
+            (ecm:parentId = ? OR ecm:ancestorId = ?) AND ecm:isVersion = 0
             AND ecm:mixinType != 'HiddenInNavigation'
-            AND ecm:currentLifeCycleState != 'deleted' 
+            AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
         <parameter>#{currentDocument.id}</parameter>
+        <parameter>#{searchDocument.eloadvsrch.searchInSubfolders ? currentDocument.id : '00000000-0000-0000-0000-000000000000'}</parameter>
         <sort column="dc:modified" ascending="false" />
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
@@ -72,6 +73,69 @@
       <selectionList>CURRENT_SELECTION</selectionList>
       <actions category="CURRENT_SELECTION_LIST" />
 
+    </contentView>
+    
+    <!-- ORDERABLE DOCUMENT CONTENT -->
+    <contentView name="orderable_document_content">
+        
+        <title>label.contentview.orderable_document_content</title>
+        <translateTitle>true</translateTitle>
+        <showTitle>false</showTitle>
+        
+        <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <whereClause docType="EloraAdvancedSearch">
+            <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                <field schema="elora_advanced_search" name="fulltext_all" />
+            </predicate>
+            <predicate parameter="dc:title" operator="ILIKE">
+                <field schema="elora_advanced_search" name="title" />
+            </predicate>
+            <predicate parameter="dc:modified" operator="BETWEEN">
+                <field schema="elora_advanced_search" name="modified_min" />
+                <field schema="elora_advanced_search" name="modified_max" />
+            </predicate>
+            <predicate parameter="elo:reference" operator="ILIKE">
+                <field schema="elora_advanced_search" name="reference" />
+            </predicate>
+            <predicate parameter="ecm:currentLifeCycleState" operator="=">
+                <field schema="elora_advanced_search" name="currentLifeCycleState" />
+            </predicate>
+            <predicate parameter="dc:lastContributor" operator="=">
+                <field schema="elora_advanced_search" name="lastContributor" />
+            </predicate>
+            <fixedPart>
+                (ecm:parentId = ? OR ecm:ancestorId = ?) AND ecm:isVersion = 0
+                AND ecm:mixinType != 'HiddenInNavigation'
+                AND ecm:currentLifeCycleState != 'deleted'
+            </fixedPart>
+            </whereClause>
+            <parameter>#{currentDocument.id}</parameter>
+            <parameter>#{searchDocument.eloadvsrch.searchInSubfolders ? currentDocument.id : '00000000-0000-0000-0000-000000000000'}</parameter>
+            <sort ascending="true" column="ecm:pos"/>
+            <sortable>false</sortable>
+            <pageSize>20</pageSize>
+        </coreQueryPageProvider>
+        
+        <searchLayout name="elora_document_content_filter" />
+        <showFilterForm>true</showFilterForm>
+        
+        <showPageSizeSelector>true</showPageSizeSelector>
+        <useGlobalPageSize>true</useGlobalPageSize>
+        <refresh>
+            <event>documentChanged</event>
+            <event>documentChildrenChanged</event>
+        </refresh>
+        <cacheKey>#{currentDocument.id}</cacheKey>
+        <cacheSize>10</cacheSize>
+        
+        <resultLayouts>
+            <layout iconPath="/icons/document_listing_icon.png" name="document_listing_table" showCSVExport="true" showEditColumns="true" showSpreadsheet="true" title="document_listing" translateTitle="true"/>
+        </resultLayouts>
+        
+        <selectionList>CURRENT_SELECTION</selectionList>
+        <actions category="ORDERABLE_CURRENT_SELECTION_LIST"/>
+        
     </contentView>
 
 
@@ -107,7 +171,8 @@
             ecm:uuid IN (?)
           </fixedPart>
         </whereClause>
-        <parameter>#{eloraLinks.getLinks()}</parameter>
+        <!-- Fix for when we use UUID type, the UUID with zeros means null -->
+        <parameter>#{empty eloraLinks.getLinks() ? '00000000-0000-0000-0000-000000000000' : eloraLinks.getLinks()}</parameter>
         <sort ascending="false" column="dc:created"/>
         <pageSize>20</pageSize>
       </coreQueryPageProvider>

@@ -192,7 +192,8 @@ public class EloraRelationHelper {
                     eloraStmtInfo.getQuantity(), eloraStmtInfo.getOrdering(),
                     eloraStmtInfo.getDirectorOrdering(),
                     eloraStmtInfo.getViewerOrdering(),
-                    eloraStmtInfo.getInverseViewerOrdering());
+                    eloraStmtInfo.getInverseViewerOrdering(),
+                    eloraStmtInfo.getIsManual());
             log.trace(logInitMsg + "Relation added from |"
                     + subjectLastVersion.getId() + "| to |"
                     + stmt.getObject().toString() + "| with predicate |"
@@ -239,7 +240,8 @@ public class EloraRelationHelper {
                 eloraStmtInfo.getQuantity(), eloraStmtInfo.getOrdering(),
                 eloraStmtInfo.getDirectorOrdering(),
                 eloraStmtInfo.getViewerOrdering(),
-                eloraStmtInfo.getInverseViewerOrdering());
+                eloraStmtInfo.getInverseViewerOrdering(),
+                eloraStmtInfo.getIsManual());
     }
 
     private static void addDocumentRelation(DocumentModel subjectLastVersion,
@@ -257,7 +259,8 @@ public class EloraRelationHelper {
                     eloraStmtInfo.getQuantity(), eloraStmtInfo.getOrdering(),
                     eloraStmtInfo.getDirectorOrdering(),
                     eloraStmtInfo.getViewerOrdering(),
-                    eloraStmtInfo.getInverseViewerOrdering());
+                    eloraStmtInfo.getInverseViewerOrdering(),
+                    eloraStmtInfo.getIsManual());
             log.trace(logInitMsg + "Relation added from |"
                     + subjectLastVersion.getId() + "| to |"
                     + objectLastVersion.getId() + "| with predicate |"
@@ -360,7 +363,8 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getOrdering(),
                             eloraStmtInfo.getDirectorOrdering(),
                             eloraStmtInfo.getViewerOrdering(),
-                            eloraStmtInfo.getInverseViewerOrdering());
+                            eloraStmtInfo.getInverseViewerOrdering(),
+                            eloraStmtInfo.getIsManual());
                     log.trace(logInitMsg + "Relation added from |"
                             + subjectBaseDoc.getId() + "| to |"
                             + objectBaseDoc.getId() + "| with predicate |"
@@ -465,7 +469,8 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getOrdering(),
                             eloraStmtInfo.getDirectorOrdering(),
                             eloraStmtInfo.getViewerOrdering(),
-                            eloraStmtInfo.getInverseViewerOrdering());
+                            eloraStmtInfo.getInverseViewerOrdering(),
+                            eloraStmtInfo.getIsManual());
                 } catch (RelationAlreadyExistsException e) {
                     log.trace(logInitMsg
                             + "Anarchic relation already exists but is ignored");
@@ -540,7 +545,8 @@ public class EloraRelationHelper {
                         eloraStmtInfo.getOrdering(),
                         eloraStmtInfo.getDirectorOrdering(),
                         eloraStmtInfo.getViewerOrdering(),
-                        eloraStmtInfo.getInverseViewerOrdering());
+                        eloraStmtInfo.getInverseViewerOrdering(),
+                        eloraStmtInfo.getIsManual());
             } else {
                 DocumentModel objectWc = session.getSourceDocument(
                         object.getRef());
@@ -555,7 +561,8 @@ public class EloraRelationHelper {
                                 eloraStmtInfo.getOrdering(),
                                 eloraStmtInfo.getDirectorOrdering(),
                                 eloraStmtInfo.getViewerOrdering(),
-                                eloraStmtInfo.getInverseViewerOrdering());
+                                eloraStmtInfo.getInverseViewerOrdering(),
+                                eloraStmtInfo.getIsManual());
                     } catch (RelationAlreadyExistsException e) {
                         log.trace(logInitMsg
                                 + "Anarchic relation already exists but is ignored");
@@ -568,7 +575,8 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getOrdering(),
                             eloraStmtInfo.getDirectorOrdering(),
                             eloraStmtInfo.getViewerOrdering(),
-                            eloraStmtInfo.getInverseViewerOrdering());
+                            eloraStmtInfo.getInverseViewerOrdering(),
+                            eloraStmtInfo.getIsManual());
                 }
             }
         }

@@ -11,7 +11,19 @@
     <require>org.nuxeo.ecm.favorites.actions</require>
 
 <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
-  
+    
+    <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet.
+    Here we use directly all the doctypes that now have the facet. -->
+    <filter id="isBasicDocument">
+        <rule grant="false">
+            <condition>#{currentDocument.type ne 'File'
+            and currentDocument.type ne 'Note'
+            and currentDocument.type ne 'Picture'
+            and currentDocument.type ne 'Audio'
+            and currentDocument.type ne 'Video'}</condition>
+        </rule>
+    </filter>
+    
     <filter id="isBomDocument">
       <rule grant="true">
         <facet>BomDocument</facet>
@@ -80,9 +92,49 @@
         <rule grant="true" />
     </filter>
     
+    <!--  create documents from template ### BEGIN ### -->
+    <filter id="can_be_created_from_template">
+      <rule grant="true">
+        <condition>#{changeableDocument.type == 'File'}</condition>
+        <condition>#{changeableDocument.type == 'Project'}</condition>
+        <condition>#{changeableDocument.type == 'Workspace'}</condition>
+        <condition>#{changeableDocument.type == 'CmPr'}</condition>
+        <condition>#{changeableDocument.type == 'CmEcr'}</condition>
+        <condition>#{changeableDocument.type == 'CmEco'}</condition>
+        <condition>#{changeableDocument.type == 'ProductValidation'}</condition>
+        <condition>#{changeableDocument.type == 'ProductVerification'}</condition>
+        <condition>#{changeableDocument.type == 'ProductionProcessValidation'}</condition>
+        <condition>#{changeableDocument.type == 'ProductionPartApprovalProcess'}</condition>
+      </rule>
+    </filter>
+    
+    <filter id="cannot_be_created_from_template">
+      <rule grant="false">
+        <condition>#{changeableDocument.type == 'File'}</condition>
+        <condition>#{changeableDocument.type == 'Project'}</condition>
+        <condition>#{changeableDocument.type == 'Workspace'}</condition>
+        <condition>#{changeableDocument.type == 'CmPr'}</condition>
+        <condition>#{changeableDocument.type == 'CmEcr'}</condition>
+        <condition>#{changeableDocument.type == 'CmEco'}</condition>
+        <condition>#{changeableDocument.type == 'ProductValidation'}</condition>
+        <condition>#{changeableDocument.type == 'ProductVerification'}</condition>
+        <condition>#{changeableDocument.type == 'ProductionProcessValidation'}</condition>
+        <condition>#{changeableDocument.type == 'ProductionPartApprovalProcess'}</condition>
+      </rule>
+    </filter>
+    <!--  create documents from template ### END ### -->
+    
   </extension>
 
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    <!-- Admin tab to show properties defined in EloraPLM -->
+    <action id="EloraPlmInfo" link="/incl/sysinfo/eloraplm_info.xhtml" label="tab.sysinfo.eloraplm"
+      type="admin_rest_document_link"
+      order="35">
+      <category>SystemInfo_sub_tab</category>
+      <filter-id>only_for_manager</filter-id>
+    </action>
     
     <!-- New default widget in summary panel left for displaying document type, CAD part type and description -->
     <action id="summary_current_document_types_and_description" order="10" type="widget" enabled="true">
@@ -135,12 +187,12 @@
       </properties>
     </action>
     
-    <!-- Action to move document -->
-    <action id="moveDocument" order="50" label="eloraplm.command.move" type="fancybox" icon="/icons/action_move_16.png">
+    <!-- Action to move current document -->
+    <action id="moveCurrentDocument" order="50" label="eloraplm.command.move" type="fancybox" icon="/icons/action_move_16.png">
       <category>DOCUMENT_UPPER_ACTION</category>
-      <filter id="filter@moveDocument">
+      <filter id="filter@moveCurrentDocument">
         <rule grant="true">
-          <condition>#{currentUser.administrator and not currentDocument.isImmutable() and not currentDocument.isProxy()}</condition>
+          <condition>#{moveActions.getCanMoveCurrentDoc()}</condition>
         </rule>
       </filter>
       <properties>
@@ -149,6 +201,26 @@
         <property name="visibleByDefault">false</property>
       </properties>
     </action>
+    
+    <!-- Action to switch current document Elora Root Folder -->
+    <action id="switchCurrentDocumentEloraRootFolder" order="55" label="eloraplm.command.switchEloraRootFolder" type="fancybox" icon="/icons/action_switch_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="filter@switchCurrentDocumentEloraRootFolder">
+        <rule grant="true">
+          <condition>#{switchActions.getCanSwitchCurrentDocEloraRootFolder()}</condition>
+        </rule>
+      </filter>
+      <properties>
+        <property name="include">/incl/action/switch_document_elora_root_folder.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="visibleByDefault">false</property>
+        <property name="width">1000</property>
+        <property name="height">800</property>
+        <property name="autoDimensions">false</property>
+      </properties>
+      
+    </action>
+    
     
     <!-- Show action by default -->
     <action id="addCurrentDocumentToWorklist" icon="/icons/action_add_to_worklist_16.png">
@@ -184,7 +256,7 @@
       </properties>
     </action>
     
-    
+    <!-- POPUP actions -->
     
     <!-- Disable POPUP_RENAME action -->
     <action id="POPUP_RENAME" enabled="false" />
@@ -192,8 +264,15 @@
     <!-- Disable POPUP_WORKFLOW action -->
     <action id="POPUP_WORKFLOW" enabled="false" />
     
-    <!-- Disable POPUP_sendEmail action -->
-    <action id="POPUP_sendEmail" enabled="false" />
+    <!-- Disable POPUP_DOWNLOAD action -->
+    <action id="POPUP_DOWNLOAD" enabled="false" />
+    
+    <!-- Disable POPUP_VIEW action -->
+    <action id="POPUP_VIEW" enabled="false" />
+    
+    <!-- Updated icon -->
+    <action icon="/icons/rights.png" id="POPUP_RIGHTS" />
+    
     
     <!-- Add some general tabs and reorder default tabs -->
     
@@ -291,7 +370,7 @@
     <action id="CREATE_DOCUMENT" link="#{eloraDocumentActions.saveDocument}"
       order="0" label="command.create">
       <category>CREATE_DOCUMENT_FORM</category>
-      <filter-id>is_not_creating_workspace</filter-id>
+      <filter-id>cannot_be_created_from_template</filter-id>
     </action>
     
     <action id="default_document_header" order="1" type="template">
@@ -326,16 +405,6 @@
         </properties>
     </action>
     
-    <action id="TAB_PROJECT_PHASES" link="/incl/tabs/project_phases.xhtml"
-        order="25" label="eloraplm.label.project.phases" type="rest_document_link">
-        <filter id="filter@projectPhasesTab">
-            <rule grant="true">
-                <type>Project</type>
-            </rule>
-        </filter>
-        <category>VIEW_ACTION_LIST</category>
-    </action>
-    
     <action id="summary_project_progress" order="10" type="widget">
         <category>SUMMARY_PANEL_RIGHT</category>
         <filter id="filter@summary_project_progress">
@@ -347,6 +416,18 @@
             <property name="widgetName">summary_project_progress</property>
         </properties>
     </action>
+    
+    
+    <!--  create documents from template ### BEGIN ### -->
+    <action id="CREATE_DOC_FROM_TEMPLATE" link="#{eloraDocumentTemplatesActions.createDocumentFromTemplate}"
+      order="0" label="command.create">
+      <category>CREATE_DOCUMENT_FORM</category>
+      <filter-id>can_be_created_from_template</filter-id>
+    </action>
+    
+    <!-- disable CREATE_WORKSPACE action, since everything will be managed from CREATE_DOC_FROM_TEMPLATE -->
+    <action id="CREATE_WORKSPACE" enabled="false"/>
+    <!--  create documents from template ### END ### -->
     
   </extension>
   

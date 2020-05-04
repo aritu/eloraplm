@@ -751,7 +751,19 @@
           <property name="template">
             /widgets/text_with_listener_widget_template.xhtml
           </property>
-        </widgetType>
+      </widgetType>
+      
+      <widgetType name="checkbox_with_listener">
+          <configuration>
+            <title>Checkbox widget with listener</title>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/checkbox_with_listener_widget_template.xhtml
+          </property>
+      </widgetType>
       
       <!-- Treewidget types -->
       
@@ -800,6 +812,13 @@
                 /widgets/colored_percentage_widget_template.xhtml
             </property>
         </widgetType>
+        
+        <!-- Widget type to show subwidgets with output & input facets for PF DataTables & TreeTables -->
+        <widgetType name="inline_edit_widget">
+            <property name="template">
+                /widgets/inline_edit_widget_template.xhtml
+            </property>
+        </widgetType>
     
     </extension>
     
@@ -844,6 +863,19 @@
             <field>data.ref</field>
             <field>data.dc.description</field>
           </fields>
+        </widget>
+        
+        <widget name="listing_reference" type="template">
+          <labels>
+            <label mode="any">label.content.header.reference</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>data</field>
+          </fields>
+          <properties mode="any">
+            <property name="template">/widgets/listing/listing_reference_widget_template.xhtml</property>
+          </properties>
         </widget>
         
         <widget name="listing_icon_reference_title" type="listing_icon_reference_title">
@@ -928,6 +960,108 @@
           </properties>
         </widget>
         
+        <widget name="priority" type="selectOneDirectory">
+            <labels>
+                <label mode="any">label.widget.planning.priority</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>plan:priority</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_priority</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_responsible" type="singleUserSuggestion">
+            <labels>
+                <label mode="any">label.widget.responsible.responsible
+            </label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.resp.responsible</field>
+            </fields>
+            <properties mode="any">
+                <property name="userSuggestionSearchType">USER_TYPE</property>
+                <property name="minChars">1</property>
+            </properties>
+            <controls mode="any">
+                <!-- enable ajax submit on change/click/select on demo application -->
+                <control name="supportInsideInputWidgetEffects">true</control>
+            </controls>
+        </widget>
+        
+        <widget name="listing_priority" type="selectOneDirectory">
+            <labels>
+                <label mode="any">label.widget.planning.priority</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.plan.priority</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_priority</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_priority_icon" type="template">
+            <labels>
+                <label mode="any">label.widget.planning.priority.compact</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.plan.priority</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="template">/widgets/listing/listing_priority_icon_widget_template.xhtml</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_priority_complete" type="template">
+            <labels>
+                <label mode="any">label.widget.planning.priority</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.plan.priority</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="template">/widgets/listing/listing_priority_complete_widget_template.xhtml</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_customers" type="selectManyDirectory">
+            <labels>
+                <label mode="any">label.widget.cust.customer</label>
+            </labels>            
+            <translated>true</translated>
+            <fields>
+                <field>data.cust.customers</field>
+            </fields>
+            <properties mode="any">
+                <property name="directoryName">elora_erpCustomers</property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_bomProdClassification" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.bomprod.productClassification</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.prodclass.productClassification</field>
+            </fields>            
+            <properties widgetMode="any">
+                <property name="directoryName">elora_bomProductClassHierarchical</property>
+                <property name="localize">true</property>
+                <property name="displayIdAndLabel">true</property>
+            </properties>
+        </widget>
         
         <widget name="listing_quantity" type="elora_decimal">
             <labels>
@@ -1291,6 +1425,17 @@
           </properties>
         </widget>
         
+        <!-- New widget for searching also in subfolders in content view filters -->
+        <widget name="elora_search_search_in_subfolders" type="checkbox">
+          <labels>
+            <label mode="any">eloraplm.label.search.searchInSubfolders</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloadvsrch:searchInSubfolders</field>
+          </fields>
+        </widget>
+        
         <!-- Use elora_header_description instead of Nuxeo's default document_header in order to apply Elora internal rules
         for displaying the description field in the header of the documents. -->
         <!-- 
@@ -1400,6 +1545,39 @@
                 <property name="showOnlyOnFirstLevel">true</property>
           </properties>
         </widget>
+        
+        <widget name="treewidget_editable_isManual" type="checkbox_with_listener">
+          <labels>
+            <label mode="any">eloraplm.label.isManual</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>isManual</field>
+          </fields>
+          <properties mode="edit">
+            <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
+            <property name="showOnlyOnFirstLevel">true</property>
+          </properties>
+        </widget>
+        
+        <widget name="localize" type="checkbox">
+                    <categories>
+                      <category>widgetTypeConf</category>
+                    </categories>
+                    <labels>
+                      <label mode="any">Localize</label>
+                    </labels>
+                    <helpLabels>
+                      <label mode="any">
+                        Flag indicating that
+                        the title is localized.
+                      </label>
+                    </helpLabels>
+                    <fields>
+                      <field>localize</field>
+                    </fields>
+                  </widget>
+        
         
         <widget name="treewidget_editable_viewer_ordering" type="text_with_listener">
           <labels>
@@ -2420,6 +2598,9 @@
             <row>
               <widget>elora_search_modified_min</widget>
               <widget>elora_search_modified_max</widget>
+            </row>
+            <row>
+              <widget>elora_search_search_in_subfolders</widget>
             </row>
           </rows>
         </layout>
