@@ -31,7 +31,6 @@
         <module>eloraplm-relations</module>
         <module>eloraplm-search</module>
         <module>eloraplm-templating</module>
-        <module>eloraplm-ui-dev</module>
         <module>eloraplm-viewer</module>
         <module>eloraplm-webapp</module>
         <module>eloraplm-workflows</module>
@@ -122,11 +121,6 @@
             <dependency>
                 <groupId>com.aritu.eloraplm</groupId>
                 <artifactId>eloraplm-templating</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aritu.eloraplm</groupId>
-                <artifactId>eloraplm-ui-dev</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
