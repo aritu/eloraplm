@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.drive.ActionService.contrib">
+    <require>org.nuxeo.drive.actions</require>
+    
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <filter id="can_drive_edit">
+            <rule grant="true">
+                <condition>#{eloraDriveActions.canEditDocument(document)}</condition>
+            </rule>
+            <rule grant="false">
+                <facet>Collection</facet>
+            </rule>
+        </filter>
+    
+    </extension>
+    
+    <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <!-- Disable Nuxeo Drive folder/document synchronization completely -->
+        <action id="driveSynchronizeCurrentDocument" enabled="false" />
+        
+        <action icon="/icons/drive_edit.png" id="driveEdit" label="command.driveEdit" link="#{eloraDriveActions.driveEditURL}" order="200" type="bare_link">
+            <category>BLOB_ACTIONS</category>
+            <filter-id>has_one_auth_token</filter-id>
+            <filter-id>can_drive_edit</filter-id>
+            <filter-id>isMainBlob</filter-id>
+            <filter-id>isBasicDocument</filter-id>
+        </action>
+        
+        <action icon="/icons/drive_edit.png" id="driveEditUserCenterNuxeoDrive" label="command.driveEdit" link="#{nuxeoDriveActions.navigateToUserCenterNuxeoDrive}" order="50">
+            <category>BLOB_ACTIONS</category>
+            <filter-id>has_no_auth_token</filter-id>
+            <filter-id>can_drive_edit</filter-id>
+            <filter-id>isMainBlob</filter-id>
+            <filter-id>isBasicDocument</filter-id>
+        </action>
+        
+    </extension>
+    
+</component>
