@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.workflows.OperationServiceComponent.contrib">
+    
+    <extension point="contextHelpers" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
+        <contextHelper id="Wf" class="com.aritu.eloraplm.workflows.automation.WorkflowFunctions"/>
+    </extension>
+    
+    <extension point="chains" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
+        
+        <chain id="Elora.Workflow.ForceResume">
+            <operation id="Context.FetchDocument"/>
+            <operation id="Workflow.ResumeNode"/>
+        </chain>
+        
+        <chain id="Elora.Workflow.SaveInitiatorComment">
+            <operation id="Context.FetchDocument"/>
+            <operation id="Context.SetWorkflowVar">
+                <param type="string" name="name">initiatorComment</param>
+                <param type="object" name="value">expr:NodeVariables['comment']</param>
+            </operation>
+        </chain>
+        
+    </extension>
+    
+    <extension point="operations" target="org.nuxeo.ecm.core.operation.OperationServiceComponent" >
+        
+        <operation class="com.aritu.eloraplm.workflows.restoperations.GetLatestDocumentRoute" replace="true" />
+        <operation class="com.aritu.eloraplm.workflows.restoperations.GetRouteNodes" replace="true" />
+        
+    </extension>
+    
+</component>

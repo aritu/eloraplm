@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.webapp.base.SeamRemotingJSBuilderComponent.contrib">
+    
+    <require>org.nuxeo.ecm.platform.ui.web.SeamRemotingJSBuilderComponent</require>
+    
+    <extension point="remotableSeamBeans" target="org.nuxeo.ecm.platform.ui.web.SeamRemotingJSBuilderComponent">
+        <remotableSeamBeans>
+            <beans>
+                <bean>eloraPopupHelper</bean>
+            </beans>
+        </remotableSeamBeans>
+    </extension>
+    
+</component>

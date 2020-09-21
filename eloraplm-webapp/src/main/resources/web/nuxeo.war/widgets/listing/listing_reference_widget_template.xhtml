@@ -1,0 +1,18 @@
+<c:if test="true" id="#{widget.id}"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:nxl="http://nuxeo.org/nxforms/layout"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <c:if test="#{nxl:isLikePlainMode(widget.mode)}">#{field.elo.reference}</c:if>
+    <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <ui:fragment rendered="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference}">
+            <span class="eloraReference popupTarget" docRef="#{field_1}">
+                <h:outputText value="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference ? field_0.elo.reference : ''}" 
+                title="#{field_0.hasSchema('elora_object') and not empty field_0.elo.reference ? field_0.elo.reference : ''}" />
+            </span>
+        </ui:fragment>
+    </c:if>
+    <c:if test="#{widget.mode == 'pdf'}">#{field.elo.reference}</c:if>
+</c:if>

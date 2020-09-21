@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.workflows.EventServiceComponent.contrib">
+    <require>org.nuxeo.ecm.platform.routing.cleanup.config</require>
+    
+    <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
+        
+        <listener name="workflowInstancesCleanup" async="true" postCommit="true" class="com.aritu.eloraplm.workflows.listener.DocumentRoutingWorkflowInstancesCleanup">
+            <event>workflowInstancesCleanup</event>
+        </listener>
+        
+    </extension>
+    
+</component>

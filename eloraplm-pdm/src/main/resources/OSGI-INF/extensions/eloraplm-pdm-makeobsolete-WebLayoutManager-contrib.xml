@@ -1,0 +1,111 @@
+<component name="com.aritu.eloraplm.pdm..makeobsolete.WebLayoutManager.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+
+    <layout name="make_obsolete_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+      </templates>
+      <columns>
+      <column name="initiatorDoc">
+          <properties mode="any">
+            <property name="columnStyleClass">width: 10em;</property>
+            <property name="columnHeading"></property>
+          </properties>
+          <widget>make_obsolete_is_initiator_doc</widget>
+        </column>
+        <column name="node_doc">
+          <properties mode="any">
+            <property name="columnStyleClass">width: 35em;</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>listing_icon_reference_title</widget>
+        </column>
+        <column name="node_doc_version">
+          <properties mode="any">
+            <property name="columnStyle">width: 7em;</property>
+          </properties>
+           <widget>listing_version_and_visualized_type</widget>
+        </column>
+        <column name="node_doc_lock">
+          <properties mode="any">
+            <property name="columnStyle">width: 7em;</property>
+          </properties>
+          <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="node_doc_state">
+          <properties mode="any">
+            <property name="columnStyle">width: 3.5em;</property>
+          </properties>
+          <widget>listing_colored_lifecycle_state</widget>
+        </column>
+        <column name="make_obsolete">
+          <properties mode="any">
+            <property name="columnStyle">width: 35em;</property>
+            <property name="columnStyleClass">alignCenter</property>
+            <property name="columnHeading">label.treetable.column.makeobsolete.check</property>
+          </properties>
+          <widget>make_obsolete_check</widget>
+        </column>
+      </columns> 
+      <properties mode="any">
+        <property name="tableTitle">title.treetable.makeobsolete</property>
+        <property name="tableStyle">table-layout: auto;</property>
+        <property name="isFancybox">true</property>
+        <property name="factory">#{makeObsoleteRoot}</property>
+        <property name="reloadRerender">nxw_promote_after_view_fancy_subview:demote_promote_buttons:executeButton</property>
+      </properties>
+    </layout>
+    
+  </extension>
+
+  <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+
+    <widget name="make_obsolete_tt" type="treetable">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <fields>
+        <field>data</field>
+      </fields>
+      <!-- <widgetModes>
+        <mode value="any">edit</mode>
+      </widgetModes> -->
+      <properties widgetMode="any">
+        <property name="treetableLayout">make_obsolete_tt</property>
+      </properties>
+    </widget>
+    
+    <widget name="make_obsolete_is_initiator_doc" type="template">
+    <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>isInitiatorDocument</field>
+      </fields>
+      <properties mode="any">
+        <property name="template">/widgets/make_obsolete_is_initiator_doc_widget.xhtml</property>
+      </properties>
+    
+    </widget> 
+    
+    <widget name="make_obsolete_check" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+          <field>data</field>
+          <field>canMakeObsoleteResult</field>
+          <field>selectedToMakeObsolete</field>
+          <field>mandatoryToMakeObsolete</field>
+        </fields>
+      <properties mode="any">
+        <property name="template">/widgets/make_obsolete_check_widget.xhtml</property>
+      </properties>
+    </widget>
+
+  </extension>
+
+</component>

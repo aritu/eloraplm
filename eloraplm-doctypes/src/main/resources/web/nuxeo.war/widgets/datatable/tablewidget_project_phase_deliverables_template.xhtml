@@ -1,0 +1,61 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+    <c:if test="#{widget.mode == 'edit'}">
+        <h:graphicImage id="deliverablesEditPanelIcon"
+            value="/icons/deliverables_edit_24.png"
+            styleClass="tipsyShow tipsyGravityS"
+            title="#{messages['eloraplm.command.project.phase.deliverables.edit']}" />
+        <p:overlayPanel id="deliverablesEditPanel" for="deliverablesEditPanelIcon" hideEffect="fade">
+            <nxl:widget name="edit_phase_deliverable" mode="edit" value="#{field}" /> 
+        </p:overlayPanel>
+    </c:if>
+    
+    <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <ui:fragment rendered="#{not empty field and not empty field.name}">
+            
+            <nxu:set var="iconClass" value="#{field.isRequired ?
+                (not empty field.document ? 'required-deliverables-added'
+                    : 'required-deliverables-empty')
+                : 'required-deliverables-none'}">
+                
+            <nxu:set var="iconImage" value="#{field.isRequired ? '/icons/deliverables_required_16.png' : '/icons/deliverables_16.png'}">
+            
+            <nxu:set var="iconTitle" value="#{field.isRequired ?
+                (not empty field.document ? 'eloraplm.label.project.phase.deliverables.required.added'
+                    : 'eloraplm.label.project.phase.deliverables.required.empty')
+                : 'eloraplm.label.project.phase.deliverables.required.none'}">
+                
+                <h:panelGroup styleClass="#{iconClass}">
+                    <h:graphicImage id="deliverablesPanelIcon" value="#{iconImage}" styleClass="tipsyShow tipsyGravityS" title="#{messages[iconTitle]}" />
+                </h:panelGroup>
+            
+            </nxu:set>
+            </nxu:set>
+            </nxu:set>
+            
+            <p:overlayPanel id="deliverablesPanel" for="deliverablesPanelIcon" hideEffect="fade">
+                <h:dataTable value="#{field}" columnClasses="labelColumn,fieldColumn" styleClass="dataTableLine">
+                    <h:column>
+                        <f:facet name="header">#{messages['eloraplm.label.project.phase.deliverable.name']}</f:facet>
+                        <h:outputLabel value="#{field.name}" for="deliverable" styleClass="#{field.isRequired ? 'required' : ''}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">#{messages['eloraplm.label.project.phase.deliverable.document']}</f:facet>
+                        <nxl:widget name="icon_reference_title" mode="view" value="#{eloraDocument.existsUid(field.document) ?
+                            eloraDocument.getDocumentFromUid(field.document) : null}" />
+                        <h:outputText value="(unable to read document)" rendered="#{not empty field.document and not eloraDocument.existsUid(field.document)}" />
+                    </h:column>
+                </h:dataTable>
+            </p:overlayPanel>
+        </ui:fragment>
+    </c:if>
+    
+</ui:composition>

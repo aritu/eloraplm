@@ -1,0 +1,14 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/review" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/review">
+ 
+  <xs:element name="lastReviewer">
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
+    </xs:simpleType>
+  </xs:element>
+  
+  <xs:element name="lastReviewed" type="xs:date"/>
+
+</xs:schema>

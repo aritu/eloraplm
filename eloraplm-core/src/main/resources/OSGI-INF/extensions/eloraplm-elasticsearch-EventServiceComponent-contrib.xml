@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.elasticsearch.EventServiceComponent.contrib">
+
+  <require>org.nuxeo.elasticsearch.core.listener</require>
+
+  <extension target="org.nuxeo.ecm.core.event.EventServiceComponent"
+    point="listener">
+    
+    <!--  disable elasticsearchInlineListener -->
+     <listener name="elasticSearchInlineListener" enabled="false"/>
+     
+     <!--  enable eloraElasticsearchInlineListener -->
+    <listener name="eloraElasticSearchInlineListener" async="false"
+      enabled="${elasticsearch.enabled:=true}"
+      postCommit="false" priority="500"
+      class="com.aritu.eloraplm.elasticsearch.listener.EloraElasticSearchInlineListener">
+      <event>beforeDocumentModification</event>
+      <event>documentCreated</event>
+      <event>documentCreatedByCopy</event>
+      <event>documentMoved</event>
+      <event>lifecycle_transition_event</event>
+      <event>documentSecurityUpdated</event>
+      <event>documentRemoved</event>
+      <event>sessionSaved</event>
+      <event>documentCheckedOut</event>
+      <event>documentCheckedIn</event>
+      <event>binaryTextUpdated</event>
+      <event>documentTagUpdated</event>
+      <event>documentProxyUpdated</event>
+      <event>childrenOrderChanged</event>
+      <event>PdmCheckoutUndoneEvent</event>
+    </listener>
+
+  </extension>
+</component>

@@ -1,0 +1,28 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:p="http://primefaces.org/ui">
+
+    <p:column>
+        <label for="user">#{messages[label]}</label>
+    </p:column>
+    <p:column styleClass="textAlignC">
+        <h:panelGroup styleClass="user">
+            <h:outputLink id="lastCheckedInBy" value="#{baseURL}user/#{user}">
+                #{nxu:userFullName(user)}
+            </h:outputLink>
+        </h:panelGroup>
+    </p:column>
+    <p:column styleClass="textAlignC">
+        <label for="modified">#{messages['eloraplm.label.header.at']}</label>
+    </p:column>
+    <p:column>
+        <h:outputText id="modified" value="#{date}">
+            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
+        </h:outputText>
+    </p:column>
+
+</ui:composition>

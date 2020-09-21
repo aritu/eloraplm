@@ -1,0 +1,133 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h3>
+        <h:outputText value="#{messages['eloraplm.title.project.phase.add']}" />
+    </h3>
+    
+    <h:form id="#{fancyboxFormId}">
+        
+        <h:panelGroup styleClass="content" layout="block">
+            <h:panelGrid columns="2" styleClass="dataInput"
+                columnClasses="labelColumn, fieldColumn">
+                
+                <h:outputLabel for="phaseType"
+                        value="#{messages['eloraplm.label.project.phase.type']}"
+                        class="required" />
+                <h:panelGroup>
+                    <p:selectOneRadio id="phaseType" value="#{projectPhasesTableBean.type}" layout="custom">
+                        <nxu:selectItems value="#{projectPhasesTableBean.getPhaseTypes()}" var="type" itemValue="#{type}"
+                            itemLabel="#{messages['eloraplm.label.project.phase.type.'.concat(type)]}" />
+                        <p:ajax
+                            update="@form"
+                            process="@this"
+                            partialSubmit="true" />
+                    </p:selectOneRadio>
+                    
+                    <c:forEach items="#{projectPhasesTableBean.getPhaseTypes()}" var="type" varStatus="loop">
+                        <p:radioButton id="#{type}" for="phaseType" itemIndex="#{loop.index}" />
+                        <h:graphicImage value="/icons/badge_#{type}_16.png"/>
+                        <h:outputLabel value="#{messages['eloraplm.label.project.phase.type.'.concat(type)]}"/>
+                    </c:forEach>
+                    <h:message for="phaseType" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="parentId"
+                        value="#{messages['eloraplm.label.project.phase.parentId']}"
+                        rendered="#{projectPhasesTableBean.type eq 'subphase'}" />
+                <h:panelGroup rendered="#{projectPhasesTableBean.type eq 'subphase'}">
+                    <h:selectOneMenu id="parentId" value="#{projectPhasesTableBean.parentId}">
+                        <f:selectItem itemValue="#{null}" itemLabel="" />
+                        <nxu:selectItems value="#{projectPhasesTableBean.getParentPhases()}" var="phase" itemValue="#{phase.key}" itemLabel="#{phase.value}" />
+                    </h:selectOneMenu>
+                    <h:message for="parentId" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="description"
+                        value="#{messages['eloraplm.label.project.phase.description']}"
+                        class="required" />
+                <h:panelGroup>
+                    <h:inputText value="#{projectPhasesTableBean.description}" required="true" />
+                    <h:message for="description" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="manager"
+                        value="#{messages['eloraplm.label.project.phase.manager']}" />
+                <h:panelGroup>
+                    <nxl:widgetType id="manager" name="singleUserSuggestion"
+                        value="#{projectPhasesTableBean}" field="manager"
+                        mode="edit" userSuggestionSearchType="USER_TYPE" minChars="1" hideHelpLabel="true" />
+                    <h:message for="manager" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="deliverables"
+                        value="#{messages['eloraplm.label.project.phase.deliverables']}" />
+                <h:panelGroup>
+                    <h:panelGrid columns="2">
+                        <h:panelGroup>
+                            <h:selectBooleanCheckbox id="isDeliverableRequired" value="#{projectPhasesTableBean.isDeliverableRequired}" />
+                            <h:outputLabel for="isDeliverableRequired" value="#{messages['eloraplm.label.project.phase.deliverable.isRequired']}" />
+                        </h:panelGroup>
+                        <h:inputText id="deliverableName" value="#{projectPhasesTableBean.deliverableName}" />
+                    </h:panelGrid>
+                    <h:message for="isDeliverableRequired" class="errorMessage" />
+                    <h:message for="deliverableName" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="realStartDate"
+                        value="#{messages['eloraplm.label.project.phase.realStartDate']}" />
+                <h:panelGroup>
+                    <nxl:widgetType id="realStartDate" name="datetime"
+                        value="#{projectPhasesTableBean}" field="realStartDate"
+                        mode="edit" format="#{nxu:basicDateFormatter()}" />
+                    <h:message for="realStartDate" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="plannedEndDate"
+                        value="#{messages['eloraplm.label.project.phase.plannedEndDate']}" />
+                <h:panelGroup>
+                    <nxl:widgetType id="plannedEndDate" name="datetime"
+                        value="#{projectPhasesTableBean}" field="plannedEndDate"
+                        mode="edit" format="#{nxu:basicDateFormatter()}" />
+                    <h:message for="plannedEndDate" class="errorMessage" />
+                </h:panelGroup>
+                
+            </h:panelGrid>
+        </h:panelGroup>
+
+        <div class="buttonsGadget">
+            
+            <h:commandButton value="#{messages['command.add']}"
+                styleClass="button"
+                actionListener="#{projectPhasesTableBean.addRow()}">
+                <f:param name="btnAddProjectPhase" value="true" />
+                
+                <f:ajax execute="@form"
+                    render="@form
+                    :#{component.namingContainer.parent.namingContainer.clientId}:global_flag_validation_failed_render
+                    :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:dtForm:#{tableWidgetId}" />
+            </h:commandButton>
+                
+            <h:commandButton value="#{messages['command.cancel']}"
+                styleClass="button">
+                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
+            </h:commandButton>
+            
+        </div>
+    </h:form>
+    
+    <h:panelGroup id="global_flag_validation_failed_render">
+        <h:outputText style="display: none;" value="#{param.btnAddProjectPhase}" />
+        <h:outputScript rendered="#{not empty param.btnAddProjectPhase and !facesContext.isValidationFailed()}">
+            jQuery.fancybox.close();
+        </h:outputScript>
+    </h:panelGroup>
+
+</ui:composition>

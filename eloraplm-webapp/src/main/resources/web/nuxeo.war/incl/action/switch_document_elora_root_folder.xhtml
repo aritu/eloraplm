@@ -1,0 +1,185 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h3>
+        <h:outputText value="#{messages['eloraplm.title.switchEloraRootFolder']}" />
+    </h3>
+
+    <nxu:set var="pageProviderName" value="#{switchActions.getPageProviderNameForSwitchingCurrentDocument()}">
+        
+        <h:form id="#{fancyboxFormId}">
+    
+            <div class="content">
+                
+                <h:panelGroup>
+                    <a4j:outputPanel>
+                    
+                        <table class="eloraFancyBoxTable">
+                             
+                             <tr>
+                                <td class="labelColumn"><strong><h:outputLabel value="#{messages['eloraplm.label.switchEloraRootFolder.selectedDocument']}:" /></strong></td>
+                                <td class="fieldColumn">
+                                    <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{currentDocument}"/>
+                                    <h:outputText value=" "/>
+                                    <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{currentDocument}"/>
+                                    <h:outputText value=" "/>
+                                    <nxl:widgetType name="listing_version_lock_icon" mode="view" field="#{currentDocument}"/>
+                                    <h:outputText value=" "/>
+                                    <nxl:widget name="itemState" mode="view" value="#{currentDocument}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="labelColumn"><strong><h:outputLabel value="#{messages['eloraplm.label.originEloraRootFolder']}:" /></strong></td>
+                                <td class="fieldColumn">
+                                    <nxl:widget name="icon_reference_title" mode="view" value="#{switchActions.getOriginEloraRootFolder()}" />
+                                </td>
+                            </tr>
+                            <!-- targetEloraRootFolder -->
+                            <tr>
+                                <td class="labelColumn"><strong><h:outputLabel value="#{messages['eloraplm.label.targetEloraRootFolder']}:" /></strong></td>
+                                <td class="fieldColumn">
+                                
+                                    <h:panelGroup id="targetEloraRootFolderUidPanel">
+                                        <nxl:widgetType name="singleDocumentSuggestion" mode="edit"
+                                          ajaxReRender="targetEloraRootFolderUidMsg targetEloraRootFolderUidPanel selectDocumentsToBeSwitchedDescriptionPanel selectDocumentsToBeSwitchedRecursivePanel selectDocumentsToBeSwitchedButtonPanel selectDocumentsToBeSwitchedPanel buttonsPanel"
+                                          value="#{switchActions}" 
+                                          field="targetEloraRootFolderUid"
+                                          translated="true"
+                                          width="100%"
+                                          placeholder="#{messages['eloraplm.label.suggestion.switchEloraRootFolder.placeholder']}"
+                                          pageProviderName="#{pageProviderName}"
+                                          documentSchemas="dublincore,common,elora_object"
+                                          additionalOperationParameters="eloraPassQueryTermsTwice">
+                                        </nxl:widgetType>
+                
+                                        <h:outputLabel value="#{messages['eloraplm.message.error.switchEloraRootFolder.targetStructureRootUidSameAsOrigin']}" 
+                                        class="errorMessage" rendered="#{!switchActions.isValidTargetEloraRootFolderUid}" />
+                                        
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                            
+                            <!-- recursiveSwitch and  calculateDocumentsToBeSwitchedForCurrentDocument button-->
+                            <tr>
+                                <td class="fieldColumn" colspan="2">
+                                    <h:panelGroup id="selectDocumentsToBeSwitchedDescriptionPanel">
+                                        <ui:fragment rendered="#{(switchActions.targetEloraRootFolderUid != null and switchActions.targetEloraRootFolderUid.length() > 0 
+                                        and switchActions.isValidTargetEloraRootFolderUid and switchActions.displayCalculateDocumentListToBeSwitched)}">
+                                            <h:outputLabel value="#{messages['eloraplm.message.switchEloraRootFolder.relatedDocuments.info']}" />
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="labelColumn">
+                                    <h:panelGroup id="selectDocumentsToBeSwitchedRecursivePanel">
+                                       <ui:fragment rendered="#{(switchActions.targetEloraRootFolderUid != null and switchActions.targetEloraRootFolderUid.length() > 0 
+                                        and switchActions.isValidTargetEloraRootFolderUid and switchActions.displayCalculateDocumentListToBeSwitched)}">
+                                            <h:outputLabel value="#{messages['eloraplm.label.recursiveSwitch']}: " />
+                                            
+                                            <nxl:widgetType name="checkbox"  mode="edit" value="#{switchActions.recursiveSwitch}"/>
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                                <td class="fieldColumn">
+                                    <h:panelGroup id="selectDocumentsToBeSwitchedButtonPanel">
+                                        <ui:fragment rendered="#{(switchActions.targetEloraRootFolderUid != null and switchActions.targetEloraRootFolderUid.length() > 0 
+                                        and switchActions.isValidTargetEloraRootFolderUid and switchActions.displayCalculateDocumentListToBeSwitched)}">
+                                            
+                                            <h:commandButton value="#{messages['eloraplm.command.calculateDocumentsToBeSwitched']}" styleClass="button" action="#{switchActions.calculateDocumentsToBeSwitchedForCurrentDocument}">
+                                               <f:ajax execute="@form" render="selectDocumentsToBeSwitchedPanel buttonsPanel" />
+                                            </h:commandButton>
+
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="2">
+                                    <h:panelGroup id="selectDocumentsToBeSwitchedPanel">
+                                        <ui:fragment rendered="#{switchActions.targetEloraRootFolderUid != null and switchActions.targetEloraRootFolderUid.length() > 0 
+                                        and switchActions.isValidTargetEloraRootFolderUid and switchActions.displayCalculateDocumentListToBeSwitched and switchActions.calculatedDocumentListToBeSwitched 
+                                        and switchActions.availableDocumentListToBeSwitched != null and switchActions.availableDocumentListToBeSwitched.size() > 0}">
+                                                
+                                                    
+                                            <p:dataTable id="docsToBeSwitchedDT" var="docToBeSwitchedUid" value="#{switchActions.availableDocumentListToBeSwitched}" 
+                                            selection="#{switchActions.selectedDocumentListToBeSwitched}" rowKey="#{docToBeSwitchedUid}" 
+                                            style="margin-bottom:0" tableStyleClass="datatable" >
+                                                        
+                                                <nxu:set var="docToBeSwitchedRef" value="#{eloraWebActions.getDocumentRefFromId(docToBeSwitchedUid)}">
+                                                <nxu:set var="docToBeSwitched" value="#{eloraWebActions.getDocument(docToBeSwitchedRef)}">
+                                                
+                                                <!-- TODO: For the instance, this functionality is restricted to Administrators and Power Users. In the future, if it is extended to any user,
+                                                we should check that docToBeSwitched is not null -->
+                                                    
+                                                    <p:column headerText="#{switchActions.availableDocumentListToBeSwitched.size()} #{messages['eloraplm.label.switchEloraRootFolder.relatedDocuments']}" style="width:200px">
+                                                        <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{docToBeSwitched}"/>
+                                                    </p:column>
+                                                    <p:column style="width: 3.5em;">
+                                                        <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{docToBeSwitched}"/>
+                                                    </p:column>
+                                                    <p:column style="width: 3em;">
+                                                        <nxl:widgetType name="listing_version_lock_icon" mode="view" field="#{docToBeSwitched}"/>
+                                                    </p:column>
+                                                    <p:column style="width: 7em;">
+                                                        <nxl:widget name="itemState" mode="view" value="#{docToBeSwitched}"/>
+                                                    </p:column>
+                                                    <p:column style="width:150px">
+                                                        <nxl:widget name="icon_reference_title" mode="view" value="#{switchActions.getDocumentEloraRootFolder(docToBeSwitchedUid)}" />
+                                                    </p:column>
+                                                    <p:column selectionMode="multiple" style="width:40px;text-align:center"/>
+                                                    
+                                                </nxu:set>
+                                                </nxu:set>
+                                            </p:dataTable>
+                                        </ui:fragment>  
+                                        
+                                        
+                                         <ui:fragment rendered="#{switchActions.targetEloraRootFolderUid != null and switchActions.targetEloraRootFolderUid.length() > 0 
+                                        and switchActions.isValidTargetEloraRootFolderUid and switchActions.displayCalculateDocumentListToBeSwitched and switchActions.calculatedDocumentListToBeSwitched 
+                                        and switchActions.availableDocumentListToBeSwitched.size() == 0}">
+                                        
+                                        <h:outputLabel value="#{messages['eloraplm.message.switchEloraRootFolder.noneRelatedDocuments']}:" />
+                                        
+                                        </ui:fragment>
+                                        
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                            
+                        </table>
+                  </a4j:outputPanel>
+                </h:panelGroup>
+                
+            </div>
+            
+            <div class="buttonsGadget">
+                            
+              <h:panelGroup id="buttonsPanel">
+                
+
+                <h:commandButton value="#{messages['eloraplm.command.switchEloraRootFolder']}" styleClass="button" 
+                action="#{switchActions.switchCurrentDocumentEloraRootFolder}" disabled="#{switchActions.isDisabledSwitchButton}">
+                </h:commandButton>
+                 
+    
+                <h:commandButton value="#{messages['command.cancel']}" styleClass="button" action="#{switchActions.cancelswitchCurrentDocumentEloraRootFolder()}">
+                  <f:ajax execute="@this" onevent="jQuery.fancybox.close"/>
+                </h:commandButton>
+              </h:panelGroup>
+            </div>
+        
+        </h:form>
+    
+    </nxu:set>
+
+</ui:composition>

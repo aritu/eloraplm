@@ -1,0 +1,240 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxr="http://nuxeo.org/nxweb/resources"
+    xmlns:p="http://primefaces.org/ui"
+    id="#{layout.id}">
+    
+    <script type="text/javascript">
+    PrimeFaces.settings.locale = 'en_US';
+    </script>
+
+    <nxu:set var="tableWidgetId" value="#{widget.id}">
+    <nxu:set var="tableLayoutId" value="#{layout.id}">
+
+    <h:panelGroup id="datatablePanel" layout="block">
+    
+        <h:form id="dtForm">
+        
+            <nxu:set var="rowStyleClass" value="#{layout.mode eq 'edit' ?
+                (rowData.isNew ?
+                    'rowIsNew' : (rowData.isRemoved ?
+                        'rowIsRemoved' : (rowData.isModified ?
+                            'rowIsModified' : (empty eloraWebActions.evaluateString(layout.properties.rowStyleClass) ?
+                                'rowIsNormal' : eloraWebActions.evaluateString(layout.properties.rowStyleClass)))))
+                : eloraWebActions.evaluateString(layout.properties.rowStyleClass)}" >
+                
+                <nxu:set var="widgetVar" value="datatbl_#{layout.id}">
+                
+                    <nxu:set var="dataFactory" value="#{eloraWebActions.evaluateObject(layout.properties.factory)}">
+                        
+                        <div style="display: flex; justify-content: flex-end;">
+                            <div id="tableActionErrorMsg" class="processMessage completeError" style="display: none; margin-right: 0;">#{messages['eloraplm.message.error.datatable.action']}</div>
+                        </div>
+                        
+                        <p:dataTable id="#{tableWidgetId}" widgetVar="#{widgetVar}" value="#{dataFactory}"
+                            var="rowData"
+                            rowIndexVar="rowIndex"
+                            resizableColumns="true" liveResize="true"
+                            tableStyleClass="datatable #{layout.properties.tableStyleClass}"
+                            tableStyle="#{layout.properties.tableStyle}"
+                            rowStyleClass="#{rowStyleClass}"
+                            emptyMessage="#{messages['eloraplm.message.info.datatable.noRecordsFound']}"
+                            scrollable="#{layout.properties.scrollable}"
+                            scrollHeight="#{layout.properties.scrollHeight}"
+                            editable="#{layout.properties.inlineEdit}"
+                            >
+                            
+                            <c:if test="#{not empty layout.properties.selectionMode}">
+                                <f:attribute name="selectionMode" value="#{layout.properties.selectionMode}" />
+                                <f:attribute name="selection" value="#{value[layout.properties.selectionMode eq 'multiple' ? 'selectedNodes' : 'selectedNode']}" />
+                            </c:if>
+                            
+                            <c:if test="#{layout.properties.isSortable}">
+                                <f:attribute name="sortBy" value="#{rowData[layout.properties.sortBy]}" />
+                                <f:attribute name="sortOrder" value="#{layout.properties.sortOrder}" />
+                            </c:if>
+                            
+                            <f:facet name="header" style="overflow: hidden;">
+                                
+                                <span class="tableHeaderTitle">
+                                    #{messages[eloraWebActions.evaluateString(layout.properties.tableTitle)]}
+                                    <br /><span class="tableInfo">
+                                        <strong>#{value.size}</strong> #{messages['eloraplm.label.datatable.info.size']}
+                                    </span>
+                                </span>
+                                <span class="tableHeaderButtons">
+                                    <h:panelGroup styleClass="tableHeaderFilters" rendered="#{not empty layout.properties.headerFiltersTemplate}">
+                                        <ui:include src="#{layout.properties.headerFiltersTemplate}" />
+                                    </h:panelGroup>
+                                    
+                                    <c:if test="#{layout.properties.isExportable}">
+                                        
+                                        <!-- Export to XLSX -->
+                                        <h:commandLink
+                                            title="#{messages['eloraplm.command.datatable.export.xlsxstream']}"
+                                            styleClass="button tipsyShow tipsyGravityN"
+                                            style="width: 48px; height: 24px;">
+                                            
+                                            <h:graphicImage value="/icons/export_xlsx_16.png" width="16" />
+                                            <p:dataExporter type="xlsxstream" target="#{tableWidgetId}"
+                                                fileName="datatable_export"
+                                                customExporter="#{value.xlsxExporter}" />
+                                        </h:commandLink>
+                                        
+                                        <!-- Export to PDF -->
+                                        <h:commandLink
+                                            title="#{messages['eloraplm.command.datatable.export.pdf']}"
+                                            styleClass="button tipsyShow tipsyGravityN"
+                                            style="width: 48px; height: 24px;">
+                                            
+                                            <h:graphicImage value="/icons/export_pdf_16.png" width="16" />
+                                            <p:dataExporter type="pdf" target="#{tableWidgetId}"
+                                                fileName="datatable_export"
+                                                customExporter="#{value.pdfExporter}" />
+                                        </h:commandLink>
+                                        
+                                        <!-- Export to CSV -->
+                                        <h:commandLink
+                                            title="#{messages['eloraplm.command.datatable.export.csv']}"
+                                            styleClass="button tipsyShow tipsyGravityN"
+                                            style="width: 48px; height: 24px;">
+                                            
+                                            <h:graphicImage value="/icons/export_csv_16.png" width="16" />
+                                            <p:dataExporter type="csv" target="#{tableWidgetId}"
+                                                fileName="datatable_export"
+                                                customExporter="#{value.csvExporter}" />
+                                        </h:commandLink>
+                                        
+                                    </c:if>
+                                    
+                                    <!-- Reload -->
+                                    <h:commandButton
+                                        image="/icons/refresh.png"
+                                        title="#{messages['eloraplm.command.datatable.reload']}"
+                                        styleClass="button tipsyShow tipsyGravityN"
+                                        style="width: 48px; height: 24px; padding: 4px 16px;">
+                                        
+                                        <p:ajax
+                                            immediate="true"
+                                            listener="#{value.reload}"
+                                            process="@this"
+                                            partialSubmit="true"
+                                            update="#{tableWidgetId}"
+                                            onstart="PF('tableBlocker_#{tableWidgetId}').show();"
+                                            oncomplete="PF('tableBlocker_#{tableWidgetId}').hide();"
+                                            onerror="jQuery('#tableActionErrorMsg').show();"
+                                        />
+                                        
+                                    </h:commandButton>
+                                    
+                                </span>
+                                
+                            </f:facet>
+                            
+                            <nxl:layoutColumn>
+                                <p:column style="#{layoutColumn.properties.columnStyle}" styleClass="datatableColumn #{layoutColumn.properties.columnStyleClass}">
+                                    
+                                    <f:facet name="header">
+                                        <span title="#{messages[layoutColumn.properties.columnTooltip]}">
+                                            <h:outputText value="#{messages[eloraWebActions.evaluateString(layoutColumn.properties.columnHeading)]}"
+                                                style="white-space:pre-line;" />
+                                        </span>
+                                    </f:facet>
+                                    
+                                    <h:panelGroup id="#{layoutColumn.widgets[0].name}">
+                                        <nxl:layoutColumnWidget>
+                                            <nxl:widget widget="#{widget}" value="#{rowData}" />
+                                        </nxl:layoutColumnWidget>
+                                    </h:panelGroup>
+                                </p:column>
+                            </nxl:layoutColumn>
+                            
+                            <c:if test="#{layout.mode eq 'edit'}">
+                                <p:column style="width:65px" styleClass="datatableColumn alignCenter" exportable="false">
+                                    <ui:include src="/widgets/datatable/edit_actions_table_row_widget_template.xhtml">
+                                        <ui:param name="tableBean" value="#{value}" />
+                                    </ui:include>
+                                </p:column>
+                                <c:if test="#{layout.properties.inlineEdit}">
+                                    <p:ajax event="rowEdit" listener="#{value.onRowEdit}" update="#{tableWidgetId}" />
+                                </c:if>
+                            </c:if>
+                            
+                            <c:if test="#{not empty layout.properties.selectionMode}">
+                                <p:column style="width: 35px" styleClass="selection-checkbox" exportable="false">
+                                    <h:panelGroup id="row-selection">
+                                        &#x25a2;
+                                    </h:panelGroup>
+                                </p:column>
+                                <c:if test="#{layout.properties.selectionMode eq 'single'}">
+                                    <p:ajax event="select" />
+                                    <p:ajax event="unselect" />
+                                </c:if>
+                            </c:if>
+                            
+                        </p:dataTable>
+                        <p:outputPanel>
+                            <p:blockUI block="#{component.namingContainer.parent.namingContainer.clientId}:datatablePanel"
+                                trigger="#{tableWidgetId}"
+                                widgetVar="tableBlocker_#{tableWidgetId}" />
+                        </p:outputPanel>
+                        
+                        <p:remoteCommand name="updateDatatableForm_#{tableWidgetId}"
+                            process="@form"
+                            onsuccess="executeActionsAfterSelectionUpdate();"
+                        />
+                        
+                    </nxu:set>
+                    
+                </nxu:set>
+                
+            </nxu:set>
+        
+        </h:form>
+        
+        <h:panelGroup id="dtButtonsPanel" styleClass="dtButtonsPanel" layout="block" rendered="#{layout.mode eq 'edit'}">
+            
+            <c:if test="#{not layout.properties.isFancybox}" >
+                <nxu:set var="nonProxyDocument" value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}">
+                
+                    <h:panelGroup id="dtButtons" styleClass="dtButtons"
+                        layout="block">
+                        
+                        <nxl:widget name="#{not empty layout.properties.alternativeButtonsWidget ?
+                            layout.properties.alternativeButtonsWidget
+                            : 'dtButtons'}"
+                            mode="view" value="#{nonProxyDocument}" />
+                        
+                    </h:panelGroup>
+                    
+                    <c:if test="#{not empty layout.properties.selectionMode}">
+                        <h:panelGroup id="dtSelectionButtons" styleClass="dtSelectionButtons" layout="block">
+                            
+                            <h:graphicImage class="selectionActionsIndicator" value="/icons/selected_rows_actions_24.png"
+                                title="#{messages['datatable.selectedRowsActions']}" />
+                            
+                            <nxl:widget name="#{not empty layout.properties.alternativeSelectButtonsWidget ?
+                                layout.properties.alternativeSelectButtonsWidget
+                                : 'dtSelectionButtons'}"
+                                mode="view" value="#{nonProxyDocument}" styleClass="dtSelectionButtonsPanel" />
+                            
+                        </h:panelGroup>
+                    </c:if>
+                    
+                </nxu:set>
+            </c:if>
+            
+        </h:panelGroup>
+        
+    </h:panelGroup>
+    
+    </nxu:set>
+    </nxu:set>
+    
+</ui:composition>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.datatable.WebResources.contrib">
+    <require>org.nuxeo.theme.nuxeo.webapp</require>
+    
+    <extension point="resources" target="org.nuxeo.ecm.platform.WebResources">
+        <resource name="eloraplm.datatable.css" type="css">
+            <uri>/css/eloraplm-datatable.css</uri>
+        </resource>
+    </extension>
+    
+    <extension point="bundles" target="org.nuxeo.ecm.platform.WebResources">
+        <bundle name="nuxeo_sassCss">
+            <resources append="true">
+                <resource>eloraplm.datatable.css</resource>
+            </resources>
+        </bundle>
+    </extension>
+    
+</component>

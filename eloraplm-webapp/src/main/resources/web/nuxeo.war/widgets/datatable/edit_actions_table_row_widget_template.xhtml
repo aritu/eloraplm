@@ -1,0 +1,60 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jstl/core">
+    
+    <h:panelGroup layout="block" class="ui-row-editor" id="#{widget.id}">
+    
+        <c:if test="#{layout.properties.inlineEdit}">
+            <a href="#"
+                class="ui-row-editor-pencil tipsyShow tipsyGravityN"
+                title="#{messages['eloraplm.command.edit']}">
+                <h:graphicImage value="/icons/row_edit_16.png" />
+            </a>
+            <a href="#"
+                class="ui-row-editor-check tipsyShow tipsyGravityN"
+                title="#{messages['eloraplm.command.save']}">
+                <h:graphicImage value="/icons/row_save_edit_16.png" />
+            </a>
+            <a href="#"
+                class="ui-row-editor-close tipsyShow tipsyGravityN"
+                title="#{messages['eloraplm.command.undo']}">
+                <h:graphicImage value="/icons/row_undo_edit_16.png" />
+            </a>
+        </c:if>
+        
+        <h:commandLink
+            title="#{messages['eloraplm.command.remove']}"
+            styleClass="tipsyShow tipsyGravityN"
+            rendered="#{layout.properties.removeRows and not rowData.isRemoved}">
+            
+            <h:graphicImage value="/icons/row_delete_16.png" />
+            <p:ajax
+                listener="#{tableBean.markRowAsRemoved(component.namingContainer, rowData, rowIndex)}"
+                process="@this"
+                partialSubmit="true"
+                onstart="prepareTablePartialAjaxUpdate(cfg.source)"
+                onsuccess="markRowAsRemoved()"
+                />
+        </h:commandLink>
+        
+        <h:commandLink
+            title="#{messages['eloraplm.command.undoRemove']}"
+            styleClass="tipsyShow tipsyGravityN"
+            rendered="#{layout.properties.removeRows and rowData.isRemoved}">
+            
+            <h:graphicImage value="/icons/row_undo_delete_16.png" />
+            <p:ajax
+                listener="#{tableBean.unmarkRowAsRemoved(component.namingContainer, rowData, rowIndex)}"
+                process="@this"
+                partialSubmit="true"
+                onstart="prepareTablePartialAjaxUpdate(cfg.source)"
+                onsuccess="unmarkRowAsRemoved()"
+                />
+        </h:commandLink>
+        
+    </h:panelGroup>
+    
+</ui:composition>

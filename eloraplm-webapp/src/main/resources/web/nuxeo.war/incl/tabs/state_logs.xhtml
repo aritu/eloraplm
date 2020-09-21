@@ -1,0 +1,63 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core">
+
+    <nxu:set var="stateLogDisplayList" value="#{stateLogActions.retrieveDocumentStateLogList(currentDocument)}">
+    
+      <p:dataTable id="statesLogsDT" var="stateLogDisplay" 
+        value="#{stateLogDisplayList}" 
+        style="margin-bottom:0" tableStyleClass="datatable" >
+        
+        <nxu:set var="versionDocumentRef" value="#{eloraWebActions.getDocumentRefFromId(stateLogDisplay.versionDocId)}">
+        <nxu:set var="versionDocument" value="#{eloraWebActions.getDocument(versionDocumentRef)}">      
+        <p:column headerText="#{messages['eloraplm.label.reference']}" style="width:15em">
+          <h:graphicImage value="#{nxd:iconPath(versionDocument)}" alt="#{versionDocument.type}"
+                    title="#{versionDocument.type}" style="vertical-align: middle" />
+                &#160;
+          <h:outputText value="#{versionDocument.hasSchema('elora_object') and not empty versionDocument.elo.reference ? versionDocument.elo.reference : '--'}"
+                    styleClass="eloraReference"  style="vertical-align: middle" />
+        </p:column>
+        </nxu:set>
+        </nxu:set>
+        
+        <c:if test="#{currentDocument.isVersionable()}">
+            <p:column headerText="#{messages['eloraplm.label.stateLogs.version']}" style="width:100px">
+          <h:outputText value="#{stateLogDisplay.versionLabel}" />
+        </p:column>
+        
+        <p:column headerText="#{messages['eloraplm.label.stateLogs.comment']}">
+          <h:outputText value="#{stateLogDisplay.checkinComment}" />
+        </p:column>
+        </c:if>
+        
+        <p:column headerText="#{messages['eloraplm.label.stateLogs.stateTo']}">
+          <span class="lifeCycleStateLabel filled" 
+            style="background-color: #{lifecycleActions.getLifeCycleStateColor(stateLogDisplay.stateTo)}">
+            #{messages[stateLogDisplay.stateTo]}
+          </span>
+        </p:column>
+        
+        <p:column headerText="#{messages['eloraplm.label.stateLogs.user']}">
+          <h:panelGroup styleClass="user">
+            <h:outputLink id="lastReviewer" value="#{baseURL}user/#{stateLogDisplay.user}">
+              #{nxu:userFullName(stateLogDisplay.user)}
+            </h:outputLink>
+          </h:panelGroup>
+        </p:column>
+        
+        <p:column headerText="#{messages['eloraplm.label.stateLogs.date']}">
+          <h:outputText id="date" value="#{stateLogDisplay.date}">
+            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
+          </h:outputText>
+        </p:column>
+        
+      </p:dataTable>
+      
+    </nxu:set>
+
+</ui:composition>

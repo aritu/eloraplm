@@ -1,0 +1,415 @@
+/*
+ * DataTable style modifications for EloraPlm
+ */
+
+div[id$="datatablePanel"]
+{
+    padding-bottom: 5px;
+}
+
+.ui-datatable table
+{
+    width: auto;
+}
+
+.ui-datatable img
+{
+    vertical-align: middle;
+}
+
+.ui-datatable table.datatable
+{
+    width: 100%;
+}
+
+.ui-datatable table.datatable,
+.ui-datatable table.datatable tbody,
+.ui-datatable table.datatable tbody tr
+{
+    border: 1px solid #e6e9ef;
+}
+
+.ui-datatable table.datatable tbody td
+{
+    border-width: 1px 0;
+    border-color: #e6e9ef;
+    border-style: solid;
+    white-space: normal;
+}
+
+.ui-datatable table.datatable .inputDate tbody,
+.ui-datatable table.datatable .inputDate tr,
+.ui-datatable table.datatable .inputDate td
+{
+    border: none;
+}
+
+/* Do not differentiate odd and even rows. */
+.ui-datatable .ui-datatable-odd,
+.ui-datatable .ui-datatable-even
+{
+    background: initial;
+}
+
+.nx-page .ui-datatable button
+{
+    height: auto;
+    padding: 0;
+}
+
+.ui-datatable table.bigFont
+{
+    font-size: 1.1em;
+}
+
+.ui-datatable
+{
+    font-size: 0.9em;
+}
+
+.ui-datatable table.smallFont
+{
+    font-size: 0.8em;
+}
+
+.ui-datatable table select
+{
+    min-width: initial;
+}
+
+.dtButtonsPanel
+{
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    
+    position: sticky;
+    bottom: 20px;
+    padding: 10px;
+    border: 1px solid #e6e9ef;
+    box-shadow: -10px 0 10px #fff, 10px 0 10px #fff, 0 10px 5px #fff, 0 -10px 5px #fff;
+    background: linear-gradient(to right, rgba(248,249,251,0.9) 0%, rgba(248,249,251,0.5) 40%, rgba(248,249,251,0.9) 70%)
+}
+
+.dtButtonsPanel .widgetPanel.actionsWidgetPanel
+{
+    padding: 0;
+}
+
+.nx-page .dtButtonsPanel a.button:hover
+{
+    color: #053832;
+    border-color: #2c874e;
+    box-shadow: 0 0 3px #8cd600;
+}
+
+.dtButtons
+{
+    text-align: right;
+}
+
+.nx-page .dtButtonsPanel a.button
+{
+    margin: 0;
+    border-radius: 0;
+    box-shadow: 0 1px 1px #ddd;
+}
+
+.nx-page .dtButtonsPanel a.button.mainAction
+{
+    text-transform: uppercase;
+    background-color: #1c5531;
+    border-color: #053832;
+    color: #fff;
+}
+
+.nx-page .dtButtonsPanel a.button.mainAction:hover
+{
+    background-color: #053832;
+    color: #fff;
+}
+
+.nx-page .dtSelectionButtons a.button
+{
+    margin-right: 0.3em;
+    background-color: #f7faff;
+    border-color: #5cf;
+}
+
+.nx-page .dtButtons a.button
+{
+    margin-left: 0.3em;
+}
+
+.dtSelectionButtonsPanel
+{
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.ui-datatable .ui-datatable-header {
+    overflow: hidden;
+}
+
+.ui-datatable .ui-datatable-header .tableHeaderTitle
+{
+    display: inline-block;
+    float: left;
+    text-align: left;
+    padding-top: 0.1em;
+    font-size: 1.15em;
+    color: #000;
+}
+
+.ui-datatable .tableInfo
+{
+    color: #555;
+    font-weight: normal;
+    font-size: .9em;
+}
+
+
+.ui-datatable .ui-datatable-header .tableHeaderButtons
+{
+    display: inline-block;
+    float: right;
+    text-align: right;
+    padding-top: 0.6em;
+}
+
+.ui-datatable .ui-datatable-header .tableHeaderButtons > *
+{
+    vertical-align: middle;
+    border: none;
+}
+
+.ui-datatable .ui-datatable-header .tableHeaderButtons .button
+{
+    background: transparent;
+}
+
+.tableHeaderFilters
+{
+    margin-right: 2em;
+    font-weight: normal;
+}
+
+.tableHeaderFilters input[type=checkbox]
+{
+    vertical-align: middle;
+    margin-left: 1em;
+    position: relative;
+    top: -3px;
+}
+
+
+/* Table row styles */
+
+.ui-datatable tr > td
+{
+    background-color: transparent;
+    padding: 0.7em 0.6em 0.7em 0.7em;
+}
+
+.ui-datatable tr.rowIsNormal > td
+{
+    background-color: transparent;
+}
+
+.ui-datatable tr.rowIsNew > td
+{
+    background-color: #faffcb;
+}
+
+.ui-datatable tr.rowIsNew > td:first-child
+{
+    box-shadow: inset 4px 0 0 #aabb55;
+}
+
+.ui-datatable tr.rowIsNew > td:last-child
+{
+    background-color: transparent;
+    background-image: linear-gradient(to left, transparent, #faffcb);
+}
+
+.ui-datatable tr.rowIsRemoved > td
+{
+    background-color: #fff0ee; 
+}
+
+.ui-datatable tr.rowIsRemoved > td:first-child
+{
+    box-shadow: inset 4px 0 0 #cc5555;
+}
+
+.ui-datatable tr.rowIsRemoved > td:last-child
+{
+    background-color: transparent;
+    background-image: linear-gradient(to left, transparent, #fff0ee);
+}
+
+.ui-datatable tr.rowIsModified > td
+{
+    background-color: #fcf8bc; 
+}
+
+.ui-datatable tr.rowIsModified > td:first-child
+{
+    box-shadow: inset 4px 0 0 #ffc04d; 
+}
+
+.ui-datatable tr.rowIsModified > td:last-child
+{
+    background-color: transparent;
+    background-image: linear-gradient(to left, transparent, #fcf8bc);
+}
+/* --- */
+
+
+
+.ui-datatable tr.ui-state-hover,
+.ui-datatable tr.ui-widget-content.ui-state-hover
+{
+    background-color: #eee;
+    box-shadow: none;
+}
+
+.ui-datatable .ui-datatable-data tr.ui-state-highlight,
+.ui-datatable .ui-datatable-data tr.ui-state-hover
+{
+    cursor: unset;
+}
+
+.ui-datatable tr.ui-state-highlight,
+.ui-datatable tr.ui-widget-content.ui-state-highlight
+{
+    color: initial;
+    background: unset;
+    text-shadow: unset;
+    border-color: #5cf;
+}
+
+.ui-datatable tr.ui-state-highlight.rowIsNew,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsNew,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsNew
+{
+    border-color: #aabb55;
+}
+
+
+.ui-datatable tr.ui-state-highlight.rowIsRemoved,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsRemoved,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsRemoved
+{
+    border-color: #cc5555;
+}
+
+
+.ui-datatable tr.ui-state-highlight.rowIsModified,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsModified,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsModified
+{
+    border-color: #ffc04d;
+}
+
+/* HAU BEHARREZKOA DA?? */
+.ui-datatable td.selection-checkbox
+{
+    color: #5cf;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.ui-datatable tr.ui-state-highlight > td,
+.ui-datatable .ui-widget-content tr.ui-state-highlight > td,
+.ui-datatable .ui-widget-header tr.ui-state-highlight > td
+{
+    border-color: #5cf;
+    border-width: 2px 0;
+}
+
+.ui-datatable tr.ui-state-highlight > td:first-child,
+.ui-datatable .ui-widget-content tr.ui-state-highlight > td:first-child,
+.ui-datatable .ui-widget-header tr.ui-state-highlight > td:first-child
+{
+    border-left-width: 1px;
+}
+
+.ui-datatable tr.ui-state-highlight > td:last-child,
+.ui-datatable .ui-widget-content tr.ui-state-highlight > td:last-child,
+.ui-datatable .ui-widget-header tr.ui-state-highlight > td:last-child
+{
+    border-right-width: 1px;
+}
+
+.ui-datatable tr.ui-state-highlight.rowIsNew > td:first-child,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsNew > td:first-child,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsNew > td:first-child,
+.ui-datatable tr.ui-state-highlight.rowIsRemoved > td:first-child,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsRemoved > td:first-child,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsRemoved > td:first-child,
+.ui-datatable tr.ui-state-highlight.rowIsModified > td:first-child,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsModified > td:first-child,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsModified > td:first-child
+{
+    border-left-width: 0;
+}
+
+.ui-datatable tr.ui-state-highlight.rowIsNew > td,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsNew > td,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsNew > td
+{
+    border-color: #aabb55;
+}
+.ui-datatable tr.ui-state-highlight.rowIsRemoved > td,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsRemoved > td,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsRemoved > td
+{
+    border-color: #cc5555;
+}
+.ui-datatable tr.ui-state-highlight.rowIsModified > td,
+.ui-datatable .ui-widget-content tr.ui-state-highlight.rowIsModified > td,
+.ui-datatable .ui-widget-header tr.ui-state-highlight.rowIsModified > td
+{
+    border-color: #ffc04d;
+}
+
+.ui-datatable .ui-widget-header.ui-datatable-header
+{
+    background-image: none;
+    background-color: #f8f9fb;
+    border: 1px solid #e6e9ef;
+    border-bottom: none;
+}
+
+.ui-datatable .ui-state-default
+{
+    background-image: none;
+    background-color: #f8f9fb;
+    border: 1px solid #e6e9ef;
+    color: #000;
+}
+
+.ui-datatable thead th
+{
+    text-align: left;
+}
+
+
+td.datatableColumn.alignCenter
+{
+    text-align: center;
+}
+
+td.datatableColumn.alignRight
+{
+    text-align: right;
+}
+
+.nx-page table.datatable tbody tr:hover
+{
+    background-color: #f8f9fb;
+}
+

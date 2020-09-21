@@ -1,0 +1,36 @@
+<div xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:c="http://java.sun.com/jstl/core">
+    
+    <c:if test="#{webActions.checkFilter('only_for_manager')}">
+    
+        <h3>#{messages['eloraplm.title.info']}</h3>
+        
+        <table class="dataTable">
+            <tr>
+                <td class="focusColumn"><h:outputText value="#{messages['eloraplm.label.version']}" /></td>
+                <td class="boldColumn">
+                    <nxu:set var="eloraPlmVersion" value="#{eloraWebActions.getEloraPlmVersion()}" >
+                        <h:outputText value="#{empty eloraPlmVersion ? messages['eloraplm.label.version.unknown'] : eloraPlmVersion }" />
+                    </nxu:set>
+                </td>
+            </tr>
+        </table>
+        
+        
+        <h3>#{messages['eloraplm.title.properties']}</h3>
+        
+        <table class="dataTable">
+        
+        <c:forEach items="#{eloraWebActions.getEloraPlmProperties()}" var="prop">
+            <tr>
+                <td class="focusColumn"><h:outputText value="#{prop.key}" /></td>
+                <td class="boldColumn"><h:outputText value="#{prop.value}" /></td>
+            </tr>
+        </c:forEach>
+        
+        </table>
+    
+    </c:if>
+    
+</div>

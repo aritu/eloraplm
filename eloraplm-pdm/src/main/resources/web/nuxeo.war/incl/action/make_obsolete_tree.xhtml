@@ -1,0 +1,33 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  >
+
+  <h:panelGroup id="content_subdiv" style="width: 1100px;" layout="block">
+  
+  
+   <c:choose>
+      <c:when test="#{currentDocument == null}">
+        <br/><br/>
+        <p class="errorMessage"><h:outputText value="#{messages['eloraplm.message.error.makeobsolete.empty.currentDoc']}" /></p>
+      </c:when>
+      <c:otherwise>
+            <h:panelGroup id="tree">
+            
+              <nxl:widget name="make_obsolete_tt" mode="view" value="#{makeObsoleteTreeBean}" />
+              
+            </h:panelGroup>
+      
+            <!-- The treetable conflicts with h:commandButton, so we have to separate the form in two, but this does not cause any error
+            as there are two separate actions in this window -->
+            
+      </c:otherwise>
+    </c:choose>
+  
+  
+  </h:panelGroup>
+
+</ui:composition>

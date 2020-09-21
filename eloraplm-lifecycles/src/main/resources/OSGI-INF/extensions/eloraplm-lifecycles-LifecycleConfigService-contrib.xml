@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.lifecycles.LifecycleConfigService.contrib">
+    
+    <extension point="states" target="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
+        
+        <state name="precreated" status="unreleased" lockable="true" color="#CCAA22" order="10" />
+        <state name="preliminary" status="unreleased" lockable="true" color="#3388AA" order="20">
+            <supportedStates>
+                <state>preliminary</state>
+                <state>approved</state>
+            </supportedStates>
+        </state>
+        <state name="approved" status="released" lockable="true" color="#88AA33" order="40">
+            <supportedStates>
+                <state>approved</state>
+            </supportedStates>
+        </state>
+        <state name="obsolete" status="obsolete" lockable="false" color="#AA8833" order="50">
+            <supportedStates>
+                <state>preliminary</state>
+                <state>approved</state>
+                <state>obsolete</state>
+            </supportedStates>
+        </state>
+        <state name="deleted" status="deleted" lockable="false" color="#555555" />
+        
+        <state name="working" status="unreleased" lockable="true" color="#3388AA" order="20" />
+        <state name="completed" status="released" lockable="true" color="#88AA33" order="20" />
+        <!-- TODO unreleased or obsolete? -->
+        <state name="rejected" status="unreleased" lockable="true" color="#CF2121" order="30" />
+        
+    </extension>
+    
+    
+    <extension point="transitions" target="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
+        
+        <!-- eloraDefaultLifeCycle -->
+        <transition lifecycle="eloraDefaultLifeCycle" name="approve" visible="true" direction="promote" />
+        <transition lifecycle="eloraDefaultLifeCycle" name="makeObsolete" visible="true" direction="promote" />
+        <transition lifecycle="eloraDefaultLifeCycle" name="backToPreliminary" visible="true" direction="demote" />
+        
+        <!-- eloraWsLifeCycle -->
+        <transition lifecycle="eloraWsLifeCycle" name="complete" visible="true" direction="promote" />
+        <transition lifecycle="eloraWsLifeCycle" name="reject" visible="true" direction="promote" />
+        <transition lifecycle="eloraWsLifeCycle" name="backToWorking" visible="true" direction="demote" />
+        
+        <!-- eloraCadLifeCycle -->
+        <transition lifecycle="eloraCadLifeCycle" name="approve" visible="true" direction="promote" />
+        <transition lifecycle="eloraCadLifeCycle" name="makeObsolete" visible="true" direction="promote" />
+        <transition lifecycle="eloraCadLifeCycle" name="backToPreliminary" visible="true" direction="demote" />
+        
+    </extension>
+    
+    
+    <extension point="config" target="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
+        <config transition="approve" allowedByAllParentStates="true" />
+        <config transition="makeObsolete" allowsAllChildStates="true" />
+    </extension>
+    
+</component>
+

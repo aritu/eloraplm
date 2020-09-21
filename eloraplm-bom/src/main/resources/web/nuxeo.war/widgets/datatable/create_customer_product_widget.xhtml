@@ -1,0 +1,35 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:c="http://java.sun.com/jstl/core"
+    >
+
+    <h:outputText value="#{messages['eloraplm.label.dt.rowNotSaved']}" rendered="#{rowData.isNew}" />
+    
+    <nxl:widget name="icon_reference_title" mode="view"
+        value="#{field_0}" rendered="#{not rowData.isNew and not empty field_0}" />
+    
+    <c:if test="#{widget.mode == 'edit'}">
+        <!-- For now it will be disabled, until customer products are well defined -->
+        <h:commandButton
+            styleClass="button disabled"
+            title="#{messages['eloraplm.command.product.createCustomerProduct']}"
+            value="#{messages['eloraplm.command.product.createCustomerProduct']}"
+            rendered="#{not rowData.isNew and empty field_0}"
+            disabled="true">
+            
+            <p:ajax
+                listener="#{itemCustomersTableBean.createAndRelateCustomerProduct(field_1, component.namingContainer, rowData, rowIndex)}"
+                process="@this"
+                partialSubmit="true"
+                onstart="prepareTablePartialAjaxUpdate(cfg.source)"
+                onsuccess="endRowUpdate()"
+                />
+                
+        </h:commandButton>
+    </c:if>
+    
+</ui:composition>

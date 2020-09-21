@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.cm.LifecycleConfigService.contrib">
+    
+    <extension point="states" target="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
+        
+        <!-- Folderish states (only color + lockable is important) -->
+        <state name="created" color="#888888" />
+        <state name="reviewed" color="#888888" />
+        <state name="validated" color="#888888" />
+        <state name="outmanaged" color="#888888" />
+        
+        <state name="evaluated" color="#888888" />
+        
+        <state name="technical reviewed" color="#888888" />
+        <state name="manufacturing reviewed" color="#888888" />
+        <state name="purchasing reviewed" color="#888888" />
+        <state name="commercial reviewed" color="#888888" />
+        <state name="economical reviewed" color="#888888" />
+        
+        <state name="asyncProcessing" color="#888888" />
+        
+    </extension>
+    
+    <extension point="transitions" target="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
+        <!-- eloraCmPrLifeCycle -->
+        <!-- TODO -->
+        
+        <!-- eloraCmEcrLifeCycle -->
+        <!-- TODO -->
+        
+        <!-- eloraCmEcoLifeCycle -->
+        <transition lifecycle="eloraCmEcoLifeCycle" name="technical review" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmEcoLifeCycle" name="complete" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmEcoLifeCycle" name="reject" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmEcoLifeCycle" name="backToCreated" visible="true" direction="demote" />
+        
+    </extension>
+    
+</component>
+

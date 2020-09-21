@@ -1,0 +1,67 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  >
+  
+    
+    <ui:fragment rendered="#{field_0.currentLifeCycleState == 'obsolete'}">
+        <h:outputText value="#{messages['label.widget.makeobsolete.check.alreadyObsolete']}" />
+    </ui:fragment>
+    
+    <ui:fragment rendered="#{field_0.currentLifeCycleState != 'obsolete' and !field_1.getCanMakeObsolete()}">
+    
+        <h:outputText value="#{messages['label.widget.makeobsolete.check.cannotMakeObsolete']} #{messages[field_1.getCannotMakeObsoleteReasonMsg()]}" />
+        
+        <nxu:set var="msgParam" value="#{field_1.getCannotMakeObsoleteReasonMsgParam()}">
+            <ui:fragment rendered="#{msgParam != null and msgParam.length() > 0}">
+                <nxu:set var="msgDocRef" value="#{eloraWebActions.getDocumentRefFromId(msgParam)}">
+                <nxu:set var="msgDoc" value="#{eloraWebActions.getDocument(msgDocRef)}">
+                    <!-- if msgParam is a document, display as a document -->
+                    <ui:fragment rendered="#{msgDoc != null}">
+                        <br/>
+                        <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{msgDoc}"/>
+                        <h:outputText value=" " />
+                        <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{msgDoc}"/>
+                    </ui:fragment>
+                    
+                    <!--otherwise, display the param value -->
+                    <ui:fragment rendered="#{msgDoc == null}">
+                            <br/>
+                            <h:outputText value="#{msgParam}" />
+                    </ui:fragment>
+                
+                </nxu:set>
+                </nxu:set>
+            </ui:fragment>
+        </nxu:set>
+        
+        <nxu:set var="incompatibleRelatedDocIdsList" value="#{field_1.getIncompatibleRelatedDocIds()}">
+            <ui:fragment rendered="#{incompatibleRelatedDocIdsList != null and incompatibleRelatedDocIdsList.size() > 0}">
+                <ui:repeat value="#{incompatibleRelatedDocIdsList}" var="incompatibleDocId">
+                    <br/>
+                    <nxu:set var="incompatibleDocRef" value="#{eloraWebActions.getDocumentRefFromId(incompatibleDocId)}">
+                    <nxu:set var="incompatibleDoc" value="#{eloraWebActions.getDocument(incompatibleDocRef)}">
+                        <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{incompatibleDoc}"/>
+                        <h:outputText value=" " />
+                        <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{incompatibleDoc}"/>
+                    </nxu:set>
+                    </nxu:set>
+                </ui:repeat>
+            </ui:fragment>
+        </nxu:set>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{field_0.currentLifeCycleState != 'obsolete' and field_1.getCanMakeObsolete()}">
+        <nxl:widgetType mode="edit" name="checkbox" value="#{field_2}" disabled="#{field_3}" >
+            <f:ajax
+            event="change" listener="#{makeObsoleteTreeBean.toggleNodeAsSelected(node)}"
+            execute="@this" />
+        </nxl:widgetType>
+    </ui:fragment>
+
+</ui:composition>

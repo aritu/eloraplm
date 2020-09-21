@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.pdm.makeobsolete.MakeObsoleteService.contrib">
+
+  <implementation class="com.aritu.eloraplm.pdm.makeobsolete.services.MakeObsoleteServiceImpl"/>
+  <service>
+    <provide interface="com.aritu.eloraplm.pdm.makeobsolete.api.MakeObsoleteService"/>
+  </service>
+
+</component>

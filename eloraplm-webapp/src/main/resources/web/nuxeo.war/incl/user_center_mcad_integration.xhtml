@@ -1,0 +1,65 @@
+<div xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+    <div class="bubbleBox">
+        <h3>
+            <h:outputText value="#{messages['eloraplm.title.userCenter.mcadIntegration.installer']}" />
+        </h3>
+        <h:form>
+            <table class="dataOutput nuxeoDrivePackages">
+                <thead>
+                    <tr>
+                        <th>
+                            <h:outputText value="#{messages['eloraplm.label.mcadIntegration.package']}" />
+                        </th>
+                        <th>
+                            <h:outputText value="#{messages['eloraplm.label.mcadIntegration.installer']}" />
+                        </th>
+                        <th>
+                            <h:outputText value="#{messages['eloraplm.label.mcadIntegration.version']}" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="#{package.platformId}">
+                            <h:outputText value="#{messages['eloraplm.label.mcadIntegration.mcadPlugin']}" class="label label-info" />
+                        </td>
+                        <td>
+                            <ui:fragment rendered="#{integrationActions.isPluginInstallerWebUrl}">
+                                <h:outputLink value="#{integrationActions.pluginInstallerUrl}" target="_blank" class="button">
+                                    <h:outputText value="#{integrationActions.pluginInstallerName}" />
+                                </h:outputLink>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{not integrationActions.isPluginInstallerWebUrl}">
+                                <strong><h:outputText value="#{messages['eloraplm.label.mcadIntegration.networkUrl']}" /></strong>
+                                <br /><h:outputText value="#{integrationActions.pluginInstallerUrl}" />
+                            </ui:fragment>
+                        </td>
+                        <td>
+                            <h:outputText value="#{integrationActions.pluginInstallerVersion}" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </h:form>
+    </div>
+    
+    <div class="bubbleBox">
+        <h3>
+            <h:outputText value="#{messages['eloraplm.title.userCenter.mcadIntegration.instructions']}" />
+        </h3>
+        <div class="textBlock">
+            <ol>
+                <li>#{messages['eloraplm.label.userCenter.mcadIntegration.instructions.step1']}</li>
+                <li>#{messages['eloraplm.label.userCenter.mcadIntegration.instructions.step2']}</li>
+                <li>#{messages['eloraplm.label.userCenter.mcadIntegration.instructions.step3']}</li>
+                <li>#{messages['eloraplm.label.userCenter.mcadIntegration.instructions.step4']}</li>
+                <li>#{messages['eloraplm.label.userCenter.mcadIntegration.instructions.step5']}</li>
+                <li>#{messages['eloraplm.label.userCenter.mcadIntegration.instructions.step6']}</li>
+            </ol>
+        </div>
+        
+    </div>
+    
+</div>

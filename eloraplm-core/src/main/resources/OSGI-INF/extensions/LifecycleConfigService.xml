@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
+    <documentation>
+        Service to configure lifecycles beyond Nuxeo's configuration options.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService"/>
+    </service>
+    
+    <extension-point name="states">
+        <documentation>
+            Used to configure lifecycle states.
+            <code>
+                <state name="..." status="released|unreleased|obsolete|deleted"
+                        lockable="true|false" color="#000000" priority="0">
+                    <supportedStates append="true|false">
+                        <state>...</state>
+                    </supportedStates>
+                </state>
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.core.lifecycles.api.StateDescriptor" />
+    </extension-point>
+    
+    <extension-point name="transitions">
+        <documentation>
+            Used to configure lifecycle transitions.
+            <code>
+                <transition lifecycle="..." name="..."
+                    visible="true\false" direction="demote|promote">
+                    <permissions append="true|false">
+                        <item>group:...</item>
+                        <item>user:...</item>
+                    </permissions>
+                </transition>
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.core.lifecycles.api.TransitionDescriptor" />
+    </extension-point>
+    
+    <extension-point name="config">
+        <documentation>
+            Used to set lifecycle global config.
+            <code>
+                <config transition="..." allowedByAllParentStates="true|false"
+                            allowsAllChildStates="true|false" />
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.core.lifecycles.api.ConfigDescriptor" />
+    </extension-point>
+
+</component> 

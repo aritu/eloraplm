@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager">
+
+    <implementation class="com.aritu.eloraplm.core.relations.services.EloraDocumentRelationService"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager"/>
+    </service>
+
+</component>

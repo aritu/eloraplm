@@ -1,0 +1,19 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+    <ui:include src="add_relation_template.xhtml">
+        <ui:param name="treeBean" value="#{cadDocumentsTreeBean}" />
+        <ui:param name="placeholder" value="eloraplm.placeholder.suggestion.relation.searchByReferenceOrTitle" />
+        <ui:param name="pageProviderName" value="other_document_wc_suggestion" />
+        <ui:param name="isEditablePredicate" value="false" />
+        <ui:param name="isEditableOrdering" value="false" />
+        <ui:param name="isEditableAddDirectRelations" value="false" />
+        <ui:param name="isEditableQuantity" value="false" />
+        <ui:param name="isEditableDirectorOrdering" value="false" />
+        <ui:param name="isEditableViewerOrdering" value="true" />
+        <ui:param name="isAnarchic" value="false" />
+        <ui:param name="subjectDocument" value="#{currentDocument}" />
+    </ui:include>
+    
+</ui:composition>

@@ -1,0 +1,24 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core">
+    
+    <c:if test="#{widget.mode == 'edit'}">
+        <h:selectOneMenu id="phaseType" value="#{field}">
+            <f:selectItem itemValue="phase" itemLabel="#{messages['eloraplm.label.project.phase.type.phase']}" />
+            <f:selectItem itemValue="subphase" itemLabel="#{messages['eloraplm.label.project.phase.type.subphase']}" />
+            <f:selectItem itemValue="gate" itemLabel="#{messages['eloraplm.label.project.phase.type.gate']}" />
+        </h:selectOneMenu>
+    </c:if>
+    
+    <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <h:graphicImage value="/icons/badge_#{field}_16.png" rendered="#{not empty field}" alt="#{messages['eloraplm.label.project.phase.type.'.concat(field)]}">
+             <f:attribute name="title" value="#{messages[('eloraplm.label.project.phase.type.').concat(field)]}" />
+             <f:attribute name="styleClass" value="tipsyShow" />
+        </h:graphicImage>
+    </c:if>
+    
+</ui:composition>

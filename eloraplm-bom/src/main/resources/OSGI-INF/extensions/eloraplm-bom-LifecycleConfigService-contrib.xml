@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.LifecycleConfigService.contrib">
+    
+    <extension point="transitions" target="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
+        
+        <!-- eloraBomLifeCycle -->
+        <transition lifecycle="eloraBomLifeCycle" name="approve" visible="true" direction="promote" />
+        <transition lifecycle="eloraBomLifeCycle" name="makeObsolete" visible="true" direction="promote" />
+        <transition lifecycle="eloraBomLifeCycle" name="backToPreliminary" visible="true" direction="demote" />
+        
+    </extension>
+    
+</component>
+

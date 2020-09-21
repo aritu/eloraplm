@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+
+<script type="text/javascript">
+  function toggleLayers(more_block, more_items) {
+    var objMoreBlock = document.getElementById(more_block).style;
+    var objMoreItems = document.getElementById(more_items).style;
+    if(objMoreBlock.display == "block")
+      objMoreBlock.display = "none";
+    if(objMoreItems.display == "none")
+      objMoreItems.display = "block";
+  }
+</script>
+
+<ui:include src="/basic_in_cad_relations.xhtml">
+  <ui:param name="formId" value="basic_in_cad_relations" />
+  <ui:param name="documentRelations" value="#{incomingCadDocumentRelations}" />
+  <ui:param name="message" value="#{messages['eloraplm.title.basic.in.cads']}" />
+</ui:include>
+
+</ui:composition>

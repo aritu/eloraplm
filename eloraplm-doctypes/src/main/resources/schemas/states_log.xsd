@@ -1,0 +1,31 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/states_log" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/states_log">
+  
+  <xs:element name="stateLogList" type="nxs:stateLogListType" />
+    <xs:complexType name="stateLogListType">
+        <xs:sequence>
+            <xs:element name="stateLog" type="nxs:stateLogType"
+                minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="stateLogType">
+        <xs:sequence>
+            <xs:element name="user">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string"
+                        ref:resolver="userManagerResolver" ref:type="user" />
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="date" type="xs:date" />
+            <xs:element name="state_from" type="xs:string" />
+            <xs:element name="state_to" type="xs:string" />
+            <xs:element name="transition" type="xs:string" />
+            <xs:element name="versionDocId" type="xs:string" />
+            <xs:element name="comment" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

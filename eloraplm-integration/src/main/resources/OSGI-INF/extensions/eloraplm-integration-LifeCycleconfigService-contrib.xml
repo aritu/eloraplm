@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.integration.LifecycleConfigService.contrib">
+
+    <require>com.aritu.eloraplm.lifecycles.LifecycleConfigService.contrib</require>
+    
+    <extension point="states" target="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
+        <state name="eloraDraftCreated" status="unreleased" lockable="true" color="#CCAA22" priority="1"></state>
+    </extension>
+    
+</component>

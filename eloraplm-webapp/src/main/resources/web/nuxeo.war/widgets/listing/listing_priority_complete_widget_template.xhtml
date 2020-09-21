@@ -1,0 +1,19 @@
+<f:subview id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory">
+    
+    <c:if test="#{nxl:isLikePlainMode(widget.mode)}">
+        <nxdir:directoryEntryOutput directoryName="elora_priority" value="#{field_0}" />
+    </c:if>
+    
+    <c:if test="#{not nxl:isLikePlainMode(widget.mode)}">
+        <h:graphicImage value="/icons/priority_#{field_0}_16.png"
+            style="vertical-align: middle;"
+            rendered="#{not empty field_0}" />
+        <nxdir:directoryEntryOutput directoryName="elora_priority" value="#{field_0}" />
+    </c:if>
+    
+</f:subview>
