@@ -39,6 +39,12 @@
             src="schemas/elora_advanced_search.xsd" />
         <schema name="cad_attachments" prefix="cadatts"
             src="schemas/cad_attachments.xsd" />
+        <schema name="check_in_info" prefix="checkin"
+            src="schemas/check_in_info.xsd" />
+        <schema name="review_info" prefix="review"
+            src="schemas/review_info.xsd" />
+        <schema name="states_log" prefix="stlog" 
+            src="schemas/states_log.xsd" /> 
     </extension>
     
     <extension point="configuration" target="org.nuxeo.ecm.core.schema.TypeService">
@@ -69,26 +75,52 @@
         <facet name="BasicDocument" />
         <facet name="WorkableDomainChild" />
         <facet name="LockRequiredToEdit" />
+        
+        <facet name="StoreCheckInInfo">
+             <schema name="check_in_info" />
+        </facet>
+        <facet name="StoreReviewInfo">
+             <schema name="review_info" />
+        </facet>
+        <facet name="StoreStatesLog">
+            <schema name="states_log" />
+        </facet>
+        
         <!-- Doctypes -->
         <doctype append="true" name="File">
             <schema name="elora_object" />
             <facet name="BasicDocument" />
+            <facet name="StoreCheckInInfo" />
+            <facet name="StoreReviewInfo" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype append="true" name="Note">
             <schema name="elora_object" />
             <facet name="BasicDocument" />
+            <facet name="StoreCheckInInfo" />
+            <facet name="StoreReviewInfo" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype append="true" name="Audio">
             <schema name="elora_object" />
             <facet name="BasicDocument" />
+            <facet name="StoreCheckInInfo" />
+            <facet name="StoreReviewInfo" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype append="true" name="Picture">
             <schema name="elora_object" />
             <facet name="BasicDocument" />
+            <facet name="StoreCheckInInfo" />
+            <facet name="StoreReviewInfo" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype append="true" name="Video">
             <schema name="elora_object" />
             <facet name="BasicDocument" />
+            <facet name="StoreCheckInInfo" />
+            <facet name="StoreReviewInfo" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype append="true" name="UserWorkspacesRoot">
             <facet name="WorkableDomainChild" />
@@ -97,6 +129,7 @@
             <schema name="elora_object" />
             <facet name="EloraWorkspace" />
             <facet name="LockRequiredToEdit" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype append="true" name="Domain">
             <facet name="Orderable" />
@@ -104,6 +137,9 @@
         <doctype extends="File" name="CadDocument">
             <schema name="cad_document" />
             <facet name="CadDocument" />
+            <facet name="StoreCheckInInfo" />
+            <facet name="StoreReviewInfo" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype extends="CadDocument" name="CadAssembly">
             <schema name="elora_viewer" />
@@ -176,6 +212,7 @@
             <facet name="EloraWorkspace" />
             <facet name="SuperSpace" />
             <facet name="LockRequiredToEdit" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype extends="Folder" name="TempFolder">
             <facet name="HiddenInNavigation" />
@@ -215,9 +252,18 @@
         </type>
         <!--  create documents from template ### END ### -->
         
+        <type id="Root">
+            <contentViews category="content">
+                <contentView>structure_document_content</contentView>
+            </contentViews>
+        </type>
+        
         <type id="Domain">
             <icon>/icons/domain_16.gif</icon>
             <bigIcon>/icons/domain_100.png</bigIcon>
+            <contentViews category="content">
+                <contentView>structure_document_content</contentView>
+            </contentViews>
             <subtypes>
                 <type>StructureRoot</type>
                 <type>CollaborationRoot</type>
@@ -468,7 +514,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>orderable_document_content</contentView>
+                <contentView>orderable_structure_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -491,7 +537,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>orderable_document_content</contentView>
+                <contentView>orderable_structure_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -514,7 +560,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>orderable_document_content</contentView>
+                <contentView>orderable_structure_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -536,7 +582,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>document_content</contentView>
+                <contentView>structure_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -614,7 +660,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>document_content</contentView>
+                <contentView>structure_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -810,7 +856,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>document_content</contentView>
+                <contentView>structure_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -864,13 +910,16 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>document_content</contentView>
+                <contentView>structure_document_content</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
                     document_trash_content
                 </contentView>
             </contentViews>
+            <subtypes>
+                <type>Folder</type>
+            </subtypes>
         </type>
         <type id="DocumentationRoot">
             <label>DocumentationRoot</label>

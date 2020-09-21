@@ -94,6 +94,9 @@ public class DoGetOrCheckout {
     @Param(name = "workspaceRealUid", required = false)
     private String workspaceRealUid;
 
+    @Param(name = "getParentFolders", required = true)
+    private boolean getParentFolders;
+
     @Context
     private OperationContext ctx;
 
@@ -316,32 +319,34 @@ public class DoGetOrCheckout {
             }
 
             // Get parents from proxies
-            DocumentRef proxyRef = requestDoc.getProxyRef();
-            if (proxyRef == null) {
-                DocumentModel foundProxy = findProxyForDocument(wcDoc);
-                if (foundProxy != null) {
-                    parentRealUid = foundProxy.getParentRef().toString();
-                    proxyUid = foundProxy.getId();
+            if (getParentFolders) {
+                DocumentRef proxyRef = requestDoc.getProxyRef();
+                if (proxyRef == null) {
+                    DocumentModel foundProxy = findProxyForDocument(wcDoc);
+                    if (foundProxy != null) {
+                        parentRealUid = foundProxy.getParentRef().toString();
+                        proxyUid = foundProxy.getId();
+                    } else {
+                        parentRealUid = rootItemParentUid;
+                    }
                 } else {
-                    parentRealUid = rootItemParentUid;
+                    proxyUid = proxyRef.toString();
+                    parentRealUid = session.getParentDocumentRef(
+                            proxyRef).toString();
                 }
-            } else {
-                proxyUid = proxyRef.toString();
-                parentRealUid = session.getParentDocumentRef(
-                        proxyRef).toString();
+
+                // Get the parent folders
+                log.trace(logInitMsg + "Document |" + realUid
+                        + "| is in the workspace. Processing folders...");
+
+                if (parentRealUid != null
+                        && !parentRealUid.equals(workspaceRealUid)) {
+                    processSingleFolder(parentRealUid);
+                }
+
+                log.trace(logInitMsg + "Document |" + realUid
+                        + "| folders processed.");
             }
-
-            // Get the parent folders
-            log.trace(logInitMsg + "Document |" + realUid
-                    + "| is in the workspace. Processing folders...");
-
-            if (parentRealUid != null
-                    && !parentRealUid.equals(workspaceRealUid)) {
-                processSingleFolder(parentRealUid);
-            }
-
-            log.trace(logInitMsg + "Document |" + realUid
-                    + "| folders processed.");
 
         }
 
@@ -497,11 +502,11 @@ public class DoGetOrCheckout {
 
     private void processRealMetadata(DoGetOrCheckoutResponseDoc responseDoc,
             DocumentModel draftDoc, String authoringTool, String type) {
-        if (MetadataConfig.realOverrideMetadataMapByType.containsKey(
+        if (MetadataConfig.getRealOverrideMetadataMapByType().containsKey(
                 authoringTool)
-                && MetadataConfig.realOverrideMetadataMapByType.get(
+                && MetadataConfig.getRealOverrideMetadataMapByType().get(
                         authoringTool).containsKey(type)) {
-            for (String property : MetadataConfig.realOverrideMetadataMapByType.get(
+            for (String property : MetadataConfig.getRealOverrideMetadataMapByType().get(
                     authoringTool).get(type)) {
                 // Data for real metadata is in draftDoc
                 Serializable value = draftDoc.getPropertyValue(property);
@@ -513,11 +518,11 @@ public class DoGetOrCheckout {
     private void processVirtualMetadata(DoGetOrCheckoutResponseDoc responseDoc,
             DocumentModel wcDoc, String authoringTool, String type)
             throws EloraException {
-        if (MetadataConfig.virtualOverrideMetadataMapByType.containsKey(
+        if (MetadataConfig.getVirtualOverrideMetadataMapByType().containsKey(
                 authoringTool)
-                && MetadataConfig.virtualOverrideMetadataMapByType.get(
+                && MetadataConfig.getVirtualOverrideMetadataMapByType().get(
                         authoringTool).containsKey(type)) {
-            for (String property : MetadataConfig.virtualOverrideMetadataMapByType.get(
+            for (String property : MetadataConfig.getVirtualOverrideMetadataMapByType().get(
                     authoringTool).get(type)) {
                 // If it is a virtual metadata, call to getDataFromMethod
                 Serializable value = EloraIntegrationHelper.getVirtualMetadata(

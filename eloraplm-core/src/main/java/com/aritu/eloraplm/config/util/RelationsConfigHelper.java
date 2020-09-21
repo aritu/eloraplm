@@ -96,6 +96,11 @@ public class RelationsConfigHelper {
                 includeObsoletes);
     }
 
+    /**
+     * @param includeObsoletes
+     * @return
+     * @throws EloraException
+     */
     public static EloraConfigTable getCadRelationsConfig(
             boolean includeObsoletes) throws EloraException {
         return getRelationsConfig(
@@ -137,19 +142,6 @@ public class RelationsConfigHelper {
      * @return
      * @throws EloraException
      */
-    public static EloraConfigTable getBomDocumentRelationsConfig(
-            boolean includeObsoletes) throws EloraException {
-        return getRelationsConfig(
-                EloraConfigConstants.VAL_RELATIONS_CONFIG_TYPE_BOM,
-                EloraConfigConstants.VAL_RELATIONS_CONFIG_SUBTYPE_DOCUMENT,
-                includeObsoletes);
-    }
-
-    /**
-     * @param includeObsoletes
-     * @return
-     * @throws EloraException
-     */
     public static EloraConfigTable getBomAnarchicRelationsConfig(
             boolean includeObsoletes) throws EloraException {
         return getRelationsConfig(
@@ -170,6 +162,29 @@ public class RelationsConfigHelper {
                 includeObsoletes);
     }
 
+    // ----------------------------------------------------------------
+    // DOC relations
+    // ----------------------------------------------------------------
+    /**
+     * @param includeObsoletes
+     * @return
+     * @throws EloraException
+     */
+    public static EloraConfigTable getDocRelationsConfig(
+            boolean includeObsoletes) throws EloraException {
+        return getRelationsConfig(
+                EloraConfigConstants.VAL_RELATIONS_CONFIG_TYPE_DOC, "",
+                includeObsoletes);
+    }
+
+    // ----------------------------------------------------------------
+    // CONTAINER relations
+    // ----------------------------------------------------------------
+    /**
+     * @param includeObsoletes
+     * @return
+     * @throws EloraException
+     */
     public static EloraConfigTable getContainerRelationsConfig(
             boolean includeObsoletes) throws EloraException {
         return getRelationsConfig(

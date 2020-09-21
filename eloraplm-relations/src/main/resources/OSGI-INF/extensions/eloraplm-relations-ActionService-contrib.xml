@@ -9,7 +9,13 @@
             <condition>#{webActions.currentTabId eq 'TAB_CAD_COMPOSITION_TREETABLE'}</condition>
         </rule>
     </filter>
-
+    
+    <filter id="cadDocumentsTreeButtons">
+        <rule grant="false">
+            <condition>#{webActions.currentTabId ne 'TAB_CAD_DOCUMENTS'}</condition>
+        </rule>
+    </filter>
+    
     <filter id="isNotDraft">
         <rule grant="false">
             <facet>EloraDraft</facet>
@@ -39,6 +45,18 @@
       <filter-id>isNotDraft</filter-id>
       <filter-id>isNotCheckedOut</filter-id>
     </action>
+    
+    <action id="TAB_CAD_DOCUMENTS" label="eloraplm.tab.cad.documents" link="/incl/tabs/cad_documents.xhtml" order="50" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>isCadDocument</filter-id>
+      <filter-id>isNotDraft</filter-id>
+    </action>
+    
+    <action id="TAB_BASIC_IN_CADS" link="/incl/tabs/basic_in_cads_content.xhtml"
+      order="70" label="label.com.aritu.eloraplm.relations.tab.cads" type="rest_document_link">
+      <category>VIEW_ACTION_LIST</category>
+      <filter-id>isBasicDocument</filter-id>
+    </action>
 
     <!-- Treetable buttons -->
     
@@ -61,6 +79,27 @@
       </properties>
     </action>
     
+    <action id="BtnAddCadDocumentRelation" order="20" label="eloraplm.command.relation.add.document" type="fancybox" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cadDocumentsTreeButtons</filter-id>
+      <filter-id>isEditable</filter-id>
+      <properties>
+        <property name="include">/incl/action/cad_documents_add_relation.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
+      </properties>
+    </action>
+    
+    <action id="BtnSaveCadDocumentRelations" order="30" label="command.save" type="link" link="#{cadDocumentsTreeBean.save(currentDocument, currentDocument, false)}" icon="">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cadDocumentsTreeButtons</filter-id>
+      <filter-id>isEditable</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    
     <!-- Summary panel right -->
     
     <action id="summary_cad_drawing_of_documents" type="widget" order="200">
@@ -75,6 +114,14 @@
       <category>SUMMARY_PANEL_RIGHT</category>
       <properties>
         <property name="widgetName">summary_cad_drawing_of_inverse_documents</property>
+      </properties>
+      <filter-id>isCadDocument</filter-id>
+    </action>
+    
+    <action id="summary_cad_documents" type="widget" order="250">
+      <category>SUMMARY_PANEL_RIGHT</category>
+      <properties>
+        <property name="widgetName">summary_cad_documents</property>
       </properties>
       <filter-id>isCadDocument</filter-id>
     </action>

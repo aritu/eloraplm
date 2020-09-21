@@ -2,6 +2,7 @@
 
 <component name="com.aritu.eloraplm.integration.OperationServiceComponent.contrib">
     <require>org.nuxeo.ecm.core.automation.featuresContrib</require>
+    <require>org.nuxeo.ecm.core.automation.coreContrib</require>
     
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
     
@@ -25,9 +26,9 @@
         
         <operation class="com.aritu.eloraplm.integration.restoperations.EloraLock" replace="true" />
         <operation class="com.aritu.eloraplm.integration.restoperations.EloraUnlock" replace="true" />
-        
         <operation class="com.aritu.eloraplm.integration.restoperations.CheckSessionStatus" replace="true" />
         <operation class="com.aritu.eloraplm.integration.restoperations.SyncVocabulary" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.restoperations.UpdateCadDocuments" replace="true" />
         
         <!-- Importer -->
         <operation class="com.aritu.eloraplm.integration.importer.restoperations.CreateProxies" replace="true" />
@@ -40,6 +41,8 @@
         
         <!-- Nuxeo overrides -->
         <operation class="com.aritu.eloraplm.integration.restoperations.EloraFileManagerImport" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.restoperations.LockDocument" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.restoperations.UnlockDocument" replace="true" />
         
     </extension>
     

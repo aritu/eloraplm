@@ -43,6 +43,7 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.LifeCycleConstants;
 import org.nuxeo.ecm.core.api.PropertyException;
+import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationService;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationService.Forcing;
@@ -60,6 +61,7 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.EloraEventTypes;
 import com.aritu.eloraplm.core.util.EloraLockInfo;
+import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
 import com.aritu.eloraplm.core.util.EloraUrlHelper;
 import com.aritu.eloraplm.core.util.json.EloraJsonHelper;
@@ -705,7 +707,8 @@ public class TryCheckin {
 
         if (!session.exists(requestDoc.getWcRef())) {
             errorList.add(new ValidationErrorItem("wcUid",
-                    "The document with the given wc uid does not exist."));
+                    EloraMessageHelper.getTranslatedMessage(session,
+                            "com.aritu.eloraplm.integration.error.wcUidDoesNotExist")));
             log.trace(logInitMsg + "No document with wc uid |"
                     + requestDoc.getWcRef().toString() + "|");
             return processDocNotExistingError(requestDoc, errorList);
@@ -758,7 +761,8 @@ public class TryCheckin {
         // If document does not exist, return KO.
         if (!session.exists(requestDoc.getRealRef())) {
             errorList.add(new ValidationErrorItem("realUid",
-                    "The document with the given real uid does not exist."));
+                    EloraMessageHelper.getTranslatedMessage(session,
+                            "com.aritu.eloraplm.integration.error.realUidDoesNotExist")));
             log.trace(logInitMsg + "No document with real uid |"
                     + requestDoc.getRealRef().toString() + "|");
             return processDocNotExistingError(requestDoc, errorList);
@@ -865,7 +869,8 @@ public class TryCheckin {
         }
 
         String wcUid = requestDoc.getWcRef() != null
-                ? requestDoc.getWcRef().toString() : "";
+                ? requestDoc.getWcRef().toString()
+                : "";
         TryCheckinResponseDoc responseDoc = new TryCheckinResponseDoc(
                 requestDoc.getLocalId(), wcUid, requestDoc.getType(), reference,
                 title, description, requestDoc.getFilename(), RESULT_KO,
@@ -913,10 +918,10 @@ public class TryCheckin {
 
     private void processRealMetadata(TryCheckinResponseDoc responseDoc,
             DocumentModel draftDoc, String authoringTool, String type) {
-        if (MetadataConfig.realMetadataMapByType.containsKey(authoringTool)
-                && MetadataConfig.realMetadataMapByType.get(
+        if (MetadataConfig.getRealMetadataMapByType().containsKey(authoringTool)
+                && MetadataConfig.getRealMetadataMapByType().get(
                         authoringTool).containsKey(type)) {
-            for (String property : MetadataConfig.realMetadataMapByType.get(
+            for (String property : MetadataConfig.getRealMetadataMapByType().get(
                     authoringTool).get(type)) {
                 // Data for real metadata is in draftDoc
                 Serializable value = draftDoc.getPropertyValue(property);
@@ -928,10 +933,11 @@ public class TryCheckin {
     private void processVirtualMetadata(TryCheckinResponseDoc responseDoc,
             DocumentModel wcDoc, String authoringTool, String type)
             throws EloraException {
-        if (MetadataConfig.virtualMetadataMapByType.containsKey(authoringTool)
-                && MetadataConfig.virtualMetadataMapByType.get(
+        if (MetadataConfig.getVirtualMetadataMapByType().containsKey(
+                authoringTool)
+                && MetadataConfig.getVirtualMetadataMapByType().get(
                         authoringTool).containsKey(type)) {
-            for (String property : MetadataConfig.virtualMetadataMapByType.get(
+            for (String property : MetadataConfig.getVirtualMetadataMapByType().get(
                     authoringTool).get(type)) {
                 // If it is a virtual metadata, call to getDataFromMethod
                 Serializable value = EloraIntegrationHelper.getVirtualMetadata(
@@ -958,9 +964,6 @@ public class TryCheckin {
             List<ValidationErrorItem> errorList, String wcUid)
             throws PropertyException, IOException {
 
-        String logInitMsg = "[updateDraft] [" + session.getPrincipal().getName()
-                + "] ";
-
         // The properties will be overriden only if it is the first call to
         // TryCheckin, so that we don't loose any change made between the first
         // TryCheckin and this one, to correct any metadata.
@@ -974,48 +977,9 @@ public class TryCheckin {
         EloraEventHelper.fireEvent(EloraEventTypes.BEFORE_TCI_DOC_VALIDATION,
                 draftDoc);
 
-        // Check that reference + type is unique, if not => KO
-        String reference = draftDoc.getPropertyValue(
-                EloraMetadataConstants.ELORA_ELO_REFERENCE) == null ? ""
-                        : draftDoc.getPropertyValue(
-                                EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
-
-        if (reference != null && !reference.isEmpty()) {
-            String query;
-
-            // Check drafts
-            log.trace(logInitMsg + "Checking that draft's reference |"
-                    + reference + "| for type |" + draftDoc.getType()
-                    + "| and user |" + session.getPrincipal().getName()
-                    + "| is unique...");
-            query = EloraQueryFactory.getWcDocsByTypeAndReferenceAndCreatorExcludingUidQuery(
-                    draftDoc.getType(), reference,
-                    session.getPrincipal().getName(), draftDoc.getId());
-            DocumentModelList uniqueErrorDrafts = session.query(query);
-
-            // Check documents
-            log.trace(logInitMsg + "Checking that doc's reference |" + reference
-                    + "| for type |" + requestDoc.getType() + "| is unique...");
-            if (wcUid == null) {
-                query = EloraQueryFactory.getWcDocsByTypeAndReferenceQuery(
-                        requestDoc.getType(), reference);
-            } else {
-                query = EloraQueryFactory.getWcDocsByTypeAndReferenceExcludingUidQuery(
-                        requestDoc.getType(), reference, wcUid);
-            }
-            DocumentModelList uniqueErrorDocs = session.query(query);
-
-            if ((uniqueErrorDrafts != null && !uniqueErrorDrafts.isEmpty())
-                    || (uniqueErrorDocs != null
-                            && !uniqueErrorDocs.isEmpty())) {
-
-                errorList.add(new ValidationErrorItem(
-                        EloraMetadataConstants.ELORA_ELO_REFERENCE,
-                        "Same reference exist for a document of the same type."));
-            } else {
-                log.trace(logInitMsg + "References are unique.");
-            }
-        }
+        UniqueReferenceChecker checker = new UniqueReferenceChecker(session,
+                errorList, draftDoc, requestDoc, wcUid);
+        errorList = checker.check();
 
         return errorList;
     }
@@ -1220,5 +1184,80 @@ public class TryCheckin {
         }
 
         return responseDoc;
+    }
+
+    class UniqueReferenceChecker extends UnrestrictedSessionRunner {
+        List<ValidationErrorItem> errorList;
+
+        DocumentModel draftDoc;
+
+        TryCheckinRequestDoc requestDoc;
+
+        String wcUid;
+
+        private UniqueReferenceChecker(CoreSession session,
+                List<ValidationErrorItem> errorList, DocumentModel draftDoc,
+                TryCheckinRequestDoc requestDoc, String wcUid) {
+            super(session);
+            this.errorList = errorList;
+            this.draftDoc = draftDoc;
+            this.requestDoc = requestDoc;
+            this.wcUid = wcUid;
+        }
+
+        @Override
+        public void run() {
+
+            String logInitMsg = "[checkThatReferenceAndTypeIsUnique] ["
+                    + session.getPrincipal().getName() + "] ";
+
+            // Check that reference + type is unique, if not => KO
+            String reference = draftDoc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE) == null ? ""
+                            : draftDoc.getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
+
+            if (reference != null && !reference.isEmpty()) {
+                long uniqueErrorDrafts = 0;
+                long uniqueErrorDocs = 0;
+
+                // Check drafts
+                log.trace(logInitMsg + "Checking that draft's reference |"
+                        + reference + "| for type |" + draftDoc.getType()
+                        + "| and user |" + session.getPrincipal().getName()
+                        + "| is unique...");
+
+                uniqueErrorDrafts = EloraQueryFactory.countWcDocsByTypeAndReferenceAndCreatorExcludingUid(
+                        session, draftDoc.getType(), reference,
+                        session.getPrincipal().getName(), draftDoc.getId());
+
+                // Check documents
+                log.trace(logInitMsg + "Checking that doc's reference |"
+                        + reference + "| for type |" + requestDoc.getType()
+                        + "| is unique...");
+                if (wcUid == null) {
+                    uniqueErrorDocs = EloraQueryFactory.countWcDocsByTypeAndReference(
+                            session, requestDoc.getType(), reference);
+                } else {
+                    uniqueErrorDocs = EloraQueryFactory.countWcDocsByTypeAndReferenceExcludingUid(
+                            session, requestDoc.getType(), reference, wcUid);
+                }
+
+                if (uniqueErrorDrafts > 0 || uniqueErrorDocs > 0) {
+
+                    errorList.add(new ValidationErrorItem(
+                            EloraMetadataConstants.ELORA_ELO_REFERENCE,
+                            EloraMessageHelper.getTranslatedMessage(session,
+                                    "com.aritu.eloraplm.integration.error.sameReferenceOfSameType")));
+                } else {
+                    log.trace(logInitMsg + "References are unique.");
+                }
+            }
+        }
+
+        public List<ValidationErrorItem> check() {
+            runUnrestricted();
+            return errorList;
+        }
     }
 }

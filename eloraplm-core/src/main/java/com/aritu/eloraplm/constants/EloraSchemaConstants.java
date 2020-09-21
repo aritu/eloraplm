@@ -49,4 +49,6 @@ public class EloraSchemaConstants {
 
     public static final String OVERWRITE_DATA = "overwrite_data";
 
+    public static final String STATES_LOG = "states_log";
+
 }

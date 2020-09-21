@@ -5,12 +5,15 @@ import static org.jboss.seam.annotations.Install.FRAMEWORK;
 
 import java.io.Serializable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.config.util.EloraConfigRow;
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
+import com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 
 @Name("lifecycleActions")
 @Scope(CONVERSATION)
@@ -19,16 +22,19 @@ public class LifecycleActionsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String getLifeCycleStateColor(String lifeCycleState) {
-        String color = "#888888";
+    private static Log log = LogFactory.getLog(LifecycleActionsBean.class);
 
-        if (LifecyclesConfig.allStatesConfig.containsKey(lifeCycleState)) {
-            EloraConfigRow lifecycleConfigRow = LifecyclesConfig.allStatesConfig.getRow(
-                    lifeCycleState);
-            color = (String) lifecycleConfigRow.getProperty("color");
+    private LifecycleConfigService lcs;
+
+    private LifecycleConfigService getLifeCycleConfigService() {
+        if (lcs == null) {
+            lcs = Framework.getService(LifecycleConfigService.class);
         }
+        return lcs;
+    }
 
-        return color;
+    public String getLifeCycleStateColor(String lifeCycleState) {
+        return getLifeCycleConfigService().getStateColor(lifeCycleState);
     }
 
     public boolean isReleasedState(String lifeCycleState) {
@@ -36,19 +42,6 @@ public class LifecycleActionsBean implements Serializable {
             return true;
         }
         return false;
-    }
-
-    public String getLifeCycleStateAbbreviation(String lifeCycleState) {
-        String abbreviation = "";
-
-        if (LifecyclesConfig.allStatesConfig.containsKey(lifeCycleState)) {
-            EloraConfigRow lifecycleConfigRow = LifecyclesConfig.allStatesConfig.getRow(
-                    lifeCycleState);
-            abbreviation = (String) lifecycleConfigRow.getProperty(
-                    "abbreviation");
-        }
-
-        return abbreviation;
     }
 
 }

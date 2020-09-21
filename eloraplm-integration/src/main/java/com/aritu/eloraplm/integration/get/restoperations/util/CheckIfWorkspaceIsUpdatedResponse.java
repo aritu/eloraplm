@@ -48,9 +48,6 @@ public class CheckIfWorkspaceIsUpdatedResponse extends EloraGeneralResponse {
         this.isUpdated = isUpdated;
     }
 
-    /**
-     * Converts GetFileStructInfoResponse to a JSON formatted String.
-     */
     @Override
     public String convertToJson() throws EloraException {
         String methodName = "[convertToJson] ";

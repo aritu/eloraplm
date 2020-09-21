@@ -28,17 +28,20 @@ import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
 import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
+import com.aritu.eloraplm.core.util.CheckInInfoHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
+import com.aritu.eloraplm.core.util.ReviewInfoHelper;
 import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
 import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
@@ -104,6 +107,18 @@ public class CheckinService implements CheckinManager {
                 EloraMetadataConstants.ELORA_OVERWRITE_OVERWRITTEN).remove();
 
         setupCheckIn(doc, checkinComment);
+
+        if (doc.hasFacet(EloraFacetConstants.FACET_STORE_CHECKIN_INFO)) {
+            // Set last Check In Info properties
+            CheckInInfoHelper.setLastCheckInInfoProperties(doc,
+                    session.getPrincipal().toString());
+        }
+
+        if (doc.hasFacet(EloraFacetConstants.FACET_STORE_REVIEW_INFO)) {
+            ReviewInfoHelper.setLastReviewInfoPropertiesByState(doc,
+                    doc.getCurrentLifeCycleState(), session);
+        }
+
         doc = session.saveDocument(doc);
         log.trace(logInitMsg + "Document |" + doc.getId() + "| saved");
 

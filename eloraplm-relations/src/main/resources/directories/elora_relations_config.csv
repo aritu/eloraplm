@@ -8,11 +8,12 @@ http://eloraplm.aritu.com/relations/CadInContextWith,CAD,IconOnly,0
 http://eloraplm.aritu.com/relations/BomComposedOf,BOM,Hierarchical,0
 http://eloraplm.aritu.com/relations/BomHasBom,BOM,Anarchic,0
 http://eloraplm.aritu.com/relations/BomHasSpecification,BOM,Direct,0
-http://eloraplm.aritu.com/relations/BomHasCadDocument,BOM,Document,0
-http://eloraplm.aritu.com/relations/BomHasDocument,BOM,Document,0
 http://eloraplm.aritu.com/relations/BomHasList,BOM,BomList,0
 http://eloraplm.aritu.com/relations/BomListHasEntry,BOM,BomList,0
 http://eloraplm.aritu.com/relations/BomManufacturerHasPart,BOM,Anarchic,0
 http://eloraplm.aritu.com/relations/BomCustomerHasProduct,BOM,Anarchic,0
+http://eloraplm.aritu.com/relations/CadHasDocument,DOC,Basic,0
+http://eloraplm.aritu.com/relations/BomHasDocument,DOC,Basic,0
+http://eloraplm.aritu.com/relations/BomHasCadDocument,DOC,Cad,0
 http://eloraplm.aritu.com/relations/CrReservedCodeOf,CR,Direct,0
 http://eloraplm.aritu.com/relations/ContainerHasContainer,CONTAINER,Direct,0

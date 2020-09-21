@@ -26,6 +26,7 @@
             <rule grant="false">
                 <condition>#{currentDocument.isVersionable() and currentDocument.isCheckedOut()}</condition>
                 <condition>#{empty demoteActions.transitions}</condition>
+                <condition>#{eloraDocumentTemplatesActions.isDocumentTemplateRootOrUnderTemplateRoot(currentDocument)}</condition>
             </rule>
         </filter>
         <filter id="canPromote">
@@ -42,6 +43,7 @@
             <rule grant="false">
                 <condition>#{currentDocument.isVersionable() and currentDocument.isCheckedOut()}</condition>
                 <condition>#{empty promoteActions.transitions}</condition>
+                <condition>#{eloraDocumentTemplatesActions.isDocumentTemplateRootOrUnderTemplateRoot(currentDocument)}</condition>
             </rule>
         </filter>
 

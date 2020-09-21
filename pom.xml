@@ -5,13 +5,13 @@
 
     <groupId>com.aritu.eloraplm</groupId>
     <artifactId>eloraplm-parent</artifactId>
-    <version>20200422</version>
+    <version>20200917</version>
     <packaging>pom</packaging>
     <name>EloraPlm POM</name>
 
     <properties>
         <nuxeo.distribution.version>7.10</nuxeo.distribution.version>
-        <nuxeo.distribution.hotfix>HF47</nuxeo.distribution.hotfix>
+        <nuxeo.hotfix.version>HF47</nuxeo.hotfix.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.basedir}</main.basedir>
     </properties>
@@ -46,7 +46,7 @@
                 <artifactId>nuxeo-distribution</artifactId>
                 <scope>import</scope>
                 <type>pom</type>
-                <version>${nuxeo.distribution.version}-${nuxeo.distribution.hotfix}</version>
+                <version>${nuxeo.distribution.version}-${nuxeo.hotfix.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.aritu.eloraplm</groupId>
@@ -202,6 +202,18 @@
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <!-- Should be replaced by the official Nuxeo hotfix releases, your local repo with Nuxeo hotfix releases,
+        or removed, adding the hotfix distribution resources to the local Maven repository -->
+        <repository>
+            <id>nuxeo-hotfix-releases</id>
+            <url>http://mvn.aritukoop.net:8081/repository/nuxeo-hotfix-releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
         <repository>

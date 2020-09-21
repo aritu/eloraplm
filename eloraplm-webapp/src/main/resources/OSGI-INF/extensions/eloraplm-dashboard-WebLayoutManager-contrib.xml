@@ -24,13 +24,22 @@
           </properties>
           <widget>listing_icon_type</widget>
         </column>
-        <column name="title_link">
-          <properties mode="any">
-              <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-              <property name="sortPropertyName">elo:reference, dc:title</property>
-              <property name="label">label.selection.column.title_link</property>
-          </properties>
-          <widget>listing_reference_title</widget>
+        <column name="reference">
+            <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                <property name="sortPropertyName">elo:reference</property>
+                <property name="columnStyleClass">referenceColumn</property>
+                <property name="label">label.selection.column.reference</property>
+            </properties>
+            <widget>listing_reference</widget>
+        </column>
+        <column name="title">
+            <properties mode="any">
+                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                <property name="sortPropertyName">dc:title</property>
+                <property name="label">label.selection.column.title</property>
+            </properties>
+            <widget>listing_title</widget>
         </column>
         <column name="lock">
           <properties mode="any">
@@ -63,7 +72,7 @@
                 <property name="label">label.lifecycle
                 </property>
             </properties>
-            <widget>listing_colored_lifecycle_state</widget>
+            <widget>listing_colored_short_lifecycle_state</widget>
         </column>
         <column>
           <properties mode="any">

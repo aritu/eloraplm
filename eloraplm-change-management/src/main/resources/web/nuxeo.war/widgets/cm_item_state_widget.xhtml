@@ -9,7 +9,7 @@
   <ui:fragment rendered="#{field != null and !empty field}">
   
     <h:outputText 
-      value="#{lifecycleActions.getLifeCycleStateAbbreviation(field)}"
+      value="#{messages[field.concat('.abbr')]}"
       styleClass="lifeCycleStateLabel hollow tipsyShow"
       style="border-color: #{lifecycleActions.getLifeCycleStateColor(field)}; color: #{lifecycleActions.getLifeCycleStateColor(field)};">
        <f:attribute name="title" value="#{messages[field]}" />

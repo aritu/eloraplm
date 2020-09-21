@@ -12,6 +12,8 @@ import org.jboss.seam.annotations.faces.Validator;
 import org.jboss.seam.annotations.intercept.BypassInterceptors;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
+
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.sun.faces.util.MessageFactory;
 
@@ -50,10 +52,12 @@ public class UniqueReferenceByTypeValidator
         String type = doc.getType();
         String docUid = doc.isProxy() ? doc.getSourceId() : doc.getId();
 
-        long docsWithSameReferenceAndType = EloraQueryFactory.countWcDocsByTypeAndReferenceExcludingUid(
-                session, type, reference, docUid);
+        // We must run the query in an unrestricted session
+        SameReferenceCounter counter = new SameReferenceCounter(session, type,
+                reference, docUid);
+        long docsWithSameReferenceAndType = counter.count();
 
-        if (docsWithSameReferenceAndType != 0) {
+        if (docsWithSameReferenceAndType > 0) {
             log.trace(logInitMsg + "Validation failed: The reference |"
                     + reference
                     + "| has already been used by another document of the same type.");
@@ -65,6 +69,37 @@ public class UniqueReferenceByTypeValidator
         }
 
         log.trace(logInitMsg + "--- EXIT ---");
+    }
+
+    public class SameReferenceCounter extends UnrestrictedSessionRunner {
+        String query;
+
+        String type;
+
+        String reference;
+
+        String docUid;
+
+        long count;
+
+        public SameReferenceCounter(CoreSession session, String type,
+                String reference, String docUid) {
+            super(session);
+            this.type = type;
+            this.reference = reference;
+            this.docUid = docUid;
+        }
+
+        @Override
+        public void run() {
+            count = EloraQueryFactory.countWcDocsByTypeAndReferenceExcludingUid(
+                    session, type, reference, docUid);
+        }
+
+        public long count() {
+            runUnrestricted();
+            return count;
+        }
     }
 
 }

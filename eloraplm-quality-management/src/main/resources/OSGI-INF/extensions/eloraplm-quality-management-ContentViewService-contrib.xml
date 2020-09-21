@@ -37,7 +37,8 @@
         </whereClause>
         <!-- Fix for when we use UUID type, the UUID with zeros means null -->
         <parameter>#{empty eloraQmContent.getUidList() ? '00000000-0000-0000-0000-000000000000' : eloraQmContent.getUidList()}</parameter>
-        <sort ascending="false" column="dc:created"/>
+        <sort ascending="true" column="elo:reference"/>
+        <sort ascending="true" column="dc:title"/>
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
 

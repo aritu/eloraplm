@@ -25,7 +25,6 @@ import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.primefaces.model.TreeNode;
 
-import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
@@ -113,7 +112,7 @@ public abstract class PromoteExecuterService implements PromoteExecuterManager {
 
     @Override
     public abstract void processPromote(TreeNode node, String transition,
-            String finalState, EloraConfigTable lifeCycleStatesConfig,
+            String finalState,
             EloraDocumentRelationManager eloraDocumentRelationManager)
             throws EloraException, DocumentAlreadyLockedException,
             DocumentInUnlockableStateException, DocumentLockRightsException;

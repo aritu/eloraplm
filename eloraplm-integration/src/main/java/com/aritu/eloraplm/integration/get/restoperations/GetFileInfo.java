@@ -27,6 +27,8 @@ import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
@@ -38,6 +40,7 @@ import com.aritu.eloraplm.integration.get.restoperations.util.FileInfoBuilder;
 import com.aritu.eloraplm.integration.get.restoperations.util.GetFileInfoResponse;
 import com.aritu.eloraplm.integration.get.restoperations.util.UidRequestDoc;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 /**
  * @author aritu
@@ -148,24 +151,42 @@ public class GetFileInfo {
                     docItem, "realUid", false);
             DocumentRef parentRealRef = EloraJsonHelper.getJsonFieldAsDocumentRef(
                     docItem, "parentRealUid", false);
+            String filename = EloraJsonHelper.getJsonFieldAsString(docItem,
+                    "filename", false);
 
-            UidRequestDoc requestDoc = new UidRequestDoc(wcRef, realRef,
-                    parentRealRef);
-            if (wcRef != null || realRef != null) {
-                // We want to avoid duplicated documents (but an AV of a
-                // document and its WC are different documents)
-                String indexUid = realRef == null ? wcRef.toString()
-                        : realRef.toString();
-                if (!requestDocs.containsKey(indexUid)) {
-                    requestDocs.put(indexUid, requestDoc);
+            if (filename == null) {
+                UidRequestDoc requestDoc = new UidRequestDoc(wcRef, realRef,
+                        parentRealRef);
+
+                if (wcRef != null || realRef != null) {
+                    // We want to avoid duplicated documents (but an AV of a
+                    // document and its WC are different documents)
+                    String indexUid = realRef == null ? wcRef.toString()
+                            : realRef.toString();
+                    if (!requestDocs.containsKey(indexUid)) {
+                        requestDocs.put(indexUid, requestDoc);
+                    }
+                } else {
+                    throw new EloraException("Null wcUid and realUid");
                 }
             } else {
-                throw new EloraException("Null wcUid and realUid");
+                fillRequestDocsByFilename(filename);
             }
         }
 
         log.trace(logInitMsg + requestDocs.size() + " documents loaded.");
         log.trace(logInitMsg + "--- EXIT --- ");
+    }
+
+    private void fillRequestDocsByFilename(String filename) {
+        String q = EloraQueryFactory.getWcDocumentsByContentFilename(filename);
+        DocumentModelList dml = session.query(q);
+        if (dml != null && !dml.isEmpty()) {
+            for (DocumentModel doc : dml) {
+                UidRequestDoc r = new UidRequestDoc(doc.getRef(), null, null);
+                requestDocs.put(doc.getId(), r);
+            }
+        }
     }
 
 }

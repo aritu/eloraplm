@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.aritu.eloraplm</groupId>
         <artifactId>eloraplm-packages</artifactId>
-        <version>20200422</version>
+        <version>20200917</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -40,6 +40,10 @@
         <dependency>
             <groupId>com.aritu.eloraplm</groupId>
             <artifactId>eloraplm-doctypes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-drive</artifactId>
         </dependency>
         <dependency>
             <groupId>com.aritu.eloraplm</groupId>

@@ -74,7 +74,7 @@ public class ObsoletePromoteExecuterService extends PromoteExecuterService {
 
     @Override
     public void processPromote(TreeNode node, String transition,
-            String finalState, EloraConfigTable lifeCycleStatesConfig,
+            String finalState,
             EloraDocumentRelationManager eloraDocumentRelationManager)
             throws EloraException, DocumentAlreadyLockedException,
             DocumentInUnlockableStateException, DocumentLockRightsException {
@@ -89,7 +89,7 @@ public class ObsoletePromoteExecuterService extends PromoteExecuterService {
             // en los procesos masivos se puede evitar esto ordenando y
             // ejecutando cada documento solo una vez
             boolean updatedAlreadyPromoted = PromoteHelper.isAlreadyPromoted(
-                    doc, finalState, lifeCycleStatesConfig);
+                    doc, finalState);
             if (!updatedAlreadyPromoted) {
                 CoreSession session = doc.getCoreSession();
                 EloraDocumentHelper.lockDocument(doc);
@@ -102,7 +102,7 @@ public class ObsoletePromoteExecuterService extends PromoteExecuterService {
         }
 
         for (TreeNode child : node.getChildren()) {
-            processPromote(child, transition, finalState, lifeCycleStatesConfig,
+            processPromote(child, transition, finalState,
                     eloraDocumentRelationManager);
         }
     }

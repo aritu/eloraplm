@@ -16,8 +16,8 @@ package com.aritu.eloraplm.exceptions;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
- * Exception thrown when trying to lock a document that is already locked. It
- * contains the current lock owner.
+ * Exception thrown when trying to create a viewer file and one of the related
+ * document's modified date is previous to the importation date of EloraPLM.
  *
  * @author aritu
  *
@@ -30,7 +30,7 @@ public class OverwriteOriginalViewerException extends Exception {
 
     public OverwriteOriginalViewerException(DocumentModel doc) {
         super("Viewer document of '" + doc.getId()
-                + "' won't be updated because it's drawing's modified date is equal or before importation date.");
+                + "' won't be updated because one of its related documents that is included in the viewer file has a modified date equal or previous to the importation date.");
         this.doc = doc;
     }
 

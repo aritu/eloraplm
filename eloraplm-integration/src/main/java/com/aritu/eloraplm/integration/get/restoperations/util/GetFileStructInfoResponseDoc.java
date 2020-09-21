@@ -33,8 +33,9 @@ import com.aritu.eloraplm.integration.util.VersionItem;
 @JsonPropertyOrder({ "cadParentRealUid", "currentLifeCycleState",
         "currentVersionInfo", "description", "eloraLockInfo", "enforce",
         "filename", "hash", "itemsInfo", "lastContributor", "lastModified",
-        "latestVersionLabel", "proxyUid", "realUid", "reference", "relations",
-        "selected", "summaryUrl", "title", "type", "versions", "wcUid" })
+        "latestVersionLabel", "parentRealUid", "proxyUid", "realUid",
+        "reference", "relations", "selected", "summaryUrl", "title", "type",
+        "versions", "wcUid" })
 public class GetFileStructInfoResponseDoc {
 
     private String cadParentRealUid;
@@ -65,6 +66,8 @@ public class GetFileStructInfoResponseDoc {
 
     private String realUid;
 
+    private String parentRealUid;
+
     private String reference;
 
     private List<RelationInfo> relations;
@@ -87,14 +90,15 @@ public class GetFileStructInfoResponseDoc {
     }
 
     public GetFileStructInfoResponseDoc(String proxyUid, String realUid,
-            String wcUid, String type, String reference, String title,
-            String filename, String hash, String description,
+            String parentRealUid, String wcUid, String type, String reference,
+            String title, String filename, String hash, String description,
             VersionInfo currentVersionInfo, String currentLifeCycleState,
             String latestVersionLabel, List<VersionItem> versions,
             EloraLockInfo eloraLockInfo, String lastContributor,
             Date lastModified, String summaryUrl) {
         this.proxyUid = proxyUid;
         this.realUid = realUid;
+        this.parentRealUid = parentRealUid;
         this.wcUid = wcUid;
         this.type = type;
         this.reference = reference;
@@ -233,6 +237,14 @@ public class GetFileStructInfoResponseDoc {
 
     public void setRealUid(String realUid) {
         this.realUid = realUid;
+    }
+
+    public String getParentRealUid() {
+        return parentRealUid;
+    }
+
+    public void setParentRealUid(String parentRealUid) {
+        this.parentRealUid = parentRealUid;
     }
 
     public String getReference() {

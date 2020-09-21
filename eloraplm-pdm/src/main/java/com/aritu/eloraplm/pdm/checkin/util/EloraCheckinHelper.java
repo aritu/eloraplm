@@ -15,22 +15,29 @@ package com.aritu.eloraplm.pdm.checkin.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.model.Property;
 import org.nuxeo.ecm.core.api.validation.ConstraintViolation;
+import org.nuxeo.ecm.core.api.validation.ConstraintViolation.PathNode;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationReport;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationService;
 import org.nuxeo.ecm.core.schema.types.constraints.Constraint;
+import org.nuxeo.ecm.core.schema.types.constraints.NotNullConstraint;
 import org.nuxeo.ecm.core.schema.types.constraints.ObjectResolverConstraint;
+import org.nuxeo.ecm.platform.usermanager.UserManagerResolver;
+
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
+import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.core.util.restoperations.ValidationErrorItem;
-import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 /**
  * // TODO: write class general comment
@@ -53,8 +60,18 @@ public class EloraCheckinHelper {
         Serializable title = doc.getPropertyValue(
                 NuxeoMetadataConstants.NX_DC_TITLE);
         if (title == null || title.toString().isEmpty()) {
+            // We simulate a NotNullConstraint
+            Property prp = (doc.getProperty(
+                    NuxeoMetadataConstants.NX_DC_TITLE));
+            List<PathNode> path = Arrays.asList(new PathNode(prp.getField()));
+            NotNullConstraint constraint = NotNullConstraint.get();
+            ConstraintViolation violation = new ConstraintViolation(
+                    prp.getSchema(), path, constraint, null);
+
             ValidationErrorItem errorItem = new ValidationErrorItem(
-                    NuxeoMetadataConstants.NX_DC_TITLE, "NotNullConstraint");
+                    NuxeoMetadataConstants.NX_DC_TITLE,
+                    constraint.getErrorMessage(violation.getInvalidValue(),
+                            EloraMessageHelper.getLocale(session)));
             errorList.add(errorItem);
 
             log.trace(logInitMsg + "Validation error for document |"
@@ -68,9 +85,19 @@ public class EloraCheckinHelper {
             Serializable reference = doc.getPropertyValue(
                     EloraMetadataConstants.ELORA_ELO_REFERENCE);
             if (reference == null || reference.toString().isEmpty()) {
+                // We simulate a NotNullConstraint
+                Property prp = (doc.getProperty(
+                        EloraMetadataConstants.ELORA_ELO_REFERENCE));
+                List<PathNode> path = Arrays.asList(
+                        new PathNode(prp.getField()));
+                NotNullConstraint constraint = NotNullConstraint.get();
+                ConstraintViolation violation = new ConstraintViolation(
+                        prp.getSchema(), path, constraint, null);
+
                 ValidationErrorItem errorItem = new ValidationErrorItem(
                         EloraMetadataConstants.ELORA_ELO_REFERENCE,
-                        "NotNullConstraint");
+                        constraint.getErrorMessage(violation.getInvalidValue(),
+                                EloraMessageHelper.getLocale(session)));
                 errorList.add(errorItem);
 
                 log.trace(logInitMsg + "Validation error for document |"
@@ -105,28 +132,26 @@ public class EloraCheckinHelper {
             for (ConstraintViolation violation : report.asList()) {
                 Constraint constraint = violation.getConstraint();
                 String constraintName = constraint.getDescription().getName();
+                Object invalidValue = violation.getInvalidValue();
+                Locale locale = EloraMessageHelper.getLocale(session);
                 for (ConstraintViolation.PathNode pathNode : violation.getPath()) {
                     // We don't want to block the operation
                     // when a resolver fails
-                    if (!(constraint instanceof ObjectResolverConstraint)) {
-                        String fieldName = pathNode.getField().getName().toString();
-                        // TODO Se ha cambiado arriba ObjectResolver por
-                        // ObjectResolverConstraint y creemos que las
-                        // comprobaciones de dc que se hacen abajo ya no hacen
-                        // falta. JIRA ELORAINT-60
-                        if (fieldName != "dc:creator"
-                                && fieldName != "dc:contributors"
-                                && fieldName != "cad:authoringTool"
-                                && fieldName != "cad:authoringToolVersion") {
+                    String fieldName = pathNode.getField().getName().toString();
 
-                            errorList.add(new ValidationErrorItem(fieldName,
-                                    constraintName));
-                        }
-                        log.trace(logInitMsg + "Validation error for document |"
-                                + doc.getId() + "| in field |" + fieldName
-                                + "| with constraint |" + constraintName
-                                + "|.");
+                    // We do not want to count as error if a user no longer
+                    // exists in the Active Directory, so we filter those
+                    // constraints
+                    if (constraint instanceof ObjectResolverConstraint
+                            && ((ObjectResolverConstraint) constraint).getResolver() instanceof UserManagerResolver) {
+                        break;
                     }
+                    errorList.add(new ValidationErrorItem(fieldName,
+                            constraint.getErrorMessage(invalidValue, locale)));
+
+                    log.trace(logInitMsg + "Validation error for document |"
+                            + doc.getId() + "| in field |" + fieldName
+                            + "| with constraint |" + constraintName + "|.");
                 }
             }
         }
@@ -134,29 +159,4 @@ public class EloraCheckinHelper {
 
         return errorList;
     }
-
-    public static List<ValidationErrorItem> checkUniqueReferenceByType(
-            String wcUid, String reference, String type,
-            List<ValidationErrorItem> errorList, CoreSession session) {
-
-        if (reference != null && !reference.isEmpty()) {
-            String query;
-            if (wcUid == null) {
-                query = EloraQueryFactory.getWcDocsByTypeAndReferenceQuery(type,
-                        reference);
-            } else {
-                query = EloraQueryFactory.getWcDocsByTypeAndReferenceExcludingUidQuery(
-                        type, reference, wcUid);
-            }
-            DocumentModelList uniqueErrorDocs = session.query(query);
-            if (uniqueErrorDocs != null && !uniqueErrorDocs.isEmpty()) {
-
-                errorList.add(new ValidationErrorItem(
-                        EloraMetadataConstants.ELORA_ELO_REFERENCE,
-                        "Same reference exist for a document of the same type."));
-            }
-        }
-        return errorList;
-    }
-
 }

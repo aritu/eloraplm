@@ -61,4 +61,13 @@ public class EloraFacetConstants {
     // To define if the document can be overwritten
     public static final String FACET_OVERWRITABLE = "Overwritable";
 
+    // To define if the document stores check in info
+    public static final String FACET_STORE_CHECKIN_INFO = "StoreCheckInInfo";
+
+    // To define if the document stores review info
+    public static final String FACET_STORE_REVIEW_INFO = "StoreReviewInfo";
+
+    // To define if the document stores states log
+    public static final String FACET_STORE_STATES_LOG = "StoreStatesLog";
+
 }

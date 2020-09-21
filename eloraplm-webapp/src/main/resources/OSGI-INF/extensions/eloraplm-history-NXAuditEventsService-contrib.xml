@@ -18,7 +18,8 @@
         <event name="PdmDemotedEvent" />
         <event name="PdmPromotedEvent" />
         <event name="PdmOverwrittenEvent" />
-        <event name="PdmItemDocOverwrittenEvent" />
+        <event name="PdmViewerDocOverwrittenEvent" />
+        <event name="PdmDocumentMetadataUpdatedEvent" />
         <event name="CheckedOutAndRelationChangedEvent" />
         <event name="CheckedOutAndRelationRemovedEvent" />
         <event name="CheckedOutAndRelationReplacedEvent" />

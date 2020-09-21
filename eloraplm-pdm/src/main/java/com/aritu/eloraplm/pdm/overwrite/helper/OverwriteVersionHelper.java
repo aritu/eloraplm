@@ -27,6 +27,7 @@ import org.nuxeo.ecm.core.api.validation.DocumentValidationService.Forcing;
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
+import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
@@ -117,12 +118,36 @@ public class OverwriteVersionHelper {
         String lastContributor = baseVersionDoc.getPropertyValue(
                 NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR).toString();
 
+        Calendar lastReviewed = null;
+        String lastReviewer = null;
+        if (currentDoc.hasFacet(EloraFacetConstants.FACET_STORE_REVIEW_INFO)) {
+            if (baseVersionDoc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWED) != null) {
+                lastReviewed = (Calendar) baseVersionDoc.getPropertyValue(
+                        EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWED);
+            }
+            if (baseVersionDoc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWER) != null) {
+                lastReviewer = baseVersionDoc.getPropertyValue(
+                        EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWER).toString();
+            }
+        }
+
         EloraDocumentHelper.copyProperties(currentDoc, baseVersionDoc);
 
         baseVersionDoc.setPropertyValue(NuxeoMetadataConstants.NX_DC_MODIFIED,
                 modified);
         baseVersionDoc.setPropertyValue(
                 NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR, lastContributor);
+
+        if (currentDoc.hasFacet(EloraFacetConstants.FACET_STORE_REVIEW_INFO)) {
+            baseVersionDoc.setPropertyValue(
+                    EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWED,
+                    lastReviewed);
+            baseVersionDoc.setPropertyValue(
+                    EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWER,
+                    lastReviewer);
+        }
 
         // Write overwrite_data
         baseVersionDoc.setPropertyValue(
@@ -155,17 +180,13 @@ public class OverwriteVersionHelper {
         // abajo si se añaden nuevas que haya que tener en cuenta. Hay que
         // buscar la forma de sacar todas menos las anárquicas
 
-        List<String> bomHierarchicalDirectAndDocumentRelations = new ArrayList<>();
-        bomHierarchicalDirectAndDocumentRelations.addAll(
-                RelationsConfig.bomHierarchicalRelationsList);
-        bomHierarchicalDirectAndDocumentRelations.addAll(
-                RelationsConfig.bomDirectRelationsList);
-        bomHierarchicalDirectAndDocumentRelations.addAll(
-                RelationsConfig.bomDocumentRelationsList);
-        bomHierarchicalDirectAndDocumentRelations.addAll(
-                RelationsConfig.cadRelationsList);
+        List<String> relations = new ArrayList<>();
+        relations.addAll(RelationsConfig.bomHierarchicalRelationsList);
+        relations.addAll(RelationsConfig.bomDirectRelationsList);
+        relations.addAll(RelationsConfig.docRelationsList);
+        relations.addAll(RelationsConfig.cadRelationsList);
 
-        for (String predicate : bomHierarchicalDirectAndDocumentRelations) {
+        for (String predicate : relations) {
             // RelationHelper.removeRelation(RelationConstants.GRAPH_NAME,
             // baseVersionDoc, new ResourceImpl(predicate), null);
             eloraDocumentRelationManager.softDeleteRelation(session,

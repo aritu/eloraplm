@@ -22,5 +22,6 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-change-management-TypeSe
  g-TypeService-contrib.xml,OSGI-INF/extensions/eloraplm-change-managem
  ent-ContentTemplateService-contrib.xml,OSGI-INF/extensions/eloraplm-c
  m-archive-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-cm-a
- rchive-WebResources-contrib.xml
+ rchive-WebResources-contrib.xml,OSGI-INF/extensions/eloraplm-cm-Lifec
+ ycleConfigService-contrib.xml
 

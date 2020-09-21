@@ -126,6 +126,8 @@ public class ViewerFileServiceImpl extends DefaultComponent
                 throw new NuxeoException("Modifier sent without an id");
             }
             break;
+        default:
+            throw new NuxeoException("Unknown extension point defined.");
         }
     }
 
@@ -295,8 +297,7 @@ public class ViewerFileServiceImpl extends DefaultComponent
                     doc, relation.predicate, relation.inverse).entrySet()) {
 
                 if (relation.checkImportationDateForOverwriteViewer
-                        && (action.equals(
-                                ViewerConstants.ACTION_OVERWRITE)
+                        && (action.equals(ViewerConstants.ACTION_OVERWRITE)
                                 || action.equals(
                                         ViewerConstants.ACTION_OVERWRITE_AV))) {
                     checkImportationDateForOverwriteViewer(entry.getValue());

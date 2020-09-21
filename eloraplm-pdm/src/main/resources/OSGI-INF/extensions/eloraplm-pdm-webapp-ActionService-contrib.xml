@@ -29,6 +29,12 @@
             <condition>#{lockActions.canUnlockCurrentDoc}</condition>
           </rule>
         </filter>
+        
+         <filter id="isNotUnderTemplate">
+          <rule grant="false">
+            <condition>#{eloraDocumentTemplatesActions.isDocumentTemplateRootOrUnderTemplateRoot(currentDocument)}</condition>
+          </rule>
+        </filter>
   </extension>
   
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
@@ -39,6 +45,7 @@
       <category>DOCUMENT_UPPER_ACTION</category>
       <filter-id>versionable</filter-id>
       <filter-id>isEditable</filter-id>
+      <filter-id>isNotUnderTemplate</filter-id>
       <properties>
         <property name="include">/incl/action/checkin_document.xhtml</property>
         <property name="ajaxSupport">true</property>

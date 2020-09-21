@@ -901,8 +901,7 @@ public class PromoteNodeService implements NodeManager {
             // nodeInfo.setEditableVersion(!parentAlreadyPromoted
             // && !parentResult.equals(PromoteConstants.RESULT_KO));
 
-            if (PromoteHelper.isAlreadyPromoted(doc, finalState,
-                    promoteCheckerManager.getLifeCycleStatesConfig())) {
+            if (PromoteHelper.isAlreadyPromoted(doc, finalState)) {
                 nodeInfo.setIsPropagated(false);
                 nodeInfo.setIsEnforced(true);
                 nodeInfo.setSwitchableVersion(false);

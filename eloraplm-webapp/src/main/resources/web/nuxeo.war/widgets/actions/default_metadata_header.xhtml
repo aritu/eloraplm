@@ -6,18 +6,42 @@
   xmlns:nxu="http://nuxeo.org/nxweb/util"
   xmlns:nxd="http://nuxeo.org/nxweb/document"
   xmlns:p="http://primefaces.org/ui"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
   >
 
-    <c:if test="#{currentDocument.hasSchema('dublincore')}">
+  <c:if test="#{currentDocument.hasSchema('dublincore')}">
     
     <nxu:set var="wcOrAvStyleClass" value="#{currentDocument.isImmutable() ? 'archivedVersion' : 'workingCopy'}">
+    <nxu:set var="displayReviewInfo" value="#{eloraDocument.isDocumentStateStatusReleasedOrObsolete(currentDocument)}">
+    
+        <!-- calculate the number of lines that will be displayed in the header -->
+        <c:choose>
+            <c:when test="${currentDocument.isCheckedOut()}">
+                <c:set var="numberLines" value="3" />
+            </c:when>
+            <c:otherwise>
+                <c:choose>
+                    <c:when test="${currentDocument.locked and displayReviewInfo}">
+                        <c:set var="numberLines" value="5" />
+                    </c:when>
+                    <c:when test="${currentDocument.locked and !displayReviewInfo}">
+                        <c:set var="numberLines" value="4" />
+                    </c:when>
+                    <c:when test="${!currentDocument.locked and displayReviewInfo}">
+                        <c:set var="numberLines" value="4" />
+                    </c:when>
+                    <c:when test="${!currentDocument.locked and !displayReviewInfo}">
+                        <c:set var="numberLines" value="3" />
+                    </c:when>
+                </c:choose>
+            </c:otherwise>
+        </c:choose>
     
         <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} #{wcOrAvStyleClass}">
-        
             <p:panelGrid styleClass="fullWidth">
-
+            
+                <!--  First row -->
                 <p:row>
-                    
                     <!-- Revision -->
                     <p:column>
                         <label for="headerRevision">#{messages['label.widget.revision']}</label>
@@ -25,78 +49,62 @@
                     <p:column>
                         <span id="headerRevision">#{eloraDocument.getMajorToDisplay(currentDocument)}</span>
                     </p:column>
-                    
+                        
                     <!-- State -->
                     <p:column styleClass="textAlignC">
-                        <span class="lifeCycleStateLabel filled"
-                            style="background-color: #{lifecycleActions.getLifeCycleStateColor(currentDocument.currentLifeCycleState)}"
-                            >#{messages[currentDocument.currentLifeCycleState]}</span>
+                        <span class="lifeCycleStateLabel filled" 
+                            style="background-color: #{lifecycleActions.getLifeCycleStateColor(currentDocument.currentLifeCycleState)}">
+                            #{messages[currentDocument.currentLifeCycleState]}
+                        </span>
                     </p:column>
+                    
                     <!-- Locked -->
                     <p:column styleClass="textAlignC" style="width: 40px;">
                         <nxl:widget id="headerLockIcon" name="version_lock_icon" value="#{currentDocument}" mode="view" />
                     </p:column>
                     
                     <!-- Separator -->
-                    <p:column rowspan="3" styleClass="headerSeparator"></p:column>
-                    
+                    <p:column rowspan="${numberLines}" styleClass="headerSeparator"></p:column>
+                         
                     <!-- Creation info -->
-                    <p:column>
-                        <label for="creator">#{messages['label.summary.createdBy']}</label>
-                    </p:column>
-                    <p:column styleClass="textAlignC">
-                        <h:panelGroup styleClass="user creator">
-                            <h:outputLink id="creator" value="#{baseURL}user/#{currentDocument.dc.creator}">
-                                #{nxu:userFullName(currentDocument.dc.creator)}
-                            </h:outputLink>
-                        </h:panelGroup>
-                    </p:column>
-                    <p:column styleClass="textAlignC">
-                        <label for="created">#{messages['eloraplm.label.header.at']}</label>
-                    </p:column>
-                    <p:column>
-                        <h:outputText id="created" value="#{currentDocument.dc.created}">
-                            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
-                        </h:outputText>
-                    </p:column>
+                    <ui:include src="user_and_date_info_in_header.xhtml">
+                        <ui:param name="label" value="label.summary.createdBy" />
+                        <ui:param name="user" value="#{currentDocument.dc.creator}" />
+                        <ui:param name="date" value="#{currentDocument.dc.created}" />
+                    </ui:include>
                     
                     <!-- Separator -->
-                    <p:column rowspan="3" styleClass="headerSeparator"></p:column>
+                    <p:column rowspan="${numberLines}" styleClass="headerSeparator"></p:column>
                     
                     <!-- Comments -->
                     <p:column style="width: 40px;" styleClass="textAlignC">
                         <h:panelGroup>
                             <c:if test="#{fieldOrValue.hasFacet('Commentable')}">
                                 <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
-                                    <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
-                                      <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
-                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
-                                            <h:graphicImage value="/icons/comments.png" />#{commentsCount}
-                                          </div>
-                                      </nxu:set>
-                                    </nxu:set>
+                                <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
+                                <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
+                                    <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
+                                        <h:graphicImage value="/icons/comments.png" />#{commentsCount}
+                                    </div>
+                                </nxu:set>
+                                </nxu:set>
                                 </nxu:set>
                             </c:if>
                         </h:panelGroup>
                     </p:column>
-                    
+                        
                     <!-- Thumbnail -->
                     <nxu:set var="blobInfo" value="#{blobHolderGenerator.getBlobHolder(currentDocument).blob.filename}" cache="true">
-                        <nxu:set var="thumbnailUrl" value="#{nxd:fileUrl('downloadThumbnail', currentDocument, 'blobholder:0', blobInfo)}" cache="true">
-                    
-                    <p:column rowspan="3" styleClass="headerThumbnail" style="background-image: url('#{thumbnailUrl}');" >
-                    
-                        <nxl:widget name="headerThumbnailButtons" mode="view" value="#{currentDocument}" />
-                    
-                    </p:column>
-                    
-                        </nxu:set>
+                    <nxu:set var="thumbnailUrl" value="#{nxd:fileUrl('downloadThumbnail', currentDocument, 'blobholder:0', blobInfo)}" cache="true">
+                        <p:column rowspan="${numberLines}" styleClass="headerThumbnail" style="background-image: url('#{thumbnailUrl}');" >
+                            <nxl:widget name="headerThumbnailButtons" mode="view" value="#{currentDocument}" />
+                        </p:column>
+                    </nxu:set>
                     </nxu:set>
                 </p:row>
-                
-                
+                    
+                <!--  Second row -->
                 <p:row>
-                
                     <!-- Version -->
                     <p:column>
                         <label for="headerVersion">#{messages['label.version']}</label>
@@ -104,7 +112,7 @@
                     <p:column>
                         <nxl:widget id="headerVersion" name="version_and_visualized_type" value="#{currentDocument}" mode="view" />
                     </p:column>
-                    
+                        
                     <!-- Checked Out -->
                     <p:column styleClass="textAlignC">
                         <h:panelGroup>
@@ -117,93 +125,109 @@
                     <p:column style="width: 40px;"></p:column>
                     
                     <!-- Last Contribution info -->
-                    <p:column>
-                        <label for="lastContributor">#{messages['label.dublincore.lastContributor']}</label>
-                    </p:column>
-                    <p:column styleClass="textAlignC">
-                        <h:panelGroup styleClass="user lastContributor">
-                            <h:outputLink id="lastContributor" value="#{baseURL}user/#{currentDocument.dc.lastContributor}">
-                                #{nxu:userFullName(currentDocument.dc.lastContributor)}
-                            </h:outputLink>
-                        </h:panelGroup>
-                    </p:column>
-                    <p:column styleClass="textAlignC">
-                        <label for="modified">#{messages['eloraplm.label.header.at']}</label>
-                    </p:column>
-                    <p:column>
-                        <h:outputText id="modified" value="#{currentDocument.dc.modified}">
-                            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
-                        </h:outputText>
-                    </p:column>
+                    <ui:include src="user_and_date_info_in_header.xhtml">
+                        <ui:param name="label" value="label.dublincore.lastContributor" />
+                        <ui:param name="user" value="#{currentDocument.dc.lastContributor}" />
+                        <ui:param name="date" value="#{currentDocument.dc.modified}" />
+                    </ui:include>
                     
-                    <!-- Pending ECOs -->
                     <p:column>
                         <h:panelGroup></h:panelGroup>
                     </p:column>
                 </p:row>
                 
+                <!--  Third row -->
                 <p:row>
-                    
                     <!-- Related BOMs or CADs-->
                     <!--  TODO::: the behavior of BOM documents is undefined -->
                     <c:choose>
-                      <c:when test="#{currentDocument.hasFacet('BomDocument')}">
-                        <p:column>
-                        </p:column>
-                        <p:column colspan="3"></p:column>
-                      </c:when>
-                      <c:otherwise>
-                        <p:column>
-                          <label for="related_boms">#{messages['eloraplm.label.header.bom']}</label>
-                        </p:column>
-                        <p:column colspan="3">
-                          <nxl:widget id="related_boms" name="related_boms" mode="view" value="#{relatedBomStatements}" />
-                        </p:column>
-                      </c:otherwise>
+                        <c:when test="#{currentDocument.hasFacet('BomDocument')}">
+                            <p:column>
+                            </p:column>
+                            <p:column colspan="3"></p:column>
+                        </c:when>
+                        <c:otherwise>
+                            <p:column>
+                                <label for="related_boms">#{messages['eloraplm.label.header.bom']}</label>
+                            </p:column>
+                            <p:column colspan="3">
+                                <nxl:widget id="related_boms" name="related_boms" mode="view" value="#{relatedBomStatements}" />
+                            </p:column>
+                        </c:otherwise>
                     </c:choose>
                     
-                    <!-- Lock info -->
-                    <c:if test="#{currentDocument.locked}">
-                        <nxu:set var="owner" value="#{not empty currentDocument.lockInfo ? currentDocument.lockInfo.owner : ''}">
-                        <nxu:set var="createdTime" value="#{not empty currentDocument.lockInfo ? currentDocument.lockInfo.created.time : ''}">
-
-                            <p:column>
-                                <label for="locker">#{messages['eloraplm.label.header.lockedBy']}</label>
-                            </p:column>
-                            <p:column styleClass="textAlignC">
-                                <h:panelGroup styleClass="user locker">
-                                    <h:outputLink id="locker" value="#{baseURL}user/#{owner}">
-                                        #{nxu:userFullName(owner)}
-                                    </h:outputLink>
-                                </h:panelGroup>
-                            </p:column>
-                            <p:column styleClass="textAlignC">
-                                <label for="locked">#{messages['eloraplm.label.header.at']}</label>
-                            </p:column>
-                            <p:column>
-                                <h:outputText id="locked" value="#{createdTime}">
-                                    <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
-                                </h:outputText>
-                            </p:column>
-                            
-                        </nxu:set>
-                        </nxu:set>
-                    </c:if>
-                    
-                    <c:if test="#{not currentDocument.locked}">
-                        <p:column colspan="4"></p:column>
-                    </c:if>
-                    
+                    <c:choose>
+                        <c:when test="#{currentDocument.locked}">
+                            <!-- Lock information -->
+                            <nxu:set var="owner" value="#{not empty currentDocument.lockInfo ? currentDocument.lockInfo.owner : ''}">
+                            <nxu:set var="createdTime" value="#{not empty currentDocument.lockInfo ? currentDocument.lockInfo.created.time : ''}">
+                                <ui:include src="user_and_date_info_in_header.xhtml">
+                                    <ui:param name="label" value="eloraplm.label.header.lockedBy" />
+                                    <ui:param name="user" value="#{owner}" />
+                                    <ui:param name="date" value="#{createdTime}" />
+                                </ui:include>
+                            </nxu:set>
+                            </nxu:set>
+                        </c:when>
+                        <c:when test="${!currentDocument.locked and !currentDocument.isCheckedOut()}">
+                            <!-- Last check in info -->
+                            <ui:include src="user_and_date_info_in_header.xhtml">
+                                <ui:param name="label" value="eloraplm.label.header.lastCheckedInBy" />
+                                <ui:param name="user" value="#{currentDocument.checkin.lastCheckedInBy}" />
+                                <ui:param name="date" value="#{currentDocument.checkin.lastCheckedInDate}" />
+                            </ui:include>
+                        </c:when>
+                        <c:otherwise>
+                            <p:column colspan="4"></p:column>
+                        </c:otherwise>
+                    </c:choose>
+                       
                     <p:column></p:column>
-                    
                 </p:row>
                 
+                <c:if test="#{!currentDocument.isCheckedOut() and (currentDocument.locked || displayReviewInfo)}">
+                    <!--  Fourth row -->
+                    <p:row>
+                        <p:column colspan="4" />
+                        <c:choose>
+                            <c:when test="#{currentDocument.locked}">
+                                <!-- Last check in info -->
+                                <ui:include src="user_and_date_info_in_header.xhtml">
+                                    <ui:param name="label" value="eloraplm.label.header.lastCheckedInBy" />
+                                    <ui:param name="user" value="#{currentDocument.checkin.lastCheckedInBy}" />
+                                    <ui:param name="date" value="#{currentDocument.checkin.lastCheckedInDate}" />
+                                </ui:include>
+                            </c:when>
+                            <c:when test="#{displayReviewInfo}">
+                                <!-- Last review info -->
+                                <ui:include src="user_and_date_info_in_header.xhtml">
+                                    <ui:param name="label" value="eloraplm.label.header.lastReviewer" />
+                                    <ui:param name="user" value="#{currentDocument.review.lastReviewer}" />
+                                    <ui:param name="date" value="#{currentDocument.review.lastReviewed}" />
+                                  </ui:include>
+                            </c:when>
+                        </c:choose>
+                        <p:column></p:column>
+                    </p:row>
+                    
+                    <!--  Fifth row -->
+                    <c:if test="#{currentDocument.locked and displayReviewInfo}">
+                        <p:row>
+                            <p:column colspan="4" />
+                            <!-- Last review info -->
+                            <ui:include src="user_and_date_info_in_header.xhtml">
+                                <ui:param name="label" value="eloraplm.label.header.lastReviewer" />
+                                <ui:param name="user" value="#{currentDocument.review.lastReviewer}" />
+                                <ui:param name="date" value="#{currentDocument.review.lastReviewed}" />
+                            </ui:include>
+                            <p:column></p:column>
+                        </p:row>
+                    </c:if>
+                </c:if>
+                
             </p:panelGrid>
-            
         </h:panelGroup>
-
-  </nxu:set>
-      
+    </nxu:set>
+    </nxu:set>
   </c:if>
-  
 </div>

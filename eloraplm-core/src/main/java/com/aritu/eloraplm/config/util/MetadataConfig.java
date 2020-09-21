@@ -48,13 +48,29 @@ public class MetadataConfig {
     // Life cycles states variables
     // ----------------------------
 
-    public static final Map<String, Map<String, List<String>>> realMetadataMapByType = initRealMetadataMapByType();
+    private static Map<String, Map<String, List<String>>> realMetadataMapByType = initRealMetadataMapByType();
 
-    public static final Map<String, Map<String, List<String>>> virtualMetadataMapByType = initVirtualMetadataMapByType();
+    private static Map<String, Map<String, List<String>>> virtualMetadataMapByType = initVirtualMetadataMapByType();
 
-    public static final Map<String, Map<String, List<String>>> realOverrideMetadataMapByType = initRealOverrideMetadataMapByType();
+    private static Map<String, Map<String, List<String>>> realOverrideMetadataMapByType = initRealOverrideMetadataMapByType();
 
-    public static final Map<String, Map<String, List<String>>> virtualOverrideMetadataMapByType = initVirtualOverrideMetadataMapByType();
+    private static Map<String, Map<String, List<String>>> virtualOverrideMetadataMapByType = initVirtualOverrideMetadataMapByType();
+
+    public static Map<String, Map<String, List<String>>> getRealMetadataMapByType() {
+        return realMetadataMapByType;
+    }
+
+    public static Map<String, Map<String, List<String>>> getVirtualMetadataMapByType() {
+        return virtualMetadataMapByType;
+    }
+
+    public static Map<String, Map<String, List<String>>> getRealOverrideMetadataMapByType() {
+        return realOverrideMetadataMapByType;
+    }
+
+    public static Map<String, Map<String, List<String>>> getVirtualOverrideMetadataMapByType() {
+        return virtualOverrideMetadataMapByType;
+    }
 
     // ---------------------------------------------------
     // Life cycles states variables initialization methods
@@ -68,10 +84,9 @@ public class MetadataConfig {
         Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>();
         try {
             for (String authoringTool : AUTHORING_TOOLS) {
-                map.put(authoringTool,
-                        getMetadataAndConvertToList(
-                                EloraConfigConstants.VAL_METADATA_MAPPING_PLM_METADATA_TYPE_REAL,
-                                authoringTool, null));
+                map.put(authoringTool, getMetadataAndConvertToList(
+                        EloraConfigConstants.VAL_METADATA_MAPPING_PLM_METADATA_TYPE_REAL,
+                        authoringTool, null));
             }
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
@@ -88,10 +103,9 @@ public class MetadataConfig {
         Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>();
         try {
             for (String authoringTool : AUTHORING_TOOLS) {
-                map.put(authoringTool,
-                        getMetadataAndConvertToList(
-                                EloraConfigConstants.VAL_METADATA_MAPPING_PLM_METADATA_TYPE_VIRTUAL,
-                                authoringTool, null));
+                map.put(authoringTool, getMetadataAndConvertToList(
+                        EloraConfigConstants.VAL_METADATA_MAPPING_PLM_METADATA_TYPE_VIRTUAL,
+                        authoringTool, null));
             }
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
@@ -108,10 +122,9 @@ public class MetadataConfig {
         Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>();
         try {
             for (String authoringTool : AUTHORING_TOOLS) {
-                map.put(authoringTool,
-                        getMetadataAndConvertToList(
-                                EloraConfigConstants.VAL_METADATA_MAPPING_PLM_METADATA_TYPE_REAL,
-                                authoringTool, OVERRIDE_UPDATE_MODES));
+                map.put(authoringTool, getMetadataAndConvertToList(
+                        EloraConfigConstants.VAL_METADATA_MAPPING_PLM_METADATA_TYPE_REAL,
+                        authoringTool, OVERRIDE_UPDATE_MODES));
             }
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
@@ -128,10 +141,9 @@ public class MetadataConfig {
         Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>();
         try {
             for (String authoringTool : AUTHORING_TOOLS) {
-                map.put(authoringTool,
-                        getMetadataAndConvertToList(
-                                EloraConfigConstants.VAL_METADATA_MAPPING_PLM_METADATA_TYPE_VIRTUAL,
-                                authoringTool, OVERRIDE_UPDATE_MODES));
+                map.put(authoringTool, getMetadataAndConvertToList(
+                        EloraConfigConstants.VAL_METADATA_MAPPING_PLM_METADATA_TYPE_VIRTUAL,
+                        authoringTool, OVERRIDE_UPDATE_MODES));
             }
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
@@ -154,6 +166,13 @@ public class MetadataConfig {
         }
 
         return map;
+    }
+
+    public static void reload() {
+        realMetadataMapByType = initRealMetadataMapByType();
+        virtualMetadataMapByType = initVirtualMetadataMapByType();
+        realOverrideMetadataMapByType = initRealOverrideMetadataMapByType();
+        virtualOverrideMetadataMapByType = initVirtualOverrideMetadataMapByType();
     }
 
 }

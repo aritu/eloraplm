@@ -33,6 +33,7 @@
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
         <facet name="AutomaticCode"/>
+        <facet name="StoreStatesLog" />
     </doctype>
 
     <doctype extends="Folder" name="CmEcr">
@@ -49,6 +50,7 @@
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
         <facet name="AutomaticCode"/>
+        <facet name="StoreStatesLog" />
     </doctype>
 
     <doctype extends="Folder" name="CmEco">
@@ -65,6 +67,7 @@
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
         <facet name="AutomaticCode"/>
+        <facet name="StoreStatesLog" />
     </doctype>
     
   </extension>

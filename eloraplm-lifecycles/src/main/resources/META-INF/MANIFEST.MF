@@ -8,11 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
 Nuxeo-Component: OSGI-INF/extensions/eloraplm-lifecycles-LifeCycleServ
- ice-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-DirectoryUIMa
- nager-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-SQLDirector
- yFactory-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-TypeServ
- ice-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-WebLayoutMana
- ger-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ActionService
+ ice-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ActionService
  -contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ResourcePublishe
- r-contrib.xml
+ r-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-LifecycleConfig
+ Service-contrib.xml
 

@@ -15,7 +15,6 @@
 package com.aritu.eloraplm.pdm.webapp.beans;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +34,6 @@ import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.impl.VersionModelImpl;
 import org.nuxeo.ecm.platform.actions.Action;
 import org.nuxeo.ecm.platform.relations.api.RelationManager;
-import org.nuxeo.ecm.platform.relations.api.Resource;
-import org.nuxeo.ecm.platform.relations.api.Statement;
-import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
-import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.webapp.helpers.EventManager;
@@ -46,14 +41,10 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
-import com.aritu.eloraplm.config.util.EloraConfig;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
-import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
-import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
-import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
@@ -63,6 +54,7 @@ import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
 import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
+import com.aritu.eloraplm.pdm.util.RelationSwitchHelper;
 import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 
 @Name("pdmAction")
@@ -70,14 +62,6 @@ import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 public class PdmActionBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private static final String CHECKOUT_SWITCH_CHILDREN_OPTION_AS_STORED = "AsStored";
-
-    private static final String CHECKOUT_SWITCH_CHILDREN_OPTION_LATEST_VERSIONS = "LatestVersions";
-
-    private static final String CHECKOUT_SWITCH_CHILDREN_OPTION_LATEST_RELEASED = "LatestReleased";
-
-    private static final String CHECKOUT_SWITCH_CHILDREN_OPTION_WORKING_COPIES = "WorkingCopies";
 
     private static final Log log = LogFactory.getLog(PdmActionBean.class);
 
@@ -146,9 +130,8 @@ public class PdmActionBean implements Serializable {
                 throw new EloraException(e.getMessage());
 
             } catch (BomCharacteristicsValidatorException e) {
-                facesMessages.add(StatusMessage.Severity.ERROR,
-                        messages.get(
-                                "eloraplm.message.error.pdm.characteristicsRequired"),
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.pdm.characteristicsRequired"),
                         e.getDocument().getPropertyValue(
                                 EloraMetadataConstants.ELORA_ELO_REFERENCE),
                         e.getDocument().getTitle());
@@ -296,6 +279,7 @@ public class PdmActionBean implements Serializable {
 
             // We set the document dirty to update lastContributor and modified
             wcDoc = EloraDocumentHelper.setDocumentDirty(wcDoc);
+            wcDoc = documentManager.saveDocument(wcDoc);
 
             resetTabList();
             navigationContext.invalidateCurrentDocument();
@@ -348,101 +332,12 @@ public class PdmActionBean implements Serializable {
     public void switchRelatedChildren(DocumentModel subjectWcDoc)
             throws EloraException {
 
-        String logInitMsg = "[switchRelatedChildren] ["
-                + documentManager.getPrincipal().getName() + "] ";
-
         if (!subjectWcDoc.isCheckedOut()) {
             throw new EloraException("Document is not checked out.");
         }
 
-        List<Resource> switchablePredicates = new ArrayList<Resource>();
-        for (String predicateUri : EloraConfig.checkoutSwitchChildrenMap.keySet()) {
-            switchablePredicates.add(new ResourceImpl(predicateUri));
-        }
-
-        DocumentModel subjectRealDoc = EloraDocumentHelper.getBaseVersion(
-                subjectWcDoc);
-
-        if (subjectRealDoc != null) {
-
-            List<Statement> switchableStatements = EloraRelationHelper.getStatements(
-                    subjectRealDoc, switchablePredicates);
-            for (Statement stmt : switchableStatements) {
-
-                String switchChildrenOption = EloraConfig.checkoutSwitchChildrenMap.get(
-                        stmt.getPredicate().getUri());
-
-                EloraStatementInfo stmtInfo = new EloraStatementInfoImpl(stmt);
-                DocumentModel objectRealDoc = RelationHelper.getDocumentModel(
-                        stmtInfo.getObject(), documentManager);
-
-                if (!switchChildrenOption.equals(
-                        CHECKOUT_SWITCH_CHILDREN_OPTION_WORKING_COPIES)) {
-
-                    if (objectRealDoc == null) {
-                        log.error(logInitMsg
-                                + "Object is null. Relation is broken or unreadable. predicateUri = |"
-                                + stmt.getPredicate().getUri()
-                                + "|, subject docUid = |"
-                                + subjectRealDoc.getId() + "|");
-                        throw new EloraException(
-                                "Object is null. Relation is broken or unreadable.");
-                    }
-
-                    DocumentModel objectWcDoc = documentManager.getWorkingCopy(
-                            objectRealDoc.getRef());
-                    DocumentModel newObjectRealDoc = getSwitchedObjectVersion(
-                            objectRealDoc, objectWcDoc, switchChildrenOption);
-
-                    eloraDocumentRelationManager.updateRelation(documentManager,
-                            subjectWcDoc, stmtInfo.getPredicate().getUri(),
-                            objectWcDoc, newObjectRealDoc,
-                            stmtInfo.getQuantity(), stmtInfo.getOrdering(),
-                            stmtInfo.getDirectorOrdering(),
-                            stmtInfo.getViewerOrdering(),
-                            stmtInfo.getInverseViewerOrdering(),
-                            stmtInfo.getIsManual());
-
-                    log.trace(logInitMsg
-                            + "Switched relation's object for document |"
-                            + subjectWcDoc.getId()
-                            + "|, switch children option: |"
-                            + switchChildrenOption + "|. Old object: |"
-                            + objectWcDoc.getId() + "|. New object: |"
-                            + objectRealDoc.getId() + "|.");
-                }
-            }
-        }
-
-    }
-
-    private DocumentModel getSwitchedObjectVersion(DocumentModel objectRealDoc,
-            DocumentModel objectWcDoc, String switchChildrenOption)
-            throws EloraException {
-
-        switch (switchChildrenOption) {
-        case CHECKOUT_SWITCH_CHILDREN_OPTION_AS_STORED:
-            return objectRealDoc;
-        case CHECKOUT_SWITCH_CHILDREN_OPTION_LATEST_RELEASED:
-            DocumentModel switchedDoc = EloraDocumentHelper.getLatestReleasedVersionOrLatestVersion(
-                    objectRealDoc);
-            if (switchedDoc == null) {
-                throw new EloraException("Document |" + objectRealDoc.getId()
-                        + "| has no latest version or it is unreadable.");
-            }
-            return switchedDoc;
-        case CHECKOUT_SWITCH_CHILDREN_OPTION_LATEST_VERSIONS:
-            DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(
-                    objectWcDoc);
-            if (baseDoc != null) {
-                baseDoc.refresh();
-                return baseDoc;
-            } else {
-                return objectWcDoc;
-            }
-        default:
-            throw new EloraException("Incorrect switch children option.");
-        }
+        RelationSwitchHelper.switchRelations(documentManager,
+                eloraDocumentRelationManager, subjectWcDoc);
     }
 
     private void resetTabList() {

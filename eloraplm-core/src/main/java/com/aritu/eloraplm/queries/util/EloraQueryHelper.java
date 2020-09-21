@@ -30,6 +30,8 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 
+import com.aritu.eloraplm.queries.UnrestrictedQueryRunner;
+
 /**
  * // TODO: write class general comment
  *
@@ -163,6 +165,39 @@ public class EloraQueryHelper {
         }
 
         return results;
+    }
+
+    /***************** UNRESTRICTED QUERIES ******************/
+
+    public static DocumentModelList executeUnrestrictedQuery(
+            CoreSession session, String query) {
+        UnrestrictedQueryRunner uqr = new UnrestrictedQueryRunner(session,
+                query);
+        return uqr.query();
+    }
+
+    public static IterableQueryResult executeUnrestrictedQueryAndFetch(
+            CoreSession session, String query) {
+        UnrestrictedQueryRunner uqr = new UnrestrictedQueryRunner(session,
+                query);
+        return uqr.queryAndFetch();
+    }
+
+    public static long executeUnrestrictedCountQuery(CoreSession session,
+            String query, String countColumn) {
+        IterableQueryResult queryResult = executeUnrestrictedQueryAndFetch(
+                session, query);
+
+        long count = 0;
+        try {
+            if (queryResult.iterator().hasNext()) {
+                Map<String, Serializable> map = queryResult.iterator().next();
+                count = (long) map.get("COUNT(" + countColumn + ")");
+            }
+        } finally {
+            queryResult.close();
+        }
+        return count;
     }
 
 }

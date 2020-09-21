@@ -1,5 +1,7 @@
 package com.aritu.eloraplm.webapp.base.convert;
 
+import java.util.Locale;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -43,7 +45,8 @@ public class DecimalValueValidator implements javax.faces.validator.Validator {
         String submittedValue = (String) input.getSubmittedValue();
         String convertedValue = (String) value;
 
-        EloraDecimalHelper.validateDecimalValue(context, submittedValue,
+        Locale locale = context.getViewRoot().getLocale();
+        EloraDecimalHelper.validateDecimalValue(locale, submittedValue,
                 convertedValue, maxIntegers, maxDecimals);
 
         log.trace(logInitMsg + "--- EXIT ---");

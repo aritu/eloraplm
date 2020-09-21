@@ -16,6 +16,8 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
 
+import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 
@@ -76,5 +78,16 @@ public class EloraDocumentBean implements Serializable {
             return documentManager.getDocument(new IdRef(uid));
         }
         return null;
+    }
+
+    public boolean isDocumentStateStatusReleasedOrObsolete(DocumentModel doc) {
+        boolean result = false;
+        String status = LifecyclesConfig.getStateStatus(
+                doc.getCurrentLifeCycleState());
+        if (EloraLifeCycleConstants.STATUS_RELEASED.equals(status)
+                || EloraLifeCycleConstants.STATUS_OBSOLETE.equals(status)) {
+            result = true;
+        }
+        return result;
     }
 }

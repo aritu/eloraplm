@@ -1,6 +1,7 @@
 package com.aritu.eloraplm.webapp.base.convert;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -46,12 +47,13 @@ public class MeasureValueValidator implements javax.faces.validator.Validator {
 
         if (value != null) {
             try {
-
+                Locale locale = context.getViewRoot().getLocale();
                 BigDecimal valueAsDecimal = EloraDecimalHelper.fromLocalizedToDecimal(
-                        context, submittedValue);
+                        locale, submittedValue);
 
                 int decimalPlaces = valueAsDecimal.stripTrailingZeros().scale() > 0
-                        ? valueAsDecimal.stripTrailingZeros().scale() : 0;
+                        ? valueAsDecimal.stripTrailingZeros().scale()
+                        : 0;
                 int integerPlaces = valueAsDecimal.stripTrailingZeros().precision()
                         - decimalPlaces;
 

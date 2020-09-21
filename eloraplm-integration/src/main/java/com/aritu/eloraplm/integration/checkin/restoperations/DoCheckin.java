@@ -73,6 +73,7 @@ import com.aritu.eloraplm.integration.util.IntegrationEventTypes;
 import com.aritu.eloraplm.lifecycles.util.LifecycleHelper;
 import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
 import com.aritu.eloraplm.pdm.overwrite.helper.OverwriteVersionHelper;
+import com.aritu.eloraplm.pdm.util.RelationSwitchHelper;
 
 /**
  * @author aritu
@@ -406,11 +407,7 @@ public class DoCheckin {
                     "contentFile", false);
             if (mainFile != null) {
                 String fileName = EloraJsonHelper.getJsonFieldAsString(mainFile,
-                        "filename", false);
-                // TODO Hau mandatory jarri integradoria eguneratzen danien.
-                // String fileName =
-                // EloraJsonHelper.getJsonFieldAsString(mainFile,
-                // "filename", true);
+                        "filename", true);
                 int fileId = EloraJsonHelper.getJsonFieldAsInt(mainFile,
                         "fileId", true);
                 String batch = EloraJsonHelper.getJsonFieldAsString(mainFile,
@@ -677,6 +674,9 @@ public class DoCheckin {
                     predicate, null);
         }
 
+        // Update Non-CAD relations as it is configured in elora_checkout_config
+        updateNonCadRelations(wcDoc);
+
         // We have to save the document before relating its binaries, or after
         // the checkin the working copy won't have the main and viewer files.
         wcDoc = session.saveDocument(wcDoc);
@@ -704,6 +704,17 @@ public class DoCheckin {
         log.trace(logInitMsg + "--- EXIT --- ");
 
         return responseDoc;
+    }
+
+    private void updateNonCadRelations(DocumentModel wcDoc)
+            throws EloraException {
+
+        List<String> nonCadRelations = new ArrayList<String>();
+        nonCadRelations.addAll(RelationsConfig.docRelationsList);
+
+        RelationSwitchHelper.switchRelations(session,
+                eloraDocumentRelationManager, wcDoc, nonCadRelations);
+
     }
 
     private String createDocumentProxy(DoCheckinRequestDoc requestDoc,
@@ -816,10 +827,7 @@ public class DoCheckin {
                 requestRel.getPredicate(), objectDoc, requestRel.getQuantity());
 
         try {
-            // Add relation wcSubject-->wcObject except when object is a
-            // version, in
-            // this case add relation wcSubject-->objectRealUid
-
+            // Add relation between WCs
             eloraDocumentRelationManager.addRelation(session, subjectWcDoc,
                     objectWcDoc, requestRel.getPredicate(), null,
                     requestRel.getQuantity(), requestRel.getOrdering());
@@ -983,12 +991,8 @@ public class DoCheckin {
 
         EloraFileInfo contentFile = requestDoc.getContentFile();
         if (contentFile != null) {
-            if (contentFile.getBatch() != null) {
-
-                // TODO Filename mandatory jarri integradoria eguneratzen
-                // danien.
-                // if (contentFile.getBatch() != null
-                // && contentFile.getFileName() != null) {
+            if (contentFile.getBatch() != null
+                    && contentFile.getFileName() != null) {
 
                 EloraDocumentHelper.relateBatchWithDoc(wcDoc,
                         contentFile.getFileId(), contentFile.getBatch(),

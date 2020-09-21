@@ -19,7 +19,7 @@
     <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
         
         <!-- Disable Nuxeo Drive folder/document synchronization completely -->
-        <action id="driveSynchronizeCurrentDocument" enabled="false" />
+        <action id="driveSynchronizeCurrentDocument" enabled="${com.aritu.eloraplm.drive.sync.enabled}" />
         
         <action icon="/icons/drive_edit.png" id="driveEdit" label="command.driveEdit" link="#{eloraDriveActions.driveEditURL}" order="200" type="bare_link">
             <category>BLOB_ACTIONS</category>

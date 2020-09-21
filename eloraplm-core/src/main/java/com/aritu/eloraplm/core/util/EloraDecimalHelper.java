@@ -22,7 +22,6 @@ import java.text.ParsePosition;
 import java.util.Locale;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.logging.Log;
@@ -44,12 +43,6 @@ public class EloraDecimalHelper {
 
     private static final char DECIMAL_SEPARATOR_STANDARD = '.';
 
-    public static String fromLocalizedToStandard(FacesContext context,
-            String value) {
-        Locale locale = context.getViewRoot().getLocale();
-        return fromLocalizedToStandard(locale, value);
-    }
-
     public static String fromLocalizedToStandard(Locale locale, String value) {
 
         String separator = getLocaleSeparator(locale);
@@ -59,12 +52,6 @@ public class EloraDecimalHelper {
         }
 
         return value;
-    }
-
-    public static String fromStandardToLocalized(FacesContext context,
-            String value) {
-        Locale locale = context.getViewRoot().getLocale();
-        return fromStandardToLocalized(locale, value);
     }
 
     public static String fromStandardToLocalized(Locale locale, String value) {
@@ -87,21 +74,21 @@ public class EloraDecimalHelper {
         return value.stripTrailingZeros().toPlainString();
     }
 
-    public static BigDecimal fromLocalizedToDecimal(FacesContext context,
-            String value) throws ParseException {
+    public static BigDecimal fromLocalizedToDecimal(Locale locale, String value)
+            throws ParseException {
         // Instead of using localized DecimalFormat, we do it this way to allow
         // using the dot as a decimal separator always, even if the locale uses
         // another separator normally
-        value = fromLocalizedToStandard(context, value);
+        value = fromLocalizedToStandard(locale, value);
         DecimalFormat format = getStandardFormat();
 
         return parseAsDecimal(format, value);
     }
 
-    public static String fromDecimalToLocalized(FacesContext context,
+    public static String fromDecimalToLocalized(Locale locale,
             BigDecimal value) {
         String standardValue = value.stripTrailingZeros().toPlainString();
-        return fromStandardToLocalized(context, standardValue);
+        return fromStandardToLocalized(locale, standardValue);
     }
 
     private static DecimalFormat getStandardFormat() {
@@ -142,12 +129,12 @@ public class EloraDecimalHelper {
         return valueAsDecimal;
     }
 
-    public static void validateDecimalValue(FacesContext context, String value,
+    public static void validateDecimalValue(Locale locale, String value,
             String maxIntegers, String maxDecimals) throws ValidatorException {
-        validateDecimalValue(context, value, value, maxIntegers, maxDecimals);
+        validateDecimalValue(locale, value, value, maxIntegers, maxDecimals);
     }
 
-    public static void validateDecimalValue(FacesContext context,
+    public static void validateDecimalValue(Locale locale,
             String submittedValue, String convertedValue, String maxIntegers,
             String maxDecimals) throws ValidatorException {
 
@@ -161,7 +148,8 @@ public class EloraDecimalHelper {
                         convertedValue);
 
                 int decimalPlaces = valueAsDecimal.stripTrailingZeros().scale() > 0
-                        ? valueAsDecimal.stripTrailingZeros().scale() : 0;
+                        ? valueAsDecimal.stripTrailingZeros().scale()
+                        : 0;
                 int integerPlaces = valueAsDecimal.stripTrailingZeros().precision()
                         - decimalPlaces;
 
@@ -183,7 +171,7 @@ public class EloraDecimalHelper {
                             + convertedValue + " has more than " + maxIntegers
                             + " integers and/or " + maxDecimals + " decimals.");
 
-                    FacesMessage message = MessageFactory.getMessage(context,
+                    FacesMessage message = MessageFactory.getMessage(locale,
                             "eloraplm.message.error.decimalValueOutOfLimits",
                             maxIntegers, maxDecimals);
 
@@ -196,7 +184,7 @@ public class EloraDecimalHelper {
                         + "Validation failed: Exception thrown. Exception class = |"
                         + e.getClass() + "|, message: " + e.getMessage(), e);
 
-                FacesMessage message = MessageFactory.getMessage(context,
+                FacesMessage message = MessageFactory.getMessage(locale,
                         "eloraplm.message.error.decimalValueValidator",
                         submittedValue);
 

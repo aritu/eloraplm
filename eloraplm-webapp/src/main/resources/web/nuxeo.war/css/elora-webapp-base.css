@@ -241,6 +241,7 @@ table.treetable tbody td.ellipsisWhenOverflow
     vertical-align: baseline;
     text-transform: uppercase;
     white-space: nowrap;
+    cursor: default;
 }
 .lifeCycleStateLabel.hollow
 {
@@ -301,6 +302,25 @@ table.treetable tbody td.ellipsisWhenOverflow
     display: inline-block;
 }
 
+.referenceColumn
+{
+    width: 10em;
+    overflow: hidden;
+}
+
+.referenceColumn .eloraReference
+{
+    max-width: 10em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.nx-page .contentViewHeaderSortTooltip.sortIndex a
+{
+    color: #8DD600;
+}
 
 .eloraFilesReadMode .simpleBox
 {

@@ -3,6 +3,7 @@ package com.aritu.eloraplm.bom.characteristics;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.application.FacesMessage;
@@ -197,7 +198,8 @@ public class BomCharacteristicMastersValidator implements Serializable {
 
             if (value != null) {
                 String numberDefaultValue = (String) value;
-                EloraDecimalHelper.validateDecimalValue(context,
+                Locale locale = context.getViewRoot().getLocale();
+                EloraDecimalHelper.validateDecimalValue(locale,
                         numberDefaultValue, numberMaxIntegerPlaces,
                         numberMaxDecimalPlaces);
             }

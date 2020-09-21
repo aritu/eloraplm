@@ -216,9 +216,7 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
                         transition);
                 try {
                     promoteExecuterManager.processPromote(topNode, transition,
-                            finalState,
-                            promoteCheckerManager.getLifeCycleStatesConfig(),
-                            eloraDocumentRelationManager);
+                            finalState, eloraDocumentRelationManager);
 
                 } catch (DocumentAlreadyLockedException e) {
                     log.trace(logInitMsg + "Document |"

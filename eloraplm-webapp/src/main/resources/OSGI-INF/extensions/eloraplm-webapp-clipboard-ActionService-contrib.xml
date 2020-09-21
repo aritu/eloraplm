@@ -113,7 +113,7 @@
          This action will create a Proxy to each copied object, instead of pasting them.  
     -->
     <action id="POPUP_PASTE_AS_PROXY" link="javascript:doPasteAsProxy" label="eloraplm.command.clipboard.pasteAsProxy"
-      icon="/icons/action_paste_all.gif">
+      icon="/icons/action_paste_all.gif" order="15">
       <category>POPUP</category>
       <filter-id>canPastePopupAsProxy</filter-id>
     </action>
@@ -122,13 +122,13 @@
          This action will create a duplicate of each copied object, instead of pasting them.  
     -->
     <action id="POPUP_PASTE_AS_DUPLICATE" link="javascript:doPasteAsDuplicate" label="eloraplm.command.clipboard.pasteAsDuplicate"
-      icon="/icons/action_paste_all.gif" enabled="false">
+      icon="/icons/action_paste_all.gif" enabled="false" order="20">
       <category>POPUP</category>
       <filter-id>canPastePopupAsDuplicate</filter-id>
     </action>
     
     <!-- Modified POPUP_MOVE action -->
-    <action id="POPUP_MOVE" icon="/icons/action_move_all.gif" label="command.clipboard.moveAll" link="javascript:doMove">
+    <action id="POPUP_MOVE" icon="/icons/action_move_all.gif" label="command.clipboard.moveAll" link="javascript:doMove" order="25">
         <category>POPUP</category>
         <filter id="filter@POPUP_MOVE">
             <rule grant="true">

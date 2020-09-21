@@ -70,7 +70,7 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     protected static boolean includeStatementsInEvents = false;
 
-    // Outgoing
+    // Outgoing (Current Doc is Subject -> Object)
 
     protected List<Statement> outgoingBomDocumentStatements;
 
@@ -84,6 +84,10 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     protected List<StatementInfo> outgoingCadSpecialStatementsInfo;
 
+    protected List<Statement> outgoingCadDocumentStatements;
+
+    protected List<StatementInfo> outgoingCadDocumentStatementsInfo;
+
     protected List<Statement> outgoingBomHasBomStatements;
 
     protected List<StatementInfo> outgoingBomHasBomStatementsInfo;
@@ -92,7 +96,11 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     protected List<StatementInfo> outgoingCustomerProductStatementsInfo;
 
-    // Incoming
+    // Incoming (Current Doc is Object <- Subject)
+
+    protected List<Statement> incomingCadDocumentStatements;
+
+    protected List<StatementInfo> incomingCadDocumentStatementsInfo;
 
     protected List<Statement> incomingBomDocumentStatements;
 
@@ -295,6 +303,20 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         return outgoingCadSpecialStatementsInfo;
     }
 
+    @Factory(value = "outgoingCadDocumentRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getOutgoingCadDocStatementsInfo() {
+        if (outgoingCadDocumentStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(
+                    new ResourceImpl(EloraRelationConstants.CAD_HAS_DOCUMENT));
+
+            outgoingCadDocumentStatementsInfo = getOutgoingStatementsInfo(
+                    predicates, outgoingCadDocumentStatements);
+        }
+
+        return outgoingCadDocumentStatementsInfo;
+    }
+
     @Factory(value = "outgoingBomHasBomRelations", scope = ScopeType.EVENT)
     public List<StatementInfo> getOutgoingBomHasBomStatementsInfo() {
         if (outgoingBomHasBomStatementsInfo == null) {
@@ -350,6 +372,21 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
     // ------------
     // Incoming
     // ------------
+
+    @Factory(value = "incomingCadDocumentRelations", scope = ScopeType.EVENT)
+    public List<StatementInfo> getIncomingCadDocStatementsInfo() {
+        if (incomingCadDocumentStatementsInfo == null) {
+            List<Resource> predicates = new ArrayList<>();
+            predicates.add(
+                    new ResourceImpl(EloraRelationConstants.CAD_HAS_DOCUMENT));
+
+            // onlyLatest??
+            incomingCadDocumentStatementsInfo = getIncomingStatementsInfo(
+                    predicates, incomingCadDocumentStatements, false);
+        }
+
+        return incomingCadDocumentStatementsInfo;
+    }
 
     @Factory(value = "incomingBomDocumentRelations", scope = ScopeType.EVENT)
     public List<StatementInfo> getIncomingBomDocStatementsInfo() {
@@ -558,10 +595,14 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
         outgoingBomCadDocumentStatementsInfo = null;
         outgoingCadSpecialStatements = null;
         outgoingCadSpecialStatementsInfo = null;
+        outgoingCadDocumentStatements = null;
+        outgoingCadDocumentStatementsInfo = null;
         outgoingBomHasBomStatements = null;
         outgoingBomHasBomStatementsInfo = null;
         outgoingCustomerProductStatements = null;
         outgoingCustomerProductStatementsInfo = null;
+        incomingCadDocumentStatements = null;
+        incomingCadDocumentStatementsInfo = null;
         incomingBomDocumentStatements = null;
         incomingBomDocumentStatementsInfo = null;
         incomingCadSpecialStatements = null;

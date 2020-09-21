@@ -66,9 +66,8 @@ public class MakeObsoleteForSimpleDocTransitionExecuter
 
         // Check if parents allow transition
         List<Resource> predicateList = new ArrayList<Resource>();
-        Resource predicate = new ResourceImpl(
-                EloraRelationConstants.BOM_HAS_DOCUMENT);
-        predicateList.add(predicate);
+        predicateList.add(new ResourceImpl(EloraRelationConstants.BOM_HAS_DOCUMENT));
+        predicateList.add(new ResourceImpl(EloraRelationConstants.CAD_HAS_DOCUMENT));
         if (!PromoteHelper.parentsAllowTransition(doc, transition,
                 predicateList)) {
             throw new TransitionNotAllowedException(doc, transition);

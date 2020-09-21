@@ -12,18 +12,6 @@
 
 <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
     
-    <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet.
-    Here we use directly all the doctypes that now have the facet. -->
-    <filter id="isBasicDocument">
-        <rule grant="false">
-            <condition>#{currentDocument.type ne 'File'
-            and currentDocument.type ne 'Note'
-            and currentDocument.type ne 'Picture'
-            and currentDocument.type ne 'Audio'
-            and currentDocument.type ne 'Video'}</condition>
-        </rule>
-    </filter>
-    
     <filter id="isBomDocument">
       <rule grant="true">
         <facet>BomDocument</facet>
@@ -131,7 +119,7 @@
     <!-- Admin tab to show properties defined in EloraPLM -->
     <action id="EloraPlmInfo" link="/incl/sysinfo/eloraplm_info.xhtml" label="tab.sysinfo.eloraplm"
       type="admin_rest_document_link"
-      order="35">
+      order="25">
       <category>SystemInfo_sub_tab</category>
       <filter-id>only_for_manager</filter-id>
     </action>
@@ -270,9 +258,18 @@
     <!-- Disable POPUP_VIEW action -->
     <action id="POPUP_VIEW" enabled="false" />
     
-    <!-- Updated icon -->
-    <action icon="/icons/rights.png" id="POPUP_RIGHTS" />
+    <!-- Updated icon and order -->
+    <action id="POPUP_RIGHTS" icon="/icons/rights.png" order="100" />
     
+    <!-- Updated order -->
+    <action id="POPUP_EDIT" order="5" />
+    <action id="POPUP_COPY" order="10" />
+    <action id="POPUP_DEL" order="1000" />
+    
+    <!-- Open in new tab -->
+    <action id="POPUP_OPEN_IN_NEW_TAB" link="javascript:doOpenInNewTab" label="eloraplm.command.openInNewTab" icon="/icons/external.gif" order="0">
+        <category>POPUP</category>
+    </action>
     
     <!-- Add some general tabs and reorder default tabs -->
     
@@ -428,6 +425,13 @@
     <!-- disable CREATE_WORKSPACE action, since everything will be managed from CREATE_DOC_FROM_TEMPLATE -->
     <action id="CREATE_WORKSPACE" enabled="false"/>
     <!--  create documents from template ### END ### -->
+    
+    <!-- User center MCAD Integration tab -->
+    <action id="userCenterMcadIntegration" label="eloraplm.label.userCenter.mcadIntegration" link="/incl/user_center_mcad_integration.xhtml" order="110">
+      <category>USER_CENTER</category>
+      <filter-id>not_anonymous</filter-id>
+      <filter-id>not_readonly</filter-id>
+    </action>
     
   </extension>
   

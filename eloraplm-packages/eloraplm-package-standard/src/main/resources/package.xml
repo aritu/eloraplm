@@ -6,7 +6,7 @@
     <p>Paquete estándar EloraPLM.</p>
     <p>EloraPLM standard package.</p>
   </description>
-  <home-page>http://aritu.com/</home-page>
+  <home-page>https://eloraplm.com/</home-page>
   <vendor>Aritu Koop. E.</vendor>
   <installer restart="true" />
   <uninstaller restart="true" />
@@ -22,11 +22,14 @@
   <platforms>
     <platform>cap-@DISTRIB_VERSION@</platform>
     <platform>cap-@DISTRIB_VERSION@-HF*</platform>
+    <!-- We can limit it to just the exact HF version -->
+    <platform>cap-@DISTRIB_VERSION@-@HOTFIX_VERSION@</platform>
   </platforms>
   <dependencies>
     <package>nuxeo-dam:6.1.4</package>
     <package>nuxeo-diff:1.6.5</package>
     <package>nuxeo-diff-pictures:1.0.2</package>
+    <package>nuxeo-drive:1.5.11</package>
     <package>nuxeo-template-rendering:6.5.4</package>
     <package>nuxeo-virtualnavigation:1.1.4</package>
   </dependencies>

@@ -186,6 +186,80 @@
           </properties>
         </layout>
         
+        <layout name="cad_doc_tt">
+            <templates>
+                <template mode="any">/layouts/layout_treetable_template.xhtml
+                </template>
+            </templates>
+            <columns>
+                <column name="icon_reference_title">
+                  <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                    <property name="columnHeading">label.content.header.title</property>
+                  </properties>
+                  <widget>treewidget_cad_icon_reference_title</widget>
+                </column>
+                <column name="download_link">
+                        <properties mode="any">
+                            <property name="columnStyle">width: 40px;</property>
+                            <property name="columnStyleClass">alignCenter</property>
+                        </properties>
+                        <widget>listing_viewer_file_download_link</widget>
+                </column>
+                <column name="lock">
+                        <properties mode="any">
+                            <property name="columnStyle">width: 40px;</property>
+                            <property name="columnStyleClass">alignCenter</property>
+                        </properties>
+                        <widget>treewidget_lock_icon</widget>
+                </column>
+                <column name="version">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 140px;</property>
+                        <property name="columnHeading">label.version</property>
+                    </properties>
+                    <widget>treewidget_editable_version_wc_av</widget>
+                </column>
+                <column name="lifecycle_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 9em;</property>
+                        <property name="columnHeading">label.lifecycle</property>
+                    </properties>
+                    <widget>listing_colored_lifecycle_state</widget>
+                </column>
+                <column name="quantity">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 6em;</property>
+                        <property name="columnHeading">label.content.header.quantity</property>
+                    </properties>
+                    <widget>listing_quantity</widget>
+                </column>
+                <column name="viewerOrdering">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 6em;</property>
+                        <property name="columnHeading">eloraplm.label.viewer.ordering</property>
+                    </properties>
+                    <widget>treewidget_editable_viewer_ordering</widget>
+                </column>
+                <column name="remove">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 40px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>cad_documents_remove_relation</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="headerFiltersTemplate">/incl/cad_documents_header_filters.xhtml</property>
+                <property name="tableTitle">eloraplm.label.treetable.cad.documents</property>
+                <property name="tableStyle">table-layout: auto;</property>
+                <property name="isSortable">true</property>
+                <property name="sortBy">ordering</property>
+                <property name="sortOrder">ascending</property>
+                <property name="factory">#{cadDocumentsRoot}</property>
+            </properties>
+        </layout>
+        
         <!-- end of treetable layouts -->
         
     </extension>
@@ -292,7 +366,36 @@
             </properties>
         </widget>
         
+        <widget name="cad_doc_tt" type="treetable">
+            <labels>
+                <label mode="any">eloraplm.label.treetable.cad.documents</label>
+            </labels>
+            <fields>
+                <field>data</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cad_doc_tt</property>
+            </properties>
+        </widget>
+        
         <!-- end of treetable widgets -->
+        
+        <widget name="summary_cad_documents" type="summary_related_documents">
+            <labels>
+                <label mode="any">label.widgetBlock.title.documents</label>
+            </labels>
+            <properties mode="any">
+                <property name="documentRelations">#{outgoingCadDocumentRelations}</property>
+                <property name="docStatementsInfo">#{eloraRelationActions.outgoingCadDocStatementsInfo}</property>
+            </properties>
+            <controls mode="any">
+                <control name="requireSurroundingForm">true</control>
+                <control name="handleLabels">true</control>
+            </controls>
+        </widget>
         
         <widget name="cad_composition_icon_only_relations" type="template">
             <labels>
@@ -374,6 +477,24 @@
           </properties>
         </widget>
         
+        <widget name="cad_documents_remove_relation" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>level</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+                <mode value="any">hidden</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="template">
+                      /widgets/cad_documents_remove_relation_widget.xhtml
+                </property>
+            </properties>
+        </widget>
         
         <widget name="listing_based_on_relation" type="template">
             <labels>

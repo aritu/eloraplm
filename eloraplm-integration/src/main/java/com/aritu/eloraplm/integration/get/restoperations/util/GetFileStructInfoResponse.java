@@ -25,6 +25,7 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import com.aritu.eloraplm.core.util.json.EloraJsonHelper;
 import com.aritu.eloraplm.core.util.restoperations.EloraGeneralResponse;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.integration.util.FolderInfo;
 
 /**
  * @author aritu
@@ -33,7 +34,8 @@ import com.aritu.eloraplm.exceptions.EloraException;
 @JsonPropertyOrder({ "result", "errorMessage", "documents" })
 public class GetFileStructInfoResponse extends EloraGeneralResponse {
 
-    private static final Log log = LogFactory.getLog(GetFileStructInfoResponse.class);
+    private static final Log log = LogFactory.getLog(
+            GetFileStructInfoResponse.class);
 
     // The first map's key is the document real uid. The value is the inner map.
     // The inner map's key is the cad parent uid. The value is a
@@ -42,13 +44,18 @@ public class GetFileStructInfoResponse extends EloraGeneralResponse {
     // each parent), that besides the cadParentRealUid, have the same data.
     Map<String, Map<String, GetFileStructInfoResponseDoc>> documents;
 
+    List<FolderInfo> folders;
+
     /**
      * Empty constructor. Initializes documents list.
      */
     public GetFileStructInfoResponse() {
         super();
         documents = new LinkedHashMap<String, Map<String, GetFileStructInfoResponseDoc>>();
+        folders = new ArrayList<FolderInfo>();
     }
+
+    /* Documents methods */
 
     public List<GetFileStructInfoResponseDoc> getDocuments() {
         List<GetFileStructInfoResponseDoc> documentsList = new ArrayList<GetFileStructInfoResponseDoc>();
@@ -90,6 +97,20 @@ public class GetFileStructInfoResponse extends EloraGeneralResponse {
 
     public void emptyDocuments() {
         documents.clear();
+    }
+
+    /* Folders methods */
+
+    public List<FolderInfo> getFolders() {
+        return folders;
+    }
+
+    public void addFolder(FolderInfo folder) {
+        folders.add(folder);
+    }
+
+    public void emptyFolders() {
+        folders.clear();
     }
 
     /**

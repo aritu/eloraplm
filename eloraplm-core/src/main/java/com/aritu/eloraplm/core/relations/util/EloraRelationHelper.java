@@ -35,9 +35,9 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationConstants;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.EloraCoreGraph;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.api.ObjectList;
@@ -101,7 +101,7 @@ public class EloraRelationHelper {
             // cuenta estas relaciones para poner OK/KO
             if (!relationsWithoutStateControl.contains(
                     stmt.getPredicate().getUri())) {
-                if (!object.isCheckedOut() && EloraDocumentHelper.isSupported(
+                if (!object.isCheckedOut() && LifecyclesConfig.isSupported(
                         doc.getCurrentLifeCycleState(),
                         object.getCurrentLifeCycleState())) {
                     copyRelation(doc, object, eloraDocumentRelationManager,
@@ -122,6 +122,7 @@ public class EloraRelationHelper {
         noStateControlRelationList.addAll(
                 RelationsConfig.bomAnarchicRelationsList);
         noStateControlRelationList.add(EloraRelationConstants.BOM_HAS_DOCUMENT);
+        noStateControlRelationList.add(EloraRelationConstants.CAD_HAS_DOCUMENT);
 
         return noStateControlRelationList;
     }
@@ -151,7 +152,7 @@ public class EloraRelationHelper {
                             "Object is null. Relation is broken or unreadable.");
                 }
 
-                if (!object.isCheckedOut() && EloraDocumentHelper.isSupported(
+                if (!object.isCheckedOut() && LifecyclesConfig.isSupported(
                         to.getCurrentLifeCycleState(),
                         object.getCurrentLifeCycleState())) {
                     copyRelation(from, object, eloraDocumentRelationManager, to,

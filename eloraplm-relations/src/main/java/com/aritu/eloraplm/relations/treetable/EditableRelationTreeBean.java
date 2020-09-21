@@ -674,9 +674,8 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                 eloraDocumentRelationManager.softDeleteRelation(documentManager,
                         objectDoc, nodeData.getPredicateUri(), subjectDoc);
             } else {
-                facesMessages.add(StatusMessage.Severity.ERROR,
-                        messages.get(
-                                "eloraplm.message.error.relations.edition.locked.by.another"),
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.relations.edition.locked.by.another"),
                         objectDoc.getPropertyValue(
                                 EloraMetadataConstants.ELORA_ELO_REFERENCE));
             }
@@ -856,9 +855,12 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                                 relatedObjectDoc.getRef());
                     }
 
-                    Integer relatedDirectorOrdering = relatedObjectDoc.getType().equals(
-                            EloraDoctypeConstants.CAD_ASSEMBLY) ? 1 : null;
-                    Integer relatedViewerOrdering = relatedObjectDoc.getType().equals(
+                    String type = relatedObjectDoc.getType();
+                    Integer relatedDirectorOrdering = type.equals(
+                            EloraDoctypeConstants.CAD_ASSEMBLY)
+                            || type.equals(EloraDoctypeConstants.CAD_PART) ? 1
+                                    : null;
+                    Integer relatedViewerOrdering = type.equals(
                             EloraDoctypeConstants.CAD_DRAWING) ? 1 : null;
 
                     BaseRelationNodeData newNodeData = new BaseRelationNodeData(

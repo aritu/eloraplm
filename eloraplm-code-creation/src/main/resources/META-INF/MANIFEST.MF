@@ -11,6 +11,6 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-code-creation-TypeServic
  e-contrib.xml,OSGI-INF/extensions/eloraplm-code-creation-SQLDirectory
  Factory-contrib.xml,OSGI-INF/extensions/eloraplm-code-creation-Direct
  oryUIManager-contrib.xml,OSGI-INF/extensions/eloraplm-code-creation-W
- ebLayoutManager-contrib.xml,OSGI-INF/extensions/com.aritu.eloraplm.co
- decreation.code-creation-service.xml
+ ebLayoutManager-contrib.xml,OSGI-INF/extensions/CodeCreationService.x
+ ml
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,9 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.relations.api.RelationManager;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
@@ -65,6 +68,7 @@ import com.aritu.eloraplm.integration.get.restoperations.util.GetFileStructInfoR
 import com.aritu.eloraplm.integration.get.restoperations.util.PropagationProperty;
 import com.aritu.eloraplm.integration.get.restoperations.util.VersionInfo;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
+import com.aritu.eloraplm.integration.util.FolderInfo;
 import com.aritu.eloraplm.integration.util.ItemInfo;
 import com.aritu.eloraplm.integration.util.RelationInfo;
 import com.aritu.eloraplm.integration.util.VersionItem;
@@ -140,6 +144,12 @@ public class GetFileStructInfo {
     @Param(name = "selected", required = true)
     private boolean isTargetSelected;
 
+    @Param(name = "getParentFolders", required = true)
+    private boolean getParentFolders;
+
+    @Param(name = "workspaceRealUid", required = false)
+    private String workspaceRealUid;
+
     @Context
     private CoreSession session;
 
@@ -171,11 +181,12 @@ public class GetFileStructInfo {
 
     private List<Resource> specialPredicates;
 
+    private Map<String, String> processedProxies;
+
+    private List<String> processedFolders;
+
     private class SpecialDocRepeatedException extends Exception {
 
-        /**
-         *
-         */
         private static final long serialVersionUID = 1L;
 
         public SpecialDocRepeatedException(String message) {
@@ -185,9 +196,6 @@ public class GetFileStructInfo {
 
     private class DocIsInCadParentsException extends Exception {
 
-        /**
-         *
-         */
         private static final long serialVersionUID = 1L;
 
         public DocIsInCadParentsException(String message) {
@@ -205,7 +213,12 @@ public class GetFileStructInfo {
                 + "isRootElement: |" + isRootElement + "|" + "\n"
                 + "rootRealUid: |" + rootRealRef + "|" + "\n"
                 + "newVersionRealUid: |" + newVersionRealRef + "|" + "\n"
-                + "childrenVersions: |" + childrenVersions + "|");
+                + "childrenVersions: |" + childrenVersions + "|" + "\n"
+                + "getItemsInfo: |" + getItemsInfo + "|" + "\n" + "enforce: |"
+                + isTargetEnforce + "|" + "\n" + "selected: |"
+                + isTargetSelected + "|" + "\n" + "getParentFolders: |"
+                + getParentFolders + "|" + "\n" + "workspaceRealUid: |"
+                + workspaceRealUid + "|");
 
         getFileStructInfoResponse = new GetFileStructInfoResponse();
 
@@ -214,6 +227,8 @@ public class GetFileStructInfo {
         specialPredicates = new ArrayList<Resource>();
 
         cadParents = new ArrayList<>();
+        processedProxies = new HashMap<String, String>();
+        processedFolders = new ArrayList<String>();
 
         isInitialLoad = true;
         isTargetWc = false;
@@ -930,37 +945,19 @@ public class GetFileStructInfo {
                         : doc.getPropertyValue(
                                 NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR).toString();
 
+        String parentRealUid = null;
         String proxyUid = null;
 
-        if (docProxyRef != null) {
-            proxyUid = docProxyRef.toString();
-        }
-
-        /*
+        if (getParentFolders) {
+            proxyUid = getProxyUid(docProxyRef, wcDoc);
+            parentRealUid = getParentUidAndProcessFolders(proxyUid);
+        } // If we do not want to get parent folders, we do not find proxies and
+          // parentRealUid is empty
         else {
-            // Check if doc exists in workspace, and get the proxyUid
-            List<String> docIds = new ArrayList<String>();
-        
-            docIds.add(docRef.toString());
-            String query = EloraQueryFactory.getDocProxiesInWorkspaceQuery(
-                    docIds, workspaceRealUid);
-            DocumentModelList docProxies = session.query(query);
-        
-            // If the exact version doesn't exist, search for live proxies
-            // (WC)
-            if (docProxies == null || docProxies.isEmpty()) {
-                docIds.add(wcDocRef.toString());
-                query = EloraQueryFactory.getDocProxiesInWorkspaceQuery(docIds,
-                        workspaceRealUid);
-                docProxies = session.query(query);
-            }
-        
-            if (docProxies != null && !docProxies.isEmpty()) {
-                DocumentModel proxyDoc = docProxies.get(0);
-                proxyUid = proxyDoc.getId();
+            if (docProxyRef != null) {
+                proxyUid = docProxyRef.toString();
             }
         }
-        */
 
         // If target document is a working copy, complete some data with latest
         // version
@@ -970,14 +967,107 @@ public class GetFileStructInfo {
                 doc, wcDoc);
 
         GetFileStructInfoResponseDoc responseDoc = new GetFileStructInfoResponseDoc(
-                proxyUid, realUid, wcDoc.getId(), doc.getType(), reference,
-                title, filename, hash, description, currentVersionInfo,
-                doc.getCurrentLifeCycleState(), latestVersionLabel, versions,
-                eloraLockInfo, lastContributor, lastModified, summaryUrl);
+                proxyUid, realUid, parentRealUid, wcDoc.getId(), doc.getType(),
+                reference, title, filename, hash, description,
+                currentVersionInfo, doc.getCurrentLifeCycleState(),
+                latestVersionLabel, versions, eloraLockInfo, lastContributor,
+                lastModified, summaryUrl);
 
         log.trace(logInitMsg + "--- EXIT ---");
 
         return responseDoc;
+    }
+
+    private String getProxyUid(DocumentRef proxyRef, DocumentModel wcDoc) {
+        String proxyUid = null;
+
+        if (processedProxies.containsKey(wcDoc.getId())) {
+            proxyUid = processedProxies.get(wcDoc.getId());
+        } else {
+            if (proxyRef != null) {
+                proxyUid = proxyRef.toString();
+            } else {
+                DocumentModel foundProxy = findProxyForDocument(wcDoc);
+                if (foundProxy != null) {
+                    proxyUid = foundProxy.getId();
+                }
+            }
+            processedProxies.put(wcDoc.getId(), proxyUid);
+        }
+
+        return proxyUid;
+    }
+
+    private String getParentUidAndProcessFolders(String docProxyUid) {
+        String logInitMsg = "[getParentUidAndProcessFolders] ["
+                + session.getPrincipal().getName() + "] ";
+
+        String parentRealUid = null;
+        DocumentRef docProxyRef = new IdRef(docProxyUid);
+        if (docProxyUid != null) {
+            parentRealUid = session.getParentDocumentRef(
+                    docProxyRef).toString();
+        } else {
+            parentRealUid = workspaceRealUid;
+        }
+
+        // Get the parent folders
+        log.trace(logInitMsg + "Document |" + docProxyUid
+                + "| is in the workspace. Processing folders...");
+
+        if (parentRealUid != null && workspaceRealUid != null
+                && !parentRealUid.equals(workspaceRealUid)) {
+            processSingleFolder(parentRealUid);
+        }
+
+        log.trace(logInitMsg + "Document |" + docProxyUid
+                + "| folders processed.");
+
+        return parentRealUid;
+    }
+
+    private DocumentModel findProxyForDocument(DocumentModel wcDoc) {
+        if (workspaceRealUid != null) {
+            String query = EloraQueryFactory.getDocProxiesQuery(wcDoc.getType(),
+                    wcDoc.getId(), workspaceRealUid);
+            DocumentModelList proxies = session.query(query);
+            if (!proxies.isEmpty()) {
+                // We get the first, even if there are more
+                return proxies.get(0);
+            }
+        }
+
+        return null;
+    }
+
+    protected void processSingleFolder(String realUid) {
+
+        String logInitMsg = "[processSingleFolder] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "Processing folder |" + realUid + "| ...");
+
+        // If it is already processed, return; else, add to list
+        if (processedFolders.contains(realUid)) {
+            return;
+        } else {
+            processedFolders.add(realUid);
+        }
+
+        DocumentModel doc = session.getDocument(new IdRef(realUid));
+        String parentRealUid = doc.getParentRef().toString();
+        String title = doc.getTitle();
+        String path = doc.getPathAsString();
+
+        FolderInfo responseFolder = new FolderInfo(realUid, parentRealUid,
+                title, path);
+        getFileStructInfoResponse.addFolder(responseFolder);
+
+        if (!parentRealUid.equals(workspaceRealUid)) {
+            processSingleFolder(parentRealUid);
+        }
+
+        log.trace(logInitMsg + "Folder |" + realUid + "| processed.");
+
     }
 
     /**

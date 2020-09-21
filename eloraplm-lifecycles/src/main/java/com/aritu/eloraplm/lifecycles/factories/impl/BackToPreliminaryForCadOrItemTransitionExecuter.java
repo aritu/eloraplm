@@ -24,10 +24,10 @@ import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
@@ -66,7 +66,7 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
         relationsToCheck.addAll(RelationsConfig.cadRelationsList);
         relationsToCheck.addAll(RelationsConfig.bomHierarchicalRelationsList);
         relationsToCheck.addAll(RelationsConfig.bomDirectRelationsList);
-        relationsToCheck.addAll(RelationsConfig.bomDocumentRelationsList);
+        relationsToCheck.addAll(RelationsConfig.docRelationsList);
         predicatesToCheck = getPredicateResourceList(relationsToCheck);
 
         processTransitionChecks(doc);
@@ -144,7 +144,7 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
             for (Statement stmt : stmts) {
                 DocumentModel subject = RelationHelper.getDocumentModel(
                         stmt.getSubject(), session);
-                if (!EloraDocumentHelper.isSupported(
+                if (!LifecyclesConfig.isSupported(
                         subject.getCurrentLifeCycleState(), targetState)) {
                     return false;
                 }
@@ -166,7 +166,7 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
             for (Statement stmt : stmts) {
                 DocumentModel object = RelationHelper.getDocumentModel(
                         stmt.getObject(), session);
-                if (!EloraDocumentHelper.isSupported(targetState,
+                if (!LifecyclesConfig.isSupported(targetState,
                         object.getCurrentLifeCycleState())) {
                     return false;
                 }

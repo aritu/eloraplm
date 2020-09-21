@@ -16,6 +16,7 @@ package com.aritu.eloraplm.webapp.base.beans;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -29,6 +30,9 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
+import org.nuxeo.ecm.admin.runtime.RuntimeInstrospection;
+import org.nuxeo.ecm.admin.runtime.SimplifiedBundleInfo;
+import org.nuxeo.ecm.admin.runtime.SimplifiedServerInfo;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentNotFoundException;
@@ -287,6 +291,20 @@ public class EloraWebActionsBean implements Serializable {
             return false;
         }
 
+    }
+
+    public String getEloraPlmVersion() {
+        String version = null;
+
+        SimplifiedServerInfo ssi = RuntimeInstrospection.getInfo();
+        List<SimplifiedBundleInfo> bundles = ssi.getBundleInfos();
+        for (SimplifiedBundleInfo bundle : bundles) {
+            // We use core bundle as reference
+            if (bundle.getName().equals("com.aritu.eloraplm.core")) {
+                version = bundle.getVersion();
+            }
+        }
+        return version;
     }
 
     public Map<Object, Object> getEloraPlmProperties() {

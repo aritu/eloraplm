@@ -50,6 +50,16 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_PRJ_PROJECTPHASELIST = "prj:projectPhaseList";
 
+    public static final String ELORA_CHECKIN_LAST_CHECKED_IN_BY = "checkin:lastCheckedInBy";
+
+    public static final String ELORA_CHECKIN_LAST_CHECKED_IN_DATE = "checkin:lastCheckedInDate";
+
+    public static final String ELORA_REVIEW_LAST_REVIEWER = "review:lastReviewer";
+
+    public static final String ELORA_REVIEW_LAST_REVIEWED = "review:lastReviewed";
+
+    public static final String ELORA_STLOG_STATE_LOG_LIST = "stlog:stateLogList";
+
     // BOM metadata
 
     public static final String ELORA_BOMMANPART_MANUFACTURER = "bommanpart:manufacturer";

@@ -69,10 +69,6 @@ public class RelationsConfig {
 
     public static final List<String> bomDirectRelationsList = initBomDirectRelationsList();
 
-    public static final EloraConfigTable bomDocumentRelationsConfig = initBomDocumentRelationsConfig();
-
-    public static final List<String> bomDocumentRelationsList = initBomDocumentRelationsList();
-
     public static final EloraConfigTable bomAnarchicRelationsConfig = initBomAnarchicRelationsConfig();
 
     public static final List<String> bomAnarchicRelationsList = initBomAnarchicRelationsList();
@@ -80,6 +76,16 @@ public class RelationsConfig {
     public static final EloraConfigTable bomRelationsConfig = initBomRelationsConfig();
 
     public static final List<String> bomRelationsList = initBomRelationsList();
+
+    // -----------------------
+    // DOC relations variables
+    // -----------------------
+
+    public static final EloraConfigTable docRelationsConfig = initDocRelationsConfig();
+
+    public static final List<String> docRelationsList = initDocRelationsList();
+
+    // TODO Subtypes?
 
     // -----------------------------
     // CONTAINER relations variables
@@ -333,36 +339,6 @@ public class RelationsConfig {
         return configList;
     }
 
-    private static EloraConfigTable initBomDocumentRelationsConfig() {
-        String logInitMsg = "[initBomDocumentRelationsConfig] ";
-
-        log.trace("********************************* ENTER IN " + logInitMsg);
-
-        EloraConfigTable configTable = null;
-        try {
-            configTable = RelationsConfigHelper.getBomDocumentRelationsConfig(
-                    false);
-        } catch (EloraException e) {
-            log.error(logInitMsg + e.getMessage(), e);
-        }
-
-        log.trace("********************************* EXIT FROM " + logInitMsg);
-        return configTable;
-    }
-
-    private static List<String> initBomDocumentRelationsList() {
-        String logInitMsg = "[initBomDocumentRelationsList] ";
-
-        log.trace("********************************* ENTER IN " + logInitMsg);
-
-        List<String> configList = Collections.unmodifiableList(
-                bomDocumentRelationsConfig.extractConfigTablePropertyValuesAsList(
-                        "id"));
-
-        log.trace("********************************* EXIT FROM " + logInitMsg);
-        return configList;
-    }
-
     private static EloraConfigTable initBomAnarchicRelationsConfig() {
         String logInitMsg = "[initBomAnarchicRelationsConfig] ";
 
@@ -422,6 +398,41 @@ public class RelationsConfig {
         return configList;
     }
 
+    // ----------------------------------------------
+    // DOC relations variables initialization methods
+    // ----------------------------------------------
+    private static EloraConfigTable initDocRelationsConfig() {
+        String logInitMsg = "[initDocRelationsConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = RelationsConfigHelper.getDocRelationsConfig(false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initDocRelationsList() {
+        String logInitMsg = "[initDocRelationsList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = Collections.unmodifiableList(
+                docRelationsConfig.extractConfigTablePropertyValuesAsList(
+                        "id"));
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
+    }
+
+    // ----------------------------------------------
+    // CONTAINER relations variables initialization methods
+    // ----------------------------------------------
     private static EloraConfigTable initContainerRelationsConfig() {
         String logInitMsg = "[initContainerRelationsConfig] ";
 

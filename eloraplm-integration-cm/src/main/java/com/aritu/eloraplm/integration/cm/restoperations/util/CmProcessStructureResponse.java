@@ -62,9 +62,6 @@ public class CmProcessStructureResponse extends EloraGeneralResponse {
         this.lastModified = lastModified;
     }
 
-    /**
-     * Converts GetFileStructInfoResponse to a JSON formatted String.
-     */
     @Override
     public String convertToJson() throws EloraException {
         String methodName = "[convertToJson] ";

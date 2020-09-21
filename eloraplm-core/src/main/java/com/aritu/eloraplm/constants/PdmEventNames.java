@@ -31,7 +31,7 @@ public class PdmEventNames {
 
     public static final String PDM_OVERWRITTEN_EVENT = "PdmOverwrittenEvent";
 
-    public static final String PDM_ITEM_DOC_OVERWRITTEN_EVENT = "PdmItemDocOverwrittenEvent";
+    public static final String PDM_VIEWER_DOC_OVERWRITTEN_EVENT = "PdmViewerDocOverwrittenEvent";
 
     public static final String PDM_DEMOTED_EVENT = "PdmDemotedEvent";
 
@@ -42,5 +42,7 @@ public class PdmEventNames {
     // This event is thrown after the viewer has been created and document has
     // been saved
     public static final String PDM_APPROVED_EVENT = "PdmApprovedEvent";
+
+    public static final String PDM_DOCUMENT_METADATA_UPDATED_EVENT = "PdmDocumentMetadataUpdatedEvent";
 
 }

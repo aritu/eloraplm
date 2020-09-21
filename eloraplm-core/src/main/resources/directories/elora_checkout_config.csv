@@ -9,3 +9,4 @@ http://eloraplm.aritu.com/relations/CadBasedOn,AsStored,0
 http://eloraplm.aritu.com/relations/CadHasDesignTable,AsStored,0
 http://eloraplm.aritu.com/relations/CadHasSuppressed,AsStored,0
 http://eloraplm.aritu.com/relations/CadInContextWith,AsStored,0
+http://eloraplm.aritu.com/relations/CadHasDocument,WorkingCopies,0

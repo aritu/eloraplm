@@ -970,8 +970,9 @@ public class BomCharacteristicsHelper {
 
                 if (numberValue != null && !numberValue.isEmpty()) {
                     FacesContext context = FacesContext.getCurrentInstance();
+                    Locale locale = context.getViewRoot().getLocale();
                     try {
-                        EloraDecimalHelper.validateDecimalValue(context,
+                        EloraDecimalHelper.validateDecimalValue(locale,
                                 numberValue,
                                 updatedBomCharacteristic.getNumberMaxIntegerPlaces().toString(),
                                 updatedBomCharacteristic.getNumberMaxDecimalPlaces().toString());

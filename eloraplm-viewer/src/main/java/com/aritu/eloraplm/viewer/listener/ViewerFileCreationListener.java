@@ -81,7 +81,7 @@ public class ViewerFileCreationListener implements EventListener {
                         case PdmEventNames.PDM_PROMOTED_EVENT:
                             action = ViewerConstants.ACTION_PROMOTE;
                             break;
-                        case PdmEventNames.PDM_ITEM_DOC_OVERWRITTEN_EVENT:
+                        case PdmEventNames.PDM_VIEWER_DOC_OVERWRITTEN_EVENT:
                             action = ViewerConstants.ACTION_OVERWRITE_AV;
                             break;
                         }
@@ -125,6 +125,6 @@ public class ViewerFileCreationListener implements EventListener {
                 PdmEventNames.PDM_ABOUT_TO_OVERWRITE_EVENT,
                 PdmEventNames.PDM_DEMOTED_EVENT,
                 PdmEventNames.PDM_PROMOTED_EVENT,
-                PdmEventNames.PDM_ITEM_DOC_OVERWRITTEN_EVENT);
+                PdmEventNames.PDM_VIEWER_DOC_OVERWRITTEN_EVENT);
     }
 }

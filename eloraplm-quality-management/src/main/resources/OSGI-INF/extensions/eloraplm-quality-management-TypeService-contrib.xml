@@ -30,6 +30,7 @@
             <facet name="SuperSpace"/>
             <facet name="QmProcess" />
             <facet name="LockRequiredToEdit" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype extends="Folder" name="ProductVerification">
             <schema name="elora_object"/>
@@ -46,6 +47,7 @@
             <facet name="SuperSpace"/>
             <facet name="QmProcess" />
             <facet name="LockRequiredToEdit" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype extends="Folder" name="ProductionProcessValidation">
             <schema name="elora_object"/>
@@ -62,6 +64,7 @@
             <facet name="SuperSpace"/>
             <facet name="QmProcess" />
             <facet name="LockRequiredToEdit" />
+            <facet name="StoreStatesLog" />
         </doctype>
         <doctype extends="Folder" name="ProductionPartApprovalProcess">
             <schema name="elora_object"/>
@@ -78,6 +81,7 @@
             <facet name="SuperSpace"/>
             <facet name="QmProcess" />
             <facet name="LockRequiredToEdit" />
+            <facet name="StoreStatesLog" />
         </doctype>
         
     </extension>

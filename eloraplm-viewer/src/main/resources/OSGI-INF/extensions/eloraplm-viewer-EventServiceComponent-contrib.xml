@@ -8,7 +8,7 @@
             <event>PdmAboutToOverwriteEvent</event>
             <event>PdmDemotedEvent</event>
             <event>PdmPromotedEvent</event>
-            <event>PdmItemDocOverwrittenEvent</event>
+            <event>PdmViewerDocOverwrittenEvent</event>
         </listener>
         
         <listener name="docOverwriteListener" async="false" postCommit="false"

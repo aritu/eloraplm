@@ -373,7 +373,7 @@
     <action id="TAB_DOC_BOM_ITEMS" link="/incl/tabs/cad_bom_items_content.xhtml"
       order="80" label="label.com.aritu.eloraplm.relations.tab.items" type="rest_document_link">
       <category>VIEW_ACTION_LIST</category>
-      <filter-id>isNormalDocument</filter-id>
+      <filter-id>isBasicDocument</filter-id>
     </action>
         
     <!-- Documents Tab buttons -->

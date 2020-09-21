@@ -13,6 +13,8 @@
  */
 package com.aritu.eloraplm.webapp.base.convert;
 
+import java.util.Locale;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -57,18 +59,17 @@ public class DecimalValueConverter implements Converter {
         try {
             if (value != null && !value.isEmpty()) {
 
+                Locale locale = context.getViewRoot().getLocale();
                 convertedValue = EloraDecimalHelper.fromLocalizedToStandard(
-                        context, value);
+                        locale, value);
             }
         } catch (ConverterException e) {
             throw e;
         } catch (Exception e) {
 
-            log.trace(
-                    logInitMsg
-                            + "Conversion failed: Exception thrown. Exception class = |"
-                            + e.getClass() + "|, message: " + e.getMessage(),
-                    e);
+            log.trace(logInitMsg
+                    + "Conversion failed: Exception thrown. Exception class = |"
+                    + e.getClass() + "|, message: " + e.getMessage(), e);
 
             FacesMessage message = MessageFactory.getMessage(context,
                     "eloraplm.message.error.decimalValueConverter", value);
@@ -95,8 +96,9 @@ public class DecimalValueConverter implements Converter {
 
             if (value != null) {
 
+                Locale locale = context.getViewRoot().getLocale();
                 convertedValue = EloraDecimalHelper.fromStandardToLocalized(
-                        context, (String) value);
+                        locale, (String) value);
             }
 
         } catch (ConverterException e) {
@@ -105,11 +107,9 @@ public class DecimalValueConverter implements Converter {
 
             // Here we can't throw a ConverterException, so we log it as an
             // error and we use FacesMessages to notify the user
-            log.error(
-                    logInitMsg
-                            + "Conversion of saved value failed: Exception thrown. Exception class = |"
-                            + e.getClass() + "|, message: " + e.getMessage(),
-                    e);
+            log.error(logInitMsg
+                    + "Conversion of saved value failed: Exception thrown. Exception class = |"
+                    + e.getClass() + "|, message: " + e.getMessage(), e);
 
             Object[] params = { value };
             FacesMessages.instance().add(StatusMessage.Severity.ERROR,

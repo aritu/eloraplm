@@ -40,11 +40,6 @@ public class GetWorkspaceResponse extends EloraGeneralResponse {
     private static final Log log = LogFactory.getLog(
             GetWorkspaceResponse.class);
 
-    // The first map's key is the document real uid. The value is the inner map.
-    // The inner map's key is the cad parent uid. The value is a
-    // GetFileStructInfoResponseDoc, with all the metadata.
-    // For each unique document in the tree, there are multiple rows (one for
-    // each parent), that besides the cadParentRealUid, have the same data.
     Map<String, GetWorkspaceResponseDoc> documents;
 
     List<FolderInfo> folders;
@@ -115,9 +110,6 @@ public class GetWorkspaceResponse extends EloraGeneralResponse {
         this.lastModified = lastModified;
     }
 
-    /**
-     * Converts GetFileStructInfoResponse to a JSON formatted String.
-     */
     @Override
     public String convertToJson() throws EloraException {
         String methodName = "[convertToJson] ";

@@ -326,9 +326,8 @@ public class CmDocsBatchProcessingBean implements Serializable {
     private void checkRepeatedDocs(DocumentModel doc) throws EloraException {
         String treeDocUid = repeatedTreeDocMap.get(doc.getVersionSeriesId());
         if (treeDocUid != null && !doc.getId().equals(treeDocUid)) {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(
-                            "eloraplm.message.error.cm.batch.docRepeatedWithDiffVersion"),
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.cm.batch.docRepeatedWithDiffVersion"),
                     doc.getPropertyValue(
                             EloraMetadataConstants.ELORA_ELO_REFERENCE),
                     doc.getTitle());

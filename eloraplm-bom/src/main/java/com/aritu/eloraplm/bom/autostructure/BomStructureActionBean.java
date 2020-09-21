@@ -54,14 +54,6 @@ public class BomStructureActionBean implements Serializable {
 
     private List<DocItemRelation> selectedDocItemRelations;
 
-    private boolean hasDirector;
-
-    private boolean hasWrontTypes;
-
-    private boolean hasMissingItems;
-
-    private List<DocumentModel> missingItems;
-
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
 
@@ -90,7 +82,7 @@ public class BomStructureActionBean implements Serializable {
             selectedDocItemRelations = new ArrayList<DocItemRelation>();
 
             itemStructureData = new ItemStructureData(currentDoc,
-                    documentManager);
+                    selectedDocItemRelations, documentManager);
         } catch (CompositionWithMultipleVersionsException e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR,

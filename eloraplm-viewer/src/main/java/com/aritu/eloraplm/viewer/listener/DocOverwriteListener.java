@@ -45,7 +45,7 @@ import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
- * Listens to the overwrite event, finds all the parent items related to the
+ * Listens to the overwrite event, finds all the parent docs related to the
  * document that has been overwritten, and updates their viewer files. It is
  * designed for CAD and Basic document overwrites.
  *
@@ -69,8 +69,7 @@ public class DocOverwriteListener implements EventListener {
                 }
 
                 if (doc.isImmutable()) {
-                    // For now, we only listen when it is overwritten from the
-                    // WC
+                    // For now, we only listen when it's overwritten from the WC
                     return;
                 }
 
@@ -85,16 +84,20 @@ public class DocOverwriteListener implements EventListener {
                     if (baseVersion != null) {
                         if (doc.hasFacet(
                                 EloraFacetConstants.FACET_CAD_DOCUMENT)) {
-                            processRelatedItems(session, baseVersion,
+                            processRelatedDocs(session, baseVersion,
                                     EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
                         }
-                        // CAUTION! At the moment, we have no way to limit BasicDocument
-                        // to REAL basic documents, so CAD and BOM docs also have this
+                        // CAUTION! At the moment, we have no way to limit
+                        // BasicDocument
+                        // to REAL basic documents, so CAD and BOM docs also
+                        // have this
                         // facet
                         else if (doc.hasFacet(
                                 EloraFacetConstants.FACET_BASIC_DOCUMENT)) {
-                            processRelatedItems(session, baseVersion,
+                            processRelatedDocs(session, baseVersion,
                                     EloraRelationConstants.BOM_HAS_DOCUMENT);
+                            processRelatedDocs(session, baseVersion,
+                                    EloraRelationConstants.CAD_HAS_DOCUMENT);
                         }
                     }
                 } catch (Exception e) {
@@ -108,9 +111,9 @@ public class DocOverwriteListener implements EventListener {
         }
     }
 
-    private void processRelatedItems(CoreSession session, DocumentModel doc,
+    private void processRelatedDocs(CoreSession session, DocumentModel doc,
             String predicateUri) throws EloraException {
-        Map<String, DocumentModel> wcItems = new HashMap<String, DocumentModel>();
+        Map<String, DocumentModel> wcSubjects = new HashMap<String, DocumentModel>();
         Resource predicate = new ResourceImpl(predicateUri);
         List<Statement> stmts = EloraRelationHelper.getSubjectStatements(
                 EloraRelationConstants.ELORA_GRAPH_NAME, doc, predicate);
@@ -118,45 +121,46 @@ public class DocOverwriteListener implements EventListener {
             EloraStatementInfo stmtInfo = new EloraStatementInfoImpl(stmt);
             Integer order = stmtInfo.getViewerOrdering();
             if (order != null && order != 0) {
-                DocumentModel item = RelationHelper.getDocumentModel(
+                DocumentModel subject = RelationHelper.getDocumentModel(
                         stmtInfo.getSubject(), session);
-                // If the item is a WC, the base AV will also have a relation to
+                // If the subject is a WC, the base AV will also have a relation
+                // to
                 // the document. We only have to restore the WC at the end.
-                if (item.isImmutable()) {
-                    DocumentModel wcItem = session.getWorkingCopy(
-                            item.getRef());
-                    // We also exclude the items that are checked out, or we
+                if (subject.isImmutable()) {
+                    DocumentModel wcSubject = session.getWorkingCopy(
+                            subject.getRef());
+                    // We also exclude the subjects that are checked out, or we
                     // will end up with corrupted relations
-                    if (!wcItem.isCheckedOut()) {
-                        updateItemViewerFile(session, item, doc);
-                        String wcId = wcItem.getId();
-                        if (!wcItems.containsKey(wcId)) {
-                            wcItems.put(wcId, wcItem);
+                    if (!wcSubject.isCheckedOut()) {
+                        updateViewerFile(session, subject, doc);
+                        String wcId = wcSubject.getId();
+                        if (!wcSubjects.containsKey(wcId)) {
+                            wcSubjects.put(wcId, wcSubject);
                         }
                     }
                 }
             }
         }
-        for (DocumentModel wcItem : wcItems.values()) {
+        for (DocumentModel wcSubject : wcSubjects.values()) {
             DocumentModel baseVersion = EloraDocumentHelper.getBaseVersion(
-                    wcItem);
-            if (wcItem != null) {
+                    wcSubject);
+            if (wcSubject != null) {
                 // The only thing that has changed is the viewer file, so we
                 // need to call to a simple restore (no relations restored)
-                EloraDocumentHelper.restoreToVersion(wcItem.getRef(),
+                EloraDocumentHelper.restoreToVersion(wcSubject.getRef(),
                         baseVersion.getRef(), true, true, session);
             }
         }
     }
 
-    private void updateItemViewerFile(CoreSession session, DocumentModel item,
+    private void updateViewerFile(CoreSession session, DocumentModel subject,
             DocumentModel doc) throws EloraException {
 
         // Nuxeo Event (viewer creation listens this event)
         Serializable ref = doc.getPropertyValue(
                 EloraMetadataConstants.ELORA_ELO_REFERENCE);
         String docReference = ref != null ? ref.toString() : null;
-        String comment = item.getVersionLabel();
+        String comment = subject.getVersionLabel();
         comment += " Caused by: ";
         if (docReference != null) {
             comment += docReference;
@@ -165,14 +169,14 @@ public class DocOverwriteListener implements EventListener {
         // if (justification != null) {
         // comment += " " + justification;
         // }
-        EloraEventHelper.fireEvent(PdmEventNames.PDM_ITEM_DOC_OVERWRITTEN_EVENT,
-                item, comment);
+        EloraEventHelper.fireEvent(PdmEventNames.PDM_VIEWER_DOC_OVERWRITTEN_EVENT,
+                subject, comment);
 
-        if (item.isImmutable()) {
-            EloraDocumentHelper.disableVersioningDocument(item);
+        if (subject.isImmutable()) {
+            EloraDocumentHelper.disableVersioningDocument(subject);
         }
 
-        session.saveDocument(item);
+        session.saveDocument(subject);
     }
 
     private boolean isEventHandled(Event event) {

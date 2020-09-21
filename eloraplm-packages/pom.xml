@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.aritu.eloraplm</groupId>
         <artifactId>eloraplm-parent</artifactId>
-        <version>20200422</version>
+        <version>20200917</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

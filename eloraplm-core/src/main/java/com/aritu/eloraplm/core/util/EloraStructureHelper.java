@@ -778,6 +778,8 @@ public class EloraStructureHelper {
                 new ResourceImpl(EloraRelationConstants.CAD_HAS_SUPPRESSED)));
         oneLevelRelatedDocuments.addAll(RelationHelper.getObjectDocuments(doc,
                 new ResourceImpl(EloraRelationConstants.CAD_IN_CONTEXT_WITH)));
+        oneLevelRelatedDocuments.addAll(RelationHelper.getObjectDocuments(doc,
+                new ResourceImpl(EloraRelationConstants.CAD_HAS_DOCUMENT)));
 
         log.trace(logInitMsg + "oneLevelRelatedDocuments.size() = "
                 + oneLevelRelatedDocuments.size() + "|");

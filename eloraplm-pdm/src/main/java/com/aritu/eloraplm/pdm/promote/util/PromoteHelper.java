@@ -12,11 +12,8 @@ import org.nuxeo.ecm.core.lifecycle.LifeCycleTransition;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
-import com.aritu.eloraplm.config.util.EloraConfigTable;
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
-import com.aritu.eloraplm.config.util.LifecyclesConfigHelper;
-import com.aritu.eloraplm.constants.EloraConfigConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -114,7 +111,7 @@ public class PromoteHelper {
             }
         } else {
             if (!isTransitionAllowedConfig(transition)) {
-                if (!EloraDocumentHelper.isSupported(childState, parentState)) {
+                if (!LifecyclesConfig.isSupported(childState, parentState)) {
                     msg = messages.get(
                             "eloraplm.message.error.state.not.supported");
                 }
@@ -126,7 +123,7 @@ public class PromoteHelper {
     private static String checkParentNodeAndMissingDocs(DocumentModel doc,
             String parentState, String childState, Statement stmt,
             Map<String, String> messages, String msg) throws EloraException {
-        if (EloraDocumentHelper.isSupported(childState, parentState)) {
+        if (LifecyclesConfig.isSupported(childState, parentState)) {
             // TODO: Tendria que sacar todos los hijos ?? No
             // solo los de este predicate ?? El drawing puede tener otro
             // tipo de statements a otras piezas ??
@@ -148,7 +145,7 @@ public class PromoteHelper {
             if (!childStmt.getObject().equals(stmt.getObject())) {
                 DocumentModel child = RelationHelper.getDocumentModel(
                         childStmt.getObject(), doc.getCoreSession());
-                if (!EloraDocumentHelper.isSupported(childState,
+                if (!LifecyclesConfig.isSupported(childState,
                         child.getCurrentLifeCycleState())) {
                     msg = messages.get(
                             "eloraplm.message.error.state.not.supported.by.not.visible.children");
@@ -168,7 +165,7 @@ public class PromoteHelper {
         String msg = "";
         if (isPropagated) {
             if (!isTransitionAllowedConfig(transition)) {
-                if (!EloraDocumentHelper.isSupported(treeParentState,
+                if (!LifecyclesConfig.isSupported(treeParentState,
                         childState)) {
                     msg = messages.get(
                             "eloraplm.message.error.state.not.supported");
@@ -180,7 +177,7 @@ public class PromoteHelper {
             }
         } else {
             if (!isTransitionAllowsConfig(transition)) {
-                if (!EloraDocumentHelper.isSupported(treeParentState,
+                if (!LifecyclesConfig.isSupported(treeParentState,
                         childState)) {
                     msg = messages.get(
                             "eloraplm.message.error.state.not.supported");
@@ -234,7 +231,7 @@ public class PromoteHelper {
             DocumentModel subject = RelationHelper.getDocumentModel(
                     stmt.getSubject(), doc.getCoreSession());
             if (!subject.getId().equals(treeParentDocId)) {
-                if (!EloraDocumentHelper.isSupported(
+                if (!LifecyclesConfig.isSupported(
                         subject.getCurrentLifeCycleState(), childState)) {
                     areRelatedParentStatesCompatible = false;
                     break;
@@ -245,13 +242,11 @@ public class PromoteHelper {
     }
 
     public static boolean isAlreadyPromoted(DocumentModel doc,
-            String finalState, EloraConfigTable lifeCycleStatesConfig) {
+            String finalState) {
 
-        long finalStateOrdering = (long) lifeCycleStatesConfig.getRow(
-                finalState).getProperty(EloraConfigConstants.PROP_ORDERING);
-        long stateOrdering = (long) lifeCycleStatesConfig.getRow(
-                doc.getCurrentLifeCycleState()).getProperty(
-                        EloraConfigConstants.PROP_ORDERING);
+        int finalStateOrdering = LifecyclesConfig.getOrder(finalState);
+        int stateOrdering = LifecyclesConfig.getOrder(
+                doc.getCurrentLifeCycleState());
         return stateOrdering >= finalStateOrdering;
     }
 
@@ -298,13 +293,11 @@ public class PromoteHelper {
             throws EloraException {
         String msg = "";
 
-        EloraConfigTable obsoleteAndDeletedStatesConfig = LifecyclesConfigHelper.getObsoleteAndDeletedStatesConfig();
-
         // For the instance, compatibility check is only required for obsolete
         // final states
-        if (obsoleteAndDeletedStatesConfig.containsKey(finalState)) {
-            msg = checkFinalObsoleteStatusAvailabity(doc,
-                    obsoleteAndDeletedStatesConfig, messages);
+        if (LifecyclesConfig.obsoleteAndDeletedStatesList.contains(
+                finalState)) {
+            msg = checkFinalObsoleteStatusAvailabity(doc, messages);
         }
 
         return msg;
@@ -315,14 +308,11 @@ public class PromoteHelper {
      * obsolete state.
      *
      * @param doc the document being promoted
-     * @param obsoleteAndDeletedStatesConfig obsolete and deleted states
-     *            configuration
      * @param messages map for managing translated messages
      * @return
      * @throws EloraException
      */
     private static String checkFinalObsoleteStatusAvailabity(DocumentModel doc,
-            EloraConfigTable obsoleteAndDeletedStatesConfig,
             Map<String, String> messages) throws EloraException {
         String msg = "";
 
@@ -346,7 +336,7 @@ public class PromoteHelper {
                 if (docVersion.getId() != baseDoc.getId()) {
 
                     String versionState = docVersion.getCurrentLifeCycleState();
-                    if (!obsoleteAndDeletedStatesConfig.containsKey(
+                    if (!LifecyclesConfig.obsoleteAndDeletedStatesList.contains(
                             versionState)) {
                         msg = messages.get(
                                 "eloraplm.message.error.promote.obsoleteStatusNotCompatible");

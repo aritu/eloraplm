@@ -21,6 +21,10 @@
             <category>TAB_CONTENT_HISTORY_sub_tab</category>
             <filter-id>view_file_history</filter-id>
         </action>
+        <action enabled="true"  id="TAB_STATE_LOGS" link="/incl/tabs/state_logs.xhtml" order="75" label="eloraplm.label.stateLogs.title" type="rest_document_link">
+          <category>TAB_CONTENT_HISTORY_sub_tab</category>
+          <filter-id>viewStateLogTab</filter-id>
+        </action>
         
         <action id="RESTORE_VERSION" enabled="false" />
         <action id="CURRENT_VERSION_SELECTION_DELETE" enabled="false" />
@@ -79,6 +83,12 @@
         <filter id="isAtLeastOneVersionSelected">
             <rule grant="true">
                 <condition>#{eloraPlmVersionHistoryActions.countSelectedVersions() ne 0}</condition>
+            </rule>
+        </filter>
+        
+        <filter id="viewStateLogTab">
+            <rule grant="true">
+                <facet>StoreStatesLog</facet>
             </rule>
         </filter>
         

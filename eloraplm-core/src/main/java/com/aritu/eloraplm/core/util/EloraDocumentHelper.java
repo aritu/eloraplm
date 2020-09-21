@@ -62,6 +62,9 @@ import org.nuxeo.ecm.platform.actions.jsf.JSFActionContext;
 import org.nuxeo.ecm.platform.actions.seam.SeamActionContext;
 import org.nuxeo.ecm.platform.dublincore.listener.DublinCoreListener;
 import org.nuxeo.ecm.platform.ec.notification.NotificationConstants;
+import org.nuxeo.ecm.platform.mimetype.MimetypeNotFoundException;
+import org.nuxeo.ecm.platform.mimetype.interfaces.MimetypeRegistry;
+import org.nuxeo.ecm.platform.mimetype.service.MimetypeRegistryService;
 import org.nuxeo.ecm.platform.relations.api.Node;
 import org.nuxeo.ecm.platform.relations.api.QNameResource;
 import org.nuxeo.ecm.platform.relations.api.RelationManager;
@@ -74,15 +77,17 @@ import org.nuxeo.ecm.webengine.jaxrs.context.RequestCleanupHandler;
 import org.nuxeo.ecm.webengine.jaxrs.context.RequestContext;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
+import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.constants.QueriesConstants;
 import com.aritu.eloraplm.constants.VersionStatusConstants;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.exceptions.DocumentAlreadyLockedException;
@@ -329,11 +334,11 @@ public class EloraDocumentHelper {
         Long majorVersion = (Long) doc.getPropertyValue(
                 NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
 
-        // We guess there is at least one not released state in configuration.
+        // We guess there is at least one unreleased state in configuration.
         // If not it will crash
-        if (LifecyclesConfig.notReleasedStatesList.isEmpty()) {
+        if (LifecyclesConfig.unreleasedStatesList.isEmpty()) {
             throw new EloraException(
-                    "There must be at least one not released state in configuration");
+                    "There must be at least one unreleased state in configuration");
         }
 
         CoreSession session = doc.getCoreSession();
@@ -380,21 +385,18 @@ public class EloraDocumentHelper {
         return null;
     }
 
-    // Overload method for optional parameter fileName
-    // FILENAME SHOULD ALWAYS BE PROVIDED
-    @Deprecated
-    public static void relateBatchWithDoc(DocumentModel doc, int fileId,
-            String batchId, String fileType, String hash)
-            throws EloraException {
-        relateBatchWithDoc(doc, fileId, batchId, fileType, "", hash);
-    }
-
     public static void relateBatchWithDoc(DocumentModel doc, int fileId,
             String batch, String fileType, String fileName, String hash)
             throws EloraException {
+        String logInitMsg = "[relateBatchWithDoc] ";
         try {
             BatchManager bm = Framework.getLocalService(BatchManager.class);
             Blob blob = bm.getBlob(batch, String.valueOf(fileId));
+
+            if (blob == null) {
+                throw new EloraException("Blob not found with batch |" + batch
+                        + "| and  fileId |" + String.valueOf(fileId) + "|");
+            }
 
             BlobHolder bh = new SimpleBlobHolder(blob);
             String digest = bh.getHash().toUpperCase();
@@ -416,6 +418,20 @@ public class EloraDocumentHelper {
                         });
             }
 
+            if (blob.getFilename() != null) {
+                MimetypeRegistryService mtrs = (MimetypeRegistryService) Framework.getLocalService(
+                        MimetypeRegistry.class);
+                try {
+                    String mimetype = mtrs.getMimetypeFromFilename(
+                            blob.getFilename());
+                    blob.setMimeType(mimetype);
+                } catch (MimetypeNotFoundException e) {
+                    log.trace(logInitMsg
+                            + "An error occurred getting mimetype from filename. Exception: "
+                            + e.getMessage());
+                }
+            }
+
             // Add Blob to document
             switch (fileType) {
             case EloraGeneralConstants.FILE_TYPE_CONTENT:
@@ -425,12 +441,6 @@ public class EloraDocumentHelper {
                 DocumentHelper.addBlob(
                         doc.getProperty(NuxeoMetadataConstants.NX_FILE_CONTENT),
                         blob);
-
-                // session.save();
-                //
-                // Blob contentBlob = (Blob)
-                // doc.getPropertyValue(NuxeoMetadataConstants.NX_FILE_CONTENT);
-
                 break;
             case EloraGeneralConstants.FILE_TYPE_CAD_ATTACHMENT:
                 if (fileName != null) {
@@ -447,9 +457,6 @@ public class EloraDocumentHelper {
                     blob.setFilename(fileName);
                 }
 
-                // TODO Hau kendu Mikelek batcha igotzerakuan pasatzen dauenien
-                blob.setMimeType("application/pdf");
-
                 // We add it to the viewer base file and the viewer file
                 DocumentHelper.addBlob(
                         doc.getProperty(
@@ -461,11 +468,14 @@ public class EloraDocumentHelper {
                         blob);
                 break;
             }
+        } catch (EloraException e) {
+            throw e;
         } catch (Exception e) {
-            // TODO: handle exception
-            throw new EloraException(e.getMessage());
+            throw new EloraException(
+                    "Unknown exception relating batch with document: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
         }
-
     }
 
     public static void setupCheckIn(
@@ -1063,14 +1073,17 @@ public class EloraDocumentHelper {
             Map<String, List<String>> excludedProperties,
             boolean excludeEmptyProperties) {
 
+        // TODO: En un futuro ver la forma de evitar los schemas que no nos
+        // interesan pasar de un documento a otro. Ahora añadimos una
+        // condicion pero puede que sea mejor solucionarlo dandole una
+        // vuelta a como registramos los tipos de documentos (mirar tema
+        // draft)
+        List<String> ignoredSchemas = new ArrayList<String>();
+        ignoredSchemas.add(NuxeoMetadataConstants.NX_SCHEMA_UID);
+        ignoredSchemas.add(EloraSchemaConstants.STATES_LOG);
+
         for (String schema : to.getSchemas()) {
-            // TODO: En un futuro ver la forma de evitar los schemas que no nos
-            // interesan pasar de un documento a otro. Ahora añadimos una
-            // condicion pero puede que sea mejor solucionarlo dandole una
-            // vuelta a como registramos los tipos de documentos (mirar tema
-            // draft)
-            if (from.hasSchema(schema)
-                    && !schema.equals(NuxeoMetadataConstants.NX_SCHEMA_UID)) {
+            if (from.hasSchema(schema) && !ignoredSchemas.contains(schema)) {
                 // We create a shallow copy so we don't alter the "from" doc
                 Map<String, Object> schemaProps = new HashMap<String, Object>(
                         from.getProperties(schema));
@@ -1129,12 +1142,6 @@ public class EloraDocumentHelper {
                 to.setProperties(schema, schemaProps);
             }
         }
-    }
-
-    public static boolean isSupported(String parentState, String childState)
-            throws EloraException {
-        return LifecyclesConfig.supportedStatesMap.get(parentState).contains(
-                childState);
     }
 
     public static List<String> getUidListFromDocList(List<DocumentModel> docs) {
@@ -1346,6 +1353,24 @@ public class EloraDocumentHelper {
         Document doc = localSession.getDocumentByUUID(docModel.getId());
         doc.setReadOnly(false);
         doc.setPropertyValue(Model.VERSION_DESCRIPTION_PROP, checkinComment);
+    }
+
+    public static boolean isDocumentUnderTemplateRoot(DocumentModel doc,
+            CoreSession session) {
+
+        boolean result = false;
+
+        DocumentModel parentDoc = session.getParentDocument(doc.getRef());
+
+        if (parentDoc != null) {
+            if (parentDoc.getType().equals(
+                    NuxeoDoctypeConstants.TEMPLATE_ROOT)) {
+                return true;
+            } else {
+                result = isDocumentUnderTemplateRoot(parentDoc, session);
+            }
+        }
+        return result;
     }
 
 }

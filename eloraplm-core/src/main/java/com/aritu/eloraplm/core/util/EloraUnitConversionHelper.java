@@ -16,7 +16,7 @@ package com.aritu.eloraplm.core.util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
-import javax.faces.context.FacesContext;
+import java.util.Locale;
 
 import com.aritu.eloraplm.config.util.EloraConfig;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
@@ -31,14 +31,14 @@ import com.aritu.eloraplm.exceptions.EloraException;
  */
 public class EloraUnitConversionHelper {
 
-    public static String convertValueToDisplay(FacesContext context,
+    public static String convertValueToDisplay(Locale locale,
             String storedValue, String baseUnit)
             throws EloraException, ParseException {
 
         BigDecimal convertedValueAsDecimal = convertValueToUnit(storedValue,
                 baseUnit);
 
-        return EloraDecimalHelper.fromDecimalToLocalized(context,
+        return EloraDecimalHelper.fromDecimalToLocalized(locale,
                 convertedValueAsDecimal);
     }
 
@@ -78,7 +78,8 @@ public class EloraUnitConversionHelper {
 
         // Check decimalPlaces and if bigger, throw exception.
         int decimalPlaces = convertedValueAsDecimal.stripTrailingZeros().scale() > 0
-                ? convertedValueAsDecimal.stripTrailingZeros().scale() : 0;
+                ? convertedValueAsDecimal.stripTrailingZeros().scale()
+                : 0;
         if (decimalPlaces > maxDecimalPlaces) {
             if (roundIfTooMuchDecimals) {
                 convertedValueAsDecimal = convertedValueAsDecimal.setScale(
@@ -114,7 +115,7 @@ public class EloraUnitConversionHelper {
         return convertedUnit;
     }
 
-    public static String convertValueToStore(FacesContext context, String value,
+    public static String convertValueToStore(Locale locale, String value,
             String baseUnit) throws EloraException, ParseException {
 
         if (baseUnit == null) {
@@ -123,7 +124,7 @@ public class EloraUnitConversionHelper {
 
         // Convert the value decimal separator depending on the locale
         BigDecimal valueAsDecimal = EloraDecimalHelper.fromLocalizedToDecimal(
-                context, value);
+                locale, value);
 
         EloraConfigRow configRow = EloraConfig.unitConversionConfigMap.get(
                 baseUnit);

@@ -263,12 +263,12 @@ public class MakeItemsObsolete {
         List<Resource> predicates = new ArrayList<Resource>();
         predicates.addAll(
                 loadPredicateResources(RelationsConfig.cadRelationsList));
-        predicates.addAll(loadPredicateResources(
-                RelationsConfig.bomDocumentRelationsList));
         predicates.addAll(
                 loadPredicateResources(RelationsConfig.bomDirectRelationsList));
         predicates.addAll(loadPredicateResources(
                 RelationsConfig.bomHierarchicalRelationsList));
+        predicates.addAll(
+                loadPredicateResources(RelationsConfig.docRelationsList));
 
         /* TODO Zerk eman duen errorea jakiteko hobeto orain dagoen moduan? Begiratu:
         if (!PromoteHelper.parentsAllowTransition(doc, EloraLifeCycleConstants.TRANS_OBSOLETE,

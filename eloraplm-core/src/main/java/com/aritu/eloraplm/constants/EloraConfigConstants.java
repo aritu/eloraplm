@@ -27,25 +27,17 @@ public class EloraConfigConstants {
 
     public static final String VOC_CHECKOUT_CONFIG = "elora_checkout_config";
 
-    public static final String VOC_CHILDREN_SUPPORTED_STATES = "elora_children_supported_states";
-
     public static final String VOC_DEFAULT_CONFIG = "elora_default_config";
 
     public static final String VOC_DOCTYPE_MAPPING = "elora_doctype_mapping";
 
     public static final String VOC_GENERAL_CONFIG = "elora_general_config";
 
-    public static final String VOC_LIFECYCLE_STATES = "elora_lifecycle_states";
-
-    public static final String VOC_LIFECYCLE_TRANSITIONS = "elora_lifecycle_transitions";
-
     public static final String VOC_METADATA_MAPPING = "elora_metadata_mapping";
 
     public static final String VOC_RELATION_PROPAGATION = "elora_relation_propagation";
 
     public static final String VOC_RELATIONS_CONFIG = "elora_relations_config";
-
-    public static final String VOC_TRANSITION_CONFIG = "elora_transition_config";
 
     public static final String VOC_UNIT_CONVERSION_MAPPING = "elora_unit_conversion_mapping";
 
@@ -60,15 +52,17 @@ public class EloraConfigConstants {
     /*
      * Keys
      */
-    public static final String KEY_CHILDREN_CHECKOUT_VERSION = "children_checkout_version";
-
-    public static final String KEY_PROTOCOL = "protocol";
-
     public static final String KEY_DECIMAL_MAX_INTEGER_PLACES = "decimalMaxIntegerPlaces";
 
     public static final String KEY_DECIMAL_MAX_DECIMAL_PLACES = "decimalMaxDecimalPlaces";
 
     public static final String KEY_IMPLANTATION_DATE = "implantationDate";
+
+    public static final String KEY_INTEGRATOR_BINARY_VERSION = "integratorBinaryVersion";
+
+    public static final String KEY_INTEGRATOR_BINARY_URL = "integratorBinaryUrl";
+
+    public static final String KEY_SHOW_MAX_COMPONENTS = "showMaxComponents";
 
     /*
      * Properties
@@ -96,22 +90,6 @@ public class EloraConfigConstants {
     public static final String PROP_DOCTYPE_MAPPING_CAD_DOCTYPE = "cad_doctype";
 
     public static final String PROP_DOCTYPE_MAPPING_PLM_DOCTYPE = "plm_doctype";
-
-    public static final String PROP_LIFECYCLE_STATES_STATUS = "status";
-
-    public static final String PROP_LIFECYCLE_STATE_ISLOCKABLE = "isLockable";
-
-    public static final String PROP_LIFECYCLE_PARENT_STATE = "parent_state";
-
-    public static final String PROP_LIFECYCLE_CHILDREN_STATE = "children_state";
-
-    public static final String PROP_LIFECYCLE_TRANSITIONS_LIFECYCLE = "lifecycle";
-
-    public static final String PROP_LIFECYCLE_TRANSITIONS_STATE = "state";
-
-    public static final String PROP_LIFECYCLE_TRANSITIONS_DEMOTE = "demoteTransitions";
-
-    public static final String PROP_LIFECYCLE_TRANSITIONS_PROMOTE = "promoteTransitions";
 
     public static final String PROP_METADATA_MAPPING_AUTHORING_TOOL = "authoring_tool";
 
@@ -174,6 +152,8 @@ public class EloraConfigConstants {
 
     public static final String VAL_RELATIONS_CONFIG_TYPE_BOM = "BOM";
 
+    public static final String VAL_RELATIONS_CONFIG_TYPE_DOC = "DOC";
+
     public static final String VAL_RELATIONS_CONFIG_TYPE_CONTAINER = "CONTAINER";
 
     public static final String VAL_RELATIONS_CONFIG_SUBTYPE_HIERARCHICAL = "Hierarchical";
@@ -182,7 +162,9 @@ public class EloraConfigConstants {
 
     public static final String VAL_RELATIONS_CONFIG_SUBTYPE_DIRECT = "Direct";
 
-    public static final String VAL_RELATIONS_CONFIG_SUBTYPE_DOCUMENT = "Document";
+    public static final String VAL_RELATIONS_CONFIG_SUBTYPE_BASIC = "Basic";
+
+    public static final String VAL_RELATIONS_CONFIG_SUBTYPE_CAD = "Cad";
 
     public static final String VAL_RELATIONS_CONFIG_SUBTYPE_ANARCHIC = "Anarchic";
 

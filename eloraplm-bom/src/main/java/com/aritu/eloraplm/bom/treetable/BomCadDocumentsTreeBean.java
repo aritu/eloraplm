@@ -105,6 +105,7 @@ public class BomCadDocumentsTreeBean extends EditableRelationTreeBean
                 setDirectorOrdering(null);
                 break;
             case EloraDoctypeConstants.CAD_ASSEMBLY:
+            case EloraDoctypeConstants.CAD_PART:
                 setViewerOrdering(null);
                 setDirectorOrdering(1);
                 break;

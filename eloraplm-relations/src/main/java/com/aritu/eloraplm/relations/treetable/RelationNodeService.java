@@ -33,10 +33,10 @@ import org.nuxeo.runtime.api.Framework;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;

@@ -41,6 +41,9 @@
       <schema name="part_classification"/>
       <facet name="BomDocument" />
       <facet name="AutomaticCode"/>
+      <facet name="StoreCheckInInfo" />
+      <facet name="StoreReviewInfo" />
+      <facet name="StoreStatesLog" />
     </doctype>
 
     <doctype extends="File" name="BomManufacturerPart">
@@ -48,6 +51,9 @@
       <schema name="responsible"/>
       <schema name="bom_manufacturer_part"/>
       <facet name="BomDocument" />
+      <facet name="StoreCheckInInfo" />
+      <facet name="StoreReviewInfo" />
+      <facet name="StoreStatesLog" />
     </doctype>
 
     <doctype extends="File" name="BomTool">
@@ -61,6 +67,9 @@
       <schema name="related_manufacturer"/>
       <facet name="BomDocument" />
       <facet name="AutomaticCode"/>
+      <facet name="StoreCheckInInfo" />
+      <facet name="StoreReviewInfo" />
+      <facet name="StoreStatesLog" />
     </doctype>
 
     <doctype extends="File" name="BomPackaging">
@@ -73,6 +82,9 @@
       <schema name="related_manufacturer"/>
       <facet name="BomDocument" />
       <facet name="AutomaticCode"/>
+      <facet name="StoreCheckInInfo" />
+      <facet name="StoreReviewInfo" />
+      <facet name="StoreStatesLog" />
     </doctype>
 
     <doctype extends="File" name="BomSpecification">
@@ -94,6 +106,9 @@
       <schema name="related_customer"/>
       <facet name="BomDocument" />
       <facet name="AutomaticCode"/>
+      <facet name="StoreCheckInInfo" />
+      <facet name="StoreReviewInfo" />
+      <facet name="StoreStatesLog" />
     </doctype>
 
     <doctype extends="File" name="BomCustomerProduct">
@@ -101,6 +116,9 @@
       <schema name="responsible"/>
       <schema name="bom_customer_product"/>
       <facet name="BomDocument" />
+      <facet name="StoreCheckInInfo" />
+      <facet name="StoreReviewInfo" />
+      <facet name="StoreStatesLog" />
     </doctype>
 
     <doctype extends="Folder" name="StructEbom">

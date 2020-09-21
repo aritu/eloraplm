@@ -17,5 +17,7 @@ To create EloraPLM package we have to build it as any other Nuxeo package, using
 
 The code in EloraPLM is copyright Aritu S. Coop., and licensed under the GNU Lesser General Public License v2.1.
 
+The included elora-primefaces library, which is PrimeFaces with small modifications to make it work with Nuxeo, has MIT license, included in the directory where the license is located.
+
 Icons are based on Font Awesome licensed under Creative Commons Attribution 4.0 International
 (license: https://fontawesome.com/license), and modified to fit our needs.

@@ -48,14 +48,16 @@ public class EloraLifeCycleConstants {
 
     public static final String ASYNC_PROCESSING = "asyncProcessing";
 
-    // -- STATUS
+    // -- STATES PROPERTIES
     public static final String STATUS_RELEASED = "released";
 
-    public static final String STATUS_NOT_RELEASED = "notReleased";
+    public static final String STATUS_UNRELEASED = "unreleased";
 
     public static final String STATUS_OBSOLETE = "obsolete";
 
     public static final String STATUS_DELETED = "deleted";
+
+    public static final String DEFAULT_STATE_COLOR = "#888888";
 
     // -- TRANSITIONS
     public static final String TRANS_APPROVE = "approve";

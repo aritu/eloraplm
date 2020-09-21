@@ -66,6 +66,20 @@
             <field schema="default_search" name="dc_modified_min"/>
             <field schema="default_search" name="dc_modified_max"/>
           </predicate>
+          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+            <field schema="elora_search" name="checkin_lastCheckedInBy" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
+            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
+          </predicate>
+          <predicate parameter="review:lastReviewer" operator="IN">
+            <field schema="elora_search" name="review_lastReviewer" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="review:lastReviewed">
+            <field schema="elora_search" name="review_lastReviewed_min"/>
+            <field schema="elora_search" name="review_lastReviewed_max"/>
+          </predicate>
           <predicate operator="BETWEEN" parameter="dc:expired">
             <field name="dc_expired_min" schema="elora_search"/>
             <field name="dc_expired_max" schema="elora_search"/>
@@ -169,6 +183,20 @@
             <field name="dc_modified_min" schema="default_search"/>
             <field name="dc_modified_max" schema="default_search"/>
           </predicate>
+          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+            <field schema="elora_search" name="checkin_lastCheckedInBy" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
+            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
+          </predicate>
+          <predicate parameter="review:lastReviewer" operator="IN">
+            <field schema="elora_search" name="review_lastReviewer" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="review:lastReviewed">
+            <field schema="elora_search" name="review_lastReviewed_min"/>
+            <field schema="elora_search" name="review_lastReviewed_max"/>
+          </predicate>
           <predicate operator="BETWEEN" parameter="dc:expired">
             <field schema="elora_search" name="dc_expired_min"/>
             <field schema="elora_search" name="dc_expired_max"/>
@@ -269,6 +297,20 @@
           <predicate operator="BETWEEN" parameter="dc:modified">
             <field name="dc_modified_min" schema="default_search"/>
             <field name="dc_modified_max" schema="default_search"/>
+          </predicate>
+          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+            <field schema="elora_search" name="checkin_lastCheckedInBy" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
+            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
+          </predicate>
+          <predicate parameter="review:lastReviewer" operator="IN">
+            <field schema="elora_search" name="review_lastReviewer" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="review:lastReviewed">
+            <field schema="elora_search" name="review_lastReviewed_min"/>
+            <field schema="elora_search" name="review_lastReviewed_max"/>
           </predicate>
           <predicate operator="BETWEEN" parameter="dc:expired">
             <field schema="elora_search" name="dc_expired_min"/>
@@ -376,6 +418,20 @@
             <field schema="default_search" name="dc_modified_min"/>
             <field schema="default_search" name="dc_modified_max"/>
           </predicate>
+          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+            <field schema="elora_search" name="checkin_lastCheckedInBy" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
+            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
+          </predicate>
+          <predicate parameter="review:lastReviewer" operator="IN">
+            <field schema="elora_search" name="review_lastReviewer" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="review:lastReviewed">
+            <field schema="elora_search" name="review_lastReviewed_min"/>
+            <field schema="elora_search" name="review_lastReviewed_max"/>
+          </predicate>
           <predicate operator="BETWEEN" parameter="dc:expired">
             <field name="dc_expired_min" schema="elora_search"/>
             <field name="dc_expired_max" schema="elora_search"/>
@@ -478,6 +534,20 @@
           <predicate operator="BETWEEN" parameter="dc:modified">
             <field schema="default_search" name="dc_modified_min"/>
             <field schema="default_search" name="dc_modified_max"/>
+          </predicate>
+          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+            <field schema="elora_search" name="checkin_lastCheckedInBy" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
+            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
+          </predicate>
+          <predicate parameter="review:lastReviewer" operator="IN">
+            <field schema="elora_search" name="review_lastReviewer" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="review:lastReviewed">
+            <field schema="elora_search" name="review_lastReviewed_min"/>
+            <field schema="elora_search" name="review_lastReviewed_max"/>
           </predicate>
           <predicate operator="BETWEEN" parameter="dc:expired">
             <field name="dc_expired_min" schema="elora_search"/>
@@ -587,6 +657,20 @@
           <predicate operator="BETWEEN" parameter="dc:modified">
             <field schema="default_search" name="dc_modified_min"/>
             <field schema="default_search" name="dc_modified_max"/>
+          </predicate>
+          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+            <field schema="elora_search" name="checkin_lastCheckedInBy" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
+            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
+          </predicate>
+          <predicate parameter="review:lastReviewer" operator="IN">
+            <field schema="elora_search" name="review_lastReviewer" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="review:lastReviewed">
+            <field schema="elora_search" name="review_lastReviewed_min"/>
+            <field schema="elora_search" name="review_lastReviewed_max"/>
           </predicate>
           <predicate operator="BETWEEN" parameter="dc:expired">
             <field name="dc_expired_min" schema="elora_search"/>
@@ -700,6 +784,20 @@
             <field schema="default_search" name="dc_modified_min"/>
             <field schema="default_search" name="dc_modified_max"/>
           </predicate>
+          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+            <field schema="elora_search" name="checkin_lastCheckedInBy" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
+            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
+          </predicate>
+          <predicate parameter="review:lastReviewer" operator="IN">
+            <field schema="elora_search" name="review_lastReviewer" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="review:lastReviewed">
+            <field schema="elora_search" name="review_lastReviewed_min"/>
+            <field schema="elora_search" name="review_lastReviewed_max"/>
+          </predicate>
           <predicate operator="BETWEEN" parameter="dc:expired">
             <field name="dc_expired_min" schema="elora_search"/>
             <field name="dc_expired_max" schema="elora_search"/>
@@ -802,6 +900,20 @@
           <predicate operator="BETWEEN" parameter="dc:modified">
             <field schema="default_search" name="dc_modified_min"/>
             <field schema="default_search" name="dc_modified_max"/>
+          </predicate>
+          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+            <field schema="elora_search" name="checkin_lastCheckedInBy" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
+            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
+          </predicate>
+          <predicate parameter="review:lastReviewer" operator="IN">
+            <field schema="elora_search" name="review_lastReviewer" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="review:lastReviewed">
+            <field schema="elora_search" name="review_lastReviewed_min"/>
+            <field schema="elora_search" name="review_lastReviewed_max"/>
           </predicate>
           <predicate operator="BETWEEN" parameter="dc:expired">
             <field name="dc_expired_min" schema="elora_search"/>

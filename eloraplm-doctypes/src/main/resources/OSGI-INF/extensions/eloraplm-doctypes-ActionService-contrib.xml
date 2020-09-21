@@ -33,7 +33,9 @@
             </rule>
         </filter>
         
-        <filter id="isNormalDocument">
+        <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet.
+        Here we use directly all the doctypes that now have the facet. -->
+        <filter id="isBasicDocument">
             <rule grant="true">
                 <type>File</type>
                 <type>Note</type>

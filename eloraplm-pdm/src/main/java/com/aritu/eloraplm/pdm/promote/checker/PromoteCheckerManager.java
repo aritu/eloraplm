@@ -23,7 +23,6 @@ import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.pdm.promote.treetable.NodeDynamicInfo;
 import com.aritu.eloraplm.pdm.promote.treetable.PromoteNodeData;
-import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -44,8 +43,6 @@ public interface PromoteCheckerManager {
     List<Resource> getSpecialPredicates();
 
     List<String> getDirectPredicates();
-
-    EloraConfigTable getLifeCycleStatesConfig();
 
     void resetValues();
 

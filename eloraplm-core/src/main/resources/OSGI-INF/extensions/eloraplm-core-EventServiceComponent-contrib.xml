@@ -5,12 +5,12 @@
     <require>org.nuxeo.elasticsearch.core.listener</require>
    
     <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
-        
-        <!-- orderingPriorityListener -->
-        <listener name="orderingPriorityListener" async="false" postCommit="false" 
-                  class="com.aritu.eloraplm.core.listener.OrderingPriorityListener" priority="150">
-            <event>documentCreated</event>
-        </listener>
+      
+      <!-- orderingPriorityListener -->
+      <listener name="orderingPriorityListener" async="false" postCommit="false" 
+        class="com.aritu.eloraplm.core.listener.OrderingPriorityListener" priority="150">
+          <event>documentCreated</event>
+      </listener>
 
       <listener name="elasticSearchInlineListener" async="false"
         enabled="${elasticsearch.enabled:=true}"
@@ -32,7 +32,23 @@
           <event>childrenOrderChanged</event>
           <event>PdmRestoredEvent</event>
       </listener>
+      
+      <!-- DocumentReviewInfoUpdaterListener -->
+      <listener name="DocumentReviewInfoUpdaterListener" async="false" postCommit="false" 
+        class="com.aritu.eloraplm.core.listener.DocumentReviewInfoUpdaterListener" priority="150">
+          <event>lifecycle_transition_event</event>
+      </listener>
 
+      <!-- StateLogListener -->
+      <listener name="StateLogListener" async="false" postCommit="false" 
+        class="com.aritu.eloraplm.core.listener.StateLogListener" priority="200">
+          <event>lifecycle_transition_event</event>
+          <event>documentCreated</event>
+          <event>PdmCheckedInEvent</event>
+          <event>documentCreatedByCopy</event>
+          <event>PdmOverwrittenEvent</event>
+      </listener>
+      
     </extension>
 
 </component>

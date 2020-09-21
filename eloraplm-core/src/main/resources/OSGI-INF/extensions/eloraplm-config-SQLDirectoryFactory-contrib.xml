@@ -36,17 +36,6 @@
       <dataFile>directories/elora_general_config.csv</dataFile>
       <createTablePolicy>on_missing_columns</createTablePolicy>
     </directory>
-
-    <directory name="elora_lifecycle_states">
-      <schema>eloraLifecycleStates</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_lifecycle_states</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_lifecycle_states.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
-    </directory>
     
     <directory name="elora_relation_propagation">
       <schema>eloraRelationPropagation</schema>

@@ -27,7 +27,7 @@ public final class NuxeoMetadataConstants {
     public static final String NX_DC_CREATOR = "dc:creator";
 
     public static final String NX_DC_CREATED = "dc:created";
-    
+
     public static final String NX_DC_MODIFIED = "dc:modified";
 
     public static final String NX_DC_NATURE = "dc:nature";
@@ -37,6 +37,8 @@ public final class NuxeoMetadataConstants {
     public static final String NX_DC_SOURCE = "dc:source";
 
     public static final String NX_FILE_CONTENT = "file:content";
+
+    public static final String NX_FILE_CONTENT_NAME = "file:content/name";
 
     public static final String NX_FILES_FILES = "files:files";
 

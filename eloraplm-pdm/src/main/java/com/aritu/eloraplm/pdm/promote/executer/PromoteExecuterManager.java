@@ -38,7 +38,6 @@ import com.aritu.eloraplm.exceptions.EloraException;
 public interface PromoteExecuterManager {
 
     void processPromote(TreeNode root, String transition, String finalState,
-            EloraConfigTable lifeCycleStatesConfig,
             EloraDocumentRelationManager eloraDocumentRelationManager)
             throws EloraException, DocumentAlreadyLockedException,
             DocumentInUnlockableStateException, DocumentLockRightsException;

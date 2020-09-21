@@ -33,8 +33,7 @@ public class EloraRelationConstants {
 
     public static final String CAD_HAS_SUPPRESSED = "http://eloraplm.aritu.com/relations/CadHasSuppressed";
 
-    // public static final String CAD_HAS_DOCUMENT =
-    // "http://eloraplm.aritu.com/relations/CadHasDocument";
+    public static final String CAD_HAS_DOCUMENT = "http://eloraplm.aritu.com/relations/CadHasDocument";
 
     // public static final String CAD_HAS_VIRTUAL_COMPONENT =
     // "http://eloraplm.aritu.com/relations/CadHasVirtualComponent";

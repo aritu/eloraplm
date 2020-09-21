@@ -45,7 +45,7 @@ public class TestCodeCreationService {
     public void isComponentLoaded() {
         RuntimeService runtime = Framework.getRuntime();
         Assert.assertNotNull(runtime.getComponent(
-                "com.aritu.eloraplm.codecreation.code-creation-service"));
+                "com.aritu.eloraplm.codecreation.service.CodeCreationService"));
     }
 
     @Test

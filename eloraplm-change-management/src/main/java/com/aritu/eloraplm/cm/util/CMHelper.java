@@ -51,9 +51,6 @@ import com.aritu.eloraplm.cm.ModifiedItem;
 import com.aritu.eloraplm.cm.treetable.CMTreeBeanHelper;
 import com.aritu.eloraplm.config.util.CMConfig;
 import com.aritu.eloraplm.config.util.CMImpactableConfig;
-import com.aritu.eloraplm.config.util.EloraConfigTable;
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
-import com.aritu.eloraplm.config.util.LifecyclesConfigHelper;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMMetadataConstants;
@@ -63,6 +60,7 @@ import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.QueriesConstants;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
@@ -1447,7 +1445,7 @@ public class CMHelper {
 
         List<ModifiedItem> derivedDocModifiedItemsList = new ArrayList<ModifiedItem>();
 
-        for (String relation : RelationsConfig.bomDocumentRelationsList) {
+        for (String relation : RelationsConfig.docRelationsList) {
             Resource predicateResource = new ResourceImpl(relation);
 
             // Retrieve related Objects
@@ -1498,7 +1496,11 @@ public class CMHelper {
 
         List<ModifiedItem> derivedBomModifiedItemsList = new ArrayList<ModifiedItem>();
 
-        for (String relation : RelationsConfig.bomDocumentRelationsList) {
+        ArrayList<String> relations = new ArrayList<String>();
+        relations.add(EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
+        relations.add(EloraRelationConstants.BOM_HAS_DOCUMENT);
+
+        for (String relation : relations) {
 
             Resource predicateResource = new ResourceImpl(relation);
 
@@ -1538,13 +1540,14 @@ public class CMHelper {
         List<ModifiedItem> derivedDocModifiedItemsList = new ArrayList<ModifiedItem>();
 
         // merge cadSpecial and cadDirect relations
-        ArrayList<String> cadSpecialAndDirectRelations = new ArrayList<String>();
-        cadSpecialAndDirectRelations.addAll(
-                RelationsConfig.cadSpecialRelationsList);
-        cadSpecialAndDirectRelations.addAll(
-                RelationsConfig.cadDirectRelationsList);
+        ArrayList<String> relations = new ArrayList<String>();
+        relations.addAll(RelationsConfig.cadSpecialRelationsList);
+        relations.addAll(RelationsConfig.cadDirectRelationsList);
+        // we cannot use a relation list because we don't need all document
+        // relations, just the CAD-DOC one
+        relations.add(EloraRelationConstants.CAD_HAS_DOCUMENT);
 
-        for (String relation : cadSpecialAndDirectRelations) {
+        for (String relation : relations) {
 
             Resource predicateResource = new ResourceImpl(relation);
 
@@ -3368,12 +3371,11 @@ public class CMHelper {
             DocumentModel wcDoc = session.getDocument(wcRef);
             if (wcDoc != null) {
 
-                EloraConfigTable obsoleteAndDeletedStatesConfig = LifecyclesConfigHelper.getObsoleteAndDeletedStatesConfig();
                 String wcDocType = wcDoc.getType();
 
                 // if the WC state is an OBSOLETE or DELETED state, ignore the
                 // document and all its versions.
-                if (!obsoleteAndDeletedStatesConfig.containsKey(
+                if (!LifecyclesConfig.obsoleteAndDeletedStatesList.contains(
                         wcDoc.getCurrentLifeCycleState())) {
                     Long wcMajorVersion = (Long) wcDoc.getPropertyValue(
                             NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);

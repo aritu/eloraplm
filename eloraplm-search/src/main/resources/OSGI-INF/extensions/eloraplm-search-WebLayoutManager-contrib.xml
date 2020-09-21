@@ -49,6 +49,18 @@
           <widget>elora_modified_search</widget>
         </row>
         <row>
+          <widget>elora_lastCheckedInBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInDate_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewer_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewed_search</widget>
+        </row>
+        <row>
           <widget>elora_expired_search</widget>
         </row>
         <row>
@@ -101,6 +113,18 @@
           <widget>elora_modified_search</widget>
         </row>
         <row>
+          <widget>elora_lastCheckedInBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInDate_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewer_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewed_search</widget>
+        </row>
+        <row>
           <widget>elora_expired_search</widget>
         </row>
         <row>
@@ -148,6 +172,18 @@
         </row>
         <row>
           <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInDate_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewer_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewed_search</widget>
         </row>
         <row>
           <widget>elora_expired_search</widget>
@@ -203,6 +239,18 @@
           <widget>elora_modified_search</widget>
         </row>
         <row>
+          <widget>elora_lastCheckedInBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInDate_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewer_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewed_search</widget>
+        </row>
+        <row>
           <widget>elora_expired_search</widget>
         </row>
         <row>
@@ -251,6 +299,18 @@
         </row>
         <row>
           <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInDate_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewer_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewed_search</widget>
         </row>
         <row>
           <widget>elora_expired_search</widget>
@@ -307,6 +367,18 @@
         </row>
         <row>
           <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInDate_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewer_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewed_search</widget>
         </row>
         <row>
           <widget>elora_expired_search</widget>
@@ -368,6 +440,18 @@
           <widget>elora_modified_search</widget>
         </row>
         <row>
+          <widget>elora_lastCheckedInBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInDate_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewer_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewed_search</widget>
+        </row>
+        <row>
           <widget>elora_expired_search</widget>
         </row>
         <row>
@@ -416,6 +500,18 @@
         </row>
         <row>
           <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastCheckedInDate_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewer_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastReviewed_search</widget>
         </row>
         <row>
           <widget>elora_expired_search</widget>
@@ -1163,6 +1259,149 @@
           </properties>
           <properties widgetMode="edit">
             <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+
+    <widget name="elora_lastCheckedInBy_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+          <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="checkin_lastCheckedInBy" type="multipleUsersSuggestion">
+          <labels>
+            <label mode="any">eloraplm.label.search.lastCheckedInBy</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:checkin_lastCheckedInBy</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="userSuggestionSearchType">USER_TYPE</property>
+            <property name="minChars">1</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_lastCheckedInDate_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">eloraplm.label.search.lastCheckedInDate</label>
+      </labels>
+      <translated>true</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+        <property name="display">inline</property>
+        <property name="subLabelStyleClass">tinyLabel</property>
+      </properties>
+      <subWidgets>
+        <widget name="checkin_lastCheckedInDate_min" type="datetime">
+          <fields>
+            <field>eloras:checkin_lastCheckedInDate_min</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.between</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
+          </properties>
+        </widget>
+        <widget name="checkin_lastCheckedInDate_max" type="datetime">
+          <fields>
+            <field>eloras:checkin_lastCheckedInDate_max</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.and</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_lastReviewer_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+          <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="review_lastReviewer" type="multipleUsersSuggestion">
+          <labels>
+            <label mode="any">eloraplm.label.search.lastReviewer</label>
+          </labels>
+          <translated>true</translated>     
+          <fields>
+            <field>eloras:review_lastReviewer</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="userSuggestionSearchType">USER_TYPE</property>
+            <property name="minChars">1</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_lastReviewed_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">eloraplm.label.search.lastReviewed</label>
+      </labels>
+      <translated>true</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+        <property name="display">inline</property>
+        <property name="subLabelStyleClass">tinyLabel</property>
+      </properties>
+      <subWidgets>
+        <widget name="review_lastReviewed_min" type="datetime">
+          <fields>
+            <field>eloras:review_lastReviewed_min</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.between</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
+          </properties>
+        </widget>
+        <widget name="review_lastReviewed_max" type="datetime">
+          <fields>
+            <field>eloras:review_lastReviewed_max</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.and</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
           </properties>
         </widget>
       </subWidgets>

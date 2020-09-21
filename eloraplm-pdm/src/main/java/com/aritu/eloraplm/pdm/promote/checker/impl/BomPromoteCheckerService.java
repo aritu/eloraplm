@@ -30,11 +30,9 @@ import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.config.util.EloraConfigTable;
-import com.aritu.eloraplm.config.util.LifecyclesConfig;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
-import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.promote.constants.PromoteConstants;
 import com.aritu.eloraplm.pdm.promote.treetable.PromoteNodeData;
@@ -49,14 +47,11 @@ import com.aritu.eloraplm.pdm.promote.util.PromoteHelper;
  */
 public class BomPromoteCheckerService extends PromoteCheckerService {
 
-    protected EloraConfigTable lifeCycleStatesConfig;
 
     protected Map<String, Boolean> iconOnlyPredicates;
 
     protected RelationManager relationManager = Framework.getLocalService(
             RelationManager.class);
-
-    // protected EloraConfigTable relationDescendingPropagationConfig;
 
     private List<Resource> hierarchicalAndDirectPredicates;
 
@@ -67,11 +62,6 @@ public class BomPromoteCheckerService extends PromoteCheckerService {
     @Override
     public List<Resource> getHierarchicalAndDirectPredicates() {
         return hierarchicalAndDirectPredicates;
-    }
-
-    @Override
-    public EloraConfigTable getLifeCycleStatesConfig() {
-        return lifeCycleStatesConfig;
     }
 
     @Override
@@ -164,7 +154,7 @@ public class BomPromoteCheckerService extends PromoteCheckerService {
         nodeInfo.setFinalState(childFinalState);
 
         boolean alreadyPromoted = PromoteHelper.isAlreadyPromoted(doc,
-                finalState, lifeCycleStatesConfig);
+                finalState);
         nodeInfo.setAlreadyPromoted(alreadyPromoted);
         nodeInfo.setResultMsg(resultMsg);
         nodeInfo.setResult(result);
@@ -257,7 +247,7 @@ public class BomPromoteCheckerService extends PromoteCheckerService {
                 predicateResource);
         String msg = "";
         for (DocumentModel objectDoc : objectDocList) {
-            if (!EloraDocumentHelper.isSupported(docFinalState,
+            if (!LifecyclesConfig.isSupported(docFinalState,
                     objectDoc.getCurrentLifeCycleState())) {
                 msg = messages.get(
                         "eloraplm.message.error.state.not.supported.by.related.cad");
@@ -268,7 +258,6 @@ public class BomPromoteCheckerService extends PromoteCheckerService {
     }
 
     protected void loadConfigurations() throws EloraException {
-        // TODO Hau konfiguraziotik bete!!
         iconOnlyPredicates = new LinkedHashMap<String, Boolean>();
         iconOnlyPredicates.put(EloraRelationConstants.CAD_IN_CONTEXT_WITH,
                 false);
@@ -277,24 +266,6 @@ public class BomPromoteCheckerService extends PromoteCheckerService {
         setSpecialPredicates();
         setHierarchicalAndDirectPredicates();
 
-        // Hierarchical and direct relations
-        // hierarchicalRelationsConfig =
-        // new ArrayList<>(RelationsConfig.bomHierarchicalRelationsConfig);
-        // directRelationsConfig = new
-        // ArrayList<>(RelationsConfig.bomDirectRelationsConfig);
-
-        lifeCycleStatesConfig = LifecyclesConfig.allStatesConfig;
-
-        //
-        // finalStateOrdering = (long)
-        // lifeCycleStatesConfig.getRow(finalState).getProperty(
-        // "ordering");
-
-        // releasedStatesConfig = LifecyclesConfig.releasedStatesConfig;
-
-        // log.trace(logInitMsg
-        // + "Hierarchical and direct cad relations configuration loaded.");
-        // log.trace(logInitMsg + "--- EXIT ---");
     }
 
     private void setDirectPredicates() {
