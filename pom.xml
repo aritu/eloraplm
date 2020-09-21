@@ -60,11 +60,6 @@
             </dependency>
             <dependency>
                 <groupId>com.aritu.eloraplm</groupId>
-                <artifactId>eloraplm-change-management-batch-processing</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aritu.eloraplm</groupId>
                 <artifactId>eloraplm-code-creation</artifactId>
                 <version>${project.version}</version>
             </dependency>
