@@ -14,6 +14,8 @@ import com.aritu.eloraplm.exceptions.EloraException;
  */
 public interface TemplatingService {
 
+    public boolean existsTemplate(String id);
+
     public TemplateDescriptor getTemplate(String id);
 
     public Blob processTemplate(String id, DocumentModel doc)

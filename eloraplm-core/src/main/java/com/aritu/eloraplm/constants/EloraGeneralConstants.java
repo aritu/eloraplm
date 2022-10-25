@@ -28,9 +28,29 @@ public class EloraGeneralConstants {
 
     public static final String CONTEXT_KEY_DC_DATA = "DC_DATA";
 
-    public static final String CONTEXT_KEY_DOC_VERSION_LABEL = "DOC_VERSION_LABEL";
+    public static final String CONTEXT_KEY_DOC_VERSION_LABEL_ON_CHECKIN = "DOC_VERSION_LABEL_ON_CHECKIN";
+
+    public static final String CONTEXT_KEY_DOC_VERSION_LABEL_ON_CREATE = "DOC_VERSION_LABEL_ON_CREATE";
+
+    public static final String CONTEXT_KEY_CREATOR_USER = "CREATOR_USER";
+
+    public static final String CONTEXT_KEY_CREATED_DATE = "CREATED_DATE";
 
     public static final String CONTEXT_SKIP_AUTOMATIC_CODE_CREATION = "SKIP_AUTOMATIC_CODE_CREATION";
+
+    public static final String CONTEXT_SKIP_CHECKIN_INFO = "SKIP_CHECKIN_INFO";
+
+    public static final String CONTEXT_SKIP_REVIEW_INFO = "SKIP_REVIEW_INFO";
+
+    public static final String CONTEXT_SKIP_STATE_LOG_LISTENER = "SKIP_STATE_LOG_LISTENER";
+
+    public static final String CONTEXT_SKIP_VIEWER_FILE_CREATION = "CONTEXT_SKIP_VIEWER_FILE_CREATION";
+
+    public static final String CONTEXT_SKIP_LOCK = "CONTEXT_SKIP_LOCK";
+
+    public static final String CONTEXT_ERROR_KEY = "CONTEXT_ERROR_KEY";
+
+    public static final String CONTEXT_KEY_ACTION = "ACTION";
 
     // File types
     public static final String FILE_TYPE_CONTENT = "content";

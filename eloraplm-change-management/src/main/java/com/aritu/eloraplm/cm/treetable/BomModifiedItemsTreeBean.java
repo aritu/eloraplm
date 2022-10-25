@@ -3,6 +3,8 @@ package com.aritu.eloraplm.cm.treetable;
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +25,7 @@ import org.primefaces.model.TreeNode;
 import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMEventNames;
+import com.aritu.eloraplm.constants.CMMetadataConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
@@ -33,6 +36,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.UnlockCheckedOutDocumentException;
 import com.aritu.eloraplm.pdm.promote.treetable.PromoteTreeBean;
 import com.aritu.eloraplm.pdm.webapp.beans.PdmActionBean;
+import com.aritu.eloraplm.webapp.base.beans.EloraWebActionsBean;
 
 @Name("cmBomModifiedItemsTreeBean")
 @Scope(ScopeType.CONVERSATION)
@@ -52,6 +56,9 @@ public class BomModifiedItemsTreeBean extends ModifiedItemsTreeBean
 
     @In(create = true)
     protected transient PromoteTreeBean promoteTreeBean;
+
+    @In(create = true)
+    protected EloraWebActionsBean eloraWebActions;
 
     public BomModifiedItemsTreeBean() {
         super(CMConstants.ITEM_TYPE_BOM);
@@ -122,23 +129,26 @@ public class BomModifiedItemsTreeBean extends ModifiedItemsTreeBean
         return super.getRoot();
     }
 
-    @Observer(CMEventNames.CM_DOC_MODIFIED_ITEMS_SAVED)
+    @Observer(value = { CMEventNames.CM_DOC_MODIFIED_ITEMS_SAVED,
+            CMEventNames.CM_MODIFIED_ITEMS_DERIVED_FROM_IMPACTED_DOCS_ADDED,
+            CMEventNames.CM_REFRESH_MODIFIED_ITEMS })
     @BypassInterceptors
-    public void markTreeToBeRealoded() {
+    public void markTreeToBeReloaded() {
         reloadBomModifiedItems = true;
     }
 
-    public void lock() throws EloraException {
+    public void lock() {
         // if there is any unsaved change in the tree, don't do anything
         if (!getIsDirty()) {
-            if (getSelectedNode() != null) {
-                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
                 DocumentModel selectedDoc = (selectedNodeData.getDestinationItem() != null
                         ? selectedNodeData.getDestinationItem()
                         : selectedNodeData.getOriginItem());
                 try {
                     EloraDocumentHelper.lockDocument(selectedDoc);
-                    reloadTree();
+                    reloadTree(selectedNode);
                     facesMessages.add(StatusMessage.Severity.INFO,
                             messages.get("eloraplm.message.success.lock"));
                 } catch (DocumentAlreadyLockedException e) {
@@ -159,6 +169,9 @@ public class BomModifiedItemsTreeBean extends ModifiedItemsTreeBean
                             e.getDocument().getPropertyValue(
                                     EloraMetadataConstants.ELORA_ELO_REFERENCE),
                             e.getDocument().getTitle());
+                } catch (EloraException e) {
+                    facesMessages.add(StatusMessage.Severity.WARN,
+                            messages.get("eloraplm.message.error.cm.lock"));
                 }
             } else {
                 facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -170,17 +183,18 @@ public class BomModifiedItemsTreeBean extends ModifiedItemsTreeBean
         }
     }
 
-    public void unlock() throws EloraException {
+    public void unlock() {
         // if there is any unsaved change in the tree, don't do anything
         if (!getIsDirty()) {
-            if (getSelectedNode() != null) {
-                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
                 DocumentModel selectedDoc = (selectedNodeData.getDestinationItem() != null
                         ? selectedNodeData.getDestinationItem()
                         : selectedNodeData.getOriginItem());
                 try {
                     EloraDocumentHelper.unlockDocument(selectedDoc);
-                    reloadTree();
+                    reloadTree(selectedNode);
                     facesMessages.add(StatusMessage.Severity.INFO,
                             messages.get("eloraplm.message.success.unlock"));
                 } catch (DocumentLockRightsException e) {
@@ -200,24 +214,34 @@ public class BomModifiedItemsTreeBean extends ModifiedItemsTreeBean
         }
     }
 
-    public void checkIn(DocumentModel doc) throws EloraException {
+    public void checkIn(DocumentModel doc) {
         // if there is any unsaved change in the tree, don't do anything
         if (!getIsDirty()) {
-            if (getSelectedNode() != null) {
-                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
                 if (isCheckinAllowed(selectedNodeData)) {
+
                     String checkinComment = selectedNodeData.getComment();
                     pdmAction.setCheckinComment(checkinComment);
                     pdmAction.checkIn(doc);
 
                     // Set as managed
                     if (!selectedNodeData.getIsManaged()) {
-                        CMHelper.setAsManagedModifiedItemByNodeId(
-                                documentManager,
-                                navigationContext.getCurrentDocument(),
-                                getItemType(), selectedNodeData.getNodeId());
+                        try {
+                            CMHelper.setAsManagedModifiedItemByNodeId(
+                                    documentManager,
+                                    navigationContext.getCurrentDocument(),
+                                    getItemType(),
+                                    selectedNodeData.getNodeId());
+                        } catch (EloraException e) {
+                            facesMessages.add(StatusMessage.Severity.ERROR,
+                                    messages.get(
+                                            "eloraplm.message.error.cm.failToSetAsManagedModifiedItem"));
+                        }
                     }
-                    reloadTree();
+                    reloadTree(selectedNode);
                 }
             } else {
                 facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -229,15 +253,16 @@ public class BomModifiedItemsTreeBean extends ModifiedItemsTreeBean
         }
     }
 
-    public void checkOut() throws EloraException {
+    public void checkOut() {
         // if there is any unsaved change in the tree, don't do anything
         if (!getIsDirty()) {
-            if (getSelectedNode() != null) {
-                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
                 if (isNodeStateAllowed(selectedNodeData)) {
                     DocumentModel selectedDoc = selectedNodeData.getDestinationItem();
                     pdmAction.checkOut(selectedDoc, true);
-                    reloadTree();
+                    reloadTree(selectedNode);
                 }
             } else {
                 facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -276,25 +301,98 @@ public class BomModifiedItemsTreeBean extends ModifiedItemsTreeBean
         return false;
     }
 
-    public void runPromote() throws EloraException {
+    public void runPromote() {
         // if there is any unsaved change in the tree, don't do anything
         if (!getIsDirty()) {
-            if (getSelectedNode() != null) {
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
                 promoteTreeBean.runPromoteAction();
 
                 // Set as managed
-                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
                 if (!selectedNodeData.getIsManaged()) {
-                    CMHelper.setAsManagedModifiedItemByNodeId(documentManager,
-                            navigationContext.getCurrentDocument(),
-                            getItemType(), selectedNodeData.getNodeId());
+                    try {
+                        CMHelper.setAsManagedModifiedItemByNodeId(
+                                documentManager,
+                                navigationContext.getCurrentDocument(),
+                                getItemType(), selectedNodeData.getNodeId());
+                    } catch (EloraException e) {
+                        facesMessages.add(StatusMessage.Severity.ERROR,
+                                messages.get(
+                                        "eloraplm.message.error.cm.failToSetAsManagedModifiedItem"));
+                    }
                 }
-                reloadTree();
+                reloadTree(selectedNode);
             }
         } else {
             facesMessages.add(StatusMessage.Severity.WARN, messages.get(
                     "eloraplm.message.warning.treetable.unsavedChanges"));
         }
+    }
+
+    public void addModifiedItemsDerivedFromImpactedDocs() {
+        String logInitMsg = "[addModifiedItemsDerivedFromImpactedDocs] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        // This functionality is enabled by configuration
+        if (eloraWebActions.isAddModifiedItemsDerivedFromImpactedDocsEnabled()) {
+
+            try {
+                DocumentModel currentDoc = navigationContext.getCurrentDocument();
+
+                // Retrieve current Documents Impact Matrix
+                ArrayList<HashMap<String, Object>> currentDocImpactMatrix = new ArrayList<HashMap<String, Object>>();
+                if (currentDoc.getPropertyValue(
+                        CMMetadataConstants.DOC_IMPACTED_ITEM_LIST) != null) {
+                    currentDocImpactMatrix = (ArrayList<HashMap<String, Object>>) currentDoc.getPropertyValue(
+                            CMMetadataConstants.DOC_IMPACTED_ITEM_LIST);
+                }
+                if (currentDocImpactMatrix.size() > 0) {
+
+                    // Add modified items from impacted documents
+                    boolean derivedModifiedItemsAdded = CMHelper.addModifiedItemsDerivedFromImpactedDocs(
+                            documentManager, currentDoc);
+
+                    // Check if something has been added
+                    if (derivedModifiedItemsAdded) {
+                        // BomModifiedItems should be reloaded
+                        reloadBomModifiedItems = true;
+                        Events.instance().raiseEvent(
+                                CMEventNames.CM_MODIFIED_ITEMS_DERIVED_FROM_IMPACTED_DOCS_ADDED);
+
+                        // Nuxeo event
+                        EloraEventHelper.fireEvent(
+                                CMEventNames.CM_MODIFIED_ITEMS_DERIVED_FROM_IMPACTED_DOCS_ADDED,
+                                navigationContext.getCurrentDocument());
+
+                        facesMessages.add(StatusMessage.Severity.INFO,
+                                messages.get(
+                                        "eloraplm.message.success.cm.addModifiedItemsDerivedFromImpactedDocs"));
+                    } else {
+                        facesMessages.add(StatusMessage.Severity.WARN,
+                                messages.get(
+                                        "eloraplm.message.success.cm.addModifiedItemsDerivedFromImpactedDocs.nothingToBeAdded"));
+                    }
+                } else {
+                    log.trace(logInitMsg
+                            + "Current Documents Impac Matrix is empty. Nothing to add as derived.");
+                    facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                            "eloraplm.message.warning.cm.addModifiedItemsDerivedFromImpacted.emptyDocImpactMatrix"));
+                }
+            } catch (Exception e) {
+                log.error(logInitMsg + e.getMessage(), e);
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.cm.addModifiedItemsDerivedFromImpactedDocs"));
+            }
+        } else {
+            log.trace(logInitMsg
+                    + "'Add modified items derived from impacted cads' functionality is not enabled.");
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.cm.addModifiedItemsDerivedFromImpactedDocs.notEnabled"));
+        }
+
+        log.trace(logInitMsg + "--- EXIT ---");
     }
 
     @Override

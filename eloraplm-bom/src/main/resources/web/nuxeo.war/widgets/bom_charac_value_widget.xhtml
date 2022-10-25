@@ -13,8 +13,8 @@
   
       <ui:fragment rendered="#{field_0 == 'number'}">
         <nxl:widget name="bom_charac_number_value" mode="#{widget.mode}" value="#{field_1}" disabled="#{field_10}" required="#{field_11}">
-          <f:attribute name="maxIntegerPlaces" value="#{field_2.toString()}" />
-          <f:attribute name="maxDecimalPlaces" value="#{field_3.toString()}" />
+          <f:attribute name="maxIntegerPlaces" value="#{field_2}" />
+          <f:attribute name="maxDecimalPlaces" value="#{field_3}" />
           <c:if test="#{widget.mode eq 'edit'}">
             <ui:include src="bom_charac_widget_ajax_content_template.xhtml">
               <ui:param name="triggeredField" value="value" />

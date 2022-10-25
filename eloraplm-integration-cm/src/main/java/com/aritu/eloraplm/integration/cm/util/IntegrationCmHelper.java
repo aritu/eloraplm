@@ -24,14 +24,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.query.sql.NXQL;
-
+import com.aritu.eloraplm.cm.util.CMHelper;
+import com.aritu.eloraplm.cm.util.CMQueryResultFactory;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMMetadataConstants;
+import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.integration.cm.CmProcessInfo;
 import com.aritu.eloraplm.integration.restoperations.util.CmProcessNode;
@@ -164,18 +168,20 @@ public class IntegrationCmHelper {
         List<String> rootItemsOriginItemUids = new ArrayList<String>();
 
         IterableQueryResult it = null;
+        IterableQueryResult itID = null;
         try {
-
             CoreSession session = doc.getCoreSession();
+            List<String> rootItemsDocumentsIds = new ArrayList<String>();
 
+            // First, fill structure and rootItems regarding MODIFIED DOCUMENTS
+            String itemType = CMConstants.ITEM_TYPE_DOC;
             String query = IntegrationCmQueryFactory.getCmEcoRootItemsQuery(
-                    doc.getId());
+                    doc.getId(), itemType);
             it = session.queryAndFetch(query, NXQL.NXQL);
 
             if (it.size() > 0) {
-                List<String> rootItemsDocumentsIds = new ArrayList<String>();
+                String pfx = CMHelper.getModifiedItemListMetadaName(itemType);
 
-                String pfx = CMMetadataConstants.DOC_MODIFIED_ITEM_LIST;
                 for (Map<String, Serializable> map : it) {
                     String nodeId = (String) map.get(pfx + "/*1/nodeId");
                     String parentNodeId = (String) map.get(
@@ -193,17 +199,29 @@ public class IntegrationCmHelper {
                             pfx + "/*1/isManaged");
                     String comment = (String) map.get(pfx + "/*1/comment");
 
+                    // The code below is not needed, since IGNORED items are not
+                    // returned in the query
+                    /*
                     // If action is IGNORE, set destinationWc as originWc
                     if (action.equals(CMConstants.ACTION_IGNORE)) {
                         destinationWcItemUid = originItemWcUid;
-                    }
+                    }*/
 
-                    CmProcessNode cmProcessNode = new CmProcessNode(nodeId,
-                            parentNodeId, originItemUid, true, null,
-                            originItemUid, originItemWcUid, destinationItemUid,
-                            destinationWcItemUid, action, isManaged, comment);
-                    structure.add(cmProcessNode);
-                    rootItemsOriginItemUids.add(originItemUid);
+
+                    DocumentModel originItem = session.getDocument(
+                            new IdRef(originItemUid));
+
+                    // Add only CAD documents in structure
+                    if (originItem.hasFacet(
+                            EloraFacetConstants.FACET_CAD_DOCUMENT)) {
+                        CmProcessNode cmProcessNode = new CmProcessNode(nodeId,
+                                parentNodeId, originItemUid, true, null,
+                                originItemUid, originItemWcUid,
+                                destinationItemUid, destinationWcItemUid,
+                                action, isManaged, comment);
+                        structure.add(cmProcessNode);
+                        rootItemsOriginItemUids.add(originItemUid);
+                    }
 
                     if (includeDocuments) {
                         try {
@@ -213,8 +231,6 @@ public class IntegrationCmHelper {
                                 if (originItemUid != null
                                         && !rootItemsDocumentsIds.contains(
                                                 originItemUid)) {
-                                    DocumentModel originItem = session.getDocument(
-                                            new IdRef(originItemUid));
                                     rootItemsDocumentsIds.add(originItemUid);
                                     rootItemDocuments.add(originItem);
                                 }
@@ -222,7 +238,6 @@ public class IntegrationCmHelper {
                             if (action.equals(CMConstants.ACTION_CHANGE)
                                     || action.equals(
                                             CMConstants.ACTION_REPLACE)) {
-
                                 if (destinationItemUid != null
                                         && !rootItemsDocumentsIds.contains(
                                                 destinationItemUid)) {
@@ -240,6 +255,75 @@ public class IntegrationCmHelper {
                     }
                 }
             }
+
+            // Now include DOCUMENTS that are related to the MODIFIED ITEMS that
+            // are not already included in rootItems list and are not included
+            // as IMPACTED DOCUMENTS, without changing the structure.
+            if (includeDocuments) {
+                itemType = CMConstants.ITEM_TYPE_BOM;
+                query = IntegrationCmQueryFactory.getCmEcoRootItemsQuery(
+                        doc.getId(), itemType);
+
+                itID = session.queryAndFetch(query, NXQL.NXQL);
+                if (itID.size() > 0) {
+                    // Retrieve the list of distinct IMPACTED DOCUMENTS
+                    List<String> distinctImpactedDocumentsOriginUids = CMQueryResultFactory.getDistinctImpactedItemsOriginsQuery(
+                            session, doc.getId(), CMConstants.ITEM_TYPE_DOC);
+                    String pfx = CMHelper.getModifiedItemListMetadaName(
+                            itemType);
+
+                    for (Map<String, Serializable> map : itID) {
+
+                        String originItemUid = (String) map.get(
+                                pfx + "/*1/originItem");
+                        String action = (String) map.get(pfx + "/*1/action");
+                        DocumentModel originItem = session.getDocument(
+                                new IdRef(originItemUid));
+
+                        // Retrieve originItem related CAD documents
+                        DocumentModelList relatedCads = EloraRelationHelper.getAllRelatedCadDocsForItem(
+                                originItem);
+                        for (DocumentModel relatedCad : relatedCads) {
+                            String relatedCadUid = relatedCad.getId();
+
+                            if (!distinctImpactedDocumentsOriginUids.contains(
+                                    relatedCadUid)) {
+                                try {
+                                    if (action.equals(CMConstants.ACTION_REMOVE)
+                                            || action.equals(
+                                                    CMConstants.ACTION_REPLACE)) {
+                                        if (!rootItemsDocumentsIds.contains(
+                                                relatedCadUid)) {
+                                            rootItemsDocumentsIds.add(
+                                                    relatedCadUid);
+                                            rootItemDocuments.add(relatedCad);
+                                        }
+                                    }
+                                    if (action.equals(CMConstants.ACTION_CHANGE)
+                                            || action.equals(
+                                                    CMConstants.ACTION_REPLACE)) {
+
+                                        DocumentModel relatedCadWc = session.getWorkingCopy(
+                                                relatedCad.getRef());
+                                        String relatedCadWcUid = relatedCadWc.getId();
+
+                                        if (!rootItemsDocumentsIds.contains(
+                                                relatedCadWcUid)) {
+                                            rootItemsDocumentsIds.add(
+                                                    relatedCadWcUid);
+                                            rootItemDocuments.add(relatedCadWc);
+                                        }
+                                    }
+                                } catch (DocumentNotFoundException e) {
+                                    log.error(logInitMsg + "Exception thrown: "
+                                            + e.getClass() + ": "
+                                            + e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } catch (NuxeoException e) {
             log.error(logInitMsg + e.getMessage(), e);
             throw new EloraException(
@@ -250,6 +334,9 @@ public class IntegrationCmHelper {
                     "Exception thrown: |" + e.getMessage() + "|");
         } finally {
             it.close();
+            if (itID != null && itID.mustBeClosed()) {
+                itID.close();
+            }
         }
 
         log.trace(logInitMsg + "--- EXIT ---");
@@ -278,22 +365,23 @@ public class IntegrationCmHelper {
         log.trace(logInitMsg + "--- ENTER ---");
 
         IterableQueryResult it = null;
+        IterableQueryResult itID = null;
         try {
-
             CoreSession session = doc.getCoreSession();
+            List<String> subitemsDocumentsIds = new ArrayList<String>();
 
             // structure should contain modified items structure (root items)
             for (Iterator<String> iterator = rootItemsOriginItemUids.iterator(); iterator.hasNext();) {
                 String rootItemOriginUid = iterator.next();
 
+                String itemType = CMConstants.ITEM_TYPE_DOC;
                 String query = IntegrationCmQueryFactory.getCmEcoSubitemsByRootItemOriginUidQuery(
-                        doc.getId(), rootItemOriginUid);
+                        doc.getId(), rootItemOriginUid, itemType);
                 it = session.queryAndFetch(query, NXQL.NXQL);
 
                 if (it.size() > 0) {
-                    List<String> subitemsDocumentsIds = new ArrayList<String>();
-
-                    String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
+                    String pfx = CMHelper.getImpactedItemListMetadaName(
+                            itemType);
                     for (Map<String, Serializable> map : it) {
                         String nodeId = (String) map.get(pfx + "/*1/nodeId");
                         String parentNodeId = (String) map.get(
@@ -326,7 +414,6 @@ public class IntegrationCmHelper {
                         }
 
                         if (includeInStructure) {
-
                             // If action is IGNORE, set destinationWc as
                             // originWc
                             if (action.equals(CMConstants.ACTION_IGNORE)) {
@@ -356,8 +443,7 @@ public class IntegrationCmHelper {
                                             subitemDocuments.add(
                                                     destinationItem);
                                         }
-                                    }
-                                    if (action.equals(
+                                    } else if (action.equals(
                                             CMConstants.ACTION_IGNORE)) {
                                         if (originWcItemUid != null
                                                 && !subitemsDocumentsIds.contains(
@@ -381,6 +467,54 @@ public class IntegrationCmHelper {
                 it.close();
             }
 
+            if (includeDocuments) {
+                // Now include DOCUMENTS that are related to the IMPACTED ITEMS
+                // that are not already included in subItems without changing
+                // the structure.
+                String itemType = CMConstants.ITEM_TYPE_BOM;
+                String query = IntegrationCmQueryFactory.getCmEcoSubitemsQuery(
+                        doc.getId(), itemType);
+
+                itID = session.queryAndFetch(query, NXQL.NXQL);
+                if (itID.size() > 0) {
+                    String pfx = CMHelper.getImpactedItemListMetadaName(
+                            itemType);
+
+                    for (Map<String, Serializable> map : itID) {
+                        String originItemUid = (String) map.get(
+                                pfx + "/*1/originItem");
+                        String action = (String) map.get(pfx + "/*1/action");
+                        DocumentModel originItem = session.getDocument(
+                                new IdRef(originItemUid));
+
+                        // Retrieve originItem related CAD documents
+                        DocumentModelList relatedCads = EloraRelationHelper.getAllRelatedCadDocsForItem(
+                                originItem);
+                        for (DocumentModel relatedCad : relatedCads) {
+                            try {
+                                // In this case IGNORE impacted elements are not
+                                // taking into account. Only CHANGE ones.
+                                if (action.equals(CMConstants.ACTION_CHANGE)) {
+                                    DocumentModel relatedCadWc = session.getWorkingCopy(
+                                            relatedCad.getRef());
+                                    String relatedCadWcUid = relatedCadWc.getId();
+
+                                    if (!subitemsDocumentsIds.contains(
+                                            relatedCadWcUid)) {
+                                        subitemsDocumentsIds.add(
+                                                relatedCadWcUid);
+                                        subitemDocuments.add(relatedCadWc);
+                                    }
+                                }
+                            } catch (DocumentNotFoundException e) {
+                                log.error(logInitMsg + "Exception thrown: "
+                                        + e.getClass() + ": " + e.getMessage());
+                            }
+                        }
+                    }
+                }
+
+            }
         } catch (NuxeoException e) {
             log.error(logInitMsg + e.getMessage(), e);
             throw new EloraException(
@@ -393,7 +527,9 @@ public class IntegrationCmHelper {
             if (it != null && it.mustBeClosed()) {
                 it.close();
             }
-
+            if (itID != null && itID.mustBeClosed()) {
+                itID.close();
+            }
         }
 
         log.trace(logInitMsg + "--- EXIT ---");
@@ -467,5 +603,4 @@ public class IntegrationCmHelper {
         }
         return itemsChanged;
     }
-
 }

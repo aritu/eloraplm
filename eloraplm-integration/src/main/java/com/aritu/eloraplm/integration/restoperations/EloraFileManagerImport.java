@@ -72,11 +72,8 @@ public class EloraFileManagerImport {
         DocumentModel newDoc = fileManager.createDocumentFromBlob(session, blob,
                 parentDoc.getPathAsString(), overwite, blob.getFilename());
 
-        if (EloraStructureHelper.hasToBeMovedToEloraStructure(newDoc,
-                parentDoc)) {
-            return EloraStructureHelper.moveToEloraStructureAndCreateProxy(
-                    newDoc);
-        }
+        EloraStructureHelper.moveDocToEloraStructureAndCreateProxyIfRequired(
+                newDoc, parentDoc);
 
         return newDoc;
     }

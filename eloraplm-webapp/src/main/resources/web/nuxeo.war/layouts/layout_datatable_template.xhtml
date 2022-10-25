@@ -7,6 +7,7 @@
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
     xmlns:nxu="http://nuxeo.org/nxweb/util"
     xmlns:nxr="http://nuxeo.org/nxweb/resources"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
     xmlns:p="http://primefaces.org/ui"
     id="#{layout.id}">
     
@@ -21,25 +22,33 @@
     
         <h:form id="dtForm">
         
-            <nxu:set var="rowStyleClass" value="#{layout.mode eq 'edit' ?
-                (rowData.isNew ?
-                    'rowIsNew' : (rowData.isRemoved ?
-                        'rowIsRemoved' : (rowData.isModified ?
-                            'rowIsModified' : (empty eloraWebActions.evaluateString(layout.properties.rowStyleClass) ?
-                                'rowIsNormal' : eloraWebActions.evaluateString(layout.properties.rowStyleClass)))))
-                : eloraWebActions.evaluateString(layout.properties.rowStyleClass)}" >
-                
-                <nxu:set var="widgetVar" value="datatbl_#{layout.id}">
-                
+            <nxu:set var="widgetVar" value="datatbl_#{layout.id}">
+            
+                <nxu:set var="rowStyleClass" value="#{layout.mode eq 'edit' ?
+                    (rowData.isNew ?
+                        'rowIsNew' : (rowData.isRemoved ?
+                            'rowIsRemoved' : (rowData.isModified ?
+                                'rowIsModified' : (empty eloraWebActions.evaluateString(layout.properties.rowStyleClass) ?
+                                    'rowIsNormal' : eloraWebActions.evaluateString(layout.properties.rowStyleClass)))))
+                    : eloraWebActions.evaluateString(layout.properties.rowStyleClass)}" >
+                    
                     <nxu:set var="dataFactory" value="#{eloraWebActions.evaluateObject(layout.properties.factory)}">
                         
                         <div style="display: flex; justify-content: flex-end;">
-                            <div id="tableActionErrorMsg" class="processMessage completeError" style="display: none; margin-right: 0;">#{messages['eloraplm.message.error.datatable.action']}</div>
+                            <div id="#{tableWidgetId}_tableActionErrorMsg" class="processMessage completeError" style="display: none; margin-right: 0;">#{messages['eloraplm.message.error.datatable.action']}</div>
                         </div>
                         
-                        <p:dataTable id="#{tableWidgetId}" widgetVar="#{widgetVar}" value="#{dataFactory}"
+                        <ui:remove>
+                            For now, we do not use the dataFactory, as it does not return the correct result:
+                            
+                            p:dataTable id="#{tableWidgetId}" widgetVar="#{widgetVar}" value="#{not empty dataFactory ? dataFactory : value.data }"
+                        </ui:remove>
+                        
+                        <p:dataTable id="#{tableWidgetId}" widgetVar="#{widgetVar}" value="#{value.data}"
+                            binding="#{value.dataTable}"
                             var="rowData"
                             rowIndexVar="rowIndex"
+                            rowKey="#{rowData.id}"
                             resizableColumns="true" liveResize="true"
                             tableStyleClass="datatable #{layout.properties.tableStyleClass}"
                             tableStyle="#{layout.properties.tableStyle}"
@@ -48,25 +57,47 @@
                             scrollable="#{layout.properties.scrollable}"
                             scrollHeight="#{layout.properties.scrollHeight}"
                             editable="#{layout.properties.inlineEdit}"
+                            expandableRowGroups="#{layout.properties.expandableRowGroups}"
                             >
                             
                             <c:if test="#{not empty layout.properties.selectionMode}">
-                                <f:attribute name="selectionMode" value="#{layout.properties.selectionMode}" />
-                                <f:attribute name="selection" value="#{value[layout.properties.selectionMode eq 'multiple' ? 'selectedNodes' : 'selectedNode']}" />
+                                <f:attribute name="selection" value="#{value[layout.properties.selectionMode eq 'multiple' ? 'selectedRows' : 'selectedRow']}" />
+                                <f:attribute name="disabledSelection" value="#{eloraWebActions.evaluateBoolean(layout.properties.disabledSelection)}" />
+                                <c:if test="#{layout.properties.selectionMode eq 'multiple'}">
+                                    <f:attribute name="rowSelectMode" value="#{not empty layout.properties.rowSelectMode ? layout.properties.rowSelectMode : 'checkbox'}" />
+                                </c:if>
                             </c:if>
                             
                             <c:if test="#{layout.properties.isSortable}">
-                                <f:attribute name="sortBy" value="#{rowData[layout.properties.sortBy]}" />
-                                <f:attribute name="sortOrder" value="#{layout.properties.sortOrder}" />
+                                <f:attribute name="sortMode" value="#{not empty layout.properties.sortMode ? layout.properties.sortMode : 'single'}" />
+                                
+                                <c:if test="#{not empty layout.properties.sortBy}">
+                                    <f:attribute name="sortBy" value="#{rowData[layout.properties.sortBy]}" />
+                                </c:if>
+                                <c:if test="#{not empty layout.properties.sortOrder}">
+                                    <f:attribute name="sortOrder" value="#{layout.properties.sortOrder}" />
+                                </c:if>
+                            </c:if>
+                            
+                            <c:if test="#{layout.properties.useFilters}">
+                                <f:attribute name="filteredValue" value="#{value.filteredRows}" />
+                            </c:if>
+                            
+                            <c:if test="#{not empty layout.properties.rowGroup}">
+                                <f:attribute name="sortBy" value="#{eloraWebActions.evaluateObject(layout.properties.rowGroup)}" />
                             </c:if>
                             
                             <f:facet name="header" style="overflow: hidden;">
                                 
                                 <span class="tableHeaderTitle">
                                     #{messages[eloraWebActions.evaluateString(layout.properties.tableTitle)]}
-                                    <br /><span class="tableInfo">
+                                    <br />
+                                    <h:panelGroup id="tableInfo" class="tableInfo">
                                         <strong>#{value.size}</strong> #{messages['eloraplm.label.datatable.info.size']}
-                                    </span>
+                                        <h:panelGroup rendered="#{layout.properties.useFilters and not empty value.dataTable.filters}">,
+                                            <strong>#{value.filteredRows.size}</strong> #{messages['eloraplm.label.datatable.info.filtered.size']}
+                                        </h:panelGroup>
+                                    </h:panelGroup>
                                 </span>
                                 <span class="tableHeaderButtons">
                                     <h:panelGroup styleClass="tableHeaderFilters" rendered="#{not empty layout.properties.headerFiltersTemplate}">
@@ -128,7 +159,7 @@
                                             update="#{tableWidgetId}"
                                             onstart="PF('tableBlocker_#{tableWidgetId}').show();"
                                             oncomplete="PF('tableBlocker_#{tableWidgetId}').hide();"
-                                            onerror="jQuery('#tableActionErrorMsg').show();"
+                                            onerror="#{'jQuery(\'#'.concat(tableWidgetId).concat('_tableActionErrorMsg\').show();')}"
                                         />
                                         
                                     </h:commandButton>
@@ -137,8 +168,45 @@
                                 
                             </f:facet>
                             
+                            <c:if test="#{not empty layout.properties.rowGroupHeader or not empty layout.properties.rowGroupHeaderTemplate}">
+                                <p:headerRow>
+                                    <p:column colspan="#{not empty layout.properties.selectionMode ? fn:length(layout.rows) + 2 : fn:length(layout.rows) + 1}">
+                                        <h:panelGroup rendered="#{not empty layout.properties.rowGroupHeaderTemplate}">
+                                            <ui:include src="#{layout.properties.rowGroupHeaderTemplate}" />
+                                        </h:panelGroup>
+                                        <h:panelGroup rendered="#{empty layout.properties.rowGroupHeaderTemplate}">
+                                            <h:outputText value="#{messages[eloraWebActions.evaluateString(layout.properties.rowGroupHeader)]}" />
+                                        </h:panelGroup>
+                                    </p:column>
+                                </p:headerRow>
+                            </c:if>
+                            
+                            <!-- COLUMN -->
                             <nxl:layoutColumn>
-                                <p:column style="#{layoutColumn.properties.columnStyle}" styleClass="datatableColumn #{layoutColumn.properties.columnStyleClass}">
+                                <p:column style="#{layoutColumn.properties.columnStyle}"
+                                    styleClass="datatableColumn #{layoutColumn.properties.columnStyleClass}"
+                                    visible="#{layoutColumn.properties.hidden ? 'false' : 'true'}"
+                                    >
+                                    <c:if test="#{layout.properties.isSortable and layoutColumn.properties.isSortable}">
+                                        <f:attribute name="sortBy" value="#{rowData[layoutColumn.properties.sortBy]}" />
+                                        <f:attribute name="sortOrder" value="#{layoutColumn.properties.sortOrder}" />
+                                        <f:attribute name="sortPriority" value="#{layoutColumn.properties.sortPriority}" />
+                                    </c:if>
+                                    
+                                    <c:if test="#{layout.properties.useFilters and not empty layoutColumn.properties.filterBy}">
+                                        <f:attribute name="filterBy" value="#{eloraWebActions.evaluateObject(layoutColumn.properties.filterBy)}" />
+                                    </c:if>
+                                    
+                                    <c:if test="#{layout.properties.useFilters and not empty layoutColumn.properties.filterMatchMode}">
+                                        <f:attribute name="filterMatchMode" value="#{layoutColumn.properties.filterMatchMode}" />
+                                    </c:if>
+                                    
+                                    <c:if test="#{layout.properties.useFilters and not empty layoutColumn.properties.filterTemplate}">
+                                        <f:facet name="filter">
+                                            <ui:include src="#{layoutColumn.properties.filterTemplate}" />
+                                        </f:facet>
+                                    </c:if>
+                                    
                                     
                                     <f:facet name="header">
                                         <span title="#{messages[layoutColumn.properties.columnTooltip]}">
@@ -167,70 +235,135 @@
                             </c:if>
                             
                             <c:if test="#{not empty layout.properties.selectionMode}">
-                                <p:column style="width: 35px" styleClass="selection-checkbox" exportable="false">
-                                    <h:panelGroup id="row-selection">
-                                        &#x25a2;
-                                    </h:panelGroup>
-                                </p:column>
-                                <c:if test="#{layout.properties.selectionMode eq 'single'}">
-                                    <p:ajax event="select" />
-                                    <p:ajax event="unselect" />
+                                <p:column selectionMode="#{layout.properties.selectionMode}" exportable="false" />
+                                <c:if test="#{layout.properties.useSelectionEvents}">
+                                    <c:if test="#{layout.properties.selectionMode eq 'multiple'}">
+                                        <p:ajax event="rowSelectCheckbox" listener="#{value.onRowSelect}" update="@form" />
+                                        <p:ajax event="rowUnselectCheckbox" listener="#{value.onRowUnselect}" update="@form" />
+                                        <p:ajax event="toggleSelect" listener="#{value.onToggleSelect}" update="@form" />
+                                    </c:if>
                                 </c:if>
                             </c:if>
                             
+                            <c:if test="#{layout.properties.useFilters}">
+                                <p:ajax event="filter" oncomplete="updateTableInfo()" />
+                            </c:if>
+                            
                         </p:dataTable>
+                        
+                        <!-- BLOCK UI -->
                         <p:outputPanel>
                             <p:blockUI block="#{component.namingContainer.parent.namingContainer.clientId}:datatablePanel"
                                 trigger="#{tableWidgetId}"
                                 widgetVar="tableBlocker_#{tableWidgetId}" />
                         </p:outputPanel>
+
+                        <!-- REMOTE COMMANDS -->
+                        <p:remoteCommand  name="updateTableInfo" update=":#{component.namingContainer.clientId}:#{tableWidgetId}:tableInfo"/>
                         
-                        <p:remoteCommand name="updateDatatableForm_#{tableWidgetId}"
-                            process="@form"
-                            onsuccess="executeActionsAfterSelectionUpdate();"
-                        />
+                        <c:if test="#{not empty layout.properties.remoteCommandsTemplate}">
+                            <ui:include src="#{layout.properties.remoteCommandsTemplate}" />
+                        </c:if>
                         
                     </nxu:set>
                     
                 </nxu:set>
                 
+                <!-- TODO Try to remove, buttons should go outside if possible, to avoid problems with dialog/button forms -->
+                <c:if test="#{layout.mode eq 'edit' and layout.properties.buttonsInsideForm}">
+                    <h:panelGroup id="dtInsideButtonsPanel" styleClass="dtButtonsPanel" layout="block">
+                    
+                        <c:if test="#{not layout.properties.isFancybox}" >
+                            <nxu:set var="nonProxyDocument" value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}">
+                            
+                                <h:panelGroup id="dtButtons" styleClass="dtButtons"
+                                    layout="block">
+                                    
+                                    <nxl:widget name="#{not empty layout.properties.alternativeButtonsWidget ?
+                                        layout.properties.alternativeButtonsWidget
+                                        : 'dtButtons'}"
+                                        mode="view" value="#{nonProxyDocument}" />
+                                    
+                                </h:panelGroup>
+                                
+                                <c:if test="#{not empty layout.properties.selectionMode}">
+                                    <h:panelGroup id="dtSelectionButtons" styleClass="dtSelectionButtons" layout="block">
+                                        
+                                        <h:graphicImage class="selectionActionsIndicator" value="/icons/selected_rows_actions_24.png"
+                                            title="#{messages['datatable.selectedRowsActions']}"
+                                            rendered="#{not empty webActions.getActionsList('DATATABLE_SELECTION_BUTTON')}" />
+                                        
+                                        <nxl:widget name="#{not empty layout.properties.alternativeSelectButtonsWidget ?
+                                            layout.properties.alternativeSelectButtonsWidget
+                                            : 'dtSelectionButtons'}"
+                                            mode="view" value="#{nonProxyDocument}" styleClass="dtSelectionButtonsPanel" />
+                                        
+                                    </h:panelGroup>
+                                </c:if>
+                                
+                            </nxu:set>
+                        </c:if>
+                        
+                    </h:panelGroup>
+                </c:if>
+                
             </nxu:set>
         
         </h:form>
         
-        <h:panelGroup id="dtButtonsPanel" styleClass="dtButtonsPanel" layout="block" rendered="#{layout.mode eq 'edit'}">
-            
-            <c:if test="#{not layout.properties.isFancybox}" >
-                <nxu:set var="nonProxyDocument" value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}">
+        <!-- EDIT DIALOG -->
+        <h:outputScript>
+            jQuery("body").on("click",'.ui-dialog-mask',function () {
+                PF('#{tableWidgetId}_editDialog').hide();
+            });
+        </h:outputScript>
+        
+        <c:if test="#{layout.properties.editRows}">
+            <p:dialog widgetVar="#{tableWidgetId}_editDialog"
+                header="#{messages['eloraplm.title.datatable.row.edit']}"
+                modal="true" draggable="true"
+                minWidth="1000" fitViewport="true"
+                closeOnEscape="true" onHide="javascript:endRowUpdate()">
+                <ui:include src="#{layout.properties.editTemplate}" />
+            </p:dialog>
+        </c:if>
+        
+        <c:if test="#{layout.mode eq 'edit' and not layout.properties.buttonsInsideForm}">
+            <h:panelGroup id="dtButtonsPanel" styleClass="dtButtonsPanel" layout="block">
                 
-                    <h:panelGroup id="dtButtons" styleClass="dtButtons"
-                        layout="block">
+                    <c:if test="#{not layout.properties.isFancybox}" >
+                        <nxu:set var="nonProxyDocument" value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}">
                         
-                        <nxl:widget name="#{not empty layout.properties.alternativeButtonsWidget ?
-                            layout.properties.alternativeButtonsWidget
-                            : 'dtButtons'}"
-                            mode="view" value="#{nonProxyDocument}" />
-                        
-                    </h:panelGroup>
-                    
-                    <c:if test="#{not empty layout.properties.selectionMode}">
-                        <h:panelGroup id="dtSelectionButtons" styleClass="dtSelectionButtons" layout="block">
+                            <h:panelGroup id="dtButtons" styleClass="dtButtons"
+                                layout="block">
+                                
+                                <nxl:widget name="#{not empty layout.properties.alternativeButtonsWidget ?
+                                    layout.properties.alternativeButtonsWidget
+                                    : 'dtButtons'}"
+                                    mode="view" value="#{nonProxyDocument}" />
+                                
+                            </h:panelGroup>
                             
-                            <h:graphicImage class="selectionActionsIndicator" value="/icons/selected_rows_actions_24.png"
-                                title="#{messages['datatable.selectedRowsActions']}" />
+                            <c:if test="#{not empty layout.properties.selectionMode}">
+                                <h:panelGroup id="dtSelectionButtons" styleClass="dtSelectionButtons" layout="block">
+                                    
+                                    <h:graphicImage class="selectionActionsIndicator" value="/icons/selected_rows_actions_24.png"
+                                        title="#{messages['datatable.selectedRowsActions']}"
+                                        rendered="#{not empty webActions.getActionsList('DATATABLE_SELECTION_BUTTON')}" />
+                                    
+                                    <nxl:widget name="#{not empty layout.properties.alternativeSelectButtonsWidget ?
+                                        layout.properties.alternativeSelectButtonsWidget
+                                        : 'dtSelectionButtons'}"
+                                        mode="view" value="#{nonProxyDocument}" styleClass="dtSelectionButtonsPanel" />
+                                    
+                                </h:panelGroup>
+                            </c:if>
                             
-                            <nxl:widget name="#{not empty layout.properties.alternativeSelectButtonsWidget ?
-                                layout.properties.alternativeSelectButtonsWidget
-                                : 'dtSelectionButtons'}"
-                                mode="view" value="#{nonProxyDocument}" styleClass="dtSelectionButtonsPanel" />
-                            
-                        </h:panelGroup>
+                        </nxu:set>
                     </c:if>
                     
-                </nxu:set>
+                </h:panelGroup>
             </c:if>
-            
-        </h:panelGroup>
         
     </h:panelGroup>
     

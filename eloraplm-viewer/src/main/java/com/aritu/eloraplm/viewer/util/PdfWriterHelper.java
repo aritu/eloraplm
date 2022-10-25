@@ -3,36 +3,40 @@
  */
 package com.aritu.eloraplm.viewer.util;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
+
+import javax.imageio.ImageIO;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import com.aritu.eloraplm.constants.ViewerConstants;
-import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.viewer.api.ConditionDescriptor;
-import com.aritu.eloraplm.viewer.api.DataObtainerAdapter;
 import com.aritu.eloraplm.viewer.api.ModifierDescriptor;
+import com.aritu.eloraplm.viewer.api.ModifierImageDescriptor;
 import com.aritu.eloraplm.viewer.api.ModifierLineDescriptor;
+import com.aritu.eloraplm.viewer.api.ModifierRectDescriptor;
 import com.aritu.eloraplm.viewer.api.ModifierTextDescriptor;
+import com.aritu.eloraplm.viewer.dataevaluator.api.DataObtainerAdapter;
+import com.aritu.eloraplm.viewer.dataevaluator.util.ConditionEvaluatorHelper;
+import com.aritu.eloraplm.viewer.dataevaluator.util.PostProcessingHelper;
+import com.aritu.eloraplm.viewer.dataevaluator.util.ValueObtainerHelper;
 
 /**
  * @author aritu
@@ -60,22 +64,24 @@ public class PdfWriterHelper {
 
     private static final String ALIGN_OPTION_CENTER = "center";
 
-    private static final String CONDITION_EXPRESSION_EQUALS = "equals";
-
-    private static final String CONDITION_EXPRESSION_NOT_EQUALS = "not equals";
-
     private Blob blob;
 
     private ModifierDescriptor modifier;
 
-    private DocumentModel doc;
+    private DocumentModel currentDoc;
 
-    private DocumentModel baseVersion;
+    private DocumentModel relatedDoc;
 
     private String action;
 
     public PdfWriterHelper(Blob blob, ModifierDescriptor modifier,
-            DocumentModel doc, String action) throws EloraException {
+            DocumentModel currentDoc, String action) throws EloraException {
+        this(blob, modifier, currentDoc, null, action);
+    }
+
+    public PdfWriterHelper(Blob blob, ModifierDescriptor modifier,
+            DocumentModel currentDoc, DocumentModel relatedDoc, String action)
+            throws EloraException {
         if (blob == null) {
             throw new EloraException("Provided blob is null.");
         }
@@ -84,7 +90,7 @@ public class PdfWriterHelper {
             throw new EloraException("Provided ModifierDescriptor is null.");
         }
 
-        if (doc == null) {
+        if (currentDoc == null) {
             throw new EloraException("Provided doc is null.");
         }
 
@@ -94,7 +100,8 @@ public class PdfWriterHelper {
 
         this.blob = blob;
         this.modifier = modifier;
-        this.doc = doc;
+        this.currentDoc = currentDoc;
+        this.relatedDoc = relatedDoc;
         this.action = action;
     }
 
@@ -120,14 +127,75 @@ public class PdfWriterHelper {
         return file;
     }
 
+    /**
+     * Writes the PDF applying the modifier in the specified pageNumber, instead
+     * of applying it in the whole blob.
+     *
+     * @param pageNumber
+     * @return
+     * @throws EloraException
+     * @throws IOException
+     * @throws COSVisitorException
+     */
+    public File writePdf(int pageNumber)
+            throws EloraException, IOException, COSVisitorException {
+        File file = null;
+        PDDocument pdfDoc = PDDocument.load(blob.getFile());
+        try {
+            PDDocumentCatalog catalog = pdfDoc.getDocumentCatalog();
+            List<?> pageList = catalog.getAllPages();
+            PDPage page = (PDPage) pageList.get(pageNumber - 1);
+            writePage(pdfDoc, page);
+            file = File.createTempFile(blob.getFilename(), "_temp.pdf");
+            pdfDoc.save(file);
+
+        } finally {
+            pdfDoc.close();
+        }
+
+        return file;
+    }
+
     private void writePage(PDDocument pdfDoc, PDPage page)
             throws IOException, EloraException {
 
         PDPageContentStream cs = new PDPageContentStream(pdfDoc, page, true,
-                true);
+                true, true);
         page = addGraphicsState(page, OPAQUE_GS_ID, 1f);
 
         try {
+
+            // Lines, rects and images first because text must be above them
+
+            if (modifier.lines != null && modifier.lines.length > 0) {
+
+                for (ModifierLineDescriptor line : modifier.lines) {
+                    if (line != null) {
+                        processLine(cs, page, line);
+                    }
+                }
+            }
+
+            if (modifier.rects != null && modifier.rects.length > 0) {
+
+                for (int r = 0; r < modifier.rects.length; r++) {
+                    ModifierRectDescriptor rect = modifier.rects[r];
+                    if (rect != null) {
+                        processRect(cs, page, r, rect);
+                    }
+                }
+            }
+
+            if (modifier.images != null && modifier.images.length > 0) {
+
+                for (int i = 0; i < modifier.images.length; i++) {
+                    ModifierImageDescriptor image = modifier.images[i];
+                    if (image != null) {
+                        processImage(pdfDoc, cs, page, i, image);
+                    }
+                }
+
+            }
 
             if (modifier.texts != null && modifier.texts.length > 0) {
 
@@ -139,21 +207,15 @@ public class PdfWriterHelper {
                 }
             }
 
-            if (modifier.lines != null && modifier.lines.length > 0) {
-
-                for (ModifierLineDescriptor line : modifier.lines) {
-                    if (line != null) {
-                        processLine(cs, page, line);
-                    }
-                }
-            }
-
         } finally {
             cs.close();
         }
     }
 
     private PDPage addGraphicsState(PDPage page, String id, float opacity) {
+        if (page.getResources() == null) {
+            page.setResources(new PDResources());
+        }
         Map<String, PDExtendedGraphicsState> gsMap = page.getResources().getGraphicsStates();
         if (gsMap == null) {
             gsMap = new HashMap<String, PDExtendedGraphicsState>();
@@ -171,9 +233,10 @@ public class PdfWriterHelper {
     private void processText(PDPageContentStream cs, PDPage page, int t,
             ModifierTextDescriptor text) throws EloraException, IOException {
 
-        if (fulfillsConditions(text.conditions, text.allConditionsRequired)) {
+        if (ConditionEvaluatorHelper.fulfillsConditions(currentDoc, relatedDoc,
+                action, text.conditions, text.allConditionsRequired)) {
 
-            String value = getTextValue(doc, text);
+            String value = getTextValue(currentDoc, relatedDoc, text);
 
             if (value != null && !value.isEmpty()) {
                 cs.setFont(text.font, text.size);
@@ -195,129 +258,17 @@ public class PdfWriterHelper {
         }
     }
 
-    private boolean fulfillsConditions(ConditionDescriptor[] conditions,
-            boolean allRequired) throws EloraException {
-        if (conditions == null || conditions.length == 0) {
-            return true;
-        }
-
-        boolean allOk = false;
-        for (ConditionDescriptor condition : conditions) {
-            DataObtainerAdapter doa = new DataObtainerAdapter(condition);
-            String left = getValue(doc, doa);
-            String right = condition.value;
-            boolean ok = condition.expression.equals(CONDITION_EXPRESSION_EQUALS)
-                    ? left.equals(right)
-                    : !left.equals(right);
-            if (allRequired && !ok) {
-                return false;
-            }
-            allOk = allOk || ok;
-        }
-        return allOk;
-    }
-
-    private String getTextValue(DocumentModel doc, ModifierTextDescriptor text)
-            throws EloraException {
+    private String getTextValue(DocumentModel doc, DocumentModel relatedDoc,
+            ModifierTextDescriptor text) throws EloraException {
 
         DataObtainerAdapter doa = new DataObtainerAdapter(text);
-        String value = getValue(doc, doa);
+        String value = ValueObtainerHelper.getValue(doc, relatedDoc, action,
+                doa);
         if (text.postProcessor != null) {
             value = PostProcessingHelper.callPostProcessor(text.postProcessor,
                     value);
         }
         return value;
-    }
-
-    private String getValue(DocumentModel doc, DataObtainerAdapter doa)
-            throws EloraException {
-
-        DocumentModel target = getTargetConsideringExceptions(doa);
-        Object o = getValueConsideringExceptions(target, doa);
-        String value = stringifyObject(o);
-        return value;
-    }
-
-    private DocumentModel getTargetConsideringExceptions(
-            DataObtainerAdapter doa) throws EloraException {
-        boolean needsBase = false;
-        if (action.equals(ViewerConstants.ACTION_OVERWRITE_AV)) {
-            needsBase = false;
-        } else if (doa.getMethod() != null
-                && doa.getMethod().equals("getVersionLabel")) {
-            needsBase = true;
-        } else if (action.equals(ViewerConstants.ACTION_OVERWRITE)) {
-            if (doa.getMethod() != null
-                    && doa.getMethod().equals("getCurrentLifeCycleState")) {
-                needsBase = true;
-            } else if (doa.getXpath() != null
-                    && (doa.getXpath().equals("dc:lastContributor")
-                            || doa.getXpath().equals("dc:modified"))) {
-                needsBase = true;
-            }
-        }
-        if (needsBase) {
-            loadBaseVersion();
-            if (baseVersion != null) {
-                return baseVersion;
-            }
-        }
-
-        return doc;
-    }
-
-    private Object getValueConsideringExceptions(DocumentModel target,
-            DataObtainerAdapter doa) throws EloraException {
-
-        if (doa.getMethod() != null && doa.getMethod().equals("dc:modified")
-                && !(action.equals(ViewerConstants.ACTION_OVERWRITE)
-                        || action.equals(
-                                ViewerConstants.ACTION_OVERWRITE_AV))) {
-            return Calendar.getInstance();
-        }
-
-        switch (doa.getType()) {
-        case "xpath":
-            Serializable pty = target.getPropertyValue(doa.getXpath());
-            if (pty != null) {
-                return pty;
-            }
-        case "method":
-            try {
-                Method method = target.getClass().getMethod(doa.getMethod());
-                return method.invoke(target);
-            } catch (SecurityException | NoSuchMethodException
-                    | IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException e) {
-                throw new EloraException(
-                        "Error calling to method |" + doa.getMethod() + "|.",
-                        e);
-            }
-        case "fixed":
-            return doa.getValue();
-        default:
-            throw new EloraException(
-                    "DataObtainerAdapter type must be xpath, method or fixed, and provided value was |"
-                            + doa.getType() + "|.");
-        }
-    }
-
-    private String stringifyObject(Object o) {
-        if (o != null) {
-            if (o instanceof String) {
-                return (String) o;
-            } else if (o instanceof Long) {
-                int i = (int) (long) o;
-                return String.valueOf(i);
-            } else if (o instanceof GregorianCalendar) {
-                GregorianCalendar cal = (GregorianCalendar) o;
-                cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-                SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                fmt.setCalendar(cal);
-                return fmt.format(cal.getTime()) + " UTC";
-            }
-        }
-        return null;
     }
 
     private float getRealXPosition(float refPointX, PDFont font, String value,
@@ -368,8 +319,13 @@ public class PdfWriterHelper {
     private Float[] getRefPoint(PDPage page, String[] refPointOption) {
         Float[] refPoint = { 0f, 0f };
 
-        float pageWidth = page.getMediaBox().getWidth();
-        float pageHeight = page.getMediaBox().getHeight();
+        PDRectangle mbox = page.getMediaBox();
+        if (mbox == null) {
+            mbox = page.findMediaBox();
+        }
+
+        float pageWidth = mbox.getWidth();
+        float pageHeight = mbox.getHeight();
 
         String refPointXOption = refPointOption != null
                 && refPointOption[0] != null ? refPointOption[0]
@@ -429,27 +385,85 @@ public class PdfWriterHelper {
     }
 
     private void processLine(PDPageContentStream cs, PDPage page,
-            ModifierLineDescriptor line) throws IOException {
+            ModifierLineDescriptor line) throws IOException, EloraException {
 
-        Float[] refPoint0 = getRefPoint(page, line.refPointOption0);
-        Float[] refPoint1 = getRefPoint(page, line.refPointOption1);
+        if (ConditionEvaluatorHelper.fulfillsConditions(currentDoc, relatedDoc,
+                action, line.conditions, line.allConditionsRequired)) {
 
-        cs.setLineWidth(line.width.floatValue());
-        cs.setStrokingColor(line.color);
-        cs.drawLine(refPoint0[0] + line.x0, refPoint0[1] + line.y0,
-                refPoint1[0] + line.x1, refPoint1[1] + line.y1);
+            Float[] refPoint0 = getRefPoint(page, line.refPointOption0);
+            Float[] refPoint1 = getRefPoint(page, line.refPointOption1);
+
+            cs.setLineWidth(line.width.floatValue());
+            cs.setStrokingColor(line.color);
+            cs.drawLine(refPoint0[0] + line.x0, refPoint0[1] + line.y0,
+                    refPoint1[0] + line.x1, refPoint1[1] + line.y1);
+        }
     }
 
-    private void loadBaseVersion() throws EloraException {
-        if (baseVersion == null) {
-            DocumentModel wcDoc = null;
-            if (doc.isImmutable()) {
-                wcDoc = doc.getCoreSession().getWorkingCopy(doc.getRef());
+    private void processRect(PDPageContentStream cs, PDPage page, int r,
+            ModifierRectDescriptor rect) throws IOException, EloraException {
+
+        if (ConditionEvaluatorHelper.fulfillsConditions(currentDoc, relatedDoc,
+                action, rect.conditions, rect.allConditionsRequired)) {
+
+            Float[] refPoint = getRefPoint(page, rect.refPointOption);
+
+            if (rect.opacity != null && rect.opacity != 1f) {
+                page = addGraphicsState(page, "gs" + r,
+                        rect.opacity.floatValue());
+                cs.appendRawCommands("/gs" + r + " gs\n");
             } else {
-                wcDoc = doc;
+                cs.appendRawCommands("/" + OPAQUE_GS_ID + " gs\n");
             }
-            baseVersion = EloraDocumentHelper.getBaseVersion(wcDoc);
+
+            cs.addRect(refPoint[0] + rect.x, refPoint[1] + rect.y, rect.width,
+                    rect.height);
+            if (rect.lineColor != null) {
+                cs.setStrokingColor(rect.lineColor);
+                cs.setLineDashPattern(new float[] {}, 0);
+                cs.setLineWidth(rect.lineWidth.floatValue());
+                cs.stroke();
+            }
+
+            if (rect.fillColor != null) {
+                cs.setNonStrokingColor(rect.fillColor);
+                cs.fillRect(refPoint[0] + rect.x, refPoint[1] + rect.y,
+                        rect.width, rect.height);
+            }
         }
+
+    }
+
+    private void processImage(PDDocument document, PDPageContentStream cs,
+            PDPage page, int i, ModifierImageDescriptor image)
+            throws IOException, EloraException {
+
+        if (ConditionEvaluatorHelper.fulfillsConditions(currentDoc, relatedDoc,
+                action, image.conditions, image.allConditionsRequired)) {
+
+            Float[] refPoint = getRefPoint(page, image.refPointOption);
+
+            if (image.opacity != null && image.opacity != 1f) {
+                page = addGraphicsState(page, "gs" + i,
+                        image.opacity.floatValue());
+                cs.appendRawCommands("/gs" + i + " gs\n");
+            } else {
+                cs.appendRawCommands("/" + OPAQUE_GS_ID + " gs\n");
+            }
+
+            URL url = this.getClass().getClassLoader().getResource(
+                    "web/nuxeo.war" + image.path);
+            BufferedImage tmp_img = ImageIO.read(url);
+            BufferedImage buff_img = new BufferedImage(tmp_img.getWidth(),
+                    tmp_img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+            buff_img.createGraphics().drawRenderedImage(tmp_img, null);
+            PDXObjectImage x_img = new PDPixelMap(document, buff_img);
+
+            cs.drawXObject(x_img, refPoint[0] + image.x, refPoint[1] + image.y,
+                    x_img.getWidth() * image.scale.floatValue(),
+                    x_img.getHeight() * image.scale.floatValue());
+        }
+
     }
 
 }

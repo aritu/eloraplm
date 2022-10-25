@@ -33,7 +33,8 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
-import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
@@ -59,6 +60,8 @@ public abstract class AbstractWorkspaceDataLoader
     protected static final String CHILDREN_VERSIONS_LATEST_RELEASED = "LatestReleased";
 
     protected static final String SOURCE_CONTENT = "Content";
+
+    protected static final String SOURCE_CONTENT_ITEM = "ContentItem";
 
     protected static final String SOURCE_CM_PROCESS_ROOT_ITEM = "CmProcessRootItem";
 
@@ -161,10 +164,10 @@ public abstract class AbstractWorkspaceDataLoader
             try {
                 DocumentModel realAvItem = getNonProxyArchivedVersion(item);
                 if (realAvItem != null) {
-                    for (DocumentModel doc : getAllRelatedCadDocsForItem(
+                    for (DocumentModel doc : EloraRelationHelper.getAllRelatedCadDocsForItem(
                             realAvItem)) {
                         try {
-                            processDocument(0, SOURCE_CONTENT, doc, true,
+                            processDocument(0, SOURCE_CONTENT_ITEM, doc, true,
                                     parentUid, contentChildrenVersions);
                         } catch (DocumentWithoutArchivedVersionsException e) {
                             continue;
@@ -205,14 +208,6 @@ public abstract class AbstractWorkspaceDataLoader
         return session.query(query);
     }
 
-    private DocumentModelList getAllRelatedCadDocsForItem(DocumentModel item) {
-
-        // TODO Orokorra
-        Resource predicate = new ResourceImpl(
-                EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
-        return RelationHelper.getObjectDocuments(item, predicate);
-    }
-
     protected void processDocument(int level, String source, DocumentModel doc,
             boolean saveInWorkspace, String parentUid, String childrenVersions)
             throws EloraException, DocumentWithoutArchivedVersionsException {
@@ -237,6 +232,7 @@ public abstract class AbstractWorkspaceDataLoader
             tempDocMap = tempSubitemDocMap;
             break;
         case SOURCE_CONTENT:
+        case SOURCE_CONTENT_ITEM:
             tempDocMap = tempContentDocMap;
             break;
         }
@@ -248,32 +244,51 @@ public abstract class AbstractWorkspaceDataLoader
                     isRootSpecial);
             if (realAvDoc != null) {
                 if (!isAlreadyProcessed(realAvDoc)
-                        || mustUpdateVersion(level, isRootSpecial, isStructure,
-                                tempDocMap, realAvDoc.getVersionSeriesId())) {
-                    GetWorkspaceResponseDoc responseDoc = getDocData(realAvDoc);
-                    responseDoc.setSource(source);
-                    responseDoc.setSaveInWorkspace(saveInWorkspace);
-                    if (parentUid != null) {
-                        responseDoc.addParentRealUid(parentUid);
-                    }
+                        || !source.equals(SOURCE_CONTENT_ITEM)) {
+                    if (!isAlreadyProcessed(realAvDoc) || mustUpdateVersion(
+                            level, isRootSpecial, isStructure, tempDocMap,
+                            realAvDoc.getVersionSeriesId())) {
+                        GetWorkspaceResponseDoc responseDoc = getDocData(
+                                realAvDoc);
+                        responseDoc.setSource(source);
+                        responseDoc.setSaveInWorkspace(saveInWorkspace);
 
-                    tempDocMap.put(realAvDoc.getVersionSeriesId(), responseDoc);
-                    response.addDocument(realAvDoc.getVersionSeriesId(),
-                            responseDoc);
-
-                    if (isStructure) {
-                        processRelations(level, source, realAvDoc,
-                                childrenVersions, isRootSpecial);
-                    }
-                } else {
-                    if (saveInWorkspace) {
-                        GetWorkspaceResponseDoc responseDoc = response.getDocument(
-                                realAvDoc.getVersionSeriesId());
-                        if (!responseDoc.hasParentRealUid(parentUid)) {
+                        if (parentUid != null) {
+                            responseDoc.setParentRealUid(parentUid);
+                            /* OBSOLETE - TO BE REMOVED */
                             responseDoc.addParentRealUid(parentUid);
+                        }
+
+                        tempDocMap.put(realAvDoc.getVersionSeriesId(),
+                                responseDoc);
+                        response.addDocument(realAvDoc.getVersionSeriesId(),
+                                responseDoc);
+
+                        if (isStructure) {
+                            processRelations(level, source, realAvDoc,
+                                    childrenVersions, isRootSpecial);
+                        }
+                    } else {
+                        if (saveInWorkspace) {
+                            GetWorkspaceResponseDoc responseDoc = response.getDocument(
+                                    realAvDoc.getVersionSeriesId());
+                            responseDoc.setParentRealUid(parentUid);
                             responseDoc.setSaveInWorkspace(true);
+                            /* OBSOLETE - TO BE REMOVED */
+                            if (!responseDoc.hasParentRealUid(parentUid)) {
+                                responseDoc.addParentRealUid(parentUid);
+                            }
                         }
                     }
+                }
+
+                if (source.equals(SOURCE_CONTENT)
+                        || source.equals(SOURCE_CONTENT_ITEM)) {
+                    if (parentUid != null) {
+                        response.addContentProxyParent(
+                                realAvDoc.getVersionSeriesId(), parentUid);
+                    }
+
                 }
             }
         }
@@ -314,6 +329,7 @@ public abstract class AbstractWorkspaceDataLoader
             String childrenVersionsOption = null;
             switch (source) {
             case SOURCE_CONTENT:
+            case SOURCE_CONTENT_ITEM:
                 childrenVersionsOption = contentChildrenVersions;
                 break;
             case SOURCE_CM_PROCESS_ROOT_ITEM:
@@ -324,13 +340,15 @@ public abstract class AbstractWorkspaceDataLoader
                 break;
             }
 
-            if (childrenVersionsOption.equals(
-                    CHILDREN_VERSIONS_LATEST_VERSIONS)) {
-                doc = EloraDocumentHelper.getLatestVersion(doc);
-            } else if (childrenVersionsOption.equals(
-                    CHILDREN_VERSIONS_LATEST_RELEASED)) {
-                doc = EloraDocumentHelper.getLatestReleasedVersionOrLatestVersion(
-                        doc);
+            if (childrenVersionsOption != null) {
+                if (childrenVersionsOption.equals(
+                        CHILDREN_VERSIONS_LATEST_VERSIONS)) {
+                    doc = EloraDocumentHelper.getLatestVersion(doc);
+                } else if (childrenVersionsOption.equals(
+                        CHILDREN_VERSIONS_LATEST_RELEASED)) {
+                    doc = EloraDocumentHelper.getLatestReleasedVersionOrLatestVersion(
+                            doc);
+                }
             }
         }
 
@@ -368,6 +386,26 @@ public abstract class AbstractWorkspaceDataLoader
             responseDoc.setHash(contentBlob.getDigest());
             responseDoc.setDownloadUrl(EloraUrlHelper.getDocumentDownloadUrl(
                     request, doc, filename));
+        }
+
+        // CAD Attachments
+        if (doc.hasSchema(EloraSchemaConstants.CAD_ATTACHMENTS)) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> cadAtts = (List<Map<String, Object>>) doc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS);
+            if (cadAtts != null && !cadAtts.isEmpty()) {
+                int i = 0;
+                for (Map<String, Object> cadAtt : cadAtts) {
+                    String filename = (String) cadAtt.get("filename");
+                    String type = (String) cadAtt.get("type");
+                    Blob attBlob = (Blob) cadAtt.get("file");
+                    String downloadUrl = EloraUrlHelper.getDocumentCadAttachmentFileUrl(
+                            request, doc, i, filename);
+                    responseDoc.addCadAttachment(filename, type, downloadUrl,
+                            attBlob.getDigest());
+                    i++;
+                }
+            }
         }
 
         return responseDoc;
@@ -498,6 +536,7 @@ public abstract class AbstractWorkspaceDataLoader
         case SOURCE_CM_PROCESS_SUBITEM:
             return cmProcessSubitemChildrenVersions;
         case SOURCE_CONTENT:
+        case SOURCE_CONTENT_ITEM:
             return contentChildrenVersions;
         default:
             throw new EloraException("Invalid source option.");

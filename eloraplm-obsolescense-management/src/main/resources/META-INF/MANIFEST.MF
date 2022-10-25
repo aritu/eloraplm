@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.om
+Bundle-Name: eloraplm-obsolescense-management
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Aritu S Coop
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-obsolescense-management-
+ LifeCycleService-contrib.xml,OSGI-INF/extensions/eloraplm-obsolescens
+ e-management-WebLayoutManager-contrib.xml,OSGI-INF/extensions/elorapl
+ m-obsolescense-management-LifecycleConfigService-contrib.xml,OSGI-INF
+ /extensions/eloraplm-obsolescense-management-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-obsolescense-management-WorkspaceArchive
+ rService-contrib.xml,OSGI-INF/extensions/eloraplm-obsolescense-manage
+ ment-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-obsolesce
+ nse-management-WebResources-contrib.xml
+

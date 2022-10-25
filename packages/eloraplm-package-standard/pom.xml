@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.aritu.eloraplm</groupId>
+        <artifactId>packages</artifactId>
+        <version>20221021</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <properties>
+        <main.basedir>${project.basedir}${file.separator}..${file.separator}..</main.basedir>
+    </properties>
+
+    <artifactId>eloraplm-package-standard</artifactId>
+    <packaging>zip</packaging>
+    <name>EloraPLM Standard</name>
+
+    <dependencies>
+
+        <!-- Additional bundles to be deployed by the MP -->
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-bom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-change-management</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-code-creation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-csv-importer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-doctypes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-drive</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-integration-cm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-lifecycles</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-obsolescense-management</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-pdm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-quality-management</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-relations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-search</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-templating</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-viewer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-webapp</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.nuxeo.build</groupId>
+                <artifactId>ant-assembly-maven-plugin</artifactId>
+                <version>2.1.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <buildFiles>
+                        <buildFile>${basedir}/src/main/assemble/assembly.xml</buildFile>
+                    </buildFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

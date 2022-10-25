@@ -55,6 +55,13 @@
           </properties>
         </widget>
         
+        <widget name="ttPermanentButtons" type="documentActionsWithForms">
+          <properties widgetMode="view">
+            <property name="category">TREETABLE_PERMANENT_BUTTON</property>
+            <property name="overallDisplay">horizontal_block</property>
+          </properties>
+        </widget>
+        
     </extension>
     
 </component>

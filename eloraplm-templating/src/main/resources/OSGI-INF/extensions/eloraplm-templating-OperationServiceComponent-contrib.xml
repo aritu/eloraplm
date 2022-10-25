@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.templating.OperationServiceComponent.contrib">
+    
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
+        
+        <operation class="com.aritu.eloraplm.templating.automation.RenderWithTemplate" replace="true" />
+        
+    </extension>
+    
+    <extension point="chains" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
+        
+        <chain id="Elora.Plm.RenderPdfWithTemplateAndAddAsChildren">
+            
+            <param type="string" name="title" />
+            <param type="string" name="templateId" />
+            
+            <operation id="Context.FetchDocument"/>
+            <operation id="Context.RestoreDocumentInputFromScript">
+                <param name="script" type="string">This[0]</param>
+            </operation>
+            <operation id="Context.SetInputAsVar">
+                <param name="name" type="string">storedInput</param>
+            </operation>
+            
+            <operation id="Document.Create">
+                <param name="name" type="string">expr:ChainParameters['title']</param>
+                <param name="type" type="string">File</param>
+                <param name="properties" type="properties">expr:dc:title=@{ChainParameters['title']}</param>
+            </operation>
+            <operation id="Document.Save" />
+            <operation id="Context.SetInputAsVar">
+                <param name="name" type="string">createdDoc</param>
+            </operation>
+            <!-- RETURNS created document -->
+            
+            <operation id="Context.RestoreDocumentInput">
+                <param name="name" type="string">storedInput</param>
+            </operation>
+            <operation id="Elora.Plm.RenderWithTemplate">
+                <param type="string" name="templateId">expr:ChainParameters['templateId']</param>
+            </operation>
+            <operation id="Blob.ToPDF" />
+            
+            <operation id="Blob.AttachOnDocument">
+                <param type="document" name="document">expr:createdDoc</param>
+                <param type="boolean" name="save">true</param>
+                <param type="string" name="xpath">file:content</param>
+            </operation>
+            <!-- RETURNS created document with PDF as main file -->
+            
+        </chain>
+        
+    </extension>
+    
+</component>

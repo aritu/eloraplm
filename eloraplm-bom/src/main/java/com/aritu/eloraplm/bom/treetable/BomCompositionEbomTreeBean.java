@@ -39,6 +39,8 @@ public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
 
     private boolean showDirectDocuments;
 
+    private int maxOrdering;
+
     public boolean getShowUniqueVersionsPerDocument() {
         return showUniqueVersionsPerDocument;
     }
@@ -69,6 +71,9 @@ public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
         showUniqueVersionsPerDocument = false;
         showObsoleteStateDocuments = true;
         showDirectDocuments = false;
+        setIsManual(true);
+        maxOrdering = 0;
+        setOrdering(1);
     }
 
     @Override
@@ -83,6 +88,11 @@ public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
                     showUniqueVersionsPerDocument, showObsoleteStateDocuments,
                     showDirectDocuments);
             setRoot(nodeService.getRoot(currentDoc));
+
+            // Update max ordering
+            maxOrdering = ((BomCompositionNodeService) nodeService).getMaxOrdering();
+            setOrdering(maxOrdering + 1);
+
             setIsDirty(false);
             setHasUnreadableNodes(false);
             setIsInvalid(false);
@@ -106,15 +116,29 @@ public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
     }
 
     @Override
-    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic) {
+    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic,
+            boolean isInverse) {
         setPredicateUri(EloraRelationConstants.BOM_COMPOSED_OF);
-        super.addRelationNode(currentDoc, isAnarchic);
+        super.addRelationNode(currentDoc, isAnarchic, isInverse);
+
+        // Update max ordering
+        if (getOrdering() != null && getOrdering() > maxOrdering) {
+            maxOrdering = getOrdering();
+            setOrdering(maxOrdering + 1);
+        }
     }
 
     @Override
     @Factory(value = "bomCompositionEbomRoot", scope = ScopeType.EVENT)
     public TreeNode getRootFromFactory() {
         return getRoot();
+    }
+
+    @Override
+    protected void resetCreateFormValues() {
+        super.resetCreateFormValues();
+        setIsManual(true);
+        setOrdering(maxOrdering + 1);
     }
 
 }

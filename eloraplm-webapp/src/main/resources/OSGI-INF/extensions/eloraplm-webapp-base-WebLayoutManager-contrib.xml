@@ -86,6 +86,7 @@
             <properties>
               <defaultValues mode="any">
                 <property name="hideExternalLink">true</property>
+                <property name="tabs">MAIN_TABS:documents</property>
               </defaultValues>
               <layouts mode="any">
                 <layout name="listing_icon_reference_title_widget_type_properties_any">
@@ -191,7 +192,7 @@
           </property>
         </widgetType>
         
-        <widgetType name="selectOneType" >
+        <widgetType name="selectOneVersion" >
           <configuration>
             <description>
               <p>
@@ -227,126 +228,7 @@
             org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
           </handler-class>
           <property name="template">
-            /widgets/listing/listing_elements_widget_template.xhtml
-          </property>
-        </widgetType>
-    
-        <widgetType name="eloraSingleDocumentSuggestion">
-          <configuration>
-            <title>EloraPlm single document suggestion</title>
-            <sinceVersion>7.10</sinceVersion>
-            <supportedModes>
-              <mode>view</mode>
-              <mode>edit</mode>
-            </supportedModes>
-            <fields>
-              <list>false</list>
-              <complex>false</complex>
-              <supportedTypes>
-                <type>string</type>
-              </supportedTypes>
-            </fields>
-            <categories>
-              <category>document</category>
-            </categories>
-            <properties>
-              <defaultValues mode="any">
-                <property name="width">100%</property>
-              </defaultValues>
-              <defaultValues mode="edit">
-                <property name="pageProviderName">default_document_suggestion</property>
-                <property name="documentSchemas">dublincore,common,elora_object</property>
-                <property name="minChars">3</property>
-                <property name="restoreSeamCtx">true</property>
-              </defaultValues>
-              <layouts mode="view">
-                <layout name="singleDocumentSuggestion_widget_type_properties_view">
-                  <rows>
-                    <row>
-                      <widget category="widgetTypeConf">documentSuggestion_tab</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">documentSuggestion_subTab</widget>
-                    </row>
-                  </rows>
-                </layout>
-              </layouts>
-              <layouts mode="edit">
-                <layout name="singleDocumentSuggestion_widget_type_properties_edit">
-                  <rows>
-                    <row>
-                      <widget category="widgetTypeConf">required</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">placeholder</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">suggestion_width</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">suggestion_minChars</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">documentSuggestion_query</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">documentSuggestion_queryDemoPreview</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">documentSuggestion_pageProviderName
-                      </widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">documentSuggestion_repository</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">documentSuggestion_documentSchemas
-                      </widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">ajaxReRender</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">suggestion_helpLabel</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">suggestion_hideHelpLabel</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">select2_containerCssClass</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">select2_dropdownCssClass</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">select2_inlinejs</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">select2_inlinejsDemoPreview</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">select2_selectionFormatter</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">select2_suggestionFormatter
-                      </widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">select2_additionalParam</widget>
-                    </row>
-                    <row>
-                      <widget category="widgetTypeConf">select2_dropdownOnArrow</widget>
-                    </row>
-                  </rows>
-                </layout>
-              </layouts>
-            </properties>
-          </configuration>
-          <handler-class>
-            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
-          </handler-class>
-          <property name="template">
-            /widgets/single_document_suggestion_widget_template.xhtml
+            /widgets/listing/listing_select_one_version_widget_template.xhtml
           </property>
         </widgetType>
         
@@ -592,6 +474,18 @@
           </property>
       </widgetType>
       
+      <widgetType name="external_link">
+          <configuration>
+            <title>External link</title>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">
+            /widgets/external_link_widget_template.xhtml
+          </property>
+      </widgetType>
+      
       <widgetType name="text_with_listener">
           <configuration>
             <title>Text widget with listener</title>
@@ -670,6 +564,112 @@
                 /widgets/inline_edit_widget_template.xhtml
             </property>
         </widgetType>
+        
+        <widgetType name="elora_checkbox">
+            <property name="template">
+                /widgets/elora_checkbox_template.xhtml
+            </property>
+        </widgetType>
+        
+        
+        <widgetType name="list_choices">
+            <configuration>
+                <fields>
+                    <defaultConfiguration>
+                        <field>value</field>
+                        <field>listChoices</field>
+                    </defaultConfiguration>
+                </fields>
+                <properties>
+                    <defaultValues mode="any">
+                        <!-- <property name="name">value</property> -->
+                    </defaultValues>
+                </properties>
+            </configuration>
+            
+            <property name="template">
+                /widgets/list_choices_widget_type_template.xhtml
+            </property>
+        </widgetType>
+        
+        <widgetType name="list_choices_config">
+            <configuration>
+                <fields>
+                    <defaultConfiguration>
+                        <field>listChoices</field>
+                    </defaultConfiguration>
+                </fields>
+                <properties>
+                    <defaultValues mode="any">
+                        <property name="onValuesUpdatedRerenderId"></property>
+                    </defaultValues>
+                </properties>
+            </configuration>
+            
+            <property name="template">
+                /widgets/list_choices_config_widget_type_template.xhtml
+            </property>
+        </widgetType>
+        
+        <widgetType name="localized_labels_config">
+            <configuration>
+                <fields>
+                    <defaultConfiguration>
+                        <field>labels</field>
+                    </defaultConfiguration>
+                </fields>
+                <properties>
+                    <defaultValues mode="any">
+                        <property name="onDefaultLocaleUpdated">javascriptFunction(event)</property>
+                    </defaultValues>
+                </properties>
+            </configuration>
+            
+            <property name="template">
+                /widgets/localized_labels_config_widget_type_template.xhtml
+            </property>
+        </widgetType>
+    
+        <widgetType name="listing_responsible">
+          <configuration>
+            <sinceVersion>5.4.2</sinceVersion>
+            <title>Responsible</title>
+            <description>
+              <p>This widget type displays the responsible name</p>
+              <p>
+                It requires the following fields configuration:
+                <ul>
+                  <li>first field mapping the responsible field</li>
+                </ul>
+              </p>
+            </description>
+            <confProperties>
+              <property name="sortPropertyName">resp.responsible</property>
+            </confProperties>
+            <fields>
+              <list>false</list>
+              <complex>false</complex>
+              <defaultConfiguration>
+                <field>data.resp.responsible</field>
+              </defaultConfiguration>
+            </fields>
+            <categories>
+              <category>listing</category>
+            </categories>
+          </configuration>
+          <handler-class>
+            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+          </handler-class>
+          <property name="template">/widgets/single_user_widget_template.xhtml</property>
+        </widgetType>
+        
+        <widgetType name="cadAttachmentFile">
+            <handler-class>
+                org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+            </handler-class>
+            <property name="template">/widgets/cad_attachment_file_widget.xhtml</property>
+        </widgetType>
+    
     
     </extension>
     
@@ -688,6 +688,7 @@
                 <field>data.file.content</field>
                 <field>data.file.content.filename</field>
             </fields>
+            <widgetModes><mode value="edit">view</mode></widgetModes>
             <properties mode="any">
                 <property name="tabs">MAIN_TABS:documents</property>
                 <property name="hideDownloadLink">true</property>
@@ -710,6 +711,7 @@
             <fields>
                 <field>data</field>
             </fields>
+            <widgetModes><mode value="edit">view</mode></widgetModes>
         </widget>
         
         <widget name="version_and_visualized_type" type="listing_version_and_visualized_type">
@@ -719,6 +721,20 @@
             <fields>
                 <field></field>
             </fields>
+            <widgetModes><mode value="edit">view</mode></widgetModes>
+        </widget>
+        
+        <widget name="listing_icon_type" type="listing_icon_type">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>data</field>
+                <field>data.ref</field>
+                <field>data.type</field>
+                <field>data.folder</field>
+            </fields>
+            <widgetModes><mode value="edit">view</mode></widgetModes>
         </widget>
         
         <widget name="listing_reference" type="template">
@@ -730,7 +746,9 @@
             <field>data</field>
             <field>data.ref</field>
           </fields>
+          <widgetModes><mode value="edit">view</mode></widgetModes>
           <properties mode="any">
+            <property name="tabs">MAIN_TABS:documents</property>
             <property name="template">/widgets/listing/listing_reference_widget_template.xhtml</property>
           </properties>
         </widget>
@@ -744,6 +762,7 @@
             <field>data</field>
             <field>data.ref</field>
           </fields>
+          <widgetModes><mode value="edit">view</mode></widgetModes>
           <properties mode="any">
             <property name="isInRelationListing">false</property>
           </properties>
@@ -760,6 +779,7 @@
             <field>predicateUri</field>
             <field>comment</field>
           </fields>
+          <widgetModes><mode value="edit">view</mode></widgetModes>
           <properties mode="any">
             <property name="isInRelationListing">true</property>
           </properties>
@@ -774,12 +794,14 @@
             <field></field>
             <field>ref</field>
           </fields>
+          <widgetModes><mode value="edit">view</mode></widgetModes>
         </widget>
         
         <widget name="listing_download_link" type="template">
           <labels>
             <label mode="any"></label>
           </labels>
+          <widgetModes><mode value="edit">view</mode></widgetModes>
           <properties mode="any">
             <property name="template">/widgets/listing/listing_general_download_link_widget_template.xhtml</property>
           </properties>
@@ -828,26 +850,18 @@
             <properties widgetMode="any">
                 <property name="directoryName">elora_priority</property>
                 <property name="required">false</property>
+                <property name="ordering">ordering</property>
             </properties>
         </widget>
         
-        <widget name="listing_responsible" type="singleUserSuggestion">
+        <widget name="listing_responsible" type="listing_responsible">
             <labels>
-                <label mode="any">label.widget.responsible.responsible
-            </label>
+              <label mode="any">label.widget.responsible.responsible</label>
             </labels>
             <translated>true</translated>
             <fields>
-                <field>data.resp.responsible</field>
+              <field>data.resp.responsible</field>
             </fields>
-            <properties mode="any">
-                <property name="userSuggestionSearchType">USER_TYPE</property>
-                <property name="minChars">1</property>
-            </properties>
-            <controls mode="any">
-                <!-- enable ajax submit on change/click/select on demo application -->
-                <control name="supportInsideInputWidgetEffects">true</control>
-            </controls>
         </widget>
         
         <widget name="listing_priority" type="selectOneDirectory">
@@ -927,9 +941,7 @@
             <fields>
                 <field>quantity</field>
             </fields>
-            <widgetModes>
-                <mode value="any">view</mode>
-            </widgetModes>
+            <widgetModes><mode value="edit">view</mode></widgetModes>
         </widget>
         
         <widget name="quantity" type="elora_decimal">
@@ -1010,7 +1022,7 @@
           </properties>
         </widget>
         
-        <widget name="selectOneVersion" type="selectOneType">
+        <widget name="selectOneVersion" type="selectOneVersion">
             <labels>
                 <label mode="any">eloraplm.label.version</label>
             </labels>
@@ -1037,6 +1049,7 @@
             <fields>
               <field>data</field>
             </fields>
+            <widgetModes><mode value="edit">view</mode></widgetModes>
         </widget>
         
         <widget name="version_lock_icon" type="listing_version_lock_icon">
@@ -1046,6 +1059,7 @@
             <fields>
               <field></field>
             </fields>
+            <widgetModes><mode value="edit">view</mode></widgetModes>
         </widget>
         
         <!--  New widget for displaying document type, CAD part type and description in summary -->
@@ -1077,7 +1091,7 @@
             <field>dc:description</field>
           </fields>
           <widgetModes>
-            <mode value="view_summary">#{currentDocument.hasSchema('dublincore')?'view':'hidden'}</mode>
+            <mode value="view">#{currentDocument.hasSchema('dublincore')?'view':'hidden'}</mode>
           </widgetModes>
         </widget>
         
@@ -1375,7 +1389,7 @@
                 <field>versionList</field>
             </fields>
             <widgetModes>
-                <mode value="any">view</mode>
+                <mode value="edit">view</mode>
             </widgetModes>
         </widget>
         
@@ -1396,7 +1410,7 @@
                 <field>quantity</field>
             </fields>
             <properties mode="edit">
-                <property name="styleClass">shortNumberInput</property>
+                <property name="styleClass">shortNumberInput blurAfterInput</property>
                 <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
                 <property name="editableOnlyOnFirstLevel">true</property>
             </properties>
@@ -1412,7 +1426,7 @@
           </fields>
           <properties mode="edit">
                 <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
-                <property name="styleClass">shortNumberInput</property>
+                <property name="styleClass">shortNumberInput blurAfterInput</property>
                 <property name="showOnlyOnFirstLevel">true</property>
           </properties>
         </widget>
@@ -1432,23 +1446,22 @@
         </widget>
         
         <widget name="localize" type="checkbox">
-                    <categories>
-                      <category>widgetTypeConf</category>
-                    </categories>
-                    <labels>
-                      <label mode="any">Localize</label>
-                    </labels>
-                    <helpLabels>
-                      <label mode="any">
-                        Flag indicating that
-                        the title is localized.
-                      </label>
-                    </helpLabels>
-                    <fields>
-                      <field>localize</field>
-                    </fields>
-                  </widget>
-        
+            <categories>
+              <category>widgetTypeConf</category>
+            </categories>
+            <labels>
+              <label mode="any">Localize</label>
+            </labels>
+            <helpLabels>
+              <label mode="any">
+                Flag indicating that
+                the title is localized.
+              </label>
+            </helpLabels>
+            <fields>
+              <field>localize</field>
+            </fields>
+        </widget>
         
         <widget name="treewidget_editable_viewer_ordering" type="text_with_listener">
           <labels>
@@ -1460,7 +1473,7 @@
           </fields>
           <properties mode="edit">
                 <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
-                <property name="styleClass">shortNumberInput</property>
+                <property name="styleClass">shortNumberInput blurAfterInput</property>
                 <property name="showOnlyOnFirstLevel">true</property>
           </properties>
         </widget>
@@ -1475,7 +1488,7 @@
           </fields>
           <properties mode="edit">
                 <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
-                <property name="styleClass">shortNumberInput</property>
+                <property name="styleClass">shortNumberInput blurAfterInput</property>
                 <property name="showOnlyOnFirstLevel">true</property>
           </properties>
         </widget>
@@ -1490,7 +1503,7 @@
           </fields>
           <properties mode="edit">
                 <property name="templateForListener">/incl/mark_as_modified_listener_for_relation.xhtml</property>
-                <property name="styleClass">shortNumberInput</property>
+                <property name="styleClass">shortNumberInput blurAfterInput</property>
                 <property name="showOnlyOnFirstLevel">true</property>
           </properties>
         </widget>
@@ -1526,7 +1539,7 @@
             <field>ordering</field>
           </fields>
           <widgetModes>
-            <mode value="any">view</mode>
+            <mode value="edit">view</mode>
             <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
           </widgetModes>
           <properties mode="any">
@@ -1543,7 +1556,7 @@
             <field>viewerOrdering</field>
           </fields>
           <widgetModes>
-            <mode value="any">view</mode>
+            <mode value="edit">view</mode>
             <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
           </widgetModes>
           <properties mode="any">
@@ -1560,7 +1573,7 @@
             <field>directorOrdering</field>
           </fields>
           <widgetModes>
-            <mode value="any">view</mode>
+            <mode value="edit">view</mode>
             <!-- <mode value="any">#{currentDocument.isImmutable() ? 'view' : 'edit'}</mode> -->
           </widgetModes>
           <properties mode="any">
@@ -1568,48 +1581,23 @@
           </properties>
         </widget>
         
-        <widget name="reference_not_required" type="template">
-          <labels>
-            <label mode="any">label.widget.elo.reference</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>elo:reference</field>
-          </fields>
-          <properties widgetMode="any">
-            <property name="required">false</property>
-            <property name="template">/widgets/reference_widget_template.xhtml</property>
-          </properties>
+        
+        <widget name="reference" type="template">
+            <labels>
+                <label mode="any">label.widget.elo.reference</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>elo:reference</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="template">/widgets/reference_widget_template.xhtml</property>
+            </properties>
+            <controls mode="any">
+                <control name="handleLabels">true</control>
+            </controls>
         </widget>
         
-        <widget name="reference_required" type="template">
-          <labels>
-            <label mode="any">label.widget.elo.reference</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>elo:reference</field>
-          </fields>
-          <properties widgetMode="any">
-            <property name="required">true</property>
-            <property name="template">/widgets/reference_widget_template.xhtml</property>
-          </properties>
-        </widget>
-        
-        <!-- CR TO BE CHANGED -->
-        <widget name="reference_automatic" type="text">
-          <labels>
-            <label mode="any">label.widget.elo.reference</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>elo:reference</field>
-          </fields>
-          <widgetModes>
-            <mode value="create">hidden</mode>
-            <mode value="edit">view</mode>
-          </widgetModes>
-        </widget>
         
         <!--  is_manual widget -->    
         <widget name="is_manual" type="template">
@@ -1635,6 +1623,21 @@
             </properties>
         </widget>
         
+        <widget name="source_template" type="template">
+            <labels>
+                <label mode="any">eloraplm.label.template.source</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>templ:sourceDocUid</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/summary/source_template_widget_template.xhtml</property>
+            </properties>
+            <controls mode="any">
+                <control name="handleLabels">true</control>
+            </controls>
+        </widget>
         
     </extension>
     
@@ -1991,20 +1994,20 @@
                     </properties>
                     <widget>listing_colored_lifecycle_state</widget>
                 </column>
-                <column name="livedit_link">
-                    <properties mode="any">
-                        <property name="columnStyleClass">iconColumn</property>
-                        <property name="label">label.selection.column.livedit_link
-                        </property>
-                    </properties>
-                    <properties mode="csv">
-                        <property name="isHidden">true</property>
-                    </properties>
-                    <properties mode="pdf">
-                        <property name="isHidden">true</property>
-                    </properties>
-                    <widget>listing_livedit_link</widget>
-                </column>
+<!--                 <column name="livedit_link"> -->
+<!--                     <properties mode="any"> -->
+<!--                         <property name="columnStyleClass">iconColumn</property> -->
+<!--                         <property name="label">label.selection.column.livedit_link -->
+<!--                         </property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="csv"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="pdf"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <widget>listing_livedit_link</widget> -->
+<!--                 </column> -->
                 <column name="description" selectedByDefault="false">
                     <properties mode="any">
                         <property name="useFirstWidgetLabelAsColumnHeader">true</property>
@@ -2155,6 +2158,336 @@
                         </property>
                     </properties>
                     <widget>listing_contributors</widget>
+                </column>
+            </columns>
+        </layout>
+        
+        <layout name="project_listing_table" type="listingTable">
+            <columns>
+                <column alwaysSelected="true" name="selection">
+                    <properties mode="any">
+                        <property
+                            name="isListingSelectionBoxWithCurrentDocument"> true
+                        </property>
+                        <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.checkbox
+                        </property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <properties mode="pdf">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>listing_ajax_selection_box_with_current_document
+                    </widget>
+                </column>
+                <column name="icon_type">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.icon_type
+                        </property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>listing_icon_type</widget>
+                </column>
+                <column name="reference">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">elo:reference</property>
+                        <property name="columnStyleClass">referenceColumn</property>
+                        <property name="label">label.selection.column.reference</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="title">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:title</property>
+                        <property name="label">label.selection.column.title</property>
+                    </properties>
+                    <widget>listing_title</widget>
+                </column>
+                <column name="download_link">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.downloadLink
+                        </property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <properties mode="pdf">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>listing_download_link</widget>
+                </column>
+                
+                <column name="lock">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="label">label.selection.column.lock
+                        </property>
+                    </properties>
+<!--                     <properties mode="csv"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="pdf"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+                    <widget>listing_version_lock_icon</widget>
+                </column>
+                <column name="modification_date">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:modified</property>
+                        <property name="label">label.dublincore.modificationDate
+                        </property>
+                    </properties>
+                    <widget>listing_modification_date</widget>
+                </column>
+                <column name="lastContributor">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:lastContributor
+                        </property>
+                        <property name="label">label.dublincore.lastContributor
+                        </property>
+                    </properties>
+                    <widget>listing_last_contributor</widget>
+                </column>
+                <column name="version_and_visualized_type">
+                    <properties mode="any">
+                        <property name="columnStyleClass">versionColumn</property>
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.version</property>
+                    </properties>
+                    <widget>listing_version_and_visualized_type</widget>
+                </column>
+                <column name="lifecycle">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">
+                            ecm:currentLifeCycleState
+                        </property>
+                        <property name="label">label.lifecycle
+                        </property>
+                    </properties>
+                    <widget>listing_colored_lifecycle_state</widget>
+                </column>
+<!--                 <column name="livedit_link"> -->
+<!--                     <properties mode="any"> -->
+<!--                         <property name="columnStyleClass">iconColumn</property> -->
+<!--                         <property name="label">label.selection.column.livedit_link -->
+<!--                         </property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="csv"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="pdf"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <widget>listing_livedit_link</widget> -->
+<!--                 </column> -->
+                <column name="description" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:description
+                        </property>
+                        <property name="label">description</property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_description</widget>
+                </column>
+                <column name="nature" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:nature</property>
+                        <property name="label">label.dublincore.nature
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_nature</widget>
+                </column>
+                <column name="subjects" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.dublincore.subject
+                        </property>
+                    </properties>
+                    <widget>listing_subjects</widget>
+                </column>
+                <column name="rights" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:rights</property>
+                        <property name="label">label.dublincore.rights
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_rights</widget>
+                </column>
+                <column name="source" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:source</property>
+                        <property name="label">label.dublincore.source
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_source</widget>
+                </column>
+                <column name="coverage" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:coverage</property>
+                        <property name="label">label.dublincore.coverage
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_coverage</widget>
+                </column>
+                <column name="creation_date" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:created</property>
+                        <property name="label">label.dublincore.created
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_creation_date</widget>
+                </column>
+                <column name="format" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:format</property>
+                        <property name="label">label.dublincore.format
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_format</widget>
+                </column>
+                <column name="language" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:language</property>
+                        <property name="label">label.dublincore.language
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_language</widget>
+                </column>
+                <column name="expired_date" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">dc:expired</property>
+                        <property name="label">label.dublincore.expired
+                        </property>
+                    </properties>
+                    <properties mode="edit_sort_infos">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <properties mode="edit_sort_infos_map">
+                        <property name="showInSortInfoSelection">true</property>
+                    </properties>
+                    <widget>listing_expiration_date</widget>
+                </column>
+                <column name="contributors" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">label.dublincore.contributors
+                        </property>
+                    </properties>
+                    <widget>listing_contributors</widget>
+                </column>
+                <column name="responsible" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">resp:responsible</property>
+                        <property name="label">label.widget.responsible.responsible</property>
+                    </properties>
+                    <widget>listing_responsible</widget>
+                </column>
+                <column name="progress" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">plan:progress</property>
+                        <property name="label">label.widget.planning.progress</property>
+                    </properties>
+                    <widget>listing_progress</widget>
+                </column>
+                <column name="plannedEndDate" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">plan:plannedEndDate</property>
+                        <property name="label">label.widget.planning.plannedEndDate</property>
+                    </properties>
+                    <widget>listing_plannedEndDate</widget>
+                </column>
+                <column name="current_phase" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">eloraplm.label.prj.currentPhase</property>
+                    </properties>
+                    <widget>listing_current_phase</widget>
+                </column>
+                <column name="current_phase_manager" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">eloraplm.label.prj.currentPhaseManager</property>
+                    </properties>
+                    <widget>listing_current_phase_manager</widget>
+                </column>
+                <column name="current_phase_plannedEndDate" selectedByDefault="false">
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="label">eloraplm.label.prj.currentPhasePlannedEndDate</property>
+                    </properties>
+                    <widget>listing_current_phase_planned_end_date</widget>
                 </column>
             </columns>
         </layout>
@@ -2530,20 +2863,20 @@
                     <widget>listing_path</widget>
                 </column>
                 
-                <column name="livedit_link">
-                    <properties mode="any">
-                        <property name="columnStyleClass">iconColumn</property>
-                        <property name="label">label.selection.column.livedit_link
-                        </property>
-                    </properties>
-                    <properties mode="csv">
-                        <property name="isHidden">true</property>
-                    </properties>
-                    <properties mode="pdf">
-                        <property name="isHidden">true</property>
-                    </properties>
-                    <widget>listing_livedit_link</widget>
-                </column>
+<!--                 <column name="livedit_link"> -->
+<!--                     <properties mode="any"> -->
+<!--                         <property name="columnStyleClass">iconColumn</property> -->
+<!--                         <property name="label">label.selection.column.livedit_link -->
+<!--                         </property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="csv"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <properties mode="pdf"> -->
+<!--                         <property name="isHidden">true</property> -->
+<!--                     </properties> -->
+<!--                     <widget>listing_livedit_link</widget> -->
+<!--                 </column> -->
                 <column name="description" selectedByDefault="false">
                     <properties mode="any">
                         <property name="useFirstWidgetLabelAsColumnHeader">true</property>

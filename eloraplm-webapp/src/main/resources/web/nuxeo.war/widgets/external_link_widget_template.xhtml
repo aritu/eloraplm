@@ -1,0 +1,34 @@
+<f:subview
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:remove>
+    <!-- EDIT MODE -->
+    </ui:remove>
+    
+    <c:if test="#{widget.mode == 'edit'}">
+        
+        <h:inputText id="value_field" value="#{field}">
+            
+            <c:if test="#{widget.properties.required}">
+                <f:validateRequired />
+            </c:if>
+            
+        </h:inputText>
+        
+        <h:message for="value_field" styleClass="errorMessage" />
+        
+    </c:if>
+    
+    <ui:remove>
+    <!-- VIEW MODE -->
+    </ui:remove>
+    
+    <c:if test="#{widget.mode == 'view'}">
+        <h:outputLink value="#{field}" target="_blank">#{field}</h:outputLink>
+    </c:if>
+    
+</f:subview>

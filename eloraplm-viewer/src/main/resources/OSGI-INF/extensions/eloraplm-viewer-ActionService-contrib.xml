@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.viewer.base.ActionService.contrib">
+    <require>org.nuxeo.ecm.webapp.seam.debug.action</require>
+
+
+<extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+    
+    <filter id="isNotFileOrIsFileWithoutViewerFile">
+        <rule grant="true">
+            <condition>#{currentDocument.type ne 'File'}</condition>
+            <condition>#{currentDocument.type eq 'File' and currentDocument.hasSchema('elora_viewer') and empty currentDocument.getPropertyValue('elovwr:file')}</condition>
+        </rule>
+        </filter>
+    
+  </extension>
+
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    <!--  override blobToPdf action -->
+    <action id="blobToPDF" link="#{conversionActions.generatePdfFileFromBlobHolder(currentDocument, currentDocumentAsBlobHolder)}"
+            order="200" label="label.document.generatePdf" icon="/icons/pdf.png">
+      <category>BLOB_ACTIONS</category>
+      <filter-id>isMainBlob</filter-id>
+      <filter-id>isExportableToPDF</filter-id>
+      <filter-id>isNotFileOrIsFileWithoutViewerFile</filter-id>
+    </action>
+    
+  </extension>
+  
+</component> 

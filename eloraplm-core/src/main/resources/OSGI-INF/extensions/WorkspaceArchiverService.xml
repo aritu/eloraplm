@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+    <documentation>
+        Service to archive / unarchive workspaces.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService"/>
+    </service>
+    
+    <extension-point name="archivers">
+        <documentation>
+            Used to configure archiver configurations.
+            <code>
+                <archiver name="..." destinationFolder="...">
+                    <condition class="..." method="..." />
+                    <executer class="..." method="..." type="pre/post" />
+                </archiver>
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.core.archiver.api.ArchiverDescriptor" />
+    </extension-point>
+    
+    <extension-point name="types">
+        <documentation>
+            Used to configure the archiver for each workspace type.
+            <code>
+                <type name="..." archiver="..." />
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.core.archiver.api.TypeDescriptor" />
+    </extension-point>
+    
+</component> 

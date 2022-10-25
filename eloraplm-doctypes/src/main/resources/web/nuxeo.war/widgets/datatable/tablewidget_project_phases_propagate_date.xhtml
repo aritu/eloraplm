@@ -1,0 +1,23 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+>
+    
+    <h:panelGroup rendered="#{not empty field_0 and field_1 eq 'phase'}">
+        <p:commandLink
+            title="#{messages['eloraplm.command.propagateDate']}"
+            styleClass="tipsyShow tipsyGravityN"
+            actionListener="#{projectPhasesTableBean.propagateDate(rowData, widget.properties.fieldToPropagate)}"
+            process="@this"
+            partialSubmit="true"
+            update="@form">
+            
+            <h:graphicImage value="/icons/action_propagate_date_24.png" style="margin-left: 1em;" />
+            
+        </p:commandLink>
+    </h:panelGroup>
+    
+</ui:composition>

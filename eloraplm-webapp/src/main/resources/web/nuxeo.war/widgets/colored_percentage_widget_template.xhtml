@@ -34,46 +34,6 @@
                 </h:selectOneListbox>
                 <h:message for="percentage" class="errorMessage" />
                 
-                
-                <script type="text/javascript">
-                    jQuery('select.percentageSelect').change(
-                        function() {
-                            switch(jQuery(this).val()) {
-                            case '0':
-                                jQuery(this).removeAttr('class');
-                                jQuery(this).addClass('percentageSelect');
-                                jQuery(this).addClass('lowest');
-                                break;
-                            case '10':
-                            case '20':
-                            case '30':
-                                jQuery(this).removeAttr('class');
-                                jQuery(this).addClass('percentageSelect');
-                                jQuery(this).addClass('low');
-                                break;
-                            case '40':
-                            case '50':
-                            case '60':
-                                jQuery(this).removeAttr('class');
-                                jQuery(this).addClass('percentageSelect');
-                                jQuery(this).addClass('medium');
-                                break;
-                            case '70':
-                            case '80':
-                            case '90':
-                                jQuery(this).removeAttr('class');
-                                jQuery(this).addClass('percentageSelect');
-                                jQuery(this).addClass('high');
-                                break;
-                            case '100':
-                                jQuery(this).removeAttr('class');
-                                jQuery(this).addClass('percentageSelect');
-                                jQuery(this).addClass('highest');
-                                break;
-                            }
-                        }
-                    );
-                </script>
             </c:if>
             
         </nxu:set>

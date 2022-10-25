@@ -11,6 +11,8 @@
     <directory name="elora_cadClassLevel3" layout="cadClassLevel3_vocabulary" sortField="ordering" />
     <directory name="elora_cadClassHierarchical" layout="cadClassHierarchical_vocabulary" sortField="parent" />
     
+    <directory name="elora_cad_attachment_type" layout="vocabulary" sortField="ordering" />
+    
     <directory name="elora_priority" layout="vocabulary" sortField="ordering" />
 
     <directory layout="vocabulary" sortField="ordering" name="elora_erpCustomers" />
@@ -20,6 +22,7 @@
 
     <directory layout="vocabulary" sortField="ordering" name="elora_partaker" />
     <directory layout="vocabulary" sortField="ordering" name="elora_projectType" />
+    <directory layout="vocabulary" sortField="ordering" name="elora_projectResult" />
 
   </extension>
 

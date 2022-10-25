@@ -19,7 +19,7 @@ import org.nuxeo.ecm.core.api.IdRef;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 @Name("eloraDocument")
 @Scope(CONVERSATION)
@@ -32,7 +32,7 @@ public class EloraDocumentBean implements Serializable {
     protected transient CoreSession documentManager;
 
     @In(create = true)
-    private transient EloraVersionLabelService eloraVersionLabelService;
+    private transient VersionLabelService versionLabelService;
 
     @In(create = true, required = false)
     protected transient FacesMessages facesMessages;
@@ -41,11 +41,14 @@ public class EloraDocumentBean implements Serializable {
     protected Map<String, String> messages;
 
     public String getMajorToDisplay(DocumentModel docModel) {
-        return eloraVersionLabelService.getMajor(docModel);
+        return versionLabelService.getMajor(docModel);
     }
 
-    public boolean isZeroVersion(String versionLabel) {
-        return eloraVersionLabelService.getZeroVersion().equals(versionLabel);
+    public boolean isZeroVersion(DocumentModel doc) {
+        String versionLabel = doc.getVersionLabel();
+        // It can be a zero version with a different label too
+        return versionLabelService.getZeroVersion().equals(versionLabel)
+                || documentManager.getVersions(doc.getRef()).isEmpty();
     }
 
     public String getVersionStatus(DocumentModel currentDoc,

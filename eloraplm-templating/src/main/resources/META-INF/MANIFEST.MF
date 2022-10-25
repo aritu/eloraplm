@@ -11,5 +11,7 @@ Nuxeo-Component: OSGI-INF/extensions/TemplatingService.xml,OSGI-INF/ex
  tensions/eloraplm-templating-ActionService-contrib.xml,OSGI-INF/exten
  sions/eloraplm-templating-ContentTemplateService-contrib.xml,OSGI-INF
  /extensions/eloraplm-templating-TemplateProcessorComponent-contrib.xm
- l,OSGI-INF/extensions/eloraplm-templating-TypeService-contrib.xml
+ l,OSGI-INF/extensions/eloraplm-templating-TypeService-contrib.xml,OSG
+ I-INF/extensions/eloraplm-templating-OperationServiceComponent-contri
+ b.xml
 

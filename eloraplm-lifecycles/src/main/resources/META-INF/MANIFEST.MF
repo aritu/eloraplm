@@ -11,5 +11,6 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-lifecycles-LifeCycleServ
  ice-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ActionService
  -contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ResourcePublishe
  r-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-LifecycleConfig
- Service-contrib.xml
+ Service-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-WebResour
+ ces-contrib.xml
 

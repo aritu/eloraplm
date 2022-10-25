@@ -24,10 +24,17 @@
     
     <extension point="transitions" target="com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService">
         <!-- eloraCmPrLifeCycle -->
-        <!-- TODO -->
+        <transition lifecycle="eloraCmPrLifeCycle" name="review" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmPrLifeCycle" name="validate" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmPrLifeCycle" name="complete" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmPrLifeCycle" name="manage" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmPrLifeCycle" name="reject" visible="true" direction="promote" />
         
         <!-- eloraCmEcrLifeCycle -->
-        <!-- TODO -->
+        <transition lifecycle="eloraCmEcrLifeCycle" name="review" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmEcrLifeCycle" name="evaluate" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmEcrLifeCycle" name="complete" visible="true" direction="promote" />
+        <transition lifecycle="eloraCmEcrLifeCycle" name="reject" visible="true" direction="promote" />
         
         <!-- eloraCmEcoLifeCycle -->
         <transition lifecycle="eloraCmEcoLifeCycle" name="technical review" visible="true" direction="promote" />

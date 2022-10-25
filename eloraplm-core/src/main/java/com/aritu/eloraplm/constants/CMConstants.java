@@ -33,6 +33,11 @@ public class CMConstants {
 
     public static final String ITEM_TYPE_BOM = "BOM";
 
+    // ITEM CLASS
+    public static final String ITEM_CLASS_MODIFIED = "MODIFIED";
+
+    public static final String ITEM_CLASS_IMPACTED = "IMPACTED";
+
     // ACTION VALUES
     public static final String ACTION_CHANGE = "id_change";
 

@@ -22,35 +22,65 @@ package com.aritu.eloraplm.constants;
  */
 public class CMBatchProcessingMetadataConstants {
 
-    // items
-    public static final String LAST_ITEM_BATCH_PROCESS = "cmbp:itemsLastBatchProcess";
+    // IMPCATED ITEMS
+    public static final String LAST_IMPACTED_ITEMS_BATCH_PROCESS = "cmbp:itemsLastBatchProcess";
 
-    public static final String LAST_ITEM_BATCH_PROCESS_EXECUTOR = "cmbp:itemsLastBatchProcessExecutor";
+    public static final String LAST_IMPACTED_ITEMS_BATCH_PROCESS_EXECUTOR = "cmbp:itemsLastBatchProcessExecutor";
 
-    public static final String LAST_ITEM_BATCH_PROCESS_RESULT_MSG = "cmbp:itemsLastBatchProcessResultMsg";
+    public static final String LAST_IMPACTED_ITEMS_BATCH_PROCESS_RESULT_MSG = "cmbp:itemsLastBatchProcessResultMsg";
 
-    public static final String LAST_ITEM_BATCH_PROCESS_SUCCESS_RESULT_LIST = "cmbp:itemsLastBatchProcessSuccessResultList";
+    public static final String LAST_IMPACTED_ITEMS_BATCH_PROCESS_SUCCESS_RESULT_LIST = "cmbp:itemsLastBatchProcessSuccessResultList";
 
-    public static final String LAST_ITEM_BATCH_PROCESS_ERROR_RESULT_LIST = "cmbp:itemsLastBatchProcessErrorResultList";
+    public static final String LAST_IMPACTED_ITEMS_BATCH_PROCESS_ERROR_RESULT_LIST = "cmbp:itemsLastBatchProcessErrorResultList";
 
-    public static final String LAST_ITEM_BATCH_PROCESS_STARTED = "cmbp:itemsLastBatchProcessStarted";
+    public static final String LAST_IMPACTED_ITEMS_BATCH_PROCESS_STARTED = "cmbp:itemsLastBatchProcessStarted";
 
-    public static final String LAST_ITEM_BATCH_PROCESS_FINISHED = "cmbp:itemsLastBatchProcessFinished";
+    public static final String LAST_IMPACTED_ITEMS_BATCH_PROCESS_FINISHED = "cmbp:itemsLastBatchProcessFinished";
 
-    // docs
-    public static final String LAST_DOC_BATCH_PROCESS = "cmbp:docsLastBatchProcess";
+    // IMPACTED DOCS
+    public static final String LAST_IMPACTED_DOCS_BATCH_PROCESS = "cmbp:docsLastBatchProcess";
 
-    public static final String LAST_DOC_BATCH_PROCESS_EXECUTOR = "cmbp:docsLastBatchProcessExecutor";
+    public static final String LAST_IMPACTED_DOCS_BATCH_PROCESS_EXECUTOR = "cmbp:docsLastBatchProcessExecutor";
 
-    public static final String LAST_DOC_BATCH_PROCESS_RESULT_MSG = "cmbp:docsLastBatchProcessResultMsg";
+    public static final String LAST_IMPACTED_DOCS_BATCH_PROCESS_RESULT_MSG = "cmbp:docsLastBatchProcessResultMsg";
 
-    public static final String LAST_DOC_BATCH_PROCESS_SUCCESS_RESULT_LIST = "cmbp:docsLastBatchProcessSuccessResultList";
+    public static final String LAST_IMPACTED_DOCS_BATCH_PROCESS_SUCCESS_RESULT_LIST = "cmbp:docsLastBatchProcessSuccessResultList";
 
-    public static final String LAST_DOC_BATCH_PROCESS_ERROR_RESULT_LIST = "cmbp:docsLastBatchProcessErrorResultList";
+    public static final String LAST_IMPACTED_DOCS_BATCH_PROCESS_ERROR_RESULT_LIST = "cmbp:docsLastBatchProcessErrorResultList";
 
-    public static final String LAST_DOC_BATCH_PROCESS_STARTED = "cmbp:docsLastBatchProcessStarted";
+    public static final String LAST_IMPACTED_DOCS_BATCH_PROCESS_STARTED = "cmbp:docsLastBatchProcessStarted";
 
-    public static final String LAST_DOC_BATCH_PROCESS_FINISHED = "cmbp:docsLastBatchProcessFinished";
+    public static final String LAST_IMPACTED_DOCS_BATCH_PROCESS_FINISHED = "cmbp:docsLastBatchProcessFinished";
+
+    // MODIFIED ITEMS
+    public static final String LAST_MODIFIED_ITEMS_BATCH_PROCESS = "cmbp:modifiedItemsLastBatchProcess";
+
+    public static final String LAST_MODIFIED_ITEMS_BATCH_PROCESS_EXECUTOR = "cmbp:modifiedItemsLastBatchProcessExecutor";
+
+    public static final String LAST_MODIFIED_ITEMS_BATCH_PROCESS_RESULT_MSG = "cmbp:modifiedItemsLastBatchProcessResultMsg";
+
+    public static final String LAST_MODIFIED_ITEMS_BATCH_PROCESS_SUCCESS_RESULT_LIST = "cmbp:modifiedItemsLastBatchProcessSuccessResultList";
+
+    public static final String LAST_MODIFIED_ITEMS_BATCH_PROCESS_ERROR_RESULT_LIST = "cmbp:modifiedItemsLastBatchProcessErrorResultList";
+
+    public static final String LAST_MODIFIED_ITEMS_BATCH_PROCESS_STARTED = "cmbp:modifiedItemsLastBatchProcessStarted";
+
+    public static final String LAST_MODIFIED_ITEMS_BATCH_PROCESS_FINISHED = "cmbp:modifiedItemsLastBatchProcessFinished";
+
+    // MODIFIED DOCS
+    public static final String LAST_MODIFIED_DOCS_BATCH_PROCESS = "cmbp:modifiedDocsLastBatchProcess";
+
+    public static final String LAST_MODIFIED_DOCS_BATCH_PROCESS_EXECUTOR = "cmbp:modifiedDocsLastBatchProcessExecutor";
+
+    public static final String LAST_MODIFIED_DOCS_BATCH_PROCESS_RESULT_MSG = "cmbp:modifiedDocsLastBatchProcessResultMsg";
+
+    public static final String LAST_MODIFIED_DOCS_BATCH_PROCESS_SUCCESS_RESULT_LIST = "cmbp:modifiedDocsLastBatchProcessSuccessResultList";
+
+    public static final String LAST_MODIFIED_DOCS_BATCH_PROCESS_ERROR_RESULT_LIST = "cmbp:modifiedDocsLastBatchProcessErrorResultList";
+
+    public static final String LAST_MODIFIED_DOCS_BATCH_PROCESS_STARTED = "cmbp:modifiedDocsLastBatchProcessStarted";
+
+    public static final String LAST_MODIFIED_DOCS_BATCH_PROCESS_FINISHED = "cmbp:modifiedDocsLastBatchProcessFinished";
 
     // general
     public static final String NEED_TO_BE_REFRESHED = "cmbp:needToBeRefreshed";

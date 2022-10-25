@@ -23,4 +23,6 @@ public class EloraDocumentEventNames {
 
     public static final String DOCUMENT_ELORA_ROOT_FOLDER_SWITCHED = "DocumentEloraRootFolderSwitched";
 
+    public static final String DOCUMENT_ELORA_CREATED_INSIDE_TEMPLATE = "DocumentEloraCreatedInsideTemplate";
+
 }

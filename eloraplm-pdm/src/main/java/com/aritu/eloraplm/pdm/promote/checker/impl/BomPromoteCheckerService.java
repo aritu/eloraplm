@@ -22,6 +22,7 @@ import java.util.Map;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.platform.relations.api.RelationManager;
 import org.nuxeo.ecm.platform.relations.api.Resource;
@@ -33,6 +34,7 @@ import org.nuxeo.runtime.api.Framework;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
+import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.promote.constants.PromoteConstants;
 import com.aritu.eloraplm.pdm.promote.treetable.PromoteNodeData;
@@ -46,7 +48,6 @@ import com.aritu.eloraplm.pdm.promote.util.PromoteHelper;
  *
  */
 public class BomPromoteCheckerService extends PromoteCheckerService {
-
 
     protected Map<String, Boolean> iconOnlyPredicates;
 
@@ -241,10 +242,20 @@ public class BomPromoteCheckerService extends PromoteCheckerService {
 
     private String checkRelatedDocs(DocumentModel doc, String docFinalState,
             Map<String, String> messages) throws EloraException {
+        /*
         Resource predicateResource = new ResourceImpl(
                 EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
+
         DocumentModelList objectDocList = RelationHelper.getObjectDocuments(doc,
                 predicateResource);
+        */
+
+        DocumentModelList objectDocList = new DocumentModelListImpl();
+        objectDocList.addAll(RelationHelper.getObjectDocuments(doc,
+                new ResourceImpl(EloraRelationConstants.BOM_HAS_CAD_DOCUMENT)));
+        objectDocList.addAll(RelationHelper.getObjectDocuments(doc,
+                new ResourceImpl(EloraRelationConstants.BOM_HAS_DOCUMENT)));
+
         String msg = "";
         for (DocumentModel objectDoc : objectDocList) {
             if (!LifecyclesConfig.isSupported(docFinalState,
@@ -283,19 +294,8 @@ public class BomPromoteCheckerService extends PromoteCheckerService {
                 RelationsConfig.bomHierarchicalRelationsList);
         hierarchicalAndDirectPredicateList.addAll(
                 RelationsConfig.bomDirectRelationsList);
-        hierarchicalAndDirectPredicates = getPredicateResourceList(
+        hierarchicalAndDirectPredicates = EloraRelationHelper.getPredicateResourceList(
                 hierarchicalAndDirectPredicateList);
-    }
-
-    private List<Resource> getPredicateResourceList(
-            List<String> hierarchicalAndDirectPredicateList) {
-        List<Resource> resourceList = new ArrayList<Resource>();
-        for (String hierarchicalAndDirectPredicate : hierarchicalAndDirectPredicateList) {
-            Resource predicateResource = new ResourceImpl(
-                    hierarchicalAndDirectPredicate);
-            resourceList.add(predicateResource);
-        }
-        return resourceList;
     }
 
     @Override

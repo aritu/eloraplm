@@ -1,0 +1,97 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+    >
+    
+    <h:panelGroup id="choicesWidget">
+        
+        <nxu:set var="defaultLocale" value="#{localizedLabelActions.getDefaultLocale()}">
+        <nxu:set var="supportedLocales" value="#{localizedLabelActions.getSupportedLocales()}">
+        
+            <table class="dataTableLine">
+                <thead>
+                    <th><label class="required">#{messages['eloraplm.column.list.choices.order']}</label></th>
+                    <c:forEach var="locale" items="#{supportedLocales}">
+                        <th><label class="#{defaultLocale eq locale ? 'required' : ''}">#{nxdir:getLabelFromId("locale", locale)}</label></th>
+                    </c:forEach>
+                    <th><label class="required">#{messages['eloraplm.column.list.choices.id']}</label></th>
+                    <th />
+                </thead>
+                <tbody>
+                <c:if test="#{field_0.size eq 0}">
+                    <tr>
+                        <td colspan="#{supportedLocales.size + 2}">#{messages['eloraplm.label.list.choices.empty']}</td>
+                    </tr>
+                </c:if>
+                <c:forEach var="choice" items="#{field_0}" varStatus="status">
+                    <tr>
+                        <td>
+                            <h:inputText id="choice-order-#{status.index}"
+                                name="choice-order"
+                                value="#{choice.order}"
+                                required="true" />
+                            <h:message for="choice-order" styleClass="errorMessage" />
+                        </td>
+                        <c:forEach var="label" items="#{choice.labels}">
+                        <nxu:set var="isDefaultLocale" value="#{defaultLocale eq label.locale}">
+                            <td>
+                                <h:inputText id="choice-label-#{label.locale}-#{status.index}"
+                                    name="choice-label-#{label.locale}"
+                                    value="#{label.label}"
+                                    required="#{isDefaultLocale}"
+                                    onkeyup="#{isDefaultLocale ? 'updateChoiceId(event)' : ''}" >
+                                     
+                                    <p:ajax event="keyup" process="choicesWidget" partialSubmit="true"
+                                        update="#{widget.properties.onValuesUpdatedRerenderId}" />
+                                    
+                                </h:inputText>
+                                <h:message for="choice-label-#{label.locale}" styleClass="errorMessage" />
+                            </td>
+                        </nxu:set>
+                        </c:forEach>
+                        <td>
+                            <h:inputText id="choice-id-#{status.index}"
+                                name="choice-id"
+                                value="#{choice.choiceId}"
+                                required="true"
+                                styleClass="editableButLikeViewMode" />
+                                
+                            <h:message for="choice-id" styleClass="errorMessage" />
+                        </td>
+                        <td>
+                            <p:commandLink
+                                title="#{messages['eloraplm.command.remove']}"
+                                styleClass="tipsyShow tipsyGravityN"
+                                actionListener="#{listChoiceActions.removeChoice(field_0, choice)}"
+                                process="@this"
+                                partialSubmit="true"
+                                update="choicesWidget #{widget.properties.onValuesUpdatedRerenderId}" >
+                                
+                                <h:graphicImage value="/icons/row_delete_16.png" />
+                                
+                            </p:commandLink>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        
+            <p:commandButton actionListener="#{listChoiceActions.addChoice(field_0)}"
+                    value="#{messages['eloraplm.command.list.choices.add']}"
+                    process="choicesWidget"
+                    update="choicesWidget"
+                    immediate="true"
+                    partialSubmit="true" />
+                    
+        </nxu:set>
+        </nxu:set>
+        
+    </h:panelGroup>
+    
+</ui:composition>
+

@@ -1,0 +1,13 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/archiving_info">
+    
+    <xs:element name="isArchived" type="xs:boolean" />
+    <xs:element name="archivingDate" type="xs:date" />
+    <xs:element name="archivingUser">
+        <xs:simpleType>
+            <xs:restriction base="xs:string" ref:resolver="userManagerResolver" ref:type="user" />
+        </xs:simpleType>
+    </xs:element>
+    
+</xs:schema>

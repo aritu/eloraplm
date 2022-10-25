@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.workflows.forms.api.WorkflowFormsService">
+    <documentation>
+        Service to configure the forms shown in workflows.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.workflows.forms.api.WorkflowFormsServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.workflows.forms.api.WorkflowFormsService"/>
+    </service>
+
+</component> 

@@ -32,8 +32,8 @@ public class BomCharacteristicMastersValidator implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Log log = LogFactory.getLog(
-            BomCharacteristicMastersValidator.class);
+    private static final Log log = LogFactory
+            .getLog(BomCharacteristicMastersValidator.class);
 
     public void validateMasterListDefaultValue(FacesContext context,
             UIComponent component, Object value) {
@@ -45,12 +45,13 @@ public class BomCharacteristicMastersValidator implements Serializable {
         // nothing to be validated.
         String bomCharacType = retrieveBomCharaMasterType(context, component);
 
-        if (bomCharacType != null && bomCharacType.equals(
-                BomCharacteristicsConstants.BOM_CHARAC_TYPE_LIST)) {
+        if (bomCharacType != null && bomCharacType
+                .equals(BomCharacteristicsConstants.BOM_CHARAC_TYPE_LIST)) {
 
             // Find the UI component that stores the list content
-            UIInput listContentTargetComponent = (UIInput) component.findComponent(
-                    BomCharacteristicsConstants.BOM_CHARAC_LIST_CONTENT_UI_ID);
+            UIInput listContentTargetComponent = (UIInput) component
+                    .findComponent(
+                            BomCharacteristicsConstants.BOM_CHARAC_LIST_CONTENT_UI_ID);
             if (listContentTargetComponent == null) {
                 log.error(logInitMsg + "list content UI element identified by |"
                         + BomCharacteristicsConstants.BOM_CHARAC_LIST_CONTENT_UI_ID
@@ -62,7 +63,9 @@ public class BomCharacteristicMastersValidator implements Serializable {
             }
 
             // Retrieve the list content
-            List<Map<String, String>> listContent = (List<Map<String, String>>) listContentTargetComponent.getLocalValue();
+            @SuppressWarnings("unchecked")
+            List<Map<String, String>> listContent = (List<Map<String, String>>) listContentTargetComponent
+                    .getLocalValue();
             // TODO::: hau kenduta ondo????
             /*if (listContent == null || listContent.isEmpty()) {
                 log.error(logInitMsg + "list content is empty");
@@ -95,12 +98,13 @@ public class BomCharacteristicMastersValidator implements Serializable {
         // nothing to be validated.
         String bomCharacType = retrieveBomCharaMasterType(context, component);
 
-        if (bomCharacType != null && bomCharacType.equals(
-                BomCharacteristicsConstants.BOM_CHARAC_TYPE_STRING)) {
+        if (bomCharacType != null && bomCharacType
+                .equals(BomCharacteristicsConstants.BOM_CHARAC_TYPE_STRING)) {
 
             // Find the UI component that stores the string max length
-            UIInput stringMaxLengthTargetComponent = (UIInput) component.findComponent(
-                    BomCharacteristicsConstants.BOM_CHARAC_STRING_MAX_LENGTH_UI_ID);
+            UIInput stringMaxLengthTargetComponent = (UIInput) component
+                    .findComponent(
+                            BomCharacteristicsConstants.BOM_CHARAC_STRING_MAX_LENGTH_UI_ID);
             if (stringMaxLengthTargetComponent == null) {
                 log.error(logInitMsg
                         + "string max length UI element identified by |"
@@ -118,7 +122,8 @@ public class BomCharacteristicMastersValidator implements Serializable {
                 return;
             }
 
-            BigDecimal stringMaxLengthBD = (BigDecimal) stringMaxLengthTargetComponent.getLocalValue();
+            BigDecimal stringMaxLengthBD = (BigDecimal) stringMaxLengthTargetComponent
+                    .getLocalValue();
             Long stringMaxLength = new Long(stringMaxLengthBD.longValueExact());
 
             log.trace(
@@ -148,12 +153,13 @@ public class BomCharacteristicMastersValidator implements Serializable {
         // nothing to be validated.
         String bomCharacType = retrieveBomCharaMasterType(context, component);
 
-        if (bomCharacType != null && bomCharacType.equals(
-                BomCharacteristicsConstants.BOM_CHARAC_TYPE_NUMBER)) {
+        if (bomCharacType != null && bomCharacType
+                .equals(BomCharacteristicsConstants.BOM_CHARAC_TYPE_NUMBER)) {
 
             // Find the UI component that stores the number max integer places
-            UIInput numberMaxIntegerPlacesTargetComponent = (UIInput) component.findComponent(
-                    BomCharacteristicsConstants.BOM_CHARAC_NUMBER_MAX_INTEGER_PLACES_UI_ID);
+            UIInput numberMaxIntegerPlacesTargetComponent = (UIInput) component
+                    .findComponent(
+                            BomCharacteristicsConstants.BOM_CHARAC_NUMBER_MAX_INTEGER_PLACES_UI_ID);
             if (numberMaxIntegerPlacesTargetComponent == null) {
                 log.error(logInitMsg
                         + "number max length UI element identified by |"
@@ -166,8 +172,9 @@ public class BomCharacteristicMastersValidator implements Serializable {
             }
 
             // Find the UI component that stores the number max decimal places
-            UIInput numberMaxDecimalPlacesTargetComponent = (UIInput) component.findComponent(
-                    BomCharacteristicsConstants.BOM_CHARAC_NUMBER_MAX_DECIMAL_PLACES_UI_ID);
+            UIInput numberMaxDecimalPlacesTargetComponent = (UIInput) component
+                    .findComponent(
+                            BomCharacteristicsConstants.BOM_CHARAC_NUMBER_MAX_DECIMAL_PLACES_UI_ID);
             if (numberMaxDecimalPlacesTargetComponent == null) {
                 log.error(logInitMsg
                         + "number max decimal places UI element identified by |"
@@ -181,19 +188,21 @@ public class BomCharacteristicMastersValidator implements Serializable {
 
             // Retrieve the number max integer places and max decimal places
             if (numberMaxIntegerPlacesTargetComponent.getLocalValue() == null
-                    || numberMaxDecimalPlacesTargetComponent.getLocalValue() == null) {
+                    || numberMaxDecimalPlacesTargetComponent
+                            .getLocalValue() == null) {
                 // Let required="true" do its job.
                 return;
             }
 
-            BigDecimal numberMaxIntegerPlacesBD = (BigDecimal) numberMaxIntegerPlacesTargetComponent.getLocalValue();
-            String numberMaxIntegerPlaces = numberMaxIntegerPlacesBD.toString();
-            BigDecimal numberMaxDecimalPlacesBD = (BigDecimal) numberMaxDecimalPlacesTargetComponent.getLocalValue();
-            String numberMaxDecimalPlaces = numberMaxDecimalPlacesBD.toString();
+            Integer numberMaxIntegerPlaces = ((BigDecimal) numberMaxIntegerPlacesTargetComponent
+                    .getLocalValue()).intValueExact();
+            Integer numberMaxDecimalPlaces = ((BigDecimal) numberMaxDecimalPlacesTargetComponent
+                    .getLocalValue()).intValueExact();
 
             log.trace(logInitMsg + "numberMaxIntegerPlaces = |"
-                    + numberMaxIntegerPlaces + "|, numberMaxDecimalPlaces=|"
-                    + numberMaxDecimalPlaces + "|");
+                    + numberMaxIntegerPlaces.toString()
+                    + "|, numberMaxDecimalPlaces=|"
+                    + numberMaxDecimalPlaces.toString() + "|");
             log.trace(logInitMsg + "value = |" + value + "|");
 
             if (value != null) {

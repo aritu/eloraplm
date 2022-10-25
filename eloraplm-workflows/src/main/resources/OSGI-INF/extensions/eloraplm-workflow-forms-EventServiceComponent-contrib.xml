@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.workflows.forms.EventServiceComponent.contrib">
+
+    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
+        
+        <listener name="workflowQuestionsInitializer" async="false" postCommit="false" 
+                  class="com.aritu.eloraplm.workflows.forms.listener.WorkflowQuestionsInitializerListener" priority="10">
+            <event>beforeRouteStart</event>
+        </listener>
+        
+        <listener name="nodeTaskQuestionsInitializer" async="false" postCommit="false" 
+                  class="com.aritu.eloraplm.workflows.forms.listener.NodeTaskQuestionsInitializerListener" priority="10">
+            <event>afterWorkflowTaskCreated</event>
+        </listener>
+        
+        <listener name="nodeTaskQuestionsWriter" async="false" postCommit="false" 
+                  class="com.aritu.eloraplm.workflows.forms.listener.NodeTaskQuestionsWriterListener" priority="10">
+            <event>workflowTaskCompleted</event>
+        </listener>
+        
+    </extension>
+
+</component>

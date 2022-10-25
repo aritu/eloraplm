@@ -17,6 +17,8 @@
                 <type>Project</type>
                 <type>AdminRoot</type>
                 <type>DocumentationRoot</type>
+                <type>DocumentTemplates</type>
+                <type>OfficeTemplates</type>
             </rule>
         </filter>
         
@@ -33,15 +35,9 @@
             </rule>
         </filter>
         
-        <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet.
-        Here we use directly all the doctypes that now have the facet. -->
         <filter id="isBasicDocument">
             <rule grant="true">
-                <type>File</type>
-                <type>Note</type>
-                <type>Audio</type>
-                <type>Video</type>
-                <type>Picture</type>
+                <facet>BasicDocument</facet>
             </rule>
         </filter>
         
@@ -94,7 +90,7 @@
         
         <filter id="projectPhasesTableButtons">
             <rule grant="true">
-                <condition>#{webActions.currentTabId eq 'TAB_PROJECT_PHASES'}</condition>
+                <condition>#{webActions.getCurrentTabId('MAIN_TABS') eq 'documents' and webActions.currentTabId eq 'TAB_PROJECT_PHASES'}</condition>
             </rule>
         </filter>
         
@@ -120,6 +116,16 @@
           <filter-id>projectPhasesTableButtons</filter-id>
           <properties>
             <property name="include">/incl/action/add_project_phase.xhtml</property>
+            <property name="ajaxSupport">true</property>
+            <property name="styleClass">button</property>
+          </properties>
+        </action>
+        
+        <action id="BtnModifyManager" order="25" label="eloraplm.command.project.phase.modifyManager" type="fancybox" icon="">
+          <category>DATATABLE_BUTTON</category>
+          <filter-id>projectPhasesTableButtons</filter-id>
+          <properties>
+            <property name="include">/incl/action/project_phases_list_modify_manager.xhtml</property>
             <property name="ajaxSupport">true</property>
             <property name="styleClass">button</property>
           </properties>

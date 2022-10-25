@@ -27,6 +27,8 @@ public class RelationInfo {
 
     private String versionLabel;
 
+    private String checksum;
+
     private String lifecycleState;
 
     private String quantity;
@@ -58,11 +60,19 @@ public class RelationInfo {
     }
 
     public String getVersionLabel() {
-        return versionLabel;
+        return (versionLabel == null ? "" : versionLabel);
     }
 
     public void setVersionLabel(String versionLabel) {
         this.versionLabel = versionLabel;
+    }
+
+    public String getChecksum() {
+        return checksum;
+    }
+
+    public void setChecksum(String checksum) {
+        this.checksum = checksum;
     }
 
     public String getLifecycleState() {

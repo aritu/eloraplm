@@ -34,6 +34,7 @@ import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
+import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.promote.constants.PromoteConstants;
 import com.aritu.eloraplm.pdm.promote.treetable.PromoteNodeData;
@@ -318,7 +319,7 @@ public class CadPromoteCheckerService extends PromoteCheckerService {
     }
 
     private void setSpecialPredicates() {
-        specialPredicates = getPredicateResourceList(
+        specialPredicates = EloraRelationHelper.getPredicateResourceList(
                 RelationsConfig.cadSpecialRelationsList);
     }
 
@@ -344,19 +345,7 @@ public class CadPromoteCheckerService extends PromoteCheckerService {
                 RelationsConfig.cadHierarchicalRelationsList);
         hierarchicalAndDirectPredicateList.addAll(
                 RelationsConfig.cadDirectRelationsList);
-        hierarchicalAndDirectPredicates = getPredicateResourceList(
+        hierarchicalAndDirectPredicates = EloraRelationHelper.getPredicateResourceList(
                 hierarchicalAndDirectPredicateList);
     }
-
-    private List<Resource> getPredicateResourceList(
-            List<String> hierarchicalAndDirectPredicateList) {
-        List<Resource> resourceList = new ArrayList<Resource>();
-        for (String hierarchicalAndDirectPredicate : hierarchicalAndDirectPredicateList) {
-            Resource predicateResource = new ResourceImpl(
-                    hierarchicalAndDirectPredicate);
-            resourceList.add(predicateResource);
-        }
-        return resourceList;
-    }
-
 }

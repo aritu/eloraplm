@@ -26,7 +26,8 @@
             <filter-id>has_one_auth_token</filter-id>
             <filter-id>can_drive_edit</filter-id>
             <filter-id>isMainBlob</filter-id>
-            <filter-id>isBasicDocument</filter-id>
+            <filter-id>isBomOrBasicDocument</filter-id>
+            <filter-id>isCheckedOut</filter-id>
         </action>
         
         <action icon="/icons/drive_edit.png" id="driveEditUserCenterNuxeoDrive" label="command.driveEdit" link="#{nuxeoDriveActions.navigateToUserCenterNuxeoDrive}" order="50">
@@ -34,7 +35,8 @@
             <filter-id>has_no_auth_token</filter-id>
             <filter-id>can_drive_edit</filter-id>
             <filter-id>isMainBlob</filter-id>
-            <filter-id>isBasicDocument</filter-id>
+            <filter-id>isBomOrBasicDocument</filter-id>
+            <filter-id>isCheckedOut</filter-id>
         </action>
         
     </extension>

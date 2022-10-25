@@ -36,15 +36,18 @@ public class TryCheckinRequestDoc {
 
     private DocumentRef structureRootRealRef;
 
+    private boolean overwrite;
+
     public TryCheckinRequestDoc(int localId, DocumentRef realRef,
             DocumentRef wcRef, String type, String filename,
-            DocumentRef structureRootRealRef) {
+            DocumentRef structureRootRealRef, boolean overwrite) {
         this.localId = localId;
         this.realRef = realRef;
         this.wcRef = wcRef;
         this.type = type;
         this.filename = filename;
         this.structureRootRealRef = structureRootRealRef;
+        this.overwrite = overwrite;
         // Initialize properties
         properties = new Properties();
     }
@@ -103,5 +106,13 @@ public class TryCheckinRequestDoc {
 
     public void setStructureRootRealRef(DocumentRef structureRootRealRef) {
         this.structureRootRealRef = structureRootRealRef;
+    }
+
+    public boolean isOverwrite() {
+        return overwrite;
+    }
+
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
     }
 }

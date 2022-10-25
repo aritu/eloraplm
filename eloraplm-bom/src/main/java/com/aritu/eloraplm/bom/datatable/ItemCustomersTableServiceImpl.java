@@ -28,8 +28,8 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.datatable.EditableTableService;
 import com.aritu.eloraplm.datatable.RowData;
-import com.aritu.eloraplm.datatable.TableService;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -37,7 +37,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
  * @author aritu
  *
  */
-public class ItemCustomersTableServiceImpl implements TableService {
+public class ItemCustomersTableServiceImpl implements EditableTableService {
 
     @Override
     public List<RowData> getData(Object parentObject) throws EloraException {

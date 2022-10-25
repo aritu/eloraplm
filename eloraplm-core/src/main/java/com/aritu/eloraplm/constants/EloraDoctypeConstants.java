@@ -20,7 +20,13 @@ public class EloraDoctypeConstants {
 
     public static final String OTHER_CAD_DOCUMENTS_FOLDER = "FolderOtherDoc";
 
+    public static final String BOM_DOCUMENT = "BomDocument";
+
     public static final String BOM_PART = "BomPart";
+
+    public static final String SOFTWARE = "Software";
+
+    public static final String ELECTRONIC_COMPONENT = "ElectronicComponent";
 
     public static final String BOM_PRODUCT = "BomProduct";
 

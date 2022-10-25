@@ -8,6 +8,7 @@
         <bundle name="nuxeo_includes">
             <resources append="true">
                 <resource>elora.webapp.base.css</resource>
+                <resource>elora.webapp.base.js</resource>
             </resources>
         </bundle>
     </extension>
@@ -15,6 +16,9 @@
     <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
         <resource name="elora.webapp.base.css" type="css">
             <uri>/css/elora-webapp-base.css</uri>
+        </resource>
+        <resource name="elora.webapp.base.js" type="js">
+            <path>scripts/elora-webapp-base.js</path>
         </resource>
     </extension>
 

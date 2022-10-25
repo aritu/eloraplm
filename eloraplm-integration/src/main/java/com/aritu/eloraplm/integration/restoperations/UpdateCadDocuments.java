@@ -39,7 +39,6 @@ import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
-import com.aritu.eloraplm.core.util.EloraFileInfo;
 import com.aritu.eloraplm.core.util.json.EloraJsonHelper;
 import com.aritu.eloraplm.core.util.restoperations.EloraGeneralResponse;
 import com.aritu.eloraplm.exceptions.ConnectorIsObsoleteException;
@@ -232,8 +231,10 @@ public class UpdateCadDocuments {
                             "batch", true);
                     String hash = EloraJsonHelper.getJsonFieldAsString(attItem,
                             "hash", true);
+                    String type = EloraJsonHelper.getJsonFieldAsString(attItem,
+                            "type", true);
                     requestDoc.addCadAttachmentFile(fileId, fileName, batch,
-                            hash);
+                            hash, type);
                 }
             }
             requestDocs.add(requestDoc);
@@ -247,7 +248,8 @@ public class UpdateCadDocuments {
             throws EloraException, COSVisitorException, IOException {
         String logInitMsg = "[processSingleDocument] ["
                 + session.getPrincipal().getName() + "] ";
-        log.trace(logInitMsg + "--- ENTER --- ");
+        log.trace(logInitMsg + "Processing document |" + requestDoc.getRealRef()
+                + "|");
 
         DocumentModel realDoc = session.getDocument(requestDoc.getRealRef());
         if (realDoc == null) {
@@ -261,8 +263,7 @@ public class UpdateCadDocuments {
             throw new EloraException(
                     "Document has no Working Copy or is unreadable by the user.");
         }
-        if (wcDoc.isLocked() && !wcDoc.getLockInfo().getOwner().equals(
-                session.getPrincipal().getName())) {
+        if (!EloraDocumentHelper.isNotLockedOrLockedByMe(wcDoc)) {
             throw new EloraException(
                     "Document is locked by another user, so it cannot be updated.");
         }
@@ -277,11 +278,15 @@ public class UpdateCadDocuments {
         if (wcDoc != null) {
             DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(wcDoc);
             if (baseDoc != null && baseDoc.getId().equals(realDoc.getId())) {
+                log.trace(logInitMsg
+                        + "Document is the base AV. Treating working copy...");
                 treatWorkingCopy(wcDoc, requestDoc);
+                log.trace(logInitMsg + "Working copy treated.");
             }
         }
 
-        log.trace(logInitMsg + "--- EXIT --- ");
+        log.trace(logInitMsg + "Document |" + requestDoc.getRealRef()
+                + "| processed.");
     }
 
     private void treatWorkingCopy(DocumentModel wcDoc,
@@ -290,6 +295,7 @@ public class UpdateCadDocuments {
                 + session.getPrincipal().getName() + "] ";
 
         if (wcDoc.isCheckedOut()) {
+            log.trace(logInitMsg + "Treating checked out working copy...");
             wcDoc = updateDocument(wcDoc, requestDoc);
             wcDoc = session.saveDocument(wcDoc);
 
@@ -298,8 +304,10 @@ public class UpdateCadDocuments {
                     + "| was checked out. Metadata has been updated.");
             return;
         } else {
+            log.trace(logInitMsg + "Restoring WC to base version.");
             EloraDocumentHelper.restoreToVersion(wcDoc.getRef(),
                     requestDoc.getRealRef(), true, true, session);
+            log.trace(logInitMsg + "Restored.");
         }
 
     }
@@ -307,7 +315,8 @@ public class UpdateCadDocuments {
     private DocumentModel updateDocument(DocumentModel doc,
             UpdateCadDocumentsRequestDoc requestDoc) throws EloraException {
         doc = updateProperties(doc, requestDoc.getProperties());
-        relateDocumentWithBinaries(doc, requestDoc);
+        doc = EloraIntegrationHelper.relateDocumentWithCadBinaries(session, doc,
+                requestDoc);
         return doc;
     }
 
@@ -318,56 +327,6 @@ public class UpdateCadDocuments {
         }
 
         return doc;
-    }
-
-    private void relateDocumentWithBinaries(DocumentModel doc,
-            UpdateCadDocumentsRequestDoc requestDoc) throws EloraException {
-
-        String logInitMsg = "[relateDocumentWithBinaries] ["
-                + session.getPrincipal().getName() + "] ";
-        log.trace(logInitMsg + "--- ENTER --- ");
-
-        EloraFileInfo contentFile = requestDoc.getContentFile();
-        if (contentFile != null) {
-            if (contentFile.getBatch() != null
-                    && contentFile.getFileName() != null) {
-
-                EloraDocumentHelper.relateBatchWithDoc(doc,
-                        contentFile.getFileId(), contentFile.getBatch(),
-                        EloraGeneralConstants.FILE_TYPE_CONTENT,
-                        contentFile.getFileName(), contentFile.getHash());
-            }
-        }
-
-        EloraFileInfo viewerFile = requestDoc.getViewerFile();
-        if (viewerFile != null) {
-            if (viewerFile.getBatch() != null
-                    && viewerFile.getFileName() != null) {
-
-                EloraDocumentHelper.relateBatchWithDoc(doc,
-                        viewerFile.getFileId(), viewerFile.getBatch(),
-                        EloraGeneralConstants.FILE_TYPE_VIEWER,
-                        viewerFile.getFileName(), viewerFile.getHash());
-            }
-        }
-
-        List<EloraFileInfo> cadAttachments = requestDoc.getCadAttachments();
-        if (cadAttachments != null) {
-            for (EloraFileInfo cadAttachment : cadAttachments) {
-                if (cadAttachment.getBatch() != null
-                        && cadAttachment.getFileName() != null) {
-                    EloraDocumentHelper.relateBatchWithDoc(doc,
-                            cadAttachment.getFileId(), cadAttachment.getBatch(),
-                            EloraGeneralConstants.FILE_TYPE_CAD_ATTACHMENT,
-                            cadAttachment.getFileName(),
-                            cadAttachment.getHash());
-                }
-            }
-        }
-
-        log.trace(logInitMsg + "Binaries related to document |"
-                + doc.getRef().toString() + "| ");
-        log.trace(logInitMsg + "--- EXIT --- ");
     }
 
     /**
@@ -391,7 +350,7 @@ public class UpdateCadDocuments {
             propList.add(EloraMetadataConstants.ELORA_ELOVWR_FILE);
         }
         if (requestDoc.getCadAttachments() != null) {
-            propList.add(EloraMetadataConstants.ELORA_CADATTS_FILES);
+            propList.add(EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS);
         }
         comment += " " + String.join(", ", propList);
 

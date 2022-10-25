@@ -30,13 +30,22 @@ public class CMEventNames {
 
     public static final String CM_DOC_IMPACT_MATRIX_CALCULATED = "DocIMCalculated";
 
+    public static final String CM_MODIFIED_ITEMS_DERIVED_FROM_IMPACTED_DOCS_ADDED = "ModifiedItemsDerivedFromImpactedDocsAdded";
+
+    public static final String CM_IMPACTED_ITEMS_CHANGES_SAVED_EVENT = "CmImpactedItemsChangesSavedEvent";
+
+    public static final String CM_IMPACTED_DOCS_CHANGES_SAVED_EVENT = "CmImpactedDocsChangesSavedEvent";
+
     // Refresh
     public static final String CM_REFRESH_ITEMS_IMPACT_MATRIX = "RefreshItemsImpactMatrix";
 
     public static final String CM_REFRESH_DOCS_IMPACT_MATRIX = "RefreshDocsImpactMatrix";
 
-    // Events for audit log
+    public static final String CM_REFRESH_MODIFIED_ITEMS = "RefreshModifiedItems";
 
+    public static final String CM_REFRESH_MODIFIED_DOCS = "RefreshModifiedDocs";
+
+    // Batch processes (Impacted Items and Impacted Docs)
     public static final String CM_ITEMS_BATCH_LOCK_EVENT = "CmItemsBatchLockEvent";
 
     public static final String CM_ITEMS_BATCH_UNLOCK_EVENT = "CmItemsBatchUnlockEvent";
@@ -57,8 +66,23 @@ public class CMEventNames {
 
     public static final String CM_DOCS_BATCH_PROMOTE_EVENT = "CmDocsBatchPromoteEvent";
 
-    public static final String CM_IMPACTED_ITEMS_CHANGES_SAVED_EVENT = "CmImpactedItemsChangesSavedEvent";
+    // Batch processes (Modified Items and Modified Docs)
+    public static final String CM_MODIF_DOCS_BATCH_LOCK_EVENT = "CmModifiedDocsBatchLockEvent";
 
-    public static final String CM_IMPACTED_DOCS_CHANGES_SAVED_EVENT = "CmImpactedDocsChangesSavedEvent";
+    public static final String CM_MODIF_DOCS_BATCH_UNLOCK_EVENT = "CmModifiedDocsBatchUnlockEvent";
+
+    public static final String CM_MODIF_DOCS_BATCH_PROMOTE_EVENT = "CmModifiedDocsPromoteEvent";
+
+    public static final String CM_MODIF_ITEMS_BATCH_LOCK_EVENT = "CmModifiedItemsBatchLockEvent";
+
+    public static final String CM_MODIF_ITEMS_BATCH_UNLOCK_EVENT = "CmModifiedItemsBatchUnlockEvent";
+
+    public static final String CM_MODIF_ITEMS_BATCH_CHECKOUT_EVENT = "CmModifiedItemsBatchCheckoutEvent";
+
+    public static final String CM_MODIF_ITEMS_BATCH_CHECKIN_EVENT = "CmModifiedItemsBatchCheckinEvent";
+
+    public static final String CM_MODIF_ITEMS_BATCH_UNDO_CHECKOUT_EVENT = "CmModifiedItemsBatchUndoCheckoutEvent";
+
+    public static final String CM_MODIF_ITEMS_BATCH_PROMOTE_EVENT = "CmModifiedItemsBatchPromoteEvent";
 
 }

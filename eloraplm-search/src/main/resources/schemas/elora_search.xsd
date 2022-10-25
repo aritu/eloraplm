@@ -37,6 +37,7 @@
   <xs:element name="search_owner" type="nxs:stringList"/>
   <xs:element name="cad_cadType" type="nxs:stringList"/>
   <xs:element name="cad_cadClassification" type="nxs:stringList"/>
+  <xs:element name="cad_cadMaterial" type="xs:string" />
   <xs:element name="cmeco_ecoType" type="nxs:stringList"/>
   <xs:element name="prj_projectType" type="nxs:stringList"/>
   
@@ -46,6 +47,10 @@
   <xs:element name="review_lastReviewer" type="nxs:stringList"/>
   <xs:element name="review_lastReviewed_min" type="xs:date" />
   <xs:element name="review_lastReviewed_max" type="xs:date" />
+  
+  <xs:element name="lock_owner" type="nxs:stringList"/>
+  <xs:element name="lock_created_min" type="xs:date" />
+  <xs:element name="lock_created_max" type="xs:date" />
   
   
   <!-- aggregates field-->

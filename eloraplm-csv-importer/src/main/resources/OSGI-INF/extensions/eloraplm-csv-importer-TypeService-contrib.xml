@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.csv.importer.TypeService.contrib">
+  <require>com.aritu.eloraplm.doctypes.TypeService.contrib</require>
+
+
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+  
+     <!--  Doctype for ImportResultsFolder -->
+    <doctype extends="Folder" name="ImportResultsFolder">
+      <!-- <facet name="SystemDocument"/>  -->
+      <facet name="EloraStruct" />
+      <!-- <subtypes>
+        <type>Folder</type>
+      </subtypes>  -->
+    </doctype>
+
+  </extension>
+
+  
+  <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
+  
+    <type id="ImportResultsFolder">
+      <label>ImportResultsFolder</label>
+      <icon>/icons/folder_16.png</icon>
+      <bigIcon>/icons/folder_100.png</bigIcon>
+      <description>ImportResultsFolder.description</description>
+      <default-view>view_documents</default-view>
+      <layouts mode="any">
+        <layout>heading</layout>
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>dublincore</layout>
+      </layouts>
+      <contentViews category="content">
+        <contentView>document_content</contentView>
+      </contentViews>
+      <contentViews category="trash_content">
+        <contentView showInExportView="false">document_trash_content</contentView>
+      </contentViews>
+      <subtypes>
+        <type>Folder</type>
+      </subtypes>
+    </type>
+    
+    <!-- Add ImportResultsFolder as subtype of AdminRoot -->
+     <type id="AdminRoot" >
+      <subtypes>
+        <type>ImportResultsFolder</type>
+      </subtypes>
+    </type>
+
+  </extension>
+  
+</component>

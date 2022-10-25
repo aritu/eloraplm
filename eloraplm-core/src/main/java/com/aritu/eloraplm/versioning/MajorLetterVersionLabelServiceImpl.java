@@ -16,35 +16,28 @@ package com.aritu.eloraplm.versioning;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.model.PropertyNotFoundException;
-import org.nuxeo.ecm.core.versioning.VersioningService;
+import java.util.Map;
 
 public class MajorLetterVersionLabelServiceImpl
-        implements EloraVersionLabelService {
+        extends AbstractVersionLabelServiceImpl {
 
-    protected static final String MAJOR_VERSION_PROP = "major_letter_versioning:major";
+    public MajorLetterVersionLabelServiceImpl() {
+        initConfig();
+    }
 
-    protected static final String ZERO_MAJOR_CHAR = "_";
+    private Map<String, String> initConfig() {
 
-    @Override
-    public String translateVersionLabel(String versionLabel) {
-        if (versionLabel == null || versionLabel.isEmpty()) {
-            return versionLabel;
-        }
-        String[] splittedVersionLabel = versionLabel.split("\\.");
-        if (splittedVersionLabel.length != 2) {
-            return versionLabel;
-        }
-        Long major = Long.valueOf(splittedVersionLabel[0]);
-        String translatedMajor = (String) translateMajor(major);
-        String minor = splittedVersionLabel[1];
-        return translatedMajor + "." + minor;
+        config.put(CFG_ZERO_MAJOR_CHAR, "_");
+        config.put(CFG_ZERO_MINOR_CHAR, "0");
+        config.put(CFG_ZERO_NEXT_MINOR_CHAR, "1");
+        config.put(CFG_CHECKED_OUT_SYMBOL, "+");
+        config.put(CFG_VERSION_SEPARATOR, ".");
+
+        return config;
     }
 
     @Override
-    public Object translateMajor(Long major) {
+    public String translateMajor(Long major) {
         // Major can really be null when we copy & paste a document
         Integer i = major != null ? major.intValue() : 0;
         List<Integer> letterInts = new ArrayList<Integer>();
@@ -67,7 +60,7 @@ public class MajorLetterVersionLabelServiceImpl
             if (letterInt > 0 && letterInt < maxLetters) {
                 letteredMajor += String.valueOf((char) (letterInt + 64));
             } else {
-                letteredMajor += ZERO_MAJOR_CHAR;
+                letteredMajor += getConfig(CFG_ZERO_MAJOR_CHAR);
             }
         }
 
@@ -75,80 +68,14 @@ public class MajorLetterVersionLabelServiceImpl
     }
 
     @Override
-    public Object translateMinor(Long minor) {
+    public String translateMinor(Long minor) {
         if (minor == null) {
             // This can really happen when we copy & paste a document
             return "0";
 
         } else {
-            return minor;
+            return String.valueOf(minor);
         }
     }
 
-    @Override
-    public int compare(String vl1, String vl2) {
-        int result = vl1.compareTo(vl2);
-        if (result == 0) {
-            return 0;
-        } else if (result > 0) {
-            return 1;
-        } else {
-            return 2;
-        }
-    }
-
-    @Override
-    public String getMajor(DocumentModel doc) {
-        try {
-            Object major = doc.getPropertyValue(MAJOR_VERSION_PROP);
-            if (major == null || !(major instanceof String)) {
-                Object defaultMajor = doc.getPropertyValue(
-                        VersioningService.MAJOR_VERSION_PROP);
-                if (defaultMajor == null || !(defaultMajor instanceof Long)) {
-                    // This can really happen when we copy & paste a document
-                    return ZERO_MAJOR_CHAR;
-                }
-                Long defaultMajorLong = (Long) defaultMajor;
-                return translateMajor(defaultMajorLong).toString();
-            } else {
-                return major.toString();
-            }
-        } catch (PropertyNotFoundException e) {
-            return doc.getPropertyValue(
-                    VersioningService.MAJOR_VERSION_PROP).toString();
-        }
-
-    }
-
-    @Override
-    public String getMinor(DocumentModel doc) {
-        Object minor = doc.getPropertyValue(
-                VersioningService.MINOR_VERSION_PROP);
-        if (minor == null || !(minor instanceof Long)) {
-            // This can really happen when we copy & paste a document
-            return "0";
-        } else {
-            return minor.toString();
-        }
-    }
-
-    @Override
-    public void setMajor(DocumentModel doc, String major) {
-        doc.setPropertyValue(MAJOR_VERSION_PROP, major);
-    }
-
-    @Override
-    public void setMinor(DocumentModel doc, String minor) {
-        doc.setPropertyValue(VersioningService.MINOR_VERSION_PROP, minor);
-    }
-
-    @Override
-    public String getZeroVersion() {
-        return ZERO_MAJOR_CHAR + ".0+";
-    }
-
-    @Override
-    public String getZeroNextVersion() {
-        return ZERO_MAJOR_CHAR + ".1";
-    }
 }

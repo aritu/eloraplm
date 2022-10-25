@@ -26,6 +26,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -42,6 +43,7 @@ import com.aritu.eloraplm.config.util.BomListsConfigHelper;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
 import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraEventNames;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
@@ -74,6 +76,9 @@ public class BomListBean implements Serializable {
 
     @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
+
+    @In
+    protected BomListComparisonTableBean bomListComparisonTableBean;
 
     private static final Log log = LogFactory.getLog(BomListBean.class);
 
@@ -147,6 +152,13 @@ public class BomListBean implements Serializable {
         this.currentBomList = currentBomList;
     }
 
+    /*
+    @Observer(WebActions.CURRENT_TAB_CHANGED_EVENT)
+    @BypassInterceptors
+    public void reloadBomListSubtab() {
+        loadBomListData();
+    }
+    */
     @Create
     public void loadBomListData() {
         String logInitMsg = "[loadBomListData] ["
@@ -165,6 +177,10 @@ public class BomListBean implements Serializable {
                 label = (String) configRow.getProperty("label");
                 description = (String) configRow.getProperty("description");
                 type = (String) configRow.getProperty("type");
+
+                Events.instance().raiseEvent(
+                        EloraEventNames.ELORA_BOM_LIST_SUBTAB_CHANGED_EVENT, id,
+                        currentDocument.getId());
             }
 
             // Check if the BOM list is created or not (for Composition)
@@ -266,7 +282,7 @@ public class BomListBean implements Serializable {
 
         } else {
             if (res.size() > 1) {
-                log.error("More han one BomListsFolder found:");
+                log.error("More than one BomListsFolder found:");
                 for (DocumentModel model : res) {
                     log.warn(" - " + model.getName() + ", "
                             + model.getPathAsString());

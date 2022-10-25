@@ -1,0 +1,69 @@
+<div id="descriptionBlock"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  >
+  
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <span class="labelColumn">
+                        <h:outputText value="#{messages['label.widget.project.projectPhaseList']}" />
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="dataTableLine summaryTable" style="width: 100%;">
+        <tbody>
+            <tr>
+                <th><h:outputText value="#{messages['label.widget.project.phaseTitle']}" /></th>
+                <th><h:outputText value="#{messages['label.widget.project.phaseManager']}" /></th>
+                <th><h:outputText value="#{messages['label.widget.project.phaseRealStartDate']}" /></th>
+                <th><h:outputText value="#{messages['label.widget.project.phasePlannedEndDate']}" /></th>
+                <th><h:outputText value="#{messages['label.widget.project.phaseRealEndDate']}" /></th>
+                <th><h:outputText value="#{messages['label.widget.project.phaseProgress']}" /></th>
+            </tr>
+            
+            <nxu:set var="projectPhasesList" value="#{projectActions.getPhasesList()}">
+                <c:forEach items="#{projectPhasesList}" var="projectPhase">
+                    <tr>
+                        <td style="word-wrap: break-word;">
+                            <h:outputText value="#{projectPhase.phaseTitle}" />
+                        </td>
+                        <td style="white-space: nowrap">
+                            <h:panelGroup styleClass="user">
+                                <h:outputLink  value="#{baseURL}user/#{projectPhase.phaseManager}">
+                                    #{nxu:userFullName(projectPhase.phaseManager)}
+                                </h:outputLink>
+                            </h:panelGroup>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <h:outputText value="#{projectPhase.phaseRealStartDate.getTime()}"  styleClass="date">
+                                <f:convertDateTime pattern="#{nxu:basicDateFormatter()}" />
+                            </h:outputText>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <h:outputText value="#{projectPhase.phasePlannedEndDate.getTime()}"  styleClass="date">
+                                <f:convertDateTime pattern="#{nxu:basicDateFormatter()}" />
+                            </h:outputText>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <h:outputText value="#{projectPhase.phaseRealEndDate.getTime()}"  styleClass="date">
+                                <f:convertDateTime pattern="#{nxu:basicDateFormatter()}" />
+                            </h:outputText>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <nxl:widgetType name="colored_percentage" mode="view" field="#{projectPhase.phaseProgress}" />
+                        </td>
+                      </tr>
+                </c:forEach>
+            </nxu:set>
+        </tbody>
+    </table>
+
+</div>

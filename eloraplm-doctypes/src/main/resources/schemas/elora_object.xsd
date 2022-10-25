@@ -5,5 +5,7 @@ targetNamespace="http://www.nuxeo.org/ecm/project/schemas/elora_object">
   <xs:element name="reference" type="xs:string" />
   
   <xs:element name="orderingPriority" type="xs:integer" default="9999"/>
+  
+  <!-- <xs:element name="isTemplate" type="xs:boolean" default="false"/>  -->
 
 </xs:schema>

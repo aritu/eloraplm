@@ -77,6 +77,8 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
 
     private String itemType = CMConstants.ITEM_TYPE_DOC;
 
+    private String itemClass = CMConstants.ITEM_CLASS_IMPACTED;
+
     @Observer(CMBatchProcessingEventNames.PROMOTE_DOCS)
     public void promoteAsync(DocumentModel cmProcessDoc, TreeNode root,
             List<String> sortedIds, DAG dag,
@@ -118,8 +120,8 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
             if (destinationWcUidList != null
                     && destinationWcUidList.size() > 0) {
                 try {
-                    CMHelper.setAsManagedImpactedItemsByDestinationWcUidList(
-                            session, cmProcessDoc, itemType,
+                    CMHelper.setAsManagedItemsByDestinationWcUidList(session,
+                            cmProcessDoc, itemType, itemClass,
                             destinationWcUidList);
                 } catch (EloraException e) {
                     log.error(logInitMsg
@@ -149,9 +151,9 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
             }
         } finally {
             CmBatchProcessingHelper.finalizeBatchProcessExecution(cmProcessDoc,
-                    itemType, transitionToComeBackToPreviousState, txStarted,
-                    successList, errorsList, exceptionErrorMsg, loginStack,
-                    session);
+                    itemType, itemClass, transitionToComeBackToPreviousState,
+                    txStarted, successList, errorsList, exceptionErrorMsg,
+                    loginStack, session);
 
             // close opened session
             session.close();
@@ -211,40 +213,40 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
                     log.trace(logInitMsg
                             + "Start getting hierarchical children of document |"
                             + docId + "|");
-                    List<Statement> bomStmts = getCadHierarchicalStmts(doc,
+                    List<Statement> cadStmts = getCadHierarchicalStmts(doc,
                             cadHierarchicalAndSpecialAndDirectRelations);
                     log.trace(logInitMsg
                             + "Finished getting hierarchical children of document |"
                             + docId + "|");
                     List<String> childrenIdList = dag.getChildLabels(docId);
 
-                    for (Statement bomStmt : bomStmts) {
-                        DocumentModel objectBomDoc = RelationHelper.getDocumentModel(
-                                bomStmt.getObject(), documentManager);
-                        if (objectBomDoc == null) {
+                    for (Statement cadStmt : cadStmts) {
+                        DocumentModel objectCadDoc = RelationHelper.getDocumentModel(
+                                cadStmt.getObject(), documentManager);
+                        if (objectCadDoc == null) {
                             log.trace(logInitMsg
-                                    + "Throw DocumentUnreadableException  since objectBomDoc is null. bomStmt = |"
-                                    + bomStmt.toString() + "|");
+                                    + "Throw DocumentUnreadableException  since objectCadDoc is null. cadStmt = |"
+                                    + cadStmt.toString() + "|");
                             throw new DocumentUnreadableException(
                                     "Error getting document from statement |"
-                                            + bomStmt.toString() + "|");
+                                            + cadStmt.toString() + "|");
                         }
                         List<String> childrenInTreeVersionSeriesIdList = childrenVersionSeriesMap.get(
                                 docId);
                         if (childrenInTreeVersionSeriesIdList != null
                                 && childrenInTreeVersionSeriesIdList.contains(
-                                        objectBomDoc.getVersionSeriesId())) {
+                                        objectCadDoc.getVersionSeriesId())) {
                             if (!childrenIdList.contains(
-                                    objectBomDoc.getId())) {
+                                    objectCadDoc.getId())) {
                                 log.error(logInitMsg
                                         + "Document to be promoted has different document version in composition and tree. docId = |"
                                         + docId + "|, reference =|" + reference
                                         + "|, title=|" + title + "|");
 
                                 Object[] messageParams = { reference, title,
-                                        objectBomDoc.getPropertyValue(
+                                        objectCadDoc.getPropertyValue(
                                                 EloraMetadataConstants.ELORA_ELO_REFERENCE),
-                                        objectBomDoc.getTitle() };
+                                        objectCadDoc.getTitle() };
                                 String message = EloraMessageHelper.getTranslatedMessage(
                                         documentManager,
                                         "eloraplm.message.error.cm.batch.docCompositionWithDiffDocVersion",
@@ -255,26 +257,26 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
 
                                 TransactionHelper.setTransactionRollbackOnly();
                                 stopProcessing = true;
-                                break; // from bomStmts loop
+                                break; // from cadStmts loop
                             }
                         } else {
-                            if (EloraDocumentHelper.isReleased(objectBomDoc)) {
+                            if (EloraDocumentHelper.isReleased(objectCadDoc)) {
                                 DocumentModel latestReleased = EloraDocumentHelper.getLatestReleasedVersion(
-                                        objectBomDoc);
+                                        objectCadDoc);
                                 if (latestReleased != null) {
                                     if (!latestReleased.getId().equals(
-                                            objectBomDoc.getId())) {
+                                            objectCadDoc.getId())) {
 
-                                        String childReference = objectBomDoc.getPropertyValue(
+                                        String childReference = objectCadDoc.getPropertyValue(
                                                 EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
-                                        String childTitle = objectBomDoc.getTitle();
+                                        String childTitle = objectCadDoc.getTitle();
 
                                         log.warn(logInitMsg
                                                 + "This document has child  released but it is not the latest released. docId = |"
                                                 + docId + "|, reference =|"
                                                 + reference + "|, title=|"
                                                 + title + "| childDocId = |"
-                                                + objectBomDoc.getId()
+                                                + objectCadDoc.getId()
                                                 + "|, child reference = |"
                                                 + childReference
                                                 + "|, child title = |"
@@ -290,19 +292,19 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
                                 } else {
                                     log.error(logInitMsg
                                             + "Could not get latest released version of document |"
-                                            + objectBomDoc.getId() + "|");
+                                            + objectCadDoc.getId() + "|");
                                 }
                             } else {
-                                String childReference = objectBomDoc.getPropertyValue(
+                                String childReference = objectCadDoc.getPropertyValue(
                                         EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
-                                String childTitle = objectBomDoc.getTitle();
+                                String childTitle = objectCadDoc.getTitle();
 
                                 log.error(logInitMsg
                                         + "Document has no released documents in its composition. docId = |"
                                         + docId + "|, reference =|" + reference
                                         + "|, title=|" + title
                                         + "|, childDocId = |"
-                                        + objectBomDoc.getId()
+                                        + objectCadDoc.getId()
                                         + "|, child reference = |"
                                         + childReference + "|, child title = |"
                                         + childTitle + "|");
@@ -319,7 +321,7 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
 
                                 TransactionHelper.setTransactionRollbackOnly();
                                 stopProcessing = true;
-                                break; // from bomStmts loop
+                                break; // from cadStmts loop
                             }
                         }
                     }

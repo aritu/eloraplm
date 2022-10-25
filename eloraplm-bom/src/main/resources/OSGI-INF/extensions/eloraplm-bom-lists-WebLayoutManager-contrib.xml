@@ -7,149 +7,340 @@
     <!-- treetable layouts -->
     
     <layout name="bom_comp_list_tt">
-          <templates>
-            <template mode="any">/layouts/layout_treetable_template.xhtml
-            </template>
-          </templates>
-          <columns>
-            <column name="icon_reference_title">
-              <properties mode="any">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
+          <properties mode="any">
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
+          </properties>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
                 <property name="columnStyleClass">ellipsisWhenOverflow</property>
-                <property name="columnHeading">label.content.header.title</property>
-              </properties>
-              <widget>treewidget_bom_icon_reference_title</widget>
-            </column>
-            <column name="bom_classification">
-                <properties mode="any">
-                    <property name="columnStyle">width: 20%;</property>
-                    <property name="columnStyleClass">ellipsisWhenOverflow</property>
-                    <property name="columnHeading">eloraplm.label.bomClassification</property>
-                </properties>
-                <widget>listing_bom_classification</widget>
-            </column>
-            <column name="download_link">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>listing_download_link</widget>
-            </column>
-            <column name="lock">
-              <properties mode="any">
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+            <properties mode="any">
                 <property name="columnStyle">width: 40px;</property>
                 <property name="columnStyleClass">alignCenter</property>
-              </properties>
-              <widget>treewidget_lock_icon</widget>
-            </column>
-            <column name="quantity">
-                <properties mode="any">
-                    <property name="columnStyle">width: 6em;</property>
-                    <property name="columnHeading">label.content.header.quantity</property>
-                </properties>
-                <widget>listing_quantity</widget>
-            </column>
-            <column name="ordering">
-                <properties mode="any">
-                    <property name="columnStyle">width: 6em;</property>
-                    <property name="columnHeading">eloraplm.label.ordering</property>
-                </properties>
-                <widget>listing_ordering</widget>
-            </column>
-            <column name="remove">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>bom_composition_list_remove_relation</widget>
-            </column>
-
-          </columns>
+            </properties>
+            <widget>listing_download_link</widget>
+        </column>
+        <column name="lock">
           <properties mode="any">
-            <property name="tableTitle">title.treetable.bomComposition</property>
-            <property name="isSortable">true</property>
-            <property name="sortBy">ordering</property>
-            <property name="sortOrder">ascending</property>
-            <property name="factory">#{bomCompositionListRoot}</property>
+            <property name="columnStyle">width: 40px;</property>
+            <property name="columnStyleClass">alignCenter</property>
           </properties>
-        </layout>
+          <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+        <column name="ordering">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">eloraplm.label.ordering</property>
+            </properties>
+            <widget>listing_ordering</widget>
+        </column>
+      </columns>
+      <properties mode="any">
+        <property name="tableTitle">title.treetable.bomComposition</property>
+        <property name="isSortable">true</property>
+        <property name="sortBy">#{nodeData['ordering']}</property>
+        <property name="sortOrder">ascending</property>
+        <property name="factory">#{bomCompositionListRoot}</property>
+      </properties>
+    </layout>
         
-        <layout name="bom_where_list_tt">
-          <templates>
-            <template mode="any">/layouts/layout_treetable_template.xhtml
-            </template>
-          </templates>
-          <columns>
-            <column name="icon_reference_title">
-              <properties mode="any">
-                <property name="columnStyleClass">ellipsisWhenOverflow</property>
-                <property name="columnHeading">label.content.header.title</property>
-              </properties>
-              <widget>treewidget_bom_icon_reference_title</widget>
-            </column>
-            <column name="bom_classification">
-                <properties mode="any">
-                    <property name="columnStyle">width: 20%;</property>
-                    <property name="columnStyleClass">ellipsisWhenOverflow</property>
-                    <property name="columnHeading">eloraplm.label.bomClassification</property>
-                </properties>
-                <widget>listing_bom_classification</widget>
-            </column>
-            <column name="download_link">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>listing_download_link</widget>
-            </column>
-            <column name="lock">
-              <properties mode="any">
-                <property name="columnStyle">width: 40px; text-align: center;</property>
-              </properties>
-              <widget>treewidget_lock_icon</widget>
-            </column>
-            <column name="quantity">
-                <properties mode="any">
-                    <property name="columnStyle">width: 6em;</property>
-                    <property name="columnHeading">label.content.header.quantity</property>
-                </properties>
-                <widget>listing_quantity</widget>
-            </column>
-
-          </columns>
+    <layout name="bom_where_list_tt">
+      <templates>
+        <template mode="any">/layouts/layout_treetable_template.xhtml
+        </template>
+      </templates>
+      <columns>
+        <column name="icon_reference_title">
           <properties mode="any">
-            <property name="tableTitle">title.treetable.bomWhereUsedList</property>
-            <property name="factory">#{bomWhereUsedListRoot}</property>
+            <property name="columnStyleClass">ellipsisWhenOverflow</property>
+            <property name="columnHeading">label.content.header.title</property>
           </properties>
-        </layout>
+          <widget>treewidget_bom_icon_reference_title</widget>
+        </column>
+        <column name="bom_classification">
+            <properties mode="any">
+                <property name="columnStyle">width: 20%;</property>
+                <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                <property name="columnHeading">eloraplm.label.bomClassification</property>
+            </properties>
+            <widget>listing_bom_classification</widget>
+        </column>
+        <column name="download_link">
+            <properties mode="any">
+                <property name="columnStyle">width: 40px;</property>
+                <property name="columnStyleClass">alignCenter</property>
+            </properties>
+            <widget>listing_download_link</widget>
+        </column>
+        <column name="lock">
+          <properties mode="any">
+            <property name="columnStyle">width: 40px; text-align: center;</property>
+          </properties>
+          <widget>treewidget_lock_icon</widget>
+        </column>
+        <column name="quantity">
+            <properties mode="any">
+                <property name="columnStyle">width: 6em;</property>
+                <property name="columnHeading">label.content.header.quantity</property>
+            </properties>
+            <widget>listing_quantity</widget>
+        </column>
+
+      </columns>
+      <properties mode="any">
+        <property name="tableTitle">title.treetable.bomWhereUsedList</property>
+        <property name="factory">#{bomWhereUsedListRoot}</property>
+      </properties>
+    </layout>
     <!-- end of treetable layouts -->
     
     <layout name="elora_bom_lists">
-          <templates>
-            <template mode="any">
-              /directory/directory_layout_template.xhtml
-            </template>
-          </templates>
-          <rows>
-            <row>
-              <widget>elora_bom_lists_id</widget>
-            </row>
-            <row>
-              <widget>elora_bom_lists_label</widget>
-            </row>
-            <row>
-              <widget>elora_bom_lists_description</widget>
-            </row>
-            <row>
-              <widget>elora_bom_lists_type</widget>
-            </row>
-            <row>
-              <widget>elora_bom_lists_obsolete</widget>
-            </row>
-            <row>
-              <widget>elora_bom_lists_order</widget>
-            </row>
-          </rows>
-        </layout>
+      <templates>
+        <template mode="any">
+          /directory/directory_layout_template.xhtml
+        </template>
+      </templates>
+      <rows>
+        <row>
+          <widget>elora_bom_lists_id</widget>
+        </row>
+        <row>
+          <widget>elora_bom_lists_label</widget>
+        </row>
+        <row>
+          <widget>elora_bom_lists_description</widget>
+        </row>
+        <row>
+          <widget>elora_bom_lists_type</widget>
+        </row>
+        <row>
+          <widget>elora_bom_lists_obsolete</widget>
+        </row>
+        <row>
+          <widget>elora_bom_lists_order</widget>
+        </row>
+      </rows>
+    </layout>
+        
+    <layout name="bom_list_comparison_dt">
+        <templates>
+            <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+        </templates>
+        <columns>
+            <column name="level">
+                <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow
+                    </property>
+                    <property name="columnHeading">
+                    </property>
+                </properties>
+                <widget>tableWidget_level</widget>
+            </column>
+            <column name="title1">
+                <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow
+                    </property>
+                    <property name="columnHeading">label.title
+                    </property>
+                </properties>
+                <widget>tableWidget_indentation_1</widget>
+                <widget>tableWidget_reference_1</widget>
+            </column>
+            <column name="quantity1">
+                <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow
+                    </property>
+                    <property name="columnHeading">eloraplm.label.relation.quantity
+                    </property>
+                </properties>
+                <widget>tableWidget_quantity_1</widget>
+            </column>
+            <column name="unit1">
+                <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow
+                    </property>
+                    <property name="columnHeading">label.widget.bompart.unit
+                    </property>
+                </properties>
+                <widget>tableWidget_unit_1</widget>
+            </column>
+            <column name="separator">
+                <properties mode="any">
+                    <property name="columnStyleClass">separator
+                    </property>
+                </properties>
+                <widget>tableWidget_separator</widget>
+            </column>
+            <column name="title2">
+                <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow
+                    </property>
+                    <property name="columnHeading">label.title
+                    </property>
+                </properties>
+                <widget>tableWidget_indentation_2</widget>
+                <widget>tableWidget_reference_2</widget>
+            </column>
+            <column name="quantity2">
+                <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow
+                    </property>
+                    <property name="columnHeading">eloraplm.label.relation.quantity
+                    </property>
+                </properties>
+                <widget>tableWidget_quantity_2</widget>
+            </column>
+            <column name="unit2">
+                <properties mode="any">
+                    <property name="columnStyleClass">ellipsisWhenOverflow
+                    </property>
+                    <property name="columnHeading">label.widget.bompart.unit
+                    </property>
+                </properties>
+                <widget>tableWidget_unit_2</widget>
+            </column>
+        </columns>
+        <properties mode="any">
+            <property name="headerFiltersTemplate"></property>
+            <property name="tableTitle">eloraplm.title.dt.bom.list.comparison</property>
+            <property name="tableStyle">table-layout: auto;</property>
+            <property name="rowStyleClass">#{rowData.firstItemNodeData == null ? 'rowFirstMissing' : (rowData.secondItemNodeData == null ? 'rowSecondMissing' : '')}</property>
+            <property name="isExportable">false</property>
+        </properties>
+        
+        <widget name="tableWidget_level" type="text">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>level</field>
+            </fields>            
+        </widget>
+        
+        <widget name="tableWidget_indentation_1" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>level</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">
+                      /widgets/datatable/datatable_indentation_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        
+        <widget name="tableWidget_indentation_2" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>level</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">
+                      /widgets/datatable/datatable_indentation_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+
+        <widget name="tableWidget_reference_1" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>firstItemNodeData</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">
+                      /widgets/datatable/bom_list_icon_reference_title_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        <widget name="tableWidget_reference_2" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>secondItemNodeData</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">
+                      /widgets/datatable/bom_list_icon_reference_title_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        <widget name="tableWidget_quantity_1" type="text">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>firstItemNodeData.quantity</field>
+            </fields>            
+        </widget>
+        <widget name="tableWidget_quantity_2" type="text">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>secondItemNodeData.quantity</field>
+            </fields>            
+        </widget>
+        <widget name="tableWidget_unit_1" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>firstItemNodeData</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">
+                      /widgets/datatable/bom_list_comparison_unit_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        <widget name="tableWidget_unit_2" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>secondItemNodeData</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">
+                      /widgets/datatable/bom_list_comparison_unit_widget.xhtml
+                </property>
+            </properties>
+        </widget>
+        <widget name="tableWidget_separator" type="text">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+        </widget>
+    </layout>
+    
   </extension>
 
 
@@ -202,8 +393,49 @@
             </property>
           </properties>
         </widget>
+        
+        <widget name="treewidget_bom_erp_icon_reference_title" type="template">
+            <labels>
+                <label mode="any">label.content.header.title</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>bomListExternalData.existsInElora</field>
+                <field>bomListExternalData.reference</field>
+                <field>bomListExternalData.name</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/treetable/treewidget_bom_erp_icon_reference_title_widget.xhtml</property>
+            </properties>
+        </widget>
 
     <!-- end of treetable widgets -->
+    
+    
+    <!-- datatable widgets -->
+
+        <widget name="bom_list_comparison_dt" type="datatable">
+            <labels>
+                <label mode="any">label.datatable.bom.comparison
+                </label>
+            </labels>            
+            <properties widgetMode="any">
+                <property name="datatableLayout">bom_list_comparison_dt</property>
+            </properties>
+        </widget>
+        
+        <widget name="bom_list_comparison_dt" type="datatable">
+            <labels>
+                <label mode="any">label.datatable.bom.comparison
+                </label>
+            </labels>            
+            <properties widgetMode="any">
+                <property name="datatableLayout">bom_list_comparison_dt</property>
+            </properties>
+        </widget>
+
+    <!-- end of datatable widgets -->
+    
 
     <!-- elora_bom_lists widgets -->
         
@@ -286,7 +518,10 @@
           </properties>
         </widget>
         
-        <!-- end of elora_relations_config widgets -->
+        <!-- end of elora_bom_lists widgets -->
+        
+        
+        
     
   </extension>
 

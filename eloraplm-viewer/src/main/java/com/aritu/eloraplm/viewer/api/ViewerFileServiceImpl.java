@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -42,18 +43,23 @@ import org.nuxeo.runtime.model.DefaultComponent;
 
 import com.aritu.eloraplm.config.util.EloraConfig;
 import com.aritu.eloraplm.constants.EloraConfigConstants;
+import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.ViewerConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
-import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.OverwriteOriginalViewerException;
+import com.aritu.eloraplm.exceptions.UnableToConvertBlobToPdfException;
 import com.aritu.eloraplm.templating.api.TemplatingService;
+import com.aritu.eloraplm.viewer.dataevaluator.util.ConditionEvaluatorHelper;
+import com.aritu.eloraplm.viewer.filename.api.FilenameService;
 import com.aritu.eloraplm.viewer.util.PdfWriterHelper;
+import com.aritu.eloraplm.viewer.util.ViewerHelper;
 
 /**
  * @author aritu
@@ -74,9 +80,7 @@ public class ViewerFileServiceImpl extends DefaultComponent
 
     private static final String SECTION_TEMPLATE = "template";
 
-    private static final String PDF_MIMETYPE = "application/pdf";
-
-    private Map<String, String> types;
+    private Map<String, List<TypeDescriptor>> types;
 
     private Map<String, ViewerFileDescriptor> viewerFiles;
 
@@ -86,7 +90,7 @@ public class ViewerFileServiceImpl extends DefaultComponent
 
     @Override
     public void activate(ComponentContext context) {
-        types = new HashMap<String, String>();
+        types = new HashMap<String, List<TypeDescriptor>>();
         viewerFiles = new HashMap<String, ViewerFileDescriptor>();
         modifiers = new HashMap<String, ModifierDescriptor>();
     }
@@ -103,9 +107,17 @@ public class ViewerFileServiceImpl extends DefaultComponent
             ComponentInstance contributor) {
         switch (extensionPoint) {
         case XP_TYPES:
-            TypesDescriptor td = (TypesDescriptor) contribution;
-            if (td.types != null) {
-                types = td.types;
+            TypeDescriptor td = (TypeDescriptor) contribution;
+            if (td.name != null) {
+                if (!types.containsKey(td.name)) {
+                    List<TypeDescriptor> tds = new ArrayList<TypeDescriptor>();
+                    tds.add(td);
+                    types.put(td.name, tds);
+                } else {
+                    List<TypeDescriptor> tds = types.get(td.name);
+                    tds.add(td);
+                    types.put(td.name, tds);
+                }
             } else {
                 throw new NuxeoException("Types is null");
             }
@@ -132,22 +144,41 @@ public class ViewerFileServiceImpl extends DefaultComponent
     }
 
     @Override
-    public ViewerFileDescriptor getViewerFileForType(String type)
+    public TypeDescriptor getType(DocumentModel doc, String action)
             throws EloraException {
-        if (type == null || type.isEmpty()) {
-            throw new EloraException("Provided type is null or empty.");
+        String type = doc.getType();
+        if (types != null && types.containsKey(type)) {
+
+            List<TypeDescriptor> tds = types.get(type);
+
+            // Iterate TypeDescriptor list. Return the first Type Descriptor
+            // that fulfills specified conditions.
+            for (TypeDescriptor td : tds) {
+                if (ConditionEvaluatorHelper.fulfillsConditions(doc, action,
+                        td.conditions, td.allConditionsRequired)) {
+                    return td;
+                }
+            }
+        }
+        return null;
+
+    }
+
+    @Override
+    public ViewerFileDescriptor getViewerFile(String id) throws EloraException {
+        if (id == null || id.isEmpty()) {
+            throw new EloraException(
+                    "Provided viewer file id is null or empty.");
         }
 
-        if (types != null && types.containsKey(type)) {
-            String viewerFileId = types.get(type);
-            if (viewerFiles != null && viewerFiles.containsKey(viewerFileId)) {
-                return viewerFiles.get(viewerFileId);
-            }
+        if (viewerFiles != null && viewerFiles.containsKey(id)) {
+            return viewerFiles.get(id);
         }
 
         return null;
     }
 
+    @Override
     public ModifierDescriptor getModifier(String id) throws EloraException {
         if (id == null || id.isEmpty()) {
             throw new EloraException("Provided modifier id is null or empty.");
@@ -177,20 +208,30 @@ public class ViewerFileServiceImpl extends DefaultComponent
         log.trace(logInitMsg + "Creating viewer with action |" + action
                 + "| for doc |" + doc.getId() + "|");
 
-        ViewerFileDescriptor vfd = getViewerFileForType(doc.getType());
-        if (vfd == null) {
-            log.info(logInitMsg + "No viewer file defined for type |"
+        TypeDescriptor td = getType(doc, action);
+        if (td == null) {
+            log.info(logInitMsg + "No type descriptor defined for type |"
                     + doc.getType() + "|");
             return;
         }
 
         try {
-            Blob viewerBlob = createViewerFileWithDescriptor(doc, vfd, action);
+            Blob viewerBlob = createViewerFileWithDescriptor(doc, td, action);
             updateViewerProperty(doc, viewerBlob);
             log.trace(logInitMsg + "Viewer created.");
+        } catch (UnableToConvertBlobToPdfException e) {
+            // This is not really an error, the blob cannot be converted to a
+            // viewer file, so the viewer file will not be created.
+            log.warn(logInitMsg + e.getMessage() + " Document uid |"
+                    + doc.getId() + "|.");
+
+            // We remove the viewer, avoiding to use the previous version
+            updateViewerProperty(doc, null);
+
         } catch (OverwriteOriginalViewerException e) {
             log.trace(logInitMsg + e.getMessage(), e);
             throw e;
+
         } catch (Exception e) {
             log.error(
                     "An error occurred while creating the viewer file for doc |"
@@ -198,9 +239,7 @@ public class ViewerFileServiceImpl extends DefaultComponent
                             + e.getMessage(),
                     e);
             // We remove the viewer, avoiding to use the previous version
-            log.trace(logInitMsg + "Remove viewer");
             updateViewerProperty(doc, null);
-            log.trace(logInitMsg + "Viewer removed");
 
             throw e;
         }
@@ -208,23 +247,47 @@ public class ViewerFileServiceImpl extends DefaultComponent
     }
 
     private Blob createViewerFileWithDescriptor(DocumentModel doc,
-            ViewerFileDescriptor vfd, String action)
+            TypeDescriptor td, String action)
             throws OverwriteOriginalViewerException, COSVisitorException,
-            EloraException, IOException, ParseException {
+            EloraException, IOException, ParseException,
+            UnableToConvertBlobToPdfException {
+
+        String logInitMsg = "[createViewerFileWithDescriptor] ["
+                + doc.getCoreSession().getPrincipal().getName() + "] ";
+
+        ViewerFileDescriptor vfd = getViewerFile(td.viewerFile);
+        if (vfd == null) {
+            log.info(logInitMsg + "No viewer file defined for type |"
+                    + doc.getType() + "|");
+            return null;
+        }
+
         if (vfd.sections != null && vfd.sections.length > 0) {
             SortedMap<Integer, Blob> blobMap = new TreeMap<Integer, Blob>();
             for (ViewerFileSectionDescriptor section : vfd.sections) {
                 blobMap = processSection(doc, section, blobMap, action);
             }
 
-            String fileName = getFileName(doc);
-
             File viewerFile = combineBlobsAndGetFile(blobMap);
 
             Blob blob = Blobs.createBlob(viewerFile);
-            blob.setMimeType(PDF_MIMETYPE);
+            blob.setMimeType(ViewerHelper.PDF_MIMETYPE);
             Framework.trackFile(viewerFile, blob);
-            blob.setFilename(fileName);
+
+            // Generate filename
+            String filename = null;
+            if (td.filename != null && td.filename.length() > 0) {
+                FilenameService fns = Framework.getService(
+                        FilenameService.class);
+                filename = fns.generateFilename(doc, td.filename, action);
+            }
+            // If there is not any configuration defined for generating the
+            // filename, generate it as standard mode
+            if (filename == null || filename.length() == 0) {
+                filename = ViewerHelper.getViewerFileName(doc);
+            }
+
+            blob.setFilename(filename);
 
             return blob;
         }
@@ -232,35 +295,12 @@ public class ViewerFileServiceImpl extends DefaultComponent
         return null;
     }
 
-    private String getFileName(DocumentModel doc) {
-        String reference = (String) doc.getPropertyValue(
-                EloraMetadataConstants.ELORA_ELO_REFERENCE);
-        String formatedVersionLabel = getFormattedVersionLabel(doc);
-
-        return reference + "_" + formatedVersionLabel + ".pdf";
-    }
-
-    private String getFormattedVersionLabel(DocumentModel doc) {
-        String versionLabel = null;
-        if (doc.isImmutable()) {
-            versionLabel = doc.getVersionLabel();
-        } else {
-            DocumentModel baseVersion = EloraDocumentHelper.getBaseVersion(doc);
-            if (baseVersion != null) {
-                versionLabel = baseVersion.getVersionLabel();
-            } else {
-                versionLabel = doc.getVersionLabel();
-            }
-        }
-
-        return versionLabel.replace(".", "");
-    }
-
     private SortedMap<Integer, Blob> processSection(DocumentModel doc,
             ViewerFileSectionDescriptor section,
             SortedMap<Integer, Blob> blobMap, String action)
             throws EloraException, COSVisitorException, IOException,
-            ParseException, OverwriteOriginalViewerException {
+            ParseException, OverwriteOriginalViewerException,
+            UnableToConvertBlobToPdfException {
         Blob blob = null;
 
         if (section.relations != null && section.relations.length > 0) {
@@ -280,7 +320,8 @@ public class ViewerFileServiceImpl extends DefaultComponent
     private Blob processSectionRelations(DocumentModel doc,
             ViewerFileSectionDescriptor section, String action)
             throws COSVisitorException, IOException, EloraException,
-            ParseException, OverwriteOriginalViewerException {
+            ParseException, OverwriteOriginalViewerException,
+            UnableToConvertBlobToPdfException {
         Blob blob = null;
         SortedMap<Integer, Blob> blobMap = new TreeMap<Integer, Blob>();
 
@@ -309,9 +350,7 @@ public class ViewerFileServiceImpl extends DefaultComponent
             }
         }
 
-        if (!blobMap.isEmpty())
-
-        {
+        if (!blobMap.isEmpty()) {
             File sectionFile = combineBlobsAndGetFile(blobMap);
             blob = Blobs.createBlob(sectionFile);
         }
@@ -330,8 +369,11 @@ public class ViewerFileServiceImpl extends DefaultComponent
                 NuxeoMetadataConstants.NX_DC_MODIFIED);
         Date lastModifiedDate = lastModifiedGc.getTime();
 
-        Serializable overwritten = doc.getPropertyValue(
-                EloraMetadataConstants.ELORA_OVERWRITE_OVERWRITTEN);
+        Serializable overwritten = null;
+        if (doc.hasFacet(EloraFacetConstants.FACET_OVERWRITABLE)) {
+            overwritten = doc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_OVERWRITE_OVERWRITTEN);
+        }
 
         if (!lastModifiedDate.after(importationDate) && overwritten == null) {
             throw new OverwriteOriginalViewerException(doc);
@@ -341,7 +383,11 @@ public class ViewerFileServiceImpl extends DefaultComponent
     private Blob processSectionFile(DocumentModel metadataDoc,
             DocumentModel blobDoc, String type, String xpath, String template,
             String modifier, String action, boolean required)
-            throws EloraException, COSVisitorException, IOException {
+            throws EloraException, COSVisitorException, IOException,
+            UnableToConvertBlobToPdfException {
+        String logInitMsg = "[processSectionFile] ["
+                + metadataDoc.getCoreSession().getPrincipal().getName() + "] ";
+
         Blob blob = null;
 
         switch (type) {
@@ -362,12 +408,23 @@ public class ViewerFileServiceImpl extends DefaultComponent
         }
 
         if (blob != null) {
-            if (!blob.getMimeType().equals(PDF_MIMETYPE)) {
+            if (!blob.getMimeType().equals(ViewerHelper.PDF_MIMETYPE)) {
                 blob = convertBlobToPdf(blob);
             }
 
-            if (modifier != null) {
-                blob = applyModifier(blob, modifier, metadataDoc, action);
+            boolean applyModifier = true;
+            if (blobDoc.hasSchema(EloraSchemaConstants.ELORA_VIEWER)) {
+                applyModifier = (boolean) blobDoc.getPropertyValue(
+                        EloraMetadataConstants.ELORA_ELOVWR_APPLY_MODIFIER);
+            }
+            log.trace(logInitMsg + "applyModifier = |" + applyModifier
+                    + "| for blobDocId = |" + blobDoc.getId() + "|");
+
+            if (modifier != null && applyModifier) {
+                // metadataDoc is the current document
+                // blobDoc is the related document
+                blob = applyModifier(blob, modifier, metadataDoc, blobDoc,
+                        action);
             }
         }
 
@@ -410,13 +467,19 @@ public class ViewerFileServiceImpl extends DefaultComponent
         return map;
     }
 
-    private Blob convertBlobToPdf(Blob blob) {
+    private Blob convertBlobToPdf(Blob blob)
+            throws UnableToConvertBlobToPdfException {
         Blob result = null;
 
         BlobHolder bh = new SimpleBlobHolder(blob);
         ConversionService cs = Framework.getService(ConversionService.class);
-        BlobHolder resultBh = cs.convertToMimeType(PDF_MIMETYPE, bh,
-                new HashMap<String, Serializable>());
+        if (cs.getConverterName(blob.getMimeType(),
+                ViewerHelper.PDF_MIMETYPE) == null) {
+            throw new UnableToConvertBlobToPdfException(
+                    "No converter available for the source file to create a PDF.");
+        }
+        BlobHolder resultBh = cs.convertToMimeType(ViewerHelper.PDF_MIMETYPE,
+                bh, new HashMap<String, Serializable>());
 
         if (resultBh != null) {
             result = resultBh.getBlob();
@@ -425,9 +488,12 @@ public class ViewerFileServiceImpl extends DefaultComponent
         return result;
     }
 
-    private Blob applyModifier(Blob blob, String modifierId, DocumentModel doc,
-            String action)
+    private Blob applyModifier(Blob blob, String modifierId,
+            DocumentModel currentDoc, DocumentModel relatedDoc, String action)
             throws EloraException, COSVisitorException, IOException {
+        String logInitMsg = "[applyModifier] ["
+                + currentDoc.getCoreSession().getPrincipal().getName() + "] ";
+
         ModifierDescriptor modifier = getModifier(modifierId);
         if (modifier == null) {
             throw new EloraException(
@@ -435,9 +501,11 @@ public class ViewerFileServiceImpl extends DefaultComponent
                             + modifierId + "|");
         }
 
-        PdfWriterHelper pwh = new PdfWriterHelper(blob, modifier, doc, action);
+        PdfWriterHelper pwh = new PdfWriterHelper(blob, modifier, currentDoc,
+                relatedDoc, action);
         File file = pwh.writePdf();
         blob = Blobs.createBlob(file);
+        log.trace(logInitMsg + "|" + modifier.id + "| modifier applied.");
 
         return blob;
     }
@@ -464,8 +532,6 @@ public class ViewerFileServiceImpl extends DefaultComponent
     private void updateViewerProperty(DocumentModel doc, Blob viewerBlob) {
         String logInitMsg = "[updateViewerProperty] ["
                 + doc.getCoreSession().getPrincipal().getName() + "] ";
-        log.trace(logInitMsg + "--- ENTER --- ");
-
         if (viewerBlob != null) {
             log.trace(logInitMsg + "Add viewer");
             addViewerBlob(doc, viewerBlob);
@@ -475,7 +541,6 @@ public class ViewerFileServiceImpl extends DefaultComponent
             removeViewerBlob(doc);
             log.trace(logInitMsg + "Viewer removed");
         }
-        log.trace(logInitMsg + "--- EXIT --- ");
     }
 
     private void addViewerBlob(DocumentModel doc, Blob blob) {
@@ -488,4 +553,5 @@ public class ViewerFileServiceImpl extends DefaultComponent
         DocumentHelper.removeProperty(doc,
                 EloraMetadataConstants.ELORA_ELOVWR_FILE);
     }
+
 }

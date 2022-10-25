@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.workflows.NotificationService.contrib">
+    
+    <require>org.nuxeo.ecm.platform.notification.document.routing.NotificationContrib</require>
+    
+    <extension target="org.nuxeo.ecm.platform.ec.notification.service.NotificationService" point="notifications">
+        
+        <notification name="Task assigned" channel="email" enabled="true" availableIn="Workspace"
+            autoSubscribed="true" template="workflowTaskAssigned" templateExpr="NotificationContext['taskInstance'].getVariable('taskNotificationTemplate')"
+            subject="&#160;Zeregina esleituta / Tarea asignada / Task Assigned - ${docTitle}"
+            label="label.nuxeo.notifications.appReviewStarted">
+            <event name="workflowTaskAssigned"/>
+        </notification>
+        
+        <notification name="Task reassigned" channel="email" enabled="true" availableIn="Workspace"
+            autoSubscribed="true" template="workflowTaskAssigned" templateExpr="NotificationContext['taskInstance'].getVariable('taskNotificationTemplate')"
+            subject="&#160;Zeregina berresleituta / Tarea reasignada / Task Reassigned - ${docTitle}"
+            label="label.nuxeo.notifications.appReviewStarted">
+            <event name="workflowTaskReassigned"/>
+        </notification>
+        
+        <notification name="Task delegated" channel="email" enabled="true" availableIn="Workspace"
+            autoSubscribed="true" template="workflowTaskDelegated"
+            subject="&#160;Zeregina delegatuta / Tarea delegada / Task Delegated - ${docTitle}"
+            label="label.nuxeo.notifications.appReviewStarted">
+            <event name="workflowTaskDelegated"/>
+        </notification>
+        
+    </extension>
+    
+</component>

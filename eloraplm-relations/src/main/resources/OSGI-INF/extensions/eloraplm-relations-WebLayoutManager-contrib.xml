@@ -254,7 +254,7 @@
                 <property name="tableTitle">eloraplm.label.treetable.cad.documents</property>
                 <property name="tableStyle">table-layout: auto;</property>
                 <property name="isSortable">true</property>
-                <property name="sortBy">ordering</property>
+                <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
                 <property name="sortOrder">ascending</property>
                 <property name="factory">#{cadDocumentsRoot}</property>
             </properties>

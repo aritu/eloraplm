@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
@@ -31,6 +30,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.versioning.VersioningService;
@@ -39,18 +39,19 @@ import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.bom.lists.BomListBean;
+import com.aritu.eloraplm.bom.lists.BomListConstants;
 import com.aritu.eloraplm.bom.lists.BomListHelper;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.relations.treetable.EditableRelationTreeBean;
 
 /**
@@ -70,7 +71,7 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
     private static final Log log = LogFactory.getLog(
             BomCompositionListTreeBean.class);
 
-    @In
+    @In(create = true)
     protected transient BomListBean bomList;
 
     private Map<String, TreeNode> roots;
@@ -115,18 +116,19 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
         DocumentModel currentDoc = getCurrentDocument();
         try {
             log.trace(logInitMsg + "Creating tree...");
-            // TODO Ez dau funtzionauko edizioak ez dalako
-            // RelationNodeService-etik heredatzen eta
-            // EditableRelationTreeBean-etako nodeService propietatea ezin
-            // dauelako erabili
-            BomCompositionListNodeService nodeService = new BomCompositionListNodeService(
-                    documentManager, bomList.getId());
+
+            BomListNodeService nodeService = Framework.getService(
+                    BomListNodeService.class);
+            nodeService.init(documentManager, 0,
+                    BomListNodeService.TREE_DIRECTION_COMPOSITION,
+                    bomList.getId());
+
             setRoot(nodeService.getRoot(currentDoc));
             setIsDirty(false);
             setHasUnreadableNodes(false);
             setIsInvalid(false);
             log.trace(logInitMsg + "Tree created.");
-        } catch (DocumentUnreadableException e) {
+        } catch (DocumentSecurityException e) {
             log.error(logInitMsg + e.getMessage());
             // empty root attribute and set hasUnreadableNodes attribute to true
             setRoot(new DefaultTreeNode());
@@ -159,6 +161,8 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
         if (roots != null) {
             roots.put(bomListId, root);
         }
+        firstLevelChildrenCount = root.getChildCount();
+        childrenCount = countChildren(root, 0);
     }
 
     @Override
@@ -248,7 +252,7 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
             // Difference between EBOM and BOM Lists
             DocumentModel sourceBomList = null;
             Resource predicateResource = null;
-            if (importList.equals("Ebom")) {
+            if (importList.equals(BomListConstants.BOM_LIST_EBOM)) {
                 sourceBomList = sourceDoc;
                 // TODO Predicate bat baino gehixau????'
                 predicateResource = new ResourceImpl(

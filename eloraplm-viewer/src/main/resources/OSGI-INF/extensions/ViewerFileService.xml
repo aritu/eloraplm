@@ -15,12 +15,37 @@
         <documentation>
             Used to define which viewer file to use for each document type.
             <code>
-                <types>
-                    <type name="...">...</type>
-                </types>
+                <type name="..." viewerFile="..." />
             </code>
+            <p/>
+            It is possible to define conditions. In that case, conditions should be fulfilled in order to create the viewer file.
+            Conditions:
+            
+            - allRequired: by default it is true, so all condition elements must be true; if false, then if just one condition is fulfilled, the text will be shown
+            
+            Condition:
+            
+            A text can have one or more conditions to show / hide
+            
+            - type: xpath / method
+            
+              If type is xpath, xpath attribute needed; if it is method, method attribute needed
+              
+            - operator: equals / notEquals / in / notIn
+            
+            - value is a simple text
+            
+            <code>
+                <type name="..." viewerFile="..." >
+                    <conditions allRequired="true/false">
+                        <condition type="xpath" xpath="..." operator="equals" value="..." />
+                        <condition type="method" method="..." operator="notEquals" value="..." />
+                    </conditions>    
+                </type>
+            </code>
+            
         </documentation>
-        <object class="com.aritu.eloraplm.viewer.api.TypesDescriptor" />
+        <object class="com.aritu.eloraplm.viewer.api.TypeDescriptor" />
     </extension-point>
     
     <extension-point name="viewerFiles">
@@ -76,7 +101,7 @@
             
               If type is xpath, xpath attribute needed; if it is method, method attribute needed
               
-            - expression: equals / not equals
+            - operator: equals / notEquals / in / notIn
             
             - value is a simple text
             
@@ -102,8 +127,8 @@
                     <text type="method" method="..." refPoint="...,..." x="0" y="0" style="..." align="..." color="0,0,0" size="0" rotation="0" opacity="0.0" />
                     <text type="fixed" value="..." refPoint="...,..." x="0" y="0" style="..." align="..." color="0,0,0" size="0" rotation="0" opacity="0.0">
                         <conditions allRequired="true/false">
-                            <condition type="xpath" xpath="..." expression="equals" value="..." />
-                            <condition type="method" method="..." expression="not equals" value="..." />
+                            <condition type="xpath" xpath="..." operator="equals" value="..." />
+                            <condition type="method" method="..." operator="notEquals" value="..." />
                         </conditions>
                     </text>
                     

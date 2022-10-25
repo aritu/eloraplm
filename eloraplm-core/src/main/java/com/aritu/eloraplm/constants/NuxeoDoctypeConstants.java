@@ -22,4 +22,8 @@ public class NuxeoDoctypeConstants {
 
     public static final String TEMPLATE_ROOT = "TemplateRoot";
 
+    public static final String DOCUMENT_TEMPLATES = "DocumentTemplates";
+
+    public static final String ROOT = "Root";
+
 }

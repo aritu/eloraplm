@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.versioning.EventServiceComponent.contrib">
+    
+    <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
+        <listener name="versionLabelListener" async="false" postCommit="false" class="com.aritu.eloraplm.versioning.VersionLabelListener" priority="100">
+            <event>beforeDocumentModification</event>
+        </listener>
+    </extension>
+    
+</component>

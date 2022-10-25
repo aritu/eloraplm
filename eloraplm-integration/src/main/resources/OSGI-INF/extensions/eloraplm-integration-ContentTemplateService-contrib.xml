@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.integration.ContentTemplateService.contrib">
+    <require>org.nuxeo.ecm.platform.content.template.service.ContentTemplateService.defaultContrib</require>
+    <require>com.aritu.eloraplm.bom.characteristics.ContentTemplateService.contrib</require>
+    
+    <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
+        
+        <factoryBinding name="AdminRootFactory" factoryName="SimpleTemplateFactory" targetType="AdminRoot" append="true">
+            <template>
+                <templateItem typeName="Folder" id="binaries" title="Binaries" description="Binaries folder."/>
+            </template>
+        </factoryBinding>
+        
+    </extension>
+    
+</component>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.codecreation.EventServiceComponent.contrib">
+
+    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
+        
+        <listener name="automaticCodeCreationListener" async="false" postCommit="false" 
+                  class="com.aritu.eloraplm.codecreation.listener.AutomaticCodeCreationListener" priority="10">
+            <event>aboutToCreate</event>
+        </listener>
+        
+    </extension>
+
+</component>

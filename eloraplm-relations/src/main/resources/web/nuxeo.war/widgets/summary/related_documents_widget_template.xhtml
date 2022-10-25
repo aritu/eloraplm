@@ -29,7 +29,7 @@
     <nxu:column styleClass="fieldColumn">
       <ui:include src="/relation_node_template.xhtml">
         <ui:param name="statement" value="#{statement}" />
-        <ui:param name="node" value="#{statement.objectInfo}" />
+        <ui:param name="node" value="#{widgetProperty_inverse ? statement.subjectInfo : statement.objectInfo}" />
       </ui:include>
     </nxu:column>
   </nxu:dataTable>

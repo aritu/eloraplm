@@ -1,13 +1,1 @@
-id,label,parent,obsolete
-id_pkcl3_1_1_1,Packaging Family 1.1.1,id_pkcl2_1_1,0
-id_pkcl3_1_1_2,Packaging Family 1.1.2,id_pkcl2_1_1,0
-id_pkcl3_1_2_1,Packaging Family 1.2.1,id_pkcl2_1_2,0
-id_pkcl3_1_2_2,Packaging Family 1.2.2,id_pkcl2_1_2,0
-id_pkcl3_2_1_1,Packaging Family 2.1.1,id_pkcl2_2_1,0
-id_pkcl3_2_1_2,Packaging Family 2.1.2,id_pkcl2_2_1,0
-id_pkcl3_2_2_1,Packaging Family 2.2.1,id_pkcl2_2_2,0
-id_pkcl3_2_2_2,Packaging Family 2.2.2,id_pkcl2_2_2,0
-id_pkcl3_3_1_1,Packaging Family 3.1.1,id_pkcl2_3_1,0
-id_pkcl3_3_1_2,Packaging Family 3.1.2,id_pkcl2_3_1,0
-id_pkcl3_3_2_1,Packaging Family 3.2.1,id_pkcl2_3_2,0
-id_pkcl3_3_2_2,Packaging Family 3.2.2,id_pkcl2_3_2,0
+id,label,parent,obsolete,ordering

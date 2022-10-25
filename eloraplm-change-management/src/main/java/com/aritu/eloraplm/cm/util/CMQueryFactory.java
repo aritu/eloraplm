@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.nuxeo.ecm.core.query.sql.NXQL;
 
+import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMDoctypeConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.queries.util.EloraQueryHelper;
@@ -48,18 +49,19 @@ public class CMQueryFactory {
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
-                + "/*1/derivedFrom, " + pfx + "/*1/parentItem, " + pfx
-                + "/*1/originItem, " + pfx + "/*1/originItemWc, " + pfx
-                + "/*1/action, " + pfx + "/*1/destinationItem, " + pfx
-                + "/*1/destinationItemWc, " + pfx + "/*1/isManaged, " + pfx
-                + "/*1/isManual, " + pfx + "/*1/type, " + pfx + "/*1/comment, "
-                + pfx + "/*1/isUpdated, " + pfx + "/*1/includeInImpactMatrix "
-                + "FROM " + CMDoctypeConstants.CM_ECO + ", "
-                + CMDoctypeConstants.CM_ECR + " WHERE " + NXQL.ECM_PRIMARYTYPE
-                + " IN ('" + CMDoctypeConstants.CM_ECO + "', '"
-                + CMDoctypeConstants.CM_ECR + "') AND " + NXQL.ECM_UUID + " = '"
-                + cmProcessUid + "' AND " + pfx + "/*1/originItem IS NOT NULL "
-                + " ORDER BY " + pfx + "/*1/rowNumber";
+                + "/*1/derivedFrom, " + pfx + "/*1/isDerivedFromImpactMatrix, "
+                + pfx + "/*1/parentItem, " + pfx + "/*1/originItem, " + pfx
+                + "/*1/originItemWc, " + pfx + "/*1/action, " + pfx
+                + "/*1/destinationItem, " + pfx + "/*1/destinationItemWc, "
+                + pfx + "/*1/isManaged, " + pfx + "/*1/isManual, " + pfx
+                + "/*1/type, " + pfx + "/*1/comment, " + pfx + "/*1/isUpdated, "
+                + pfx + "/*1/includeInImpactMatrix " + "FROM "
+                + CMDoctypeConstants.CM_ECO + ", " + CMDoctypeConstants.CM_ECR
+                + " WHERE " + NXQL.ECM_PRIMARYTYPE + " IN ('"
+                + CMDoctypeConstants.CM_ECO + "', '" + CMDoctypeConstants.CM_ECR
+                + "') AND " + NXQL.ECM_UUID + " = '" + cmProcessUid + "' AND "
+                + pfx + "/*1/originItem IS NOT NULL " + " ORDER BY " + pfx
+                + "/*1/rowNumber";
 
         return query;
     }
@@ -75,6 +77,21 @@ public class CMQueryFactory {
             String originUid, String itemType) throws EloraException {
 
         String pfx = CMHelper.getModifiedItemListMetadaName(itemType);
+
+        String query = "SELECT COUNT(" + NXQL.ECM_UUID + ") FROM "
+                + CMDoctypeConstants.CM_ECO + ", " + CMDoctypeConstants.CM_ECR
+                + " WHERE " + NXQL.ECM_PRIMARYTYPE + " IN ('"
+                + CMDoctypeConstants.CM_ECO + "', '" + CMDoctypeConstants.CM_ECR
+                + "') AND " + NXQL.ECM_UUID + " = '" + cmProcessUid + "' AND "
+                + pfx + "/*1/originItem = '" + originUid + "'";
+
+        return query;
+    }
+
+    public static String getCountImpactedItemsByOriginQuery(String cmProcessUid,
+            String originUid, String itemType) throws EloraException {
+
+        String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
 
         String query = "SELECT COUNT(" + NXQL.ECM_UUID + ") FROM "
                 + CMDoctypeConstants.CM_ECO + ", " + CMDoctypeConstants.CM_ECR
@@ -134,6 +151,21 @@ public class CMQueryFactory {
                 + CMDoctypeConstants.CM_ECR + "') AND " + NXQL.ECM_UUID + " = '"
                 + cmProcessUid + "' AND " + pfx + "/*1/originItem IN (%s)",
                 originList);
+
+        return query;
+    }
+
+    public static String getDistinctImpactedItemsOriginsQuery(
+            String cmProcessUid, String itemType) throws EloraException {
+
+        String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
+
+        String query = String.format("SELECT DISTINCT " + pfx
+                + "/*1/originItem " + "FROM " + CMDoctypeConstants.CM_ECO + ", "
+                + CMDoctypeConstants.CM_ECR + " WHERE " + NXQL.ECM_PRIMARYTYPE
+                + " IN ('" + CMDoctypeConstants.CM_ECO + "', '"
+                + CMDoctypeConstants.CM_ECR + "') AND " + NXQL.ECM_UUID + " = '"
+                + cmProcessUid + "'");
 
         return query;
     }
@@ -368,6 +400,28 @@ public class CMQueryFactory {
                 + " IN ('" + CMDoctypeConstants.CM_ECO + "', '"
                 + CMDoctypeConstants.CM_ECR + "') AND " + pfx
                 + "/*1/destinationItem = '" + docUid + "'";
+
+        return query;
+    }
+
+    public static String getCountItemsByItemClassTypeAndManagedQuery(
+            String cmProcessUid, String itemType, String itemClass,
+            int isManaged) throws EloraException {
+
+        String pfx;
+        if (itemClass.equals(CMConstants.ITEM_CLASS_IMPACTED)) {
+            pfx = CMHelper.getImpactedItemListMetadaName(itemType);
+        } else {
+            pfx = CMHelper.getModifiedItemListMetadaName(itemType);
+        }
+
+        String query = "SELECT COUNT(" + NXQL.ECM_UUID + ") FROM "
+                + CMDoctypeConstants.CM_ECO + ", " + CMDoctypeConstants.CM_ECR
+                + " WHERE " + NXQL.ECM_PRIMARYTYPE + " IN ('"
+                + CMDoctypeConstants.CM_ECO + "', '" + CMDoctypeConstants.CM_ECR
+                + "') AND " + NXQL.ECM_UUID + " = '" + cmProcessUid + "' AND "
+                + pfx + "/*1/originItem IS NOT NULL AND " + pfx
+                + "/*1/isManaged = " + isManaged;
 
         return query;
     }

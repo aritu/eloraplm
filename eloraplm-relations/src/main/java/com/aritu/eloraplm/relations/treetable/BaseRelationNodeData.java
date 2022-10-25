@@ -69,6 +69,18 @@ public class BaseRelationNodeData extends BaseNodeData
 
     private Map<String, String> versionList;
 
+    private boolean isExternalSource;
+
+    private BomListExternalData bomListExternalData;
+
+    public BaseRelationNodeData(String id, int level, String docId,
+            DocumentModel data, DocumentModel wcDoc, Statement stmt,
+            String predicateUri, String quantity, Integer ordering) {
+        this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity, null,
+                ordering, null, null, null, null, false, false, false, null,
+                false, false);
+    }
+
     public BaseRelationNodeData(String id, int level, String docId,
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, String comment,
@@ -76,7 +88,7 @@ public class BaseRelationNodeData extends BaseNodeData
             boolean isSpecial, boolean isDirect) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering, null, null,
-                isSpecial, isDirect, false, false);
+                isSpecial, isDirect, false, null, false, false);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
@@ -88,7 +100,7 @@ public class BaseRelationNodeData extends BaseNodeData
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering,
                 inverseViewerOrdering, isManual, isSpecial, isDirect, false,
-                false);
+                null, false, false);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
@@ -99,7 +111,17 @@ public class BaseRelationNodeData extends BaseNodeData
             boolean isRemoved) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering, null, null,
-                isSpecial, isDirect, isNew, isRemoved);
+                isSpecial, isDirect, false, null, isNew, isRemoved);
+    }
+
+    public BaseRelationNodeData(String id, int level, String docId,
+            DocumentModel data, DocumentModel wcDoc, String quantity,
+            Integer ordering, boolean isExternalSource,
+            BomListExternalData bomListExternalData) {
+
+        this(id, level, docId, data, wcDoc, null, null, quantity, null,
+                ordering, null, null, null, false, false, false,
+                isExternalSource, bomListExternalData, false, false);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
@@ -107,7 +129,9 @@ public class BaseRelationNodeData extends BaseNodeData
             String predicateUri, String quantity, String comment,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
             Integer inverseViewerOrdering, Boolean isManual, boolean isSpecial,
-            boolean isDirect, boolean isNew, boolean isRemoved) {
+            boolean isDirect, boolean isExternalSource,
+            BomListExternalData bomListExternalData, boolean isNew,
+            boolean isRemoved) {
         super(id, level, isNew, isRemoved);
 
         this.docId = docId;
@@ -124,6 +148,8 @@ public class BaseRelationNodeData extends BaseNodeData
         this.isManual = isManual;
         this.isSpecial = isSpecial;
         this.isDirect = isDirect;
+        this.isExternalSource = isExternalSource;
+        this.bomListExternalData = bomListExternalData;
 
         versionList = new LinkedHashMap<String, String>();
         if (docId != null && data != null) {
@@ -294,6 +320,27 @@ public class BaseRelationNodeData extends BaseNodeData
     @Override
     public void setVersionList(Map<String, String> versionList) {
         this.versionList = versionList;
+    }
+
+    @Override
+    public boolean getIsExternalSource() {
+        return isExternalSource;
+    }
+
+    @Override
+    public void setIsExternalSource(boolean isExternalSource) {
+        this.isExternalSource = isExternalSource;
+    }
+
+    @Override
+    public BomListExternalData getBomListExternalData() {
+        return bomListExternalData;
+    }
+
+    @Override
+    public void setBomListExternalData(
+            BomListExternalData bomListExternalData) {
+        this.bomListExternalData = bomListExternalData;
     }
 
     @Override

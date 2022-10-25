@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.webapp.base.SQLDirectoryFactory.contrib">
+    <require>org.nuxeo.ecm.directories</require>
+
+    <extension point="directories" target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory">
+        
+        <directory name="locale">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <cacheTimeout>3600</cacheTimeout>
+            <cacheMaxSize>1000</cacheMaxSize>
+            <table>locale</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <dataFile>directories/locale_elora.csv</dataFile>
+            <createTablePolicy>always</createTablePolicy>
+        </directory>
+    </extension>
+
+</component> 

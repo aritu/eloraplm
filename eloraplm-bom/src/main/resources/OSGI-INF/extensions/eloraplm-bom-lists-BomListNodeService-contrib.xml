@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.bom.lists.BomListNodeService.contrib">
+  
+  <implementation class="com.aritu.eloraplm.bom.lists.treetable.BomListNodeServiceImpl"/>
+  <service>
+    <provide interface="com.aritu.eloraplm.bom.lists.treetable.BomListNodeService"/>
+  </service>
+
+</component>

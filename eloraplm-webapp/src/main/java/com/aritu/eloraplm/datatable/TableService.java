@@ -22,6 +22,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
  *
  */
 public interface TableService {
+
     /**
      * Receives the parent object, and returns all the rows of the table
      *
@@ -38,18 +39,5 @@ public interface TableService {
      * @throws EloraException
      */
     RowData createRowData(String rowId);
-
-    /**
-     * Creates row data with status data
-     *
-     * @param rowId
-     * @param isNew
-     * @param isModified
-     * @param isRemoved
-     * @return
-     * @throws EloraException
-     */
-    RowData createRowData(String rowId, boolean isNew, boolean isModified,
-            boolean isRemoved);
 
 }

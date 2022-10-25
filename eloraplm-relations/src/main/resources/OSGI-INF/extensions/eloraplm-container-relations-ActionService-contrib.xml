@@ -28,11 +28,12 @@
     </action>
     <!-- end of tabs -->
     
+    <!--
     <action id="BtnCreateContainerInverseRelation" order="10" label="eloraplm.command.relation.create.container" type="fancybox" icon="">
         <category>TREETABLE_INVERSE_BUTTON</category>
         <filter-id>addContainerRelationTreeButton</filter-id>
         <properties>
-          <property name="include">/incl/action/create_container_relation.xhtml</property>
+          <property name="include">/incl/action/container_add_inverse_relation.xhtml</property>
           <property name="ajaxSupport">true</property>
           <property name="styleClass">button</property>
         </properties>
@@ -40,6 +41,29 @@
     
     <action id="BtnSaveContainerInverseRelations" order="20" label="command.save" type="link" link="#{containerInverseTreeBean.save(currentDocument, currentDocument, false, true)}" icon="">
       <category>TREETABLE_INVERSE_BUTTON</category>
+      <filter-id>addContainerRelationTreeButton</filter-id>
+      <filter-id>isEditable</filter-id>
+      <properties>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    -->
+    
+    <action id="BtnCreateContainerRelation" order="10" label="eloraplm.command.relation.create.container" type="fancybox" icon="">
+        <category>TREETABLE_BUTTON</category>
+        <filter-id>addContainerRelationTreeButton</filter-id>
+        <filter-id>isEditable</filter-id>
+        <properties>
+          <property name="include">/incl/action/container_add_relation.xhtml</property>
+          <property name="ajaxSupport">true</property>
+          <property name="styleClass">button</property>
+        </properties>
+    </action>
+    
+    
+    <action id="BtnSaveContainerRelations" order="20" label="command.save" type="link" link="#{containerTreeBean.save(currentDocument, currentDocument, false, false)}" icon="">
+      <category>TREETABLE_BUTTON</category>
       <filter-id>addContainerRelationTreeButton</filter-id>
       <filter-id>isEditable</filter-id>
       <properties>

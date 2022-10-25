@@ -1,11 +1,1 @@
-id,label,parent,obsolete
-id_icl3_1000,Digital circuits,id_icl2_7000,0
-id_icl3_2000,Linear circuits,id_icl2_7000,0
-id_icl3_3000,Memory,id_icl2_7000,0
-id_icl3_4000,Hybrid,id_icl2_7000,0
-id_icl3_5000,Resistor,id_icl2_7000,0
-id_icl3_6000,Capacitor,id_icl2_7000,0
-id_icl3_7000,Inductor,id_icl2_7000,0
-id_icl3_8000,Batterie,id_icl2_7000,0
-id_icl3_9000,Connector,id_icl2_7000,0
-id_icl3_10000,Switch,id_icl2_7000,0
+id,label,parent,obsolete,ordering

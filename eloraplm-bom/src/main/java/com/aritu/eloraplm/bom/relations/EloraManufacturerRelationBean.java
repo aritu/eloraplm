@@ -57,7 +57,7 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.relations.EloraRelationActionsBean;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 @Name("manufacturerRelationBean")
 @Scope(ScopeType.CONVERSATION)
@@ -68,8 +68,8 @@ public class EloraManufacturerRelationBean
 
     private static final long serialVersionUID = 1L;
 
-    private EloraVersionLabelService eloraVersionLabelService = Framework.getService(
-            EloraVersionLabelService.class);
+    private VersionLabelService versionLabelService = Framework.getService(
+            VersionLabelService.class);
 
     private List<Statement> outgoingManufacturerPartStatements;
 
@@ -153,7 +153,7 @@ public class EloraManufacturerRelationBean
         Resource predicate = new ResourceImpl(
                 EloraRelationConstants.BOM_MANUFACTURER_HAS_PART);
         outgoingManufacturerPartStatements = RelationHelper.getStatements(
-                currentDoc, predicate);
+                EloraRelationConstants.ELORA_GRAPH_NAME, currentDoc, predicate);
 
         if (outgoingManufacturerPartStatements.isEmpty()) {
             outgoingManufacturerPartStatements = Collections.emptyList();
@@ -179,8 +179,8 @@ public class EloraManufacturerRelationBean
             DocumentModel manPartDoc = createManufacturerPart(currentDoc);
 
             // Check in new document
-            EloraDocumentHelper.setupCheckIn(eloraVersionLabelService,
-                    manPartDoc, "Created from Part: " + currentDoc.getTitle());
+            EloraDocumentHelper.setupCheckIn(versionLabelService, manPartDoc,
+                    "Created from Part: " + currentDoc.getTitle());
 
             manPartDoc = documentManager.saveDocument(manPartDoc);
 
@@ -202,8 +202,8 @@ public class EloraManufacturerRelationBean
 
     private DocumentModel createManufacturerPart(DocumentModel doc)
             throws EloraException {
-        String eloraRootFolderId = EloraStructureHelper.getEloraRootFolderUid(doc,
-                documentManager);
+        String eloraRootFolderId = EloraStructureHelper.getEloraRootFolderUid(
+                doc, documentManager);
 
         String targetFolderPath = EloraStructureHelper.getPathByType(
                 new IdRef(eloraRootFolderId),

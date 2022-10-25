@@ -23,6 +23,9 @@ public class EloraFacetConstants {
     // CollaborationRoot, LibraryRoot, AdminRoot, etc.
     public static final String FACET_ELORA_ROOT_FOLDER = "EloraRootFolder";
 
+    // For all documents that are part of the main structure
+    public static final String FACET_ELORA_STRUCT = "EloraStruct";
+
     // For documents derived from CadDocument: CadAssembly, CadPart, CadDrawing,
     // Design Table,...
     public static final String FACET_CAD_DOCUMENT = "CadDocument";
@@ -34,17 +37,14 @@ public class EloraFacetConstants {
     // Project, CmEco, ...
     public static final String FACET_ELORA_WORKSPACE = "EloraWorkspace";
 
+    // Archivable workspaces
+    public static final String FACET_ARCHIVABLE = "Archivable";
+
     // For BOM documents: BomPart, BomManufacturerPart, BomCustomerProduct,...
     public static final String FACET_BOM_DOCUMENT = "BomDocument";
 
     // For basic documents: File, Note, Audio, Picture, Video
-    // CAUTION! At the moment, we have no way to limit BasicDocument
-    // to REAL basic documents, so CAD and BOM docs also have this
-    // facet
     public static final String FACET_BASIC_DOCUMENT = "BasicDocument";
-
-    // For automatic code creation
-    public static final String FACET_AUTOMATIC_CODE = "AutomaticCode";
 
     // For domain children that contain workspaces inside
     public static final String FACET_WORKABLE_DOMAIN_CHILD = "WorkableDomainChild";
@@ -61,6 +61,9 @@ public class EloraFacetConstants {
     // To define if the document can be overwritten
     public static final String FACET_OVERWRITABLE = "Overwritable";
 
+    // To define if the document can be defined as a template
+    public static final String FACET_TEMPLATABLE = "Templatable";
+
     // To define if the document stores check in info
     public static final String FACET_STORE_CHECKIN_INFO = "StoreCheckInInfo";
 
@@ -69,5 +72,13 @@ public class EloraFacetConstants {
 
     // To define if the document stores states log
     public static final String FACET_STORE_STATES_LOG = "StoreStatesLog";
+
+    // For archived WorkspaceRoots
+    public static final String FACET_ARCHIVED_WORKSPACE_ROOT = "ArchivedWorkspaceRoot";
+
+    // Workflow Forms
+    public static final String FACET_HAS_WORKFLOW_FORMS = "HasWorkflowForms";
+
+    public static final String FACET_DEFINED_BY_WORKFLOW_FORMS = "DefinedByWorkflowForms";
 
 }

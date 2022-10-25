@@ -27,12 +27,16 @@ public class PromoteActionsBean extends LifecycleTransitionsActionsBean {
     public List<String> getTransitions() {
         if (transitions.isEmpty()) {
             DocumentModel doc = navigationContext.getCurrentDocument();
-            transitions = LifecyclesConfig.getVisiblePromoteTransitions(doc);
+            if (doc != null) {
+                transitions = LifecyclesConfig
+                        .getVisiblePromoteTransitions(doc);
 
-            // if (transitions.size() >= 1) {
-            // transition = transitions.get(0);
-            // init();
-            // }
+                // if (transitions.size() >= 1) {
+                // transition = transitions.get(0);
+                // init();
+                // }
+
+            }
 
         }
         return transitions;
@@ -44,9 +48,10 @@ public class PromoteActionsBean extends LifecycleTransitionsActionsBean {
 
         DocumentModel doc = navigationContext.getCurrentDocument();
 
+        // Seam event
+        Events.instance().raiseEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc);
+
         if (hasToFireDefaultEvent()) {
-            // Seam event
-            Events.instance().raiseEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc);
 
             // Nuxeo Event
             doc.refresh();

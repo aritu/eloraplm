@@ -161,11 +161,31 @@ public class EloraUrlHelper {
             DocumentModel doc) throws EloraException {
 
         String serverUrl = getServerUrl(request);
-        String docViewerFilerUrl = String.join("/",
+        String docViewerFileUrl = String.join("/",
                 new String[] { serverUrl, NXBIGFILE_URL,
                         doc.getRepositoryName(), doc.getId(),
                         EloraMetadataConstants.ELORA_ELOVWR_FILE });
-        return docViewerFilerUrl;
+        return docViewerFileUrl;
+    }
+
+    /**
+     * @param request
+     * @param doc
+     * @param i
+     * @return
+     * @throws EloraException
+     */
+    public static String getDocumentCadAttachmentFileUrl(
+            HttpServletRequest request, DocumentModel doc, int i, String filename)
+            throws EloraException {
+
+        String serverUrl = getServerUrl(request);
+        String cadAttachmentUrl = String.join("/",
+                new String[] { serverUrl, NXBIGFILE_URL,
+                        doc.getRepositoryName(), doc.getId(),
+                        EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS,
+                        String.valueOf(i), "file", filename });
+        return cadAttachmentUrl;
     }
 
     /**

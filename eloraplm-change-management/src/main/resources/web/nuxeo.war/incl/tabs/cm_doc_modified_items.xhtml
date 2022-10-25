@@ -9,11 +9,33 @@
     <c:if test="#{currentDocument.lockInfo.owner != currentUser and currentDocument.currentLifeCycleState == 'asyncProcessing'}">
       <div class="processMessage completeWarning"><h:outputText value="#{messages['eloraplm.message.warning.cm.batch.batchProcessInProgressByAnotherUser']}"/></div>
     </c:if>
+    
+    <c:if test="#{currentDocument.lockInfo.owner == currentUser and currentDocument.cmbp.needToBeRefreshed == true}">
+      <ui:include src="/incl/cm_batch_process_last_process_info.xhtml">
+        <ui:param name="lastBatchProcess" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcess}" />
+        <ui:param name="lastBatchProcessExecutor" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessExecutor}" />
+        <ui:param name="lastBatchProcessResultMsg" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessResultMsg}" />
+        <ui:param name="lastBatchProcessSuccessResultList" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessSuccessResultList}" />
+        <ui:param name="lastBatchProcessErrorResultList" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessErrorResultList}" />
+        <ui:param name="lastBatchProcessStarted" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessStarted}" />
+        <ui:param name="lastBatchProcessFinished" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessFinished}" />
+      </ui:include> 
+    </c:if>
 
 
     <c:if test="#{(currentDocument.lockInfo.owner != currentUser and currentDocument.currentLifeCycleState != 'asyncProcessing')
                   or (currentDocument.lockInfo.owner == currentUser and not currentDocument.cmbp.needToBeRefreshed == true)}">
       <ui:include src="document_not_editable_warning.xhtml"/>
+      
+      <ui:include src="/incl/cm_batch_process_last_process_info.xhtml">
+        <ui:param name="lastBatchProcess" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcess}" />
+        <ui:param name="lastBatchProcessExecutor" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessExecutor}" />
+        <ui:param name="lastBatchProcessResultMsg" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessResultMsg}" />
+        <ui:param name="lastBatchProcessSuccessResultList" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessSuccessResultList}" />
+        <ui:param name="lastBatchProcessErrorResultList" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessErrorResultList}" />
+        <ui:param name="lastBatchProcessStarted" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessStarted}" />
+        <ui:param name="lastBatchProcessFinished" value="#{currentDocument.cmbp.modifiedDocsLastBatchProcessFinished}" />
+      </ui:include>
       
       <nxl:widget name="cm_doc_mod_tt" mode="view" value="#{cmDocModifiedItemsTreeBean}" />
     </c:if>

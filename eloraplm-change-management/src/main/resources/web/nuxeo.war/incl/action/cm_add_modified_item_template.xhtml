@@ -32,7 +32,7 @@
                 <td class="labelColumn"><strong><h:outputLabel value="#{messages['eloraplm.label.cm.origin']}:" /></strong></td>
                 <td class="fieldColumn">
                   <h:panelGroup id="originItemWcUidPanel">
-                    <nxl:widgetType name="eloraSingleDocumentSuggestion" mode="edit"
+                    <nxl:widgetType name="singleDocumentSuggestion" mode="edit"
                       ajaxReRender="originItemWcUidMsg originItemMsgPanel originItemRealUidPanel actionPanelLabel actionPanel actionMsgPanel destinationItemPanelLabel destinationItemPanel destinationItemMsgPanel includeInImpactMatrixPanelLabel includeInImpactMatrixPanel commentPanelLabel commentPanel buttonsPanel"
                       value="#{treeBean}" 
                       field="originItemWcUid"
@@ -40,9 +40,10 @@
                       width="100%"
                       placeholder="eloraplm.placeholder.suggestion.cm.originItem"
                       pageProviderName="#{originPageProviderName}"
+                      documentSchemas="dublincore,common,elora_object,template_info"
                       required="true"
                       additionalOperationParameters="eloraPassQueryTermsTwice"
-                      >
+                    >
                     </nxl:widgetType>
                     <h:message for="originItemWcUid" class="errorMessage" id="originItemWcUidMsg" />
                   </h:panelGroup>
@@ -127,7 +128,7 @@
                     <!-- if action == replace, display destination item selection and destination item version selection -->
                     <ui:fragment rendered="#{treeBean.originItemMsg == null and treeBean.action != null and treeBean.actionMsg == null and treeBean.action eq 'id_replace'}">
                      <nxu:set var="pageProviderName" value="#{treeBean.getPageProviderNameForAddModifiedItemReplaceDestinationItem()}">
-                        <nxl:widgetType name="eloraSingleDocumentSuggestion" mode="edit"
+                        <nxl:widgetType name="singleDocumentSuggestion" mode="edit"
                             ajaxReRender="destinationItemMsgPanel includeInImpactMatrixPanelLabel includeInImpactMatrixPanel commentPanelLabel commentPanel buttonsPanel"
                             value="#{treeBean}" 
                             field="destinationItemWcUid"
@@ -135,8 +136,10 @@
                             width="100%"
                             placeholder="eloraplm.placeholder.suggestion.cm.destinationItem"
                             pageProviderName="#{pageProviderName}"
+                            documentSchemas="dublincore,common,elora_object,template_info"
                             required="true"
-                            additionalOperationParameters="eloraPassQueryTermsTwice">
+                            additionalOperationParameters="eloraPassQueryTermsTwice"
+                        >
                         </nxl:widgetType>
                         <h:message for="destinationItemWcUid" class="errorMessage" />
                         
@@ -147,6 +150,8 @@
                       <nxl:widget name="cm_destination_item" mode="view" value="#{treeBean}" />
                       <h:outputText value="&#160;&#160;&#160;" />
                       <nxl:widget name="cm_destination_item_version" mode="view" value="#{treeBean}" />
+                      <h:outputText value="&#160;&#160;&#160;" />
+                      <nxl:widget name="cm_destination_item_state" mode="view" value="#{treeBean}" />
                     </ui:fragment>
                   </h:panelGroup>
                   

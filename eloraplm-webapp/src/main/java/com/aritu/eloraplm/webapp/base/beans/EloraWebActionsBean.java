@@ -16,6 +16,16 @@ package com.aritu.eloraplm.webapp.base.beans;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -35,23 +45,31 @@ import org.nuxeo.ecm.admin.runtime.SimplifiedBundleInfo;
 import org.nuxeo.ecm.admin.runtime.SimplifiedServerInfo;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.SortInfo;
 import org.nuxeo.ecm.core.convert.api.ConversionService;
 import org.nuxeo.ecm.core.convert.api.ConverterNotRegistered;
 import org.nuxeo.ecm.directory.Session;
 import org.nuxeo.ecm.directory.api.DirectoryService;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
+import org.nuxeo.ecm.platform.ui.web.tag.fn.Functions;
 import org.nuxeo.runtime.api.Framework;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.constants.EloraEventNames;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraPropertiesConstants;
+import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 /**
  * @author aritu
@@ -68,16 +86,18 @@ public class EloraWebActionsBean implements Serializable {
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
 
-    @In
+    @In(create = true, required = false)
     protected transient NavigationContext navigationContext;
 
     @In(create = true, required = false)
     protected transient FacesMessages facesMessages;
 
-    @In(create = true)
+    @In(create = true, required = false)
     protected Map<String, String> messages;
 
     private Boolean isAny2PdfConverterAvailable;
+
+    private TreeNode structureTree;
 
     /**
      * @param directoryName
@@ -89,8 +109,8 @@ public class EloraWebActionsBean implements Serializable {
         if (entryId == null) {
             return null;
         }
-        DirectoryService dirService = Framework.getService(
-                DirectoryService.class);
+        DirectoryService dirService = Framework
+                .getService(DirectoryService.class);
         try (Session session = dirService.open(directoryName)) {
             return session.getEntry(entryId);
         }
@@ -101,14 +121,20 @@ public class EloraWebActionsBean implements Serializable {
      */
     public boolean isInAWorkspace() {
 
-        DocumentModel superSpace = documentManager.getSuperSpace(
-                navigationContext.getCurrentDocument());
+        DocumentModel superSpace = documentManager
+                .getSuperSpace(navigationContext.getCurrentDocument());
 
         if (superSpace.hasFacet(EloraFacetConstants.FACET_ELORA_WORKSPACE)) {
             return true;
         }
 
         return false;
+    }
+
+    public boolean existsDocument(String id) {
+        return id != null && !id.isEmpty()
+                ? documentManager.exists(new IdRef(id))
+                : false;
     }
 
     public DocumentRef getDocumentRefFromId(String id) {
@@ -118,6 +144,15 @@ public class EloraWebActionsBean implements Serializable {
         DocumentRef docRef = new IdRef(id);
 
         return docRef;
+    }
+
+    public DocumentModel getDocumentFromId(String id) {
+        DocumentRef docRef = getDocumentRefFromId(id);
+        if (docRef != null) {
+            return getDocument(docRef);
+        }
+
+        return null;
     }
 
     public DocumentModel getDocument(DocumentRef docRef) {
@@ -143,24 +178,44 @@ public class EloraWebActionsBean implements Serializable {
         return docM;
     }
 
+    public List<DocumentRef> getDocumentVersionRefs(DocumentRef docRef) {
+        List<DocumentRef> versionRefs = new ArrayList<DocumentRef>();
+
+        if (docRef != null) {
+            versionRefs = documentManager.getVersionsRefs(docRef);
+        }
+
+        return versionRefs;
+    }
+
+    public boolean isBaseVersion(DocumentRef avRef) {
+        DocumentModel wcDoc = documentManager.getWorkingCopy(avRef);
+        DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(wcDoc);
+        if (baseDoc != null && baseDoc.getId().equals(avRef.toString())) {
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean isAvObsolete() {
         try {
-            return EloraDocumentHelper.isAvObsolete(
-                    navigationContext.getCurrentDocument());
+            return EloraDocumentHelper
+                    .isAvObsolete(navigationContext.getCurrentDocument());
         } catch (EloraException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.checkIfDocIsObsolete"));
+            facesMessages.add(StatusMessage.Severity.ERROR, messages
+                    .get("eloraplm.message.error.checkIfDocIsObsolete"));
             return false;
         }
     }
 
     public boolean isWcObsolete() {
         try {
-            return EloraDocumentHelper.isWcObsolete(
-                    navigationContext.getCurrentDocument());
+            return EloraDocumentHelper
+                    .isWcObsolete(navigationContext.getCurrentDocument());
         } catch (EloraException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.checkIfDocIsObsolete"));
+            facesMessages.add(StatusMessage.Severity.ERROR, messages
+                    .get("eloraplm.message.error.checkIfDocIsObsolete"));
             return false;
         }
     }
@@ -170,8 +225,8 @@ public class EloraWebActionsBean implements Serializable {
      * @return
      */
     public boolean isEditable() {
-        return EloraDocumentHelper.isEditable(
-                navigationContext.getCurrentDocument());
+        return EloraDocumentHelper
+                .isEditable(navigationContext.getCurrentDocument());
     }
 
     public boolean hasBaseVersion() {
@@ -189,8 +244,8 @@ public class EloraWebActionsBean implements Serializable {
      */
     public Boolean evaluateBoolean(String expr) {
         FacesContext context = FacesContext.getCurrentInstance();
-        Boolean result = context.getApplication().evaluateExpressionGet(context,
-                expr, Boolean.class);
+        Boolean result = context.getApplication()
+                .evaluateExpressionGet(context, expr, Boolean.class);
 
         return result;
     }
@@ -202,8 +257,21 @@ public class EloraWebActionsBean implements Serializable {
     public String evaluateString(String expr) {
 
         FacesContext context = FacesContext.getCurrentInstance();
-        String result = context.getApplication().evaluateExpressionGet(context,
-                expr, String.class);
+        String result = context.getApplication()
+                .evaluateExpressionGet(context, expr, String.class);
+
+        return result;
+    }
+
+    /**
+     * @param expr
+     * @return
+     */
+    public Integer evaluateInteger(String expr) {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        Integer result = context.getApplication()
+                .evaluateExpressionGet(context, expr, Integer.class);
 
         return result;
     }
@@ -211,16 +279,28 @@ public class EloraWebActionsBean implements Serializable {
     public Object evaluateObject(String expr) {
 
         FacesContext context = FacesContext.getCurrentInstance();
-        Object result = context.getApplication().evaluateExpressionGet(context,
-                expr, Object.class);
+        Object result = context.getApplication()
+                .evaluateExpressionGet(context, expr, Object.class);
 
         return result;
     }
 
-    // public List<Object> reverseListOrder(List<Object> list) {
-    // Collections.reverse(list);
-    // return list;
-    // }
+    public GregorianCalendar stringToCalendar(String value, String pattern) {
+        String logInitMsg = "[stringToCalendar] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
+        try {
+            DateFormat df = new SimpleDateFormat(pattern);
+            Date date = df.parse(value);
+            cal.setTime(date);
+        } catch (ParseException e) {
+            log.error(logInitMsg + "Error parsing string |" + value
+                    + "| to calendar: " + e.getMessage(), e);
+        }
+
+        return cal;
+    }
 
     public String getEloraDownloadLink() throws EloraException {
 
@@ -232,13 +312,19 @@ public class EloraWebActionsBean implements Serializable {
             currentDoc = documentManager.getSourceDocument(currentDoc.getRef());
         }
         if (!currentDoc.isImmutable()) {
-            DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(
-                    currentDoc);
+            DocumentModel baseDoc = EloraDocumentHelper
+                    .getBaseVersion(currentDoc);
             if (baseDoc == null) {
                 log.error(logInitMsg + "The document |" + currentDoc.getId()
                         + "| has no base version. Probably because it has no AVs.");
-                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                        "eloraplm.message.error.getEloraDownloadLink"));
+                // We cannot show a facesMessage because this method is not
+                // called when the user presses the button, it is called when
+                // the summary page is displayed, so the error message is
+                // displayed in the next action
+
+                // If no baseDoc exists (or we are not able to get it, for
+                // example from the plugin) the link is empty
+                return "";
             }
             currentDoc = baseDoc;
         }
@@ -258,8 +344,8 @@ public class EloraWebActionsBean implements Serializable {
             currentDoc = documentManager.getSourceDocument(currentDoc.getRef());
         }
         if (!currentDoc.isImmutable()) {
-            DocumentModel baseVersion = EloraDocumentHelper.getBaseVersion(
-                    currentDoc);
+            DocumentModel baseVersion = EloraDocumentHelper
+                    .getBaseVersion(currentDoc);
             if (baseVersion != null) {
                 currentDoc = baseVersion;
             }
@@ -274,8 +360,8 @@ public class EloraWebActionsBean implements Serializable {
 
     public Boolean getIsAny2PdfConverterAvailable() {
         if (isAny2PdfConverterAvailable == null) {
-            isAny2PdfConverterAvailable = Boolean.valueOf(
-                    checkIfAny2PdfConverterIsAvailable());
+            isAny2PdfConverterAvailable = Boolean
+                    .valueOf(checkIfAny2PdfConverterIsAvailable());
         }
 
         return isAny2PdfConverterAvailable;
@@ -318,4 +404,104 @@ public class EloraWebActionsBean implements Serializable {
 
         return eloraProps;
     }
+
+    public boolean isAddModifiedItemsDerivedFromImpactedDocsEnabled() {
+        boolean isEnabled = false;
+        if (Boolean.valueOf(Framework.getProperty(
+                EloraPropertiesConstants.PROP_CM_ADD_MODIFIED_ITEMS_DERIVED_FROM_IMPACTED_DOCS_ENABLED,
+                Boolean.toString(false)))) {
+            isEnabled = true;
+        }
+        return isEnabled;
+    }
+
+    public TreeNode getStructureTree() {
+        if (structureTree == null) {
+            buildStructureTree();
+        }
+        return structureTree;
+    }
+
+    public void reloadStructureTree() {
+        buildStructureTree();
+    }
+
+    private void buildStructureTree() {
+        String logInitMsg = "[buildStructureTree] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        try {
+            String query = EloraQueryFactory.getEloraStructDocuments();
+            DocumentModelList docs = documentManager.query(query);
+            Map<String, TreeNode> nodes = new HashMap<String, TreeNode>();
+            structureTree = new DefaultTreeNode("/", null);
+            for (DocumentModel doc : docs) {
+                nodes.put(doc.getId(), new DefaultTreeNode(doc, null));
+            }
+            for (DocumentModel doc : docs) {
+                if (doc.getType().equals(NuxeoDoctypeConstants.DOMAIN)) {
+                    TreeNode domainNode = nodes.get(doc.getId());
+                    domainNode.setExpanded(true);
+                    structureTree.getChildren().add(domainNode);
+                } else {
+                    String parentId = doc.getParentRef() != null
+                            ? doc.getParentRef().toString()
+                            : null;
+                    if (parentId != null) {
+                        if (nodes.containsKey(parentId)) {
+                            nodes.get(parentId)
+                                    .getChildren()
+                                    .add(nodes.get(doc.getId()));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(logInitMsg + "Uncontrolled error: "
+                    + e.getClass().getName() + " - " + e.getMessage(), e);
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("eloraplm.message.error.structureTree"));
+        }
+
+    }
+
+    public List<SortInfo> createSortInfoList(String column, boolean ascending) {
+        List<SortInfo> sil = new ArrayList<SortInfo>();
+        SortInfo si = new SortInfo(column, ascending);
+        sil.add(si);
+        return sil;
+    }
+
+    public boolean isArchived() {
+        return EloraDocumentHelper
+                .isArchived(navigationContext.getCurrentDocument());
+    }
+
+    public boolean userIsInUserGroupList(String user,
+            List<String> userGroupList) {
+
+        for (String userGroup : userGroupList) {
+            if (user.equals(userGroup)) {
+                return true;
+            }
+
+            if (Functions.userIsMemberOf(userGroup)) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+    public Date getDateFromString(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) {
+            return null;
+        }
+
+        DateTimeFormatter dtf = DateTimeFormatter.ISO_INSTANT;
+        Instant i = Instant.from(dtf.parse(dateStr));
+        return Date.from(i);
+    }
+
 }

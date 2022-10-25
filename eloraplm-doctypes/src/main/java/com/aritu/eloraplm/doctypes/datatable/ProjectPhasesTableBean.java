@@ -21,10 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Predicate;
+
+import javax.faces.context.FacesContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,12 +38,17 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
-
+import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.ProjectConstants;
-import com.aritu.eloraplm.datatable.EditableTableBean;
+import com.aritu.eloraplm.constants.QueriesConstants;
+import com.aritu.eloraplm.datatable.EditableDocBasedTableBean;
 import com.aritu.eloraplm.datatable.RowData;
+import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 /**
  *
@@ -51,7 +59,7 @@ import com.aritu.eloraplm.datatable.RowData;
 @Scope(CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class ProjectPhasesTableBean extends EditableTableBean
+public class ProjectPhasesTableBean extends EditableDocBasedTableBean
         implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,17 +80,21 @@ public class ProjectPhasesTableBean extends EditableTableBean
 
     private String parentId;
 
+    private String title;
+
     private String description;
 
     private String manager;
 
-    private boolean isDeliverableRequired;
-
-    private String deliverableName;
+    private List<Map<String, Object>> deliverables;
 
     private Date realStartDate;
 
     private Date plannedEndDate;
+
+    private String fromManager;
+
+    private String toManager;
 
     public String getType() {
         return type;
@@ -98,6 +110,14 @@ public class ProjectPhasesTableBean extends EditableTableBean
 
     public void setParentId(String parentId) {
         this.parentId = parentId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -116,20 +136,12 @@ public class ProjectPhasesTableBean extends EditableTableBean
         this.manager = manager;
     }
 
-    public boolean getIsDeliverableRequired() {
-        return isDeliverableRequired;
+    public List<Map<String, Object>> getDeliverables() {
+        return deliverables;
     }
 
-    public void setIsDeliverableRequired(boolean isDeliverableRequired) {
-        this.isDeliverableRequired = isDeliverableRequired;
-    }
-
-    public String getDeliverableName() {
-        return deliverableName;
-    }
-
-    public void setDeliverableName(String deliverableName) {
-        this.deliverableName = deliverableName;
+    public void setDeliverables(List<Map<String, Object>> deliverables) {
+        this.deliverables = deliverables;
     }
 
     public Date getRealStartDate() {
@@ -147,6 +159,23 @@ public class ProjectPhasesTableBean extends EditableTableBean
     public void setPlannedEndDate(Date plannedEndDate) {
         this.plannedEndDate = plannedEndDate;
     }
+
+    public String getFromManager() {
+        return fromManager;
+    }
+
+    public void setFromManager(String fromManager) {
+        this.fromManager = fromManager;
+    }
+
+    public String getToManager() {
+        return toManager;
+    }
+
+    public void setToManager(String toManager) {
+        this.toManager = toManager;
+    }
+
     /* ---------------- */
 
     // To be able to negate stream filter
@@ -157,6 +186,7 @@ public class ProjectPhasesTableBean extends EditableTableBean
     public ProjectPhasesTableBean() {
         tableService = new ProjectPhasesTableServiceImpl();
         phaseTypes = Arrays.asList(PHASE_TYPES);
+        deliverables = new ArrayList<Map<String, Object>>();
     }
 
     @Override
@@ -167,6 +197,7 @@ public class ProjectPhasesTableBean extends EditableTableBean
             log.trace(logInitMsg + "Creating table...");
             setData(tableService.getData(getCurrentDocument()));
             setIsDirty(false);
+            log.trace(logInitMsg + "Table created.");
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -198,17 +229,10 @@ public class ProjectPhasesTableBean extends EditableTableBean
 
             String rowId = calculateRowId();
 
-            Map<String, Object> deliverable = new HashMap<String, Object>();
-            deliverable.put(
-                    ProjectConstants.PROJECT_PHASE_DELIVERABLES_ISREQUIRED,
-                    getIsDeliverableRequired());
-            deliverable.put(ProjectConstants.PROJECT_PHASE_DELIVERABLES_NAME,
-                    getDeliverableName());
-
             RowData row = ts.createRowData(rowId, getParentId(), getType(),
-                    getDescription(), getManager(), deliverable,
+                    getTitle(), getDescription(), getManager(), deliverables,
                     getRealStartDate(), getPlannedEndDate(), null, 0, null,
-                    true, false, false);
+                    null, false, true, false, false);
 
             getData().add(row);
 
@@ -236,25 +260,31 @@ public class ProjectPhasesTableBean extends EditableTableBean
         List<String> rowIdList = getRowIdList();
 
         if (getParentId() == null) {
-            String maxRowId = rowIdList.stream().filter(
-                    not(x -> x.contains("_"))).max(String::compareTo).orElse(
-                            null);
+            String maxRowId = rowIdList.stream().filter(not(x -> x.contains(
+                    ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR))).max(
+                            String::compareTo).orElse(null);
             if (maxRowId == null) {
-                rowId = "001";
+                rowId = ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID;
             } else {
                 int m = Integer.valueOf(maxRowId);
                 rowId = String.format("%03d", (m + 1));
             }
         } else {
             String maxRowId = rowIdList.stream().filter(
-                    x -> x.startsWith(getParentId() + "_")).max(
-                            String::compareTo).orElse(null);
+                    x -> x.startsWith(getParentId()
+                            + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR)).max(
+                                    String::compareTo).orElse(null);
             if (maxRowId == null) {
-                rowId = getParentId() + "_001";
+                rowId = getParentId()
+                        + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                        + ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID;
             } else {
-                String[] a = maxRowId.split("_");
+                String[] a = maxRowId.split(
+                        ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR);
                 int m = Integer.valueOf(a[a.length - 1]);
-                rowId = getParentId() + "_" + String.format("%03d", (m + 1));
+                rowId = getParentId()
+                        + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                        + String.format("%03d", (m + 1));
             }
         }
         return rowId;
@@ -295,33 +325,14 @@ public class ProjectPhasesTableBean extends EditableTableBean
                                 row.getParentId());
                         phase.put(ProjectConstants.PROJECT_PHASE_TYPE,
                                 row.getType());
+                        phase.put(ProjectConstants.PROJECT_PHASE_TITLE,
+                                row.getTitle());
                         phase.put(ProjectConstants.PROJECT_PHASE_DESCRIPTION,
                                 row.getDescription());
                         phase.put(ProjectConstants.PROJECT_PHASE_MANAGER,
                                 row.getManager());
-
-                        List<Map<String, Object>> dlvs = new ArrayList<Map<String, Object>>();
-                        Map<String, Object> dlv = row.getDeliverable();
-                        if (dlv != null) {
-                            /**
-                             * BETTER TO LINK THE PROXY, BECAUSE THAT IS WHAT
-                             * THEY WORK WITH // Normally the doc will be a
-                             * proxy (is what the // page provider returns). Get
-                             * the source doc. if (dlv.get(
-                             * ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENT)
-                             * != null) { String dlvDocId = (String) dlv.get(
-                             * ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENT);
-                             * DocumentModel dlvDoc =
-                             * documentManager.getDocument( new
-                             * IdRef(dlvDocId)); if (dlvDoc.isProxy()) {
-                             * dlv.put(ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENT,
-                             * dlvDoc.getSourceId()); } }
-                             */
-                            dlvs.add(dlv);
-                        }
                         phase.put(ProjectConstants.PROJECT_PHASE_DELIVERABLES,
-                                dlvs);
-
+                                row.getDeliverables());
                         phase.put(ProjectConstants.PROJECT_PHASE_REALSTARTDATE,
                                 row.getRealStartDate());
                         phase.put(ProjectConstants.PROJECT_PHASE_PLANNEDENDDATE,
@@ -332,6 +343,10 @@ public class ProjectPhasesTableBean extends EditableTableBean
                                 row.getProgress());
                         phase.put(ProjectConstants.PROJECT_PHASE_COMMENT,
                                 row.getComment());
+                        phase.put(ProjectConstants.PROJECT_PHASE_RESULT,
+                                row.getResult());
+                        phase.put(ProjectConstants.PROJECT_PHASE_OBSOLETE,
+                                row.getObsolete());
                         phaseList.add(phase);
 
                         row.setIsModified(false);
@@ -355,6 +370,579 @@ public class ProjectPhasesTableBean extends EditableTableBean
         }
     }
 
+    public void modifyManager() {
+        String logInitMsg = "[modifyManager] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg
+                + "Modifying the manager of all the phases of the project |"
+                + getCurrentDocument().getId() + "|.");
+        try {
+            String fromManager = getFromManager();
+            String toManager = getToManager();
+            if (fromManager != null && fromManager.length() > 0
+                    && toManager != null && toManager.length() > 0) {
+                if (!fromManager.equals(toManager)) {
+                    for (RowData r : getData()) {
+                        ProjectPhaseRowData row = (ProjectPhaseRowData) r;
+                        if (!row.getIsRemoved()) {
+                            String currentManager = row.getManager();
+                            if (currentManager != null
+                                    && currentManager.equals(fromManager)) {
+                                row.setManager(toManager);
+                                row.setIsModified(true);
+                            }
+                        }
+                    }
+                    setIsDirty(true);
+                    facesMessages.add(StatusMessage.Severity.INFO, messages.get(
+                            "eloraplm.message.success.project.phases.manager.modified"));
+                } else {
+                    log.trace(logInitMsg
+                            + "Specified fromManager and toManager have same avalue: fromManager = |"
+                            + fromManager + "|, toManager = |" + toManager
+                            + "|");
+                    facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                            "eloraplm.message.warning.project.phase.modify.manager.sameValues"));
+                }
+            } else {
+                log.trace(logInitMsg
+                        + "Specified fromManager or toManager cannot be empty: fromManager = |"
+                        + fromManager + "|, toManager = |" + toManager + "|");
+                facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                        "eloraplm.message.warning.project.phase.modify.manager.emptyValue"));
+            }
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.project.phases.manager.modify"));
+        } finally {
+            resetModifyManagerFormValues();
+        }
+    }
+
+    public Map<String, String> loadContentDocuments() {
+        String logInitMsg = "[loadContentDocuments] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        Map<String, String> documentList = new LinkedHashMap<String, String>();
+
+        try {
+            DocumentModel currentDocument = getCurrentDocument();
+
+            String contentDocumentListsQuery = EloraQueryFactory.getOtherDocumentProxiesInsideAncestorQuery(
+                    currentDocument.getId());
+
+            DocumentModelList contentDocumentList = documentManager.query(
+                    contentDocumentListsQuery);
+
+            if (contentDocumentList != null && contentDocumentList.size() > 0) {
+                for (DocumentModel contentDoc : contentDocumentList) {
+
+                    String lifeCycleState = messages.get(
+                            contentDoc.getCurrentLifeCycleState()
+                                    + EloraLifeCycleConstants.ABBR_SUFFIX);
+                    documentList.put(contentDoc.getId(), contentDoc.getTitle()
+                            + "  [" + lifeCycleState + "]");
+                }
+            }
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.project.load.content.documents"));
+        }
+
+        return documentList;
+    }
+
+    public Map<String, String> getProjectDeliverableDocumentVersions(
+            String documentId) throws EloraException {
+        String logInitMsg = "[getProjectDeliverableDocumentVersions] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        Map<String, String> versionList = new LinkedHashMap<String, String>();
+
+        try {
+            if (documentId != null) {
+                DocumentModel document = documentManager.getDocument(
+                        new IdRef(documentId));
+
+                if (document != null && !document.isImmutable()) {
+                    if (document.isProxy()) {
+                        document = documentManager.getWorkingCopy(
+                                document.getRef());
+                    }
+                    // calculate the version list
+                    String allVersionsDocsQuery = EloraQueryFactory.getAllVersionsDocsQuery(
+                            document.getType(), document.getId(), false,
+                            QueriesConstants.SORT_ORDER_DESC);
+
+                    DocumentModelList allVersionDocs = documentManager.query(
+                            allVersionsDocsQuery);
+
+                    if (allVersionDocs != null && allVersionDocs.size() > 0) {
+                        for (DocumentModel versionDoc : allVersionDocs) {
+                            versionList.put(versionDoc.getId(),
+                                    versionDoc.getVersionLabel());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.project.get.deliverable.document.versions"));
+        }
+
+        return versionList;
+    }
+
+    public void chooseDeliverableDocument() {
+        String logInitMsg = "[chooseDeliverableDocument] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        try {
+            String dataTableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
+                    "dataTableRowIndex");
+            String deliverableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
+                    "deliverableRowIndex");
+            String documentIdParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
+                    "documentId");
+
+            log.trace(logInitMsg + "dataTableRowIndexParam = |"
+                    + dataTableRowIndexParam + "|, deliverableRowIndexParam = |"
+                    + deliverableRowIndexParam + "|, documentIdParam = |"
+                    + documentIdParam + "|");
+
+            if (dataTableRowIndexParam != null
+                    && deliverableRowIndexParam != null
+                    && documentIdParam != null) {
+
+                int dataTableRowIndex = Integer.parseInt(
+                        dataTableRowIndexParam);
+                int deliverableRowIndex = Integer.parseInt(
+                        deliverableRowIndexParam);
+
+                ProjectPhaseRowData row = (ProjectPhaseRowData) getData().get(
+                        dataTableRowIndex);
+                Map<String, Object> deliverable = row.getDeliverables().get(
+                        deliverableRowIndex);
+                if (documentIdParam != null && documentIdParam.length() > 0) {
+                    DocumentModel selectedDocM = documentManager.getDocument(
+                            new IdRef(documentIdParam));
+                    if (selectedDocM != null) {
+                        deliverable.put(
+                                ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTWCPROXY,
+                                documentIdParam);
+                        deliverable.put(
+                                ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTAV,
+                                null);
+                    } else {
+                        log.error(logInitMsg
+                                + "Selected document cannot be retrieved: documentId = |"
+                                + documentIdParam + "|.");
+                        deliverable.put(
+                                ProjectConstants.PROJECT_PHASE_DELIVERABLES_ANCHORINGMSG,
+                                messages.get(
+                                        "eloraplm.message.error.project.choose.deliverable.document.documentNotFound"));
+                    }
+                } else {
+                    // empty document
+                    deliverable.put(
+                            ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTWCPROXY,
+                            null);
+                    deliverable.put(
+                            ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTAV,
+                            null);
+                }
+            }
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.project.choose.deliverable.document"));
+        }
+    }
+
+    public void chooseDeliverableDocumentVersion() {
+        String logInitMsg = "[chooseDeliverableDocumentVersion] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        try {
+            String dataTableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
+                    "dataTableRowIndex");
+            String deliverableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
+                    "deliverableRowIndex");
+            String documentIdParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
+                    "documentId");
+
+            log.trace(logInitMsg + "dataTableRowIndexParam = |"
+                    + dataTableRowIndexParam + "|, deliverableRowIndexParam = |"
+                    + deliverableRowIndexParam + "|, documentIdParam = |"
+                    + documentIdParam + "|");
+
+            if (dataTableRowIndexParam != null
+                    && deliverableRowIndexParam != null
+                    && documentIdParam != null) {
+
+                int dataTableRowIndex = Integer.parseInt(
+                        dataTableRowIndexParam);
+                int deliverableRowIndex = Integer.parseInt(
+                        deliverableRowIndexParam);
+
+                ProjectPhaseRowData row = (ProjectPhaseRowData) getData().get(
+                        dataTableRowIndex);
+                Map<String, Object> deliverable = row.getDeliverables().get(
+                        deliverableRowIndex);
+
+                if (documentIdParam != null && documentIdParam.length() > 0) {
+                    DocumentModel selectedDocM = documentManager.getDocument(
+                            new IdRef(documentIdParam));
+
+                    if (selectedDocM != null) {
+                        deliverable.put(
+                                ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTAV,
+                                documentIdParam);
+                    } else {
+                        log.error(logInitMsg
+                                + "Selected document cannot be retrieved: documentId = |"
+                                + documentIdParam + "|.");
+                        deliverable.put(
+                                ProjectConstants.PROJECT_PHASE_DELIVERABLES_ANCHORINGMSG,
+                                messages.get(
+                                        "eloraplm.message.error.project.choose.deliverable.document.documentNotFound"));
+                    }
+                } else {
+                    // empty document version
+                    deliverable.put(
+                            ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTAV,
+                            "");
+
+                    // Check that the anchoredDocWcProxyUid still exists in the
+                    // project content
+                    String anchoredDocWcProxyUid = (String) deliverable.get(
+                            ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTWCPROXY);
+                    String currentDocumentId = getCurrentDocument().getId();
+                    String documentInProjectContentQuery = EloraQueryFactory.getDocumentInsideAncestorQuery(
+                            anchoredDocWcProxyUid, currentDocumentId);
+
+                    DocumentModelList documentInProjectContent = documentManager.query(
+                            documentInProjectContentQuery);
+
+                    if (documentInProjectContent == null
+                            || documentInProjectContent.size() == 0) {
+                        // empty also the proxy, since it doesn't exist any more
+                        // on the content
+                        deliverable.put(
+                                ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTWCPROXY,
+                                "");
+
+                        log.trace(logInitMsg + "The proxy |"
+                                + anchoredDocWcProxyUid
+                                + "| does not exist in the content of the document |"
+                                + currentDocumentId
+                                + "|, so it will be emptied.");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.project.choose.deliverable.document.version"));
+        }
+    }
+
+    public boolean isFirstRow(String currentRowId) {
+        boolean isFirstRow = false;
+        if (currentRowId.indexOf(
+                ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR) == -1) {
+            if (currentRowId.equals(
+                    ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID)) {
+                isFirstRow = true;
+            }
+        } else {
+            int separatorLastIndex = currentRowId.lastIndexOf(
+                    ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR);
+            String currentLevelRowId = currentRowId.substring(
+                    separatorLastIndex + 1, currentRowId.length());
+            if (currentLevelRowId.equals(
+                    ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID)) {
+                isFirstRow = true;
+            }
+        }
+        return isFirstRow;
+    }
+
+    public boolean isLastRow(String currentRowId) {
+        boolean isLastRow = false;
+
+        if (currentRowId.indexOf(
+                ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR) == -1) {
+            String lastRowId = getLastRowId(null);
+            if (currentRowId.equals(lastRowId)) {
+                isLastRow = true;
+            }
+        } else {
+            int separatorLastIndex = currentRowId.lastIndexOf(
+                    ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR);
+            String parentLevelRowId = currentRowId.substring(0,
+                    separatorLastIndex);
+
+            String lastRowId = getLastRowId(parentLevelRowId);
+            if (currentRowId.equals(lastRowId)) {
+                isLastRow = true;
+            }
+        }
+        return isLastRow;
+    }
+
+    public void moveRow(String direction, String currentRowId) {
+        String logInitMsg = "[moveRow] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "direction = |" + direction
+                + "|, currentRowId = |" + currentRowId + "|");
+        // move TOP
+        if (direction != null
+                && direction.equals(ProjectConstants.PROJECT_PHASE_MOVE_TOP)) {
+            String previousRowId = null;
+
+            // first level elements
+            if (currentRowId.indexOf(
+                    ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR) == -1) {
+                // check that it is not already at the first position
+                if (!currentRowId.equals(
+                        ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID)) {
+                    int currentRowIdInt = Integer.valueOf(currentRowId);
+                    int previousRowIdInt = currentRowIdInt - 1;
+                    previousRowId = String.format("%03d", previousRowIdInt);
+                }
+            }
+            // other level elements
+            else {
+                String[] currentRowIdSplitted = currentRowId.split(
+                        ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR);
+                String currentLevelRowId = currentRowIdSplitted[currentRowIdSplitted.length
+                        - 1];
+                // check that it is not already at the first position
+                if (!currentLevelRowId.equals(
+                        ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID)) {
+                    int currentLevelRowIdInt = Integer.valueOf(
+                            currentLevelRowId);
+                    int currentLevelPreviousRowIdInt = currentLevelRowIdInt - 1;
+                    String parentLevelRowId = currentRowIdSplitted[currentRowIdSplitted.length
+                            - 2];
+                    previousRowId = parentLevelRowId
+                            + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                            + String.format("%03d",
+                                    currentLevelPreviousRowIdInt);
+                }
+            }
+            if (previousRowId != null) {
+                updateTableRowsIds(previousRowId, currentRowId, currentRowId);
+                setIsDirty(true);
+            }
+        }
+        // move DOWN
+        else if (direction != null
+                && direction.equals(ProjectConstants.PROJECT_PHASE_MOVE_DOWN)) {
+            String nextRowId = null;
+            // first level elements
+            if (currentRowId.indexOf(
+                    ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR) == -1) {
+                // check that it is not already at the last position
+                String lastRowId = getLastRowId(null);
+                if (!currentRowId.equals(lastRowId)) {
+                    int currentRowIdInt = Integer.valueOf(currentRowId);
+                    int nextRowIdInt = currentRowIdInt + 1;
+                    nextRowId = String.format("%03d", nextRowIdInt);
+                }
+            }
+            // other level elements
+            else {
+                int separatorLastIndex = currentRowId.lastIndexOf(
+                        ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR);
+                String currentLevelRowId = currentRowId.substring(
+                        separatorLastIndex + 1, currentRowId.length());
+                String parentLevelRowId = currentRowId.substring(0,
+                        separatorLastIndex);
+
+                String lastRowId = getLastRowId(parentLevelRowId);
+
+                if (!currentLevelRowId.equals(lastRowId)) {
+                    int currentLevelRowIdInt = Integer.valueOf(
+                            currentLevelRowId);
+                    int currentLevelNextRowIdInt = currentLevelRowIdInt + 1;
+                    nextRowId = parentLevelRowId
+                            + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                            + String.format("%03d", currentLevelNextRowIdInt);
+                }
+            }
+            if (nextRowId != null) {
+                updateTableRowsIds(currentRowId, nextRowId, currentRowId);
+                setIsDirty(true);
+            }
+        }
+    }
+
+    /**
+     * If parentRow is null, retrieve the last row id of the datatable.
+     * Otherwise, the last row id under the specified parent row id.
+     *
+     * @param parentRow
+     * @return
+     */
+    private String getLastRowId(String parentRowId) {
+        String rowId;
+        List<String> rowIdList = getRowIdList();
+
+        if (parentRowId == null) {
+            String maxRowId = rowIdList.stream().filter(not(x -> x.contains(
+                    ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR))).max(
+                            String::compareTo).orElse(null);
+            if (maxRowId == null) {
+                rowId = ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID;
+            } else {
+                rowId = String.format("%03d", Integer.valueOf(maxRowId));
+            }
+        } else {
+            String maxRowId = rowIdList.stream().filter(
+                    x -> x.startsWith(parentRowId
+                            + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR)).max(
+                                    String::compareTo).orElse(null);
+            if (maxRowId == null) {
+                rowId = parentRowId
+                        + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                        + ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID;
+            } else {
+                String[] a = maxRowId.split(
+                        ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR);
+                rowId = parentRowId
+                        + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                        + String.format("%03d",
+                                Integer.valueOf(a[a.length - 1]));
+            }
+        }
+        return rowId;
+    }
+
+    private void updateTableRowsIds(String rowIdToBeIncreased,
+            String rowIdToBeDecreased, String rowIdBeingMoved) {
+        String logInitMsg = "[updateTableRowsIdsMoveTop] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        log.trace(logInitMsg + "rowIdToBeIncreased = |" + rowIdToBeIncreased
+                + "|, rowIdToBeDecreased = |" + rowIdToBeDecreased + "|");
+
+        for (RowData r : getData()) {
+            ProjectPhaseRowData row = (ProjectPhaseRowData) r;
+            if (!row.getIsRemoved()) {
+
+                String rowId = row.getId();
+                if (rowId.equals(rowIdToBeIncreased)) {
+                    row.setId(increaseRowId(rowId));
+                } else if (rowId.startsWith(rowIdToBeIncreased)) {
+                    row.setId(increaseRowId(rowId, true));
+                } else if (rowId.equals(rowIdToBeDecreased)) {
+                    row.setId(decreaseRowId(rowId));
+                } else if (rowId.startsWith(rowIdToBeDecreased)) {
+                    row.setId(decreaseRowId(rowId, true));
+                }
+
+                // Mark as modified only the row that is being moved
+                if (rowId.equals(rowIdBeingMoved)) {
+                    row.setIsModified(true);
+                }
+            }
+        }
+    }
+
+    private String increaseRowId(String rowId) {
+        return increaseRowId(rowId, false);
+    }
+
+    private String increaseRowId(String rowId, boolean increaseParent) {
+        String logInitMsg = "[increaseRowId] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "rowId = |" + rowId + "|");
+
+        String newRowId;
+
+        if (rowId.indexOf(
+                ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR) == -1) {
+            newRowId = String.format("%03d", Integer.valueOf(rowId) + 1);
+        } else {
+            int separatorLastIndex = rowId.lastIndexOf(
+                    ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR);
+            String currentLevelRowId = rowId.substring(separatorLastIndex + 1,
+                    rowId.length());
+            String parentLevelRowId = rowId.substring(0, separatorLastIndex);
+
+            if (increaseParent) {
+                newRowId = String.format("%03d",
+                        Integer.valueOf(parentLevelRowId) + 1)
+                        + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                        + currentLevelRowId;
+            } else {
+                newRowId = parentLevelRowId
+                        + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                        + String.format("%03d",
+                                Integer.valueOf(currentLevelRowId) + 1);
+            }
+        }
+        log.trace(logInitMsg + "newRowId = |" + newRowId + "|");
+        return newRowId;
+    }
+
+    private String decreaseRowId(String rowId) {
+        return decreaseRowId(rowId, false);
+    }
+
+    private String decreaseRowId(String rowId, boolean decreaseParent) {
+        String logInitMsg = "[decreaseRowId] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "rowId = |" + rowId + "|");
+
+        String newRowId;
+
+        if (rowId.indexOf(
+                ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR) == -1) {
+            newRowId = String.format("%03d", Integer.valueOf(rowId) - 1);
+        } else {
+            int separatorLastIndex = rowId.lastIndexOf(
+                    ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR);
+            String currentLevelRowId = rowId.substring(separatorLastIndex + 1,
+                    rowId.length());
+            String parentLevelRowId = rowId.substring(0, separatorLastIndex);
+            if (decreaseParent) {
+                newRowId = String.format("%03d",
+                        Integer.valueOf(parentLevelRowId) - 1)
+                        + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                        + currentLevelRowId;
+            } else {
+                newRowId = parentLevelRowId
+                        + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
+                        + String.format("%03d",
+                                Integer.valueOf(currentLevelRowId) - 1);
+            }
+        }
+
+        log.trace(logInitMsg + "newRowId = |" + newRowId + "|");
+        return newRowId;
+    }
+
     public List<String> getPhaseTypes() {
         return phaseTypes;
     }
@@ -365,9 +953,10 @@ public class ProjectPhasesTableBean extends EditableTableBean
             ProjectPhaseRowData row = (ProjectPhaseRowData) r;
             String type = row.getType();
             if (type != null) {
-                if (!type.equals(ProjectConstants.PROJECT_PHASE_TYPE_GATE)) {
-                    if (row.getId() != null && row.getDescription() != null) {
-                        parentPhases.put(row.getId(), row.getDescription());
+                if (type.equals(ProjectConstants.PROJECT_PHASE_TYPE_PHASE)) {
+                    if (row.getId() != null && row.getTitle() != null
+                            && !row.getObsolete()) {
+                        parentPhases.put(row.getId(), row.getTitle());
                     }
                 }
             }
@@ -375,16 +964,55 @@ public class ProjectPhasesTableBean extends EditableTableBean
         return parentPhases;
     }
 
+    public void propagateDate(ProjectPhaseRowData row, String field) {
+        String id = row.getId();
+        switch (field) {
+        case "realStartDate":
+            Date realStartDate = row.getRealStartDate();
+            getData().stream().filter(r -> !r.getId().equals(id)
+                    && r.getId().startsWith(id)).forEach(a -> {
+                        ((ProjectPhaseRowData) a).setRealStartDate(
+                                realStartDate);
+                        a.setIsModified(true);
+                    });
+            break;
+        case "realEndDate":
+            Date realEndDate = row.getRealEndDate();
+            getData().stream().filter(r -> !r.getId().equals(id)
+                    && r.getId().startsWith(id)).forEach(a -> {
+                        ((ProjectPhaseRowData) a).setRealEndDate(realEndDate);
+                        a.setIsModified(true);
+                    });
+            break;
+        case "plannedEndDate":
+            Date plannedEndDate = row.getPlannedEndDate();
+            getData().stream().filter(r -> !r.getId().equals(id)
+                    && r.getId().startsWith(id)).forEach(a -> {
+                        ((ProjectPhaseRowData) a).setPlannedEndDate(
+                                plannedEndDate);
+                        a.setIsModified(true);
+                    });
+            break;
+        }
+
+        setIsDirty(true);
+    }
+
     @Override
     protected void resetCreateFormValues() {
         super.resetCreateFormValues();
         type = "phase";
         parentId = null;
+        title = null;
         description = null;
         manager = null;
-        isDeliverableRequired = false;
-        deliverableName = null;
+        deliverables = new ArrayList<Map<String, Object>>();
         realStartDate = null;
         plannedEndDate = null;
+    }
+
+    protected void resetModifyManagerFormValues() {
+        fromManager = null;
+        toManager = null;
     }
 }

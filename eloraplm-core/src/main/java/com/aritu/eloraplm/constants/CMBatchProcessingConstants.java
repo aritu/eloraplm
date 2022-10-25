@@ -34,6 +34,8 @@ public class CMBatchProcessingConstants {
 
     public static final String UNDO_CHECKOUT = "undoCheckout";
 
+    public static final String CHECKOUT = "checkout";
+
     // Errors
     public static final String ERR_ALREADY_LOCKED = "AlreadyLocked";
 

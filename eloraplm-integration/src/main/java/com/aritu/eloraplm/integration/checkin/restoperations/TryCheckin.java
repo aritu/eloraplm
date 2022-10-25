@@ -63,6 +63,7 @@ import com.aritu.eloraplm.core.util.EloraEventTypes;
 import com.aritu.eloraplm.core.util.EloraLockInfo;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
+import com.aritu.eloraplm.core.util.EloraUnitConversionHelper;
 import com.aritu.eloraplm.core.util.EloraUrlHelper;
 import com.aritu.eloraplm.core.util.json.EloraJsonHelper;
 import com.aritu.eloraplm.core.util.restoperations.ValidationErrorItem;
@@ -82,7 +83,7 @@ import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 import com.aritu.eloraplm.integration.util.ItemInfo;
 import com.aritu.eloraplm.pdm.checkin.util.EloraCheckinHelper;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
  * @author aritu
@@ -133,8 +134,8 @@ public class TryCheckin {
     private DocumentValidationService validator = Framework.getService(
             DocumentValidationService.class);
 
-    private EloraVersionLabelService versionLabelService = Framework.getService(
-            EloraVersionLabelService.class);
+    private VersionLabelService versionLabelService = Framework.getService(
+            VersionLabelService.class);
 
     private Map<Integer, TryCheckinRequestFolder> requestFolders;
 
@@ -347,11 +348,15 @@ public class TryCheckin {
                         realRef);
             }
 
+            boolean overwrite = EloraJsonHelper.getJsonFieldAsBoolean(docItem,
+                    "overwrite", false);
+
             tempFolderPaths = populateTempFoldersMap(session, tempFolderPaths,
                     structureRootRealRef);
 
             TryCheckinRequestDoc requestDoc = new TryCheckinRequestDoc(localId,
-                    realRef, wcRef, type, filename, structureRootRealRef);
+                    realRef, wcRef, type, filename, structureRootRealRef,
+                    overwrite);
 
             // TODO Hau "kendu" 2+ TRYean?
             JsonNode properties = EloraJsonHelper.getJsonNode(docItem,
@@ -363,13 +368,21 @@ public class TryCheckin {
                     String value = EloraJsonHelper.getJsonFieldAsString(
                             propItem, "value", false, false, true);
                     if (property != null && value != null) {
+
                         // Uppercase the reference
                         if (property.equals(
                                 EloraMetadataConstants.ELORA_ELO_REFERENCE)) {
                             value = value.toUpperCase();
                         }
-                        // TODO Round decimal values
-                        // EloraUnitConversionHelper
+                        // Round decimal values
+                        else if (EloraUnitConversionHelper.isDecimalProperty(
+                                property)
+                                && (value != null && !value.isEmpty()
+                                        && !value.equals("0"))) {
+                            value = EloraUnitConversionHelper.roundDecimalValue(
+                                    property, value);
+                        }
+
                         requestDoc.addProperty(property, value);
                     }
                 }
@@ -644,8 +657,6 @@ public class TryCheckin {
         log.trace(logInitMsg + "--- ENTER --- ");
 
         List<ValidationErrorItem> errorList = new ArrayList<ValidationErrorItem>();
-        // String tempFolderPath = getTempFolderPath(
-        // requestDoc.getStructureRootRealRef());
 
         PathSegmentService pss = Framework.getService(PathSegmentService.class);
         String nameForPath = pss.generatePathSegment(requestDoc.getFilename());
@@ -892,7 +903,8 @@ public class TryCheckin {
      */
     private TryCheckinResponseDoc processMetadata(
             TryCheckinResponseDoc responseDoc, DocumentModel draftDoc,
-            DocumentModel wcDoc, String type) throws EloraException {
+            DocumentModel wcDoc, String type, boolean overwrite)
+            throws EloraException {
 
         String logInitMsg = "[processMetadata] ["
                 + session.getPrincipal().getName() + "] ";
@@ -909,7 +921,7 @@ public class TryCheckin {
                 type);
 
         processVirtualMetadata(responseDoc, wcDoc, authoringTool.toString(),
-                type);
+                type, overwrite);
 
         log.trace(logInitMsg + "--- EXIT --- ");
 
@@ -931,8 +943,8 @@ public class TryCheckin {
     }
 
     private void processVirtualMetadata(TryCheckinResponseDoc responseDoc,
-            DocumentModel wcDoc, String authoringTool, String type)
-            throws EloraException {
+            DocumentModel wcDoc, String authoringTool, String type,
+            boolean overwrite) throws EloraException {
         if (MetadataConfig.getVirtualMetadataMapByType().containsKey(
                 authoringTool)
                 && MetadataConfig.getVirtualMetadataMapByType().get(
@@ -940,8 +952,11 @@ public class TryCheckin {
             for (String property : MetadataConfig.getVirtualMetadataMapByType().get(
                     authoringTool).get(type)) {
                 // If it is a virtual metadata, call to getDataFromMethod
+                String operation = overwrite
+                        ? EloraIntegrationHelper.OPERATION_TRY_OVERWRITE
+                        : EloraIntegrationHelper.OPERATION_TRY_CHECKIN;
                 Serializable value = EloraIntegrationHelper.getVirtualMetadata(
-                        session, wcDoc, property, "TryCheckin");
+                        session, wcDoc, property, operation);
                 responseDoc.addOverrideMetadata(property, value);
             }
         }
@@ -1077,7 +1092,7 @@ public class TryCheckin {
         // needed
         if (calculateOverrideMetadata) {
             responseDoc = processMetadata(responseDoc, draftDoc, newDoc,
-                    requestDoc.getType());
+                    requestDoc.getType(), requestDoc.isOverwrite());
         }
 
         // Validate the document (CAD + schema validation)
@@ -1160,7 +1175,7 @@ public class TryCheckin {
         // needed
         if (calculateOverrideMetadata) {
             responseDoc = processMetadata(responseDoc, draftDoc, wcDoc,
-                    requestDoc.getType());
+                    requestDoc.getType(), requestDoc.isOverwrite());
         }
 
         // Get items info
@@ -1208,7 +1223,7 @@ public class TryCheckin {
         @Override
         public void run() {
 
-            String logInitMsg = "[checkThatReferenceAndTypeIsUnique] ["
+            String logInitMsg = "[UniqueReferenceChecker] ["
                     + session.getPrincipal().getName() + "] ";
 
             // Check that reference + type is unique, if not => KO
@@ -1244,6 +1259,12 @@ public class TryCheckin {
                 }
 
                 if (uniqueErrorDrafts > 0 || uniqueErrorDocs > 0) {
+
+                    log.error(logInitMsg + "Reference |" + reference
+                            + "| already exists for type |"
+                            + requestDoc.getType() + "|. Drafts: |"
+                            + uniqueErrorDrafts + "| Docs: |" + uniqueErrorDocs
+                            + "|");
 
                     errorList.add(new ValidationErrorItem(
                             EloraMetadataConstants.ELORA_ELO_REFERENCE,

@@ -1,0 +1,22 @@
+<f:subview
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"  
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+    
+    <ui:fragment rendered="#{field != null and !field.isExternalSource}">        
+        <ui:fragment rendered="#{field.data.type eq 'BomProduct'}">
+          <h:outputText value="#{field.data.getPropertyValue('bomprod:unit')}" />
+        </ui:fragment>
+        <ui:fragment rendered="#{field.data.type eq 'BomPart'}">
+          <h:outputText value="#{field.data.getPropertyValue('bompart:unit')}" />
+        </ui:fragment>        
+    </ui:fragment>
+   
+    <ui:fragment rendered="#{field != null and field.isExternalSource}">        
+        <h:outputText value="#{field.bomListExternalData.unit}" />
+    </ui:fragment>
+  
+</f:subview>

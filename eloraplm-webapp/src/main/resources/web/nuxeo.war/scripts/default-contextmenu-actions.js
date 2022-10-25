@@ -135,11 +135,11 @@ function doWorkflow(docid) {
 }
 
 function doLock(docid){
-  Seam.Component.getInstance("popupHelper").lockDocument(docid, refreshPage);
+  Seam.Component.getInstance("popupHelper").lockDocument(docid,reloadPage);
 }
 
 function doUnlock(docid){
-  Seam.Component.getInstance("popupHelper").unlockDocument(docid, refreshPage);
+  Seam.Component.getInstance("popupHelper").unlockDocument(docid,reloadPage);
 }
 
 function doSendEmail(docid){
@@ -174,5 +174,9 @@ function saveRename(target)
 
  docid = span.id.replace('title_','');
  Seam.Component.getInstance("popupHelper").editTitle(docid,input.value,saveRenameCallback);
+}
+
+function removeFromFavorites(docId) {
+  Seam.Component.getInstance("eloraPopupHelper").removeDocumentFromFavorites(docId,reloadPage);
 }
 

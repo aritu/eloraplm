@@ -5,7 +5,10 @@
     <require>org.nuxeo.admin.center</require>
     <require>org.nuxeo.ecm.platform.audit.web</require>
     <require>org.nuxeo.ecm.platform.contentview.jsf</require>
+    <require>org.nuxeo.ecm.platform.lang.ext</require>
     <require>org.nuxeo.ecm.platform.oauth</require>
+    <require>org.nuxeo.ecm.platform.preview</require>
+    <require>org.nuxeo.ecm.platform.routing.web</require>
     <require>org.nuxeo.ecm.platform.ui.select2</require>
     <require>org.nuxeo.ecm.relations.web</require>
     <require>org.nuxeo.ecm.webapp.base</require>
@@ -45,6 +48,21 @@
         
         <delete path="${bundle.fileName}.tmp" />
     </install>
+    
+    <extension target="faces-config#APPLICATION_LOCALE" mode="replace">
+        <locale-config>
+            <default-locale>en</default-locale>
+            <supported-locale>eu</supported-locale>
+            <supported-locale>eu_ES</supported-locale>
+            <supported-locale>eu_FR</supported-locale>
+            <supported-locale>es</supported-locale>
+            <supported-locale>es_ES</supported-locale>
+            <supported-locale>en</supported-locale>
+            <supported-locale>en_GB</supported-locale>
+            <supported-locale>en_US</supported-locale>
+        </locale-config>
+        <message-bundle>messages</message-bundle>
+    </extension>
     
     <extension target="faces-config#NAVIGATION">
         <navigation-case>

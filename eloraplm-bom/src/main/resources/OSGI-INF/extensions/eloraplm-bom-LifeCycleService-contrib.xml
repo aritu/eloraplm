@@ -14,6 +14,9 @@
           <type name="BomProduct">eloraBomLifeCycle</type>
           <type name="BomCustomerProduct">eloraBomLifeCycle</type>
           
+          <type name="Software">eloraBomLifeCycle</type>
+          <type name="ElectronicComponent">eloraBomLifeCycle</type>
+          
           <type name="StructEbom">default</type>
           <type name="FolderBomPart">default</type>
           <type name="FolderBomManufacturerPart">default</type>
@@ -63,7 +66,7 @@
             <state name="obsolete" description="Content is obsolete" initial="true">
               <transitions>
                 <transition>delete</transition>
-                <transition>backToApproved</transition>
+                <transition>backToPreliminary</transition>
               </transitions>
             </state>
             <state name="deleted" description="Document is deleted">

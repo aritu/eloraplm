@@ -15,6 +15,8 @@
             <type name="CollaborationRoot">default</type>
             <type name="LibraryRoot">default</type>
             <type name="StructureRoot">default</type>
+            <type name="DocumentationRoot">default</type>
+            <type name="AdminRoot">default</type>
             
             <type name="StructArchived">default</type>
             <type name="FolderArchivedWorkspaces">default</type>
@@ -27,6 +29,9 @@
             <type name="FolderOtherDoc">default</type>
             <type name="StructEbom">default</type>
             
+            <type name="DocumentTemplates">default</type>
+            <type name="OfficeTemplates">default</type>
+            
             <type name="TempFolder">default</type>
             
             <type name="File">eloraDefaultLifeCycle</type>
@@ -37,8 +42,6 @@
             
             <type name="Workspace">eloraWsLifeCycle</type>
             <type name="Project">eloraWsLifeCycle</type>
-            
-            <type name="AdminRoot">default</type>
           
         </types>
     </extension>

@@ -79,9 +79,19 @@ div[id$="treetablePanel"]
     background: linear-gradient(to right, rgba(248,249,251,0.9) 0%, rgba(248,249,251,0.5) 40%, rgba(248,249,251,0.9) 70%)
 }
 
+.ttButtonsLeftPanel,
+.ttButtonsRightPanel
+{
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 0 10px;
+}
+
 .ttButtonsPanel .widgetPanel.actionsWidgetPanel
 {
     padding: 0;
+    margin-left: 4px;
+}
 }
 
 .nx-page .ttButtonsPanel a.button:hover

@@ -10,6 +10,9 @@ import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XNodeList;
 import org.nuxeo.common.xmap.annotation.XObject;
 
+import com.aritu.eloraplm.constants.ViewerConstants;
+import com.aritu.eloraplm.viewer.dataevaluator.api.ConditionDescriptor;
+
 /**
  * @author aritu
  *
@@ -27,8 +30,14 @@ public class ModifierTextDescriptor {
     @XNode("@method")
     public String method;
 
+    @XNodeList(value = "param", type = Object[].class, componentType = Object.class)
+    public Object[] methodParams;
+
     @XNode("@value")
     public String value;
+
+    @XNode(value = "@source")
+    public String source = ViewerConstants.SOURCE_CURRENT_DOC;
 
     public String[] refPointOption;
 
@@ -50,7 +59,7 @@ public class ModifierTextDescriptor {
     @XNode("@y")
     public Integer y;
 
-    public String style;
+    public String style = "regular";
 
     @XNode("@style")
     public void setStyle(String style) {
@@ -108,5 +117,6 @@ public class ModifierTextDescriptor {
     @XNodeList(value = "conditions/condition", type = ConditionDescriptor[].class, componentType = ConditionDescriptor.class)
     public ConditionDescriptor[] conditions;
 
-    public PDFont font;
+    public PDFont font = PDType1Font.HELVETICA;
+
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.ecm.directories.contrib">
+  <require>org.nuxeo.ecm.directories</require>
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+    
+    <!--  Override Nuxeo default Nature directory -->
+    <directory name="nature">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <cacheTimeout>3600</cacheTimeout>
+      <cacheMaxSize>1000</cacheMaxSize>
+      <table>elora_nature</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <dataFile>directories/elora_nature.csv</dataFile>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
+    </directory>
+
+  </extension>
+  
+</component>

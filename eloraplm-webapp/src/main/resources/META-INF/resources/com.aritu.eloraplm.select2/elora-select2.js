@@ -1,4 +1,21 @@
 (function() {
+    
+/* -----------------------------------------------------------------------------------------------
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * 
+ * WARNING!!
+ * 
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * -----------------------------------------------------------------------------------------------
+ * 
+ * 
+ * This JS is only used in DEV mode, to edit it easily.
+ * 
+ * All changes done to this file MUST be replicated in elora-select2.min.js in a minimized format,
+ * or the changes will not show on production environments!
+ * 
+ * 
+*/
 
   var entityMap = {
     '&': '&amp;',
@@ -43,11 +60,15 @@
     markup += warnMessage(entry);
     return markup;
   }
-
-  function docEntryDefaultFormatter(doc) {
+  
+  function docEntryWithoutStateFormatter(doc) {
       var markup = "<table><tbody>";
-      markup += "<tr><td>";
+      markup += "<tr><td style='width: 24px'>";
       if (doc.properties) {
+          if (doc.properties['templ:isTemplate']) {
+              markup += "<img src='" + window.nxContextPath + "/icons/badge_template_12.png' class='smallIcon' />"
+              markup += "</td><td style='width: 24px'>";
+          }
           if (doc.properties['common:icon']) {
             markup += "<img src='" + window.nxContextPath
                 + doc.properties['common:icon'] + "' class='smallIcon' />"
@@ -56,7 +77,7 @@
           if (doc.properties['elo:reference']) {
               markup += "<span class='eloraReference'>"
               + escapeHTML(doc.properties['elo:reference']) + "</span>";
-          }
+          } 
       }
       markup += escapeHTML(doc.title);
       markup += warnMessage(doc);
@@ -65,6 +86,41 @@
       }
       markup += "</td></tr></tbody></table>"
       return markup;
+  }
+  
+  function docEntryWithStateFormatter(doc) {
+      var markup = "<table><tbody>";
+      markup += "<tr><td style='width: 24px'>";
+      if (doc.properties) {
+          if (doc.properties['templ:isTemplate']) {
+            markup += "<img src='" + window.nxContextPath + "/icons/badge_template_12.png' class='smallIcon' />"
+            markup += "</td><td style='width: 24px'>";
+          }
+          if (doc.properties['common:icon']) {
+            markup += "<img src='" + window.nxContextPath
+                + doc.properties['common:icon'] + "' class='smallIcon' />"
+            markup += "</td><td>";
+          }
+          if (doc.properties['elo:reference']) {
+              markup += "<span class='eloraReference'>"
+              + escapeHTML(doc.properties['elo:reference']) + "</span>";
+          } 
+      }
+      markup += escapeHTML(doc.title);
+      markup += "&nbsp;&nbsp;&nbsp;<span class='lifeCycleStateLabel hollow' style='color: "
+              + getLifecycleStateColor(doc.state) + ";border-color:"
+              + getLifecycleStateColor(doc.state) + "' title='" + getLifecycleStateName(doc.state) + "'>"
+              + getLifecycleStateAbbr(doc.state) + "</span>";
+      markup += warnMessage(doc);
+      if (doc.path) {
+        markup += "<span class='displayB detail' style='word-break:break-all;'>" + escapeHTML(doc.path) + "</span>";
+      }
+      markup += "</td></tr></tbody></table>"
+      return markup;
+  }
+  
+  function docEntryDefaultFormatter(doc) {
+      return docEntryWithStateFormatter(doc);
   }
 
   function dirEntryDefaultFormatter(entry) {
@@ -75,9 +131,12 @@
 
   var userSelectionDefaultFormatter = userEntryDefaultFormatter;
 
-  function docSelectionDefaultFormatter(doc) {
+  function docSelectionWithoutStateFormatter(doc) {
       var markup = "";
       if (doc.properties) {
+          if (doc.properties['templ:isTemplate']) {
+              markup += "<img src='" + window.nxContextPath + "/icons/badge_template_12.png' class='smallIcon' />"
+          }
           if (doc.properties['common:icon']) {
             markup += "<img src='" + window.nxContextPath
                 + doc.properties['common:icon'] + "' class='smallIcon' />"
@@ -90,6 +149,34 @@
       markup += getDocLinkElt(doc);
       markup += warnMessage(doc);
       return markup;
+  }
+  
+  function docSelectionWithStateFormatter(doc) {
+      var markup = "";
+      if (doc.properties) {
+          if (doc.properties['templ:isTemplate']) {
+              markup += "<img src='" + window.nxContextPath + "/icons/badge_template_12.png' class='smallIcon' />"
+          }
+          if (doc.properties['common:icon']) {
+            markup += "<img src='" + window.nxContextPath
+                + doc.properties['common:icon'] + "' class='smallIcon' />"
+          }
+          if (doc.properties['elo:reference']) {
+              markup += "<span class='eloraReference'>"
+              + escapeHTML(doc.properties['elo:reference']) + "</span>";
+          }
+      }
+      markup += getDocLinkElt(doc);
+      markup += "&nbsp;&nbsp;&nbsp;<span class='lifeCycleStateLabel hollow' style='color: "
+          + getLifecycleStateColor(doc.state) + ";border-color:"
+          + getLifecycleStateColor(doc.state) + "' title='" + getLifecycleStateName(doc.state) + "'>"
+          + getLifecycleStateAbbr(doc.state) + "</span>";
+      markup += warnMessage(doc);
+      return markup;
+  }
+  
+  function docSelectionDefaultFormatter(doc) {
+      return docSelectionWithStateFormatter(doc);
   }
 
   function dirSelectionDefaultFormatter(entry) {
@@ -112,7 +199,9 @@
 
   function getDocLinkElt(doc) {
     if (doc.contextParameters) {
-      var url = doc.contextParameters.documentURL;
+      // Added MAIN_TABS
+      var url = doc.contextParameters.documentURL + "?tabIds=MAIN_TABS:documents,:";
+      
       var markup = "<a href="
           + url
           + " onclick='if(!(event.ctrlKey||event.metaKey||event.button==1)){this.href='"
@@ -124,7 +213,7 @@
   }
 
   function getUrlWithConversationId(url) {
-    return url + "?conversationId=" + currentConversationId;
+    return url + "&amp;conversationId=" + currentConversationId;
   }
 
   function configureOperationParameters(op, params, query) {

@@ -27,6 +27,7 @@
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0 
             AND ecm:isProxy = 0
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
             AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
@@ -81,6 +82,7 @@
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
             AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
@@ -133,8 +135,9 @@
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
             AND prodclass:productClassification IS NOT NULL
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+            AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
         <sort column="elo:orderingPriority" ascending="true" />
@@ -179,13 +182,13 @@
           <predicate parameter="partclass:partClassification" operator="STARTSWITH">
             <field schema="vnav" name="bom_partClass"/>
           </predicate>
-          <fixedPart>
-            ecm:primaryType = 'BomPart'
-            AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
+          <fixedPart statement="SELECT * FROM BomPart">
+            ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
             AND partclass:partClassification IS NOT NULL
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+            AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
         <sort column="elo:orderingPriority" ascending="true" />
@@ -235,8 +238,9 @@
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
             AND bomtool:toolClassification IS NOT NULL
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+            AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
         <sort column="elo:orderingPriority" ascending="true" />
@@ -285,8 +289,9 @@
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
             AND bompack:packagingClassification IS NOT NULL
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+            AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
         <sort column="elo:orderingPriority" ascending="true" />
@@ -336,8 +341,9 @@
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
             AND bomspec:specificationClassification IS NOT NULL
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+            AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
         <sort column="elo:orderingPriority" ascending="true" />
@@ -386,8 +392,9 @@
             ecm:mixinType = 'CadDocument'
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
             AND cad:cadClassification IS NOT NULL
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+            AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
         <sort column="elo:orderingPriority" ascending="true" />
@@ -435,8 +442,9 @@
             ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
             AND dc:nature IS NOT NULL
+            AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+            AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
         <sort column="elo:orderingPriority" ascending="true" />

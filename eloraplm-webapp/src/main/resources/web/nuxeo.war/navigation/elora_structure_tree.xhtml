@@ -1,0 +1,35 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxd="http://nuxeo.org/nxweb/document" >
+    
+    <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    
+    <h:form ajaxSubmit="true" id="treeExplorer">
+        <p:commandLink styleClass="structureRefreshButton"
+            actionListener="#{eloraWebActions.reloadStructureTree()}"
+            update="structureTree">
+            <h:graphicImage value="/icons/refresh.png">
+                <f:attribute name="title" value="#{messages['label.refresh']}" />
+                <f:attribute name="styleClass" value="tipsyShow" />
+            </h:graphicImage>
+        </p:commandLink>
+        
+        <p:tree id="structureTree" value="#{eloraWebActions.structureTree}" var="node">
+            <p:ajax event="expand" />
+            <p:ajax event="collapse" />
+            <p:treeNode styleClass="#{node.id eq currentDocument.id ? 'currentDoc' : ''} #{node.type eq 'Domain' ? 'domain' : ''}">
+                <nxd:restDocumentLink document="#{node}">
+                    <h:graphicImage class="smallIcon" value="#{nxd:typeInfo(node).icon}" 
+                              title="#{messages[node.type]}" />
+                    <h:outputText value="#{node.title}"/>
+                </nxd:restDocumentLink>
+            </p:treeNode>
+        </p:tree>
+        
+    </h:form>
+    
+</ui:composition>

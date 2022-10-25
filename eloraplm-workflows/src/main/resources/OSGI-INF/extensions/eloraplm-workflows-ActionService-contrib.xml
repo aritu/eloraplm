@@ -3,14 +3,42 @@
 <component name="com.aritu.eloraplm.workflows.ActionService.contrib">
 
     <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
+    <require>org.nuxeo.ecm.platform.routing.dashboard.actions</require>
+    <require>studio.extensions.nuxeo-routing-default</require>
+    
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <filter id="WorkflowsEnabled">
+            <rule grant="false">
+                <condition>#{frameworkPropertyActions.getProperty('not com.aritu.eloraplm.workflows.enabled')}</condition>
+            </rule>
+        </filter>
+        
+        <!--  Disable Nuxeo default Workflows. 
+              As it is not posible to use enable="false" attribute in the workflow definition, 
+              we are modifying the workflows' filters in order to prevent launching the workflows. 
+        -->
+        <filter id="filter@wf@ParallelDocumentReview">
+          <rule grant="true">
+            <condition>false</condition>
+          </rule>
+        </filter>
+        <filter id="filter@SerialDocumentReview">
+           <rule grant="true">
+            <condition>false</condition>
+          </rule>
+        </filter>
+        
+    </extension>
     
     <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
         
         <action id="TAB_HISTORY_WORKFLOWS" label="eloraplm.wf.tab.history.workflows" link="/incl/tabs/closed_workflows.xhtml" order="60" type="rest_document_link"> -->
              <category>TAB_CONTENT_HISTORY_sub_tab</category>
+             <filter-id>WorkflowsEnabled</filter-id>
              <filter id="filter@TAB_HISTORY_WORKFLOWS">
                  <rule grant="true">
-                    <condition>#{workflowActions.hasClosedRelatedRoutes(currentDocument.id)}</condition>
+                    <condition>#{workflowActions.hasClosedRelatedRoutes()}</condition>
                  </rule>
              </filter>
          </action>
@@ -18,11 +46,23 @@
         <!-- Move tasks block to top -->
         <action id="summary_current_document_single_tasks" enabled="false" />
         <action id="header_current_document_single_tasks" order="600" type="template">
+            <filter-id>WorkflowsEnabled</filter-id>
             <category>DOCUMENT_HEADER</category>
             <properties>
                 <property name="template">/widgets/header_current_document_single_tasks.xhtml</property>
             </properties>
         </action>
         
+        
+        <!-- Only show USER CENTER workflows tab to Administrators -->
+        <action id="WorkflowHome">
+            <filter id="WorkflowHomeOnlyAdminOrPowerUser">
+                <rule grant="false">
+                    <condition>#{not currentUser.isAdministrator() and not currentUser.isMemberOf('powerusers')}</condition>
+                </rule>
+            </filter>
+        </action>
+        
     </extension>
+    
 </component>

@@ -56,10 +56,13 @@ public class ImpactedItemsNodeService implements NodeManager {
 
     protected String itemType;
 
-    public ImpactedItemsNodeService(CoreSession session, String itemType)
-            throws EloraException {
+    protected Map<String, String> messages;
+
+    public ImpactedItemsNodeService(CoreSession session, String itemType,
+            Map<String, String> messages) throws EloraException {
         this.session = session;
         this.itemType = itemType;
+        this.messages = messages;
         nodeId = 0;
     }
 
@@ -524,7 +527,8 @@ public class ImpactedItemsNodeService implements NodeManager {
         if (trigger.equals(
                 CMConstants.TRIGGER_ACTION_LOAD_DESTINATION_VERSIONS)) {
 
-            CMTreeBeanHelper.loadDestinationVersions(nodeData, session);
+            CMTreeBeanHelper.loadDestinationVersions(nodeData, session,
+                    messages);
 
         } else {
             nodeData.setIsModified(true);
@@ -581,7 +585,7 @@ public class ImpactedItemsNodeService implements NodeManager {
             } else if (trigger.equals(CMConstants.TRIGGER_FIELD_IS_MANAGED)) {
 
                 CMTreeBeanHelper.processRefreshNodeTriggeredByIsManaged(
-                        nodeData, session);
+                        nodeData, session, messages);
 
             } else if (trigger.equals(
                     CMConstants.TRIGGER_FIELD_DESTINATION_ITEM_UID)) {

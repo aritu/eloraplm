@@ -22,4 +22,8 @@ public class NuxeoFacetConstants {
     // For Domain, WorkspaceRoot, TemplateRoot, SectionRoot, Workspace, etc.
     public static final String FACET_SUPER_SPACE = "SuperSpace";
 
+    public static final String FACET_HIDDEN_IN_NAVIGATION = "HiddenInNavigation";
+
+    public static final String FACET_VERSIONABLE = "Versionable";
+
 }

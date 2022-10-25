@@ -22,5 +22,7 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-doctypes-ActionService-c
  trib.xml,OSGI-INF/extensions/eloraplm-thumbnails-OperationServiceComp
  onent-contrib.xml,OSGI-INF/extensions/eloraplm-thumbnails-PreviewAdap
  terManagerComponent-contrib.xml,OSGI-INF/extensions/eloraplm-thumbnai
- ls-ThumbnailService.xml
+ ls-ThumbnailService.xml,OSGI-INF/extensions/eloraplm-nxdirectories-co
+ ntrib.xml,OSGI-INF/extensions/eloraplm-doctypes-WorkspaceArchiverServ
+ ice-contrib.xml
 

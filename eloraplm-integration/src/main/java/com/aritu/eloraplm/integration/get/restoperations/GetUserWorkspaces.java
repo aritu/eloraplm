@@ -41,10 +41,13 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
+import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.IntegrationConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
+import com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
 import com.aritu.eloraplm.core.util.json.EloraJsonHelper;
@@ -53,6 +56,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.integration.get.restoperations.util.GetUserWorkspacesRequestFilters;
 import com.aritu.eloraplm.integration.get.restoperations.util.GetUserWorkspacesResponse;
 import com.aritu.eloraplm.integration.get.restoperations.util.GetUserWorkspacesResponseDoc;
+import com.aritu.eloraplm.integration.restoperations.util.EloraLifecycleStateInfo;
 import com.aritu.eloraplm.integration.restoperations.util.EloraStructureRootInfo;
 import com.aritu.eloraplm.integration.restoperations.util.EloraTypeInfo;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
@@ -189,6 +193,16 @@ public class GetUserWorkspaces {
                         filterItem, "value", true);
                 requestFilters.setOnlyFavorite(onlyFavorite);
                 break;
+            case IntegrationConstants.REQUEST_FILTER_UID_LIST:
+                List<String> uidList = EloraJsonHelper.getJsonFieldAsStringList(
+                        filterItem, "value", true);
+                requestFilters.setUidList(uidList);
+                break;
+            case IntegrationConstants.REQUEST_FILTER_INCLUDE_ARCHIVED:
+                boolean includeArchived = EloraJsonHelper.getJsonFieldAsBoolean(
+                        filterItem, "value", true);
+                requestFilters.setIncludeArchived(includeArchived);
+                break;
             default:
                 break;
             }
@@ -200,7 +214,12 @@ public class GetUserWorkspaces {
     protected void getWorkspaces(GetUserWorkspacesRequestFilters requestFilters)
             throws EloraException, OperationException {
 
+        String logInitMsg = "[getWorkspaces] ["
+                + session.getPrincipal().getName() + "] ";
+
         DocumentModelList workspaces = new DocumentModelListImpl();
+
+        boolean includeArchived = requestFilters.isIncludeArchived();
 
         // Retrieve the wsRootUids list in function of specified structureRoot
         // filter:
@@ -209,52 +228,40 @@ public class GetUserWorkspaces {
         // - otherwise, we should calculate the wsRootUids regarding all
         // available domains
         List<String> wsRootUids = new ArrayList<String>();
-
         if (requestFilters.getStructureRoot() != null
                 && !requestFilters.getStructureRoot().isEmpty()) {
             wsRootUids = retrieveWorkspaceRootListByAncestor(
-                    requestFilters.getStructureRoot());
-
+                    requestFilters.getStructureRoot(), includeArchived);
         } else {
-            // if not any structure root has been defined, we should start
-            // looking from user domains.
-            List<DocumentModel> domains = new DomainsFinder(
-                    session.getRepositoryName()).getDomains();
+            if (!includeArchived) {
+                // if not any structure root has been defined and archived
+                // workspace shouldn't be included, we should start
+                // looking from user domains.
+                List<DocumentModel> domains = new DomainsFinder(
+                        session.getRepositoryName()).getDomains();
 
-            for (DocumentModel domain : domains) {
-                wsRootUids.addAll(
-                        retrieveWorkspaceRootListByAncestor(domain.getId()));
+                for (DocumentModel domain : domains) {
+                    wsRootUids.addAll(retrieveWorkspaceRootListByAncestor(
+                            domain.getId(), includeArchived));
+                }
             }
         }
 
-        // Construct the query in function of lifeCycleState and type filters
-        String query = "";
-        if (requestFilters.getLifeCycleState() != null
-                && !requestFilters.getLifeCycleState().isEmpty()) {
-            if (requestFilters.getType() != null
-                    && !requestFilters.getType().isEmpty()) {
+        // Construct the query in function of received filters
+        List<String> wsUids = requestFilters.getUidList();
+        String query = EloraQueryFactory.getWorkspacesByWsUidsWsRootUidsLifeCycleStateAndTypeQuery(
+                wsUids, wsRootUids, requestFilters.getLifeCycleState(),
+                requestFilters.getType());
 
-                query = EloraQueryFactory.getWorkspacesForWsRootsLifeCycleStateAndTypeQuery(
-                        wsRootUids, requestFilters.getLifeCycleState(),
-                        requestFilters.getType());
-            } else {
-                query = EloraQueryFactory.getWorkspacesForWsRootsAndLifeCycleStateQuery(
-                        wsRootUids, requestFilters.getLifeCycleState());
-            }
-        } else {
-            if (requestFilters.getType() != null
-                    && !requestFilters.getType().isEmpty()) {
-                query = EloraQueryFactory.getNotDeletedWorkspacesForWsRootsAndTypeQuery(
-                        wsRootUids, requestFilters.getType());
-            } else {
-                query = EloraQueryFactory.getNotDeletedWorkspacesForWsRootsQuery(
-                        wsRootUids);
-            }
-        }
+        log.trace(logInitMsg + " query = |" + query + "|");
+
         workspaces = session.query(query);
 
         // Add found workspaces to the response
         if (workspaces != null) {
+
+            log.trace(logInitMsg + "|" + workspaces.size()
+                    + "| workspaces found");
 
             for (DocumentModel workspace : workspaces) {
 
@@ -269,20 +276,37 @@ public class GetUserWorkspaces {
                     structureRootInfo.setUid(structureRoot.getId());
                     structureRootInfo.setTitle(structureRoot.getTitle());
 
-                    getUserWorkspacesResponse.addDocument(buildResponse(
-                            workspace, structureRootInfo, isFavorite));
+                    boolean isArchived = EloraDocumentHelper.isArchived(
+                            workspace);
+
+                    getUserWorkspacesResponse.addDocument(
+                            buildResponse(workspace, structureRootInfo,
+                                    isFavorite, isArchived));
                 }
             }
         }
     }
 
-    private List<String> retrieveWorkspaceRootListByAncestor(
-            String ancestorUid) {
+    private List<String> retrieveWorkspaceRootListByAncestor(String ancestorUid,
+            boolean includeArchived) {
+        String logInitMsg = "[retrieveWorkspaceRootListByAncestor] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "ancestorUid = |" + ancestorUid
+                + "|, includeArchived = |" + includeArchived + "|");
+
         List<String> wsRootUids = new ArrayList<String>();
+
         String wsRootQuery = EloraQueryFactory.getWorkspaceRootUidsByAncestorQuery(
-                ancestorUid);
+                ancestorUid, includeArchived);
+
+        log.trace(logInitMsg + " wsRootQuery = |" + wsRootQuery + "|");
+
         IterableQueryResult wsRootQueryResult = session.queryAndFetch(
                 wsRootQuery, NXQL.NXQL);
+
+        log.trace(logInitMsg + "|" + wsRootQueryResult.size()
+                + "| workspaceRoots found");
+
         try {
             if (wsRootQueryResult.size() > 0) {
                 for (Map<String, Serializable> map : wsRootQueryResult) {
@@ -297,7 +321,8 @@ public class GetUserWorkspaces {
     }
 
     protected GetUserWorkspacesResponseDoc buildResponse(DocumentModel doc,
-            EloraStructureRootInfo structureInfo, boolean isFavorite) {
+            EloraStructureRootInfo structureInfo, boolean isFavorite,
+            boolean isArchived) {
 
         String domainUid = null;
         if (!doc.getType().equals(NuxeoDoctypeConstants.DOMAIN)) {
@@ -323,7 +348,23 @@ public class GetUserWorkspaces {
         wsDoc.setPath(path);
         wsDoc.setStructureRootInfo(structureInfo);
         wsDoc.setIsFavorite(isFavorite);
-        wsDoc.setLifecycleState(doc.getCurrentLifeCycleState());
+        wsDoc.setIsArchived(isArchived);
+
+        String lifecycleSate = doc.getCurrentLifeCycleState();
+        LifecycleConfigService lcs = Framework.getService(
+                LifecycleConfigService.class);
+
+        String label = EloraMessageHelper.getTranslatedMessage(session,
+                lifecycleSate);
+        String shortLabel = EloraMessageHelper.getTranslatedMessage(session,
+                lifecycleSate + EloraLifeCycleConstants.ABBR_SUFFIX);
+        String color = lcs.getStateColor(lifecycleSate);
+        boolean isFinalState = lcs.isFinalState(lifecycleSate);
+
+        EloraLifecycleStateInfo stateInfo = new EloraLifecycleStateInfo(
+                lifecycleSate, label, shortLabel, color, isFinalState);
+
+        wsDoc.setLifecycleStateInfo(stateInfo);
         Serializable description = doc.getPropertyValue(
                 NuxeoMetadataConstants.NX_DC_DESCRIPTION);
         if (description != null) {

@@ -29,10 +29,11 @@ elora.suggestbox = (function(m) {
   m.entryHandler = function(item) {
     var docUrl = item.url;
     if (!docUrl.match(absoluteUrlRegExp)) {
-      docUrl = baseURL + docUrl;
+      // Added MAIN_TABS
+      docUrl = baseURL + docUrl + "?tabIds=MAIN_TABS:documents,:";
     }
     if (typeof currentConversationId != 'undefined') {
-      docUrl += "?conversationId=" + currentConversationId;
+      docUrl += "&amp;conversationId=" + currentConversationId;
     }
     window.location.replace(docUrl);
   };

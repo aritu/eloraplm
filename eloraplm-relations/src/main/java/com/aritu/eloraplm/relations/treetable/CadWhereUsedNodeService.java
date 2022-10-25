@@ -14,7 +14,10 @@
 package com.aritu.eloraplm.relations.treetable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -25,6 +28,8 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.treetable.NodeManager;
 
@@ -88,7 +93,8 @@ public class CadWhereUsedNodeService extends RelationNodeService
 
         boolean isBasedOn = (predicateUri != null
                 && predicateUri.equals(EloraRelationConstants.CAD_BASED_ON))
-                        ? true : false;
+                        ? true
+                        : false;
         nodeData.setIsBasedOn(isBasedOn);
 
         boolean isSuppressed = false;
@@ -107,20 +113,49 @@ public class CadWhereUsedNodeService extends RelationNodeService
 
         DocumentModelList relatedItemList = getRelatedItems(nodeData);
         if (relatedItemList != null && !relatedItemList.isEmpty()) {
-            List<DocumentModel> relatedItems = new ArrayList<DocumentModel>();
-            List<String> processedVersionSeries = new ArrayList<String>();
-            for (DocumentModel relatedItem : relatedItemList) {
-                String versionSeriesId = relatedItem.getVersionSeriesId();
-                // We only add each related document once, as the query is
-                // ordered by modified time (desc), we supose it will be the
-                // latest
-                if (!processedVersionSeries.contains(versionSeriesId)) {
-                    relatedItems.add(relatedItem);
-                    processedVersionSeries.add(versionSeriesId);
+            if (relatedItemList.size() > 1) {
+                // It is possible to have different versions of the same bom //
+                // item pointing to current document version. Take latest. //
+                // related
+                Map<String, List<DocumentModel>> docListByVersionSerieId = new HashMap<String, List<DocumentModel>>();
+                for (DocumentModel relatedItem : relatedItemList) {
+                    String versionSeriesId = session.getVersionSeriesId(
+                            relatedItem.getRef());
+                    if (docListByVersionSerieId.containsKey(versionSeriesId)) {
+                        docListByVersionSerieId.get(versionSeriesId).add(
+                                relatedItem);
+                    } else {
+                        List<DocumentModel> docList = new ArrayList<>();
+                        docList.add(relatedItem);
+                        docListByVersionSerieId.put(versionSeriesId, docList);
+                    }
+                }
+
+                relatedItemList.removeAll(relatedItemList);
+
+                if (docListByVersionSerieId.size() == 1) {
+                    DocumentModel doc = null;
+                    // There are different versions of the same bom item
+                    // related. Take the latest version.
+                    for (Map.Entry<String, List<DocumentModel>> entry : docListByVersionSerieId.entrySet()) {
+                        String versionSeriesId = entry.getKey();
+                        List<DocumentModel> docList = docListByVersionSerieId.get(
+                                versionSeriesId);
+                        List<String> uidList = EloraDocumentHelper.getUidListFromDocList(
+                                docList);
+                        Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
+                                docList);
+                        String type = docList.get(0).getType();
+
+                        doc = EloraRelationHelper.getLatestRelatedVersion(
+                                session, majorVersion, uidList, type);
+                    }
+                    // convertir a lista doc y meter abajo
+                    // relatedItemList.removeAll(relatedItemList);
+                    relatedItemList.add(doc);
                 }
             }
-
-            nodeData.setRelatedBoms(relatedItems);
+            nodeData.setRelatedBoms(relatedItemList);
         }
 
         return nodeData;

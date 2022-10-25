@@ -82,9 +82,10 @@ public class CadDocumentsTreeBean extends EditableRelationTreeBean
     }
 
     @Override
-    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic) {
+    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic,
+            boolean isInverse) {
         setPredicateUri(EloraRelationConstants.CAD_HAS_DOCUMENT);
-        super.addRelationNode(currentDoc, isAnarchic);
+        super.addRelationNode(currentDoc, isAnarchic, isInverse);
     }
 
     @Override

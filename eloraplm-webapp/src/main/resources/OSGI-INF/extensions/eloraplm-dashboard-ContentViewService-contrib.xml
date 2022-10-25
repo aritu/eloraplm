@@ -28,7 +28,7 @@
       </resultLayouts>
     </contentView>
     
-    <contentView name="user_locked_documents">
+    <!-- <contentView name="user_locked_documents">
       <title>title.dashboard.userLockedDocuments</title>
       <translateTitle>true</translateTitle>
       <pageProvider name="dashboard_user_locked_documents">
@@ -49,7 +49,7 @@
         <layout name="dashboard_document_listing" showCSVExport="false"
           showPDFExport="false" showSyndicationLinks="false" />
       </resultLayouts>
-    </contentView>
+    </contentView>  -->
     
  </extension>
  
@@ -68,7 +68,7 @@
       <pageSize>10</pageSize>
     </coreQueryPageProvider>
     
-    <coreQueryPageProvider name="dashboard_user_locked_documents">
+    <!-- <coreQueryPageProvider name="dashboard_user_locked_documents">
       <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
       <pattern>
         SELECT * FROM Document WHERE ecm:lockOwner = ? AND ecm:mixinType != 'HiddenInNavigation' AND
@@ -77,13 +77,13 @@
       </pattern>
       <sort column="dc:modified" ascending="false" />
       <pageSize>10</pageSize>
-    </coreQueryPageProvider>
+    </coreQueryPageProvider> -->
     
     <coreQueryPageProvider name="user_favorites">
       <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
       <pattern>
         SELECT * FROM Document where ecm:mixinType != 'HiddenInNavigation' AND
-        ecm:isVersion = 0 AND ecm:currentLifeCycleState !=
+        ecm:isVersion = 0 AND ecm:isProxy = 0 AND ecm:currentLifeCycleState !=
         'deleted' AND collectionMember:collectionIds/* = ?
       </pattern>
       <sort column="dc:title" ascending="true" />

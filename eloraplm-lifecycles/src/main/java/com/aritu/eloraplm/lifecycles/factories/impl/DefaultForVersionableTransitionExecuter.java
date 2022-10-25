@@ -19,9 +19,11 @@ import java.util.List;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
+import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
+import com.aritu.eloraplm.lifecycles.util.LifecycleHelper;
 
 /**
  * @author aritu
@@ -62,14 +64,19 @@ public class DefaultForVersionableTransitionExecuter
         CoreSession session = doc.getCoreSession();
 
         if (doc.isImmutable()) {
-            doc.followTransition(transition);
+
+            LifecycleHelper.followTransitionAndLaunchEvent(doc, transition,
+                    PdmEventNames.PDM_PROMOTED_EVENT, doc.getVersionLabel());
+
         } else {
             DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(doc);
             if (baseDoc == null) {
                 throw new EloraException("The document |" + doc.getId()
                         + "| has no base version.");
             }
-            baseDoc.followTransition(transition);
+
+            LifecycleHelper.followTransitionAndLaunchEvent(baseDoc, transition,
+                    PdmEventNames.PDM_PROMOTED_EVENT, doc.getVersionLabel());
 
             // We cannot follow transition instead of restoring, because it
             // checks the document out always. This is the only way we know to
@@ -82,7 +89,7 @@ public class DefaultForVersionableTransitionExecuter
 
     @Override
     public boolean hasToFireDefaultEvent() {
-        return true;
+        return false;
     }
 
 }

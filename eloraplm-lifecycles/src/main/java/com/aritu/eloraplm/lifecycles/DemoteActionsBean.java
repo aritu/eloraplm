@@ -25,12 +25,15 @@ public class DemoteActionsBean extends LifecycleTransitionsActionsBean {
     public List<String> getTransitions() {
         if (transitions.isEmpty()) {
             DocumentModel doc = navigationContext.getCurrentDocument();
-            transitions = LifecyclesConfig.getVisibleDemoteTransitions(doc);
+            if (doc != null) {
+                transitions = LifecyclesConfig.getVisibleDemoteTransitions(doc);
 
-            // if (transitions.size() >= 1) {
-            // transition = transitions.get(0);
-            // init();
-            // }
+                // if (transitions.size() >= 1) {
+                // transition = transitions.get(0);
+                // init();
+                // }
+
+            }
 
         }
         return transitions;
@@ -42,10 +45,11 @@ public class DemoteActionsBean extends LifecycleTransitionsActionsBean {
 
         DocumentModel doc = navigationContext.getCurrentDocument();
 
+        // Seam event
+        Events.instance().raiseEvent(PdmEventNames.PDM_DEMOTED_EVENT, doc);
+        
         if (hasToFireDefaultEvent()) {
-            // Seam event
-            Events.instance().raiseEvent(PdmEventNames.PDM_DEMOTED_EVENT, doc);
-
+            
             // Nuxeo Event
             doc.refresh();
             String comment = doc.getVersionLabel();

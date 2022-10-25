@@ -29,6 +29,7 @@ import org.nuxeo.ecm.core.event.EventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 
 import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.constants.EloraGeneralConstants;
 
 /**
  * @author aritu
@@ -51,10 +52,6 @@ public class DocCreationInitialActionsProcessor implements EventListener {
                     return;
                 }
 
-                // Only execute for WC of certain facets
-                // CAUTION! At the moment, we have no way to limit BasicDocument
-                // to REAL basic documents, so CAD and BOM docs also have this
-                // facet
                 if (doc.isVersion() || doc.isProxy() || !(doc.hasFacet(
                         EloraFacetConstants.FACET_CAD_DOCUMENT)
                         || doc.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)
@@ -70,7 +67,7 @@ public class DocCreationInitialActionsProcessor implements EventListener {
 
                 CoreSession session = docEventContext.getCoreSession();
 
-                executeInitialActions(session, doc);
+                executeInitialActions(docEventContext, session, doc);
 
                 session.save();
 
@@ -81,13 +78,17 @@ public class DocCreationInitialActionsProcessor implements EventListener {
         }
     }
 
-    private void executeInitialActions(CoreSession session, DocumentModel doc) {
+    private void executeInitialActions(DocumentEventContext docEventCtx,
+            CoreSession session, DocumentModel doc) {
 
-        // Lock document
-        if (!doc.isLocked()) {
-            doc.setLock();
+        boolean skipLock = false;
+
+        if (docEventCtx.hasProperty(EloraGeneralConstants.CONTEXT_SKIP_LOCK)) {
+            skipLock = (boolean) docEventCtx.getProperty(
+                    EloraGeneralConstants.CONTEXT_SKIP_LOCK);
         }
 
+        DocCreationHelper.executeInitialActions(session, doc, skipLock);
     }
 
     protected boolean isEventHandled(Event event) {

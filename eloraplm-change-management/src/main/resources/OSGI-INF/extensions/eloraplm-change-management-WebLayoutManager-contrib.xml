@@ -199,12 +199,12 @@
           </properties>
           <widget>cm_is_managed</widget>
         </column>
-        <column name="is_manual">
+        <column name="is_manual_or_derived_from">
           <properties mode="any">
             <property name="columnStyle">width: 40px;</property>
             <property name="columnStyleClass">alignCenter</property>
           </properties>
-          <widget>is_manual</widget>
+          <widget>is_manual_or_derived_from</widget>
         </column>
         <column name="options">
           <properties mode="any">
@@ -892,6 +892,19 @@
         </fields>
     </widget>
     
+    <widget name="cm_edit_origin_item_state" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>editOriginItem.currentLifeCycleState</field>
+      </fields>
+      <properties mode="any">
+        <property name="template">/widgets/cm_item_state_widget.xhtml</property>
+      </properties>
+    </widget>
+    
     <widget name="cm_origin_item_lock_icon" type="treewidget_lock_icon">
       <labels>
         <label mode="any"/>
@@ -1007,6 +1020,19 @@
         </fields>
     </widget>
     
+    <widget name="cm_edit_destination_item_state" type="template">
+      <labels>
+        <label mode="any"></label>
+      </labels>
+      <translated>true</translated>
+      <fields>
+        <field>editDestinationItem.currentLifeCycleState</field>
+      </fields>
+      <properties mode="any">
+        <property name="template">/widgets/cm_item_state_widget.xhtml</property>
+      </properties>
+    </widget>
+    
     <widget name="cm_destination_item_lock_icon" type="treewidget_lock_icon">
       <labels>
         <label mode="any"/>
@@ -1079,6 +1105,21 @@
       <properties mode="any">
         <property name="template">/widgets/cm_options_widget.xhtml</property>
       </properties>
+    </widget>
+    
+    <widget name="is_manual_or_derived_from" type="template">
+        <labels>
+            <label mode="any"></label>
+        </labels>
+      <translated>true</translated>
+      <fields>
+        <field>isManual</field>
+        <field>derivedFrom</field>
+        <field>isDerivedFromImpactMatrix</field>
+      </fields>
+      <properties mode="any">
+            <property name="template">/widgets/cm_is_manual_or_derived_from.xhtml</property>
+          </properties>
     </widget>
     <!-- end of treetable widgets -->
     

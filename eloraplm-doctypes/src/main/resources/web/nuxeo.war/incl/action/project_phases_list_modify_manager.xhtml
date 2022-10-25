@@ -1,0 +1,62 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h3>
+        <h:outputText value="#{messages['eloraplm.title.project.phase.modifyManager']}" />
+    </h3>
+    
+    <h:form id="#{fancyboxFormId}">
+        <h:panelGroup styleClass="content" layout="block">
+            <h:panelGrid columns="2" styleClass="dataInput"
+                columnClasses="labelColumn, fieldColumn">
+                <h:outputLabel for="fromManager"
+                        value="#{messages['eloraplm.label.project.phase.fromManager']}" />
+                <h:panelGroup>
+                    <nxl:widgetType id="fromManager" name="singleUserSuggestion"
+                        value="#{projectPhasesTableBean}" field="fromManager"
+                        mode="edit" userSuggestionSearchType="USER_TYPE" minChars="1" hideHelpLabel="true" />
+                    <h:message for="fromManager" class="errorMessage" />
+                </h:panelGroup>
+                <h:outputLabel for="toManager"
+                        value="#{messages['eloraplm.label.project.phase.toManager']}" />
+                <h:panelGroup>
+                    <nxl:widgetType id="toManager" name="singleUserSuggestion"
+                        value="#{projectPhasesTableBean}" field="toManager"
+                        mode="edit" userSuggestionSearchType="USER_TYPE" minChars="1" hideHelpLabel="true" />
+                   <h:message for="toManager" class="errorMessage" />
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:panelGroup>
+
+        <div class="buttonsGadget">
+            <h:commandButton value="#{messages['eloraplm.command.modify']}"
+                styleClass="button"
+                actionListener="#{projectPhasesTableBean.modifyManager()}">
+                <f:param name="btnAddProjectPhase" value="true" />
+                <f:ajax execute="@form"
+                    render="@form
+                    :#{component.namingContainer.parent.namingContainer.clientId}:global_flag_validation_failed_render
+                    :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:dtForm:#{tableWidgetId}" />
+            </h:commandButton>
+            <h:commandButton value="#{messages['command.cancel']}"
+                styleClass="button">
+                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
+            </h:commandButton>
+        </div>
+    </h:form>
+    
+    <h:panelGroup id="global_flag_validation_failed_render">
+        <h:outputText style="display: none;" value="#{param.btnAddProjectPhase}" />
+        <h:outputScript rendered="#{not empty param.btnAddProjectPhase and !facesContext.isValidationFailed()}">
+            jQuery.fancybox.close();
+        </h:outputScript>
+    </h:panelGroup>
+
+</ui:composition>

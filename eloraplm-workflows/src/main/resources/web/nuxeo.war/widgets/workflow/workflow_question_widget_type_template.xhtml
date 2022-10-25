@@ -1,0 +1,33 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <nxu:set var="userLocale" value="#{empty userLocale ? fn:substring(userProfileActions.userProfile.userprofile.locale, 0, 2) : userLocale}" >
+        
+        <c:forEach var="type" items="#{workflowFormActions.getFieldTypes()}">
+            <h:panelGroup rendered="#{field_1.wfq.type eq type.key}">
+                <nxl:widget name="#{'workflow_question_type_'.concat(type.key)}" mode="#{widget.mode}" value="#{widget.value}" required="#{widgetProperty_required}" />
+            </h:panelGroup>
+        </c:forEach>
+        
+        <ui:remove>
+        <!-- Text is the default fallback type (+for comment or WFA NodeVariable answers) -->
+        </ui:remove>
+        
+        <h:panelGroup rendered="#{empty field_1}">
+        
+            <h:panelGroup rendered="#{not empty field_2 and field_2 eq 'action'}">
+                <h:outputText value="#{field_0}" converter="taskStatusConverter" escape="false" />
+            </h:panelGroup>
+            <h:panelGroup rendered="#{empty field_2 or field_2 ne 'action'}">
+                <nxl:widget name="workflow_question_type_text" mode="#{widget.mode}" value="#{widget.value}" required="#{widgetProperty_required}" />
+            </h:panelGroup>
+        </h:panelGroup>
+        
+    </nxu:set>
+</ui:composition>
+

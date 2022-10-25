@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 import com.aritu.eloraplm.core.util.json.EloraJsonHelper;
@@ -34,7 +35,8 @@ import com.aritu.eloraplm.integration.util.FolderInfo;
  *
  */
 @JsonPropertyOrder({ "result", "errorMessage", "documents", "folders",
-        "cmProcessStructure", "lastModified" })
+        "cmProcessStructure", "duplicateProxies", "lastModified" })
+@JsonIgnoreProperties({ "contentProxyParents" })
 public class GetWorkspaceResponse extends EloraGeneralResponse {
 
     private static final Log log = LogFactory.getLog(
@@ -46,6 +48,8 @@ public class GetWorkspaceResponse extends EloraGeneralResponse {
 
     List<CmProcessNode> cmProcessStructure;
 
+    Map<String, ContentProxyParents> contentProxyParents;
+
     Date lastModified;
 
     /**
@@ -55,6 +59,7 @@ public class GetWorkspaceResponse extends EloraGeneralResponse {
         super();
         documents = new LinkedHashMap<String, GetWorkspaceResponseDoc>();
         folders = new ArrayList<FolderInfo>();
+        contentProxyParents = new LinkedHashMap<String, ContentProxyParents>();
     }
 
     public List<GetWorkspaceResponseDoc> getDocuments() {
@@ -108,6 +113,35 @@ public class GetWorkspaceResponse extends EloraGeneralResponse {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public List<ContentProxyParents> getDuplicateProxies() {
+        List<ContentProxyParents> dpList = new ArrayList<ContentProxyParents>();
+        for (ContentProxyParents cpp : contentProxyParents.values()) {
+            if (cpp.hasMultipleParents()) {
+                dpList.add(cpp);
+            }
+        }
+        return dpList;
+    }
+
+    public ContentProxyParents getContentProxyParents(String versionSeriesId) {
+        return contentProxyParents.get(versionSeriesId);
+    }
+
+    public boolean hasContentProxyParents(String versionSeriesId) {
+        return contentProxyParents.containsKey(versionSeriesId);
+    }
+
+    public void addContentProxyParent(String wcUid, String parentRealUid) {
+        ContentProxyParents cpp;
+        if (hasContentProxyParents(wcUid)) {
+            cpp = getContentProxyParents(wcUid);
+        } else {
+            cpp = new ContentProxyParents(wcUid);
+            contentProxyParents.put(wcUid, cpp);
+        }
+        cpp.addParentRealUid(parentRealUid);
     }
 
     @Override

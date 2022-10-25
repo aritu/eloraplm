@@ -2,6 +2,7 @@
 
 <component name="com.aritu.eloraplm.dashboard.WebLayoutManager.contrib">
   <require>org.nuxeo.ecm.user.center.dashboard.jsf.layouts.listing</require>
+  <require>org.nuxeo.ecm.user.center.dashboard.jsf.layouts.dashboard</require>
   
   <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
     point="layouts">
@@ -95,15 +96,30 @@
       </properties>
     </widget>
     
-    <widget name="dashboard_user_locked_documents" type="contentViewWithForms">
+    <!-- <widget name="dashboard_user_locked_documents" type="contentViewWithForms">
       <properties widgetMode="any">
         <property name="contentViewName">user_locked_documents</property>
         <property name="foldable">true</property>
         <property name="hideEmpty">true</property>
         <property name="useAjaxPagination">true</property>
       </properties>
+    </widget> -->
+    
+    <!-- Remove help label to standard widget -->
+    <widget name="dashboard_user_tasks" type="contentViewWithForms">
+      <!-- handles labels to display the widget help within the widget -->
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">title.dashboard.userTasks</label>
+      </labels>
+      <translated>true</translated>
+      <properties widgetMode="any">
+        <property name="contentViewName">user_tasks</property>
+        <property name="foldable">true</property>
+        <property name="useAjaxPagination">true</property>
+      </properties>
     </widget>
-  
+    
   </extension>
   
   

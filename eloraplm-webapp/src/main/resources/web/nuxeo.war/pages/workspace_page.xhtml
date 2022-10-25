@@ -1,64 +1,134 @@
 <ui:composition template="basic_page.xhtml"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:c="http://java.sun.com/jstl/core"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:p="http://primefaces.org/ui">
-  <ui:param name="pageName" value="#{themeActions.currentPage}" />
-  <ui:param name="pageFlavor" value="#{themeActions.currentFlavor}" />
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
 
-  <ui:define name="basic body includes">
-    <ui:include src="/incl/includes.xhtml" />
-  </ui:define>
+    <ui:param name="pageName" value="#{themeActions.currentPage}" />
+    <ui:param name="pageFlavor" value="#{themeActions.currentFlavor}" />
 
-  <ui:define name="basic body">
+    <ui:define name="basic body includes">
+        <ui:include src="/incl/includes.xhtml" />
+    </ui:define>
 
-    <ui:decorate template="/pages/header_footer_template.xhtml">
-      <ui:define name="main content">
-        <div id="column_sidebar_buttons" class="column">
-                <a onclick="PF('column_sidebar_browse').isVisible() ? PF('column_sidebar_browse').hide() : PF('column_sidebar_browse').show()">
-                    
-                    <h:graphicImage value="/icons/browse_22.png"
-                        styleClass="tipsyShow tipsyGravityW sidebar_button"
-                        title="#{messages['eloraplm.sidebar.button.browse']}" />
-                    
-                </a>
-                <a onclick="PF('column_sidebar_clipboard').isVisible() ? PF('column_sidebar_clipboard').hide() : PF('column_sidebar_clipboard').show()">
-                    
-                    <h:graphicImage value="/icons/clipboard_22.png"
-                        styleClass="tipsyShow tipsyGravityW sidebar_button"
-                        title="#{messages['eloraplm.sidebar.button.clipboard']}" />
-                    
-                </a>
-        </div>
-        <p:sidebar id="column_sidebar_browse" styleClass="column_sidebar" widgetVar="column_sidebar_browse" baseZIndex="7000" visible="false"
-            onShow="PF('column_sidebar_clipboard').hide()">
-                <c:if test="false">
-                    <ui:include src="/incl/import.xhtml" />
-                </c:if>
+    <ui:define name="basic body">
+
+        <ui:decorate template="/pages/header_footer_template.xhtml">
+            <ui:define name="main content">
+            
+            <nxu:set var="currentTasks" value="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.workflows.enabled') ?
+                taskService.getAllCurrentTaskInstances(documentManager, eloraWebActions.createSortInfoList('nt:dueDate', true))
+                : '' }">
                 
-                <ui:include src="/incl/multi_tree_explorer.xhtml" />
+                <div id="column_sidebar_buttons" class="column">
+                    <a onclick="PF('column_sidebar_browse').isVisible() ? PF('column_sidebar_browse').hide() : PF('column_sidebar_browse').show()">
+                        
+                        <h:graphicImage value="/icons/sidebar_browse_22.png"
+                            styleClass="tipsyShow tipsyGravityW sidebar_button"
+                            title="#{messages['eloraplm.sidebar.button.browse']}" />
+                        
+                    </a>
+                    <a onclick="PF('column_sidebar_clipboard').isVisible() ? PF('column_sidebar_clipboard').hide() : PF('column_sidebar_clipboard').show()">
+                        
+                        <h:graphicImage value="/icons/sidebar_clipboard_22.png"
+                            styleClass="tipsyShow tipsyGravityW sidebar_button"
+                            title="#{messages['eloraplm.sidebar.button.clipboard']}" />
+                        
+                    </a>
+                    <c:if test="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.workflows.enabled')}">
+                        <a onclick="PF('column_sidebar_tasks').isVisible() ? PF('column_sidebar_tasks').hide() : PF('column_sidebar_tasks').show()">
+                            
+                            <h:graphicImage value="/icons/sidebar_tasks_22.png"
+                                styleClass="tipsyShow tipsyGravityW sidebar_button"
+                                title="#{messages['eloraplm.sidebar.button.tasks']}" />
+                            
+                        </a>
+                        <h:panelGroup styleClass="sidebar_badge" rendered="#{not empty currentTasks}">#{fn:length(currentTasks) lt 10 ? fn:length(currentTasks) : '+'}</h:panelGroup>
+                    </c:if>
+                </div>
                 
-                <c:if test="false">
-                    <ui:insert name="nosconnection">
-                        <c:if test="#{connectUpdateStatusInfo.bannerPath!=null}">
-                            <ui:include src="#{connectUpdateStatusInfo.bannerPath}" />
+                <p:sidebar id="column_sidebar_browse" styleClass="column_sidebar" widgetVar="column_sidebar_browse" baseZIndex="7000" visible="false"
+                    onShow="PF('column_sidebar_clipboard').hide();PF('column_sidebar_tasks').hide()">
+                        <c:if test="false">
+                            <ui:include src="/incl/import.xhtml" />
                         </c:if>
-                    </ui:insert>
+                        
+                        <ui:include src="/incl/multi_tree_explorer.xhtml" />
+                        
+                        <c:if test="false">
+                            <ui:insert name="nosconnection">
+                                <c:if test="#{connectUpdateStatusInfo.bannerPath!=null}">
+                                    <ui:include src="#{connectUpdateStatusInfo.bannerPath}" />
+                                </c:if>
+                            </ui:insert>
+                        </c:if>
+                </p:sidebar>
+                
+                <p:sidebar id="column_sidebar_clipboard" styleClass="column_sidebar" widgetVar="column_sidebar_clipboard" baseZIndex="7000" visible="false"
+                    onShow="PF('column_sidebar_browse').hide();PF('column_sidebar_tasks').hide()">
+                        <ui:include src="/incl/user_clipboard.xhtml" />
+                </p:sidebar>
+                
+                <c:if test="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.workflows.enabled')}">
+                    <p:sidebar id="column_sidebar_tasks" styleClass="column_sidebar" widgetVar="column_sidebar_tasks" baseZIndex="7000" visible="false"
+                        onShow="PF('column_sidebar_browse').hide();PF('column_sidebar_clipboard').hide()">
+                        
+                        <div id="sidebar_tasks_container">
+                            <h:outputText styleClass="processMessage completeInfo" value="#{messages['eloraplm.message.info.wf.tasks.empty']}"
+                                rendered="#{empty currentTasks}" />
+                            <ui:repeat var="task" value="#{currentTasks}" rendered="#{not empty currentTasks}">
+                                <div class="sidebar_task_card">
+                                    <div class="sidebar_task_header">
+                                        <!-- Process name should be obtained from task.processName, but Nuxeo does not store it, so we have to
+                                             use this workaround -->
+                                        <p class="sidebar_task_title">#{messages[eloraWebActions.getDocumentFromId(task.processId).title]} - #{messages[task.name]}</p>
+                                        <h:outputText value="#{messages['eloraplm.wf.label.task.delegated']}"
+                                            styleClass="label" rendered="#{not empty task.delegatedActors
+                                                and eloraWebActions.userIsInUserGroupList(currentUser, task.actors)}" />
+                                        <h:outputText value="#{messages['eloraplm.wf.label.task.delegatedToYou']}"
+                                            styleClass="label" rendered="#{not empty task.delegatedActors
+                                                and eloraWebActions.userIsInUserGroupList(currentUser, task.delegatedActors)}" />
+                                    </div>
+                                    <p>#{messages[task.directive]}</p>
+                                    <p class="sidebar_task_dates">
+                                        <strong class="label label-light">#{messages['label.workflow.task.startdate']}</strong>
+                                        <h:outputText value=" " />
+                                        <h:outputText value="#{task.created}">
+                                            <f:convertDateTime pattern="#{nxu:basicDateFormatter()}" />
+                                        </h:outputText>
+                                        <nxu:set var="isDelayed" value="#{task.dueDate lt currentDate ? true : false}">
+                                            <strong class="label #{isDelayed ? 'label-error' : 'label-light'}">#{messages['label.workflow.task.duedate']}</strong>
+                                            <h:outputText value=" " />
+                                            <h:outputText value="#{task.dueDate}" styleClass="#{isDelayed ? 'delayedDate' : ''}">
+                                                <f:convertDateTime pattern="#{nxu:basicDateFormatter()}" />
+                                            </h:outputText>
+                                        </nxu:set>
+                                    </p>
+                                    <p class="sidebar_task_link">
+                                        <nxl:widget name="icon_reference_title" mode="view" value="#{eloraWebActions.getDocumentFromId(task.targetDocumentId)}" />
+                                    </p>
+                                </div>
+                            </ui:repeat>
+                        </div>
+                    </p:sidebar>
                 </c:if>
-        </p:sidebar>
-        <p:sidebar id="column_sidebar_clipboard" styleClass="column_sidebar" widgetVar="column_sidebar_clipboard" baseZIndex="7000" visible="false"
-            onShow="PF('column_sidebar_browse').hide()">
-                <ui:include src="/incl/user_clipboard.xhtml" />
-        </p:sidebar>
-        <div class="content ws_content">
-          <ui:include src="/incl/breadcrumb.xhtml" />
-          <ui:insert name="body" />
-        </div>
-        <div class="clear" />
-      </ui:define>
-    </ui:decorate>
+                
+                <div class="content ws_content">
+                    <ui:include src="/incl/breadcrumb.xhtml" />
+                    <ui:insert name="body" />
+                </div>
+                <div class="clear" />
+            
+            </nxu:set>
+            
+            </ui:define>
+        </ui:decorate>
 
-  </ui:define>
+    </ui:define>
 
 </ui:composition>

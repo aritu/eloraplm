@@ -36,11 +36,11 @@
         <h:form id="document_files_edit" disableDoubleClickShield="true" >
         
           <a4j:jsFunction name="clearUpload" render="validateMultiplesUploadDiv" >
-            <a4j:param name="param1" assignTo="#{FileManageActions.fileToRemove}"  />
-            <nxu:actionListenerMethod value="#{FileManageActions.removeOneOrAllUploadedFiles  }" />
+            <a4j:param name="param1" assignTo="#{eloraFileManageActions.fileToRemove}"  />
+            <nxu:actionListenerMethod value="#{eloraFileManageActions.removeOneOrAllUploadedFiles  }" />
           </a4j:jsFunction>
           <a4j:jsFunction name="clearAllUpload" render="validateMultiplesUploadDiv">
-            <nxu:actionListenerMethod value="#{FileManageActions.removeOneOrAllUploadedFiles}" />
+            <nxu:actionListenerMethod value="#{eloraFileManageActions.removeOneOrAllUploadedFiles}" />
           </a4j:jsFunction>
           <script>
             function processClear(event) {
@@ -57,9 +57,9 @@
           <h3><h:outputText value="#{messages['label.upload.files.download']}" /></h3>
         
           <h:panelGrid columns="2" styleClass="dataTableNoBorder smallTable"
-            columnClasses="fortyPercent">
+            columnClasses="fortyPercent,">
         
-            <rich:fileUpload fileUploadListener="#{FileManageActions.processUpload}"
+            <rich:fileUpload fileUploadListener="#{eloraFileManageActions.processUpload}"
               addLabel="#{messages['RICH_FILE_UPLOAD_ADD_LABEL']}"
               clearLabel="#{messages['RICH_FILE_UPLOAD_CLEAR_LABEL']}"
               clearAllLabel="#{messages['RICH_FILE_UPLOAD_CLEAR_ALL_LABEL']}"
@@ -80,19 +80,21 @@
             <a4j:region id="files_region">
               <a4j:outputPanel id="files_panel" layout="block">
                 <c:forEach id="files_input" items="#{currentDocument.files.files}" var="file" varStatus="counter">
-                  <div class="simpleBox">
-                      <a4j:commandLink immediate="true"
-                        onclick="if( !confirmRemoveFiles('#{nxu:javaScriptEscape(currentDocument.files.files[counter.index].filename)}')) return false;"
-                        actionListener="#{FileManageActions.performAction}"
-                        id="files_delete" render="document_files_edit"
-                        bypassUpdates="true">
-                        <h:graphicImage value="/icons/delete.png" alt="#{messages['command.remove.file']}" style="vertical-align: middle;" />
-                        <f:param name="index" value="#{counter.index}" />
-                      </a4j:commandLink>
-                    <nxh:outputLink value="#{nxd:complexFileUrl('downloadFile', currentDocument, 'files:files', counter.index, 'file', currentDocument.files.files[counter.index].filename)}">
-                      <nxh:outputText value="#{currentDocument.files.files[counter.index].filename}" />
-                    </nxh:outputLink>
-                  </div>
+                    <nxu:set var="filename" value="#{currentDocument.files.files[counter.index].file.filename != null ? currentDocument.files.files[counter.index].file.filename : currentDocument.files.files[counter.index].filename}">
+                      <div class="simpleBox">
+                          <a4j:commandLink immediate="true"
+                            onclick="if( !confirmRemoveFiles('#{nxu:javaScriptEscape(filename)}')) return false;"
+                            actionListener="#{eloraFileManageActions.performAction}"
+                            id="files_delete" render="document_files_edit"
+                            bypassUpdates="true">
+                            <h:graphicImage value="/icons/delete.png" alt="#{messages['command.remove.file']}" style="vertical-align: middle;" />
+                            <f:param name="index" value="#{counter.index}" />
+                          </a4j:commandLink>
+                        <nxh:outputLink value="#{nxd:complexFileUrl('downloadFile', currentDocument, 'files:files', counter.index, 'file', filename)}">
+                          <nxh:outputText value="#{filename}" />
+                        </nxh:outputLink>
+                      </div>
+                    </nxu:set>
                 </c:forEach>
               </a4j:outputPanel>
             </a4j:region>
@@ -101,9 +103,9 @@
         
           <a4j:outputPanel id="validateMultiplesUploadDiv">
             <a4j:commandButton
-              rendered="#{not empty FileManageActions.uploadedFiles}" render="document_files_edit"
+              rendered="#{not empty eloraFileManageActions.uploadedFiles}" render="document_files_edit"
               value="#{messages['command.add.files']}" styleClass="button"
-              action="#{FileManageActions.validateMultiplesUpload}" />
+              action="#{eloraFileManageActions.validateMultiplesUpload}" />
           </a4j:outputPanel>
         
         </h:form>

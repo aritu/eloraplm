@@ -1,0 +1,23 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <h:outputText value="#{messages['eloraplm.message.info.wf.taskHasMultipleActors']}" class="processMessage completeWarning" />
+    <h:commandButton styleClass="button"
+        value="#{messages['eloraplm.command.wf.assignToMe']}">
+        
+        <p:ajax listener="#{workflowActions.reassignTaskToMe(taskInfo.taskId)}"
+                process="@this"
+                partialSubmit="true"
+                update="@form"
+                onsuccess="refreshForm_#{widget.id}()"/>
+    
+    </h:commandButton>
+    <p:remoteCommand name="refreshForm_#{widget.id}"
+        process="@this" 
+        partialSubmit="true"
+        update="@form" />
+    
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+    <nxu:set var="userLocale" value="#{empty userLocale ? fn:substring(userProfileActions.userProfile.userprofile.locale, 0, 2) : userLocale}" >
+
+        <h:selectOneMenu id="listChoices" value="#{field_0}">
+            <f:selectItem itemValue="#{null}" itemLabel=" " />
+            <nxu:selectItems value="#{field_1}"
+                var="choice"
+                itemValue="#{choice.choiceId}"
+                itemLabel="#{localizedLabelActions.getLocalizedLabel(choice.labels, userLocale, choice.choiceId)}" />
+            
+        </h:selectOneMenu>
+                
+        <h:message for="listChoices" styleClass="errorMessage" />
+        
+    </nxu:set>
+    
+</ui:composition>
+

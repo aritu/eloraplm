@@ -30,6 +30,7 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 
+import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.queries.UnrestrictedQueryRunner;
 
 /**
@@ -39,6 +40,17 @@ import com.aritu.eloraplm.queries.UnrestrictedQueryRunner;
  *
  */
 public class EloraQueryHelper {
+
+    /**
+     * Escape the special chars for NXQL as defined in documentation: \, ', ''
+     *
+     * @param value
+     * @return
+     */
+    public static String escapeSpecialChars(String value) {
+        return value.replace("\\", "\\\\").replace("'", "\\'").replace("\"",
+                "\\\"");
+    }
 
     public static String formatList(Collection<String> list) {
 
@@ -176,28 +188,31 @@ public class EloraQueryHelper {
         return uqr.query();
     }
 
-    public static IterableQueryResult executeUnrestrictedQueryAndFetch(
-            CoreSession session, String query) {
+    public static long executeUnrestrictedCountQuery(CoreSession session,
+            String query, String countColumn) throws EloraException {
+        long count = 0;
         UnrestrictedQueryRunner uqr = new UnrestrictedQueryRunner(session,
                 query);
-        return uqr.queryAndFetch();
-    }
+        count = uqr.queryAndCount(countColumn);
 
-    public static long executeUnrestrictedCountQuery(CoreSession session,
-            String query, String countColumn) {
-        IterableQueryResult queryResult = executeUnrestrictedQueryAndFetch(
-                session, query);
-
-        long count = 0;
-        try {
-            if (queryResult.iterator().hasNext()) {
-                Map<String, Serializable> map = queryResult.iterator().next();
-                count = (long) map.get("COUNT(" + countColumn + ")");
-            }
-        } finally {
-            queryResult.close();
+        if (count == -1) {
+            throw new EloraException(
+                    "Failure executing unrestricted count query.");
         }
         return count;
+    }
+
+    public static List<String> executeUnrestrictedQueryAndGetResultStringList(
+            String column, String query, CoreSession session) {
+
+        List<String> results = new ArrayList<String>();
+
+        UnrestrictedQueryRunner uqr = new UnrestrictedQueryRunner(session,
+                query);
+
+        results = uqr.queryAndFetch(column);
+
+        return results;
     }
 
 }

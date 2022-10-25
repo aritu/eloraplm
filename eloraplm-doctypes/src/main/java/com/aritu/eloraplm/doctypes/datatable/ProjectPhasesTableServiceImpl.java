@@ -23,8 +23,8 @@ import java.util.Map;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.ProjectConstants;
+import com.aritu.eloraplm.datatable.EditableTableService;
 import com.aritu.eloraplm.datatable.RowData;
-import com.aritu.eloraplm.datatable.TableService;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -32,7 +32,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
  * @author aritu
  *
  */
-public class ProjectPhasesTableServiceImpl implements TableService {
+public class ProjectPhasesTableServiceImpl implements EditableTableService {
 
     @Override
     public List<RowData> getData(Object parentObject) throws EloraException {
@@ -50,11 +50,13 @@ public class ProjectPhasesTableServiceImpl implements TableService {
                     ProjectConstants.PROJECT_PHASE_PARENTID);
             String type = getPhaseStringProperty(phase,
                     ProjectConstants.PROJECT_PHASE_TYPE);
+            String title = getPhaseStringProperty(phase,
+                    ProjectConstants.PROJECT_PHASE_TITLE);
             String description = getPhaseStringProperty(phase,
                     ProjectConstants.PROJECT_PHASE_DESCRIPTION);
             String manager = getPhaseStringProperty(phase,
                     ProjectConstants.PROJECT_PHASE_MANAGER);
-            Map<String, Object> deliverable = getDeliverable(phase);
+            List<Map<String, Object>> deliverables = getDeliverables(phase);
             Date realStartDate = getPhaseDateProperty(phase,
                     ProjectConstants.PROJECT_PHASE_REALSTARTDATE);
             Date plannedEndDate = getPhaseDateProperty(phase,
@@ -65,10 +67,15 @@ public class ProjectPhasesTableServiceImpl implements TableService {
                     ProjectConstants.PROJECT_PHASE_PROGRESS);
             String comment = getPhaseStringProperty(phase,
                     ProjectConstants.PROJECT_PHASE_COMMENT);
+            String result = getPhaseStringProperty(phase,
+                    ProjectConstants.PROJECT_PHASE_RESULT);
+            boolean obsolete = getPhaseBooleanProperty(phase,
+                    ProjectConstants.PROJECT_PHASE_OBSOLETE);
 
-            data.add(createRowData(rowId, parentId, type, description, manager,
-                    deliverable, realStartDate, plannedEndDate, realEndDate,
-                    progress, comment, false, false, false));
+            data.add(createRowData(rowId, parentId, type, title, description,
+                    manager, deliverables, realStartDate, plannedEndDate,
+                    realEndDate, progress, comment, result, obsolete, false,
+                    false, false));
         }
 
         return data;
@@ -101,30 +108,32 @@ public class ProjectPhasesTableServiceImpl implements TableService {
         return null;
     }
 
+    private boolean getPhaseBooleanProperty(HashMap<String, Object> phase,
+            String property) {
+        if (phase.containsKey(property) && phase.get(property) != null) {
+            return (Boolean) phase.get(property);
+        }
+        return false;
+    }
+
     /**
-     * We get the first of the deliverables, as we want to be able to store more
-     * than one document in the schema, but for now we cannot make it work in
-     * the edition
-     *
      * @param phase
      * @return
      */
-    private Map<String, Object> getDeliverable(HashMap<String, Object> phase) {
-        Map<String, Object> deliverable = new HashMap<String, Object>();
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> getDeliverables(
+            HashMap<String, Object> phase) {
+        List<Map<String, Object>> deliverables = new ArrayList<Map<String, Object>>();
 
         if (phase.containsKey(ProjectConstants.PROJECT_PHASE_DELIVERABLES)
                 && phase.get(
                         ProjectConstants.PROJECT_PHASE_DELIVERABLES) != null) {
 
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> deliverables = (List<Map<String, Object>>) phase.get(
+            deliverables = (List<Map<String, Object>>) phase.get(
                     ProjectConstants.PROJECT_PHASE_DELIVERABLES);
-            if (!deliverables.isEmpty()) {
-                deliverable = deliverables.get(0);
-            }
 
         }
-        return deliverable;
+        return deliverables;
     }
 
     @Override
@@ -136,19 +145,20 @@ public class ProjectPhasesTableServiceImpl implements TableService {
     public RowData createRowData(String rowId, boolean isNew,
             boolean isModified, boolean isRemoved) {
         return createRowData(rowId, null, null, null, null, null, null, null,
-                null, 0, null, isNew, isModified, isRemoved);
+                null, null, 0, null, null, false, isNew, isModified, isRemoved);
     }
 
     public RowData createRowData(String rowId, String parentId, String type,
-            String description, String manager, Map<String, Object> deliverable,
-            Date realStartDate, Date plannedEndDate, Date realEndDate,
-            int progress, String comment, boolean isNew, boolean isModified,
+            String title, String description, String manager,
+            List<Map<String, Object>> deliverables, Date realStartDate,
+            Date plannedEndDate, Date realEndDate, int progress, String comment,
+            String result, boolean obsolete, boolean isNew, boolean isModified,
             boolean isRemoved) {
 
-        RowData row = new ProjectPhaseRowData(rowId, parentId, type,
-                description, manager, deliverable, realStartDate,
-                plannedEndDate, realEndDate, progress, comment, isNew,
-                isModified, isRemoved);
+        RowData row = new ProjectPhaseRowData(rowId, parentId, type, title,
+                description, manager, deliverables, realStartDate,
+                plannedEndDate, realEndDate, progress, comment, result,
+                obsolete, isNew, isModified, isRemoved);
 
         return row;
     }

@@ -1,4 +1,17 @@
-id,label,obsolete
-id_tcl1_1,Tool Line 1,0
-id_tcl1_2,Tool Line 2,0
-id_tcl1_3,Tool Line 3,0
+id,label,obsolete,ordering
+"injection mold","Molde de Inyección","0","001"
+"blow  mold","Molde de soplado","0","002"
+"forming mold","Molde de conformado","0","003"
+"pressing mold","Molde de prensado","0","004"
+"assembly tooling","Utillaje de Montaje","0","005"
+"verification tooling","Utillaje de Verificación","0","006"
+"clamping tooling","Utillaje de Sujección","0","007"
+"measurement tooling","Utillaje de Medición","0","008"
+"marking tooling","Utillaje de Marcado","0","009"
+"drilling tool","Herramienta de Taladrado","0","010"
+"cutting tool","Herramienta de Corte","0","011"
+"machining tool","Herramienta de mecanizado","0","012"
+"mounting tool","Herramienta de montaje","0","013"
+"gripping tool","Herramienta de Sujeción","0","014"
+"measuring tool","Herramienta de Medición","0","015"
+"forming tool","Herramienta de Conformado","0","016"

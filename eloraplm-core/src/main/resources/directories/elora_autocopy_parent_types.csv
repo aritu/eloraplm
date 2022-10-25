@@ -10,3 +10,5 @@
 "BomPackaging","FolderBomPackaging",0
 "BomSpecification","FolderBomSpecification",0
 "BomTool","FolderBomTool",0
+"Software","FolderBomPart",0
+"ElectronicComponent","FolderBomPart",0

@@ -24,6 +24,9 @@ public class BatchProcessInfo {
     // itemType refers to BOM (Item) or DOC (Document)
     public String itemType;
 
+    // itemClass refers to MODIFIED item or IMPACTED item
+    public String itemClass;
+
     public String processingAction;
 
     public int totalCount;
@@ -38,11 +41,12 @@ public class BatchProcessInfo {
      * @param totalCount
      * @param processedCount
      */
-    public BatchProcessInfo(String itemType, String processingAction,
-            int totalCount, int processedCount, boolean isInProgress,
-            int needToBeRefreshed) {
+    public BatchProcessInfo(String itemType, String itemClass,
+            String processingAction, int totalCount, int processedCount,
+            boolean isInProgress, int needToBeRefreshed) {
         super();
         this.itemType = itemType;
+        this.itemClass = itemClass;
         this.processingAction = processingAction;
         this.totalCount = totalCount;
         this.processedCount = processedCount;
@@ -62,6 +66,20 @@ public class BatchProcessInfo {
      */
     public void setItemType(String itemType) {
         this.itemType = itemType;
+    }
+
+    /**
+     * @return the itemClass
+     */
+    public String getItemClass() {
+        return itemClass;
+    }
+
+    /**
+     * @param itemClass the itemClass to set
+     */
+    public void setItemClass(String itemClass) {
+        this.itemClass = itemClass;
     }
 
     /**

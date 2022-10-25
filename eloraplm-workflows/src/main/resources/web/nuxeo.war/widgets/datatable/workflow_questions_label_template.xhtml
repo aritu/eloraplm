@@ -1,0 +1,22 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    
+    <nxu:set var="userLocale" value="#{fn:substring(userProfileActions.userProfile.userprofile.locale, 0, 2)}" >
+        
+        <h:outputText value="#{field_0 eq 'comment' ?
+            messages['label.comment']
+            : (field_0 eq 'action' ?
+                messages['eloraplm.wf.label.action']
+                : (fn:startsWith(field_0, 'wfa_') ?
+                    messages['eloraplm.wf.label.'.concat(field_0)] 
+                    : localizedLabelActions.getLocalizedLabel(field_1, userLocale, field_0)
+                )
+            )}" />
+        
+    </nxu:set>
+    
+</ui:composition>

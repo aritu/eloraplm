@@ -1,165 +1,148 @@
 <ui:fragment
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:c="http://java.sun.com/jstl/core"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
 
-  <c:set var="canHaveMainBlob" value="#{!empty currentDocumentAsBlobHolder}" />
-  <c:set var="hasMainBlob" value="#{!empty currentDocumentAsBlobHolder.blob}" />
-  <c:set var="hasOtherBlobs" value="#{currentDocument.hasSchema('files') and !empty currentDocument.files.files}" />
-  <c:set var="isCadOrBomDocument" value="#{currentDocument.hasFacet('CadDocument') or currentDocument.hasFacet('BomDocument')}" />
-  <c:set var="canHaveEloraViewerFile" value="#{currentDocument.hasSchema('elora_viewer')}" />
-  <c:set var="hasEloraViewerFile" value="#{canHaveEloraViewerFile and !empty currentDocument.getPropertyValue('elovwr:file')}" />
-  <c:set var="hasCadAttachments" value="#{currentDocument.hasSchema('cad_attachments') and !empty currentDocument.cadatts.files}" />
-  <c:choose>
-    <c:when test="#{isCadOrBomDocument}">
-      <c:set var="fileZoneClass" value="" />
-    </c:when>
-    <c:otherwise>
-      <c:set var="fileZoneClass" value="dropzone dropContent" />
-    </c:otherwise>
-  </c:choose>
-  <c:set var="canHaveMainBlobAndNotCadOrBomDocument" value="#{canHaveMainBlob and !isCadOrBomDocument}" />
+    <c:set var="canHaveMainBlob" value="#{!empty currentDocumentAsBlobHolder}" />
+    <c:set var="hasMainBlob" value="#{!empty currentDocumentAsBlobHolder.blob}" />
+    <c:set var="hasOtherBlobs" value="#{currentDocument.hasSchema('files') and !empty currentDocument.files.files}" />
+    <c:set var="canHaveEloraViewerFile" value="#{currentDocument.hasSchema('elora_viewer')}" />
+    <c:set var="hasEloraViewerFile" value="#{canHaveEloraViewerFile and !empty currentDocument.getPropertyValue('elovwr:file')}" />
+    <c:set var="hasCadAttachments" value="#{currentDocument.hasSchema('cad_attachments') and !empty currentDocument.cadatts.attachments}" />
+    <c:set var="fileZoneClass" value="" />
 
-<h:panelGroup styleClass="#{canHaveMainBlob || hasOtherBlobs ? 'content_block': ''}" layout="block">
-  <!-- Write the widget label (Content) -->
-  <c:if test="#{hasMainBlob || hasEloraViewerFile || hasOtherBlobs || canHaveMainBlob || canHaveEloraViewerFile}">
+    <h:panelGroup styleClass="#{canHaveMainBlob || hasOtherBlobs ? 'content_block': ''}" layout="block">
+    <!-- Write the widget label (Content) -->
+        <c:if test="#{hasMainBlob || hasEloraViewerFile || hasOtherBlobs || canHaveMainBlob || canHaveEloraViewerFile}">
+            
+            <c:if test="#{widget.handlingLabels}">
+                <c:if test="#{!empty widget.label}">
+                    <ui:include src="/widgets/incl/widget_label_template.xhtml">
+                        <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+                    </ui:include>
+                </c:if>
+                <c:if test="#{empty widget.label}">
+                    <ui:include src="/widgets/incl/label_template.xhtml">
+                        <ui:param name="label" value="action.view.binary.content" />
+                        <ui:param name="helpLabel" value="#{widget.helpLabel}" />
+                        <ui:param name="translated" value="true" />
+                        <ui:param name="required" value="#{widget.required}" />
+                        <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+                    </ui:include>
+                </c:if>
+            </c:if>
+        </c:if>
 
-    <c:if test="#{widget.handlingLabels}">
-      <c:if test="#{!empty widget.label}">
-        <ui:include src="/widgets/incl/widget_label_template.xhtml">
-          <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
-        </ui:include>
-      </c:if>
-      <c:if test="#{empty widget.label}">
-        <ui:include src="/widgets/incl/label_template.xhtml">
-          <ui:param name="label" value="action.view.binary.content" />
-          <ui:param name="helpLabel" value="#{widget.helpLabel}" />
-          <ui:param name="translated" value="true" />
-          <ui:param name="required" value="#{widget.required}" />
-          <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
-        </ui:include>
-      </c:if>
-    </c:if>
+        <!-- Main blob -->
+        <c:if test="#{hasMainBlob}">
+            <div class="#{fileZoneClass}" context="mainBlob" id="mainBlobDropZone">
+                <table class="smallTable">
+                    <tbody>
+                        <tr>
+                            <td class="labelColumn">
+                                <h:outputText value="#{messages['label.summary.download.file']}" />
+                            </td>
+                            <td class="fieldColumn" docRef="#{currentDocument.id}">
+                                <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}" field="#{currentDocumentAsBlobHolder.xpath}"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
+        <c:if test="#{!hasMainBlob and canHaveMainBlob}">
+            <div class="#{fileZoneClass}" context="mainBlob" id="mainBlobDropZone">
+                <table class="smallTable">
+                    <tbody>
+                        <tr>
+                            <td class="labelColumn">
+                                <h:outputText value="#{messages['label.summary.download.file']}" />
+                            </td>
+                            <td class="fieldColumn" docRef="#{currentDocument.id}">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
 
-  </c:if>
+        <!-- Elora viewer file -->
+        <c:if test="#{hasEloraViewerFile}">
+            <div class="#{fileZoneClass}" context="eloraViewerFile" id="eloraViewerFileZone">
+                <table class="smallTable">
+                    <tbody>
+                        <tr>
+                            <td class="labelColumn">
+                                <h:outputText value=" #{messages['label.widget.elovwr.file']}" />
+                            </td>
+                            <td class="fieldColumn">
+                                <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
+                                    field="elovwr:file" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
+        <c:if test="#{!hasEloraViewerFile and canHaveEloraViewerFile}">
+            <div class="#{fileZoneClass}" context="eloraViewerFile" id="eloraViewerFileZone">
+                <table class="smallTable">
+                    <tbody>
+                        <tr>
+                            <td class="labelColumn">
+                                <h:outputText value=" #{messages['label.widget.elovwr.file']}" />
+                            </td>
+                            <td class="fieldColumn">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
 
-  <!-- If isCadOrBomDocument, don't enable to drop files in summary tab.-->  
-  <c:if test="#{!isCadOrBomDocument and !hasMainBlob and canHaveMainBlob}">
-    <div class="dropzone dropArea" context="mainBlob" id="mainBlobDropZone">
-       #{messages['label.dnd.dropHere']}
-    </div>
-  </c:if>
-  
-  <!-- Main blob -->
-  <c:if test="#{hasMainBlob}">
-    <div class="#{fileZoneClass}" context="mainBlob" id="mainBlobDropZone">
-      <table class="smallTable">
-        <tbody>
-          <tr>
-            <td class="labelColumn">
-              <h:outputText value="#{messages['label.summary.download.file']}" />
-            </td>
-            <td class="fieldColumn" docRef="#{currentDocument.id}">
-              <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}" field="#{currentDocumentAsBlobHolder.xpath}"/>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </c:if>
-  <c:if test="#{!hasMainBlob and isCadOrBomDocument and canHaveMainBlob}">
-    <div class="#{fileZoneClass}" context="mainBlob" id="mainBlobDropZone">
-      <table class="smallTable">
-        <tbody>
-          <tr>
-            <td class="labelColumn">
-              <h:outputText value="#{messages['label.summary.download.file']}" />
-            </td>
-            <td class="fieldColumn" docRef="#{currentDocument.id}">
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </c:if>
-  
-  <!-- Elora viewer file -->
-  <c:if test="#{hasEloraViewerFile}">
-    <div class="#{fileZoneClass}" context="eloraViewerFile" id="eloraViewerFileZone">
-      <table class="smallTable">
-        <tbody>
-            <tr>
-              <td class="labelColumn">
-                <h:outputText value=" #{messages['label.widget.elovwr.file']}" />
-              </td>
-              <td class="fieldColumn">
-                <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
-                                field="elovwr:file" />
-              </td>
-            </tr>
-        </tbody>
-      </table>
-    </div>
-  </c:if>
-  <c:if test="#{!hasEloraViewerFile and canHaveEloraViewerFile}">
-    <div class="#{fileZoneClass}" context="eloraViewerFile" id="eloraViewerFileZone">
-      <table class="smallTable">
-        <tbody>
-            <tr>
-              <td class="labelColumn">
-                <h:outputText value=" #{messages['label.widget.elovwr.file']}" />
-              </td>
-              <td class="fieldColumn">
-              </td>
-            </tr>
-        </tbody>
-      </table>
-    </div>
-  </c:if>
+        <!-- Attachments -->
+        <c:if test="#{hasOtherBlobs}">
+            <div class="#{fileZoneClass}" context="otherBlobs" id="otherBlobsDropZone">
+                <table class="smallTable">
+                    <tbody>
+                    <c:forEach items="#{currentDocument.files.files}" varStatus="loop">
+                        <tr>
+                            <td class="labelColumn">
+                                <h:outputText value=" #{messages['label.summary.download.attachments']}" rendered="#{loop.index == 0}" />
+                            </td>
+                            <td class="fieldColumn">
+                                <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
+                                    field="files:files/#{loop.index}/file" />
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
 
-  <!-- Attachments -->
-  <c:if test="#{hasOtherBlobs}">
-    <div class="#{fileZoneClass}" context="otherBlobs" id="otherBlobsDropZone">
-      <table class="smallTable">
-        <tbody>
-          <c:forEach items="#{currentDocument.files.files}" varStatus="loop">
-            <tr>
-              <td class="labelColumn">
-                <h:outputText value=" #{messages['label.summary.download.attachments']}" rendered="#{loop.index == 0}" />
-              </td>
-              <td class="fieldColumn">
-                <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
-                                field="files:files/#{loop.index}/file" />
-              </td>
-            </tr>
-          </c:forEach>
-        </tbody>
-      </table>
-    </div>
-  </c:if>
-  
-  <!-- CAD Attachments -->
-  <c:if test="#{hasCadAttachments}">
-    <div class="#{fileZoneClass}" context="cadAttachments" id="cadAttachmentsDropZone">
-      <table class="smallTable">
-        <tbody>
-          <c:forEach items="#{currentDocument.cadatts.files}" varStatus="loop">
-            <tr>
-              <td class="labelColumn">
-                <h:outputText value=" #{messages['eloraplm.label.summary.download.cadAttachments']}" rendered="#{loop.index == 0}" />
-              </td>
-              <td class="fieldColumn">
-                <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
-                                field="cadatts:files/#{loop.index}/file" />
-              </td>
-            </tr>
-          </c:forEach>
-        </tbody>
-      </table>
-    </div>
-  </c:if>
+        <!-- CAD Attachments -->
+        <c:if test="#{hasCadAttachments}">
+            <div class="#{fileZoneClass}" context="cadAttachments" id="cadAttachmentsDropZone">
+                <table class="smallTable">
+                    <tbody>
+                    <c:forEach items="#{currentDocument.cadatts.attachments}" varStatus="loop">
+                        <tr>
+                            <td class="labelColumn">
+                                <h:outputText value=" #{messages['eloraplm.label.summary.download.cadAttachments']}" rendered="#{loop.index == 0}" />
+                            </td>
+                            <td class="fieldColumn">
+                                <nxl:widgetType name="cadAttachmentFile" mode="view" value="#{currentDocument}" field="#{loop.index}" />
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
 
-</h:panelGroup>
+    </h:panelGroup>
 
 </ui:fragment>

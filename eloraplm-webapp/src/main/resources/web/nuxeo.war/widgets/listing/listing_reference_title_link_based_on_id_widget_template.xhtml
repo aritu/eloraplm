@@ -1,0 +1,17 @@
+<c:if test="true"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  >
+  
+  <nxu:set var="documentRef" value="#{eloraWebActions.getDocumentRefFromId(field)}">
+  <nxu:set var="document" value="#{eloraWebActions.getDocument(documentRef)}">
+    
+    <nxl:widget name="referenceTitle" mode="#{layout.mode}" value="#{document}"/>
+
+  </nxu:set>
+  </nxu:set>
+  
+
+</c:if>

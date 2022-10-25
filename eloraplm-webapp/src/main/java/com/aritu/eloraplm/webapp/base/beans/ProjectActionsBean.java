@@ -20,7 +20,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -33,6 +38,7 @@ import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.ProjectConstants;
+import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
  * @author aritu
@@ -44,6 +50,8 @@ import com.aritu.eloraplm.constants.ProjectConstants;
 public class ProjectActionsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Log log = LogFactory.getLog(ProjectActionsBean.class);
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -73,8 +81,17 @@ public class ProjectActionsBean implements Serializable {
                 "eloraplm.message.success.project.progress.update"));
     }
 
-    public String getCurrentPhase(DocumentModel doc) {
-        String currentPhase = "";
+    /**
+     * Returns the current phase of the project, which is the first phases that
+     * is not 100% completed.
+     *
+     * @param doc
+     * @return first phase that is not 100% completed
+     */
+    private Map<String, Object> getCurrentPhase(DocumentModel doc) {
+
+        Map<String, Object> currentPhase = null;
+
         if (doc != null && doc.getPropertyValue(
                 EloraMetadataConstants.ELORA_PRJ_PROJECTPHASELIST) != null) {
             @SuppressWarnings("unchecked")
@@ -86,22 +103,73 @@ public class ProjectActionsBean implements Serializable {
                                 ? (String) phase.get(
                                         ProjectConstants.PROJECT_PHASE_TYPE)
                                 : ProjectConstants.PROJECT_PHASE_TYPE_PHASE;
-                if (phaseType.equals(ProjectConstants.PROJECT_PHASE_TYPE_PHASE)
-                        || phaseType.equals(
-                                ProjectConstants.PROJECT_PHASE_TYPE_GATE)) {
-                    long progress = (Long) phase.get(
+                if (phaseType.equals(
+                        ProjectConstants.PROJECT_PHASE_TYPE_PHASE)) {
+                    Long progress = (Long) phase.get(
                             ProjectConstants.PROJECT_PHASE_PROGRESS);
-                    if (progress < 100L) {
-                        currentPhase = (String) phase.get(
-                                ProjectConstants.PROJECT_PHASE_DESCRIPTION);
+                    if (progress != null && progress < 100L) {
+                        currentPhase = phase;
                         break;
                     }
                 }
             }
+            if (currentPhase == null && !phaseList.isEmpty()) {
+                currentPhase = phaseList.get(0);
+            }
+        }
+        return currentPhase;
+    }
 
+    public String getCurrentPhaseTitle(DocumentModel doc) {
+        String currentPhaseTitle = "";
+
+        Map<String, Object> currentPhase = getCurrentPhase(doc);
+
+        if (currentPhase != null) {
+            currentPhaseTitle = (String) currentPhase.get(
+                    ProjectConstants.PROJECT_PHASE_TITLE);
         }
 
-        return currentPhase;
+        return currentPhaseTitle;
+    }
+
+    public String getCurrentPhaseDescription(DocumentModel doc) {
+        String currentPhaseDescription = "";
+
+        Map<String, Object> currentPhase = getCurrentPhase(doc);
+
+        if (currentPhase != null) {
+            currentPhaseDescription = (String) currentPhase.get(
+                    ProjectConstants.PROJECT_PHASE_DESCRIPTION);
+        }
+
+        return currentPhaseDescription;
+    }
+
+    public String getCurrentPhaseManager(DocumentModel doc) {
+        String currentPhaseManager = "";
+
+        Map<String, Object> currentPhase = getCurrentPhase(doc);
+
+        if (currentPhase != null) {
+            currentPhaseManager = (String) currentPhase.get(
+                    ProjectConstants.PROJECT_PHASE_MANAGER);
+        }
+
+        return currentPhaseManager;
+    }
+
+    public Date getCurrentPhaseEndDate(DocumentModel doc) {
+        GregorianCalendar cal = null;
+
+        Map<String, Object> currentPhase = getCurrentPhase(doc);
+
+        if (currentPhase != null) {
+            cal = (GregorianCalendar) currentPhase.get(
+                    ProjectConstants.PROJECT_PHASE_PLANNEDENDDATE);
+        }
+
+        return cal != null ? cal.getTime() : null;
     }
 
     public Date getPhaseRealStartDate(DocumentModel doc, String phaseId) {
@@ -143,6 +211,128 @@ public class ProjectActionsBean implements Serializable {
 
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * Returns project phases, excluding sub-phases and gates. Obsolete phases
+     * are not returned.
+     *
+     * @return
+     * @throws EloraException
+     */
+    public ArrayList<HashMap<String, Object>> getPhasesList()
+            throws EloraException {
+
+        return getPhasesList(false);
+    }
+
+    /**
+     * Returns project phases, excluding sub-phases and gates.
+     *
+     * @param includeObsoletePhases indicates if obsolete phases should be
+     *            include or not in the result.
+     * @return
+     * @throws EloraException
+     */
+    public ArrayList<HashMap<String, Object>> getPhasesList(
+            boolean includeObsoletePhases) throws EloraException {
+
+        String logInitMsg = "[getPhasesList] ";
+        ArrayList<HashMap<String, Object>> phasesList = new ArrayList<HashMap<String, Object>>();
+
+        try {
+            ArrayList<HashMap<String, Object>> projectPhasesList = new ArrayList<HashMap<String, Object>>();
+
+            DocumentModel currentDocument = navigationContext.getCurrentDocument();
+
+            if (currentDocument.getPropertyValue(
+                    EloraMetadataConstants.ELORA_PRJ_PROJECTPHASELIST) != null) {
+                projectPhasesList.addAll(
+                        (ArrayList<HashMap<String, Object>>) currentDocument.getPropertyValue(
+                                EloraMetadataConstants.ELORA_PRJ_PROJECTPHASELIST));
+            }
+
+            for (HashMap<String, Object> projectPhase : projectPhasesList) {
+                String type = (String) projectPhase.get("type");
+                if (type != null && type.equals(
+                        ProjectConstants.PROJECT_PHASE_TYPE_PHASE)) {
+                    if (!includeObsoletePhases) {
+                        boolean obsolete = (boolean) projectPhase.get(
+                                "obsolete");
+                        if (!obsolete) {
+                            phasesList.add(projectPhase);
+                        }
+                    } else {
+                        phasesList.add(projectPhase);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        return phasesList;
+    }
+
+    /**
+     * Returns the deliverables status of the specified set of deliverables.
+     *
+     * @param deliverables
+     * @return
+     */
+    public String getDeliverablesStatus(
+            List<Map<String, Object>> deliverables) {
+
+        String logInitMsg = "[getDeliverablesStatus] ";
+
+        boolean not_defined = false;
+        boolean not_anchored = false;
+        boolean all_optional = true;
+
+        try {
+            for (Iterator<Map<String, Object>> deliverablesIt = deliverables.iterator(); deliverablesIt.hasNext();) {
+                Map<String, Object> deliverable = deliverablesIt.next();
+                boolean isRequired = (boolean) deliverable.get(
+                        ProjectConstants.PROJECT_PHASE_DELIVERABLES_ISREQUIRED);
+                if (isRequired) {
+                    all_optional = false;
+                    String docWcProxy = (String) deliverable.get(
+                            ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTWCPROXY);
+                    String link = (String) deliverable.get(
+                            ProjectConstants.PROJECT_PHASE_DELIVERABLES_LINK);
+                    if ((docWcProxy == null || docWcProxy.length() == 0)
+                            && (link == null || link.length() == 0)) {
+                        not_defined = true;
+                    } else {
+                        if (link == null || link.length() == 0) {
+
+                            if (docWcProxy != null && docWcProxy.length() > 0) {
+                                String docAv = (String) deliverable.get(
+                                        ProjectConstants.PROJECT_PHASE_DELIVERABLES_DOCUMENTAV);
+                                if (docAv == null || docAv.length() == 0) {
+                                    not_anchored = true;
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (all_optional) {
+                return ProjectConstants.PROJECT_PHASE_DELIVERABLES_STATUS_ALL_OPTIONAL;
+            } else if (not_defined) {
+                return ProjectConstants.PROJECT_PHASE_DELIVERABLES_STATUS_NOT_DEFINED;
+            } else if (not_anchored) {
+                return ProjectConstants.PROJECT_PHASE_DELIVERABLES_STATUS_NOT_ANCHORED;
+            } else {
+                return ProjectConstants.PROJECT_PHASE_DELIVERABLES_STATUS_COMPLETED;
+            }
+
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            return "";
         }
     }
 

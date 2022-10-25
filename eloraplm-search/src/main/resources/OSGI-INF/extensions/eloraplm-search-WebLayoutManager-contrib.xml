@@ -101,6 +101,9 @@
           <widget>elora_cadClassification_search</widget>
         </row>
         <row>
+          <widget>elora_cadMaterial_search</widget>
+        </row>
+        <row>
           <widget>elora_createdBy_search</widget>
         </row>
         <row>
@@ -698,6 +701,69 @@
         </row>
       </rows>
     </layout>
+    
+    <layout name="elora_locked_documents_search_layout">
+      <templates>
+        <template mode="any">/layouts/layout_default_template.xhtml</template>
+      </templates>
+      <rows>
+        <!-- 
+        <row>
+          <widget>elora_text_search</widget>
+        </row>
+        <row>
+          <widget>elora_reference_search</widget>
+        </row>
+        <row>
+          <widget>elora_title_fulltext_search</widget>
+        </row>  -->
+        <row>
+          <widget>elora_lockOwner_search</widget>
+        </row>
+         <row>
+          <widget>elora_lockCreated_search</widget>
+        </row>
+        <row>
+          <widget>elora_currentLifeCycleState_search</widget>
+        </row>
+        <row>
+          <widget>elora_mixinType_search</widget>
+        </row>
+        <row>
+          <widget>elora_primaryType_search</widget>
+        </row>
+        <!-- <row>
+          <widget>elora_customer_search</widget>
+        </row>
+        <row>
+          <widget>elora_manufacturer_search</widget>
+        </row>
+        <row>
+          <widget>elora_responsible_search</widget>
+        </row> -->
+        <row>
+          <widget>elora_createdBy_search</widget>
+        </row>
+        <row>
+          <widget>elora_created_search</widget>
+        </row>
+        <row>
+          <widget>elora_lastContributor_search</widget>
+        </row>
+        <row>
+          <widget>elora_modified_search</widget>
+        </row>
+        <row>
+          <widget>elora_expired_search</widget>
+        </row>
+        <row>
+          <widget>elora_location_search</widget>
+        </row>
+        <row>
+          <widget>elora_tags_search</widget>
+        </row>
+      </rows>
+    </layout>
 
   </extension>
 
@@ -748,7 +814,7 @@
             <field>eloras:elo_reference</field>
           </fields>
           <properties widgetMode="any">
-            <property name="converter">ilikeSearchValueConverter</property>       
+            <property name="converter">ilikeSearchValueConverter</property>
           </properties>
           <properties widgetMode="edit">
             <property name="width">270px</property>
@@ -1534,6 +1600,31 @@
       </subWidgets>
     </widget>
     
+    <widget name="elora_cadMaterial_search" type="container">
+       <handlingLabels>true</handlingLabels>
+       <labels>
+          <label mode="any"></label>
+        </labels>
+        <translated>false</translated>
+      <subWidgets>
+        <widget name="cad_cadMaterial" type="text">
+         <labels>
+            <label mode="any">label.widget.cad.cadMaterial</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:cad_cadMaterial</field>
+          </fields>
+          <properties widgetMode="any">
+            <property name="converter">ilikeSearchValueConverter</property>
+          </properties>
+          <properties widgetMode="edit">
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
     <!--  Basic documents search related widgets -->
     <widget name="elora_basic_documents_currentLifeCycleState_search" type="container">
       <handlingLabels>true</handlingLabels>
@@ -1970,6 +2061,77 @@
           </properties>
           <properties widgetMode="edit">
             <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_lockOwner_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+          <label mode="any"></label>
+      </labels>
+      <translated>false</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+      </properties>
+      <subWidgets>
+        <widget name="lock_owner" type="multipleUsersSuggestion">
+          <labels>
+            <label mode="any">eloraplm.label.search.lockOwner</label>
+          </labels>
+          <translated>true</translated>
+          <fields>
+            <field>eloras:lock_owner</field>
+          </fields>
+          <properties widgetMode="edit">
+            <property name="userSuggestionSearchType">USER_TYPE</property>
+            <property name="minChars">1</property>
+            <property name="hideHelpLabel">true</property>
+            <property name="width">270px</property>
+          </properties>
+        </widget>
+      </subWidgets>
+    </widget>
+    
+    <widget name="elora_lockCreated_search" type="container">
+      <handlingLabels>true</handlingLabels>
+      <labels>
+        <label mode="any">eloraplm.label.search.lockCreated</label>
+      </labels>
+      <translated>true</translated>
+      <properties widgetMode="any">
+        <property name="hideSubLabels">false</property>
+        <property name="display">inline</property>
+        <property name="subLabelStyleClass">tinyLabel</property>
+      </properties>
+      <subWidgets>
+        <widget name="lock_created_min" type="datetime">
+          <fields>
+            <field>eloras:lock_created_min</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.between</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
+          </properties>
+        </widget>
+        <widget name="lock_created_max" type="datetime">
+          <fields>
+            <field>eloras:lock_created_max</field>
+          </fields>
+          <labels>
+            <label mode="any">label.search.and</label>
+          </labels>
+          <translated>true</translated>
+          <properties widgetMode="edit">
+            <property name="styleClass">dataInputTextDate</property>
+            <property name="format">#{nxu:basicDateAndTimeFormatter()}</property>
+            <property name="style">width:140px;</property>
           </properties>
         </widget>
       </subWidgets>

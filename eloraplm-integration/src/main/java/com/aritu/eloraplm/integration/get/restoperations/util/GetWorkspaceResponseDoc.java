@@ -36,7 +36,9 @@ public class GetWorkspaceResponseDoc {
 
     private String hash;
 
-    private List<String> parentRealUids = new ArrayList<String>();
+    private List<String> parentRealUids;
+
+    private String parentRealUid;
 
     private String realUid;
 
@@ -45,6 +47,13 @@ public class GetWorkspaceResponseDoc {
     private String type;
 
     private String wcUid;
+
+    private List<CadAttachmentDownloadInfo> cadAttachments;
+
+    public GetWorkspaceResponseDoc() {
+        parentRealUids = new ArrayList<String>();
+        cadAttachments = new ArrayList<CadAttachmentDownloadInfo>();
+    }
 
     public String getSource() {
         return source;
@@ -84,6 +93,14 @@ public class GetWorkspaceResponseDoc {
 
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    public String getParentRealUid() {
+        return parentRealUid;
+    }
+
+    public void setParentRealUid(String parentRealUid) {
+        this.parentRealUid = parentRealUid;
     }
 
     public List<String> getParentRealUids() {
@@ -128,6 +145,16 @@ public class GetWorkspaceResponseDoc {
 
     public void setWcUid(String wcUid) {
         this.wcUid = wcUid;
+    }
+
+    public List<CadAttachmentDownloadInfo> getCadAttachments() {
+        return cadAttachments;
+    }
+
+    public void addCadAttachment(String filename, String type,
+            String downloadUrl, String hash) {
+        cadAttachments.add(new CadAttachmentDownloadInfo(filename, type,
+                downloadUrl, hash));
     }
 
 }

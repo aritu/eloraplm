@@ -38,9 +38,9 @@ public class EloraConfig {
 
     public static final Map<String, String> autocopyParentTypesMap = initAutocopyParentTypesMap();
 
-    public static final EloraConfigTable generalConfig = initGeneralConfig();
+    public static EloraConfigTable generalConfig = initGeneralConfig();
 
-    public static final Map<String, String> generalConfigMap = initGeneralConfigMap();
+    public static Map<String, String> generalConfigMap = initGeneralConfigMap();
 
     public static final EloraConfigTable unitConversionConfig = initUnitConversionConfig();
 
@@ -50,9 +50,9 @@ public class EloraConfig {
 
     public static final Map<String, String> checkoutSwitchChildrenMap = initCheckoutSwitchChildrenMap();
 
-    public static final EloraConfigTable integrationVersionControlConfig = initIntegrationVersionControlConfig();
+    public static EloraConfigTable integrationVersionControlConfig = initIntegrationVersionControlConfig();
 
-    public static final Map<String, Integer> integrationMinAllowedVersionsMap = initIntegrationMinAllowedVersionsMap();
+    public static Map<String, Integer> integrationMinAllowedVersionsMap = initIntegrationMinAllowedVersionsMap();
 
     // ---------------------------------------------------
     // Elora config variables initialization methods
@@ -199,7 +199,8 @@ public class EloraConfig {
             Long minAllowedVersionLong = (long) row.getProperty(
                     EloraConfigConstants.PROP_INTEGRATION_VERSION_CONTROL_MIN_ALLOWED_VERSION);
             Integer minAllowedVersion = minAllowedVersionLong != null
-                    ? minAllowedVersionLong.intValue() : null;
+                    ? minAllowedVersionLong.intValue()
+                    : null;
 
             map.put((String) row.getProperty(EloraConfigConstants.PROP_ID),
                     minAllowedVersion);
@@ -207,6 +208,16 @@ public class EloraConfig {
 
         log.trace("********************************* EXIT FROM " + logInitMsg);
         return map;
+    }
+
+    public static void reloadGeneralConfig() {
+        generalConfig = initGeneralConfig();
+        generalConfigMap = initGeneralConfigMap();
+    }
+
+    public static void reloadIntegrationConfig() {
+        integrationVersionControlConfig = initIntegrationVersionControlConfig();
+        integrationMinAllowedVersionsMap = initIntegrationMinAllowedVersionsMap();
     }
 
 }

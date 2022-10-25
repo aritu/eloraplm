@@ -87,6 +87,9 @@ public class EloraRelationConstants {
     public static final Resource IS_MANUAL = new ResourceImpl(
             ELORA_METADATA_NAMESPACE + "IsManual");
 
+    public static final Resource IS_TEMPLATE = new ResourceImpl(
+            ELORA_METADATA_NAMESPACE + "IsTemplate");
+
     // Constants for soft delete
     public static final String SOFT_DELETED_RELATION_SOURCE = "SoftDeleted";
 

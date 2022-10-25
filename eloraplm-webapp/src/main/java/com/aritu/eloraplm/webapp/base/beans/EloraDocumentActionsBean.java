@@ -13,6 +13,7 @@
  */
 package com.aritu.eloraplm.webapp.base.beans;
 
+import static org.jboss.seam.annotations.Install.DEPLOYMENT;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.web.RequestParameter;
@@ -32,10 +34,13 @@ import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
-import org.nuxeo.ecm.webapp.base.InputController;
+import org.nuxeo.ecm.webapp.contentbrowser.DocumentActions;
+import org.nuxeo.ecm.webapp.contentbrowser.DocumentActionsBean;
 import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
 
 /**
@@ -44,10 +49,11 @@ import com.aritu.eloraplm.core.util.EloraStructureHelper;
  *         Copied and overwritten from DocumentActionsBean
  *
  */
-@Name("eloraDocumentActions")
+@Name("documentActions")
 @Scope(CONVERSATION)
-public class EloraDocumentActionsBean extends InputController
-        implements Serializable {
+@Install(precedence = DEPLOYMENT)
+public class EloraDocumentActionsBean extends DocumentActionsBean
+        implements DocumentActions, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,6 +69,7 @@ public class EloraDocumentActionsBean extends InputController
     @In(create = true)
     protected Map<String, String> messages;
 
+    @Override
     public String saveDocument() {
         DocumentModel changeableDocument = navigationContext.getChangeableDocument();
         return saveDocument(changeableDocument);
@@ -71,6 +78,7 @@ public class EloraDocumentActionsBean extends InputController
     @RequestParameter
     protected String parentDocumentPath;
 
+    @Override
     public String saveDocument(DocumentModel newDocument) {
         // Document has already been created if it has an id.
         // This will avoid creation of many documents if user hit create button
@@ -101,18 +109,20 @@ public class EloraDocumentActionsBean extends InputController
 
         DocumentModel returnDoc;
         try {
+
+            // Copy base viewer file to the viewer file
+            if (newDocument.hasSchema(EloraSchemaConstants.ELORA_VIEWER)) {
+                Serializable baseFile = newDocument.getPropertyValue(
+                        EloraMetadataConstants.ELORA_ELOVWR_BASEFILE);
+                newDocument.setPropertyValue(
+                        EloraMetadataConstants.ELORA_ELOVWR_FILE, baseFile);
+            }
+
             newDocument = documentManager.createDocument(newDocument);
             returnDoc = newDocument;
 
-            // Check if the new document has to be moved to its position in
-            // Elora Structure.
-            // If yes, move it to the Elora Structure and create a Proxy
-            // pointing to the moved document.
-            if (EloraStructureHelper.hasToBeMovedToEloraStructure(newDocument,
-                    parentDoc)) {
-                returnDoc = EloraStructureHelper.moveToEloraStructureAndCreateProxy(
-                        newDocument);
-            }
+            EloraStructureHelper.moveDocToEloraStructureAndCreateProxyIfRequired(
+                    newDocument, parentDoc);
 
         } catch (DocumentValidationException e) {
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -130,6 +140,23 @@ public class EloraDocumentActionsBean extends InputController
         Events.instance().raiseEvent(EventNames.DOCUMENT_CHILDREN_CHANGED,
                 currentDocument);
         return navigationContext.navigateToDocument(returnDoc, "after-create");
+    }
+
+    @Override
+    public String updateDocument(DocumentModel doc,
+            Boolean restoreCurrentTabs) {
+
+        // If viewer base file changes, we must apply the change to the viewer
+        // file too.
+        if (doc.hasSchema(EloraSchemaConstants.ELORA_VIEWER) && doc.getProperty(
+                EloraMetadataConstants.ELORA_ELOVWR_BASEFILE).isDirty()) {
+            Serializable baseFile = doc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELOVWR_BASEFILE);
+            doc.setPropertyValue(EloraMetadataConstants.ELORA_ELOVWR_FILE,
+                    baseFile);
+        }
+
+        return super.updateDocument(doc, restoreCurrentTabs);
     }
 
 }

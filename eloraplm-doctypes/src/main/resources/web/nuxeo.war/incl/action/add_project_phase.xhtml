@@ -50,11 +50,18 @@
                     <h:message for="parentId" class="errorMessage" />
                 </h:panelGroup>
                 
-                <h:outputLabel for="description"
-                        value="#{messages['eloraplm.label.project.phase.description']}"
+                <h:outputLabel for="title"
+                        value="#{messages['eloraplm.label.project.phase.title']}"
                         class="required" />
                 <h:panelGroup>
-                    <h:inputText value="#{projectPhasesTableBean.description}" required="true" />
+                    <h:inputText value="#{projectPhasesTableBean.title}" required="true" />
+                    <h:message for="title" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="description"
+                        value="#{messages['eloraplm.label.project.phase.description']}"/>
+                <h:panelGroup>
+                    <h:inputText value="#{projectPhasesTableBean.description}" required="false" />
                     <h:message for="description" class="errorMessage" />
                 </h:panelGroup>
                 
@@ -65,20 +72,6 @@
                         value="#{projectPhasesTableBean}" field="manager"
                         mode="edit" userSuggestionSearchType="USER_TYPE" minChars="1" hideHelpLabel="true" />
                     <h:message for="manager" class="errorMessage" />
-                </h:panelGroup>
-                
-                <h:outputLabel for="deliverables"
-                        value="#{messages['eloraplm.label.project.phase.deliverables']}" />
-                <h:panelGroup>
-                    <h:panelGrid columns="2">
-                        <h:panelGroup>
-                            <h:selectBooleanCheckbox id="isDeliverableRequired" value="#{projectPhasesTableBean.isDeliverableRequired}" />
-                            <h:outputLabel for="isDeliverableRequired" value="#{messages['eloraplm.label.project.phase.deliverable.isRequired']}" />
-                        </h:panelGroup>
-                        <h:inputText id="deliverableName" value="#{projectPhasesTableBean.deliverableName}" />
-                    </h:panelGrid>
-                    <h:message for="isDeliverableRequired" class="errorMessage" />
-                    <h:message for="deliverableName" class="errorMessage" />
                 </h:panelGroup>
                 
                 <h:outputLabel for="realStartDate"
@@ -97,6 +90,16 @@
                         value="#{projectPhasesTableBean}" field="plannedEndDate"
                         mode="edit" format="#{nxu:basicDateFormatter()}" />
                     <h:message for="plannedEndDate" class="errorMessage" />
+                </h:panelGroup>
+                
+                <h:outputLabel for="deliverables"
+                        value="#{messages['eloraplm.label.project.phase.deliverables']}" />
+                <h:panelGroup>
+                    <h:panelGrid columns="2">
+                        <nxl:widget name="add_phase_deliverable" mode="edit" value="#{projectPhasesTableBean.deliverables}" /> 
+                    </h:panelGrid>
+                    <h:message for="isDeliverableRequired" class="errorMessage" />
+                    <h:message for="deliverableName" class="errorMessage" />
                 </h:panelGroup>
                 
             </h:panelGrid>

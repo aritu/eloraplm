@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.doctypes.WorkspaceArchiverService.contrib">
+    
+    <extension point="archivers" target="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+        
+        <archiver name="workspaces" destinationFolder="FolderArchivedWorkspaces" />
+        <archiver name="projects" destinationFolder="FolderArchivedProjects" />
+        
+    </extension>
+    
+    <extension point="types" target="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+        
+        <type name="Workspace" archiver="workspaces" />
+        <type name="Project" archiver="projects" />
+        
+    </extension>
+
+</component>
+

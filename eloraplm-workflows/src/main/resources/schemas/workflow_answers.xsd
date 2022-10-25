@@ -1,0 +1,58 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+xmlns:nxs="https://eloraplm.aritu.com/schemas/workflow_answers"
+xmlns:elo="https://eloraplm.aritu.com/schemas/core"
+targetNamespace="https://eloraplm.aritu.com/schemas/workflow_answers">
+    
+    <xs:import namespace="https://eloraplm.aritu.com/schemas/core" schemaLocation="localized_labels.xsd" />
+    <xs:import namespace="https://eloraplm.aritu.com/schemas/core" schemaLocation="list_choices.xsd" />
+    
+    <xs:element name="answers" type="nxs:workflow_answers"/>
+    
+    <!-- Answers -->
+    <!-- ******* -->
+    
+    <xs:complexType name="workflow_answers">
+        <xs:sequence>
+            <xs:element name="answer" type="nxs:workflow_answer" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="workflow_answer">
+        <xs:sequence>
+            
+            <!-- ID -->
+            <!-- ** -->
+            
+            <xs:element name="workflowId" type="xs:string" />
+            
+            <xs:element name="nodeId" type="xs:string" />
+            
+            <xs:element name="questionId" type="xs:string" />
+            
+            <xs:element name="taskId" type="xs:string" />
+            
+            <xs:element name="taskExecuted" type="xs:date" />
+            
+            <!-- Question -->
+            <!-- ******** -->
+            
+            <xs:element name="question" type="xs:string" />
+            <!-- If we put a restriction, it fails with escalation rules,...
+            
+            <xs:element name="question">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+                </xs:simpleType>
+            </xs:element>
+            -->
+            
+            <!-- Value is always stored as string (no matter what type it is) -->
+            <xs:element name="value" type="xs:string" />
+            
+            <xs:element name="order" type="xs:integer" />
+            
+        </xs:sequence>
+    </xs:complexType>
+    
+</xs:schema>

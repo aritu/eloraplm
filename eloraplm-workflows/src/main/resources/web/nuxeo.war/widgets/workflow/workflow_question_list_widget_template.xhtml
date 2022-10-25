@@ -1,0 +1,31 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+    <nxu:set var="choices" value="#{listChoiceActions.convertMapListToObjectList(field_1.wfq.listChoices.value)}">
+        
+        <c:if test="#{widget.mode == 'edit'}">
+            <h:selectOneMenu id="listChoices" value="#{field_0}" required="#{widgetProperty_required}" styleClass="listChoices">
+                <f:selectItem itemValue="#{null}" itemLabel=" " />
+                <nxu:selectItems value="#{choices}"
+                    var="choice"
+                    itemValue="#{choice.choiceId}"
+                    itemLabel="#{localizedLabelActions.getLocalizedLabel(choice.labels, userLocale, choice.choiceId)}" />
+                
+            </h:selectOneMenu>
+            
+            <h:message for="listChoices" styleClass="errorMessage" />
+        </c:if>
+        
+        <c:if test="#{widget.mode != 'edit'}">
+            #{listChoiceActions.getChoiceLabel(choices, field_0, userLocale)}
+        </c:if>
+        
+    </nxu:set>
+    
+</ui:composition>
+

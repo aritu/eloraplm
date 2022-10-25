@@ -1,10 +1,1 @@
-id,label,parent,obsolete
-id_pkcl2_1_1,Packaging Type 1.1,id_pkcl1_1,0
-id_pkcl2_1_2,Packaging Type 1.2,id_pkcl1_1,0
-id_pkcl2_1_3,Packaging Type 1.3,id_pkcl1_1,0
-id_pkcl2_2_1,Packaging Type 2.1,id_pkcl1_2,0
-id_pkcl2_2_2,Packaging Type 2.2,id_pkcl1_2,0
-id_pkcl2_2_3,Packaging Type 2.3,id_pkcl1_2,0
-id_pkcl2_3_1,Packaging Type 3.1,id_pkcl1_3,0
-id_pkcl2_3_2,Packaging Type 3.2,id_pkcl1_3,0
-id_pkcl2_3_3,Packaging Type 3.3,id_pkcl1_3,0
+id,label,parent,obsolete,ordering

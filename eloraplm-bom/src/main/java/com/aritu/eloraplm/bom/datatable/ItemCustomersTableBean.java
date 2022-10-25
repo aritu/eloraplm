@@ -44,10 +44,10 @@ import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
-import com.aritu.eloraplm.datatable.EditableTableBean;
+import com.aritu.eloraplm.datatable.EditableDocBasedTableBean;
 import com.aritu.eloraplm.datatable.RowData;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
  *
@@ -58,7 +58,7 @@ import com.aritu.eloraplm.versioning.EloraVersionLabelService;
 @Scope(CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class ItemCustomersTableBean extends EditableTableBean
+public class ItemCustomersTableBean extends EditableDocBasedTableBean
         implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -69,8 +69,8 @@ public class ItemCustomersTableBean extends EditableTableBean
     @In(create = true)
     private EloraDocumentRelationManager eloraDocumentRelationManager;
 
-    private EloraVersionLabelService eloraVersionLabelService = Framework.getService(
-            EloraVersionLabelService.class);
+    private VersionLabelService versionLabelService = Framework.getService(
+            VersionLabelService.class);
 
     public ItemCustomersTableBean() {
         tableService = new ItemCustomersTableServiceImpl();
@@ -169,8 +169,7 @@ public class ItemCustomersTableBean extends EditableTableBean
                     customerId);
 
             // Check in new document
-            EloraDocumentHelper.setupCheckIn(eloraVersionLabelService,
-                    custProdDoc,
+            EloraDocumentHelper.setupCheckIn(versionLabelService, custProdDoc,
                     "Created from Product: " + currentDoc.getTitle());
 
             custProdDoc = documentManager.saveDocument(custProdDoc);

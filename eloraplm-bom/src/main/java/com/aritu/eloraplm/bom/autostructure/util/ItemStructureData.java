@@ -30,6 +30,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
+import org.nuxeo.ecm.core.schema.DocumentType;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
@@ -42,6 +43,7 @@ import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
 import com.aritu.eloraplm.exceptions.CompositionWithMultipleVersionsException;
 import com.aritu.eloraplm.exceptions.EloraException;
 
@@ -517,21 +519,20 @@ public class ItemStructureData {
     private static List<String> getAllowedTypeForCurrentDoc(
             DocumentModel item) {
         List<String> allowedTypes = new ArrayList<String>();
-        String docType = item.getType();
-        switch (docType) {
-        case EloraDoctypeConstants.BOM_PART:
-        case EloraDoctypeConstants.BOM_PRODUCT:
-            allowedTypes.add(EloraDoctypeConstants.BOM_PART);
+        String docTypeName = item.getType();
+        DocumentType docType = item.getDocumentType();
+        if (EloraDocumentTypesHelper.getDocumentType(
+                EloraDoctypeConstants.BOM_PART).isSuperTypeOf(docType)
+                || docTypeName.equals(EloraDoctypeConstants.BOM_PRODUCT)) {
+            allowedTypes.addAll(
+                    EloraDocumentTypesHelper.getExtendedDocumentTypeNames(
+                            EloraDoctypeConstants.BOM_PART));
             allowedTypes.add(EloraDoctypeConstants.BOM_PRODUCT);
-            break;
-        case EloraDoctypeConstants.BOM_PACKAGING:
+        } else if (docTypeName.equals(EloraDoctypeConstants.BOM_PACKAGING)) {
             allowedTypes.add(EloraDoctypeConstants.BOM_PACKAGING);
-            break;
-        case EloraDoctypeConstants.BOM_TOOL:
+        } else if (docTypeName.equals(EloraDoctypeConstants.BOM_TOOL)) {
             allowedTypes.add(EloraDoctypeConstants.BOM_TOOL);
-            break;
-        default:
-            break;
+        } else {
         }
         return allowedTypes;
     }

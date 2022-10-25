@@ -6,7 +6,8 @@
     xmlns:c="http://java.sun.com/jstl/core">
     
     <h:panelGroup layout="block" class="ui-row-editor" id="#{widget.id}">
-    
+        
+        <!-- INLINE EDIT -->
         <c:if test="#{layout.properties.inlineEdit}">
             <a href="#"
                 class="ui-row-editor-pencil tipsyShow tipsyGravityN"
@@ -25,35 +26,48 @@
             </a>
         </c:if>
         
-        <h:commandLink
+        <!-- EDIT ROWS -->
+        <p:commandLink
+            title="#{messages['eloraplm.command.edit']}"
+            styleClass="tipsyShow tipsyGravityN"
+            action="#{tableBean.setEditingRow(rowData)}"
+            update=":nxw_workflow_questions_dt:editWorkflowQuestionForm"
+            onstart="prepareTablePartialAjaxUpdate(cfg.source)"
+            oncomplete="PF('#{tableWidgetId}_editDialog').show(); PF('#{tableWidgetId}_editDialog').resetPosition()"
+            rendered="#{layout.properties.editRows and not layout.properties.inlineEdit and not rowData.isRemoved}">
+            
+            <h:graphicImage value="/icons/row_edit_16.png" />
+            
+        </p:commandLink>
+        
+        <!-- REMOVE ROWS -->
+        <p:commandLink
             title="#{messages['eloraplm.command.remove']}"
             styleClass="tipsyShow tipsyGravityN"
-            rendered="#{layout.properties.removeRows and not rowData.isRemoved}">
+            rendered="#{layout.properties.removeRows and not rowData.isRemoved}"
+            actionListener="#{tableBean.markRowAsRemoved(component.namingContainer, rowData, rowIndex)}"
+            process="@this"
+            partialSubmit="true"
+            onstart="prepareTablePartialAjaxUpdate(cfg.source)"
+            onsuccess="markRowAsRemoved()">
             
             <h:graphicImage value="/icons/row_delete_16.png" />
-            <p:ajax
-                listener="#{tableBean.markRowAsRemoved(component.namingContainer, rowData, rowIndex)}"
-                process="@this"
-                partialSubmit="true"
-                onstart="prepareTablePartialAjaxUpdate(cfg.source)"
-                onsuccess="markRowAsRemoved()"
-                />
-        </h:commandLink>
+            
+        </p:commandLink>
         
-        <h:commandLink
+        <p:commandLink
             title="#{messages['eloraplm.command.undoRemove']}"
             styleClass="tipsyShow tipsyGravityN"
-            rendered="#{layout.properties.removeRows and rowData.isRemoved}">
+            rendered="#{layout.properties.removeRows and rowData.isRemoved}"
+            actionListener="#{tableBean.unmarkRowAsRemoved(component.namingContainer, rowData, rowIndex)}"
+            process="@this"
+            partialSubmit="true"
+            onstart="prepareTablePartialAjaxUpdate(cfg.source)"
+            onsuccess="unmarkRowAsRemoved()">
             
             <h:graphicImage value="/icons/row_undo_delete_16.png" />
-            <p:ajax
-                listener="#{tableBean.unmarkRowAsRemoved(component.namingContainer, rowData, rowIndex)}"
-                process="@this"
-                partialSubmit="true"
-                onstart="prepareTablePartialAjaxUpdate(cfg.source)"
-                onsuccess="unmarkRowAsRemoved()"
-                />
-        </h:commandLink>
+            
+        </p:commandLink>
         
     </h:panelGroup>
     

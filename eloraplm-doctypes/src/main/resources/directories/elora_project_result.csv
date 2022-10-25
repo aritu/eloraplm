@@ -1,0 +1,4 @@
+id,label,obsolete,ordering
+ok,eloraplm.label.project.result.ok,0,100
+nok,eloraplm.label.project.result.nok,0,200
+na,eloraplm.label.project.result.na,0,300

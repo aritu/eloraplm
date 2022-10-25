@@ -2,6 +2,7 @@
 <fragment version="1">
 
     <require>com.aritu.eloraplm.webapp</require>
+    <require>org.nuxeo.search.ui</require>
   
     <install>
         <unzip from="${bundle.fileName}" to="/" prefix="web">

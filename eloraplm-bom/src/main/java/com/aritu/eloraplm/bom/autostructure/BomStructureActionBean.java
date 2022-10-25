@@ -35,6 +35,7 @@ import com.aritu.eloraplm.bom.autostructure.util.ItemStructureData;
 import com.aritu.eloraplm.bom.autostructure.util.ItemStructureData.DocItemRelation;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.CompositionWithMultipleVersionsException;
 
 @Name("bomStructureAction")
@@ -120,6 +121,8 @@ public class BomStructureActionBean implements Serializable {
                 if (itemStructureData.isStructureUpdated()) {
                     // Events.instance().raiseEvent(
                     // AutostructureEventNames.AUTOSTRUCTURE_UPDATED_EVENT);
+                    EloraDocumentHelper.updateContributorAndModified(currentDoc,
+                            true);
                 }
                 facesMessages.add(StatusMessage.Severity.INFO, messages.get(
                         "eloraplm.message.createStructure.success.updated"));

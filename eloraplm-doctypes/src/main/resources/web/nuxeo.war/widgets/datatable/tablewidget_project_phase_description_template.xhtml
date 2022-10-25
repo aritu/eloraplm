@@ -1,0 +1,39 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
+
+   <c:if test="#{widget.mode == 'edit'}">
+            <h:panelGroup >
+                <h:graphicImage 
+                    id="descriptionPanelIconEdit" 
+                    value="/icons/description_edit_24.png" 
+                    styleClass="tipsyShow tipsyGravityS" 
+                    title="#{messages['eloraplm.label.project.phase.description.clickToEdit']}" />
+            </h:panelGroup>
+            
+            <p:overlayPanel id="descriptionPanelEdit" for="descriptionPanelIconEdit" hideEffect="fade">
+                <nxl:widgetType name="textarea" mode="edit" value="#{field}" />
+            </p:overlayPanel>
+   </c:if>
+   
+   <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <ui:fragment rendered="#{not empty field}">
+            <h:panelGroup >
+                <h:graphicImage 
+                    id="descriptionPanelIconView" 
+                    value="/icons/description_16.png" 
+                    styleClass="tipsyShow tipsyGravityS" 
+                    title="#{messages['eloraplm.label.project.phase.description.clickToDisplay']}" />
+            </h:panelGroup>
+            
+            <p:overlayPanel id="descriptionPanelView" for="descriptionPanelIconView" hideEffect="fade">
+                <nxl:widgetType name="textarea" mode="view" value="#{field}" />
+            </p:overlayPanel>
+        </ui:fragment>
+    </c:if>
+
+</ui:composition>

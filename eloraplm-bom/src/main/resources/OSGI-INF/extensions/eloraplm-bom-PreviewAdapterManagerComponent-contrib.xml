@@ -8,6 +8,14 @@
             <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
         </previewAdapter>
         <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>Software</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
+            <typeName>ElectronicComponent</typeName>
+            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
+        </previewAdapter>
+        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
             <typeName>BomManufacturerPart</typeName>
             <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
         </previewAdapter>

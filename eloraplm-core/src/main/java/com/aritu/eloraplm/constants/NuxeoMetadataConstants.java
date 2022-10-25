@@ -62,11 +62,15 @@ public final class NuxeoMetadataConstants {
 
     public static final String NX_RELATION_SOURCE = "relation:source";
 
+    public static final String NX_RNODE_HAS_TASK = "rnode:hasTask";
+
     public static final String NX_RNODE_TASKS_INFO = "rnode:tasksInfo";
 
     public static final String NX_RNODE_TASKS_INFO_STATUS = "status";
 
     public static final String NX_RNODE_TASKS_INFO_TASKDOCID = "taskDocId";
+
+    public static final String NX_RNODE_TASKS_INFO_ACTOR = "actor";
 
     public static final String NX_SCHEMA_UID = "uid";
 

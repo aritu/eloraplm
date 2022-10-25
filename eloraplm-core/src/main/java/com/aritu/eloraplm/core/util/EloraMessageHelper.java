@@ -119,8 +119,7 @@ public class EloraMessageHelper {
      * @param key
      * @return
      */
-    public static String getTranslatedMessage(CoreSession session,
-            String key) {
+    public static String getTranslatedMessage(CoreSession session, String key) {
 
         return getTranslatedMessage(session, key, new Object[0]);
     }
@@ -131,8 +130,8 @@ public class EloraMessageHelper {
      * @param params
      * @return
      */
-    public static String getTranslatedMessage(CoreSession session,
-            String key, Object[] params) {
+    public static String getTranslatedMessage(CoreSession session, String key,
+            Object[] params) {
 
         if (key == null) {
             return "";
@@ -169,6 +168,48 @@ public class EloraMessageHelper {
             lang = "en";
         }
         return LocaleUtils.toLocale(lang);
+    }
+
+    public static String getTranslatedEuMessage(String key) {
+
+        return getTranslatedEuMessage(key, new Object[0]);
+    }
+
+    public static String getTranslatedEuMessage(String key, Object[] params) {
+        return getTranslatedMessage("eu_ES", key, params);
+    }
+
+    public static String getTranslatedEsMessage(String key) {
+
+        return getTranslatedEsMessage(key, new Object[0]);
+    }
+
+    public static String getTranslatedEsMessage(String key, Object[] params) {
+        return getTranslatedMessage("es_ES", key, params);
+    }
+
+    public static String getTranslatedEnMessage(String key) {
+
+        return getTranslatedEnMessage(key, new Object[0]);
+    }
+
+    public static String getTranslatedEnMessage(String key, Object[] params) {
+        return getTranslatedMessage("en_US", key, params);
+    }
+
+    public static String getTranslatedMessage(String locale, String key) {
+        return getTranslatedMessage(locale, key, new Object[0]);
+    }
+
+    public static String getTranslatedMessage(String locale, String key,
+            Object[] params) {
+        if (key == null) {
+            return "";
+        }
+        String resultValue = I18NUtils.getMessageString("messages", key,
+                new Object[0], LocaleUtils.toLocale(locale));
+
+        return resultValue;
     }
 
     // returns OS's default locale language code

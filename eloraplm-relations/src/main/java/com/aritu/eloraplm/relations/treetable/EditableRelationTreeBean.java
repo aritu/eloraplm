@@ -1,13 +1,14 @@
 package com.aritu.eloraplm.relations.treetable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.In;
@@ -187,29 +188,28 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
     }
 
     public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic) {
+        addRelationNode(currentDoc, isAnarchic, false);
+    }
+
+    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic,
+            boolean isInverse) {
         String logInitMsg = "[addRelationNode] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "Adding node |" + objectDocumentUid
                 + "| to tree of document |" + currentDoc.getId() + "|.");
 
         try {
-            // TODO Txekeo honeik ondo dauz???
-            if ((isAnarchic && (!currentDoc.isLocked()
-                    || currentDoc.getLockInfo().getOwner().equals(
-                            documentManager.getPrincipal().getName())))
-                    || (currentDoc.isLocked()
-                            && currentDoc.getLockInfo().getOwner().equals(
-                                    documentManager.getPrincipal().getName()))) {
+            if (areRelationsEditable(currentDoc, isAnarchic)) {
                 // TODO txekeo gehixau??
                 DocumentModel objectDoc = documentManager.getDocument(
                         new IdRef(objectDocumentUid));
 
-                // TODO Inverse erlazioetan ez dabil, eta Save egin gabe badago
+                // TODO Inverse erlazioetan ez dabil?, eta Save egin gabe badago
                 // beste nodo bat (benetako erlazioak sortu gabe), bere azpiko
                 // dokumentuak ere ez ditu txekeatzen. Baina kasu normaletarako
                 // balio du.
                 if (!EloraRelationHelper.isCircularRelation(currentDoc,
-                        objectDoc, documentManager)) {
+                        objectDoc, isInverse, documentManager)) {
                     boolean objectHasVersion = documentManager.getLastDocumentVersion(
                             objectDoc.getRef()) != null;
                     boolean docHasVersion = documentManager.getLastDocumentVersion(
@@ -268,7 +268,7 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                                 logInitMsg + "The object document has no AVs.");
                         facesMessages.add(StatusMessage.Severity.WARN,
                                 messages.get(
-                                        "eloraplm.message.error.documentWithoutVersion"));
+                                        "eloraplm.message.warning.relations.edit.documentWithoutVersion"));
                     }
                 } else {
                     log.error(logInitMsg
@@ -360,12 +360,7 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
             currentDoc = documentManager.getWorkingCopy(currentDoc.getRef());
         }
 
-        if ((isAnarchic && (!currentDoc.isLocked()
-                || currentDoc.getLockInfo().getOwner().equals(
-                        documentManager.getPrincipal().getName())))
-                || (currentDoc.isLocked()
-                        && currentDoc.getLockInfo().getOwner().equals(
-                                documentManager.getPrincipal().getName()))) {
+        if (areRelationsEditable(currentDoc, isAnarchic)) {
             BaseRelationNodeData nodeData = (BaseRelationNodeData) node.getData();
             // If it is a new node, remove it completely
             if (nodeData.getIsNew()) {
@@ -441,12 +436,7 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                 // cambiar plantillas y clases que les debería dar igual este
                 // cambio
                 // TODO Begiratu hau. Checkoutakin aldatu egin da
-                if ((isAnarchic && (!currentDoc.isLocked()
-                        || currentDoc.getLockInfo().getOwner().equals(
-                                documentManager.getPrincipal().getName())))
-                        || (currentDoc.isLocked()
-                                && currentDoc.getLockInfo().getOwner().equals(
-                                        documentManager.getPrincipal().getName()))) {
+                if (areRelationsEditable(currentDoc, isAnarchic)) {
 
                     List<TreeNode> firstLevelNodes = getRoot().getChildren();
                     if (firstLevelNodes != null && !firstLevelNodes.isEmpty()) {
@@ -546,9 +536,7 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                         nodeData.getInverseViewerOrdering(),
                         nodeData.getIsManual());
             } else {
-                if (!objectDoc.isLocked()
-                        || objectDoc.getLockInfo().getOwner().equals(
-                                documentManager.getPrincipal().getName())) {
+                if (EloraDocumentHelper.isNotLockedOrLockedByMe(objectDoc)) {
                     eloraDocumentRelationManager.addRelation(documentManager,
                             subjectDoc, object, nodeData.getPredicateUri(),
                             isInverse, false, nodeData.getComment(),
@@ -666,11 +654,7 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
 
         } else {
             // Check if parent is locked by someone else
-            if (!objectDoc.isLocked()
-                    || objectDoc.getLockInfo().getOwner().equals(
-                            documentManager.getPrincipal().getName())) {
-                // RelationHelper.removeRelation(objectDoc, predicateResource,
-                // subjectDoc);
+            if (EloraDocumentHelper.isNotLockedOrLockedByMe(objectDoc)) {
                 eloraDocumentRelationManager.softDeleteRelation(documentManager,
                         objectDoc, nodeData.getPredicateUri(), subjectDoc);
             } else {
@@ -688,9 +672,6 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                 objectDoc);
         if (baseSubjectDoc != null && baseObjectDoc != null) {
             if (!isInverse) {
-                // RelationHelper.removeRelation(baseSubjectDoc,
-                // predicateResource,
-                // baseObjectDoc);
                 eloraDocumentRelationManager.softDeleteRelation(documentManager,
                         baseSubjectDoc, nodeData.getPredicateUri(),
                         baseObjectDoc);
@@ -701,9 +682,6 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                         + nodeData.getPredicateUri() + "|.");
 
             } else {
-                // RelationHelper.removeRelation(baseObjectDoc,
-                // predicateResource,
-                // baseSubjectDoc);
                 eloraDocumentRelationManager.softDeleteRelation(documentManager,
                         baseObjectDoc, nodeData.getPredicateUri(),
                         baseSubjectDoc);
@@ -836,7 +814,8 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
                 + currentDoc.getId() + "|.");
 
         if (objectDoc.getType().equals(EloraDoctypeConstants.CAD_DRAWING)) {
-            List<Statement> stmts = RelationHelper.getStatements(objectDoc,
+            List<Statement> stmts = RelationHelper.getStatements(
+                    EloraRelationConstants.ELORA_GRAPH_NAME, objectDoc,
                     new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF));
             for (Statement stmt : stmts) {
                 NodeInfo relatedObjectInfo = new NodeInfoImpl(stmt.getObject(),
@@ -926,6 +905,7 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
 
     public void refreshVersionList(RelationNodeData nodeData) {
         Map<String, String> versionList = new LinkedHashMap<>();
+        Map<String, String> reversedVersionList = new LinkedHashMap<>();
 
         DocumentModel doc = nodeData.getData();
         DocumentModel wcDoc = nodeData.getWcDoc();
@@ -938,7 +918,14 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
         // Add WC
         versionList.put(wcDoc.getId(), wcDoc.getVersionLabel() + " (WC)");
 
-        nodeData.setVersionList(versionList);
+        // Reverse order
+        List<String> keys = new ArrayList<String>(versionList.keySet());
+        Collections.reverse(keys);
+        for (String key : keys) {
+            reversedVersionList.put(key, versionList.get(key));
+        }
+
+        nodeData.setVersionList(reversedVersionList);
     }
 
     public void refreshNode(TreeTable table, TreeNode node) {
@@ -1024,5 +1011,18 @@ public abstract class EditableRelationTreeBean extends CoreTreeBean
         }
 
         return doc;
+    }
+
+    private boolean areRelationsEditable(DocumentModel doc,
+            boolean isAnarchic) {
+        if (
+        // If it is anarchic, we only need to not be locked by others
+        (isAnarchic && EloraDocumentHelper.isNotLockedOrLockedByMe(doc))
+                // If not anarchic, document has to be editable
+                || EloraDocumentHelper.isEditable(doc)) {
+            return true;
+        }
+
+        return false;
     }
 }

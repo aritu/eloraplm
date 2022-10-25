@@ -13,25 +13,22 @@
  */
 package com.aritu.eloraplm.integration.restoperations;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
+import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
-import org.nuxeo.ecm.platform.ui.web.util.SeamComponentCallHelper;
-
-import com.aritu.eloraplm.constants.EloraFacetConstants;
+import org.nuxeo.runtime.api.Framework;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
+import com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService;
+import com.aritu.eloraplm.exceptions.ArchivingConditionsNotMetException;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
- *
- * TODO: Beste WS motentzako balio izateko aldaketak jarri!!! TODO: Sortu
- * ganorazko zerbitzu bat artxibatzeko
  *
  * @author aritu
  *
@@ -41,25 +38,43 @@ public class ArchiveWorkspace {
 
     public static final String ID = "Elora.Plm.ArchiveWorkspace";
 
+    private static final Log log = LogFactory.getLog(ArchiveWorkspace.class);
+
     @Context
     private CoreSession session;
 
-    @OperationMethod
+    @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentRef docRef) throws EloraException {
         DocumentModel doc = session.getDocument(docRef);
         return run(doc);
     }
 
-    @OperationMethod
+    @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel doc) throws EloraException {
-        List<Object> params = new ArrayList<Object>();
-        params.add(doc);
+        String logInitMsg = "[run] [" + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
 
-        if (doc.hasFacet(EloraFacetConstants.FACET_QM_PROCESS)) {
+        try {
 
-            SeamComponentCallHelper.callSeamComponentByName(
-                    "archiveQmProcessAction", "archiveQmProcess",
-                    params.toArray());
+            WorkspaceArchiverService was = Framework.getService(
+                    WorkspaceArchiverService.class);
+            doc = was.archive(doc);
+
+            log.info(logInitMsg + "Workspace successfuly archived.");
+
+        } catch (ArchivingConditionsNotMetException e) {
+
+            // TODO Arrazoia gehitu errorera, eta gero facesmessagesen
+            // erakutsi?!
+
+            log.error(logInitMsg + e.getMessage(), e);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
         }
 
         return doc;

@@ -8,6 +8,34 @@
     
         <!-- vocabulary layouts -->
         
+         <layout name="elora_code_types">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_code_types_id</widget>
+            </row>
+            <row>
+              <widget>elora_code_types_doc_type</widget>
+            </row>
+            <row>
+              <widget>elora_code_types_mask_id</widget>
+            </row>
+            <row>
+              <widget>elora_code_types_condition_id</widget>
+            </row>
+            <row>
+              <widget>elora_code_types_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_code_types_ordering</widget>
+            </row>
+          </rows>
+        </layout>
+        
         <layout name="elora_code_masks">
           <templates>
             <template mode="any">
@@ -45,20 +73,39 @@
           </rows>
         </layout>
         
-        <!-- end of vocabulary layouts -->
-        
-        <layout name="elora_object_reference_auto">
+        <layout name="elora_code_conditions">
           <templates>
-            <template mode="any">/layouts/layout_default_template.xhtml
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
             </template>
           </templates>
           <rows>
             <row>
-              <widget>reference_auto</widget>
+              <widget>elora_code_conditions_id</widget>
+            </row>
+            <row>
+              <widget>elora_code_conditions_class_name</widget>
+            </row>
+            <row>
+              <widget>elora_code_conditions_method_name</widget>
+            </row>
+            <row>
+              <widget>elora_code_conditions_methodParams</widget>
+            </row>
+            <row>
+              <widget>elora_code_conditions_operator</widget>
+            </row>
+            <row>
+              <widget>elora_code_conditions_value</widget>
+            </row>
+            <row>
+              <widget>elora_code_conditions_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_code_conditions_ordering</widget>
             </row>
           </rows>
         </layout>
-        
         
     </extension>
     
@@ -66,6 +113,92 @@
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
         
         <!-- vocabulary widgets -->
+        
+             <!-- elora_code_types widgets -->
+            
+            <widget name="elora_code_types_id" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.id</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeTypes:id</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            
+            <widget name="elora_code_types_doc_type" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeTypes.docType</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeTypes:doc_type</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_types_mask_id" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeTypes.maskId</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeTypes:mask_id</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_types_condition_id" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeTypes.conditionId</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeTypes:condition_id</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">false</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_types_obsolete" type="template">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeTypes:obsolete</field>
+              </fields>
+              <properties mode="any">
+                <property name="template">
+                  /widgets/integer_yes_no_widget_template.xhtml
+                </property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_types_ordering" type="int">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.ordering</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeTypes:ordering</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="size">10</property>
+              </properties>
+            </widget>
+            
+            <!-- end of elora_code_types widgets -->
+            
         
             <!-- elora_code_masks widgets -->
             
@@ -189,47 +322,119 @@
             </widget>
             
             <!-- end of elora_code_masks widgets -->
+            
+            
+            <!-- elora_code_conditions widgets -->
+            
+            <widget name="elora_code_conditions_id" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.id</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeConditions:id</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_conditions_class_name" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeConditions.className</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeConditions:className</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_conditions_method_name" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeConditions.methodName</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeConditions:methodName</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_conditions_methodParams" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeConditions.methodParams</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeConditions:methodParams</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">false</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_conditions_operator" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeConditions.operator</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeConditions:operator</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_conditions_value" type="text">
+              <labels>
+                <label mode="any">eloraplm.label.codecreation.codeConditions.value</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeConditions:value</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="required">true</property>
+              </properties>
+            </widget>
+            
+             <widget name="elora_code_conditions_obsolete" type="template">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeConditions:obsolete</field>
+              </fields>
+              <properties mode="any">
+                <property name="template">
+                  /widgets/integer_yes_no_widget_template.xhtml
+                </property>
+              </properties>
+            </widget>
+            
+            <widget name="elora_code_conditions_ordering" type="int">
+              <labels>
+                <label mode="any">eloraplm.label.vocabulary.ordering</label>
+              </labels>
+              <translated>true</translated>
+              <fields>
+                <field>eloraCodeConditions:ordering</field>
+              </fields>
+              <properties widgetMode="edit">
+                <property name="size">10</property>
+              </properties>
+            </widget>
+            
+            <!-- end of elora_code_conditions widgets -->
 
         <!-- end of vocabulary widgets -->
-        
-        <!-- TODO Aldatu reference widget guztiak batera joateko: template bat konfigurazio desberdinekin, edo holako zeoze -->
-        <widget name="reference_required" type="template">
-          <labels>
-            <label mode="any">label.widget.elo.reference</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>elo:reference</field>
-          </fields>
-          <properties widgetMode="edit">
-            <property name="converter">#{layout.mode == 'create' ? 'codeCreationConverter' : ''}</property>
-          </properties>
-          <properties widgetMode="any">
-            <property name="required">true</property>
-            <property name="template">/widgets/reference_widget_template.xhtml</property>
-          </properties>
-        </widget>
-        
-        <widget name="reference_auto" type="template">
-          <labels>
-            <label mode="any">label.widget.elo.reference</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>elo:reference</field>
-          </fields>
-          <widgetModes>
-            <mode value="create">edit</mode>
-            <mode value="edit">#{empty layoutValue.elo.reference ? 'edit' : 'view'}</mode>
-          </widgetModes>
-          <properties widgetMode="edit">
-            <property name="converter">codeCreationConverter</property>
-            <property name="isHidden">#{layout.mode == 'create' ? true : empty layoutValue.elo.reference ? true : false}</property>
-          </properties>
-          <properties widgetMode="any">
-            <property name="template">/widgets/reference_widget_template.xhtml</property>
-          </properties>
-        </widget>
     
     </extension>
     

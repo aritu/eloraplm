@@ -14,6 +14,6 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-quality-management-TypeS
  management-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-
  quality-management-ContentViewService-contrib.xml,OSGI-INF/extensions
  /eloraplm-quality-management-ContentTemplateService-contrib.xml,OSGI-
- INF/extensions/eloraplm-qm-archive-ActionService-contrib.xml,OSGI-INF
- /extensions/eloraplm-qm-archive-WebResources-contrib.xml
+ INF/extensions/eloraplm-quality-management-WorkspaceArchiverService-c
+ ontrib.xml
 

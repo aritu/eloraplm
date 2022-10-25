@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.csv.ImporterService">
+
+  <implementation class="com.aritu.eloraplm.csvimporter.EloraCSVImporterImpl" />
+
+  <service>
+    <provide interface="com.aritu.eloraplm.csvimporter.EloraCSVImporter"/>
+  </service>
+
+</component>

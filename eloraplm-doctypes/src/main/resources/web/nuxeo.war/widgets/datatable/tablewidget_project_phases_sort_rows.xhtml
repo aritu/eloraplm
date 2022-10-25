@@ -1,0 +1,32 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+>
+
+    <h:commandButton 
+        image="#{projectPhasesTableBean.isFirstRow(field) ? '/icons/sort_up_disabled_16.png' : '/icons/sort_up_16.png'}"
+        title="#{messages['eloraplm.command.up']}"
+        actionListener="#{projectPhasesTableBean.moveRow('top', field)}"
+        disabled="#{projectPhasesTableBean.isFirstRow(field) ? true : false}"
+        style="display: block;">
+        <f:ajax execute="@form"
+            render="@form
+            :#{component.namingContainer.parent.namingContainer.clientId}:global_flag_validation_failed_render
+            :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:dtForm:#{tableWidgetId}" />
+    </h:commandButton>
+
+    <h:commandButton 
+        image="#{projectPhasesTableBean.isLastRow(field) ? '/icons/sort_down_disabled_16.png' : '/icons/sort_down_16.png'}"
+        title="#{messages['eloraplm.command.down']}"
+        actionListener="#{projectPhasesTableBean.moveRow('down', field)}"
+        disabled="#{projectPhasesTableBean.isLastRow(field) ? true : false}"
+        style="display: block;">
+        <f:ajax execute="@form"
+            render="@form
+            :#{component.namingContainer.parent.namingContainer.clientId}:global_flag_validation_failed_render
+            :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:dtForm:#{tableWidgetId}" />
+    </h:commandButton>
+
+</ui:composition>

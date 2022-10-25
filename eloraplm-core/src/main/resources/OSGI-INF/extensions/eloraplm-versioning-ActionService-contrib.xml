@@ -6,7 +6,7 @@
   
     <filter id="isNotZeroVersion">
       <rule grant="false">
-        <condition>#{eloraDocument.isZeroVersion(currentDocument.versionLabel)}</condition>
+        <condition>#{eloraDocument.isZeroVersion(currentDocument)}</condition>
       </rule>
     </filter>
     

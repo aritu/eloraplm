@@ -1,0 +1,41 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <nxu:set var="userLocale" value="#{fn:substring(userProfileActions.userProfile.userprofile.locale, 0, 2)}" >
+        
+        <nxu:inputList value="#{field_0}" model="answer" diff="true" >
+            
+            <h:panelGroup rendered="#{answer.rowData.taskId eq task.id}">
+                
+                <nxu:set var="question" value="#{eloraWebActions.getDocumentFromId(answer.rowData.question)}">
+                <nxu:set var="required" value="#{question.wfq.required}">
+                    <nxl:subWidget>
+                        <tr>
+                            <td class="labelColumn">
+                                <h:outputText styleClass="labelColumn#{required ? ' required' : ''}"
+                                    value="#{localizedLabelActions.getLocalizedLabelFromMap(question.wfq.labels.value, userLocale, question.wfq.questionId)}" />
+                            </td>
+                            <td class="fieldColumn">
+                                <nxl:widget widget="#{widget}" mode="#{widget.mode}" value="#{answer.rowData}" required="#{required}" />
+                            </td>
+                        </tr>
+                    </nxl:subWidget>
+                
+                </nxu:set>
+                </nxu:set>
+                
+            </h:panelGroup>
+            
+        </nxu:inputList>
+        
+    </nxu:set>
+    
+</ui:composition>
+

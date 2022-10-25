@@ -1,0 +1,20 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <h:selectOneMenu id="filterNode" value="#{value.nodeId}">
+        <f:selectItem itemValue="#{null}" itemLabel=" " />
+        <nxu:selectItems value="#{workflowFormActions.getNodesMap(value.workflowId)}"
+            var="wf" itemValue="#{wf.key}" itemLabel="#{messages[wf.value]}" />
+        <p:ajax event="change"
+            process="@this"
+            partialSubmit="true"
+            oncomplete="PF('#{widgetVar}').filter()" />
+    </h:selectOneMenu>
+    
+</ui:composition>
+

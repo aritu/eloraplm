@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.om.LifeCycleService.contrib">
+    <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
+    
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
+        <types>
+            <type name="OmProcess">eloraOmLifeCycle</type>
+        </types>
+    </extension>
+
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="lifecycle">
+        
+        <lifecycle name="eloraOmLifeCycle" defaultInitial="created">
+            <transitions>
+                <transition name="backToCreated" destinationState="created" />
+                <transition name="toWorking" destinationState="working" />
+                <transition name="backToWorking" destinationState="working" />
+<!--                 <transition name="startAsyncProcess" destinationState="asyncProcessing" /> -->
+                <transition name="complete" destinationState="completed" />
+                <transition name="reject" destinationState="rejected" />
+                <transition name="delete" destinationState="deleted" />
+                <transition name="undelete" destinationState="created" />
+            </transitions>
+            
+            <states>
+                <state name="created" initial="true" description="Default state">
+                    <transitions>
+<!--                         <transition>startAsyncProcess</transition> -->
+                        <transition>toWorking</transition>
+                        <transition>reject</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+<!--                 <state name="asyncProcessing" description="There is an asynchronous process running"> -->
+<!--                     <transitions> -->
+<!--                         <transition>backToCreated</transition> -->
+<!--                         <transition>toWorking</transition> -->
+<!--                     </transitions> -->
+<!--                 </state> -->
+                <state name="working" description="Process started">
+                    <transitions>
+                        <transition>backToCreated</transition>
+<!--                         <transition>startAsyncProcess</transition> -->
+                        <transition>complete</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="rejected" description="Process is rejected">
+                    <transitions>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="completed" description="Process is completed">
+                    <transitions>
+                        <transition>backToCreated</transition>
+                        <transition>backToWorking</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="deleted" description="Process is deleted">
+                    <transitions>
+                        <transition>undelete</transition>
+                    </transitions>
+                </state>
+            </states>
+        </lifecycle>
+        
+      </extension>
+
+</component>

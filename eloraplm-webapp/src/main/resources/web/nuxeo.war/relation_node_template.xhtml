@@ -12,6 +12,8 @@
     <tr>
       <td class="iconColumn">
         <f:subview rendered="#{node.documentModel != null}">
+            <nxu:graphicImage value="/icons/badge_template_12.png"
+                    styleClass="templateBadge" rendered="#{eloraDocumentTemplatesActions.isTemplate(node.documentModel)}"/>
             <h:graphicImage value="#{nxd:iconPath(node.documentModel)}" />
         </f:subview>
         <h:graphicImage rendered="#{node.resource and not node.QNameResource}" value="/icons/html.png" />

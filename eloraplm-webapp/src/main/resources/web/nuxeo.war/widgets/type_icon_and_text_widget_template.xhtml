@@ -5,7 +5,7 @@
   xmlns:nxd="http://nuxeo.org/nxweb/document"
   xmlns:nxu="http://nuxeo.org/nxweb/util">
   
-    <nxu:set var="currentDocumentTypeTranslated" value="#{messages[currentDocument.type]}">
+    <nxu:set var="currentDocumentTypeTranslated" value="#{messages[nxd:typeInfo(currentDocument).label]}">
         <h:graphicImage class="smallIcon" value="#{nxd:typeInfo(currentDocument).icon}" 
                                       title="#{currentDocumentTypeTranslated}"
                                       rendered="#{!empty nxd:typeInfo(currentDocument).icon}"/>

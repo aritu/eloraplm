@@ -35,5 +35,6 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-bom-ActionService-contri
  ns/eloraplm-bom-lists-WebLayoutManager-contrib.xml,OSGI-INF/extension
  s/eloraplm-bom-lists-WebResources-contrib.xml,OSGI-INF/extensions/elo
  raplm-bom-characteristics-LifeCycleService-contrib.xml,OSGI-INF/exten
- sions/eloraplm-bom-LifecycleConfigService-contrib.xml
+ sions/eloraplm-bom-LifecycleConfigService-contrib.xml,OSGI-INF/extens
+ ions/eloraplm-bom-lists-BomListNodeService-contrib.xml
 

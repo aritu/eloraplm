@@ -83,6 +83,14 @@
       </properties>
     </action>
     
+    <action id="eloraLockedDocumentsSearchContentView" order="60">
+      <category>SEARCH_CONTENT_VIEWS</category>
+      <properties>
+        <property name="contentViewName">elora_locked_documents_search</property>
+      </properties>
+    </action>
+    
+    
     <action id="defaultSearchContentView" order="90">
         <filter-id>only_for_manager</filter-id>
     </action>

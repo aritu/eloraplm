@@ -21,7 +21,6 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-change-management-TypeSe
  onService-contrib.xml,OSGI-INF/extensions/eloraplm-cm-batch-processin
  g-TypeService-contrib.xml,OSGI-INF/extensions/eloraplm-change-managem
  ent-ContentTemplateService-contrib.xml,OSGI-INF/extensions/eloraplm-c
- m-archive-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-cm-a
- rchive-WebResources-contrib.xml,OSGI-INF/extensions/eloraplm-cm-Lifec
- ycleConfigService-contrib.xml
+ m-LifecycleConfigService-contrib.xml,OSGI-INF/extensions/eloraplm-cha
+ nge-management-WorkspaceArchiverService-contrib.xml
 

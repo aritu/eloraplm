@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.workflows.forms.ActionService.contrib">
+
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+    
+        <filter id="workflowQuestionsTableButtons">
+            <rule grant="true">
+                <condition>#{webActions.getCurrentTabId('MAIN_TABS') eq 'admin' and adminViews.getCurrentView() eq 'manageWorkflowForms'}</condition>
+            </rule>
+        </filter>
+        
+        <filter id="showWorkflowAnswersTab">
+            <rule grant="true">
+                <facet>HasWorkflowForms</facet>
+            </rule>
+        </filter>
+    
+    </extension>
+    
+    <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <!-- Admin tab -->
+        
+        <action id="manageWorkflowForms"
+            link="/incl/admin/manage_workflow_forms.xhtml"
+            label="eloraplm.tab.admin.workflows.forms"
+            type="admin_rest_document_link" order="130">
+            <filter-id>WorkflowsEnabled</filter-id>
+            <category>NUXEO_ADMIN</category>
+        </action>
+        
+        <!-- ///////////////// -->
+        
+        <!-- Workflow answers tab -->
+        
+        <action id="TAB_WORKFLOW_ANSWERS" link="/incl/tabs/workflow_answers.xhtml"
+            order="100" label="eloraplm.label.workflows.forms.answers" type="rest_document_link">
+            <filter-id>WorkflowsEnabled</filter-id>
+            <filter-id>showWorkflowAnswersTab</filter-id>
+            <category>VIEW_ACTION_LIST</category>
+        </action>
+    
+        <!-- ///////////////// -->
+        
+        <!-- Datatable buttons -->
+        
+        <action id="btnAddWorkflowQuestion" order="20" label="eloraplm.command.workflows.forms.question.add" type="fancybox" icon="">
+            <category>DATATABLE_BUTTON</category>
+            <filter-id>workflowQuestionsTableButtons</filter-id>
+            <properties>
+                <property name="include">/incl/action/add_workflow_question.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+            </properties>
+        </action>
+        
+        <action id="btnSaveWorkflowQuestions" order="30" label="command.save" type="link" link="#{workflowQuestionsTableBean.save()}" icon="">
+            <category>DATATABLE_BUTTON</category>
+            <filter-id>workflowQuestionsTableButtons</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+        
+        <!-- ///////////////// -->
+        
+    </extension>
+    
+</component>

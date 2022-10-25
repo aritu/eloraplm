@@ -972,10 +972,16 @@ public class BomCharacteristicsHelper {
                     FacesContext context = FacesContext.getCurrentInstance();
                     Locale locale = context.getViewRoot().getLocale();
                     try {
+                        Long numberMaxIntegerPlacesL = updatedBomCharacteristic.getNumberMaxIntegerPlaces();
+                        Long numberMaxDecimalPlacesL = updatedBomCharacteristic.getNumberMaxDecimalPlaces();
                         EloraDecimalHelper.validateDecimalValue(locale,
                                 numberValue,
-                                updatedBomCharacteristic.getNumberMaxIntegerPlaces().toString(),
-                                updatedBomCharacteristic.getNumberMaxDecimalPlaces().toString());
+                                (numberMaxIntegerPlacesL != null
+                                        ? numberMaxIntegerPlacesL.intValue()
+                                        : null),
+                                (numberMaxDecimalPlacesL != null
+                                        ? numberMaxDecimalPlacesL.intValue()
+                                        : null));
                         updatedBomCharacteristic.setNumberValue(numberValue);
 
                         fillReloadingCharacteristicValueRelatedMessage(context,

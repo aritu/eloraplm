@@ -5,6 +5,7 @@ targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_bp">
 
   <xs:include schemaLocation="cm_batch_process_result_list_type.xsd" />
     
+  <!--  IMPACTED ITEMS -->  
   <xs:element name="itemsLastBatchProcess" type="xs:string"/>
   
   <xs:element name="itemsLastBatchProcessExecutor" type="xs:string"/>
@@ -19,7 +20,7 @@ targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_bp">
   
   <xs:element name="itemsLastBatchProcessFinished" type="xs:date"/>
   
-  
+  <!--  IMPACTED DOCS -->
   <xs:element name="docsLastBatchProcess" type="xs:string"/>
   
   <xs:element name="docsLastBatchProcessExecutor" type="xs:string"/>
@@ -33,6 +34,36 @@ targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cm_bp">
   <xs:element name="docsLastBatchProcessStarted" type="xs:date"/>
   
   <xs:element name="docsLastBatchProcessFinished" type="xs:date"/>
+  
+   <!--  MODIFIED ITEMS -->  
+  <xs:element name="modifiedItemsLastBatchProcess" type="xs:string"/>
+  
+  <xs:element name="modifiedItemsLastBatchProcessExecutor" type="xs:string"/>
+
+  <xs:element name="modifiedItemsLastBatchProcessResultMsg" type="xs:string"/>
+  
+  <xs:element name="modifiedItemsLastBatchProcessSuccessResultList" type="nxs:cmBatchProcessResultListType"/>
+  
+  <xs:element name="modifiedItemsLastBatchProcessErrorResultList" type="nxs:cmBatchProcessResultListType"/>
+  
+  <xs:element name="modifiedItemsLastBatchProcessStarted" type="xs:date"/>
+  
+  <xs:element name="modifiedItemsLastBatchProcessFinished" type="xs:date"/>
+  
+  <!--  MODIFIED DOCS -->
+  <xs:element name="modifiedDocsLastBatchProcess" type="xs:string"/>
+  
+  <xs:element name="modifiedDocsLastBatchProcessExecutor" type="xs:string"/>
+  
+  <xs:element name="modifiedDocsLastBatchProcessResultMsg" type="xs:string"/>
+  
+  <xs:element name="modifiedDocsLastBatchProcessSuccessResultList" type="nxs:cmBatchProcessResultListType"/>
+  
+  <xs:element name="modifiedDocsLastBatchProcessErrorResultList" type="nxs:cmBatchProcessResultListType"/>
+  
+  <xs:element name="modifiedDocsLastBatchProcessStarted" type="xs:date"/>
+  
+  <xs:element name="modifiedDocsLastBatchProcessFinished" type="xs:date"/>
   
   
   <xs:element name="needToBeRefreshed" type="xs:boolean"/>

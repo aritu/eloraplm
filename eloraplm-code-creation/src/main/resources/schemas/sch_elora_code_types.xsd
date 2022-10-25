@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<xs:schema
+    targetNamespace="http://eloraplm.aritu.com/schemas/sch_elora_code_types"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+
+    <xs:element name="id" type="xs:string"/>
+    <xs:element name="doc_type" type="xs:string"/>
+    <xs:element name="mask_id" type="xs:string"/>
+    <xs:element name="condition_id" type="xs:string"/>
+    <xs:element name="obsolete" type="xs:integer" default="0"/>
+    <xs:element name="ordering" type="xs:integer" default="10000000"/>
+
+</xs:schema>

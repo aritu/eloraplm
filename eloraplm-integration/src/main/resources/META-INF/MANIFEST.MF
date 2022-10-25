@@ -19,5 +19,6 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-integration-OperationSer
  nsions/eloraplm-integration-config-TypeService-contrib.xml,OSGI-INF/e
  xtensions/eloraplm-integration-config-WebLayoutManager-contrib.xml,OS
  GI-INF/extensions/eloraplm-integration-LifeCycleconfigService-contrib
- .xml
+ .xml,OSGI-INF/extensions/eloraplm-integration-ContentTemplateService-
+ contrib.xml
 

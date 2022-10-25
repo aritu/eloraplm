@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.om.WebLayoutManager.contrib">
+    
+    <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <!-- datatable layouts -->
+        
+        <layout name="om_imp_dt">
+            <templates>
+                <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="icon_type">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnHeading"></property>
+                    </properties>
+                    <widget>listing_icon_type</widget>
+                </column>
+                <column name="reference">
+                    <properties mode="any">
+                        <property name="columnStyleClass">referenceColumn</property>
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="title_and_anarchic_top_docs">
+                    <properties mode="any">
+                        <property name="columnHeading">label.title</property>
+                    </properties>
+                    <widget>listing_title</widget>
+                    <widget>listing_anarchic_top_docs</widget>
+                </column>
+                <column name="lock_icon">
+                    <properties mode="any">
+                        <property name="columnHeading"></property>
+                    </properties>
+                    <widget>listing_version_lock_icon</widget>
+                </column>
+                <column name="version_and_visualized_type">
+                    <properties mode="any">
+                        <property name="columnHeading"></property>
+                    </properties>
+                    <widget>listing_version_and_visualized_type</widget>
+                </column>
+                <column name="origin_state">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.om.originState</property>
+                    </properties>
+                    <widget>listing_colored_lifecycle_state</widget>
+                </column>
+                <column name="destination_state">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.om.destinationState</property>
+                    </properties>
+                    <widget>listing_colored_destination_state</widget>
+                </column>
+                <column name="is_ok">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnHeading"></property>
+                    </properties>
+                    <widget>listing_is_ok</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="headerFiltersTemplate"></property>
+                <property name="tableTitle">eloraplm.title.om.impactList</property>
+                <property name="tableStyle">table-layout: auto;</property>
+                <property name="factory">#{omImpactedRows}</property>
+                <property name="rowGroup">#{rowData.classification}</property>
+                <property name="rowGroupHeader">#{rowData.classification}</property>
+                <property name="expandableRowGroups">true</property>
+            </properties>
+            <properties mode="edit">
+                <property name="selectionMode">multiple</property>
+                <property name="disabledSelection">#{not rowData.isAnarchic}</property>
+                <property name="buttonsInsideForm">true</property>
+                <property name="removeRows">false</property>
+            </properties>
+        </layout>
+        
+        <layout name="om_proc_dt">
+            <templates>
+                <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="icon_type">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnHeading"></property>
+                    </properties>
+                    <widget>listing_icon_type</widget>
+                </column>
+                <column name="reference">
+                    <properties mode="any">
+                        <property name="columnStyleClass">referenceColumn</property>
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.title</property>
+                    </properties>
+                    <widget>listing_title</widget>
+                </column>
+                <column name="version_and_visualized_type">
+                    <properties mode="any">
+                        <property name="columnHeading"></property>
+                    </properties>
+                    <widget>listing_version_and_visualized_type</widget>
+                </column>
+                <column name="origin_state">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.om.originState</property>
+                    </properties>
+                    <widget>listing_colored_origin_state</widget>
+                </column>
+                <column name="destination_state">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.om.destinationState</property>
+                    </properties>
+                    <widget>listing_colored_destination_state</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="headerFiltersTemplate"></property>
+                <property name="tableTitle">eloraplm.title.om.processedList</property>
+                <property name="tableStyle">table-layout: auto;</property>
+                <property name="removeRows">false</property>
+                <property name="factory">#{omProcessedRows}</property>
+                <property name="rowGroup">#{rowData.classification}</property>
+                <property name="rowGroupHeader">#{rowData.classification}</property>
+                <property name="expandableRowGroups">true</property>
+            </properties>
+        </layout>
+        
+    </extension>
+    
+    <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <widget name="listing_colored_origin_state" type="template">
+            <labels>
+                <label mode="any">eloraplm.label.om.originState</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>originState</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_colored_destination_state" type="template">
+            <labels>
+                <label mode="any">eloraplm.label.om.destinationState</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>destinationState</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_is_ok" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>isOk</field>
+                <field>errorMsg</field>
+                <field>errorMsgParam</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="template">/widgets/listing/listing_is_ok_widget_template.xhtml</property>
+            </properties>
+        </widget>
+        
+        <widget name="listing_anarchic_top_docs" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>isAnarchic</field>
+                <field>anarchicTopDocs</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="template">/widgets/listing/listing_anarchic_top_docs_widget_template.xhtml</property>
+            </properties>
+        </widget>
+        
+        <!-- datatable widgets -->
+        
+        <widget name="om_imp_dt" type="datatable">
+            <labels>
+                <label mode="any">eloraplm.title.om.impactList</label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="datatableLayout">om_imp_dt</property>
+            </properties>
+        </widget>
+        
+        <widget name="om_proc_dt" type="datatable">
+            <labels>
+                <label mode="any">eloraplm.title.om.processedList</label>
+            </labels>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="datatableLayout">om_proc_dt</property>
+            </properties>
+        </widget>
+        
+    </extension>
+    
+</component>

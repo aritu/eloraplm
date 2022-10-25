@@ -77,7 +77,7 @@ public class DocImpactedItemsTreeBean extends ImpactedItemsTreeBean
             CMEventNames.CM_DOC_IMPACT_MATRIX_CALCULATED,
             CMEventNames.CM_REFRESH_DOCS_IMPACT_MATRIX })
     @BypassInterceptors
-    public void markTreeToBeRealoded() {
+    public void markTreeToBeReloaded() {
         reloadDocImpactedItems = true;
     }
 

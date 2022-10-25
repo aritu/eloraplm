@@ -42,82 +42,49 @@ public class EloraOrderingPriorityHelper {
 
         Integer orderingPriority = null;
 
-        switch (docType) {
-        // --------------------------------------------------------------
-        // ITEMS
-        // --------------------------------------------------------------
-        case EloraDoctypeConstants.BOM_PRODUCT:
+        if (docType.equals(EloraDoctypeConstants.BOM_PRODUCT)) {
             orderingPriority = OrderingPriorityConstants.BOM_PRODUCT;
-            break;
-        case EloraDoctypeConstants.BOM_PART:
+        } else if (EloraDocumentTypesHelper.getDocumentType(
+                EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
+                        EloraDocumentTypesHelper.getDocumentType(docType))) {
             orderingPriority = OrderingPriorityConstants.BOM_PART;
-            break;
-        case EloraDoctypeConstants.BOM_TOOL:
+        } else if (docType.equals(EloraDoctypeConstants.BOM_TOOL)) {
             orderingPriority = OrderingPriorityConstants.BOM_TOOL;
-            break;
-        case EloraDoctypeConstants.BOM_PACKAGING:
+        } else if (docType.equals(EloraDoctypeConstants.BOM_PACKAGING)) {
             orderingPriority = OrderingPriorityConstants.BOM_PACKAGING;
-            break;
-        case EloraDoctypeConstants.BOM_SPECIFICATION:
+        } else if (docType.equals(EloraDoctypeConstants.BOM_SPECIFICATION)) {
             orderingPriority = OrderingPriorityConstants.BOM_SPECIFICATION;
-            break;
-        case EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT:
+        } else if (docType.equals(EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT)) {
             orderingPriority = OrderingPriorityConstants.BOM_CUSTOMER_PRODUCT;
-            break;
-        case EloraDoctypeConstants.BOM_MANUFACTURER_PART:
+        } else if (docType.equals(
+                EloraDoctypeConstants.BOM_MANUFACTURER_PART)) {
             orderingPriority = OrderingPriorityConstants.BOM_MANUFACTURER_PART;
-            break;
-        // --------------------------------------------------------------
-        // CAD DOCUMENTS
-        // --------------------------------------------------------------
-        case EloraDoctypeConstants.CAD_DRAWING:
+        } else if (docType.equals(EloraDoctypeConstants.CAD_DRAWING)) {
             orderingPriority = OrderingPriorityConstants.CAD_DRAWING;
-            break;
-        case EloraDoctypeConstants.CAD_ASSEMBLY:
+        } else if (docType.equals(EloraDoctypeConstants.CAD_ASSEMBLY)) {
             orderingPriority = OrderingPriorityConstants.CAD_ASSEMBLY;
-            break;
-        case EloraDoctypeConstants.CAD_PART:
+        } else if (docType.equals(EloraDoctypeConstants.CAD_PART)) {
             orderingPriority = OrderingPriorityConstants.CAD_PART;
-            break;
-        case EloraDoctypeConstants.CAD_DESIGN_TABLE:
+        } else if (docType.equals(EloraDoctypeConstants.CAD_DESIGN_TABLE)) {
             orderingPriority = OrderingPriorityConstants.CAD_DESIGN_TABLE;
-            break;
-        // --------------------------------------------------------------
-        // OTHER DOCUMENTS
-        // --------------------------------------------------------------
-        case NuxeoDoctypeConstants.FILE:
+        } else if (docType.equals(NuxeoDoctypeConstants.FILE)) {
             orderingPriority = OrderingPriorityConstants.FILE;
-            break;
-        case NuxeoDoctypeConstants.NOTE:
+        } else if (docType.equals(NuxeoDoctypeConstants.NOTE)) {
             orderingPriority = OrderingPriorityConstants.NOTE;
-            break;
-        case NuxeoDoctypeConstants.PICTURE:
+        } else if (docType.equals(NuxeoDoctypeConstants.PICTURE)) {
             orderingPriority = OrderingPriorityConstants.PICTURE;
-            break;
-        case NuxeoDoctypeConstants.VIDEO:
+        } else if (docType.equals(NuxeoDoctypeConstants.VIDEO)) {
             orderingPriority = OrderingPriorityConstants.VIDEO;
-            break;
-        case NuxeoDoctypeConstants.AUDIO:
+        } else if (docType.equals(NuxeoDoctypeConstants.AUDIO)) {
             orderingPriority = OrderingPriorityConstants.AUDIO;
-            break;
-        // --------------------------------------------------------------
-        // ELORA WORKSPACES
-        // --------------------------------------------------------------
-        case CMDoctypeConstants.CM_ECO:
+        } else if (docType.equals(CMDoctypeConstants.CM_ECO)) {
             orderingPriority = OrderingPriorityConstants.CM_ECO;
-            break;
-        case CMDoctypeConstants.CM_ECR:
+        } else if (docType.equals(CMDoctypeConstants.CM_ECR)) {
             orderingPriority = OrderingPriorityConstants.CM_ECR;
-            break;
-        case CMDoctypeConstants.CM_PR:
+        } else if (docType.equals(CMDoctypeConstants.CM_PR)) {
             orderingPriority = OrderingPriorityConstants.CM_PR;
-            break;
-        // --------------------------------------------------------------
-        // DEFAULT
-        // --------------------------------------------------------------
-        default:
+        } else {
             orderingPriority = OrderingPriorityConstants.DEFAULT;
-            break;
         }
 
         log.trace(logInitMsg + "--- EXIT --- with orderingPriority = |"

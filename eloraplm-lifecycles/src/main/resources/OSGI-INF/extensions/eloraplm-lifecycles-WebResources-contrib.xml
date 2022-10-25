@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.lifecycles.WebResources.contrib">
+
+    <require>org.nuxeo.theme.nuxeo.webapp</require>
+
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
+        <bundle name="nuxeo_includes">
+            <resources append="true">
+                <resource>lifecycle-state-functions.xhtml</resource>
+            </resources>
+        </bundle>
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+      <resource name="lifecycle-state-functions.xhtml" type="xhtml">
+        <uri>/incl/lifecycle-state-functions.xhtml</uri>
+      </resource>
+    </extension>
+
+</component>

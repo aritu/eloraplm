@@ -1,25 +1,17 @@
-id,label,parent,obsolete
-id_tcl1_1,Tool Line 1,,0
-id_tcl1_2,Tool Line 2,,0
-id_tcl1_3,Tool Line 3,,0
-id_tcl2_1_1,Tool Type 1.1,id_tcl1_1,0
-id_tcl2_1_2,Tool Type 1.2,id_tcl1_1,0
-id_tcl2_1_3,Tool Type 1.3,id_tcl1_1,0
-id_tcl2_2_1,Tool Type 2.1,id_tcl1_2,0
-id_tcl2_2_2,Tool Type 2.2,id_tcl1_2,0
-id_tcl2_2_3,Tool Type 2.3,id_tcl1_2,0
-id_tcl2_3_1,Tool Type 3.1,id_tcl1_3,0
-id_tcl2_3_2,Tool Type 3.2,id_tcl1_3,0
-id_tcl2_3_3,Tool Type 3.3,id_tcl1_3,0
-id_tcl3_1_1_1,Tool Family 1.1.1,id_tcl2_1_1,0
-id_tcl3_1_1_2,Tool Family 1.1.2,id_tcl2_1_1,0
-id_tcl3_1_2_1,Tool Family 1.2.1,id_tcl2_1_2,0
-id_tcl3_1_2_2,Tool Family 1.2.2,id_tcl2_1_2,0
-id_tcl3_2_1_1,Tool Family 2.1.1,id_tcl2_2_1,0
-id_tcl3_2_1_2,Tool Family 2.1.2,id_tcl2_2_1,0
-id_tcl3_2_2_1,Tool Family 2.2.1,id_tcl2_2_2,0
-id_tcl3_2_2_2,Tool Family 2.2.2,id_tcl2_2_2,0
-id_tcl3_3_1_1,Tool Family 3.1.1,id_tcl2_3_1,0
-id_tcl3_3_1_2,Tool Family 3.1.2,id_tcl2_3_1,0
-id_tcl3_3_2_1,Tool Family 3.2.1,id_tcl2_3_2,0
-id_tcl3_3_2_2,Tool Family 3.2.2,id_tcl2_3_2,0
+id,label,parent,obsolete,ordering
+"injection mold","Molde de Inyección","","0","001"
+"blow  mold","Molde de soplado","","0","002"
+"forming mold","Molde de conformado","","0","003"
+"pressing mold","Molde de prensado","","0","004"
+"assembly tooling","Utillaje de Montaje","","0","005"
+"verification tooling","Utillaje de Verificación","","0","006"
+"clamping tooling","Utillaje de Sujección","","0","007"
+"measurement tooling","Utillaje de Medición","","0","008"
+"marking tooling","Utillaje de Marcado","","0","009"
+"drilling tool","Herramienta de Taladrado","","0","010"
+"cutting tool","Herramienta de Corte","","0","011"
+"machining tool","Herramienta de mecanizado","","0","012"
+"mounting tool","Herramienta de montaje","","0","013"
+"gripping tool","Herramienta de Sujeción","","0","014"
+"measuring tool","Herramienta de Medición","","0","015"
+"forming tool","Herramienta de Conformado","","0","016"

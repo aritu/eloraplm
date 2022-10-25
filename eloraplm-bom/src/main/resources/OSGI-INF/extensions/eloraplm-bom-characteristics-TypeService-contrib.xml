@@ -22,6 +22,7 @@
     <!--  Folder for BomCharacteristicMasters -->
     <doctype extends="Folder" name="BomCharacteristicMastersFolder">
       <facet name="SystemDocument"/>
+      <facet name="HiddenInNavigation"/>
       <subtypes>
         <type>Folder</type>
       </subtypes>
@@ -83,7 +84,7 @@
   
     <type id="BomCharacteristicMastersFolder">
       <label>BomCharacteristicMastersFolder</label>
-      <icon>/icons/folder_16.gif</icon>
+      <icon>/icons/folder_16.png</icon>
       <bigIcon>/icons/folder_100.png</bigIcon>
       <description>BomCharacteristicMastersFolder.description</description>
       <default-view>view_documents</default-view>
@@ -114,7 +115,7 @@
 
     <type id="BomPartCharacteristicMaster">
       <label>BomPartCharacteristicMaster</label>
-      <icon>/icons/bom_part_charac_16.gif</icon>
+      <icon>/icons/bom_part_charac_16.png</icon>
       <bigIcon>/icons/bom_part_charac_100.png</bigIcon>
       <category>BomCharacteristicMaster</category>
       <description>BomPartCharacteristicMaster.description</description>
@@ -127,7 +128,7 @@
    
    <type id="BomProductCharacteristicMaster">
       <label>BomProductCharacteristicMaster</label>
-      <icon>/icons/bom_product_charac_16.gif</icon>
+      <icon>/icons/bom_product_charac_16.png</icon>
       <bigIcon>/icons/bom_product_charac_100.png</bigIcon>
       <category>BomCharacteristicMaster</category>
       <description>BomProductCharacteristicMaster.description</description>
@@ -140,7 +141,7 @@
    
    <type id="BomToolCharacteristicMaster">
       <label>BomToolCharacteristicMaster</label>
-      <icon>/icons/bom_tool_charac_16.gif</icon>
+      <icon>/icons/bom_tool_charac_16.png</icon>
       <bigIcon>/icons/bom_tool_charac_100.png</bigIcon>
       <category>BomCharacteristicMaster</category>
       <description>BomToolCharacteristicMaster.description</description>
@@ -153,7 +154,7 @@
    
    <type id="BomPackagingCharacteristicMaster">
       <label>BomPackagingCharacteristicMaster</label>
-      <icon>/icons/bom_packaging_charac_16.gif</icon>
+      <icon>/icons/bom_packaging_charac_16.png</icon>
       <bigIcon>/icons/bom_packaging_charac_100.png</bigIcon>
       <category>BomCharacteristicMaster</category>
       <description>BomPackagingCharacteristicMaster.description</description>
@@ -166,7 +167,7 @@
    
    <type id="BomSpecificationCharacteristicMaster">
       <label>BomSpecificationCharacteristicMaster</label>
-      <icon>/icons/bom_specification_charac_16.gif</icon>
+      <icon>/icons/bom_specification_charac_16.png</icon>
       <bigIcon>/icons/bom_specification_charac_100.png</bigIcon>
       <category>BomCharacteristicMaster</category>
       <description>BomSpecificationCharacteristicMaster.description</description>

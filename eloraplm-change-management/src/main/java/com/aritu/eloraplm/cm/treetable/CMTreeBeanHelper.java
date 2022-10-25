@@ -104,8 +104,8 @@ public class CMTreeBeanHelper {
     }
 
     public static void processRefreshNodeTriggeredByIsManaged(
-            CMItemsNodeData nodeData, CoreSession session)
-            throws EloraException {
+            CMItemsNodeData nodeData, CoreSession session,
+            Map<String, String> messages) throws EloraException {
 
         boolean isManaged = nodeData.getIsManaged();
 
@@ -128,7 +128,7 @@ public class CMTreeBeanHelper {
 
                 if (nodeData.getDestinationItemVersionList() == null
                         || nodeData.getDestinationItemVersionList().size() == 0) {
-                    loadDestinationVersions(nodeData, session);
+                    loadDestinationVersions(nodeData, session, messages);
                 }
 
                 nodeData.setDestinationItemUid(
@@ -169,7 +169,8 @@ public class CMTreeBeanHelper {
     }
 
     public static void loadDestinationVersions(CMItemsNodeData nodeData,
-            CoreSession session) throws EloraException {
+            CoreSession session, Map<String, String> messages)
+            throws EloraException {
 
         Map<String, String> versionList = new HashMap<String, String>();
 
@@ -179,7 +180,7 @@ public class CMTreeBeanHelper {
 
             // calculate the version list
             versionList = CMHelper.calculateModifiableItemVersionList(session,
-                    destinationItemWcUid);
+                    destinationItemWcUid, messages);
 
             // Add also the WC at the end
             versionList.put(destinationItemWcUid,

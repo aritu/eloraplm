@@ -23,9 +23,16 @@ public class CodeCreationConfigConstants {
 
     public static final String VOC_CODE_MASKS = "elora_code_masks";
 
+    public static final String VOC_CODE_CONDITIONS = "elora_code_conditions";
+
     /*
      * Properties
      */
+    public static final String PROP_CODE_TYPES_DOC_TYPE = "doc_type";
+
+    public static final String PROP_CODE_TYPES_MASK_ID = "mask_id";
+
+    public static final String PROP_CODE_TYPES_CONDITION_ID = "condition_id";
 
     public static final String PROP_CODE_MASKS_PREFIX = "prefix";
 
@@ -38,5 +45,15 @@ public class CodeCreationConfigConstants {
     public static final String PROP_CODE_MASKS_MAXVALUE = "maxValue";
 
     public static final String PROP_CODE_MASKS_SEQUENCEKEY = "sequenceKey";
+
+    public static final String PROP_CODE_CONDITIONS_CLASSNAME = "className";
+
+    public static final String PROP_CODE_CONDITIONS_METHODNAME = "methodName";
+
+    public static final String PROP_CODE_CONDITIONS_METHODPARAMS = "methodParams";
+
+    public static final String PROP_CODE_CONDITIONS_OPERATOR = "operator";
+
+    public static final String PROP_CODE_CONDITIONS_VALUE = "value";
 
 }

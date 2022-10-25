@@ -36,6 +36,8 @@ public class ProjectConstants {
 
     public static final String PROJECT_PHASE_TYPE = "type";
 
+    public static final String PROJECT_PHASE_TITLE = "phaseTitle";
+
     public static final String PROJECT_PHASE_DESCRIPTION = "phaseDescription";
 
     public static final String PROJECT_PHASE_MANAGER = "phaseManager";
@@ -52,11 +54,42 @@ public class ProjectConstants {
 
     public static final String PROJECT_PHASE_COMMENT = "comment";
 
+    public static final String PROJECT_PHASE_RESULT = "result";
+
+    public static final String PROJECT_PHASE_OBSOLETE = "obsolete";
+
     /* Deliverables info */
 
     public static final String PROJECT_PHASE_DELIVERABLES_ISREQUIRED = "isRequired";
 
     public static final String PROJECT_PHASE_DELIVERABLES_NAME = "name";
 
-    public static final String PROJECT_PHASE_DELIVERABLES_DOCUMENT = "document";
+    public static final String PROJECT_PHASE_DELIVERABLES_DOCUMENTWCPROXY = "documentWCProxy";
+
+    public static final String PROJECT_PHASE_DELIVERABLES_DOCUMENTAV = "documentAV";
+
+    public static final String PROJECT_PHASE_DELIVERABLES_ANCHORINGMSG = "anchoringMsg";
+
+    public static final String PROJECT_PHASE_DELIVERABLES_LINK = "link";
+
+    /* Deliverables status */
+
+    public static final String PROJECT_PHASE_DELIVERABLES_STATUS_ALL_OPTIONAL = "allOptional";
+
+    public static final String PROJECT_PHASE_DELIVERABLES_STATUS_NOT_DEFINED = "notDefined";
+
+    public static final String PROJECT_PHASE_DELIVERABLES_STATUS_NOT_ANCHORED = "notAnchored";
+
+    public static final String PROJECT_PHASE_DELIVERABLES_STATUS_COMPLETED = "completed";
+
+    /* Actions */
+
+    public static final String PROJECT_PHASE_MOVE_DOWN = "down";
+
+    public static final String PROJECT_PHASE_MOVE_TOP = "top";
+
+    /* Misc */
+    public static final String PROJECT_PHASE_FIRST_ROW_ID = "001";
+
+    public static final String PROJECT_PHASE_ROW_ID_SEPARATOR = "_";
 }

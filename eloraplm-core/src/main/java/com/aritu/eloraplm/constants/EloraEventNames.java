@@ -29,4 +29,6 @@ public class EloraEventNames {
 
     public static final String ELORA_BOM_STRUCT_UPDATED_EVENT = "EloraBomStructUpdatedEvent";
 
+    public static final String ELORA_BOM_LIST_SUBTAB_CHANGED_EVENT = "EloraBomListSubtabChangedEvent";
+
 }

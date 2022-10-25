@@ -38,6 +38,12 @@ public class BomCompositionNodeService extends RelationNodeService
 
     protected boolean showDirectDocuments;
 
+    protected int maxOrdering;
+
+    public int getMaxOrdering() {
+        return maxOrdering;
+    }
+
     public BomCompositionNodeService(CoreSession session,
             boolean showUniqueVersionsPerDocument,
             boolean showObsoleteStateDocuments, boolean showDirectDocuments)
@@ -45,10 +51,9 @@ public class BomCompositionNodeService extends RelationNodeService
         super(session);
 
         treeDirection = TREE_DIRECTION_COMPOSITION;
-
         relationType = RELATION_TYPE_BOM;
-
         nodeId = 0;
+        maxOrdering = 0;
 
         this.showUniqueVersionsPerDocument = showUniqueVersionsPerDocument;
         this.showObsoleteStateDocuments = showObsoleteStateDocuments;
@@ -76,6 +81,10 @@ public class BomCompositionNodeService extends RelationNodeService
             String comment, Integer ordering, Integer directorOrdering,
             Integer viewerOrdering, Integer inverseViewerOrdering,
             Boolean isManual, boolean isSpecial, boolean isDirect) {
+
+        if (ordering != null && ordering > maxOrdering) {
+            maxOrdering = ordering;
+        }
 
         return new BaseRelationNodeData(id, level, docId, data, wcDoc, stmt,
                 predicateUri, quantity, comment, ordering, directorOrdering,

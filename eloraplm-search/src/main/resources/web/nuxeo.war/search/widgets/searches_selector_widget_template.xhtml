@@ -1,0 +1,20 @@
+<div xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:a4j="http://richfaces.org/a4j"
+  class="searchesSelector">
+
+  <a4j:region id="#{widget.id}_region">
+    <h:selectOneMenu
+      value="#{searchUIActions.currentSelectedSavedSearchId}"
+      id="#{widget.id}" styleClass="langSelect"
+      valueChangeListener="#{searchUIActions.refreshAndRewind}"
+      onchange="submit()">
+      <f:selectItems value="#{searchUIActions.allSavedSearchesSelectItems}" />
+    </h:selectOneMenu>
+  </a4j:region>
+  
+  <h:outputScript target="#{pageJsTarget}">
+    jQuery("[id$='#{widget.id}']").select2({width:"100%"});
+  </h:outputScript>
+
+</div>

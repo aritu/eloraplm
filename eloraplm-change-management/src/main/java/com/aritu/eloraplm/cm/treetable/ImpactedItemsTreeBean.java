@@ -70,7 +70,7 @@ public abstract class ImpactedItemsTreeBean extends CoreTreeBean
         try {
             DocumentModel currentDoc = getCurrentDocument();
             nodeService = new ImpactedItemsNodeService(documentManager,
-                    itemType);
+                    itemType, messages);
             setRoot(nodeService.getRoot(currentDoc));
             setIsDirty(false);
             setHasUnreadableNodes(false);
@@ -117,14 +117,12 @@ public abstract class ImpactedItemsTreeBean extends CoreTreeBean
     }
 
     public void refreshNode(TreeTable table, TreeNode node,
-            String triggeredField, boolean updateChildren)
-            throws EloraException {
+            String triggeredField, boolean updateChildren) {
         refreshNode(node, triggeredField);
         EloraAjax.updateTreeTableRow(table, node.getRowKey(), updateChildren);
     }
 
-    public void refreshNode(TreeNode node, String triggeredField)
-            throws EloraException {
+    public void refreshNode(TreeNode node, String triggeredField) {
         String logInitMsg = "[" + itemType + "] [refreshNode] ["
                 + documentManager.getPrincipal().getName() + "] ";
         // log.trace(logInitMsg + "--- ENTER --- ");
@@ -338,7 +336,7 @@ public abstract class ImpactedItemsTreeBean extends CoreTreeBean
                     selectedNodeData.setIsUpdated(true);
 
                     CMTreeBeanHelper.processRefreshNodeTriggeredByIsManaged(
-                            selectedNodeData, documentManager);
+                            selectedNodeData, documentManager, messages);
 
                     setIsDirty(true);
                 }

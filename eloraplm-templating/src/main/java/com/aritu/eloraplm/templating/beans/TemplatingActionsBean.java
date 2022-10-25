@@ -55,13 +55,18 @@ public class TemplatingActionsBean implements Serializable {
     protected Map<String, String> messages;
 
     public String render(String templateId) {
+        DocumentModel currentDocument = navigationContext.getCurrentDocument();
+        return render(currentDocument, templateId);
+    }
+
+    public String render(DocumentModel doc, String templateId) {
         try {
-            DocumentModel currentDocument = navigationContext.getCurrentDocument();
+
             TemplatingService ts = Framework.getService(
                     TemplatingService.class);
-            Blob rendition = ts.processTemplate(templateId, currentDocument);
+            Blob rendition = ts.processTemplate(templateId, doc);
             String filename = rendition.getFilename();
-            ComponentUtils.download(currentDocument, null, rendition, filename,
+            ComponentUtils.download(doc, null, rendition, filename,
                     "templateRendition");
             return null;
         } catch (NuxeoException e) {

@@ -10,8 +10,8 @@ var row = null;
 var tableWidgetId = null;
 
 function prepareTablePartialAjaxUpdate(caller) {
-    row = jQuery('[id="' + caller.id + '"]').closest("tr");
-    tableWidgetId = caller.id.split(':')[0];
+    row = jQuery('[id="' + caller + '"]').closest("tr");
+    tableWidgetId = caller.split(':')[0];
     
     PF('tableBlocker_'+tableWidgetId).show();
 }

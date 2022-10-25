@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.aritu.eloraplm</groupId>
+        <artifactId>eloraplm-parent</artifactId>
+        <version>20221021</version>
+    </parent>
+
+    <properties>
+        <main.basedir>${project.basedir}${file.separator}..</main.basedir>
+    </properties>
+
+    <artifactId>eloraplm-csv-importer</artifactId>
+    <name>eloraplm-csv-importer</name>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.nuxeo.common</groupId>
+            <artifactId>nuxeo-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.runtime</groupId>
+            <artifactId>nuxeo-runtime</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.ecm.core</groupId>
+            <artifactId>nuxeo-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.ecm.core</groupId>
+            <artifactId>nuxeo-core-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.ecm.core</groupId>
+            <artifactId>nuxeo-core-query</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.ecm.core</groupId>
+            <artifactId>nuxeo-core-schema</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.ecm.automation</groupId>
+            <artifactId>nuxeo-automation-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.ecm.automation</groupId>
+            <artifactId>nuxeo-automation-features</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.seam</groupId>
+            <artifactId>jboss-seam</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.ecm.platform</groupId>
+            <artifactId>nuxeo-platform-relations-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nuxeo.ecm.platform</groupId>
+            <artifactId>nuxeo-admin-center</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.4.0.201906121030-r</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-pdm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aritu.eloraplm</groupId>
+            <artifactId>eloraplm-code-creation</artifactId>
+        </dependency>
+    </dependencies>
+
+<!--     <build> -->
+<!--         <plugins> -->
+<!--             <plugin> -->
+<!--                 <groupId>org.apache.maven.plugins</groupId> -->
+<!--                 <artifactId>maven-antrun-plugin</artifactId> -->
+<!--                 <version>3.0.0</version> -->
+<!--                 <executions> -->
+<!--                     <execution> -->
+<!--                         <id>separate-seam-classes</id> -->
+<!--                         <phase>process-classes</phase> -->
+<!--                         <configuration> -->
+<!--                             <target> -->
+<!--                                 <taskdef resource="net/sf/antcontrib/antlib.xml" /> -->
+<!--                                 <ant antfile="${basedir}/../build.xml" /> -->
+<!--                             </target> -->
+<!--                         </configuration> -->
+<!--                         <goals> -->
+<!--                             <goal>run</goal> -->
+<!--                         </goals> -->
+<!--                     </execution> -->
+<!--                 </executions> -->
+<!--                 <dependencies> -->
+<!--                     <dependency> -->
+<!--                         <groupId>ant-contrib</groupId> -->
+<!--                         <artifactId>ant-contrib</artifactId> -->
+<!--                         <version>1.0b3</version> -->
+<!--                         <exclusions> -->
+<!--                             <exclusion> -->
+<!--                                 <groupId>ant</groupId> -->
+<!--                                 <artifactId>ant</artifactId> -->
+<!--                             </exclusion> -->
+<!--                         </exclusions> -->
+<!--                     </dependency> -->
+<!--                 </dependencies> -->
+<!--             </plugin> -->
+<!--         </plugins> -->
+<!--     </build> -->
+
+</project>

@@ -127,6 +127,12 @@
             <facet>CMProcess</facet>
         </rule>
     </filter>
+    
+    <filter id="cmAddModifiedItemsDerivedFromImpactedDocsEnabled">
+        <rule grant="true">
+             <condition>#{eloraWebActions.isAddModifiedItemsDerivedFromImpactedDocsEnabled()}</condition>
+        </rule>
+    </filter>
 
   </extension>
 
@@ -196,7 +202,6 @@
       </properties>
     </action>
     
-    
     <action id="BtnCalculateBomImpactMatrix" order="20" label="eloraplm.command.cm.calculateImpactMatrix" type="link" link="#{cmBomModifiedItemsTreeBean.calculateImpactMatrix}" icon="/icons/action_calculate_im_16.png">
       <category>TREETABLE_BUTTON</category>
       <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
@@ -217,7 +222,7 @@
       </properties>
     </action>
    
-    <action id="BtnSaveBomModifiedItemsTreetable" order="30" label="command.save" type="link" link="#{cmBomModifiedItemsTreeBean.saveTree}" icon="">
+    <action id="BtnSaveBomModifiedItemsTreetable" order="100" label="command.save" type="link" link="#{cmBomModifiedItemsTreeBean.saveTree}" icon="">
       <category>TREETABLE_BUTTON</category>
       <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
       <properties>
@@ -227,7 +232,7 @@
       </properties>
     </action>
     
-    <action id="BtnSaveDocModifiedItemsTreetable" order="30" label="command.save" type="link" link="#{cmDocModifiedItemsTreeBean.saveTree}" icon="">
+    <action id="BtnSaveDocModifiedItemsTreetable" order="100" label="command.save" type="link" link="#{cmDocModifiedItemsTreeBean.saveTree}" icon="">
       <category>TREETABLE_BUTTON</category>
       <filter-id>cmDocModifiedItemsTreeButtons</filter-id>
       <properties>
@@ -254,6 +259,17 @@
         <property name="addForm">true</property>
         <property name="ajaxSupport">true</property>
         <property name="styleClass">button mainAction</property>
+      </properties>
+    </action>
+    
+    <action id="BtnAddModifiedItemsDerivedFromImpactedDocs" order="15" label="eloraplm.command.cm.modifiedItem.addDerivedItems" type="link"  link="#{cmBomModifiedItemsTreeBean.addModifiedItemsDerivedFromImpactedDocs}" icon="/icons/action_add_16.png">
+      <category>TREETABLE_BUTTON</category>
+      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
+      <filter-id>cmAddModifiedItemsDerivedFromImpactedDocsEnabled</filter-id>
+      <properties>
+        <property name="addForm">true</property>
+        <property name="ajaxSupport">true</property>
+        <property name="styleClass">button</property>
       </properties>
     </action>
     

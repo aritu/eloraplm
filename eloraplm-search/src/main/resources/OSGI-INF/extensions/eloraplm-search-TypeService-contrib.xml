@@ -2,7 +2,6 @@
 
 <component name="com.aritu.eloraplm.search.TypeService.contrib">
   <require>org.nuxeo.search.ui.types</require>
-  <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
        <schema name="elora_search" prefix="eloras" src="schemas/elora_search.xsd"/>
@@ -53,14 +52,12 @@
       <schema name="elora_search" />
     </doctype>
     
+    <doctype extends="DefaultSearch" name="EloraLockedDocsSearch">
+      <schema name="elora_search" />
+    </doctype>
+    
   </extension>
   
-  <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
-    <types>
-      <type name="EloraGeneralSearch">default</type>
-      <type name="EloraCadDocsSearch">default</type>
-    </types>
-  </extension>
   
   <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
 
@@ -259,6 +256,24 @@
       <layouts mode="edit">
         <layout>heading</layout>
         <layout>elora_qm_documents_search_layout</layout>
+      </layouts>
+    </type>
+    
+    <type id="EloraLockedDocsSearch">
+      <label>EloraLockedDocsSearch</label>
+      <icon>/icons/search.png</icon>
+      <bigIcon>/icons/search_100.png</bigIcon>
+      <description>EloraLockedDocsSearch.description</description>
+      <default-view>home_view_documents</default-view>
+      <layouts mode="any">
+        <layout>elora_locked_documents_search_layout</layout>
+        <!-- Commented in order to don't display content_view_display layout (Search Results selector and Order by columns) 
+        <layout>content_view_display</layout>
+        -->
+      </layouts>
+      <layouts mode="edit">
+        <layout>heading</layout>
+        <layout>elora_locked_documents_search_layout</layout>
       </layouts>
     </type>
     

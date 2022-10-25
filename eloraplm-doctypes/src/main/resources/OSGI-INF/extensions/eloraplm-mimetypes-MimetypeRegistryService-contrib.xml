@@ -65,7 +65,7 @@
         </mimetype>
        
         <!-- Catia -->
-        <mimetype binary="true" iconPath="cad_assembly_16.gif" normalized="application/catproduct">
+        <mimetype binary="true" iconPath="cad_assembly_16.png" normalized="application/catproduct">
             <mimetypes>
                 <mimetype>application/catia</mimetype>
             </mimetypes>
@@ -73,7 +73,7 @@
                 <extension>catproduct</extension>
             </extensions>
         </mimetype>
-        <mimetype binary="true" iconPath="cad_part_16.gif" normalized="application/catpart">
+        <mimetype binary="true" iconPath="cad_part_16.png" normalized="application/catpart">
             <mimetypes>
                 <mimetype>application/catia</mimetype>
             </mimetypes>
@@ -81,7 +81,7 @@
                 <extension>catpart</extension>
             </extensions>
         </mimetype>
-        <mimetype binary="true" iconPath="cad_drawing_16.gif" normalized="application/catdrawing">
+        <mimetype binary="true" iconPath="cad_drawing_16.png" normalized="application/catdrawing">
             <mimetypes>
                 <mimetype>application/catia</mimetype>
             </mimetypes>

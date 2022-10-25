@@ -36,6 +36,7 @@ import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.query.sql.NXQL;
+import org.nuxeo.ecm.core.schema.DocumentType;
 import org.nuxeo.ecm.platform.relations.api.Graph;
 import org.nuxeo.ecm.platform.relations.api.Node;
 import org.nuxeo.ecm.platform.relations.api.QNameResource;
@@ -44,7 +45,6 @@ import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.impl.StatementImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
-
 import com.aritu.eloraplm.cm.CMItem;
 import com.aritu.eloraplm.cm.ImpactedItem;
 import com.aritu.eloraplm.cm.ModifiedItem;
@@ -64,6 +64,7 @@ import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
@@ -159,6 +160,10 @@ public class CMHelper {
         // Add its specific attributes
         // --- derivedFrom
         modifiedItemType.put("derivedFrom", modifiedItem.getDerivedFrom());
+
+        // --- isDerivedFromImpactMatrix
+        modifiedItemType.put("isDerivedFromImpactMatrix",
+                modifiedItem.getIsDerivedFromImpactMatrix());
 
         // --- includeInImpactMatrix
         modifiedItemType.put("includeInImpactMatrix",
@@ -268,7 +273,7 @@ public class CMHelper {
             String derivedModifiedItemQuantity,
             boolean derivedModifiedItemIsAnarchic,
             boolean derivedModifiedItemIsDirectObject,
-            String derivedModifiedItemType)
+            String derivedModifiedItemType, boolean isDerivedFromImpactMatrix)
             throws EloraException, DocumentUnreadableException {
 
         String modifiedItemOriginUid = modifiedItemOriginItem.getId();
@@ -318,6 +323,10 @@ public class CMHelper {
                 } else {
                     derivedModifiedItemDestinationItemWcUid = derivedModifedItemDestinationItemUid;
                 }
+            } else {
+                // If derived item action is Replace, but derived item
+                // destination is null, change the derived action to Remove.
+                derivedModifiedItemAction = CMConstants.ACTION_REMOVE;
             }
         }
         derivedModifiedItemIncludeInImpactMatrix = CMHelper.getIncludeInImpactMatrixDefaultValue(
@@ -328,8 +337,8 @@ public class CMHelper {
         String parentNodeId = null;
 
         ModifiedItem derivedModifiedItem = new ModifiedItem(null, nodeId,
-                parentNodeId, modifiedItemOriginUid, null,
-                derivedModifiedItemOriginItemUid,
+                parentNodeId, modifiedItemOriginUid, isDerivedFromImpactMatrix,
+                null, derivedModifiedItemOriginItemUid,
                 derivedModifiedItemOriginItemWcUid,
                 derivedModifiedItemPredicate, derivedModifiedItemQuantity,
                 derivedModifiedItemIsAnarchic,
@@ -728,6 +737,81 @@ public class CMHelper {
                         + existModifiedItemInProcess + "|");
 
         return existModifiedItemInProcess;
+    }
+
+    /**
+     * True if there is already specified impactedItem in the specified Change
+     * Management process.
+     *
+     * @param session
+     * @param cmProcess
+     * @param impactedItemOriginItemUid
+     * @throws EloraException
+     */
+    public static boolean existImpactedItemInCMProcess(CoreSession session,
+            String cmProcessUid, String impactedItemOriginItemUid,
+            String impactedItemOriginItemType) throws EloraException {
+
+        String logInitMsg = "[existImpactedItemInCMProcess] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        boolean existImpactedItemInProcess = false;
+
+        // Check specified input parameters and log them
+        if (cmProcessUid == null) {
+            log.error(logInitMsg + "Specified cmProcessUid is null.");
+            throw new EloraException("Specified cmProcessUid is null.");
+        }
+
+        if (impactedItemOriginItemUid == null
+                || impactedItemOriginItemUid.isEmpty()) {
+            log.error(logInitMsg
+                    + "Specified impactedItemOriginItemUid is null or Empty.");
+            throw new EloraException(
+                    "Specified impactedItemOriginItemUid is null.");
+        }
+
+        log.trace(logInitMsg + " enter parameters: cmProcessUid = |"
+                + cmProcessUid + "|, impactedItemOriginItemUid = |"
+                + impactedItemOriginItemUid + "|");
+
+        IterableQueryResult queryResult = null;
+        try {
+            String query = CMQueryFactory.getCountImpactedItemsByOriginQuery(
+                    cmProcessUid, impactedItemOriginItemUid,
+                    impactedItemOriginItemType);
+
+            queryResult = session.queryAndFetch(query, NXQL.NXQL);
+
+            if (queryResult.iterator().hasNext()) {
+                Map<String, Serializable> map = queryResult.iterator().next();
+                String resultCountStr = map.get(
+                        "COUNT(" + NXQL.ECM_UUID + ")").toString();
+                int resultCount = Integer.valueOf(resultCountStr);
+
+                log.trace(logInitMsg + "DB query resultCount = |" + resultCount
+                        + "|");
+
+                if (resultCount > 0) {
+                    existImpactedItemInProcess = true;
+                }
+            }
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        } finally {
+            if (queryResult != null) {
+                queryResult.close();
+            }
+        }
+
+        log.trace(
+                logInitMsg + "--- EXIT --- with existImpactedItemInProcess = |"
+                        + existImpactedItemInProcess + "|");
+
+        return existImpactedItemInProcess;
     }
 
     public static long getModifiedItemsMaxRowNumberInCMProcess(
@@ -1162,8 +1246,6 @@ public class CMHelper {
                                 i);
                         String originItemUid = modifiedItemToBeAdded.getOriginItem();
 
-                        /* if (!existModifiedItemInCMProcess(session,
-                                cmProcess.getId(), originItemUid, itemType)) {*/
                         DocumentModel originItem = session.getDocument(
                                 new IdRef(originItemUid));
                         checkOriginItem(session, originItem);
@@ -1213,7 +1295,7 @@ public class CMHelper {
                                 modifiedItemToBeAdded.getAction(),
                                 modifiedItemToBeAdded.getComment(), itemType,
                                 newDerivedDocModifiedItems,
-                                newDerivedBomModifiedItems);
+                                newDerivedBomModifiedItems, false);
 
                         for (int j = 0; j < newDerivedDocModifiedItems.size(); ++j) {
                             ModifiedItem newDerivedDocModifiedItem = newDerivedDocModifiedItems.get(
@@ -1252,7 +1334,6 @@ public class CMHelper {
                             }
                         }
                     }
-                    /*}*/
                 }
 
                 ////////////////////////// ////
@@ -1383,7 +1464,8 @@ public class CMHelper {
             DocumentModel modifiedItemDestinationItem,
             String modifiedItemAction, String modifiedItemComment,
             String itemType, List<ModifiedItem> docModifiedItems,
-            List<ModifiedItem> bomModifiedItems) throws EloraException {
+            List<ModifiedItem> bomModifiedItems,
+            boolean isDerivedFromImpactMatrix) throws EloraException {
 
         String logInitMsg = "[calculateDerivedModifiedItems] ["
                 + session.getPrincipal().getName() + "] ";
@@ -1396,7 +1478,7 @@ public class CMHelper {
                 List<ModifiedItem> derivedDocModifiedItemsList = calculateDerivedDocModifiedItemsListForBom(
                         session, modifiedItemOriginItem,
                         modifiedItemDestinationItem, modifiedItemAction,
-                        modifiedItemComment);
+                        modifiedItemComment, isDerivedFromImpactMatrix);
                 if (derivedDocModifiedItemsList != null
                         && derivedDocModifiedItemsList.size() > 0) {
                     docModifiedItems.addAll(derivedDocModifiedItemsList);
@@ -1406,7 +1488,7 @@ public class CMHelper {
                 List<ModifiedItem> derivedBomModifiedItemsList = calculateDerivedBomModifiedItemsListForDoc(
                         session, modifiedItemOriginItem,
                         modifiedItemDestinationItem, modifiedItemAction,
-                        modifiedItemComment);
+                        modifiedItemComment, isDerivedFromImpactMatrix);
                 if (derivedBomModifiedItemsList != null
                         && derivedBomModifiedItemsList.size() > 0) {
                     bomModifiedItems.addAll(derivedBomModifiedItemsList);
@@ -1416,7 +1498,7 @@ public class CMHelper {
                     List<ModifiedItem> derivedDocModifiedItemsList = calculateDerivedDocModifiedItemsListForDoc(
                             session, modifiedItemOriginItem,
                             modifiedItemDestinationItem, modifiedItemAction,
-                            modifiedItemComment);
+                            modifiedItemComment, isDerivedFromImpactMatrix);
                     if (derivedDocModifiedItemsList != null
                             && derivedDocModifiedItemsList.size() > 0) {
                         docModifiedItems.addAll(derivedDocModifiedItemsList);
@@ -1440,7 +1522,8 @@ public class CMHelper {
     private static List<ModifiedItem> calculateDerivedDocModifiedItemsListForBom(
             CoreSession session, DocumentModel modifiedItemOriginItem,
             DocumentModel modifiedItemDestinationItem,
-            String modifiedItemAction, String modifiedItemComment)
+            String modifiedItemAction, String modifiedItemComment,
+            boolean isDerivedFromImpactMatrix)
             throws EloraException, DocumentUnreadableException {
 
         List<ModifiedItem> derivedDocModifiedItemsList = new ArrayList<ModifiedItem>();
@@ -1453,12 +1536,15 @@ public class CMHelper {
                     predicateResource, modifiedItemOriginItem, false, false,
                     false, null);
 
-            // Put the CadDrawing documents at the beginning of the list.
+            // Put the 3D document (CadPart of CadAseembly) at the beginning of
+            // the list. In this way, we avoid having dependency problems during
+            // massive promote.
             List<RelatedItemData> sortedDerivedRelatedItems = new LinkedList<RelatedItemData>();
             for (RelatedItemData derivedRelatedItem : derivedRelatedItems) {
                 DocumentModel modifiedItemDoc = derivedRelatedItem.getDocModel();
                 String docType = modifiedItemDoc.getType();
-                if (docType.equals(EloraDoctypeConstants.CAD_DRAWING)) {
+                if (docType.equals(EloraDoctypeConstants.CAD_PART)
+                        || docType.equals(EloraDoctypeConstants.CAD_ASSEMBLY)) {
                     sortedDerivedRelatedItems.add(0, derivedRelatedItem);
                 } else {
                     sortedDerivedRelatedItems.add(derivedRelatedItem);
@@ -1478,7 +1564,8 @@ public class CMHelper {
                             modifiedItemDestinationItem, modifiedItemAction,
                             modifiedItemComment, derivedModifiedItemDocM,
                             relation, false, derivedRelatedItem.getQuantity(),
-                            false, false, derivedModifiedItemType);
+                            false, false, derivedModifiedItemType,
+                            isDerivedFromImpactMatrix);
 
                     derivedDocModifiedItemsList.add(derivedModifiedItem);
                 }
@@ -1489,9 +1576,9 @@ public class CMHelper {
     }
 
     private static List<ModifiedItem> calculateDerivedBomModifiedItemsListForDoc(
-            CoreSession session, DocumentModel modifiedItemOriginItem,
-            DocumentModel modifiedItemDestinationItem,
-            String modifiedItemAction, String modifiedItemComment)
+            CoreSession session, DocumentModel sourceDocOriginItem,
+            DocumentModel sourceDocDestinationItem, String sourceDocAction,
+            String sourceDocComment, boolean isDerivedFromImpactMatrix)
             throws EloraException, DocumentUnreadableException {
 
         List<ModifiedItem> derivedBomModifiedItemsList = new ArrayList<ModifiedItem>();
@@ -1506,8 +1593,8 @@ public class CMHelper {
 
             // Retrieve related Subjects
             List<RelatedItemData> derivedRelatedItems = getRelatedItems(session,
-                    predicateResource, modifiedItemOriginItem, true, false,
-                    false, null);
+                    predicateResource, sourceDocOriginItem, true, false, false,
+                    null);
 
             if (derivedRelatedItems != null && !derivedRelatedItems.isEmpty()) {
                 for (RelatedItemData derivedRelatedItem : derivedRelatedItems) {
@@ -1517,11 +1604,12 @@ public class CMHelper {
 
                     // for the instance isDirectObject = false
                     ModifiedItem derivedModifiedItem = createDerivedModifiedItem(
-                            session, modifiedItemOriginItem,
-                            modifiedItemDestinationItem, modifiedItemAction,
-                            modifiedItemComment, derivedModifiedItemDocM,
-                            relation, true, derivedRelatedItem.getQuantity(),
-                            false, false, derivedModifiedItemType);
+                            session, sourceDocOriginItem,
+                            sourceDocDestinationItem, sourceDocAction,
+                            sourceDocComment, derivedModifiedItemDocM, relation,
+                            true, derivedRelatedItem.getQuantity(), false,
+                            false, derivedModifiedItemType,
+                            isDerivedFromImpactMatrix);
 
                     derivedBomModifiedItemsList.add(derivedModifiedItem);
                 }
@@ -1534,7 +1622,8 @@ public class CMHelper {
     private static List<ModifiedItem> calculateDerivedDocModifiedItemsListForDoc(
             CoreSession session, DocumentModel modifiedItemOriginItem,
             DocumentModel modifiedItemDestinationItem,
-            String modifiedItemAction, String modifiedItemComment)
+            String modifiedItemAction, String modifiedItemComment,
+            boolean isDerivedFromImpactMatrix)
             throws EloraException, DocumentUnreadableException {
 
         List<ModifiedItem> derivedDocModifiedItemsList = new ArrayList<ModifiedItem>();
@@ -1568,7 +1657,8 @@ public class CMHelper {
                             modifiedItemDestinationItem, modifiedItemAction,
                             modifiedItemComment, derivedModifiedItemDocM,
                             relation, false, derivedRelatedItem.getQuantity(),
-                            false, false, derivedModifiedItemType);
+                            false, false, derivedModifiedItemType,
+                            isDerivedFromImpactMatrix);
 
                     derivedDocModifiedItemsList.add(derivedModifiedItem);
                 }
@@ -1590,7 +1680,8 @@ public class CMHelper {
                             modifiedItemDestinationItem, modifiedItemAction,
                             modifiedItemComment, derivedModifiedItemDocM,
                             relation, true, derivedRelatedItem.getQuantity(),
-                            false, false, derivedModifiedItemType);
+                            false, false, derivedModifiedItemType,
+                            isDerivedFromImpactMatrix);
 
                     derivedDocModifiedItemsList.add(derivedModifiedItem);
                 }
@@ -3296,8 +3387,8 @@ public class CMHelper {
      * @throws EloraException
      */
     public static Map<String, String> calculateOriginVersionList(
-            CoreSession session, String docWcUid, boolean onlyReleasedVersion)
-            throws EloraException {
+            CoreSession session, String docWcUid, boolean onlyReleasedVersion,
+            Map<String, String> messages) throws EloraException {
 
         String logInitMsg = "[calculateOriginVersionList] ["
                 + session.getPrincipal().getName() + "] ";
@@ -3333,7 +3424,7 @@ public class CMHelper {
                 }
             }
 
-            fillVersionList(versionList, originVersionList);
+            fillVersionList(versionList, originVersionList, messages);
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
             throw new EloraException(e.getMessage());
@@ -3359,7 +3450,8 @@ public class CMHelper {
      */
 
     public static Map<String, String> calculateModifiableItemVersionList(
-            CoreSession session, String docWcUid) throws EloraException {
+            CoreSession session, String docWcUid, Map<String, String> messages)
+            throws EloraException {
 
         String logInitMsg = "[calculateModifiableItemVersionList] ["
                 + session.getPrincipal().getName() + "] ";
@@ -3424,7 +3516,7 @@ public class CMHelper {
                             releasedDocs.addAll(allVersionDocs);
                         }
                     }
-                    fillVersionList(versionList, releasedDocs);
+                    fillVersionList(versionList, releasedDocs, messages);
                 }
             }
         } catch (Exception e) {
@@ -3435,14 +3527,18 @@ public class CMHelper {
     }
 
     private static void fillVersionList(Map<String, String> versionList,
-            DocumentModelList docsList) {
+            DocumentModelList docsList, Map<String, String> messages) {
 
         if (docsList != null && docsList.size() > 0) {
 
             for (DocumentModel doc : docsList) {
                 String docUid = doc.getId();
                 String versionLabel = doc.getVersionLabel();
-                versionList.put(docUid, versionLabel);
+                String lifeCycleState = messages.get(
+                        doc.getCurrentLifeCycleState()
+                                + EloraLifeCycleConstants.ABBR_SUFFIX);
+                versionList.put(docUid,
+                        versionLabel + "   [" + lifeCycleState + "]");
             }
         }
     }
@@ -3471,19 +3567,26 @@ public class CMHelper {
     }
 
     // TODO::: agian izena aldatu honi???
-    private static CMImpactableConfig getImpactableConfig(String docType,
+    private static CMImpactableConfig getImpactableConfig(String docTypeName,
             String action) throws EloraException {
 
         String logInitMsg = "[getImpactableConfig] ";
 
-        String configId = docType + "_" + action;
+        DocumentType docType = EloraDocumentTypesHelper.getDocumentType(
+                docTypeName);
+        if (EloraDocumentTypesHelper.getDocumentType(
+                EloraDoctypeConstants.BOM_PART).isSuperTypeOf(docType)) {
+            docTypeName = EloraDoctypeConstants.BOM_PART;
+        }
+
+        String configId = docTypeName + "_" + action;
 
         CMImpactableConfig impactableConfigData = CMConfig.docTypeActionsImpactConfigMap.get(
                 configId);
 
         if (impactableConfigData == null) {
             String errorMsg = "No impactable configuration found for docType = |"
-                    + docType + "|, action = |" + action + "|";
+                    + docTypeName + "|, action = |" + action + "|";
             log.trace(logInitMsg + errorMsg);
             throw new EloraException(errorMsg);
         }
@@ -3765,45 +3868,50 @@ public class CMHelper {
         return newModifiedItems;
     }
 
-    public static void setAsManagedImpactedItemsByDestinationWcUidList(
+    public static void setAsManagedItemsByDestinationWcUidList(
             CoreSession session, DocumentModel cmProcess, String itemType,
-            List<String> destinationWcUidList) throws EloraException {
+            String itemClass, List<String> destinationWcUidList)
+            throws EloraException {
 
-        String logInitMsg = "[setAsManagedImpactedItemsByDestinationWcUidList] ";
+        String logInitMsg = "[setAsManagedItemsByDestinationWcUidList] ";
         log.trace(logInitMsg + "--- ENTER --- ");
         log.trace(logInitMsg + "cmProcess = |" + cmProcess + "|, itemType = |"
-                + itemType + "|, destinationWcUidList size = |"
+                + itemType + "|, itemClass = |" + itemClass
+                + "|, destinationWcUidList size = |"
                 + destinationWcUidList.size() + "|");
 
         try {
             // Current Modified Items
-            ArrayList<HashMap<String, Object>> currentImpactedItems = new ArrayList<HashMap<String, Object>>();
+            ArrayList<HashMap<String, Object>> currentItems = new ArrayList<HashMap<String, Object>>();
 
-            String impactedItemListMetada = getImpactedItemListMetadaName(
-                    itemType);
+            String itemListMetada = "";
 
-            if (cmProcess.getPropertyValue(impactedItemListMetada) != null) {
-                currentImpactedItems = (ArrayList<HashMap<String, Object>>) cmProcess.getPropertyValue(
-                        impactedItemListMetada);
+            if (itemClass.equals(CMConstants.ITEM_CLASS_IMPACTED)) {
+                itemListMetada = getImpactedItemListMetadaName(itemType);
+            } else if (itemClass.equals(CMConstants.ITEM_CLASS_MODIFIED)) {
+                itemListMetada = getModifiedItemListMetadaName(itemType);
             }
 
-            if (currentImpactedItems != null
-                    && currentImpactedItems.size() > 0) {
+            if (cmProcess.getPropertyValue(itemListMetada) != null) {
+                currentItems = (ArrayList<HashMap<String, Object>>) cmProcess.getPropertyValue(
+                        itemListMetada);
+            }
 
-                ArrayList<HashMap<String, Object>> newImpactedItems = setAsManaged(
-                        session, currentImpactedItems, destinationWcUidList);
+            if (currentItems != null && currentItems.size() > 0) {
+
+                ArrayList<HashMap<String, Object>> newItems = setAsManaged(
+                        session, currentItems, destinationWcUidList);
 
                 // -------------------------------------------------------------------
                 // Store new calculated impacted items
                 // -------------------------------------------------------------------
-                cmProcess.setPropertyValue(impactedItemListMetada,
-                        newImpactedItems);
+                cmProcess.setPropertyValue(itemListMetada, newItems);
 
                 session.saveDocument(cmProcess);
                 session.save();
             } else {
                 log.trace(
-                        "currentImpactedItems is empty. Nothing to be set as managed");
+                        "currentItems is empty. Nothing to be set as managed");
             }
 
         } catch (NuxeoException e) {
@@ -3813,6 +3921,104 @@ public class CMHelper {
         }
         log.trace(logInitMsg + "--- EXIT --- ");
     }
+
+    /*public static void setAsManagedModifiedItemsByDestinationWcUidList(
+            CoreSession session, DocumentModel cmProcess, String itemType,
+            List<String> destinationWcUidList) throws EloraException {
+    
+        String logInitMsg = "[setAsManagedModifiedItemsByDestinationWcUidList] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+        log.trace(logInitMsg + "cmProcess = |" + cmProcess + "|, itemType = |"
+                + itemType + "|, destinationWcUidList size = |"
+                + destinationWcUidList.size() + "|");
+    
+        try {
+            // Current Modified Items
+            ArrayList<HashMap<String, Object>> currentModifiedItems = new ArrayList<HashMap<String, Object>>();
+    
+            String modifiedItemListMetada = getModifiedItemListMetadaName(
+                    itemType);
+    
+            if (cmProcess.getPropertyValue(modifiedItemListMetada) != null) {
+                currentModifiedItems = (ArrayList<HashMap<String, Object>>) cmProcess.getPropertyValue(
+                        modifiedItemListMetada);
+            }
+    
+            if (currentModifiedItems != null
+                    && currentModifiedItems.size() > 0) {
+    
+                ArrayList<HashMap<String, Object>> newModifiedItems = setAsManaged(
+                        session, currentModifiedItems, destinationWcUidList);
+    
+                // -------------------------------------------------------------------
+                // Store new calculated impacted items
+                // -------------------------------------------------------------------
+                cmProcess.setPropertyValue(modifiedItemListMetada,
+                        newModifiedItems);
+    
+                session.saveDocument(cmProcess);
+                session.save();
+            } else {
+                log.trace(
+                        "currentModifiedItems is empty. Nothing to be set as managed");
+            }
+    
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        }
+        log.trace(logInitMsg + "--- EXIT --- ");
+    }
+    
+    public static void setAsManagedImpactedItemsByDestinationWcUidList(
+            CoreSession session, DocumentModel cmProcess, String itemType,
+            List<String> destinationWcUidList) throws EloraException {
+    
+        String logInitMsg = "[setAsManagedImpactedItemsByDestinationWcUidList] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+        log.trace(logInitMsg + "cmProcess = |" + cmProcess + "|, itemType = |"
+                + itemType + "|, destinationWcUidList size = |"
+                + destinationWcUidList.size() + "|");
+    
+        try {
+            // Current Modified Items
+            ArrayList<HashMap<String, Object>> currentImpactedItems = new ArrayList<HashMap<String, Object>>();
+    
+            String impactedItemListMetada = getImpactedItemListMetadaName(
+                    itemType);
+    
+            if (cmProcess.getPropertyValue(impactedItemListMetada) != null) {
+                currentImpactedItems = (ArrayList<HashMap<String, Object>>) cmProcess.getPropertyValue(
+                        impactedItemListMetada);
+            }
+    
+            if (currentImpactedItems != null
+                    && currentImpactedItems.size() > 0) {
+    
+                ArrayList<HashMap<String, Object>> newImpactedItems = setAsManaged(
+                        session, currentImpactedItems, destinationWcUidList);
+    
+                // -------------------------------------------------------------------
+                // Store new calculated impacted items
+                // -------------------------------------------------------------------
+                cmProcess.setPropertyValue(impactedItemListMetada,
+                        newImpactedItems);
+    
+                session.saveDocument(cmProcess);
+                session.save();
+            } else {
+                log.trace(
+                        "currentImpactedItems is empty. Nothing to be set as managed");
+            }
+    
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        }
+        log.trace(logInitMsg + "--- EXIT --- ");
+    }*/
 
     private static ArrayList<HashMap<String, Object>> setAsManaged(
             CoreSession session,
@@ -3918,4 +4124,181 @@ public class CMHelper {
 
         log.trace(logInitMsg + "--- EXIT ---");
     }
+
+    public static boolean addModifiedItemsDerivedFromImpactedDocs(
+            CoreSession session, DocumentModel cmProcess)
+            throws EloraException {
+        String logInitMsg = "[addModifiedItemsDerivedFromImpactedDocs] ["
+                + session.getPrincipal().getName() + "]";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        boolean derivedModifiedItemsAdded = false;
+
+        try {
+
+            // Retrieve distinct modified and impacted items origins
+            ArrayList<String> distinctModifiedItemOriginIds = getDistinctModifiedItemOriginIds(
+                    cmProcess);
+            ArrayList<String> distinctImpactedItemOriginIds = getDistinctImpactedItemOriginIds(
+                    cmProcess);
+
+            // Retrieve current modified items
+            ArrayList<HashMap<String, Object>> currentModifiedItems = new ArrayList<HashMap<String, Object>>();
+            if (cmProcess.getPropertyValue(
+                    CMMetadataConstants.BOM_MODIFIED_ITEM_LIST) != null) {
+                currentModifiedItems = (ArrayList<HashMap<String, Object>>) cmProcess.getPropertyValue(
+                        CMMetadataConstants.BOM_MODIFIED_ITEM_LIST);
+            }
+
+            boolean modifiedItemsChanged = false;
+            long nextModifiedItemRowNumber = getModifiedItemsMaxRowNumberInCMProcess(
+                    session, cmProcess, CMConstants.ITEM_TYPE_BOM) + 1;
+
+            // Retrieve current impacted documents
+            ArrayList<HashMap<String, Object>> currentImpactedDocuments = new ArrayList<HashMap<String, Object>>();
+            if (cmProcess.getPropertyValue(
+                    CMMetadataConstants.DOC_IMPACTED_ITEM_LIST) != null) {
+                currentImpactedDocuments = (ArrayList<HashMap<String, Object>>) cmProcess.getPropertyValue(
+                        CMMetadataConstants.DOC_IMPACTED_ITEM_LIST);
+            }
+
+            // Iterate over each impacted document and calculate its related
+            // items (BomHasCadDocument)
+            for (int i = 0; i < currentImpactedDocuments.size(); ++i) {
+                HashMap<String, Object> impactedDocument = currentImpactedDocuments.get(
+                        i);
+                DocumentModel impactedDocumentOrigin = null;
+                String impactedDocumentOriginUid = (String) impactedDocument.get(
+                        "originItem");
+                if (impactedDocumentOriginUid != null
+                        && !impactedDocumentOriginUid.isEmpty()) {
+                    impactedDocumentOrigin = session.getDocument(
+                            new IdRef(impactedDocumentOriginUid));
+                }
+
+                DocumentModel impactedDocumentDestination = null;
+                String impactedDocumentDestinationUid = (String) impactedDocument.get(
+                        "destinationItem");
+                if (impactedDocumentDestinationUid != null
+                        && !impactedDocumentDestinationUid.isEmpty()) {
+                    impactedDocumentDestination = session.getDocument(
+                            new IdRef(impactedDocumentDestinationUid));
+                }
+
+                String impactedDocumentAction = (String) impactedDocument.get(
+                        "action");
+                String impactedDocumentComment = (String) impactedDocument.get(
+                        "comment");
+
+                List<ModifiedItem> derivedModifiedItemsList = calculateDerivedBomModifiedItemsListForDoc(
+                        session, impactedDocumentOrigin,
+                        impactedDocumentDestination, impactedDocumentAction,
+                        impactedDocumentComment, true);
+
+                if (derivedModifiedItemsList != null
+                        && derivedModifiedItemsList.size() > 0) {
+                    for (ModifiedItem derivedModifiedItem : derivedModifiedItemsList) {
+                        String derivedModifiedItemOriginUid = derivedModifiedItem.getOriginItem();
+
+                        // If retrieved derived modified item is not already
+                        // included as modified or impacted item, add it as
+                        // modified item.
+                        if (!distinctModifiedItemOriginIds.contains(
+                                derivedModifiedItemOriginUid)
+                                && !distinctImpactedItemOriginIds.contains(
+                                        derivedModifiedItemOriginUid)) {
+                            derivedModifiedItem.setRowNumber(
+                                    nextModifiedItemRowNumber);
+                            HashMap<String, Object> derivedModifiedItemType = createModifiedItemType(
+                                    derivedModifiedItem);
+                            currentModifiedItems.add(derivedModifiedItemType);
+                            distinctModifiedItemOriginIds.add(
+                                    getModifiedItemUniqueId(
+                                            derivedModifiedItemType));
+                            modifiedItemsChanged = true;
+                            nextModifiedItemRowNumber++;
+                        }
+                    }
+                }
+            }
+
+            if (modifiedItemsChanged) {
+                cmProcess.setPropertyValue(
+                        CMMetadataConstants.BOM_MODIFIED_ITEM_LIST,
+                        currentModifiedItems);
+                session.saveDocument(cmProcess);
+                session.save();
+
+                derivedModifiedItemsAdded = true;
+            }
+
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "General exception thrown: |" + e.getMessage() + "|");
+        }
+        log.trace(logInitMsg + "--- EXIT --- with derivedModifiedItemsAdded = |"
+                + derivedModifiedItemsAdded + "|");
+
+        return derivedModifiedItemsAdded;
+    }
+
+    private static ArrayList<String> getDistinctModifiedItemOriginIds(
+            DocumentModel cmProcess) throws EloraException {
+
+        ArrayList<String> distinctModifiedItemOriginIds = new ArrayList<String>();
+
+        // Current Modified Items
+        ArrayList<HashMap<String, Object>> currentModifiedItems = new ArrayList<HashMap<String, Object>>();
+
+        if (cmProcess.getPropertyValue(
+                CMMetadataConstants.BOM_MODIFIED_ITEM_LIST) != null) {
+            currentModifiedItems = (ArrayList<HashMap<String, Object>>) cmProcess.getPropertyValue(
+                    CMMetadataConstants.BOM_MODIFIED_ITEM_LIST);
+        }
+
+        for (int i = 0; i < currentModifiedItems.size(); ++i) {
+            HashMap<String, Object> modifiedItem = currentModifiedItems.get(i);
+            String modifiedItemOriginUid = (String) modifiedItem.get(
+                    "originItem");
+            if (!distinctModifiedItemOriginIds.contains(
+                    modifiedItemOriginUid)) {
+                distinctModifiedItemOriginIds.add(modifiedItemOriginUid);
+            }
+        }
+
+        return distinctModifiedItemOriginIds;
+    }
+
+    private static ArrayList<String> getDistinctImpactedItemOriginIds(
+            DocumentModel cmProcess) throws EloraException {
+
+        ArrayList<String> distinctImpactedItemOriginIds = new ArrayList<String>();
+
+        // Current Impacted Items
+        ArrayList<HashMap<String, Object>> currentImpactedItems = new ArrayList<HashMap<String, Object>>();
+
+        if (cmProcess.getPropertyValue(
+                CMMetadataConstants.BOM_IMPACTED_ITEM_LIST) != null) {
+            currentImpactedItems = (ArrayList<HashMap<String, Object>>) cmProcess.getPropertyValue(
+                    CMMetadataConstants.BOM_IMPACTED_ITEM_LIST);
+        }
+
+        for (int i = 0; i < currentImpactedItems.size(); ++i) {
+            HashMap<String, Object> impactedItem = currentImpactedItems.get(i);
+            String impactedItemOriginUid = (String) impactedItem.get(
+                    "originItem");
+            if (!distinctImpactedItemOriginIds.contains(
+                    impactedItemOriginUid)) {
+                distinctImpactedItemOriginIds.add(impactedItemOriginUid);
+            }
+        }
+
+        return distinctImpactedItemOriginIds;
+    }
+
 }

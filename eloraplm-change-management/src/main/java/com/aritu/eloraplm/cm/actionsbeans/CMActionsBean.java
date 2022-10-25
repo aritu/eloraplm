@@ -29,6 +29,8 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 
+import com.aritu.eloraplm.cm.util.CMHelper;
+import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMMetadataConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
@@ -88,11 +90,55 @@ public class CMActionsBean implements Serializable {
 
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
-            throw new EloraException(
-                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
         }
 
         return manualModifiedItemsList;
+    }
+
+    public boolean existImpactedItemInCMProcess(String cmProcessUid,
+            String originItemUid) {
+
+        String logInitMsg = "[existImpactedItemInCMProcess] ";
+
+        boolean isContained = false;
+
+        try {
+            isContained = CMHelper.existImpactedItemInCMProcess(documentManager,
+                    cmProcessUid, originItemUid, CMConstants.ITEM_TYPE_DOC);
+
+            if (!isContained) {
+                isContained = CMHelper.existImpactedItemInCMProcess(
+                        documentManager, cmProcessUid, originItemUid,
+                        CMConstants.ITEM_TYPE_BOM);
+            }
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        return isContained;
+    }
+
+    public boolean existModifiedItemInCMProcess(String cmProcessUid,
+            String originItemUid) {
+
+        String logInitMsg = "[existModifiedItemInCMProcess] ";
+
+        boolean isContained = false;
+
+        try {
+            isContained = CMHelper.existModifiedItemInCMProcess(documentManager,
+                    cmProcessUid, originItemUid, CMConstants.ITEM_TYPE_DOC);
+
+            if (!isContained) {
+                isContained = CMHelper.existModifiedItemInCMProcess(
+                        documentManager, cmProcessUid, originItemUid,
+                        CMConstants.ITEM_TYPE_BOM);
+            }
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        return isContained;
     }
 
 }

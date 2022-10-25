@@ -1,0 +1,111 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:fragment>
+            <table>
+                <tbody style="border:none">
+                <tr style="border:none">
+                    <!-- TODO: STILO BAT SORTU -->
+                    <td style="border:none;text-align:left;vertical-align: middle;">
+                        <ui:fragment rendered="#{empty field.documentAV}"> 
+                            <nxu:set var="contentDocuments" value="#{projectPhasesTableBean.loadContentDocuments()}">
+                                <h:selectOneListbox
+                                  id="documentSelectListbox"
+                                  styleClass="dataInputText"
+                                  size="1"
+                                  value="#{field.documentWCProxy}"
+                                  style="min-width: 3em;">
+                                    <f:selectItem itemValue="#{null}" itemLabel="" />
+                                    <nxu:selectItems value="#{contentDocuments}" var="contentDocument" itemValue="#{contentDocument.key}" itemLabel="#{contentDocument.value}" />
+                                        <p:ajax event="change" onstart="chooseDeliverableDocument(#{rowIndex}, cfg.source)" />
+                                </h:selectOneListbox>
+                            </nxu:set>
+                        </ui:fragment>
+                        
+                        <h:inputHidden id="selectedDocumentWcProxyId" value="#{field.documentWCProxy}" />
+
+                        <ui:fragment rendered="#{not empty field.documentAV}">
+                            <nxu:set var="deliverableDocumentAV" value="#{eloraDocument.getDocumentFromUid(field.documentAV)}">
+                                <span>
+                                <nxl:widget name="icon_reference_title" mode="view" value="#{deliverableDocumentAV}" />
+                                </span>
+                                <span style="margin-left: 5px">
+                                <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{deliverableDocumentAV}"/>
+                                </span>
+                                <span style="margin-left: 5px">
+                                <nxl:widget name="colored_lifecycle_state" mode="view" value="#{deliverableDocumentAV}" />
+                                </span>
+                            </nxu:set>
+                        </ui:fragment>
+                    </td>
+
+                    <td style="border:none;text-align:left;vertical-align: middle;">
+                        <ui:fragment rendered="#{not empty field.documentWCProxy and eloraDocument.existsUid(field.documentWCProxy)}">
+                            <nxu:set var="documentVersionsList" value="#{projectPhasesTableBean.getProjectDeliverableDocumentVersions(field.documentWCProxy)}">
+                                <h:selectOneListbox
+                                  id="versionSelectListbox"
+                                  styleClass="dataInputText"
+                                  size="1"
+                                  value="#{field.documentAV}"
+                                  style="min-width: 3em;" 
+                                  rendered="#{not empty field.documentWCProxy}">
+                                    <f:selectItem itemValue="#{null}" itemLabel="[WC]" />
+                                    <nxu:selectItems value="#{documentVersionsList}" var="version" itemValue="#{version.key}" itemLabel="#{version.value}" />
+                                    <p:ajax event="change" onstart="chooseDeliverableDocumentVersion(#{rowIndex}, cfg.source)" />
+                                </h:selectOneListbox>
+                            </nxu:set>
+                        </ui:fragment>
+                        
+                        <ui:fragment rendered="#{not empty field.documentWCProxy and not eloraDocument.existsUid(field.documentWCProxy) and not empty field.documentAV}">
+                            <nxu:set var="deliverableDocumentAV" value="#{eloraDocument.getDocumentFromUid(field.documentAV)}">
+                                <h:selectOneListbox
+                                  id="unanchorSelectListbox"
+                                  styleClass="dataInputText"
+                                  size="1"
+                                  value="#{field.documentAV}"
+                                  style="min-width: 3em;" 
+                                  rendered="#{not empty field.documentWCProxy}">
+                                    <f:selectItem itemValue="#{null}" itemLabel="" />
+                                    <f:selectItem itemValue="#{field.documentAV}" itemLabel="#{deliverableDocumentAV.versionLabel}" />
+                                        <p:ajax event="change" onstart="unanchorDeliverableDocument(#{rowIndex}, cfg.source)" />
+                                </h:selectOneListbox>
+                           </nxu:set>
+                        </ui:fragment>
+                    </td>
+                </tr>
+                <ui:fragment rendered="#{not empty field.documentWCProxy and not eloraDocument.existsUid(field.documentWCProxy)}">
+                    <tr style="border:none">
+                        <td style="border:none;text-align:left;vertical-align: middle;" colspan="2">
+                            <span style="margin-left:5px;font-style:italic;color:grey;">
+                                <ui:fragment rendered="#{empty field.documentAV}">
+                                    <h:outputText value="#{messages['eloraplm.message.warning.project.deliverable.document.proxyDoesNotExistInProjectContent']}" />
+                                </ui:fragment>
+                                <ui:fragment rendered="#{not empty field.documentAV}">
+                                    <h:outputText value="#{messages['eloraplm.message.warning.project.unanchor.document.anchored.proxyDoesNotExistInProjectContent']}" />
+                                </ui:fragment>
+                            </span>
+                        </td>
+                    </tr>
+                </ui:fragment>
+
+                 <ui:fragment rendered="#{not empty field.anchoringMsg}">
+                     <tr style="border:none">
+                        <td style="border:none;text-align:left;vertical-align: middle;" colspan="2">
+                            <span style="margin-left:5px;font-style:italic;color:red;">
+                                <h:outputText value="#{field.anchoringMsg}" />
+                            </span>
+                        </td>
+                    </tr>
+                 </ui:fragment>
+                </tbody>
+            </table>
+
+    </ui:fragment>
+
+</ui:composition>

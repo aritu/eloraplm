@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.cm.WorkspaceArchiverService.contrib">
+    
+    <extension point="archivers" target="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+        
+        <archiver name="changeManagement" destinationFolder="FolderArchivedChangeManagement" />
+        <archiver name="cmEcrEco" destinationFolder="FolderArchivedChangeManagement">
+            <condition class="com.aritu.eloraplm.cm.archiver.CmArchiverConditions" method="isFullECOArchived" />
+        </archiver>
+        
+    </extension>
+    
+    <extension point="types" target="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+        
+        <type name="CmPr" archiver="changeManagement" />
+        <type name="CmEcr" archiver="cmEcrEco" />
+        <type name="CmEco" archiver="cmEcrEco" />
+        
+    </extension>
+    
+</component>
+

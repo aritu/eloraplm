@@ -55,12 +55,13 @@ public class CmAsyncBatchProcessingHelperBean implements Serializable {
 
     /**
      * Invalidates current document in the navigation context. It launches an
-     * event to refresh also the impacted tree ben of the specified type (DOC,
-     * BOM)
+     * event to refresh also the tree bean of the specified type (DOC, BOM) and
+     * class (IMPACTED, MODIFIED)
      *
      * @param itemType
+     * @param itemClass
      */
-    public void refreshDocument(String itemType) {
+    public void refreshDocument(String itemType, String itemClass) {
         String logInitMsg = "[refreshDocument] ["
                 + documentManager.getPrincipal().getName() + "] "
                 + " itemType = |" + itemType + "| ";
@@ -80,25 +81,53 @@ public class CmAsyncBatchProcessingHelperBean implements Serializable {
         // Invalidate current document
         navigationContext.invalidateCurrentDocument();
 
-        // refresh required impact matrix in function of the itemType:
-        // ITEM or DOC
+        // refresh required tree bean in function of the itemType (ITEM or DOC)
+        // and the itemClass (MODIFIED or IMPACTED)
         // if itemType is null or empty, nothing to do. It means that this
         // process is not stored in the bean. This can happen after
         // reinitializing the server.
-        if (itemType != null && itemType.length() > 0) {
+        if (itemType != null && itemType.length() > 0 && itemClass != null
+                && itemClass.length() > 0) {
             try {
-                switch (itemType) {
-                case CMConstants.ITEM_TYPE_BOM:
-                    Events.instance().raiseEvent(
-                            CMEventNames.CM_REFRESH_ITEMS_IMPACT_MATRIX);
-                    break;
-                case CMConstants.ITEM_TYPE_DOC:
-                    Events.instance().raiseEvent(
-                            CMEventNames.CM_REFRESH_DOCS_IMPACT_MATRIX);
-                    break;
+                if (itemClass.equals(CMConstants.ITEM_CLASS_IMPACTED)) {
+                    switch (itemType) {
+                    case CMConstants.ITEM_TYPE_BOM:
+                        Events.instance().raiseEvent(
+                                CMEventNames.CM_REFRESH_ITEMS_IMPACT_MATRIX);
+                        break;
+                    case CMConstants.ITEM_TYPE_DOC:
+                        Events.instance().raiseEvent(
+                                CMEventNames.CM_REFRESH_DOCS_IMPACT_MATRIX);
+                        break;
 
-                default:
-                    log.error(logInitMsg + "Invalid item type |" + itemType
+                    default:
+                        log.error(logInitMsg + "Invalid item type |" + itemType
+                                + "|.");
+                        facesMessages.add(StatusMessage.Severity.ERROR,
+                                messages.get(
+                                        "eloraplm.message.error.cm.batch.refreshDocument"));
+                    }
+
+                } else if (itemClass.equals(CMConstants.ITEM_CLASS_MODIFIED)) {
+                    switch (itemType) {
+                    case CMConstants.ITEM_TYPE_BOM:
+                        Events.instance().raiseEvent(
+                                CMEventNames.CM_REFRESH_MODIFIED_ITEMS);
+                        break;
+                    case CMConstants.ITEM_TYPE_DOC:
+                        Events.instance().raiseEvent(
+                                CMEventNames.CM_REFRESH_MODIFIED_DOCS);
+                        break;
+
+                    default:
+                        log.error(logInitMsg + "Invalid item type |" + itemType
+                                + "|.");
+                        facesMessages.add(StatusMessage.Severity.ERROR,
+                                messages.get(
+                                        "eloraplm.message.error.cm.batch.refreshDocument"));
+                    }
+                } else {
+                    log.error(logInitMsg + "Invalid item class |" + itemClass
                             + "|.");
                     facesMessages.add(StatusMessage.Severity.ERROR,
                             messages.get(

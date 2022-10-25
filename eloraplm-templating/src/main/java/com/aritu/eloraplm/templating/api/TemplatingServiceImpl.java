@@ -51,6 +51,11 @@ public class TemplatingServiceImpl extends DefaultComponent
     }
 
     @Override
+    public boolean existsTemplate(String id) {
+        return templates.containsKey(id);
+    }
+
+    @Override
     public TemplateDescriptor getTemplate(String id) {
 
         if (templates != null && templates.containsKey(id)) {

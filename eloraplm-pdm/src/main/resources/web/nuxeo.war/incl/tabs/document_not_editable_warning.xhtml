@@ -15,7 +15,7 @@
             <h:outputText value="#{messages['eloraplm.message.warning.nonVersionableDocumentNotEditable']}" styleClass="processMessage completeWarning" />
         </c:if>
         <c:if test="#{not currentDocument.isVersionable() and not currentDocument.hasFacet('LockRequiredToEdit')}">
-            <h:outputText value="#{messages['eloraplm.message.warning.nonVersionableDocumentLocked']}" styleClass="processMessage completeWarning" />
+            <h:outputText value="#{messages['eloraplm.message.warning.nonVersionableDocumentLockedByOther']}" styleClass="processMessage completeWarning" />
         </c:if>
       </c:if>
   </h:panelGroup>

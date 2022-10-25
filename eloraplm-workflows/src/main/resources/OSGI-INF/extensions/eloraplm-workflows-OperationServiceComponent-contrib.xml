@@ -6,19 +6,139 @@
         <contextHelper id="Wf" class="com.aritu.eloraplm.workflows.automation.WorkflowFunctions"/>
     </extension>
     
+    <extension point="chainException" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
+        <catchChain id="catchApproveDocument" onChainId="Elora.Plm.ApproveDocument">
+          <run chainId="Elora.Plm.ChainExceptionApproveDocument" priority="0" rollBack="false"/>
+        </catchChain>
+        
+        <catchChain id="catchApproveDocumentExecution" onChainId="Elora.Plm.ApproveDocumentExecution">
+          <run chainId="Elora.Plm.ChainExceptionApproveDocument" priority="0" rollBack="false"/>
+        </catchChain>
+    </extension>
     <extension point="chains" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
         
         <chain id="Elora.Workflow.ForceResume">
-            <operation id="Context.FetchDocument"/>
             <operation id="Workflow.ResumeNode"/>
         </chain>
         
         <chain id="Elora.Workflow.SaveInitiatorComment">
-            <operation id="Context.FetchDocument"/>
             <operation id="Context.SetWorkflowVar">
                 <param type="string" name="name">initiatorComment</param>
                 <param type="object" name="value">expr:NodeVariables['comment']</param>
             </operation>
+        </chain>
+        
+        
+        <!-- Elora.Plm.ApproveDocument:
+            - fetch document
+            - get base version of the document
+            - check if the document is already approved or not
+            - if it is not already approve, launch approve execution
+            - do a refresh
+         -->
+        <chain id="Elora.Plm.ApproveDocument">
+            <operation id="Context.FetchDocument"/>
+            <operation id="Elora.Plm.GetBaseVersion"/>
+            <operation id="Context.RunOperation">
+                <param name="id" type="string">expr:@{This[0].currentLifeCycleState != 'approved' ? 'Elora.Plm.ApproveDocumentExecution' : 'Elora.Plm.ApproveDocument.NotifyDocumentAlreadyApproved' }</param>
+            </operation>
+            <operation id="Seam.Refresh"/>
+        </chain>
+        
+        
+        <!-- Elora.Plm.ApproveDocumentExecution:
+            - fetch document
+            - if fetched document is not immutable, get base version of the document
+            - approve the base version
+            - send promoted and approved events
+            - disable versioning  the document
+            - save the document
+            - restore the WC to the approved document
+            - do a refresh
+         -->
+        <chain id="Elora.Plm.ApproveDocumentExecution">
+            <operation id="Context.FetchDocument"/>
+             <operation id="Context.RunOperation">
+                <param name="id" type="string">expr:@{!This[0].isImmutable() ? 'Elora.Plm.GetBaseVersion' : 'voidChain' }</param>
+            </operation>
+            <operation id="Document.FollowLifecycleTransition">
+                <param name="value" type="string">approve</param>
+            </operation>
+            <operation id="Elora.Plm.FireEvent">
+                <param name="name" type="string">PdmPromotedEvent</param>
+                <param name="comment" type="string">expr:Document.versionLabel</param>
+            </operation>
+            <operation id="Elora.Plm.FireEvent">
+                <param name="name" type="string">PdmApprovedEvent</param>
+            </operation>
+            <operation id="Elora.Plm.DisableVersioningDocument"/>
+            <operation id="Document.Save"/>
+            <operation id="Elora.Plm.RestoreToVersion"/>
+            <operation id="Seam.Refresh"/>
+        </chain>
+        
+        
+        <!-- Elora.Plm.ApproveDocument.NotifyDocumentAlreadyApproved:
+            - fetch document
+            - Adds a warning message indicating that the document is already approved
+         -->
+        <chain id="Elora.Plm.ApproveDocument.NotifyDocumentAlreadyApproved">
+            <operation id="Context.FetchDocument"/>
+            <operation id="WebUI.AddMessage">
+                <param name="message" type="string">eloraplm.message.warn.wf.documentAlreadyApproved</param>
+                <param name="severity" type="string">WARN</param>
+            </operation>
+        </chain>
+        
+        
+        <!-- Elora.Plm.ApproveDocument.ChainExceptionApproveDocument:
+            - fetch document
+            - Adds an error message indicating that there has been an error approving the document
+         -->
+        <chain id="Elora.Plm.ChainExceptionApproveDocument">
+            <operation id="Context.FetchDocument"/>
+            <operation id="WebUI.AddMessage">
+                <param name="message" type="string">eloraplm.message.error.wf.errorApprovingDocument</param>
+                <param name="severity" type="string">ERROR</param>
+            </operation>
+        </chain>
+        
+        
+        <!-- Elora.Plm.Demote:
+            - fetch document
+            - follow transition
+            - send demoted event
+            - do a refresh
+         -->
+        <chain id="Elora.Plm.Demote">
+            <operation id="Context.FetchDocument"/>
+            <operation id="Document.FollowLifecycleTransition">
+                <param name="value" type="string">expr:ChainParameters['transition']</param>
+            </operation>
+            <operation id="Elora.Plm.FireEvent">
+                <param name="name" type="string">PdmDemotedEvent</param>
+                <param name="comment" type="string">expr:Document.versionLabel</param>
+            </operation>
+            <operation id="Seam.Refresh"/>
+        </chain>
+        
+        
+        <!-- Elora.Plm.Promote:
+            - fetch document
+            - follow transition
+            - send promoted event
+            - do a refresh
+         -->
+        <chain id="Elora.Plm.Promote">
+            <operation id="Context.FetchDocument"/>
+            <operation id="Document.FollowLifecycleTransition">
+                <param name="value" type="string">expr:ChainParameters['transition']</param>
+            </operation>
+            <operation id="Elora.Plm.FireEvent">
+                <param name="name" type="string">PdmPromotedEvent</param>
+                <param name="comment" type="string">expr:Document.versionLabel</param>
+            </operation>
+            <operation id="Seam.Refresh"/>
         </chain>
         
     </extension>
@@ -27,6 +147,10 @@
         
         <operation class="com.aritu.eloraplm.workflows.restoperations.GetLatestDocumentRoute" replace="true" />
         <operation class="com.aritu.eloraplm.workflows.restoperations.GetRouteNodes" replace="true" />
+        <operation class="com.aritu.eloraplm.workflows.restoperations.GetBaseVersion" replace="true" />
+        <operation class="com.aritu.eloraplm.workflows.restoperations.RestoreToVersion" replace="true" />
+        <operation class="com.aritu.eloraplm.workflows.restoperations.FireEvent" replace="true" />
+        <operation class="com.aritu.eloraplm.workflows.restoperations.DisableVersioningDocument" replace="true" />
         
     </extension>
     

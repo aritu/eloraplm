@@ -1,4 +1,6 @@
-id,label,obsolete
-id_icl1_1,Mechanical,0
-id_icl1_2,Electrical,0
-id_icl1_3,Software,0
+id,label,obsolete,ordering
+"mechanical","Mecánico","0","001"
+"electronic","Electronico","0","002"
+"electromechanical","Electromecánico","0","003"
+"software","Software","0","004"
+"other","Otros","0","005"

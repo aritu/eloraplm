@@ -48,6 +48,8 @@ public class EloraLifeCycleConstants {
 
     public static final String ASYNC_PROCESSING = "asyncProcessing";
 
+    public static final String WORKING = "working";
+
     // -- STATES PROPERTIES
     public static final String STATUS_RELEASED = "released";
 
@@ -80,9 +82,18 @@ public class EloraLifeCycleConstants {
 
     public static final String TRANS_START_ASYNC_PROCESS = "startAsyncProcess";
 
+    public static final String TRANS_TO_WORKING = "toWorking";
+
     // -- LIFECYCLES
     public static final String CAD_LIFE_CYCLE = "eloraCadLifeCycle";
 
     public static final String BOM_LIFE_CYCLE = "eloraBomLifeCycle";
+
+    public static final String DEFAULT_LIFE_CYCLE = "eloraDefaultLifeCycle";
+
+    public static final String WS_LIFE_CYCLE = "eloraWsLifeCycle";
+
+    // --- MISC
+    public static final String ABBR_SUFFIX = ".abbr";
 
 }

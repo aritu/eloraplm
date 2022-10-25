@@ -70,10 +70,10 @@ public class LockDocument {
 
     private boolean canLock(DocumentModel doc) {
         // TODO PowerUsers?
-        // TODO Hau gaizki dago. Lifecycle egoera guztietan isLockable jartzen
-        // dugunean XPa matxakatuta
-        // hori bakarrik begiratu ahalko da, oraingoz ezin da.
         try {
+            if (doc.isLocked()) {
+                return false;
+            }
             if (!doc.isFolder()
                     && !EloraDocumentHelper.getIsCurrentStateLockable(doc)) {
                 return false;

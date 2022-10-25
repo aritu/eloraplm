@@ -34,13 +34,29 @@
         <event name="CmItemsBatchExecuteActionsEvent" />
         <event name="CmItemsBatchCheckInEvent" />
         <event name="CmItemsBatchOverwriteEvent" />
+        <event name="CmItemsBatchUndoCheckoutEvent" />
         <event name="CmItemsBatchPromoteEvent" />
         <event name="CmDocsBatchLockEvent" />
         <event name="CmDocsBatchUnlockEvent" />
         <event name="CmDocsBatchPromoteEvent" />
+        <event name="CmModifiedDocsBatchLockEvent" />
+        <event name="CmModifiedDocsBatchUnlockEvent" />
+        <event name="CmModifiedDocsPromoteEvent" />
+        <event name="CmModifiedItemsBatchLockEvent" />
+        <event name="CmModifiedItemsBatchUnlockEvent" />
+        <event name="CmModifiedItemsBatchCheckoutEvent" />
+        <event name="CmModifiedItemsBatchCheckinEvent" />
+        <event name="CmModifiedItemsBatchOverwriteEvent" />
+        <event name="CmModifiedItemsBatchUndoCheckoutEvent" />
+        <event name="CmModifiedItemsBatchPromoteEvent" />
         <event name="documentLocked" />
         <event name="documentUnlocked" />
         <event name="DocumentEloraRootFolderSwitched" />
+        <event name="OmSourceDocSaved" />
+        <event name="OmImpactCalculated" />
+        <event name="OmImpactProcessed" />
+        <event name="ViewerFileCreatedEvent" />
+        
         
         <!-- Disable events enabled by default -->
         <event name="documentModified" enabled="false" />

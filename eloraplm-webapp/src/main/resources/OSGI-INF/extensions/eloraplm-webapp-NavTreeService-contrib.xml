@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.webapp.NavTreeService.contrib">
+
+    <require>org.nuxeo.ecm.webapp.tree.nav.NavTreeService.default.contrib</require>
+
+    <extension point="navigationTree" target="org.nuxeo.ecm.webapp.tree.nav.NavTreeService">
+    
+        <navTree order="1" treeId="CONTENT_TREE" treeLabel="label.content.tree"
+            xhtmlview="/navigation/elora_structure_tree.xhtml" />
+    
+    </extension>
+
+</component>

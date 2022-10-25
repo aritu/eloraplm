@@ -13,6 +13,7 @@
  */
 package com.aritu.eloraplm.integration.get.restoperations.util;
 
+import com.aritu.eloraplm.integration.restoperations.util.EloraLifecycleStateInfo;
 import com.aritu.eloraplm.integration.restoperations.util.EloraStructureRootInfo;
 import com.aritu.eloraplm.integration.restoperations.util.EloraTypeInfo;
 
@@ -38,9 +39,11 @@ public class GetUserWorkspacesResponseDoc {
 
     private String path;
 
-    private String lifecycleState;
+    private EloraLifecycleStateInfo lifecycleStateInfo;
 
     private String description;
+
+    private boolean isArchived;
 
     public String getRealUid() {
         return realUid;
@@ -106,12 +109,13 @@ public class GetUserWorkspacesResponseDoc {
         this.domainRealUid = domainRealUid;
     }
 
-    public String getLifecycleState() {
-        return lifecycleState;
+    public EloraLifecycleStateInfo getLifecycleStateInfo() {
+        return lifecycleStateInfo;
     }
 
-    public void setLifecycleState(String lifecycleState) {
-        this.lifecycleState = lifecycleState;
+    public void setLifecycleStateInfo(
+            EloraLifecycleStateInfo lifecycleStateInfo) {
+        this.lifecycleStateInfo = lifecycleStateInfo;
     }
 
     public String getDescription() {
@@ -120,6 +124,14 @@ public class GetUserWorkspacesResponseDoc {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean getIsArchived() {
+        return isArchived;
+    }
+
+    public void setIsArchived(boolean isArchived) {
+        this.isArchived = isArchived;
     }
 
 }

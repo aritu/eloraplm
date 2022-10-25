@@ -1,0 +1,13 @@
+<f:subview id="#{widget.id}"
+  xmlns="http://www.w3.org/1999/xhtml"  
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+
+        <h:graphicImage value="/icons/external_material_16.png" styleClass="proxyBadge" />
+                                
+        &#160;<h:outputText rendered="#{not empty field_1}" styleClass="eloraReference" value="#{field_1}" />&#160;
+        
+        <h:outputText rendered="#{not empty field_2}" styleClass="documentTitleLink" value="#{field_2}" />
+        
+</f:subview>

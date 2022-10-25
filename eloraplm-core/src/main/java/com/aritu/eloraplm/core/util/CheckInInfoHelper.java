@@ -15,7 +15,9 @@
 package com.aritu.eloraplm.core.util;
 
 import java.util.Date;
+
 import org.nuxeo.ecm.core.api.DocumentModel;
+
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 
 /**
@@ -28,19 +30,25 @@ import com.aritu.eloraplm.constants.EloraMetadataConstants;
 public class CheckInInfoHelper {
 
     public static void setLastCheckInInfoProperties(DocumentModel doc,
-            String lastCheckedInBy) {
+            String lastCheckedInBy, Date lastCheckedInDate) {
         doc.setPropertyValue(
                 EloraMetadataConstants.ELORA_CHECKIN_LAST_CHECKED_IN_BY,
                 lastCheckedInBy);
         doc.setPropertyValue(
                 EloraMetadataConstants.ELORA_CHECKIN_LAST_CHECKED_IN_DATE,
-                new Date());
+                lastCheckedInDate);
+    }
+
+    public static void setLastCheckInInfoProperties(DocumentModel doc,
+            String lastCheckedInBy) {
+        setLastCheckInInfoProperties(doc, lastCheckedInBy, new Date());
     }
 
     public static void emptyLastCheckInInfoProperties(DocumentModel doc) {
-        doc.setPropertyValue(EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWER,
-                null);
-        doc.setPropertyValue(EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWED,
+        doc.setPropertyValue(
+                EloraMetadataConstants.ELORA_CHECKIN_LAST_CHECKED_IN_BY, null);
+        doc.setPropertyValue(
+                EloraMetadataConstants.ELORA_CHECKIN_LAST_CHECKED_IN_DATE,
                 null);
     }
 

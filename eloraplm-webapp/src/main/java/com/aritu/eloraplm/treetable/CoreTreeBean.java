@@ -37,9 +37,9 @@ public abstract class CoreTreeBean extends EloraDocContextBoundActionBean
 
     private TreeNode[] selectedNodes;
 
-    private int firstLevelChildrenCount;
+    protected int firstLevelChildrenCount;
 
-    private int childrenCount;
+    protected int childrenCount;
 
     private boolean hasUnreadableNodes;
 
@@ -60,7 +60,7 @@ public abstract class CoreTreeBean extends EloraDocContextBoundActionBean
         childrenCount = countChildren(root, 0);
     }
 
-    private int countChildren(TreeNode node, int count) {
+    protected int countChildren(TreeNode node, int count) {
         count += node.getChildCount();
         for (TreeNode child : node.getChildren()) {
             count = countChildren(child, count);

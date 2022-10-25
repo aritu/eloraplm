@@ -80,4 +80,8 @@ public class AutomationFunctions extends CoreFunctions {
         return list;
     }
 
+    public Object[] listToArray(List<Object> list) {
+        return list.toArray(new Object[list.size()]);
+    }
+
 }

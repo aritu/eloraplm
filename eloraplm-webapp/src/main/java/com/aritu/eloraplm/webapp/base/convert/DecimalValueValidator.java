@@ -26,8 +26,8 @@ import com.aritu.eloraplm.core.util.EloraDecimalHelper;
 @BypassInterceptors
 public class DecimalValueValidator implements javax.faces.validator.Validator {
 
-    private static final Log log = LogFactory.getLog(
-            DecimalValueValidator.class);
+    private static final Log log = LogFactory
+            .getLog(DecimalValueValidator.class);
 
     @Override
     public void validate(FacesContext context, UIComponent component,
@@ -36,10 +36,16 @@ public class DecimalValueValidator implements javax.faces.validator.Validator {
         String logInitMsg = "[validate] ";
         log.trace(logInitMsg + "--- ENTER --- value = |" + value + "|");
 
-        String maxIntegers = (String) component.getAttributes().get(
-                "maxIntegerPlaces");
-        String maxDecimals = (String) component.getAttributes().get(
-                "maxDecimalPlaces");
+        Integer maxIntegers = component.getAttributes()
+                .get("maxIntegerPlaces") != null
+                        ? (int) (long) component.getAttributes()
+                                .get("maxIntegerPlaces")
+                        : null;
+        Integer maxDecimals = component.getAttributes()
+                .get("maxDecimalPlaces") != null
+                        ? (int) (long) component.getAttributes()
+                                .get("maxDecimalPlaces")
+                        : null;
 
         UIInput input = (UIInput) component;
         String submittedValue = (String) input.getSubmittedValue();

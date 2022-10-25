@@ -23,20 +23,24 @@ public class ModifiedItem extends CMItem {
 
     protected String derivedFrom;
 
+    protected boolean isDerivedFromImpactMatrix;
+
     protected boolean includeInImpactMatrix;
 
     public ModifiedItem(Long rowNumber, String nodeId, String parentNodeId,
-            String derivedFrom, String parentItem, String originItem,
-            String originItemWc, String predicate, String quantity,
-            boolean isAnarchic, boolean isDirectObject, String action,
-            String destinationItem, String destinationItemWc, boolean isManaged,
-            boolean isManual, String type, String comment, boolean isUpdated,
+            String derivedFrom, boolean isDerivedFromImpactMatrix,
+            String parentItem, String originItem, String originItemWc,
+            String predicate, String quantity, boolean isAnarchic,
+            boolean isDirectObject, String action, String destinationItem,
+            String destinationItemWc, boolean isManaged, boolean isManual,
+            String type, String comment, boolean isUpdated,
             boolean includeInImpactMatrix) {
         super(rowNumber, nodeId, parentNodeId, parentItem, originItem,
                 originItemWc, predicate, quantity, isAnarchic, isDirectObject,
                 action, destinationItem, destinationItemWc, isManaged, isManual,
                 type, comment, isUpdated);
         this.derivedFrom = derivedFrom;
+        this.isDerivedFromImpactMatrix = isDerivedFromImpactMatrix;
         this.includeInImpactMatrix = includeInImpactMatrix;
     }
 
@@ -46,6 +50,15 @@ public class ModifiedItem extends CMItem {
 
     public void setDerivedFrom(String derivedFrom) {
         this.derivedFrom = derivedFrom;
+    }
+
+    public boolean getIsDerivedFromImpactMatrix() {
+        return isDerivedFromImpactMatrix;
+    }
+
+    public void setIsDerivedFromImpactMatrix(
+            boolean isDerivedFromImpactMatrix) {
+        this.isDerivedFromImpactMatrix = isDerivedFromImpactMatrix;
     }
 
     public boolean getIncludeInImpactMatrix() {

@@ -18,11 +18,15 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.NXCore;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.lifecycle.LifeCycle;
 import org.nuxeo.ecm.core.lifecycle.LifeCycleService;
 import org.nuxeo.ecm.core.lifecycle.LifeCycleTransition;
+
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -99,5 +103,19 @@ public class LifecycleHelper {
                 + transitionName + "|");
 
         return transitionName;
+    }
+
+    public static void followTransitionAndLaunchEvent(DocumentModel doc,
+            String transition, String eventName, String eventComment)
+            throws EloraException {
+
+        CoreSession session = doc.getCoreSession();
+
+        doc.followTransition(transition);
+
+        EloraEventHelper.fireEvent(eventName, doc, eventComment);
+
+        EloraDocumentHelper.disableVersioningDocument(doc);
+        doc = session.saveDocument(doc);
     }
 }

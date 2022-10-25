@@ -1,7 +1,24 @@
 <?xml version="1.0"?>
-<component name="com.aritu.eloraplm.codecreation.service.CodeCreationService">
+<component name="com.aritu.eloraplm.codecreation.api.CodeCreationService">
+    <documentation>
+        Service to configure code creation.
+    </documentation>
 
-    <service><provide interface="com.aritu.eloraplm.codecreation.service.CodeCreationService" /></service>
-    <implementation class="com.aritu.eloraplm.codecreation.service.CodeCreationServiceImpl" />
+    <service><provide interface="com.aritu.eloraplm.codecreation.api.CodeCreationService" /></service>
+    <implementation class="com.aritu.eloraplm.codecreation.api.CodeCreationServiceImpl" />
+    
+    <extension-point name="types">
+        <documentation>
+            Used to configure code creation for each doctype.
+            <code>
+                <type id="..." mode="manual|manualRequired|auto|autoIfEmpty" />
+            </code>
+            On creation, manual and autoIfEmpty modes display a non-required input. Auto displays a text
+            indicating that code is automatically generated, and manualRequired displays a required input.
+            On edition, manual displays a non-required input, and manualRequired, autoIfEmpty and auto modes
+            display a required input.
+        </documentation>
+        <object class="com.aritu.eloraplm.codecreation.api.TypeDescriptor" />
+    </extension-point>
     
 </component>

@@ -98,9 +98,10 @@ public class ContainerTreeBean extends EditableRelationTreeBean
     }
 
     @Override
-    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic) {
+    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic,
+            boolean isInverse) {
         setPredicateUri(EloraRelationConstants.CONTAINER_HAS_CONTAINER);
-        super.addRelationNode(currentDoc, isAnarchic);
+        super.addRelationNode(currentDoc, isAnarchic, isInverse);
     }
 
     @Override

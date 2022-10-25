@@ -1,0 +1,32 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="editWorkflowQuestionForm">
+        
+        <h:panelGroup styleClass="content" layout="block" style="min-height: 500px">
+            
+            <nxl:layout name="workflow_question" mode="edit" value="#{workflowQuestionsTableBean.editingRow}" />
+            
+        </h:panelGroup>
+        
+        <div class="dialogButtons">
+        
+            <p:commandButton type="button" value="#{messages['command.cancel']}"
+            onclick="PF('#{tableWidgetId}_editDialog').hide();"/>
+            
+            <p:commandButton value="#{messages['command.save']}"
+                actionListener="#{workflowQuestionsTableBean.updateRow()}"
+                onsuccess="markRowAsModified(); PF('#{tableWidgetId}_editDialog').hide();" />
+                
+        </div>
+        
+    </h:form>
+
+</ui:composition>

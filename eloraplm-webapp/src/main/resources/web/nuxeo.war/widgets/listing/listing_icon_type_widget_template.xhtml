@@ -20,6 +20,9 @@
                 <nxu:graphicImage value="/icons/badge_proxy_12.png"
                     styleClass="proxyBadge" rendered="#{field_0.isProxy()}"/>
                 
+                <nxu:graphicImage value="/icons/badge_template_12.png"
+                    styleClass="templateBadge" rendered="#{eloraDocumentTemplatesActions.isTemplate(field_0)}"/>
+                
                 <div id="docRef:#{field_1}"
                     class="documentIcon cell popupTarget"
                     docRef="#{field_1}">

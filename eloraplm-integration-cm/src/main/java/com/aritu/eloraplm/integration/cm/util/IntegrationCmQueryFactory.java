@@ -13,8 +13,10 @@
  */
 package com.aritu.eloraplm.integration.cm.util;
 
+import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMMetadataConstants;
+import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
  * CM Query Factory class.
@@ -34,10 +36,13 @@ public class IntegrationCmQueryFactory {
      *
      * @param cmProcessUid Uid related to the CM process.
      * @return
+     * @throws EloraException
      */
-    public static String getCmEcoRootItemsQuery(String cmProcessUid) {
+    public static String getCmEcoRootItemsQuery(String cmProcessUid,
+            String itemType) throws EloraException {
 
-        String pfx = CMMetadataConstants.DOC_MODIFIED_ITEM_LIST;
+        // String pfx = CMMetadataConstants.DOC_MODIFIED_ITEM_LIST;
+        String pfx = CMHelper.getModifiedItemListMetadaName(itemType);
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
@@ -54,9 +59,11 @@ public class IntegrationCmQueryFactory {
     }
 
     public static String getCmEcoSubitemsByRootItemOriginUidQuery(
-            String cmProcessUid, String rootItemOriginUid) {
+            String cmProcessUid, String rootItemOriginUid, String itemType)
+            throws EloraException {
 
-        String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
+        // String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
+        String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
@@ -68,6 +75,27 @@ public class IntegrationCmQueryFactory {
                 + cmProcessUid + "' AND " + pfx + "/*1/modifiedItem = '"
                 + rootItemOriginUid + "' AND " + pfx
                 + "/*1/originItem IS NOT NULL ORDER BY " + pfx
+                + "/*1/rowNumber";
+
+        return query;
+    }
+
+    public static String getCmEcoSubitemsQuery(String cmProcessUid,
+            String itemType) throws EloraException {
+
+        // String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
+        String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
+
+        String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
+                + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
+                + "/*1/modifiedItem, " + pfx + "/*1/parentItem, " + pfx
+                + "/*1/originItem, " + pfx + "/*1/originItemWc, " + pfx
+                + "/*1/action, " + pfx + "/*1/destinationItem, " + pfx
+                + "/*1/destinationItemWc, " + pfx + "/*1/isManaged, " + pfx
+                + "/*1/comment " + "FROM CmEco, CmEcr WHERE ecm:uuid = '"
+                + cmProcessUid + "' AND " + pfx
+                + "/*1/originItem IS NOT NULL AND " + pfx + "/*1/action <> '"
+                + CMConstants.ACTION_IGNORE + "'ORDER BY " + pfx
                 + "/*1/rowNumber";
 
         return query;

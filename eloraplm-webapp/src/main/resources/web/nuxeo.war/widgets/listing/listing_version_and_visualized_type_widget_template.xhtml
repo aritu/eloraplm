@@ -18,38 +18,39 @@
 <nxu:set var="versionStatusMessage" value="eloraplm.message.versionStatus.#{versionStatus}">
     
     <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
-    
-        <h:panelGroup styleClass="#{field_0.isCheckedOut() ? 'checkedOutLabel' : ''}">
-            <ui:include src="/widgets/listing/listing_version_widget_template.xhtml" />
-        </h:panelGroup>
-    
-        <h:panelGroup styleClass="visualizedTypeProxy" rendered="#{isVersionable and isProxy}">
+        <h:panelGroup styleClass="versionAndVisualizedType">
+            <h:panelGroup styleClass="#{field_0.isCheckedOut() ? 'checkedOutLabel' : ''}">
+                <ui:include src="/widgets/listing/listing_version_widget_template.xhtml" />
+            </h:panelGroup>
         
-                <h:outputText value="AV" title="#{messages['label.title.proxyToArchivedVersion']}"
+            <h:panelGroup styleClass="visualizedTypeProxy" rendered="#{isVersionable and isProxy}">
+            
+                    <h:outputText value="AV" title="#{messages['label.title.proxyToArchivedVersion']}"
+                        styleClass="tipsyShow" style="cursor: default;"
+                        rendered ="#{not empty realDoc and realDoc.isVersion()}"/>
+                    <h:outputText value="WC" title="#{messages['label.title.proxyToWorkingCopy']}"
+                        styleClass="tipsyShow" style="cursor: default;"
+                        rendered ="#{not empty realDoc and not realDoc.isVersion()}"/>
+            
+            </h:panelGroup>
+            
+            <h:panelGroup styleClass="visualizedType" rendered="#{isVersionable and not isProxy}">
+            
+                <h:outputText value="AV" title="#{messages['label.title.archivedVersion']}"
                     styleClass="tipsyShow" style="cursor: default;"
-                    rendered ="#{not empty realDoc and realDoc.isVersion()}"/>
-                <h:outputText value="WC" title="#{messages['label.title.proxyToWorkingCopy']}"
+                    rendered ="#{isVersion}"/>
+                <h:outputText value="WC" title="#{messages['label.title.workingCopy']}"
                     styleClass="tipsyShow" style="cursor: default;"
-                    rendered ="#{not empty realDoc and not realDoc.isVersion()}"/>
-        
-        </h:panelGroup>
-        
-        <h:panelGroup styleClass="visualizedType" rendered="#{isVersionable and not isProxy}">
-        
-            <h:outputText value="AV" title="#{messages['label.title.archivedVersion']}"
-                styleClass="tipsyShow" style="cursor: default;"
-                rendered ="#{isVersion}"/>
-            <h:outputText value="WC" title="#{messages['label.title.workingCopy']}"
-                styleClass="tipsyShow" style="cursor: default;"
-                rendered ="#{not isVersion}"/>
+                    rendered ="#{not isVersion}"/>
+                    
+            </h:panelGroup>
+            
+            <h:graphicImage url="/icons/#{versionStatus}.png" title="#{messages[versionStatusMessage]}"
+                style="margin-left: 2px;"
+                styleClass="tipsyShow"
+                rendered="#{realDoc.isVersion() and versionStatus ne 'Normal'}" />
                 
         </h:panelGroup>
-        
-        <h:graphicImage url="/icons/#{versionStatus}.png" title="#{messages[versionStatusMessage]}"
-            style="margin-left: 2px;"
-            styleClass="tipsyShow"
-            rendered="#{realDoc.isVersion() and versionStatus ne 'Normal'}" />
-        
     </c:if>
     
     <c:if test="#{nxl:isLikePlainMode(widget.mode)}">

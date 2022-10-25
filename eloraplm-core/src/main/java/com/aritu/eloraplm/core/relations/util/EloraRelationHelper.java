@@ -25,6 +25,7 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
+import org.nuxeo.ecm.platform.relations.api.Node;
 import org.nuxeo.ecm.platform.relations.api.QNameResource;
 import org.nuxeo.ecm.platform.relations.api.RelationManager;
 import org.nuxeo.ecm.platform.relations.api.Resource;
@@ -161,6 +162,37 @@ public class EloraRelationHelper {
                     throw new CheckinNotAllowedException(from, object);
                 }
             }
+        }
+    }
+
+    /**
+     * Creates a relation based on an statement. Now it is used from template
+     * creation. In this case we don't need to restore any wc relations or
+     * create relations to a specific version
+     */
+    public static void copyRelation(DocumentModel subject, DocumentModel object,
+            EloraDocumentRelationManager eloraDocumentRelationManager,
+            Statement stmt) throws EloraException {
+        CoreSession session = subject.getCoreSession();
+        String logInitMsg = "[copyRelation] ["
+                + session.getPrincipal().getName() + "] ";
+
+        // TODO: No se hace ningún tratamiento especial de los anárquicos. Mirar
+        // si está bien para las plantillas
+
+        EloraStatementInfo eloraStmtInfo = new EloraStatementInfoImpl(stmt);
+        if (isOtherDocument(object)) {
+            log.trace(logInitMsg + "Object |" + object.getId()
+                    + "| is other document");
+            eloraDocumentRelationManager.addRelation(session, subject,
+                    stmt.getObject(), stmt.getPredicate().getUri());
+            log.trace(logInitMsg + "Relation added from |" + subject.getId()
+                    + "| to |" + stmt.getObject().toString()
+                    + "| with predicate |" + stmt.getPredicate().getUri()
+                    + "|");
+        } else {
+            addDocumentRelation(subject, object, object,
+                    eloraDocumentRelationManager, session, stmt, eloraStmtInfo);
         }
     }
 
@@ -504,7 +536,7 @@ public class EloraRelationHelper {
         }
     }
 
-    private static void copyAllRelations(DocumentModel from, DocumentModel to,
+    public static void copyAllRelations(DocumentModel from, DocumentModel to,
             EloraDocumentRelationManager eloraDocumentRelationManager,
             CoreSession session) throws EloraException {
 
@@ -583,6 +615,13 @@ public class EloraRelationHelper {
         }
         log.trace(logInitMsg + "Relations copied from:|" + from.getId()
                 + "| to |" + to.getId() + "|");
+    }
+
+    public static List<Statement> getStatements(DocumentModel subjectDoc,
+            Resource predicate) {
+        List<Resource> predicates = new ArrayList<Resource>();
+        predicates.add(predicate);
+        return getStatements(subjectDoc, predicates);
     }
 
     public static List<Statement> getStatements(DocumentModel subjectDoc,
@@ -668,8 +707,8 @@ public class EloraRelationHelper {
      */
     public static List<Statement> getSubjectStatements(DocumentModel objectDoc,
             Resource predicateResource) {
-        return getSubjectStatements(RelationConstants.GRAPH_NAME, objectDoc,
-                predicateResource);
+        return getSubjectStatements(EloraRelationConstants.ELORA_GRAPH_NAME,
+                objectDoc, predicateResource);
     }
 
     /**
@@ -847,10 +886,10 @@ public class EloraRelationHelper {
         return relatedVersionsOfObject;
     }
 
-    public static boolean isCircularRelation(DocumentModel parentDoc,
-            DocumentModel addedDoc, CoreSession session) {
+    public static boolean isCircularRelation(DocumentModel currentDoc,
+            DocumentModel addedDoc, boolean isInverse, CoreSession session) {
         try {
-            checkCircularRelation(parentDoc, addedDoc, session);
+            checkCircularRelation(currentDoc, addedDoc, isInverse, session);
             return false;
         } catch (EloraException e) {
             return true;
@@ -859,22 +898,49 @@ public class EloraRelationHelper {
 
     // TODO: Que sea mas eficiente sacando las relaciones de una lista de
     // predicates. Hay que saber cuales queremos
-    private static void checkCircularRelation(DocumentModel parentDoc,
-            DocumentModel addedDoc, CoreSession session) throws EloraException {
+    private static void checkCircularRelation(DocumentModel currentDoc,
+            DocumentModel addedDoc, boolean isInverse, CoreSession session)
+            throws EloraException {
 
-        if (parentDoc.getId().equals(addedDoc.getId())) {
+        if (currentDoc.getId().equals(addedDoc.getId())) {
             throw new EloraException("Circular relation adding document");
         }
 
-        List<Statement> stmts = RelationHelper.getStatements(addedDoc, null);
+        List<Statement> stmts;
+        if (!isInverse) {
+            stmts = RelationHelper.getStatements(
+                    EloraRelationConstants.ELORA_GRAPH_NAME, addedDoc, null);
+        } else {
+            stmts = EloraRelationHelper.getSubjectStatements(
+                    EloraRelationConstants.ELORA_GRAPH_NAME, addedDoc, null);
+        }
         for (Statement stmt : stmts) {
-            DocumentModel relatedDoc = RelationHelper.getDocumentModel(
-                    stmt.getObject(), session);
-            if (relatedDoc.getId().equals(parentDoc.getId())) {
+            DocumentModel relatedDoc;
+            Node node = !isInverse ? stmt.getObject() : stmt.getSubject();
+            relatedDoc = RelationHelper.getDocumentModel(node, session);
+            if (relatedDoc.getId().equals(currentDoc.getId())) {
                 throw new EloraException("Circular relation adding document");
             }
-            checkCircularRelation(parentDoc, relatedDoc, session);
+            checkCircularRelation(currentDoc, relatedDoc, isInverse, session);
         }
+
+    }
+
+    public static DocumentModelList getAllRelatedCadDocsForItem(
+            DocumentModel item) {
+        Resource predicate = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_CAD_DOCUMENT);
+        return RelationHelper.getObjectDocuments(item, predicate);
+    }
+
+    public static List<Resource> getPredicateResourceList(
+            List<String> predicateList) {
+        List<Resource> resourceList = new ArrayList<Resource>();
+        for (String predicateUri : predicateList) {
+            Resource predicateResource = new ResourceImpl(predicateUri);
+            resourceList.add(predicateResource);
+        }
+        return resourceList;
     }
 
 }

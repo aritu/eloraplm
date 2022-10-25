@@ -33,7 +33,7 @@ public class EloraSchemaConstants {
 
     public static final String CAD_ATTACHMENTS = "cad_attachments";
 
-    public static final String MAJOR_LETTER_VERSIONING = "major_letter_versioning";
+    public static final String VERSION_LABEL = "version_label";
 
     public static final String PROJECT = "project";
 
@@ -50,5 +50,9 @@ public class EloraSchemaConstants {
     public static final String OVERWRITE_DATA = "overwrite_data";
 
     public static final String STATES_LOG = "states_log";
+
+    public static final String TEMPLATE_INFO = "template_info";
+
+    public static final String RESPONSIBLE = "responsible";
 
 }

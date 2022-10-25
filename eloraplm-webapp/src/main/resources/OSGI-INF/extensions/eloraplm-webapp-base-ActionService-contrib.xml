@@ -8,6 +8,7 @@
     <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
     <require>org.nuxeo.ecm.platform.preview.actions</require>
     <require>org.nuxeo.ecm.platform.publisher.web.actions</require>
+    <require>org.nuxeo.ecm.platform.userworkspace.actions</require>
     <require>org.nuxeo.ecm.favorites.actions</require>
 
 <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
@@ -31,13 +32,25 @@
       </rule>
     </filter>
     
-    <filter id="isCadBomOrBasicDocument">
-      <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet -->
+    <filter id="isCadOrBasicDocument">
       <rule grant="true">
-        <condition>#{currentDocument.hasFacet('CadDocument')
-            or currentDocument.hasFacet('BomDocument')
-            or currentDocument.hasFacet('BasicDocument')
-        }</condition>
+        <facet>CadDocument</facet>
+        <facet>BasicDocument</facet>
+      </rule>
+    </filter>
+    
+    <filter id="isBomOrBasicDocument">
+      <rule grant="true">
+        <facet>BomDocument</facet>
+        <facet>BasicDocument</facet>
+      </rule>
+    </filter>
+    
+    <filter id="isCadBomOrBasicDocument">
+      <rule grant="true">
+        <facet>CadDocument</facet>
+        <facet>BomDocument</facet>
+        <facet>BasicDocument</facet>
       </rule>
     </filter>
     
@@ -55,7 +68,6 @@
     
     <filter id="hasDefaultHeader">
         <rule grant="true">
-            <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet -->
             <facet>BasicDocument</facet>
             <facet>CadDocument</facet>
         </rule>
@@ -80,37 +92,19 @@
         <rule grant="true" />
     </filter>
     
-    <!--  create documents from template ### BEGIN ### -->
-    <filter id="can_be_created_from_template">
-      <rule grant="true">
-        <condition>#{changeableDocument.type == 'File'}</condition>
-        <condition>#{changeableDocument.type == 'Project'}</condition>
-        <condition>#{changeableDocument.type == 'Workspace'}</condition>
-        <condition>#{changeableDocument.type == 'CmPr'}</condition>
-        <condition>#{changeableDocument.type == 'CmEcr'}</condition>
-        <condition>#{changeableDocument.type == 'CmEco'}</condition>
-        <condition>#{changeableDocument.type == 'ProductValidation'}</condition>
-        <condition>#{changeableDocument.type == 'ProductVerification'}</condition>
-        <condition>#{changeableDocument.type == 'ProductionProcessValidation'}</condition>
-        <condition>#{changeableDocument.type == 'ProductionPartApprovalProcess'}</condition>
-      </rule>
+    <!--  Enable CVS Import on TemplateRoot. importFile will only be available for Administrator or Power Users. -->
+    <filter id="importFile" append="true">
+        <rule grant="true">
+            <permission>AddChildren</permission>
+            <type>TemplateRoot</type>
+            <type>DocumentTemplates</type>
+            <type>OfficeTemplates</type>
+        </rule>
+        <rule grant="false">
+            <condition>#{!(currentUser.administrator || currentUser.isMemberOf('powerusers'))}</condition>
+            <condition>#{(currentDocument.type ne 'TemplateRoot' and currentDocument.type ne 'DocumentTemplates' and currentDocument.type ne 'OfficeTemplates')}</condition>
+        </rule>
     </filter>
-    
-    <filter id="cannot_be_created_from_template">
-      <rule grant="false">
-        <condition>#{changeableDocument.type == 'File'}</condition>
-        <condition>#{changeableDocument.type == 'Project'}</condition>
-        <condition>#{changeableDocument.type == 'Workspace'}</condition>
-        <condition>#{changeableDocument.type == 'CmPr'}</condition>
-        <condition>#{changeableDocument.type == 'CmEcr'}</condition>
-        <condition>#{changeableDocument.type == 'CmEco'}</condition>
-        <condition>#{changeableDocument.type == 'ProductValidation'}</condition>
-        <condition>#{changeableDocument.type == 'ProductVerification'}</condition>
-        <condition>#{changeableDocument.type == 'ProductionProcessValidation'}</condition>
-        <condition>#{changeableDocument.type == 'ProductionPartApprovalProcess'}</condition>
-      </rule>
-    </filter>
-    <!--  create documents from template ### END ### -->
     
   </extension>
 
@@ -131,6 +125,18 @@
         <property name="widgetName">summary_current_document_types_and_description</property>
       </properties>
       <filter-id>isNotBomDocument</filter-id>
+    </action>
+    
+    <action id="summary_current_document_view_for_file" type="widget" order="300">
+      <category>SUMMARY_PANEL_LEFT</category>
+      <properties>
+        <property name="widgetName">summary_current_document_view</property>
+      </properties>
+      <filter id="filter@summary_current_document_view_for_file">
+        <rule grant="true">
+            <type>File</type>
+        </rule>
+      </filter>
     </action>
     
     
@@ -157,6 +163,9 @@
     
     <!-- disable document relations from right panel. We choose what relations to show -->
     <action id="summary_current_document_relations" enabled="false"/>
+    
+    <!-- disable personal workspace menu -->
+    <action id="SHOW_PERSONAL_WORKSPACE" enabled="false" />
     
     
     <!-- Action to create WS proxy -->
@@ -196,6 +205,25 @@
       <filter id="filter@switchCurrentDocumentEloraRootFolder">
         <rule grant="true">
           <condition>#{switchActions.getCanSwitchCurrentDocEloraRootFolder()}</condition>
+        </rule>
+      </filter>
+      <properties>
+        <property name="include">/incl/action/switch_document_elora_root_folder.xhtml</property>
+        <property name="ajaxSupport">true</property>
+        <property name="visibleByDefault">false</property>
+        <property name="width">1000</property>
+        <property name="height">800</property>
+        <property name="autoDimensions">false</property>
+      </properties>
+      
+    </action>
+    
+    <!-- Action to switch current document to Library Root Folder -->
+    <action id="switchCurrentDocumentLibraryRootFolder" order="55" label="eloraplm.command.switchLibraryRootFolder" type="fancybox" icon="/icons/action_switch_16.png">
+      <category>DOCUMENT_UPPER_ACTION</category>
+      <filter id="filter@switchCurrentDocumentLibraryRootFolder">
+        <rule grant="true">
+          <condition>#{switchActions.getCanSwitchCurrentDocLibraryRootFolder()}</condition>
         </rule>
       </filter>
       <properties>
@@ -259,7 +287,7 @@
     <action id="POPUP_VIEW" enabled="false" />
     
     <!-- Updated icon and order -->
-    <action id="POPUP_RIGHTS" icon="/icons/rights.png" order="100" />
+    <action id="POPUP_RIGHTS" icon="/icons/popup_rights_16.png" order="100" />
     
     <!-- Updated order -->
     <action id="POPUP_EDIT" order="5" />
@@ -270,6 +298,17 @@
     <action id="POPUP_OPEN_IN_NEW_TAB" link="javascript:doOpenInNewTab" label="eloraplm.command.openInNewTab" icon="/icons/external.gif" order="0">
         <category>POPUP</category>
     </action>
+    
+    <!-- Remove from favorites --> 
+    <action id="POPUP_REMOVE_FROM_FAVORITES" link="javascript:removeFromFavorites" label="label.removeFromFavorites" icon="/icons/popup_favorite_16.png" order="200">
+        <category>POPUP</category>
+        <filter id="popup_can_remove_from_favorites_doc">
+            <rule grant="true">
+              <condition>#{eloraFavoritesActions.canDocumentBeRemovedFromFavorites(document)}</condition>
+            </rule>
+      </filter>
+    </action>
+     
     
     <!-- Add some general tabs and reorder default tabs -->
     
@@ -287,7 +326,6 @@
     
     <action id="TAB_LINKS" link="/incl/tabs/links.xhtml"
       order="100" label="eloraplm.label.links" type="rest_document_link">
-      <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet -->
       <filter-id>isCadBomOrBasicDocument</filter-id>
       <category>VIEW_ACTION_LIST</category>
     </action>
@@ -364,12 +402,6 @@
       </properties>
     </action>
     
-    <action id="CREATE_DOCUMENT" link="#{eloraDocumentActions.saveDocument}"
-      order="0" label="command.create">
-      <category>CREATE_DOCUMENT_FORM</category>
-      <filter-id>cannot_be_created_from_template</filter-id>
-    </action>
-    
     <action id="default_document_header" order="1" type="template">
         <category>DOCUMENT_HEADER</category>
         <filter-id>hasDefaultHeader</filter-id>
@@ -414,16 +446,20 @@
         </properties>
     </action>
     
-    
     <!--  create documents from template ### BEGIN ### -->
     <action id="CREATE_DOC_FROM_TEMPLATE" link="#{eloraDocumentTemplatesActions.createDocumentFromTemplate}"
       order="0" label="command.create">
       <category>CREATE_DOCUMENT_FORM</category>
-      <filter-id>can_be_created_from_template</filter-id>
+      <filter id="filter@CREATE_DOC_FROM_TEMPLATE">
+        <rule grant="false">
+            <condition>#{changeableDocument.type == 'TemplateSource'}</condition>
+        </rule>
+      </filter>
     </action>
     
-    <!-- disable CREATE_WORKSPACE action, since everything will be managed from CREATE_DOC_FROM_TEMPLATE -->
+    <!-- disable CREATE_WORKSPACE and CREATE_DOCUMENT actions, since everything will be managed from CREATE_DOC_FROM_TEMPLATE -->
     <action id="CREATE_WORKSPACE" enabled="false"/>
+    <action id="CREATE_DOCUMENT" enabled="false"/>
     <!--  create documents from template ### END ### -->
     
     <!-- User center MCAD Integration tab -->
@@ -431,6 +467,19 @@
       <category>USER_CENTER</category>
       <filter-id>not_anonymous</filter-id>
       <filter-id>not_readonly</filter-id>
+    </action>
+    
+    
+    <action id="sourceTemplate" type="widget" order="400">
+        <category>SUMMARY_PANEL_RIGHT</category>
+        <properties>
+            <property name="widgetName">source_template</property>
+        </properties>
+        <filter id="filter@sourceTemplate">
+            <rule grant="true">
+                <condition>#{currentDocument.hasFacet('Templatable') and not empty currentDocument.templ.sourceDocUid}</condition>
+            </rule>
+        </filter>
     </action>
     
   </extension>

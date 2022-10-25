@@ -34,7 +34,7 @@ public class MetadataConfig {
     private static final Log log = LogFactory.getLog(MetadataConfig.class);
 
     private static final String[] AUTHORING_TOOLS = { "SolidWorks", "Catia",
-            "SolidEdge" };
+            "SolidEdge", "NX" };
 
     private static final String[] DOCTYPES = {
             EloraDoctypeConstants.CAD_DRAWING, EloraDoctypeConstants.CAD_PART,

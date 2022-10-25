@@ -1,22 +1,12 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:c="http://java.sun.com/jstl/core"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  >
-
-<h:panelGroup styleClass="textAlignC displayB" style="margin-bottom: 15px;">
-  <!-- TODO: Hau include komun batera pasatu -->
-   <c:if test="#{nxd:hasPermission(currentDocument, 'Write') and not currentDocument.isVersion() and not currentDocument.isProxy()}">
-      <c:if test="#{currentDocument.locked and !(currentDocumentLockDetails['document.locker'] eq currentUser)}">
-          <h:outputText value="#{messages['eloraplm.message.warning.relations.edit.documentLockedByOther']}" class="processMessage completeWarning" />
-      </c:if>
-   </c:if>
-  </h:panelGroup>
-  
-  <nxl:widget name="cont_tt" mode="view" value="#{containerTreeBean}" />
-  
-  <nxl:widget name="cont_inv_tt" mode="edit" value="#{containerTreeBean}" />
-  
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <ui:include src="document_not_editable_warning.xhtml"/>
+    
+    <nxl:widget name="cont_tt" mode="edit" value="#{containerTreeBean}" />
+    
+    <nxl:widget name="cont_inv_tt" mode="view" value="#{containerInverseTreeBean}" />
+    
 </ui:composition>

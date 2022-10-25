@@ -26,33 +26,35 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
 
     protected DocumentModel derivedFrom;
 
+    protected boolean isDerivedFromImpactMatrix;
+
     protected boolean isImpactable;
 
     protected boolean includeInImpactMatrix;
 
     public ModifiedItemsNodeData(String id, int level) {
 
-        this(id, level, null, null, null, null, null, null, null, null, null,
-                false, false, null, false, null, null, false, false, false,
-                false, null, null, false, false, false, false);
+        this(id, level, null, null, null, null, false, null, null, null, null,
+                null, false, false, null, false, null, null, false, false,
+                false, false, null, null, false, false, false, false);
     }
 
     public ModifiedItemsNodeData(String id, int level, Long rowNumber,
             String nodeId, String parentNodeId, DocumentModel derivedFrom,
-            DocumentModel parentItem, DocumentModel originItem,
-            DocumentModel originItemWc, String predicate, String quantity,
-            boolean isAnarchic, boolean isDirectObject, String action,
-            boolean actionIsReadOnly, DocumentModel destinationItem,
-            DocumentModel destinationItemWc,
+            boolean isDerivedFromImpactMatrix, DocumentModel parentItem,
+            DocumentModel originItem, DocumentModel originItemWc,
+            String predicate, String quantity, boolean isAnarchic,
+            boolean isDirectObject, String action, boolean actionIsReadOnly,
+            DocumentModel destinationItem, DocumentModel destinationItemWc,
             boolean destinationItemVersionIsReadOnly, boolean isManaged,
             boolean isManagedIsReadOnly, boolean isManual, String type,
             String comment, boolean commentIsReadOnly, boolean isUpdated,
             boolean isImpactable, boolean includeInImpactMatrix) {
 
         this(id, level, false, false, false, rowNumber, nodeId, parentNodeId,
-                derivedFrom, parentItem, originItem, originItemWc, predicate,
-                quantity, isAnarchic, isDirectObject, action, actionIsReadOnly,
-                destinationItem, destinationItemWc,
+                derivedFrom, isDerivedFromImpactMatrix, parentItem, originItem,
+                originItemWc, predicate, quantity, isAnarchic, isDirectObject,
+                action, actionIsReadOnly, destinationItem, destinationItemWc,
                 destinationItemVersionIsReadOnly, isManaged,
                 isManagedIsReadOnly, isManual, type, comment, commentIsReadOnly,
                 isUpdated, isImpactable, includeInImpactMatrix);
@@ -61,11 +63,11 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
     public ModifiedItemsNodeData(String id, int level, boolean isNew,
             boolean isRemoved, boolean isModified, Long rowNumber,
             String nodeId, String parentNodeId, DocumentModel derivedFrom,
-            DocumentModel parentItem, DocumentModel originItem,
-            DocumentModel originItemWc, String predicate, String quantity,
-            boolean isAnarchic, boolean isDirectObject, String action,
-            boolean actionIsReadOnly, DocumentModel destinationItem,
-            DocumentModel destinationItemWc,
+            boolean isDerivedFromImpactMatrix, DocumentModel parentItem,
+            DocumentModel originItem, DocumentModel originItemWc,
+            String predicate, String quantity, boolean isAnarchic,
+            boolean isDirectObject, String action, boolean actionIsReadOnly,
+            DocumentModel destinationItem, DocumentModel destinationItemWc,
             boolean destinationItemVersionIsReadOnly, boolean isManaged,
             boolean isManagedIsReadOnly, boolean isManual, String type,
             String comment, boolean commentIsReadOnly, boolean isUpdated,
@@ -82,6 +84,7 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
                 isUpdated);
 
         this.derivedFrom = derivedFrom;
+        this.isDerivedFromImpactMatrix = isDerivedFromImpactMatrix;
         this.isImpactable = isImpactable;
         this.includeInImpactMatrix = includeInImpactMatrix;
     }
@@ -98,6 +101,15 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
 
     public void setDerivedFrom(DocumentModel derivedFrom) {
         this.derivedFrom = derivedFrom;
+    }
+
+    public boolean getIsDerivedFromImpactMatrix() {
+        return isDerivedFromImpactMatrix;
+    }
+
+    public void setIsDerivedFromImpactMatrix(
+            boolean isDerivedFromImpactMatrix) {
+        this.isDerivedFromImpactMatrix = isDerivedFromImpactMatrix;
     }
 
     public void setIsImpactable(boolean isImpactable) {

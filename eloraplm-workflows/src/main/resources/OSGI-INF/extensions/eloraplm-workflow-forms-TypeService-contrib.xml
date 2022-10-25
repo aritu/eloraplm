@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.workflows.forms.TypeService.contrib">
+    <require>org.nuxeo.ecm.platform.types</require>
+    
+    <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+        
+        <schema name="workflow_question" prefix="wfq" src="schemas/workflow_question.xsd" />
+        <schema name="workflow_answers" prefix="wfans" src="schemas/workflow_answers.xsd" />
+        
+    </extension>
+    
+    <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService" >
+        
+        <!-- Facets -->
+        <facet name="HasWorkflowForms">
+            <schema name="workflow_answers" />
+        </facet>
+        <facet name="DefinedByWorkflowForms" />
+        
+        <!-- Doctypes -->
+        <doctype name="WorkflowQuestion"
+            extends="Document">
+            <facet name="HiddenInNavigation" />
+            <schema name="workflow_question" />
+        </doctype>
+        
+    </extension>
+    
+    <extension point="types" target="org.nuxeo.ecm.platform.types.TypeService">
+        
+        <type id="Folder">
+            <subtypes>
+                <type>WorkflowQuestion</type>
+            </subtypes>
+        </type>
+        
+    </extension>
+    
+</component>

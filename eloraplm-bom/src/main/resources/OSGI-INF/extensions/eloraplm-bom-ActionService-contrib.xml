@@ -22,6 +22,8 @@
     <filter id="isBomPart">
         <rule grant="true">
           <type>BomPart</type>
+          <type>Software</type>
+          <type>ElectronicComponent</type>
         </rule>
     </filter>
     
@@ -74,6 +76,8 @@
           <type>BomProduct</type>
           <type>BomPackaging</type>
           <type>BomTool</type>
+          <type>Software</type>
+          <type>ElectronicComponent</type>
         </rule>
     </filter>
     
@@ -84,6 +88,8 @@
           <type>BomProduct</type>
           <type>BomPackaging</type>
           <type>BomTool</type>
+          <type>Software</type>
+          <type>ElectronicComponent</type>
         </rule>
     </filter>
     
@@ -117,6 +123,8 @@
           <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
           <type>BomPart</type>
           <type>BomProduct</type>
+          <type>Software</type>
+          <type>ElectronicComponent</type>
         </rule>
     </filter>
     
@@ -132,6 +140,8 @@
           <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
           <type>BomPart</type>
           <type>BomProduct</type>
+          <type>Software</type>
+          <type>ElectronicComponent</type>
         </rule>
     </filter>
     
@@ -203,6 +213,8 @@
     <filter id="isBomPartOrBomProduct">
         <rule grant="true">
           <type>BomPart</type>
+          <type>Software</type>
+          <type>ElectronicComponent</type>
           <type>BomProduct</type>
         </rule>
     </filter>
@@ -335,6 +347,7 @@
       order="70" label="label.com.aritu.eloraplm.relations.tab.bomSourcing" type="rest_document_link">
       <category>VIEW_ACTION_LIST</category>
       <filter-id>isBomPart</filter-id>
+      
     </action>
     
     <action id="TAB_ITEM_CUSTOMERS" link="/incl/tabs/item_customers_content.xhtml"

@@ -9,6 +9,7 @@ xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
       <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_bomItemTypes" />
     </xs:simpleType>
   </xs:element>
+  <xs:element name="externalVersion" type="xs:string" />
   <xs:element name="estimatedCost">
         <xs:simpleType>
             <xs:restriction base="xs:string">

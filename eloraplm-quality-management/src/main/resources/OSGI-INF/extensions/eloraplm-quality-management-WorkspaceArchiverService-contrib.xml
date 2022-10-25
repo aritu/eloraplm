@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.qm.WorkspaceArchiverService.contrib">
+    
+    <extension point="archivers" target="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+        
+        <archiver name="qualityManagement" destinationFolder="FolderArchivedQualityManagement">
+            <executer class="com.aritu.eloraplm.qm.archiver.QmArchiverExecuters" method="replaceSubjectsWithArchivedVersion" type="post" />
+        </archiver>
+        
+    </extension>
+    
+    <extension point="types" target="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+        
+        <type name="ProductValidation" archiver="qualityManagement" />
+        <type name="ProductVerification" archiver="qualityManagement" />
+        <type name="ProductionProcessValidation" archiver="qualityManagement" />
+        <type name="ProductionPartApprovalProcess" archiver="qualityManagement" />
+        
+    </extension>
+    
+</component>
+

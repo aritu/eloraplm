@@ -55,10 +55,22 @@ public class ModifiedItemsNodeService implements NodeManager {
 
     protected String itemType;
 
-    public ModifiedItemsNodeService(CoreSession session, String itemType)
+    protected TreeNode selectedNode;
+
+    protected Map<String, String> messages;
+
+    public ModifiedItemsNodeService(CoreSession session, String itemType,
+            Map<String, String> messages) throws EloraException {
+        this(session, itemType, null, messages);
+    }
+
+    public ModifiedItemsNodeService(CoreSession session, String itemType,
+            TreeNode selectedNode, Map<String, String> messages)
             throws EloraException {
         this.session = session;
         this.itemType = itemType;
+        this.selectedNode = selectedNode;
+        this.messages = messages;
         nodeId = 0;
     }
 
@@ -149,6 +161,13 @@ public class ModifiedItemsNodeService implements NodeManager {
                         derivedFrom = session.getDocument(
                                 new IdRef(derivedFromUid));
                     }
+                    boolean isDerivedFromImpactMatrix = false;
+                    if (map.get(
+                            pfx + "/*1/isDerivedFromImpactMatrix") != null) {
+                        isDerivedFromImpactMatrix = (boolean) map.get(
+                                pfx + "/*1/isDerivedFromImpactMatrix");
+                    }
+
                     DocumentModel parentItem = null;
                     if (parentItemUid != null) {
                         parentItem = session.getDocument(
@@ -188,17 +207,22 @@ public class ModifiedItemsNodeService implements NodeManager {
                     ModifiedItemsNodeData nodeData = new ModifiedItemsNodeData(
                             String.valueOf(nodeId), level, rowNumber,
                             currentNodeId, parentNodeId, derivedFrom,
-                            parentItem, originItem, originItemWc, null, null,
-                            false, false, action, true, destinationItem,
-                            destinationItemWc, destinationItemVersionIsReadOnly,
-                            isManaged, isManagedIsReadOnly, isManual, type,
-                            comment, false, isUpdated, isImpactable,
-                            includeInImpactMatrix);
+                            isDerivedFromImpactMatrix, parentItem, originItem,
+                            originItemWc, null, null, false, false, action,
+                            true, destinationItem, destinationItemWc,
+                            destinationItemVersionIsReadOnly, isManaged,
+                            isManagedIsReadOnly, isManual, type, comment, false,
+                            isUpdated, isImpactable, includeInImpactMatrix);
 
                     nodeId++;
 
                     TreeNode node = new DefaultTreeNode(nodeData, root);
                     node.setExpanded(true);
+                    if (selectedNode != null) {
+                        if (node.getRowKey().equals(selectedNode.getRowKey())) {
+                            node.setSelected(true);
+                        }
+                    }
                 }
             }
         } catch (DocumentNotFoundException | DocumentSecurityException e) {
@@ -242,9 +266,10 @@ public class ModifiedItemsNodeService implements NodeManager {
 
         ModifiedItemsNodeData newNodeData = new ModifiedItemsNodeData(
                 String.valueOf(nodeId), 1, true, false, false, null,
-                currentNodeId, null, null, null, originItem, originItemWc, null,
-                null, false, false, action, true, destinationItem,
-                destinationItemWc, destinationItemVersionIsReadOnly, isManaged,
+                currentNodeId, null, null, false, null, originItem,
+                originItemWc, null, null, false, false, action, true,
+                destinationItem, destinationItemWc,
+                destinationItemVersionIsReadOnly, isManaged,
                 isManagedIsReadOnly, true, originItemType, comment, false,
                 false, isImpactable, includeInImpactMatrix);
 
@@ -433,7 +458,8 @@ public class ModifiedItemsNodeService implements NodeManager {
 
         ModifiedItem modifiedItem = new ModifiedItem(nodeData.getRowNumber(),
                 nodeData.getNodeId(), nodeData.getParentNodeId(),
-                derivedFromUid, parentItemUid, originItemUid, originItemWcUid,
+                derivedFromUid, nodeData.getIsDerivedFromImpactMatrix(),
+                parentItemUid, originItemUid, originItemWcUid,
                 nodeData.getPredicate(), nodeData.getQuantity(),
                 nodeData.getIsAnarchic(), nodeData.getIsDirectObject(),
                 nodeData.getAction(), destinationItemUid, destinationItemWcUid,
@@ -456,7 +482,8 @@ public class ModifiedItemsNodeService implements NodeManager {
         if (trigger.equals(
                 CMConstants.TRIGGER_ACTION_LOAD_DESTINATION_VERSIONS)) {
 
-            CMTreeBeanHelper.loadDestinationVersions(nodeData, session);
+            CMTreeBeanHelper.loadDestinationVersions(nodeData, session,
+                    messages);
 
         } else {
             nodeData.setIsModified(true);
@@ -465,7 +492,7 @@ public class ModifiedItemsNodeService implements NodeManager {
             if (trigger.equals(CMConstants.TRIGGER_FIELD_IS_MANAGED)) {
 
                 CMTreeBeanHelper.processRefreshNodeTriggeredByIsManaged(
-                        nodeData, session);
+                        nodeData, session, messages);
 
             } else if (trigger.equals(
                     CMConstants.TRIGGER_FIELD_DESTINATION_ITEM_UID)) {

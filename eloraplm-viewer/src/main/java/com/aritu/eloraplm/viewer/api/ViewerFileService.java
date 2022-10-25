@@ -13,8 +13,12 @@ import com.aritu.eloraplm.exceptions.EloraException;
  */
 public interface ViewerFileService {
 
-    public ViewerFileDescriptor getViewerFileForType(String type)
+    public TypeDescriptor getType(DocumentModel doc, String action)
             throws EloraException;
+
+    public ViewerFileDescriptor getViewerFile(String id) throws EloraException;
+
+    public ModifierDescriptor getModifier(String id) throws EloraException;
 
     public void createViewer(DocumentModel doc, String action) throws Exception;
 

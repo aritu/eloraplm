@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.csv.importer.workmanager" version="1.0">
+
+    <extension target="org.nuxeo.ecm.core.work.service" point="queues">
+    
+        <queue id="eloraCsvImporter">
+            <name>Elora CSV Importer</name>
+            <maxThreads>1</maxThreads>
+            <category>eloraCsvImporter</category>
+        </queue>
+  
+    </extension>
+
+</component>

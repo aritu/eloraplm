@@ -1,0 +1,16 @@
+<f:subview id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxp="http://nuxeo.org/nxweb/pdf"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+    
+    <h:outputText value="#{projectActions.getCurrentPhaseEndDate(field_0)}">
+        <f:convertDateTime pattern="#{nxu:basicDateFormatter()}" />
+    </h:outputText>
+    
+    
+</f:subview>

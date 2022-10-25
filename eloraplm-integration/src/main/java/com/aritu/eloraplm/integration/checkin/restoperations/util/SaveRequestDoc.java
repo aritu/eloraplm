@@ -18,6 +18,7 @@ import java.util.List;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.DocumentRef;
 
+import com.aritu.eloraplm.core.util.CadAttachmentInfo;
 import com.aritu.eloraplm.core.util.EloraFileInfo;
 
 /**
@@ -44,7 +45,7 @@ public class SaveRequestDoc {
 
     private EloraFileInfo eloraViewerFile;
 
-    private List<EloraFileInfo> cadAttachments;
+    private List<CadAttachmentInfo> cadAttachments;
 
     private DocumentRef structureRootRealRef;
 
@@ -135,13 +136,14 @@ public class SaveRequestDoc {
         eloraViewerFile = new EloraFileInfo(fileId, fileName, batch, hash);
     }
 
-    public List<EloraFileInfo> getCadAttachments() {
+    public List<CadAttachmentInfo> getCadAttachments() {
         return cadAttachments;
     }
 
     public void addCadAttachmentFile(int fileId, String fileName, String batch,
-            String hash) {
-        cadAttachments.add(new EloraFileInfo(fileId, fileName, batch, hash));
+            String hash, String type) {
+        cadAttachments.add(
+                new CadAttachmentInfo(fileId, fileName, batch, hash, type));
     }
 
     public DocumentRef getStructureRootRealRef() {

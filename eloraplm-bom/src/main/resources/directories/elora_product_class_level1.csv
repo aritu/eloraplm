@@ -1,4 +1,5 @@
-id,label,obsolete
-id_pcl1_1,Product Line 1,0
-id_pcl1_2,Product Line 2,0
-id_pcl1_3,Product Line 3,0
+id,label,obsolete,ordering
+"Basic Range","Gama Básica","0","001"
+"Mid Range","Gama Media","0","002"
+"High End","Gama Alta","0","003"
+"Customized Product","Producto Personalizado","0","004"

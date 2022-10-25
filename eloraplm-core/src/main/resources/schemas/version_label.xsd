@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/version_label">
+
+    <xs:element name="major" type="xs:string" />
+    <xs:element name="minor" type="xs:string" />
+
+</xs:schema>

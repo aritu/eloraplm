@@ -55,7 +55,7 @@ import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
 import com.aritu.eloraplm.pdm.util.RelationSwitchHelper;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 @Name("pdmAction")
 @Scope(ScopeType.EVENT)
@@ -86,8 +86,8 @@ public class PdmActionBean implements Serializable {
     @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
 
-    protected EloraVersionLabelService eloraVersionLabelService = Framework.getService(
-            EloraVersionLabelService.class);
+    protected VersionLabelService versionLabelService = Framework
+            .getService(VersionLabelService.class);
 
     private String checkinComment;
 
@@ -99,19 +99,19 @@ public class PdmActionBean implements Serializable {
         this.checkinComment = checkinComment;
     }
 
-    public void checkIn(DocumentModel doc) throws EloraException {
+    public void checkIn(DocumentModel doc) {
         String logInitMsg = "[checkIn] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
-        CheckinManager checkinManager = Framework.getService(
-                CheckinManager.class);
+        CheckinManager checkinManager = Framework
+                .getService(CheckinManager.class);
         try {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
 
             if (doc.isImmutable()) {
-                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                        "eloraplm.message.error.pdm.checkinNotAllowed"));
+                facesMessages.add(StatusMessage.Severity.ERROR, messages
+                        .get("eloraplm.message.error.pdm.checkinNotAllowed"));
                 throw new EloraException("Cannot checkin a version");
             }
             try {
@@ -120,8 +120,9 @@ public class PdmActionBean implements Serializable {
                 facesMessages.add(StatusMessage.Severity.ERROR,
                         messages.get(
                                 "eloraplm.message.error.pdm.checkinNotAllowed"),
-                        e.getErrorDocument().getPropertyValue(
-                                EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                        e.getErrorDocument()
+                                .getPropertyValue(
+                                        EloraMetadataConstants.ELORA_ELO_REFERENCE),
                         e.getErrorDocument().getTitle());
                 throw new EloraException(e.getMessage());
             } catch (DocumentNotCheckedOutException e) {
@@ -132,16 +133,18 @@ public class PdmActionBean implements Serializable {
             } catch (BomCharacteristicsValidatorException e) {
                 facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                         "eloraplm.message.error.pdm.characteristicsRequired"),
-                        e.getDocument().getPropertyValue(
-                                EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                        e.getDocument()
+                                .getPropertyValue(
+                                        EloraMetadataConstants.ELORA_ELO_REFERENCE),
                         e.getDocument().getTitle());
                 throw new EloraException(e.getMessage());
             }
-            navigationContext.invalidateCurrentDocument();
+
+            invalidateAndResetTabList();
 
             // Seam Event
-            Events.instance().raiseEvent(PdmEventNames.PDM_CHECKED_IN_EVENT,
-                    doc);
+            Events.instance()
+                    .raiseEvent(PdmEventNames.PDM_CHECKED_IN_EVENT, doc);
 
             facesMessages.add(StatusMessage.Severity.INFO,
                     messages.get("eloraplm.message.success.checkin"));
@@ -183,8 +186,8 @@ public class PdmActionBean implements Serializable {
             }
 
             VersionModel version = new VersionModelImpl();
-            DocumentModel latestVersion = EloraDocumentHelper.getLatestVersion(
-                    doc);
+            DocumentModel latestVersion = EloraDocumentHelper
+                    .getLatestVersion(doc);
             if (latestVersion == null) {
                 throw new EloraException("Document |" + doc.getId()
                         + "| has no latest version or it is unreadable.");
@@ -208,12 +211,11 @@ public class PdmActionBean implements Serializable {
                 doc.removeLock();
             }
 
-            resetTabList(currentTabAction, currentSubTabAction);
-            navigationContext.invalidateCurrentDocument();
+            invalidateAndResetTabList(currentTabAction, currentSubTabAction);
 
             // Seam event
-            Events.instance().raiseEvent(
-                    PdmEventNames.PDM_CHECKOUT_UNDONE_EVENT, doc);
+            Events.instance()
+                    .raiseEvent(PdmEventNames.PDM_CHECKOUT_UNDONE_EVENT, doc);
 
             // Nuxeo Event
             String comment = doc.getVersionLabel();
@@ -260,8 +262,8 @@ public class PdmActionBean implements Serializable {
             TransactionHelper.startTransaction();
 
             if (doc.isImmutable()) {
-                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                        "eloraplm.message.error.pdm.checkoutNotAllowed"));
+                facesMessages.add(StatusMessage.Severity.ERROR, messages
+                        .get("eloraplm.message.error.pdm.checkoutNotAllowed"));
             }
             DocumentModel wcDoc = getWcDoc(doc);
 
@@ -281,12 +283,11 @@ public class PdmActionBean implements Serializable {
             wcDoc = EloraDocumentHelper.setDocumentDirty(wcDoc);
             wcDoc = documentManager.saveDocument(wcDoc);
 
-            resetTabList();
-            navigationContext.invalidateCurrentDocument();
+            invalidateAndResetTabList();
 
             // Seam event
-            Events.instance().raiseEvent(PdmEventNames.PDM_CHECKED_OUT_EVENT,
-                    doc);
+            Events.instance()
+                    .raiseEvent(PdmEventNames.PDM_CHECKED_OUT_EVENT, doc);
 
             // Nuxeo Event
             String comment = wcDoc.getVersionLabel();
@@ -340,14 +341,15 @@ public class PdmActionBean implements Serializable {
                 eloraDocumentRelationManager, subjectWcDoc);
     }
 
-    private void resetTabList() {
+    private void invalidateAndResetTabList() {
         Action currentTabAction = webActions.getCurrentTabAction();
         Action currentSubTabAction = webActions.getCurrentSubTabAction();
-        resetTabList(currentTabAction, currentSubTabAction);
+        invalidateAndResetTabList(currentTabAction, currentSubTabAction);
     }
 
-    private void resetTabList(Action currentTabAction,
+    private void invalidateAndResetTabList(Action currentTabAction,
             Action currentSubTabAction) {
+        navigationContext.invalidateCurrentDocument();
         webActions.resetTabList();
         List<Action> tabActionsList = webActions.getTabsList();
         if (tabActionsList.contains(currentTabAction)) {

@@ -11,12 +11,12 @@
                 <state>approved</state>
             </supportedStates>
         </state>
-        <state name="approved" status="released" lockable="true" color="#88AA33" order="40">
+        <state name="approved" status="released" lockable="true" color="#88AA33" order="40" finalState="true">
             <supportedStates>
                 <state>approved</state>
             </supportedStates>
         </state>
-        <state name="obsolete" status="obsolete" lockable="false" color="#AA8833" order="50">
+        <state name="obsolete" status="obsolete" lockable="false" color="#AA8833" order="50" finalState="true">
             <supportedStates>
                 <state>preliminary</state>
                 <state>approved</state>
@@ -26,9 +26,9 @@
         <state name="deleted" status="deleted" lockable="false" color="#555555" />
         
         <state name="working" status="unreleased" lockable="true" color="#3388AA" order="20" />
-        <state name="completed" status="released" lockable="true" color="#88AA33" order="20" />
+        <state name="completed" status="released" lockable="true" color="#88AA33" order="20" finalState="true" />
         <!-- TODO unreleased or obsolete? -->
-        <state name="rejected" status="unreleased" lockable="true" color="#CF2121" order="30" />
+        <state name="rejected" status="unreleased" lockable="true" color="#CF2121" order="30" finalState="true" />
         
     </extension>
     

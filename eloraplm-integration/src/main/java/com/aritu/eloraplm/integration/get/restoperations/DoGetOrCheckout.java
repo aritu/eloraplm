@@ -42,6 +42,7 @@ import org.nuxeo.runtime.transaction.TransactionHelper;
 import com.aritu.eloraplm.config.util.MetadataConfig;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraUrlHelper;
@@ -406,15 +407,34 @@ public class DoGetOrCheckout {
         Blob contentBlob = (Blob) realDoc.getPropertyValue(
                 NuxeoMetadataConstants.NX_FILE_CONTENT);
         if (contentBlob != null) {
-            HttpServletRequest request = (HttpServletRequest) ctx.get(
-                    "request");
             String filename = contentBlob.getFilename();
-            String downloadUrl = EloraUrlHelper.getDocumentDownloadUrl(request,
-                    realDoc, filename);
+            String downloadUrl = EloraUrlHelper.getDocumentDownloadUrl(
+                    (HttpServletRequest) ctx.get("request"), realDoc, filename);
 
             responseDoc.setFilename(filename);
             responseDoc.setHash(contentBlob.getDigest());
             responseDoc.setDownloadUrl(downloadUrl);
+        }
+
+        // Get CAD attachments
+        if (realDoc.hasSchema(EloraSchemaConstants.CAD_ATTACHMENTS)) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> cadAtts = (List<Map<String, Object>>) realDoc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS);
+            if (cadAtts != null && !cadAtts.isEmpty()) {
+                int i = 0;
+                for (Map<String, Object> cadAtt : cadAtts) {
+                    String filename = (String) cadAtt.get("filename");
+                    String type = (String) cadAtt.get("type");
+                    Blob attBlob = (Blob) cadAtt.get("file");
+                    String downloadUrl = EloraUrlHelper.getDocumentCadAttachmentFileUrl(
+                            (HttpServletRequest) ctx.get("request"), realDoc, i,
+                            filename);
+                    responseDoc.addCadAttachment(filename, type, downloadUrl,
+                            attBlob.getDigest());
+                    i++;
+                }
+            }
         }
 
         // Add to responseDocs
@@ -526,7 +546,8 @@ public class DoGetOrCheckout {
                     authoringTool).get(type)) {
                 // If it is a virtual metadata, call to getDataFromMethod
                 Serializable value = EloraIntegrationHelper.getVirtualMetadata(
-                        session, wcDoc, property, "DoGetOrCheckout");
+                        session, wcDoc, property,
+                        EloraIntegrationHelper.OPERATION_DO_GET_OR_CHECKOUT);
                 responseDoc.addOverrideMetadata(property, value);
             }
         }

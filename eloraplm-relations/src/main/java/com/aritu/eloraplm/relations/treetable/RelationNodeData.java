@@ -75,4 +75,13 @@ public interface RelationNodeData extends NodeData {
     Map<String, String> getVersionList();
 
     void setVersionList(Map<String, String> versionList);
+
+    boolean getIsExternalSource();
+
+    void setIsExternalSource(boolean isExternalSource);
+
+    BomListExternalData getBomListExternalData();
+
+    void setBomListExternalData(BomListExternalData bomListExternalData);
+
 }

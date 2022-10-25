@@ -13,34 +13,37 @@
   
   <c:if test="#{widget.mode == 'edit'}">
 
-        <h:panelGroup rendered="#{not widget.properties.editableOnlyOnFirstLevel or value.level == '1'}">
-            <h:inputText id="value_field" value="#{field}" size="50" maxlength="50" styleClass="#{empty widget.properties.styleClass ? 'numberInput' : widget.properties.styleClass }">
+        <h:panelGroup rendered="#{not widget.properties.editableOnlyOnFirstLevel or (not empty value.level and value.level == '1')}">
+            <h:inputText id="#{widget.id}_value_field" value="#{field}"
+                required="#{widgetProperty_required}"
+                size="50" maxlength="50"
+                styleClass="#{empty widget.properties.styleClass ? 'numberInput' : widget.properties.styleClass }">
                 
                 <f:converter converterId="#{widget.properties.converter}" />
                 <f:validator validatorId="#{widget.properties.validator}" />
                 
-                <c:if test="#{widget.properties.required}">
-                    <f:validateRequired />
+                <c:if test="#{not empty widget.properties.templateForListener}">
+                    <ui:include src="#{widgetProperty_templateForListener}" />
                 </c:if>
                 
-                <f:attribute name="maxIntegerPlaces" value="#{widget.properties.maxIntegerPlaces}" />
-                <f:attribute name="maxDecimalPlaces" value="#{widget.properties.maxDecimalPlaces}" />
-                
-                <c:if test="#{not empty widget.properties.templateForListener}">
-                    <ui:include src="#{widget.properties.templateForListener}" />
+                <c:if test="#{not empty widget.properties.maxIntegerPlaces}">
+                    <f:attribute name="maxIntegerPlaces" value="#{eloraWebActions.evaluateInteger(widgetProperty_maxIntegerPlaces)}" />
+                </c:if>
+                <c:if test="#{not empty widget.properties.maxDecimalPlaces}">
+                    <f:attribute name="maxDecimalPlaces" value="#{eloraWebActions.evaluateInteger(widgetProperty_maxDecimalPlaces)}" />
                 </c:if>
                 
             </h:inputText>
             
-            <h:message for="value_field" styleClass="errorMessage" />
+            <h:message for="#{widget.id}_value_field" styleClass="errorMessage" />
         </h:panelGroup>
         
         <!-- To disable edition based on the level -->
-        <h:panelGroup rendered="#{widget.properties.editableOnlyOnFirstLevel and value.level != '1'}">
-            <h:outputText value="#{field}">
-                <f:converter converterId="#{widget.properties.converter}" />
-            </h:outputText>
-        </h:panelGroup>
+         <h:panelGroup rendered="#{widget.properties.editableOnlyOnFirstLevel and not empty value.level and value.level != '1'}">
+             <h:outputText value="#{field}">
+                 <f:converter converterId="#{widget.properties.converter}" />
+             </h:outputText>
+         </h:panelGroup>
   </c:if>
   
 </f:subview>

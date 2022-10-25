@@ -23,14 +23,35 @@ public class StateDescriptor {
     @XNode("@status")
     public String status;
 
+    // We have to use isLockableSet in order to have a default value, and be
+    // able to merge states XP definitions
+    public boolean isLockableSet;
+
+    public boolean lockable = true;
+
     @XNode("@lockable")
-    public Boolean lockable;
+    public void setLockable(boolean lockable) {
+        this.lockable = lockable;
+        isLockableSet = true;
+    }
 
     @XNode("@color")
     public String color;
 
     @XNode("@order")
     public Integer order;
+
+    // We have to use isFinalStateSet in order to have a default value, and be
+    // able to merge states XP definitions
+    public boolean isFinalStateSet;
+
+    public boolean finalState = false;
+
+    @XNode("@finalState")
+    public void setFinalState(boolean finalState) {
+        this.finalState = finalState;
+        isFinalStateSet = true;
+    }
 
     @XNodeList(value = "supportedStates/state", componentType = String.class, type = ArrayList.class)
     public List<String> supportedStates;
@@ -46,9 +67,10 @@ public class StateDescriptor {
     public void merge(StateDescriptor other) {
         if (other != null && name.equals(other.name)) {
             status = other.status == null ? status : other.status;
-            lockable = other.lockable == null ? lockable : other.lockable;
+            lockable = other.isLockableSet ? other.lockable : lockable;
             color = other.color == null ? color : other.color;
             order = other.order == null ? order : other.order;
+            finalState = other.isFinalStateSet ? other.finalState : finalState;
             if (other.appendSupportedStates) {
                 supportedStates.addAll(other.supportedStates);
             } else {

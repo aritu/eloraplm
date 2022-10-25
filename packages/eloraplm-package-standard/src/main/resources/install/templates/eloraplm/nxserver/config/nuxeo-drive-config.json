@@ -1,0 +1,27 @@
+{
+    "delay": 30,
+    "ignored_prefixes": [".", "icon\r", "thumbs.db", "desktop.ini", "~$"],
+    "ignored_suffixes": [".bak", ".crdownload", ".dwl", ".dwl2", ".lnk", ".lock", ".nxpart", ".part", ".partial", ".swp", ".tmp", "~"],
+    "ignored_files": ["^atmp\\d+$"],
+    "log_level_file": "DEBUG",
+    "timeout": 30,
+    "handshake_timeout": 60,
+    "beta_channel": false,
+    "update_check_delay": 3600,
+    "behavior": {
+        "server_deletion": false
+    },
+    "chunk_upload": false,
+    "client_version": "4.5.1",
+    "feature": {
+        "auto_update": false,
+        "direct_edit": true,
+        "direct_transfer": false,
+        "s3": false
+    },
+    "synchronization_enabled": false,
+    "ui": "jsf",
+    "update_check_delay": 0,
+    "update_site_url": "https://community.nuxeo.com/static/drive-updates/",
+    "use_analytics": false
+}

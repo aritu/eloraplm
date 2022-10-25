@@ -32,9 +32,19 @@
         
          <filter id="isNotUnderTemplate">
           <rule grant="false">
-            <condition>#{eloraDocumentTemplatesActions.isDocumentTemplateRootOrUnderTemplateRoot(currentDocument)}</condition>
+            <condition>#{eloraDocumentTemplatesActions.isCurrentDocumentUnderTemplateRoot()}</condition>
           </rule>
         </filter>
+        
+        <!--  override canRemoveFromFavorites: use eloraFavoritesActions beans -->
+        <filter id="canRemoveFromFavorites">
+          <rule grant="true">
+            <condition>
+              #{eloraFavoritesActions.canCurrentDocumentBeRemovedFromFavorites()}
+            </condition>
+          </rule>
+        </filter>
+    
   </extension>
   
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
@@ -45,7 +55,7 @@
       <category>DOCUMENT_UPPER_ACTION</category>
       <filter-id>versionable</filter-id>
       <filter-id>isEditable</filter-id>
-      <filter-id>isNotUnderTemplate</filter-id>
+      <!-- <filter-id>isNotUnderTemplate</filter-id> -->
       <properties>
         <property name="include">/incl/action/checkin_document.xhtml</property>
         <property name="ajaxSupport">true</property>

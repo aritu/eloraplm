@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="com.aritu.eloraplm.core.EloraPersistenceComponent.contrib">
+    
+    <implementation class="com.aritu.eloraplm.core.persistence.EloraPersistenceServiceImpl" />
+    <service>
+        <provide interface="com.aritu.eloraplm.core.persistence.EloraPersistenceService"/>
+    </service>
+    
+</component>

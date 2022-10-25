@@ -1,0 +1,64 @@
+<f:subview xmlns:f="http://java.sun.com/jsf/core"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxh="http://nuxeo.org/nxweb/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxd="http://nuxeo.org/nxweb/document"
+  xmlns:nxdir="http://nuxeo.org/nxdirectory"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  id="#{widget.id}">
+
+
+
+<nxu:set var="document" value="#{empty widgetProperty_document ? value : widgetProperty_document}">
+<nxu:set var="attachment" value="#{document.cadatts.attachments[field_0]}">
+
+  <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+    
+    <nxu:set var="blobXPath" value="cadatts:attachments/#{field_0}/file">
+    <c:set var="blob" value="#{attachment['file']}" />
+    <c:set var="filename" value="#{empty attachment['filename'] ? blob.filename : attachment['filename']}" />
+    <c:set var="blobLength" value="#{blob.length}" />
+    <c:set var="fileUrl" value="#{nxd:fileUrl('downloadFile', document, blobXPath, filename)}" />
+
+    <nxu:set var="actions"
+             value="#{documentActions.getBlobActions(document, blobXPath, blob)}"
+             cache="true">
+    <nxh:graphicImage value="#{nxd:fileIconPath(blob)}"
+                      rendered="#{! empty nxd:fileIconPath(blob)}" />
+    <c:if test="#{blobLength >= 0}">
+      <nxh:outputLink value="#{fileUrl}">
+        <h:outputText value="#{filename}"/>
+      </nxh:outputLink>
+      <h:outputText styleClass="detail" value="#{nxu:printFileSize(blobLength)}"/>
+      <nxdir:directoryEntryOutput styleClass="attachmentType"
+        directoryName="elora_cad_attachment_type" value="#{attachment['type']}" localize="true" displayIdAndLabel="" />
+    </c:if>
+    <c:if test="#{blobLength lt 0}">
+      <h:outputText value="#{filename}"/>
+    </c:if>
+
+    <div class="actionsColumn">
+      <nxl:widget name="blobActions"
+                  mode="view"
+                  actions="#{actions}" />
+    </div>
+    </nxu:set>
+    </nxu:set>
+  </c:if>
+
+  <c:if test="#{nxl:isBoundToEditMode(widget.mode)}">
+
+    <nxu:inputFile id="#{widget.id}_file" value="#{attachment['file']}"
+      filename="#{attachment['filename']}" required="#{widgetProperty_required}" editFilename="false"
+      onclick="#{widgetProperty_onclick}" onchange="#{widgetProperty_onchange}" />
+    <h:message escape="false" styleClass="errorMessage" for="#{widget.id}_file"
+      id="#{widget.id}_message" />
+
+  </c:if>
+
+</nxu:set>
+</nxu:set>
+
+</f:subview>

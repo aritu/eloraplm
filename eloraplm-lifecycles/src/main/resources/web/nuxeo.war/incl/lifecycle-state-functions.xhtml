@@ -1,0 +1,42 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core">
+    
+    <h:outputScript>
+        var lifecycleStateColors = [];
+        var lifecycleStateNames = [];
+        var lifecycleStateAbbrs = [];
+        
+        function getLifecycleStateColor(state) {
+            if(lifecycleStateColors.length == 0) {
+                <c:forEach items="#{lifecycleStateActions.lifecycleStateColors}" var="lsc">
+                    lifecycleStateColors['#{lsc.key}'] = '#{lsc.value}';
+                </c:forEach>
+            }
+            
+            return ( lifecycleStateColors.hasOwnProperty(state) ? lifecycleStateColors[state] : '#888888' );
+        }
+        
+        function getLifecycleStateName(state) {
+            if(lifecycleStateNames.length == 0) {
+                <c:forEach items="#{lifecycleStateActions.lifecycleStateNames}" var="lsn">
+                    lifecycleStateNames['#{lsn.key}'] = '#{lsn.value}';
+                </c:forEach>
+            }
+            
+            return ( lifecycleStateNames.hasOwnProperty(state) ? lifecycleStateNames[state] : state );
+        }
+        
+        function getLifecycleStateAbbr(state) {
+            if(lifecycleStateAbbrs.length == 0) {
+                <c:forEach items="#{lifecycleStateActions.lifecycleStateAbbrs}" var="lsa">
+                    lifecycleStateAbbrs['#{lsa.key}'] = '#{lsa.value}';
+                </c:forEach>
+            }
+            
+            return ( lifecycleStateAbbrs.hasOwnProperty(state) ? lifecycleStateAbbrs[state] : state );
+        }
+    </h:outputScript> 
+    
+</ui:fragment>

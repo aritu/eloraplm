@@ -17,5 +17,6 @@
     <xs:element name="viewerOrdering" type="xs:integer"/>
     <xs:element name="inverseViewerOrdering" type="xs:integer"/>
     <xs:element name="isManual" type="xs:boolean" default="false"/>
+    <xs:element name="isTemplate" type="xs:boolean" default="false"/>
 
 </xs:schema>

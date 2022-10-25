@@ -1,24 +1,40 @@
-id,label,parent,obsolete
-id_icl1_1,Mechanical,,0
-id_icl2_1000,Cases,id_icl1_1,0
-id_icl2_2000,Screws,id_icl1_1,0
-id_icl2_3000,Nuts,id_icl1_1,0
-id_icl2_4000,Rods,id_icl1_1,0
-id_icl2_5000,Pipes,id_icl1_1,0
-id_icl2_6000,Rings,id_icl1_1,0
-id_icl1_2,Electrical,,0
-id_icl2_7000,Electronics,id_icl1_2,0
-id_icl3_1000,Digital circuits,id_icl2_7000,0
-id_icl3_2000,Linear circuits,id_icl2_7000,0
-id_icl3_3000,Memory,id_icl2_7000,0
-id_icl3_4000,Hybrid,id_icl2_7000,0
-id_icl3_5000,Resistor,id_icl2_7000,0
-id_icl3_6000,Capacitor,id_icl2_7000,0
-id_icl3_7000,Inductor,id_icl2_7000,0
-id_icl3_8000,Batterie,id_icl2_7000,0
-id_icl3_9000,Connector,id_icl2_7000,0
-id_icl3_10000,Switch,id_icl2_7000,0
-id_icl2_8000,Electrics,id_icl1_2,0
-id_icl1_3,Software,,0
-id_icl2_9000,Application,id_icl1_3,0
-id_icl2_10000,App Module,id_icl1_3,0
+id,label,parent,obsolete,ordering
+"mechanical","Mecánico","","0","001"
+"electronic","Electronico","","0","002"
+"electromechanical","Electromecánico","","0","003"
+"software","Software","","0","004"
+"other","Otros","","0","005"
+"ring","Anilla","mechanical","0","001"
+"washer","Arandela","mechanical","0","002"
+"connecting rod","Biela","mechanical","0","003"
+"box","Caja","mechanical","0","004"
+"gear","Engranaje","mechanical","0","005"
+"o-ring","Junta tórica","mechanical","0","006"
+"screw","Tornillo","mechanical","0","007"
+"pipe","Tubo","mechanical","0","008"
+"nut","Tuerca","mechanical","0","009"
+"rod","Varilla","mechanical","0","010"
+"batterie","Batería","electronic","0","011"
+"digital circuit","Circuito digital","electronic","0","012"
+"linear circuit","Circuito lineal","electronic","0","013"
+"capacitor","Condensador","electronic","0","014"
+"inductor","Inductor","electronic","0","015"
+"memory","Memoria","electronic","0","016"
+"pcb ","PCB -Circuito impreso","electronic","0","017"
+"motherboard","Placa base","electronic","0","018"
+"resistor","Resistencia","electronic","0","019"
+"connector","Conector","electromechanical","0","020"
+"fuse","Fusible","electromechanical","0","021"
+"switch","Interruptor","electromechanical","0","022"
+"engine","Motor","electromechanical","0","023"
+"relay","Relé","electromechanical","0","024"
+"thermostat","Termostato","electromechanical","0","025"
+"transformer","Transformador","electromechanical","0","026"
+"turbine","Turbina","electromechanical","0","027"
+"fan","Ventilador","electromechanical","0","028"
+"app","Aplicación","software","0","029"
+"user inteface","Interface de usuario","software","0","030"
+"embedded software","Software integrado","software","0","031"
+"oil","Aceite","other","0","032"
+"grease","Grasa","other","0","033"
+"paint","Pintura","other","0","034"

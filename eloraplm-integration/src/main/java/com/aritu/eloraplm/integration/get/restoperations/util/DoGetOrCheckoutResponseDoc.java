@@ -27,11 +27,13 @@ import com.aritu.eloraplm.core.util.restoperations.ValidationErrorItem;
  *
  */
 
-@JsonPropertyOrder({ "currentLifeCycleState", "currentVersionLabel",
-        "description", "downloadUrl", "errorList", "filename", "hash",
-        "overrideMetadata", "parentRealUid", "proxyUid", "realUid", "reference",
-        "result", "title", "type", "wcUid" })
+@JsonPropertyOrder({ "cadAttachments", "currentLifeCycleState",
+        "currentVersionLabel", "description", "downloadUrl", "errorList",
+        "filename", "hash", "overrideMetadata", "parentRealUid", "proxyUid",
+        "realUid", "reference", "result", "title", "type", "wcUid" })
 public class DoGetOrCheckoutResponseDoc {
+
+    private List<CadAttachmentDownloadInfo> cadAttachments;
 
     private String currentLifeCycleState;
 
@@ -84,6 +86,7 @@ public class DoGetOrCheckoutResponseDoc {
         this.errorList = errorList;
         // Initialize the lists
         overrideMetadata = new ArrayList<>();
+        cadAttachments = new ArrayList<CadAttachmentDownloadInfo>();
     }
 
     public String getProxyUid() {
@@ -225,5 +228,15 @@ public class DoGetOrCheckoutResponseDoc {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public List<CadAttachmentDownloadInfo> getCadAttachments() {
+        return cadAttachments;
+    }
+
+    public void addCadAttachment(String filename, String type,
+            String downloadUrl, String hash) {
+        cadAttachments.add(new CadAttachmentDownloadInfo(filename, type,
+                downloadUrl, hash));
     }
 }

@@ -14,6 +14,9 @@
         
             <h:graphicImage value="/icons/badge_proxy_12.png"
                 styleClass="proxyBadge" rendered="#{field_0.isProxy()}"/>
+                
+            <h:graphicImage value="/icons/badge_template_12.png"
+                styleClass="templateBadge" rendered="#{eloraDocumentTemplatesActions.isTemplate(field_0)}"/>
             
             <span id="docRef:#{field_1}" class="cell" docRef="#{field_1}">
             
@@ -44,6 +47,7 @@
     
             <nxd:restDocumentLink document="#{linkTargetDoc}"
                     tab="#{widgetProperty_tab}" subTab="#{widgetProperty_subTab}"
+                    tabs="#{nxu:test(tabWidgetTabs == null, widgetProperty_tabs, tabWidgetTabs)}"
                     target="#{widgetProperty_target}" styleClass="documentTitleLink" rendered="#{field_0 != null and !empty linkTargetDoc}">
                 
                 <span title="#{nxd:titleOrId(field_0)}">#{nxd:titleOrId(field_0)}</span>

@@ -30,7 +30,6 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
-import com.aritu.eloraplm.constants.EloraGroupConstants;
 
 /**
  * @author aritu
@@ -87,8 +86,7 @@ public class MoveActionBean implements Serializable {
 
                 NuxeoPrincipal currentUser = (NuxeoPrincipal) documentManager.getPrincipal();
 
-                if (currentUser.isAdministrator() || currentUser.isMemberOf(
-                        EloraGroupConstants.POWER_USERS_GROUP)) {
+                if (currentUser.isAdministrator()) {
                     canMove = true;
                 }
             }

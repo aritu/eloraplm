@@ -14,80 +14,46 @@
 
 package com.aritu.eloraplm.versioning;
 
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.versioning.VersioningService;
+import java.util.Map;
 
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+public class DefaultVersionLabelServiceImpl
+        extends AbstractVersionLabelServiceImpl {
 
-public class DefaultVersionLabelServiceImpl implements EloraVersionLabelService {
+    public DefaultVersionLabelServiceImpl() {
+        initConfig();
+    }
 
-    @Override
-    public String translateVersionLabel(String versionLabel) {
-        return versionLabel;
+    private Map<String, String> initConfig() {
+
+        config.put(CFG_ZERO_MAJOR_CHAR, "0");
+        config.put(CFG_ZERO_MINOR_CHAR, "0");
+        config.put(CFG_ZERO_NEXT_MINOR_CHAR, "1");
+        config.put(CFG_CHECKED_OUT_SYMBOL, "+");
+        config.put(CFG_VERSION_SEPARATOR, ".");
+
+        return config;
     }
 
     @Override
-    public Object translateMinor(Long minor) {
-        return minor;
-    }
+    public String translateMajor(Long major) {
+        if (major == null) {
+            // This can really happen when we copy & paste a document
+            return "0";
 
-    @Override
-    public Object translateMajor(Long major) {
-        return major;
-    }
-
-    @Override
-    public String getMajor(DocumentModel doc) {
-        Object major = doc.getPropertyValue(
-                VersioningService.MAJOR_VERSION_PROP);
-        if (major == null || !(major instanceof Long)) {
-            return "-";
         } else {
-            return major.toString();
+            return String.valueOf(major);
         }
     }
 
     @Override
-    public String getMinor(DocumentModel doc) {
-        Object minor = doc.getPropertyValue(
-                VersioningService.MINOR_VERSION_PROP);
-        if (minor == null || !(minor instanceof Long)) {
-            return "-";
+    public String translateMinor(Long minor) {
+        if (minor == null) {
+            // This can really happen when we copy & paste a document
+            return "0";
+
         } else {
-            return minor.toString();
+            return String.valueOf(minor);
         }
-    }
-
-    @Override
-    public void setMajor(DocumentModel doc, String major) {
-        doc.setPropertyValue(VersioningService.MAJOR_VERSION_PROP, major);
-    }
-
-    @Override
-    public void setMinor(DocumentModel doc, String minor) {
-        doc.setPropertyValue(VersioningService.MINOR_VERSION_PROP, minor);
-    }
-
-    @Override
-    public int compare(String vl1, String vl2) {
-        int result = vl1.compareTo(vl2);
-        if (result == 0) {
-            return 0;
-        } else if (result > 0) {
-            return 1;
-        } else {
-            return 2;
-        }
-    }
-
-    @Override
-    public String getZeroVersion() {
-        return "0.0+";
-    }
-
-    @Override
-    public String getZeroNextVersion() {
-        return "0.1";
     }
 
 }

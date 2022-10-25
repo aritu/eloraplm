@@ -1,25 +1,52 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:nxd="http://nuxeo.org/nxweb/document">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxd="http://nuxeo.org/nxweb/document">
     
-    <ui:fragment rendered="#{not currentDocument.isImmutable()}">
-        <h:panelGroup styleClass="isObsoleteMessage" rendered="#{eloraWebActions.isWcObsolete()}">
-          #{messages['eloraplm.message.docIsObsolete']}
-        </h:panelGroup>
-    </ui:fragment>
+    <ui:remove> <!-- ////////////////////////// AV VERSION ////////////////////////// --> </ui:remove>
     
-    <ui:fragment rendered="#{currentDocument.isImmutable()}">
-        <h:panelGroup styleClass="isObsoleteMessage" rendered="#{eloraWebActions.isAvObsolete()}">
-          #{messages['eloraplm.message.docIsObsolete']}
-        </h:panelGroup>
-    
+    <c:if test="#{currentDocument.isImmutable()}">
         <h:panelGroup styleClass="goToWcMessage">
           #{messages['eloraplm.message.docIsArchivedVersion']}
           <nxd:restDocumentLink document="#{documentManager.getWorkingCopy(currentDocument.ref)}"
               styleClass="button">#{messages['eloraplm.command.goToWorkingCopy']}</nxd:restDocumentLink>
         </h:panelGroup>
-    </ui:fragment>
+    </c:if>
+    
+    <ui:remove> <!-- ////////////////////////// OBSOLETE ////////////////////////// --> </ui:remove>
+    
+    <c:if test="#{not currentDocument.isImmutable() and eloraWebActions.isWcObsolete()}">
+        <h:panelGroup styleClass="isObsoleteMessage">
+          #{messages['eloraplm.message.docIsObsolete']}
+        </h:panelGroup>
+    </c:if>
+    
+    <c:if test="#{currentDocument.isImmutable() and eloraWebActions.isAvObsolete()}">
+        <h:panelGroup styleClass="isObsoleteMessage">
+          #{messages['eloraplm.message.docIsObsolete']}
+        </h:panelGroup>
+    </c:if>
+    
+    <ui:remove> <!-- ////////////////////////// ARCHIVED WS ////////////////////////// --> </ui:remove>
+    
+    <c:if test="#{eloraWebActions.isArchived()}">
+        <h:panelGroup styleClass="isArchivedMessage">
+            <h:outputFormat value="#{messages['eloraplm.message.wsIsArchived']} ">
+                <f:param value="#{currentDocument.arc.archivingDate}" />
+                <f:param value="#{currentDocument.arc.archivingUser}" />
+            </h:outputFormat>
+        </h:panelGroup>
+    </c:if>
+    
+    <ui:remove> <!-- ////////////////////////// TEMPLATE ////////////////////////// --> </ui:remove>
+    
+    <c:if test="#{eloraDocumentTemplatesActions.isTemplate()}">
+        <h:panelGroup styleClass="isTemplateMessage">
+            <h:outputText value="#{messages['eloraplm.message.docIsTemplate']} "/>
+        </h:panelGroup>
+    </c:if>
     
 </ui:composition>

@@ -6,6 +6,27 @@ jQuery(document).ready(function() {
     }
 });
 
+
+var typingTimer;
+var doneTypingInterval = 300;
+
+//on keyup, start the countdown
+jQuery('table.treetable').on('keyup', 'input.blurAfterInput', function () {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(doneTyping, doneTypingInterval, this);
+});
+
+//on keydown, clear the countdown 
+jQuery('table.treetable').on('keydown', 'input.blurAfterInput', function () {
+    clearTimeout(typingTimer);
+});
+
+//user is "finished typing" blur input
+function doneTyping(input) {
+    input.blur();
+}
+
+
 var row = null;
 var treeWidgetId = null;
 

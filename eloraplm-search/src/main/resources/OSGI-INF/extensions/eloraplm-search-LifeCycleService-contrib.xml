@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.search.LifeCycleService.contrib">
+    <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
+    
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
+        <types>
+          <type name="EloraGeneralSearch">eloraSearchLifeCycle</type>
+          <type name="EloraCadDocsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraBasicDocsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraBomProductsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraBomSpecificationsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraBomPackagingsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraBomToolsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraBomPartsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraCmEcosSearch">eloraSearchLifeCycle</type>
+          <type name="EloraProjectsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraQmDocsSearch">eloraSearchLifeCycle</type>
+          <type name="EloraLockedDocsSearch">eloraSearchLifeCycle</type>
+        </types>
+    </extension>
+
+    <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="lifecycle">
+        <lifecycle defaultInitial="created" name="eloraSearchLifeCycle">
+          <states>
+            <state description="Default state" initial="true" name="created" />
+          </states>
+        </lifecycle>
+    </extension>
+
+</component>

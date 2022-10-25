@@ -37,11 +37,16 @@ public class ReviewInfoHelper {
     private static final Log log = LogFactory.getLog(ReviewInfoHelper.class);
 
     public static void setLastReviewInfoProperties(DocumentModel doc,
-            String lastReviewer) {
+            String lastReviewer, Date lastReviewed) {
         doc.setPropertyValue(EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWER,
                 lastReviewer);
         doc.setPropertyValue(EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWED,
-                new Date());
+                lastReviewed);
+    }
+
+    public static void setLastReviewInfoProperties(DocumentModel doc,
+            String lastReviewer) {
+        setLastReviewInfoProperties(doc, lastReviewer, new Date());
     }
 
     public static void emptyLastReviewInfoProperties(DocumentModel doc) {
@@ -53,6 +58,26 @@ public class ReviewInfoHelper {
 
     public static void setLastReviewInfoPropertiesByState(DocumentModel doc,
             String state, CoreSession session) {
+        setLastReviewInfoPropertiesByState(doc,
+                session.getPrincipal().toString(), new Date(), state, session);
+    }
+
+    public static void setLastReviewInfoPropertiesByState(DocumentModel doc,
+            String state, String lastReviewer, CoreSession session) {
+        setLastReviewInfoPropertiesByState(doc, lastReviewer, new Date(), state,
+                session);
+    }
+
+    public static void setLastReviewInfoPropertiesByState(DocumentModel doc,
+            String state, Date lastReviewed, CoreSession session) {
+        setLastReviewInfoPropertiesByState(doc,
+                session.getPrincipal().toString(), lastReviewed, state,
+                session);
+    }
+
+    public static void setLastReviewInfoPropertiesByState(DocumentModel doc,
+            String lastReviewer, Date lastReviewed, String state,
+            CoreSession session) {
 
         String logInitMsg = "[setLastReviewInfoPropertiesByState] ["
                 + session.getPrincipal().getName() + "] ";
@@ -66,8 +91,8 @@ public class ReviewInfoHelper {
         // Info properties
         case EloraLifeCycleConstants.STATUS_RELEASED:
         case EloraLifeCycleConstants.STATUS_OBSOLETE:
-            ReviewInfoHelper.setLastReviewInfoProperties(doc,
-                    session.getPrincipal().toString());
+            ReviewInfoHelper.setLastReviewInfoProperties(doc, lastReviewer,
+                    lastReviewed);
             log.trace("Last review info properties filled.");
             break;
         // Otherwise empty last Review Info Properties
@@ -76,7 +101,6 @@ public class ReviewInfoHelper {
             log.trace("Last review info properties emptied.");
             break;
         }
-
     }
 
 }

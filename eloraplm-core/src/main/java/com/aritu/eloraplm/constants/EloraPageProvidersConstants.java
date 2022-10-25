@@ -45,4 +45,6 @@ public class EloraPageProvidersConstants {
 
     public static final String STRUCTURE_COLLABORATION_LIBRARY_ROOT_WC_DOC_SUGG = "structure_collaboration_library_root_wc_suggestion";
 
+    public static final String LIBRARY_ROOT_WC_DOC_SUGG = "library_root_wc_suggestion";
+
 }

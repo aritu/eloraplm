@@ -1,10 +1,1 @@
-id,label,parent,obsolete
-id_spcl2_1_1,Specification Type 1.1,id_spcl1_1,0
-id_spcl2_1_2,Specification Type 1.2,id_spcl1_1,0
-id_spcl2_1_3,Specification Type 1.3,id_spcl1_1,0
-id_spcl2_2_1,Specification Type 2.1,id_spcl1_2,0
-id_spcl2_2_2,Specification Type 2.2,id_spcl1_2,0
-id_spcl2_2_3,Specification Type 2.3,id_spcl1_2,0
-id_spcl2_3_1,Specification Type 3.1,id_spcl1_3,0
-id_spcl2_3_2,Specification Type 3.2,id_spcl1_3,0
-id_spcl2_3_3,Specification Type 3.3,id_spcl1_3,0
+id,label,parent,obsolete,ordering

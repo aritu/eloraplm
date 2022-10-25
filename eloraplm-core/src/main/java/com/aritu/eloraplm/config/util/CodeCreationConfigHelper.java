@@ -13,12 +13,17 @@
  */
 package com.aritu.eloraplm.config.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.config.api.EloraConfigManager;
 import com.aritu.eloraplm.constants.CodeCreationConfigConstants;
+import com.aritu.eloraplm.constants.EloraConfigConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -35,45 +40,13 @@ public class CodeCreationConfigHelper {
     // ----------------------------------------------------------------
 
     /**
-     * @param doctype
+     * @param maskId
      * @return
      * @throws EloraException
      */
-    public static EloraConfigRow getMaskConfigForDoctype(String doctype)
+    public static EloraConfigRow getMaskConfig(String maskId)
             throws EloraException {
-        return getMaskConfigForDoctype(doctype, false);
-    }
-
-    /**
-     * @param doctype
-     * @param includeObsoletes
-     * @return
-     * @throws EloraException
-     */
-    public static EloraConfigRow getMaskConfigForDoctype(String doctype,
-            boolean includeObsoletes) throws EloraException {
-
-        EloraConfigRow maskConfig = null;
-        
-        // First get the sequence id
-        String maskId = getMaskId(doctype);
-        if(maskId != null) {
-            maskConfig = getMaskConfig(maskId, includeObsoletes);
-        }
-        return maskConfig;
-    }
-
-    /**
-     * @param doctype
-     * @return
-     * @throws EloraException
-     */
-    private static String getMaskId(String doctype) throws EloraException {
-
-        String maskId = configService.getConfig(
-                CodeCreationConfigConstants.VOC_CODE_TYPES, doctype);
-
-        return maskId;
+        return getMaskConfig(maskId, false);
     }
 
     /**
@@ -98,6 +71,73 @@ public class CodeCreationConfigHelper {
                 CodeCreationConfigConstants.VOC_CODE_MASKS, maskId, properties);
 
         return maskConfig;
+    }
+
+    // TODO: berriak
+
+    /**
+     * @param docType
+     * @return
+     * @throws EloraException
+     */
+    public static EloraConfigTable getCodeCreationConfig(String docType)
+            throws EloraException {
+        return getCodeCreationConfig(docType, false);
+    }
+
+    public static EloraConfigTable getCodeCreationConfig(String docType,
+            boolean includeObsoletes) throws EloraException {
+
+        Map<String, Serializable> filter = new HashMap<>();
+        if (!includeObsoletes) {
+            filter.put(CodeCreationConfigConstants.PROP_CODE_TYPES_DOC_TYPE,
+                    docType);
+            filter.put(EloraConfigConstants.PROP_OBSOLETE, "0");
+        }
+
+        EloraConfigTable codeCreationTypesConfig = EloraConfigHelper.configService.getConfigTable(
+                CodeCreationConfigConstants.VOC_CODE_TYPES, filter, null,
+                false);
+
+        return codeCreationTypesConfig;
+    }
+
+    /**
+     * @param conditionId
+     * @return
+     * @throws EloraException
+     */
+    public static EloraConfigRow getConditionConfig(String conditionId)
+            throws EloraException {
+        return getConditionConfig(conditionId, false);
+    }
+
+    /**
+     * @param conditionId
+     * @param includeObsoletes
+     * @return
+     * @throws EloraException
+     */
+    public static EloraConfigRow getConditionConfig(String conditionId,
+            boolean includeObsoletes) throws EloraException {
+
+        // Then get the sequence properties
+        List<String> properties = new ArrayList<>();
+        properties.add(
+                CodeCreationConfigConstants.PROP_CODE_CONDITIONS_CLASSNAME);
+        properties.add(
+                CodeCreationConfigConstants.PROP_CODE_CONDITIONS_METHODNAME);
+        properties.add(
+                CodeCreationConfigConstants.PROP_CODE_CONDITIONS_METHODPARAMS);
+        properties.add(
+                CodeCreationConfigConstants.PROP_CODE_CONDITIONS_OPERATOR);
+        properties.add(CodeCreationConfigConstants.PROP_CODE_CONDITIONS_VALUE);
+
+        EloraConfigRow conditionConfig = configService.getConfigProperties(
+                CodeCreationConfigConstants.VOC_CODE_CONDITIONS, conditionId,
+                properties);
+
+        return conditionConfig;
     }
 
 }

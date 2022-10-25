@@ -1,0 +1,55 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+    >
+    
+    <nxu:set var="defaultLocale" value="#{localizedLabelActions.getDefaultLocale()}">
+        
+        <h:panelGroup id="labelsWidget">
+            
+            <c:if test="#{empty field_0}">
+                <p:commandButton actionListener="#{layoutValue.setLabels(localizedLabelActions.initializeLabelList(field_0))}"
+                    value="Initialize"
+                    process="@this"
+                    update="labelsWidget"
+                    immediate="true"
+                    partialSubmit="true" />
+            </c:if>
+            
+            <c:forEach var="label" items="#{field_0}">
+                
+                <nxu:set var="isDefaultLocale" value="#{defaultLocale eq label.locale}">
+                    
+                    <h:panelGrid columns="2" columnClasses="labelColumn,fieldColumn">
+                        <h:panelGroup>
+                            <h:outputLabel for="label-#{label.locale}"
+                                value="#{nxdir:getLabelFromId('locale', label.locale)}"
+                                styleClass="#{isDefaultLocale ? 'required' : ''}" />
+                            <h:inputHidden value="#{label.locale}" />
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:inputText id="label-#{label.locale}" name="label-#{label.locale}"
+                                value="#{label.label}"
+                                required="#{isDefaultLocale}"
+                                onkeyup="#{isDefaultLocale ? widget.properties.onDefaultLocaleUpdated : ''}"
+                                style="min-width: 15em;" />
+                                
+                            <h:message for="label-#{label.locale}" styleClass="errorMessage" />
+                        </h:panelGroup>
+                    </h:panelGrid>
+                    
+                </nxu:set>
+                
+            </c:forEach>
+            
+        </h:panelGroup>
+        
+    </nxu:set>
+    
+</ui:composition>
+

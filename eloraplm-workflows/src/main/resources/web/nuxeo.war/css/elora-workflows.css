@@ -22,18 +22,21 @@
     vertical-align: middle;
 }
 
-.nx-page .workflowTasksMessage input[type="button"]
+.nx-page .workflowTasksMessage button
 {
+    font-size: .9em;
     color: #036;
     border: none;
     border-radius: 0;
+    box-shadow: none;
     margin: 0 0 0 1em;
+    padding: 0;
     vertical-align: middle;
     background-color: #aef;
 }
 
-.nx-page .workflowTasksMessage input[type="button"]:hover,
-.nx-page .workflowTasksMessage input[type="button"]:focus
+.nx-page .workflowTasksMessage button:hover,
+.nx-page .workflowTasksMessage button:focus
 {
     color: #036;
     border-color: #036;

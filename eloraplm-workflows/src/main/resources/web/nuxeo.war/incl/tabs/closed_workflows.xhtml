@@ -11,7 +11,7 @@
     
         <p:dataTable id="closedWorkflows"
             var="wf"
-            value="#{workflowActions.findClosedRelatedRoutes(currentDocument.id)}"
+            value="#{workflowActions.findClosedRelatedRoutes()}"
             selectionMode="single"
             selection="#{workflowActions.selectedWorkflow}"
             scrollable="true"

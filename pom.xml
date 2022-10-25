@@ -1,11 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.aritu.eloraplm</groupId>
     <artifactId>eloraplm-parent</artifactId>
-    <version>20200917</version>
+    <version>20221021</version>
     <packaging>pom</packaging>
     <name>EloraPlm POM</name>
 
@@ -16,28 +14,61 @@
         <main.basedir>${project.basedir}</main.basedir>
     </properties>
 
-    <modules>
-        <module>eloraplm-bom</module>
-        <module>eloraplm-change-management</module>
-        <module>eloraplm-code-creation</module>
-        <module>eloraplm-core</module>
-        <module>eloraplm-doctypes</module>
-        <module>eloraplm-drive</module>
-        <module>eloraplm-integration</module>
-        <module>eloraplm-integration-cm</module>
-        <module>eloraplm-lifecycles</module>
-        <module>eloraplm-pdm</module>
-        <module>eloraplm-quality-management</module>
-        <module>eloraplm-relations</module>
-        <module>eloraplm-search</module>
-        <module>eloraplm-templating</module>
-        <module>eloraplm-viewer</module>
-        <module>eloraplm-webapp</module>
-        <module>eloraplm-workflows</module>
+    <profiles>
+        <profile>
+            <id>no-packages</id>
+            <modules>
+                <module>eloraplm-bom</module>
+                <module>eloraplm-change-management</module>
+                <module>eloraplm-code-creation</module>
+                <module>eloraplm-core</module>
+                <module>eloraplm-csv-importer</module>
+                <module>eloraplm-doctypes</module>
+                <module>eloraplm-drive</module>
+                <module>eloraplm-integration</module>
+                <module>eloraplm-integration-cm</module>
+                <module>eloraplm-lifecycles</module>
+                <module>eloraplm-obsolescense-management</module>
+                <module>eloraplm-pdm</module>
+                <module>eloraplm-quality-management</module>
+                <module>eloraplm-relations</module>
+                <module>eloraplm-search</module>
+                <module>eloraplm-templating</module>
+                <module>eloraplm-viewer</module>
+                <module>eloraplm-webapp</module>
+                <module>eloraplm-workflows</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>eloraplm-bom</module>
+                <module>eloraplm-change-management</module>
+                <module>eloraplm-code-creation</module>
+                <module>eloraplm-core</module>
+                <module>eloraplm-csv-importer</module>
+                <module>eloraplm-doctypes</module>
+                <module>eloraplm-drive</module>
+                <module>eloraplm-integration</module>
+                <module>eloraplm-integration-cm</module>
+                <module>eloraplm-lifecycles</module>
+                <module>eloraplm-obsolescense-management</module>
+                <module>eloraplm-pdm</module>
+                <module>eloraplm-quality-management</module>
+                <module>eloraplm-relations</module>
+                <module>eloraplm-search</module>
+                <module>eloraplm-templating</module>
+                <module>eloraplm-viewer</module>
+                <module>eloraplm-webapp</module>
+                <module>eloraplm-workflows</module>
 
-        <module>eloraplm-packages</module>
-
-    </modules>
+                <module>packages</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <dependencyManagement>
         <dependencies>
@@ -70,6 +101,11 @@
             </dependency>
             <dependency>
                 <groupId>com.aritu.eloraplm</groupId>
+                <artifactId>eloraplm-csv-importer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aritu.eloraplm</groupId>
                 <artifactId>eloraplm-doctypes</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -91,6 +127,11 @@
             <dependency>
                 <groupId>com.aritu.eloraplm</groupId>
                 <artifactId>eloraplm-lifecycles</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aritu.eloraplm</groupId>
+                <artifactId>eloraplm-obsolescense-management</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -134,6 +175,7 @@
                 <version>${project.version}</version>
             </dependency>
 
+            
             <dependency>
                 <groupId>com.aritu.eloraplm.lib</groupId>
                 <artifactId>elora-primefaces</artifactId>
@@ -142,7 +184,7 @@
 
             <dependency>
                 <groupId>com.aritu.eloraplm</groupId>
-                <artifactId>eloraplm-packages</artifactId>
+                <artifactId>packages</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

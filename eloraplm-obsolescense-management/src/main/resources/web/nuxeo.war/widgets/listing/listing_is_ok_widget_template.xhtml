@@ -1,0 +1,19 @@
+<c:if test="true" id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <c:if test="#{nxl:isLikePlainMode(widget.mode) or widget.mode == 'pdf'}">#{field_0 ? 'OK' : 'KO'}</c:if>
+    <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <h:outputText value="OK" styleClass="resultOk" rendered="#{field_0}" />
+        
+        <h:graphicImage value="/icons/warning.gif" style="vertical-align: middle;" rendered="#{not field_0}">
+             <f:attribute name="title" value="#{nxu:translate(field_1)} #{field_2}" />
+             <f:attribute name="styleClass" value="tipsyShow" />
+        </h:graphicImage>
+    </c:if>
+</c:if>

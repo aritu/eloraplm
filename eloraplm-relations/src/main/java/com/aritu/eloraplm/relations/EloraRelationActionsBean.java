@@ -267,7 +267,7 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
                     new ResourceImpl(EloraRelationConstants.BOM_HAS_DOCUMENT));
 
             outgoingBomDocumentStatementsInfo = getOutgoingStatementsInfo(
-                    predicates, outgoingBomDocumentStatements);
+                    predicates, outgoingBomDocumentStatements, false);
         }
 
         return outgoingBomDocumentStatementsInfo;
@@ -281,7 +281,7 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
                     EloraRelationConstants.BOM_HAS_CAD_DOCUMENT));
 
             outgoingBomCadDocumentStatementsInfo = getOutgoingStatementsInfo(
-                    predicates, outgoingBomCadDocumentStatements);
+                    predicates, outgoingBomCadDocumentStatements, false);
         }
 
         return outgoingBomCadDocumentStatementsInfo;
@@ -297,7 +297,7 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
                     EloraRelationConstants.CAD_HAS_DESIGN_TABLE));
 
             outgoingCadSpecialStatementsInfo = getOutgoingStatementsInfo(
-                    predicates, outgoingCadSpecialStatements);
+                    predicates, outgoingCadSpecialStatements, false);
         }
 
         return outgoingCadSpecialStatementsInfo;
@@ -311,7 +311,7 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
                     new ResourceImpl(EloraRelationConstants.CAD_HAS_DOCUMENT));
 
             outgoingCadDocumentStatementsInfo = getOutgoingStatementsInfo(
-                    predicates, outgoingCadDocumentStatements);
+                    predicates, outgoingCadDocumentStatements, false);
         }
 
         return outgoingCadDocumentStatementsInfo;
@@ -325,7 +325,7 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
                     new ResourceImpl(EloraRelationConstants.BOM_HAS_BOM));
 
             outgoingBomHasBomStatementsInfo = getOutgoingStatementsInfo(
-                    predicates, outgoingBomHasBomStatements);
+                    predicates, outgoingBomHasBomStatements, true);
         }
 
         return outgoingBomHasBomStatementsInfo;
@@ -339,24 +339,36 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
                     EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT));
 
             outgoingCustomerProductStatementsInfo = getOutgoingStatementsInfo(
-                    predicates, outgoingCustomerProductStatements);
+                    predicates, outgoingCustomerProductStatements, false);
         }
 
         return outgoingCustomerProductStatementsInfo;
     }
 
     private List<StatementInfo> getOutgoingStatementsInfo(
-            List<Resource> predicates, List<Statement> stmts) {
+            List<Resource> predicates, List<Statement> stmts,
+            boolean onlyLatest) {
         DocumentModel currentDoc = getCurrentDocument();
-        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
-            // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(
-                    currentDoc.getRef());
+        if (!currentDoc.isImmutable() && !currentDoc.isCheckedOut()) {
+            // Get base version
+            DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(
+                    currentDoc);
+            if (baseDoc != null) {
+                currentDoc = baseDoc;
+            }
         }
+
         List<StatementInfo> stmtsInfo = new ArrayList<StatementInfo>();
         stmts = new ArrayList<Statement>();
-        for (Resource predicate : predicates) {
-            stmts.addAll(RelationHelper.getStatements(currentDoc, predicate));
+
+        if (onlyLatest) {
+            getLatestStatements(currentDoc, predicates, stmts, false);
+        } else {
+            for (Resource predicate : predicates) {
+                stmts.addAll(RelationHelper.getStatements(
+                        EloraRelationConstants.ELORA_GRAPH_NAME, currentDoc,
+                        predicate));
+            }
         }
 
         if (!stmts.isEmpty()) {
@@ -428,9 +440,8 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
             predicates.add(
                     new ResourceImpl(EloraRelationConstants.BOM_HAS_BOM));
 
-            // onlyLatest??
             incomingBomHasBomStatementsInfo = getIncomingStatementsInfo(
-                    predicates, incomingBomHasBomStatements, false);
+                    predicates, incomingBomHasBomStatements, true);
         }
 
         return incomingBomHasBomStatementsInfo;
@@ -455,16 +466,20 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
             List<Resource> predicates, List<Statement> stmts,
             boolean onlyLatest) {
         DocumentModel currentDoc = getCurrentDocument();
-        if (!currentDoc.isCheckedOut() && !currentDoc.isVersion()) {
-            // Get last version to show its relations
-            currentDoc = documentManager.getLastDocumentVersion(
-                    currentDoc.getRef());
+        if (!currentDoc.isImmutable() && !currentDoc.isCheckedOut()) {
+            // Get base version
+            DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(
+                    currentDoc);
+            if (baseDoc != null) {
+                currentDoc = baseDoc;
+            }
         }
+
         List<StatementInfo> stmtsInfo = new ArrayList<StatementInfo>();
         stmts = new ArrayList<Statement>();
 
         if (onlyLatest) {
-            getLatestStatements(currentDoc, predicates, stmts);
+            getLatestStatements(currentDoc, predicates, stmts, true);
         } else {
             for (Resource predicate : predicates) {
                 stmts.addAll(EloraRelationHelper.getSubjectStatements(
@@ -485,42 +500,58 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
     // TODO: Txapuza para sacar los ultimos statements relacionados. En un
     // futuro puede que hagamos estas cosas de otra manera
     private void getLatestStatements(DocumentModel currentDoc,
-            List<Resource> predicates, List<Statement> incomingStmts) {
+            List<Resource> predicates, List<Statement> stmtList,
+            boolean inverse) {
         for (Resource predicate : predicates) {
             // We don't need EloraCoreGraph if we don't use quantity
-            List<Statement> stmts = EloraRelationHelper.getSubjectStatements(
-                    currentDoc, predicate);
+
+            List<Statement> stmts;
+            if (inverse) {
+                stmts = EloraRelationHelper.getSubjectStatements(currentDoc,
+                        predicate);
+            } else {
+                stmts = RelationHelper.getStatements(
+                        EloraRelationConstants.ELORA_GRAPH_NAME, currentDoc,
+                        predicate);
+            }
 
             Map<String, List<String>> idMap = new HashMap<>();
             Map<String, List<DocumentModel>> docMap = new HashMap<>();
             Map<String, Statement> stmtMap = new HashMap<>();
 
             for (Statement stmt : stmts) {
-                DocumentModel subjectDoc = RelationHelper.getDocumentModel(
-                        stmt.getSubject(), documentManager);
 
-                if (subjectDoc != null) {
+                DocumentModel relatedDoc;
+                if (inverse) {
+                    relatedDoc = RelationHelper.getDocumentModel(
+                            stmt.getSubject(), documentManager);
+                } else {
+                    relatedDoc = RelationHelper.getDocumentModel(
+                            stmt.getObject(), documentManager);
+                }
 
-                    String versionSeriesId = subjectDoc.getVersionSeriesId();
-                    String docId = subjectDoc.getId();
+                if (relatedDoc != null) {
+
+                    String versionSeriesId = relatedDoc.getVersionSeriesId();
+                    String docId = relatedDoc.getId();
 
                     if (idMap.containsKey(versionSeriesId)) {
                         idMap.get(versionSeriesId).add(docId);
-                        docMap.get(versionSeriesId).add(subjectDoc);
+                        docMap.get(versionSeriesId).add(relatedDoc);
                     } else {
                         List<String> idList = new ArrayList<String>();
                         idList.add(docId);
                         idMap.put(versionSeriesId, idList);
 
                         List<DocumentModel> docList = new ArrayList<DocumentModel>();
-                        docList.add(subjectDoc);
+                        docList.add(relatedDoc);
                         docMap.put(versionSeriesId, docList);
                     }
 
                     stmtMap.put(docId, stmt);
                 } else {
                     // Add not visible statements
-                    incomingStmts.add(stmt);
+                    stmtList.add(stmt);
                 }
             }
 
@@ -533,9 +564,9 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
                     DocumentModel latestDoc = EloraRelationHelper.getLatestRelatedVersion(
                             documentManager, majorVersion, relatedUids, type);
-                    incomingStmts.add(stmtMap.get(latestDoc.getId()));
+                    stmtList.add(stmtMap.get(latestDoc.getId()));
                 } else {
-                    incomingStmts.add(stmtMap.get(relatedUids.get(0)));
+                    stmtList.add(stmtMap.get(relatedUids.get(0)));
                 }
             }
         }

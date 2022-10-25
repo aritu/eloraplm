@@ -16,9 +16,11 @@ package com.aritu.eloraplm.bom.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.schema.DocumentType;
 
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
 
 /**
  * Helper class for Elora Boms.
@@ -31,29 +33,27 @@ public class BomHelper {
     private static final Log log = LogFactory.getLog(BomHelper.class);
 
     public static String getBomClassificationMetadataForBomType(
-            String bomType) {
+            String bomTypeName) {
 
         String logInitMsg = "[getBomClassificationMetadataForBomType] ";
-        log.trace(logInitMsg + "--- ENTER --- bomType = |" + bomType + "|");
+        log.trace(logInitMsg + "--- ENTER --- bomType = |" + bomTypeName + "|");
 
+        DocumentType bomType = EloraDocumentTypesHelper.getDocumentType(
+                bomTypeName);
         String classificationMetadata = "";
 
-        switch (bomType) {
-        case EloraDoctypeConstants.BOM_PART:
+        if (EloraDocumentTypesHelper.getDocumentType(
+                EloraDoctypeConstants.BOM_PART).isSuperTypeOf(bomType)) {
             classificationMetadata = EloraMetadataConstants.ELORA_PARTCLASS_PARTCLASSIFICATION;
-            break;
-        case EloraDoctypeConstants.BOM_PRODUCT:
+        } else if (bomTypeName.equals(EloraDoctypeConstants.BOM_PRODUCT)) {
             classificationMetadata = EloraMetadataConstants.ELORA_PRODCLASS_PRODUCTCLASSIFICATION;
-            break;
-        case EloraDoctypeConstants.BOM_TOOL:
+        } else if (bomTypeName.equals(EloraDoctypeConstants.BOM_TOOL)) {
             classificationMetadata = EloraMetadataConstants.ELORA_BOMTOOL_TOOLCLASSIFICATION;
-            break;
-        case EloraDoctypeConstants.BOM_PACKAGING:
+        } else if (bomTypeName.equals(EloraDoctypeConstants.BOM_PACKAGING)) {
             classificationMetadata = EloraMetadataConstants.ELORA_BOMPACK_PACKAGINGCLASSIFICATION;
-            break;
-        case EloraDoctypeConstants.BOM_SPECIFICATION:
+        } else if (bomTypeName.equals(
+                EloraDoctypeConstants.BOM_SPECIFICATION)) {
             classificationMetadata = EloraMetadataConstants.ELORA_BOMSPEC_SPECIFICATIONCLASSIFICATION;
-            break;
         }
 
         log.trace(logInitMsg + "--- EXIT --- with bomCharacteristicDocType = |"

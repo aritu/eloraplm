@@ -1,25 +1,15 @@
-id,label,parent,obsolete
-id_pkcl1_1,Packaging Line 1,,0
-id_pkcl1_2,Packaging Line 2,,0
-id_pkcl1_3,Packaging Line 3,,0
-id_pkcl2_1_1,Packaging Type 1.1,id_pkcl1_1,0
-id_pkcl2_1_2,Packaging Type 1.2,id_pkcl1_1,0
-id_pkcl2_1_3,Packaging Type 1.3,id_pkcl1_1,0
-id_pkcl2_2_1,Packaging Type 2.1,id_pkcl1_2,0
-id_pkcl2_2_2,Packaging Type 2.2,id_pkcl1_2,0
-id_pkcl2_2_3,Packaging Type 2.3,id_pkcl1_2,0
-id_pkcl2_3_1,Packaging Type 3.1,id_pkcl1_3,0
-id_pkcl2_3_2,Packaging Type 3.2,id_pkcl1_3,0
-id_pkcl2_3_3,Packaging Type 3.3,id_pkcl1_3,0
-id_pkcl3_1_1_1,Packaging Family 1.1.1,id_pkcl2_1_1,0
-id_pkcl3_1_1_2,Packaging Family 1.1.2,id_pkcl2_1_1,0
-id_pkcl3_1_2_1,Packaging Family 1.2.1,id_pkcl2_1_2,0
-id_pkcl3_1_2_2,Packaging Family 1.2.2,id_pkcl2_1_2,0
-id_pkcl3_2_1_1,Packaging Family 2.1.1,id_pkcl2_2_1,0
-id_pkcl3_2_1_2,Packaging Family 2.1.2,id_pkcl2_2_1,0
-id_pkcl3_2_2_1,Packaging Family 2.2.1,id_pkcl2_2_2,0
-id_pkcl3_2_2_2,Packaging Family 2.2.2,id_pkcl2_2_2,0
-id_pkcl3_3_1_1,Packaging Family 3.1.1,id_pkcl2_3_1,0
-id_pkcl3_3_1_2,Packaging Family 3.1.2,id_pkcl2_3_1,0
-id_pkcl3_3_2_1,Packaging Family 3.2.1,id_pkcl2_3_2,0
-id_pkcl3_3_2_2,Packaging Family 3.2.2,id_pkcl2_3_2,0
+id,label,parent,obsolete,ordering
+"Cushioning","Amortiguación","","0","001"
+"Tray","Bandeja","","0","002"
+"Bag","Bolsa","","0","003"
+"CardboarBox","Caja de cartón","","0","004"
+"Closure","Cierre","","0","005"
+"Pail","Cubeta","","0","006"
+"Wrapper","Envoltorio","","0","007"
+"Label","Etiqueta","","0","008"
+"Strapping","Fleje","","0","009"
+"Weatherproofing","Impermeabilización","","0","010"
+"Crate","Jaula","","0","011"
+"Bracing","Refuerzo","","0","012"
+"Divider","Separador","","0","013"
+"Packaging ink","Tinta de Embalaje","","0","014"

@@ -4,7 +4,7 @@ xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cad_document"
 targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cad_document"
 xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
 
-  <xs:element name="cadType" default="id_design">
+  <xs:element name="cadType" default="design">
     <xs:simpleType>
       <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cadType" />
     </xs:simpleType>

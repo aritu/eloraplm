@@ -18,11 +18,14 @@ import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.DOCUMENT_CREATED;
 import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.DOCUMENT_CREATED_BY_COPY;
 import static com.aritu.eloraplm.constants.PdmEventNames.PDM_CHECKED_IN_EVENT;
 import static com.aritu.eloraplm.constants.PdmEventNames.PDM_OVERWRITTEN_EVENT;
+import static com.aritu.eloraplm.constants.EloraDocumentEventNames.DOCUMENT_ELORA_CREATED_INSIDE_TEMPLATE;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.NXCore;
@@ -35,7 +38,9 @@ import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.lifecycle.LifeCycleService;
 
 import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
+import com.aritu.eloraplm.constants.NuxeoFacetConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.StateLogHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -63,19 +68,32 @@ public class StateLogListener implements EventListener {
             // Check that we are handling the right event
             if (isEventHandled(event)) {
 
+                // Check if we have to skip the listener
+                if (docEventCtx.hasProperty("default/"
+                        + EloraGeneralConstants.CONTEXT_SKIP_STATE_LOG_LISTENER)) {
+                    return;
+                }
+
                 // Get the document model from the event context
                 DocumentModel doc = docEventCtx.getSourceDocument();
                 // Process the event
                 CoreSession session = docEventCtx.getCoreSession();
 
+                // Skip HiddenInNavigation documents because docs extended from
+                // File (like UserInvitation) will enter and sometimes crash.
+                // Besides, it has no sense to store state logs for hidden
+                // documents.
+                if (doc.hasFacet(
+                        NuxeoFacetConstants.FACET_HIDDEN_IN_NAVIGATION)) {
+                    return;
+                }
+
                 // Check document's facet in order to know if it is storing
                 // States Log.
                 if (doc.hasFacet(EloraFacetConstants.FACET_STORE_STATES_LOG)) {
 
-                    // Ignore document templates, that is, documents that are
-                    // located under TemplateRoot directory
-                    if (EloraDocumentHelper.isDocumentUnderTemplateRoot(doc,
-                            session)) {
+                    // Ignore document templates
+                    if (EloraDocumentHelper.isTemplate(doc)) {
                         log.trace(logInitMsg
                                 + "--- return [template document]---");
                         return;
@@ -85,7 +103,9 @@ public class StateLogListener implements EventListener {
 
                     // Filter the event
                     if (eventName.equals(DOCUMENT_CREATED)
-                            || eventName.equals(DOCUMENT_CREATED_BY_COPY)) {
+                            || eventName.equals(DOCUMENT_CREATED_BY_COPY)
+                            || eventName.equals(
+                                    DOCUMENT_ELORA_CREATED_INSIDE_TEMPLATE)) {
                         // don't handle proxies and versions.
                         if (doc.isProxy() || doc.isVersion()) {
                             return;
@@ -97,7 +117,9 @@ public class StateLogListener implements EventListener {
                     if (eventName.equals(TRANSITION_EVENT)) {
                         processTransitionEvent(docEventCtx, doc, session);
                     } else if (eventName.equals(DOCUMENT_CREATED)
-                            || eventName.equals(DOCUMENT_CREATED_BY_COPY)) {
+                            || eventName.equals(DOCUMENT_CREATED_BY_COPY)
+                            || eventName.equals(
+                                    DOCUMENT_ELORA_CREATED_INSIDE_TEMPLATE)) {
                         processDocumentCreationEvent(doc, session);
                     } else if (eventName.equals(PDM_CHECKED_IN_EVENT)) {
                         processCheckedInEvent(doc, session);
@@ -125,7 +147,7 @@ public class StateLogListener implements EventListener {
     protected List<String> getHandledEventsName() {
         return Arrays.asList(TRANSITION_EVENT, DOCUMENT_CREATED,
                 DOCUMENT_CREATED_BY_COPY, PDM_CHECKED_IN_EVENT,
-                PDM_OVERWRITTEN_EVENT);
+                PDM_OVERWRITTEN_EVENT, DOCUMENT_ELORA_CREATED_INSIDE_TEMPLATE);
     }
 
     protected void processTransitionEvent(DocumentEventContext docEventCtx,
@@ -157,7 +179,10 @@ public class StateLogListener implements EventListener {
 
         if (doc.isVersion()) {
             DocumentModel wcDoc = session.getWorkingCopy(doc.getRef());
-            restoreWcFromVersionDoc(wcDoc, doc, session);
+            DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(wcDoc);
+            if (doc.getId().equals(baseDoc.getId())) {
+                restoreWcFromVersionDoc(wcDoc, doc, session);
+            }
         }
     }
 
@@ -188,10 +213,31 @@ public class StateLogListener implements EventListener {
             return;
         }
 
+        // Check if createor user and creator date are passed in context.
+        // (Used in Elora CSV Import)
+        // Otherwise, use current principal user and current date.
+        String user = null;
+        if (doc.getContextData(
+                EloraGeneralConstants.CONTEXT_KEY_CREATOR_USER) != null) {
+            user = (String) doc.getContextData(
+                    EloraGeneralConstants.CONTEXT_KEY_CREATOR_USER);
+        }
+        if (StringUtils.isBlank(user)) {
+            user = session.getPrincipal().toString();
+        }
+        Date date = null;
+        if (doc.getContextData(
+                EloraGeneralConstants.CONTEXT_KEY_CREATED_DATE) != null) {
+            date = (Date) doc.getContextData(
+                    EloraGeneralConstants.CONTEXT_KEY_CREATED_DATE);
+        }
+        if (date == null) {
+            date = new Date();
+        }
+
         String versionDocId = doc.getId();
-        StateLogHelper.addStateLogProperties(doc,
-                session.getPrincipal().toString(), null, stateTo, null,
-                versionDocId);
+        StateLogHelper.addStateLogProperties(doc, user, null, stateTo, null,
+                versionDocId, null, date);
 
         log.trace(logInitMsg + "stateLogProperties added");
 

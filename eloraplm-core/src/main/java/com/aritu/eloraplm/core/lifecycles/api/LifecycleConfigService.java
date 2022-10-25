@@ -35,6 +35,10 @@ public interface LifecycleConfigService {
 
     public int getOrder(String state);
 
+    public List<String> getFinalStateList();
+
+    public boolean isFinalState(String state);
+
     // Transitions
 
     public TransitionDescriptor getTransitionConfig(String lifecycle,

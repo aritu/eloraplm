@@ -44,6 +44,7 @@ import org.nuxeo.ecm.platform.relations.services.DocumentRelationService;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.EloraCoreGraph;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 
 /**
  * // TODO: write class general comment
@@ -243,6 +244,14 @@ public class EloraDocumentRelationService extends DocumentRelationService
             }
         }
 
+        if (EloraDocumentHelper.isTemplate(from)) {
+            if (stmt.getProperties(
+                    EloraRelationConstants.IS_TEMPLATE) == null) {
+                stmt.addProperty(EloraRelationConstants.IS_TEMPLATE,
+                        new LiteralImpl(String.valueOf(true)));
+            }
+        }
+
         // end of custom metadata
 
         // notifications
@@ -366,21 +375,30 @@ public class EloraDocumentRelationService extends DocumentRelationService
         if (ordering != null) {
             newStmt.setProperty(EloraRelationConstants.ORDERING,
                     new LiteralImpl(String.valueOf(ordering)));
+        } else {
+            newStmt.setProperty(EloraRelationConstants.ORDERING, null);
         }
 
         if (directorOrdering != null) {
             newStmt.setProperty(EloraRelationConstants.DIRECTOR_ORDERING,
                     new LiteralImpl(String.valueOf(directorOrdering)));
+        } else {
+            newStmt.setProperty(EloraRelationConstants.DIRECTOR_ORDERING, null);
         }
 
         if (viewerOrdering != null) {
             newStmt.setProperty(EloraRelationConstants.VIEWER_ORDERING,
                     new LiteralImpl(String.valueOf(viewerOrdering)));
+        } else {
+            newStmt.setProperty(EloraRelationConstants.VIEWER_ORDERING, null);
         }
 
         if (inverseViewerOrdering != null) {
             newStmt.setProperty(EloraRelationConstants.INVERSE_VIEWER_ORDERING,
                     new LiteralImpl(String.valueOf(inverseViewerOrdering)));
+        } else {
+            newStmt.setProperty(EloraRelationConstants.INVERSE_VIEWER_ORDERING,
+                    null);
         }
 
         if (isManual != null) {

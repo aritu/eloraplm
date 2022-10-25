@@ -9,11 +9,18 @@
         <xs:sequence>
             <xs:element name="isRequired" type="xs:boolean"/>
             <xs:element name="name" type="xs:string"/>
-            <xs:element name="document">
+            <xs:element name="documentWCProxy">
                 <xs:simpleType>
                     <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
                 </xs:simpleType>
             </xs:element>
+            <xs:element name="documentAV">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="anchoringMsg" type="xs:string" />
+            <xs:element name="link" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="deliverableListType">
@@ -29,6 +36,7 @@
             <xs:element name="phaseId" type="xs:string"/>
             <xs:element name="parentId" type="xs:string"/>
             <xs:element name="type" type="xs:string"/>
+            <xs:element name="phaseTitle" type="xs:string"/>
             <xs:element name="phaseDescription" type="xs:string"/>
             <xs:element name="phaseManager">
                 <xs:simpleType>
@@ -41,6 +49,8 @@
             <xs:element name="phaseRealEndDate" type="xs:date"/>
             <xs:element name="phaseProgress" type="xs:integer"/>
             <xs:element name="comment" type="xs:string"/>
+            <xs:element name="obsolete" type="xs:boolean" default="false"/>
+            <xs:element name="result" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="projectPhaseListType">

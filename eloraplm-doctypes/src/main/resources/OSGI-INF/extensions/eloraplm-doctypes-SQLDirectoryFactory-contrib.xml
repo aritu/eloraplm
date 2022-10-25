@@ -89,17 +89,6 @@
       <createTablePolicy>on_missing_columns</createTablePolicy>
     </directory>
 
-<!--     <directory name="elora_erpSuppliers"> -->
-<!--       <schema>vocabulary</schema> -->
-<!--       <dataSource>java:/nxsqldirectory</dataSource> -->
-<!--       <table>elora_erp_supplier</table> -->
-<!--       <idField>id</idField> -->
-<!--       <autoincrementIdField>false</autoincrementIdField> -->
-<!--       <readOnly>false</readOnly> -->
-<!--       <dataFile>directories/elora_erp_supplier.csv</dataFile> -->
-<!--       <createTablePolicy>always</createTablePolicy> -->
-<!--     </directory> -->
-
     <directory name="elora_partaker">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
@@ -132,7 +121,28 @@
       <dataFile>directories/elora_project_type.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
-
+    
+    <directory name="elora_projectResult">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_project_result</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_project_result.csv</dataFile>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_cad_attachment_type">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_attachment_type</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_attachment_type.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
 
   </extension>
   

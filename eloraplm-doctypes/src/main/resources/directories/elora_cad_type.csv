@@ -1,4 +1,4 @@
-id,label,obsolete
-id_design,Design,0
-id_sample,Sample,0
-id_study,Development,0
+id,label,obsolete,ordering
+"design","Diseño","0","001"
+"development","Desarrollo","0","002"
+"sample","Muestra","0","003"

@@ -22,6 +22,7 @@
           AND ecm:isProxy = 0
           AND ecm:currentLifeCycleState != 'deleted'
           AND ecm:parentId IS NOT NULL
+          AND templ:isTemplate != 1
         </pattern>
         <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />

@@ -7,14 +7,16 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-WebModule: org.nuxeo.ecm.webengine.jaxrs.scan.DynamicApplicationFactory;package=com/aritu/eloraplm/search/tools/
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-search-ActionService-con
- trib.xml,OSGI-INF/extensions/eloraplm-search-ContentViewService-contr
- ib.xml,OSGI-INF/extensions/eloraplm-search-WebLayoutManager-contrib.x
- ml,OSGI-INF/extensions/eloraplm-search-TypeService-contrib.xml,OSGI-I
- NF/extensions/eloraplm-search-SuggestionService-contrib.xml,OSGI-INF/
- extensions/eloraplm-search-PageProviderService-contrib.xml,OSGI-INF/e
- xtensions/eloraplm-search-OperationServiceComponent-contrib.xml,OSGI-
- INF/extensions/eloraplm-search-SQLDirectoryFactory-contrib.xml,OSGI-I
- NF/extensions/eloraplm-search-DirectoryUIManager-contrib.xml
+Nuxeo-WebModule: org.nuxeo.ecm.webengine.jaxrs.scan.DynamicApplicationFa
+ ctory;package=com/aritu/eloraplm/search/tools/
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-search-ActionService-contr
+ ib.xml,OSGI-INF/extensions/eloraplm-search-ContentViewService-contrib.x
+ ml,OSGI-INF/extensions/eloraplm-search-WebLayoutManager-contrib.xml,OSG
+ I-INF/extensions/eloraplm-search-TypeService-contrib.xml,OSGI-INF/exten
+ sions/eloraplm-search-SuggestionService-contrib.xml,OSGI-INF/extensions
+ /eloraplm-search-PageProviderService-contrib.xml,OSGI-INF/extensions/el
+ oraplm-search-OperationServiceComponent-contrib.xml,OSGI-INF/extensions
+ /eloraplm-search-SQLDirectoryFactory-contrib.xml,OSGI-INF/extensions/el
+ oraplm-search-DirectoryUIManager-contrib.xml,OSGI-INF/extensions/elorap
+ lm-search-LifeCycleService-contrib.xml
 

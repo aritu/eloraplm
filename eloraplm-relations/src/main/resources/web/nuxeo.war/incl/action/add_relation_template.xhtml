@@ -6,7 +6,8 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
-    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
 
     <h3>
         <h:outputText value="#{messages['eloraplm.title.relation.add']}" />
@@ -76,7 +77,7 @@
                             width="100%"
                             placeholder="#{placeholder}"
                             pageProviderName="#{pageProviderName}"
-                            documentSchemas="dublincore,common,elora_object"
+                            documentSchemas="dublincore,common,elora_object,template_info"
                             additionalOperationParameters="eloraPassQueryTermsTwice">
                         </nxl:widgetType>
                     </a4j:outputPanel>
@@ -206,16 +207,12 @@
 
         <div class="buttonsGadget">
             
-            <h:commandButton value="#{messages['command.add']}"
+            <p:commandButton value="#{messages['command.add']}"
                 styleClass="button"
-                actionListener="#{treeBean.addRelationNode(currentDocument, isAnarchic)}">
-                <f:param name="btnAddRelation" value="true" />
-                
-                <f:ajax execute="@form"
-                    render="@form
-                    :#{component.namingContainer.parent.namingContainer.clientId}:global_flag_validation_failed_render
-                    :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:ttForm:#{treeWidgetId}" />
-            </h:commandButton>
+                actionListener="#{treeBean.addRelationNode(currentDocument, isAnarchic, isInverse)}"
+                oncomplete="handleFancyboxSuccess(xhr, status, args)"
+                process="@form"
+                update="@form :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:ttForm:#{treeWidgetId}" />
                 
             <h:commandButton value="#{messages['command.cancel']}"
                 styleClass="button">
@@ -225,11 +222,12 @@
         </div>
     </h:form>
     
-    <h:panelGroup id="global_flag_validation_failed_render">
-        <h:outputText style="display: none;" value="#{param.btnAddRelation}" />
-        <h:outputScript rendered="#{not empty param.btnAddRelation and !facesContext.isValidationFailed()}">
-            jQuery.fancybox.close();
-        </h:outputScript>
-    </h:panelGroup>
+    <h:outputScript>
+        function handleFancyboxSuccess(xhr, status, args) {
+            if(status == "success" &amp;&amp; !args.validationFailed) {
+                jQuery.fancybox.close();
+            }
+        }
+    </h:outputScript>
 
 </ui:composition>

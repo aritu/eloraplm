@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,16 +34,19 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.config.util.EloraConfig;
+import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.VersionStatusConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraFileInfo;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.exceptions.ConnectorIsObsoleteException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.integration.get.restoperations.util.VersionInfo;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.integration.restoperations.util.CadFileInfoRequestDoc;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
  * // TODO: write class general comment
@@ -51,6 +55,12 @@ import com.aritu.eloraplm.versioning.EloraVersionLabelService;
  *
  */
 public class EloraIntegrationHelper {
+
+    public static final String OPERATION_TRY_CHECKIN = "TryCheckin";
+
+    public static final String OPERATION_TRY_OVERWRITE = "TryOverwrite";
+
+    public static final String OPERATION_DO_GET_OR_CHECKOUT = "DoGetOrCheckout";
 
     private static final Log log = LogFactory.getLog(
             EloraIntegrationHelper.class);
@@ -140,53 +150,52 @@ public class EloraIntegrationHelper {
     public static Serializable getVirtualMetadata(CoreSession session,
             DocumentModel doc, String property, String operation)
             throws EloraException {
-        EloraVersionLabelService versionLabelService = Framework.getService(
-                EloraVersionLabelService.class);
+        VersionLabelService versionLabelService = Framework.getService(
+                VersionLabelService.class);
 
         Serializable value = null;
         switch (property) {
         case "lifeCycleState":
 
             switch (operation) {
-            case "TryCheckin":
+            case OPERATION_TRY_CHECKIN:
                 // TODO Hau konfiguraziotik hartu beharko zen, baina oraingoz ez
                 // dago initial state zein den jarrita, eta ez du zentzu
                 // askorik. Badakigu Try-ean beti "preliminary"ra doala, eta
                 // zuzenean pasatuko dugu balio hori.
                 value = "preliminary";
                 break;
-            default:
+            case OPERATION_TRY_OVERWRITE:
+            case OPERATION_DO_GET_OR_CHECKOUT:
                 value = doc.getCurrentLifeCycleState();
                 break;
             }
             break;
 
         case "majorVersion":
-
             switch (operation) {
-            case "TryCheckin":
+            case OPERATION_TRY_CHECKIN:
                 value = EloraDocumentHelper.calculateNextMajorVersion(doc);
                 break;
-            case "DoGetOrCheckout":
+            case OPERATION_TRY_OVERWRITE:
+            case OPERATION_DO_GET_OR_CHECKOUT:
                 Long major = (Long) doc.getPropertyValue(
                         VersioningService.MAJOR_VERSION_PROP);
-                value = (Serializable) versionLabelService.translateMajor(
-                        major);
+                value = versionLabelService.translateMajor(major);
                 break;
             }
             break;
 
         case "minorVersion":
-
             switch (operation) {
-            case "TryCheckin":
+            case OPERATION_TRY_CHECKIN:
                 value = EloraDocumentHelper.calculateNextMinorVersion(doc);
                 break;
-            case "DoGetOrCheckout":
+            case OPERATION_TRY_OVERWRITE:
+            case OPERATION_DO_GET_OR_CHECKOUT:
                 Long minor = (Long) doc.getPropertyValue(
                         VersioningService.MINOR_VERSION_PROP);
-                value = (Serializable) versionLabelService.translateMinor(
-                        minor);
+                value = versionLabelService.translateMinor(minor);
                 break;
             }
             break;
@@ -326,6 +335,38 @@ public class EloraIntegrationHelper {
                 }
             }
         }
+    }
+
+    public static DocumentModel relateDocumentWithCadBinaries(
+            CoreSession session, DocumentModel doc,
+            CadFileInfoRequestDoc requestDoc) throws EloraException {
+
+        String logInitMsg = "[relateDocumentWithCadBinaries] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "Relating CAD binaries to document |"
+                + doc.getId() + "|");
+
+        // Content
+        EloraDocumentHelper.relateDocumentWithBinary(doc,
+                requestDoc.getContentFile(),
+                EloraGeneralConstants.FILE_TYPE_CONTENT);
+
+        // Viewer
+        EloraDocumentHelper.relateDocumentWithBinary(doc,
+                requestDoc.getViewerFile(),
+                EloraGeneralConstants.FILE_TYPE_VIEWER);
+
+        // CAD attachments
+        // First we have to cast them to simple EloraFileInfo
+        List<EloraFileInfo> cadatts = requestDoc.getCadAttachments().stream().map(
+                a -> (EloraFileInfo) a).collect(Collectors.toList());
+        EloraDocumentHelper.relateDocumentWithBinaries(doc, cadatts,
+                EloraGeneralConstants.FILE_TYPE_CAD_ATTACHMENT);
+
+        log.trace(logInitMsg + "CAD binaries related to document |"
+                + doc.getId() + "| ");
+
+        return doc;
     }
 
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.archiver.ActionService.contrib">
+    
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <filter id="canBeArchived">
+            <rule grant="true">
+                <condition>#{workspaceArchiverActions.canBeArchived()}</condition>
+            </rule>
+            <rule grant="false">
+                <filter-id>cannot_write</filter-id>
+                <condition>#{currentDocument.isLocked() and currentDocument.lockInfo.owner ne currentUser}</condition>
+            </rule>
+        </filter>
+        
+        <filter id="canBeUnarchived">
+            <rule grant="true">
+                <condition>#{workspaceArchiverActions.canBeUnarchived()}</condition>
+            </rule>
+        </filter>
+        
+    </extension>
+    
+    <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+        <action id="archiveWorkspace" order="0" label="eloraplm.command.archive.workspace" type="link"
+                confirm="if(!confirmArchiveWorkspace()) return false;" link="#{workspaceArchiverActions.archive}" 
+                icon="/icons/action_archive_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter-id>canBeArchived</filter-id>
+        </action>
+        
+        <action id="unarchiveWorkspace" order="0" label="eloraplm.command.unarchive.workspace" type="link"
+                confirm="if(!confirmUnarchiveWorkspace()) return false;" link="#{workspaceArchiverActions.unarchive}" 
+                icon="/icons/action_unarchive_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter-id>canBeUnarchived</filter-id>
+        </action>
+        
+    </extension>
+    
+</component>

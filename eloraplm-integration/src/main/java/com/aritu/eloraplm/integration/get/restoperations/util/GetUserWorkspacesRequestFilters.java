@@ -13,6 +13,8 @@
  */
 package com.aritu.eloraplm.integration.get.restoperations.util;
 
+import java.util.List;
+
 /**
  * @author aritu
  *
@@ -26,6 +28,10 @@ public class GetUserWorkspacesRequestFilters {
     private String structureRoot;
 
     private boolean onlyFavorite;
+
+    private List<String> uidList;
+
+    private boolean includeArchived;
 
     public String getLifeCycleState() {
         return lifeCycleState;
@@ -57,6 +63,22 @@ public class GetUserWorkspacesRequestFilters {
 
     public void setOnlyFavorite(boolean onlyFavorite) {
         this.onlyFavorite = onlyFavorite;
+    }
+
+    public List<String> getUidList() {
+        return uidList;
+    }
+
+    public void setUidList(List<String> uidList) {
+        this.uidList = uidList;
+    }
+
+    public boolean isIncludeArchived() {
+        return includeArchived;
+    }
+
+    public void setIncludeArchived(boolean includeArchived) {
+        this.includeArchived = includeArchived;
     }
 
 }

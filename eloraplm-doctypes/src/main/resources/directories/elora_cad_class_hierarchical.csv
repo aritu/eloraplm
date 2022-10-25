@@ -1,25 +1,33 @@
-id,label,parent,obsolete
-id_cadl1_1,CAD Line 1,,0
-id_cadl1_2,CAD Line 2,,0
-id_cadl1_3,CAD Line 3,,0
-id_cadl2_1_1,CAD Type 1.1,id_cadl1_1,0
-id_cadl2_1_2,CAD Type 1.2,id_cadl1_1,0
-id_cadl2_1_3,CAD Type 1.3,id_cadl1_1,0
-id_cadl2_2_1,CAD Type 2.1,id_cadl1_2,0
-id_cadl2_2_2,CAD Type 2.2,id_cadl1_2,0
-id_cadl2_2_3,CAD Type 2.3,id_cadl1_2,0
-id_cadl2_3_1,CAD Type 3.1,id_cadl1_3,0
-id_cadl2_3_2,CAD Type 3.2,id_cadl1_3,0
-id_cadl2_3_3,CAD Type 3.3,id_cadl1_3,0
-id_cadl3_1_1_1,CAD Family 1.1.1,id_cadl2_1_1,0
-id_cadl3_1_1_2,CAD Family 1.1.2,id_cadl2_1_1,0
-id_cadl3_1_2_1,CAD Family 1.2.1,id_cadl2_1_2,0
-id_cadl3_1_2_2,CAD Family 1.2.2,id_cadl2_1_2,0
-id_cadl3_2_1_1,CAD Family 2.1.1,id_cadl2_2_1,0
-id_cadl3_2_1_2,CAD Family 2.1.2,id_cadl2_2_1,0
-id_cadl3_2_2_1,CAD Family 2.2.1,id_cadl2_2_2,0
-id_cadl3_2_2_2,CAD Family 2.2.2,id_cadl2_2_2,0
-id_cadl3_3_1_1,CAD Family 3.1.1,id_cadl2_3_1,0
-id_cadl3_3_1_2,CAD Family 3.1.2,id_cadl2_3_1,0
-id_cadl3_3_2_1,CAD Family 3.2.1,id_cadl2_3_2,0
-id_cadl3_3_2_2,CAD Family 3.2.2,id_cadl2_3_2,0
+id,label,parent,obsolete,ordering
+"mechanical","Mecánico","","0","001"
+"electronic","Electrónico","","0","002"
+"electromechanical","Electromecánico","","0","003"
+"ring","Anilla","mechanical","0","001"
+"washer","Arandela","mechanical","0","002"
+"connecting rod","Biela","mechanical","0","003"
+"box","Caja","mechanical","0","004"
+"gear","Engranaje","mechanical","0","005"
+"o-ring","Junta tórica","mechanical","0","006"
+"screw","Tornillo","mechanical","0","007"
+"pipe","Tubo","mechanical","0","008"
+"nut","Tuerca","mechanical","0","009"
+"rod","Varilla","mechanical","0","010"
+"batterie","Batería","electronic","0","011"
+"digital circuit","Circuito digital","electronic","0","012"
+"linear circuit","Circuito lineal","electronic","0","013"
+"capacitor","Condensador","electronic","0","014"
+"inductor","Inductor","electronic","0","015"
+"memory","Memoria","electronic","0","016"
+"pcb ","PCB -Circuito impreso","electronic","0","017"
+"motherboard","Placa base","electronic","0","018"
+"resistor","Resistencia","electronic","0","019"
+"connector","Conector","electromechanical","0","020"
+"fuse","Fusible","electromechanical","0","021"
+"switch","Interruptor","electromechanical","0","022"
+"engine","Motor","electromechanical","0","023"
+"relay","Relé","electromechanical","0","024"
+"thermostat","Termostato","electromechanical","0","025"
+"transformer","Transformador","electromechanical","0","026"
+"turbine","Turbina","electromechanical","0","027"
+"fan","Ventilador","electromechanical","0","028"
+

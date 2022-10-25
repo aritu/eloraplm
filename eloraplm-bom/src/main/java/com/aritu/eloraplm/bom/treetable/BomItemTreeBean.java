@@ -98,9 +98,10 @@ public class BomItemTreeBean extends EditableRelationTreeBean
     }
 
     @Override
-    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic) {
+    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic,
+            boolean isInverse) {
         setPredicateUri(EloraRelationConstants.BOM_HAS_BOM);
-        super.addRelationNode(currentDoc, isAnarchic);
+        super.addRelationNode(currentDoc, isAnarchic, isInverse);
     }
 
     @Override

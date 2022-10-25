@@ -115,27 +115,12 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 .nxMainContainer .column_sidebar
 {
     width: auto;
+    height: calc(100% - 61px);
 }
 
 .nxMainContainer .ws_content
 {
     margin-left: 48px;
-}
-
-.nxMainContainer #column_sidebar_browse #nxw_treeExplorerTabs_tab_content
-{
-    max-height: calc(100vh - 140px);
-    overflow-y: auto;
-}
-
-.nxMainContainer #column_sidebar_clipboard
-{
-    font-size: 0.85em;
-}
-
-.nxMainContainer #column_sidebar_clipboard .userClipboard
-{
-    width: 340px;
 }
 
 .nxMainContainer .column
@@ -384,6 +369,13 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 */
 
 
+.nx-page input[type="text"],
+.nx-page input[type="password"],
+.nx-page input[type="date"],
+.nx-page textarea {
+    min-width: 4.5em;
+}
+
 /* Show Close and Clean buttons in Richfaces calendar */
 .nx-page .rf-cal-btn-close,
 .nx-page .rf-cal-tl-ftr:nth-child(2)
@@ -436,7 +428,7 @@ table.listItem td
 .ui-dialog.ui-widget
 {
     font-size: 1em;
-    z-index: 9002 !important;
+    z-index: 40010 !important;
 }
 
 #fancybox-wrap
@@ -483,7 +475,7 @@ table.listItem td
 #nxw_documentTabs_panel.tabsBar li.selected,
 #nxw_documentTabs_panel.tabsBar li:hover
 {
-    box-shadow: 0 -2px 2px rgba(0,0,0,0.5);
+    box-shadow: 0 -1px 1px rgba(0,0,0,0.5);
 }
 
 .nxFooter,

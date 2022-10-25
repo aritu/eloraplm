@@ -13,6 +13,8 @@
  */
 package com.aritu.eloraplm.core.util;
 
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -226,6 +228,33 @@ public class EloraStructureHelper {
         }
     }
 
+    public static DocumentModel getDocModelByType(DocumentRef structureRootRef,
+            String type, CoreSession session) throws EloraException {
+
+        Set<String> facets = EloraDocumentTypesHelper.getFacetsByDocumentType(
+                type);
+
+        if (facets.contains(EloraFacetConstants.FACET_CAD_DOCUMENT)
+                || facets.contains(EloraFacetConstants.FACET_BASIC_DOCUMENT)) {
+
+            return EloraStructureHelper.getCadDocModelByType(structureRootRef,
+                    type, session);
+
+        } else if (facets.contains(EloraFacetConstants.FACET_BOM_DOCUMENT)) {
+
+            return EloraStructureHelper.getBomDocModelByType(structureRootRef,
+                    type, session);
+
+        } else if (facets.contains(EloraFacetConstants.FACET_ELORA_WORKSPACE)) {
+            return EloraStructureHelper.getWsRootDocModel(structureRootRef,
+                    session);
+        } else {
+            log.error("type = |" + type + "| has not defined right facet.");
+            throw new EloraException("UndefinedFacetForDocType");
+        }
+
+    }
+
     /**
      * Retrieves the path of the CAD document in function of the specified
      * structure root and CAD document type.
@@ -265,14 +294,22 @@ public class EloraStructureHelper {
             String type, String structType, CoreSession session)
             throws EloraException {
 
+        DocumentModel docModel = getStructureDocumentByType(structureRootRef,
+                type, structType, session);
+
+        return docModel.getPathAsString();
+    }
+
+    public static DocumentModel getStructureDocumentByType(
+            DocumentRef structureRootRef, String type, String structType,
+            CoreSession session) throws EloraException {
         DocumentModel docModel = getDocModelByType(structureRootRef, type,
                 structType, session);
 
         if (docModel == null) {
             throw new EloraException("Document path cannot be retrieved.");
         }
-
-        return docModel.getPathAsString();
+        return docModel;
     }
 
     /**
@@ -367,8 +404,31 @@ public class EloraStructureHelper {
     }
 
     /////////////////////////////////////////////////////////////
-    // TODO::: hURRENGO BI METODOEN IZENAK HOBETO AUKERATU
+    // TODO::: HURRENGO HIRU METODOEN IZENAK HOBETO AUKERATU
     /////////////////////////////////////////////////////////////
+    public static void moveDocToEloraStructureAndCreateProxyIfRequired(
+            DocumentModel doc, DocumentModel parentDocument) {
+
+        String logInitMsg = "[moveDocToEloraStructureAndCreateProxyIfRequired] ["
+                + doc.getCoreSession().getPrincipal().getName() + "] ";
+
+        // Check if it has to be moved to its position in Elora Structure.
+        // If yes, move it to the Elora Structure and create a Proxy
+        // pointing to the moved document.
+        if (EloraStructureHelper.hasToBeMovedToEloraStructure(doc,
+                parentDocument)) {
+            log.trace(logInitMsg + "Document |" + doc.getId()
+                    + "| has to be moved to the vault when creating under |"
+                    + parentDocument.getId() + "|.");
+
+            EloraStructureHelper.moveToEloraStructureAndCreateProxy(doc);
+
+            log.trace(logInitMsg + "Document |" + doc.getId()
+                    + "| moved to vault and created proxy in |"
+                    + parentDocument.getId() + "|.");
+        }
+    }
+
     /**
      * Check if the new document has to be moved to its position in Elora
      * Structure.
@@ -377,7 +437,7 @@ public class EloraStructureHelper {
      * @param parentDoc
      * @return
      */
-    public static boolean hasToBeMovedToEloraStructure(DocumentModel document,
+    private static boolean hasToBeMovedToEloraStructure(DocumentModel document,
             DocumentModel parentDoc) {
         String logInitMsg = "[hasToBeMovedToEloraStructure] ["
                 + document.getCoreSession().getPrincipal().getName() + "] ";
@@ -385,14 +445,18 @@ public class EloraStructureHelper {
 
         boolean moveToEloraStructure = false;
 
-        // CAUTION! At the moment, we have no way to limit BasicDocument
-        // to REAL basic documents, so CAD and BOM docs also have this
-        // facet
-        if (document.hasFacet(EloraFacetConstants.FACET_BASIC_DOCUMENT)
-                || document.hasFacet(EloraFacetConstants.FACET_CAD_DOCUMENT)
-                || document.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)) {
-            if (EloraStructureHelper.isDocUnderWorkspaceRoot(parentDoc)) {
-                moveToEloraStructure = true;
+        if (!document.isProxy()) {
+            log.trace(logInitMsg + "Document |" + document.getId()
+                    + "| is not a proxy.");
+            if (document.hasFacet(EloraFacetConstants.FACET_BASIC_DOCUMENT)
+                    || document.hasFacet(EloraFacetConstants.FACET_CAD_DOCUMENT)
+                    || document.hasFacet(
+                            EloraFacetConstants.FACET_BOM_DOCUMENT)) {
+                if (EloraStructureHelper.isDocUnderWorkspaceRoot(parentDoc)) {
+                    log.trace(logInitMsg + "Document |" + document.getId()
+                            + "| is basic, cad or item and parent doc is a workspace.");
+                    moveToEloraStructure = true;
+                }
             }
         }
 
@@ -410,7 +474,7 @@ public class EloraStructureHelper {
      * @param documentManager
      * @return
      */
-    public static DocumentModel moveToEloraStructureAndCreateProxy(
+    private static DocumentModel moveToEloraStructureAndCreateProxy(
             DocumentModel document) {
         String logInitMsg = "[moveToEloraStructureAndCreateProxy] ["
                 + document.getCoreSession().getPrincipal().getName() + "] ";
@@ -578,8 +642,9 @@ public class EloraStructureHelper {
     }
 
     public static DocumentModelList retrieveDocListToBeSwitchedForBomDoc(
-            DocumentModel doc, DocumentRef targetEloraRootFolderRef,
-            boolean recursiveSwitch) throws EloraException {
+            DocumentModel doc, boolean originRootFolderIsLibraryRoot,
+            DocumentRef targetEloraRootFolderRef, boolean recursiveSwitch)
+            throws EloraException {
 
         String logInitMsg = "[retrieveDocListToBeSwitchedForBomDoc] ["
                 + doc.getCoreSession().getPrincipal().getName() + "] ";
@@ -590,7 +655,8 @@ public class EloraStructureHelper {
         DocumentModelList docListToBeSwitched = new DocumentModelListImpl();
 
         retrieveRelatedDocumentsToBeSwitchedForBomDoc(docListToBeSwitched, doc,
-                targetEloraRootFolderRef, recursiveSwitch);
+                originRootFolderIsLibraryRoot, targetEloraRootFolderRef,
+                recursiveSwitch);
 
         log.trace(
                 logInitMsg + "--- EXIT --- with docListToBeSwitched.size() = |"
@@ -601,6 +667,7 @@ public class EloraStructureHelper {
 
     private static void retrieveRelatedDocumentsToBeSwitchedForBomDoc(
             DocumentModelList docListToBeSwitched, DocumentModel doc,
+            boolean originRootFolderIsLibraryRoot,
             DocumentRef targetEloraRootFolderRef, boolean recursiveSwitch)
             throws EloraException {
 
@@ -624,6 +691,7 @@ public class EloraStructureHelper {
             for (DocumentModel relatedDoc : hierarchicalRelatedDocuments) {
 
                 if (hastToBeSwitchedRelatedElement(relatedDoc,
+                        originRootFolderIsLibraryRoot,
                         targetEloraRootFolderRef)) {
                     addToDocListToBeSwitchedIfNotAlreadyContained(
                             docListToBeSwitched, relatedDoc);
@@ -633,6 +701,7 @@ public class EloraStructureHelper {
                         // hierarchically related documents.
                         retrieveRelatedDocumentsToBeSwitchedForBomDoc(
                                 docListToBeSwitched, relatedDoc,
+                                originRootFolderIsLibraryRoot,
                                 targetEloraRootFolderRef, recursiveSwitch);
                     }
                 }
@@ -640,7 +709,8 @@ public class EloraStructureHelper {
         }
         // One level relations
         retrieveOneLevelRelatedDocumentsToBeSwitchedForBomDoc(
-                docListToBeSwitched, doc, targetEloraRootFolderRef);
+                docListToBeSwitched, doc, originRootFolderIsLibraryRoot,
+                targetEloraRootFolderRef);
 
         log.trace(
                 logInitMsg + "--- EXIT --- with docListToBeSwitched.size() = |"
@@ -649,6 +719,7 @@ public class EloraStructureHelper {
 
     private static void retrieveOneLevelRelatedDocumentsToBeSwitchedForBomDoc(
             DocumentModelList docListToBeSwitched, DocumentModel doc,
+            boolean originRootFolderIsLibraryRoot,
             DocumentRef targetEloraRootFolderRef) throws EloraException {
         String logInitMsg = "[retrieveOneLevelRelatedDocumentsToBeSwitchedForBomDoc] ["
                 + doc.getCoreSession().getPrincipal().getName() + "] ";
@@ -672,6 +743,7 @@ public class EloraStructureHelper {
         if (!oneLevelRelatedDocuments.isEmpty()) {
             for (DocumentModel relatedDoc : oneLevelRelatedDocuments) {
                 if (hastToBeSwitchedRelatedElement(relatedDoc,
+                        originRootFolderIsLibraryRoot,
                         targetEloraRootFolderRef)) {
                     addToDocListToBeSwitchedIfNotAlreadyContained(
                             docListToBeSwitched, relatedDoc);
@@ -684,8 +756,9 @@ public class EloraStructureHelper {
     }
 
     public static DocumentModelList retrieveDocListToBeSwitchedForCadDoc(
-            DocumentModel doc, DocumentRef targetEloraRootFolderRef,
-            boolean recursiveSwitch) throws EloraException {
+            DocumentModel doc, boolean originRootFolderIsLibraryRoot,
+            DocumentRef targetEloraRootFolderRef, boolean recursiveSwitch)
+            throws EloraException {
 
         String logInitMsg = "[retrieveDocListToBeSwitchedForCadDoc] ["
                 + doc.getCoreSession().getPrincipal().getName() + "] ";
@@ -696,7 +769,8 @@ public class EloraStructureHelper {
         DocumentModelList docListToBeSwitched = new DocumentModelListImpl();
 
         retrieveRelatedDocumentsToBeSwitchedForCadDoc(docListToBeSwitched, doc,
-                targetEloraRootFolderRef, recursiveSwitch);
+                originRootFolderIsLibraryRoot, targetEloraRootFolderRef,
+                recursiveSwitch);
 
         log.trace(
                 logInitMsg + "--- EXIT --- with docListToBeSwitched.size() = |"
@@ -707,6 +781,7 @@ public class EloraStructureHelper {
 
     private static void retrieveRelatedDocumentsToBeSwitchedForCadDoc(
             DocumentModelList docListToBeSwitched, DocumentModel doc,
+            boolean originRootFolderIsLibraryRoot,
             DocumentRef targetEloraRootFolderRef, boolean recursiveSwitch)
             throws EloraException {
 
@@ -732,6 +807,7 @@ public class EloraStructureHelper {
             for (DocumentModel relatedDoc : hierarchicalRelatedDocuments) {
 
                 if (hastToBeSwitchedRelatedElement(relatedDoc,
+                        originRootFolderIsLibraryRoot,
                         targetEloraRootFolderRef)) {
                     addToDocListToBeSwitchedIfNotAlreadyContained(
                             docListToBeSwitched, relatedDoc);
@@ -741,6 +817,7 @@ public class EloraStructureHelper {
                         // hierarchically related documents.
                         retrieveRelatedDocumentsToBeSwitchedForCadDoc(
                                 docListToBeSwitched, relatedDoc,
+                                originRootFolderIsLibraryRoot,
                                 targetEloraRootFolderRef, recursiveSwitch);
                     }
                 }
@@ -748,7 +825,8 @@ public class EloraStructureHelper {
         }
         // One level relations
         retrieveOneLevelRelatedDocumentsToBeSwitchedForCadDoc(
-                docListToBeSwitched, doc, targetEloraRootFolderRef);
+                docListToBeSwitched, doc, originRootFolderIsLibraryRoot,
+                targetEloraRootFolderRef);
 
         log.trace(
                 logInitMsg + "--- EXIT --- with docListToBeSwitched.size() = |"
@@ -757,6 +835,7 @@ public class EloraStructureHelper {
 
     private static void retrieveOneLevelRelatedDocumentsToBeSwitchedForCadDoc(
             DocumentModelList docListToBeSwitched, DocumentModel doc,
+            boolean originRootFolderIsLibraryRoot,
             DocumentRef targetEloraRootFolderRef) throws EloraException {
 
         String logInitMsg = "[retrieveOneLevelRelatedDocumentsToBeSwitchedForCadDoc] ["
@@ -787,6 +866,7 @@ public class EloraStructureHelper {
         if (!oneLevelRelatedDocuments.isEmpty()) {
             for (DocumentModel relatedDoc : oneLevelRelatedDocuments) {
                 if (hastToBeSwitchedRelatedElement(relatedDoc,
+                        originRootFolderIsLibraryRoot,
                         targetEloraRootFolderRef)) {
                     addToDocListToBeSwitchedIfNotAlreadyContained(
                             docListToBeSwitched, relatedDoc);
@@ -799,6 +879,7 @@ public class EloraStructureHelper {
     }
 
     private static boolean hastToBeSwitchedRelatedElement(DocumentModel doc,
+            boolean originRootFolderIsLibraryRoot,
             DocumentRef targetEloraRootFolderRef) throws EloraException {
 
         String logInitMsg = "[hastToBeSwitchedRelatedElement] ["
@@ -808,7 +889,7 @@ public class EloraStructureHelper {
 
         boolean hasToBeSwitched = false;
 
-        if (!isDocUnderLibraryRoot(doc)) {
+        if (originRootFolderIsLibraryRoot || !isDocUnderLibraryRoot(doc)) {
 
             String docEloraRootFolderUid = EloraStructureHelper.getEloraRootFolderUid(
                     doc, doc.getCoreSession());

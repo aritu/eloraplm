@@ -1,0 +1,23 @@
+<div xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+    <c:if test="#{widget.handlingLabels}">
+        <c:if test="#{!empty widget.label}">
+            <ui:include src="/widgets/incl/widget_label_template.xhtml">
+                <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+            </ui:include>
+        </c:if>
+    </c:if>
+    
+    <c:if test="#{eloraWebActions.existsDocument(field_0)}">
+        <nxl:widget name="icon_reference_title" mode="view" value="#{eloraWebActions.getDocumentFromId(field_0)}" />
+    </c:if>
+    <c:if test="#{not eloraWebActions.existsDocument(field_0)}">
+        <h:outputText value="#{messages['eloraplm.info.templates.source.deleted']}" />
+    </c:if>
+    
+</div>

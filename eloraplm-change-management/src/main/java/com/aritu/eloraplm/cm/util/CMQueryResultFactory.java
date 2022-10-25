@@ -131,4 +131,51 @@ public class CMQueryResultFactory {
         return distinctActions;
     }
 
+    public static List<String> getDistinctImpactedItemsOriginsQuery(
+            CoreSession session, String cmProcessUid, String itemType)
+            throws EloraException {
+
+        String logInitMsg = "[getDistinctImpactedItemsOriginsQuery] ["
+                + session.getPrincipal().getName() + "] ";
+
+        log.trace(logInitMsg + "--- ENTER --- itemType = |" + itemType + "|");
+
+        List<String> distinctImpactedItemsOrigins = new ArrayList<String>();
+
+        IterableQueryResult it = null;
+        try {
+            String query = CMQueryFactory.getDistinctImpactedItemsOriginsQuery(
+                    cmProcessUid, itemType);
+            it = session.queryAndFetch(query, NXQL.NXQL);
+
+            if (it.size() > 0) {
+
+                String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
+
+                for (Map<String, Serializable> map : it) {
+                    String originItemUid = (String) map.get(
+                            pfx + "/*1/originItem");
+
+                    distinctImpactedItemsOrigins.add(originItemUid);
+                }
+            }
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Exception thrown: |" + e.getMessage() + "|");
+        } finally {
+            it.close();
+        }
+
+        log.trace(logInitMsg
+                + "--- EXIT --- with distinctImpactedItemsOrigins.size() = |"
+                + distinctImpactedItemsOrigins.size() + "|");
+
+        return distinctImpactedItemsOrigins;
+    }
+
 }

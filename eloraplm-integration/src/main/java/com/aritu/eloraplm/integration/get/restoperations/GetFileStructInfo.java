@@ -73,7 +73,7 @@ import com.aritu.eloraplm.integration.util.ItemInfo;
 import com.aritu.eloraplm.integration.util.RelationInfo;
 import com.aritu.eloraplm.integration.util.VersionItem;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
  * @author aritu
@@ -144,7 +144,7 @@ public class GetFileStructInfo {
     @Param(name = "selected", required = true)
     private boolean isTargetSelected;
 
-    @Param(name = "getParentFolders", required = true)
+    @Param(name = "getParentFolders", required = false)
     private boolean getParentFolders;
 
     @Param(name = "workspaceRealUid", required = false)
@@ -156,8 +156,8 @@ public class GetFileStructInfo {
     private RelationManager relationManager = Framework.getService(
             RelationManager.class);
 
-    private EloraVersionLabelService versionLabelService = Framework.getService(
-            EloraVersionLabelService.class);
+    private VersionLabelService versionLabelService = Framework.getService(
+            VersionLabelService.class);
 
     private EloraConfigTable propagationConfig;
 

@@ -29,7 +29,6 @@ import org.nuxeo.ecm.core.api.IdRef;
 
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
-import com.aritu.eloraplm.core.listener.StateLogListener;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -41,12 +40,12 @@ import com.aritu.eloraplm.exceptions.EloraException;
  */
 public class StateLogHelper {
 
-    private static final Log log = LogFactory.getLog(StateLogListener.class);
+    private static final Log log = LogFactory.getLog(StateLogHelper.class);
 
     @SuppressWarnings("unchecked")
     public static void addStateLogProperties(DocumentModel doc, String user,
             String stateFrom, String stateTo, String transition,
-            String versionDocId, String comment) {
+            String versionDocId, String comment, Date date) {
 
         if (!doc.hasFacet(EloraFacetConstants.FACET_STORE_STATES_LOG)) {
             // nothing to do
@@ -61,7 +60,7 @@ public class StateLogHelper {
                     EloraMetadataConstants.ELORA_STLOG_STATE_LOG_LIST);
         }
 
-        StateLog stateLog = new StateLog(user, new Date(), stateFrom, stateTo,
+        StateLog stateLog = new StateLog(user, date, stateFrom, stateTo,
                 transition, versionDocId, comment);
 
         Map<String, Object> stateLogType = createStateLogType(stateLog);
@@ -71,6 +70,13 @@ public class StateLogHelper {
         doc.setPropertyValue(EloraMetadataConstants.ELORA_STLOG_STATE_LOG_LIST,
                 currentStateLogList);
 
+    }
+
+    public static void addStateLogProperties(DocumentModel doc, String user,
+            String stateFrom, String stateTo, String transition,
+            String versionDocId, String comment) {
+        addStateLogProperties(doc, user, stateFrom, stateTo, transition,
+                versionDocId, comment, new Date());
     }
 
     public static void addStateLogProperties(DocumentModel doc, String user,

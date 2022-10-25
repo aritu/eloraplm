@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 <component name="com.aritu.eloraplm.doctypes.TypeService.contrib">
     <require>org.nuxeo.ecm.core.CoreExtensions</require>
-    <require>org.nuxeo.nuxeo.ecm.platform.audio.doctype</require>
-    <require>org.nuxeo.ecm.platform.picture.coreTypes</require>
-    <require>org.nuxeo.nuxeo.ecm.platform.video.doctype</require>
-    <require>org.nuxeo.ecm.platform.userworkspace.coreTypes</require>
-    <require>org.nuxeo.ecm.platform.forum.types</require>
     <require>org.nuxeo.ecm.platform.audio.ecm.types</require>
-    <require>org.nuxeo.ecm.platform.video.jsf.types</require>
+    <require>org.nuxeo.ecm.platform.forum.types</require>
+    <require>org.nuxeo.ecm.platform.picture.coreTypes</require>
     <require>org.nuxeo.ecm.platform.picture.jsf.types</require>
     <require>org.nuxeo.ecm.platform.types</require>
+    <require>org.nuxeo.ecm.platform.userworkspace.coreTypes</require>
+    <require>org.nuxeo.ecm.platform.video.jsf.types</require>
+    <require>org.nuxeo.nuxeo.ecm.platform.audio.doctype</require>
+    <require>org.nuxeo.nuxeo.ecm.platform.video.doctype</require>
+    <require>org.nuxeo.platform.TemplateSources.types.contrib</require>
     
     <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
         <schema name="elora_object" prefix="elo"
@@ -44,7 +45,11 @@
         <schema name="review_info" prefix="review"
             src="schemas/review_info.xsd" />
         <schema name="states_log" prefix="stlog" 
-            src="schemas/states_log.xsd" /> 
+            src="schemas/states_log.xsd" />
+        <schema name="archiving_info" prefix="arc" 
+            src="schemas/archiving_info.xsd" /> 
+        <schema name="template_info" prefix="templ" 
+            src="schemas/template_info.xsd" />
     </extension>
     
     <extension point="configuration" target="org.nuxeo.ecm.core.schema.TypeService">
@@ -62,6 +67,9 @@
         
         <!-- Facets -->
         <facet name="CadDocument" />
+        <facet name="Archivable">
+            <schema name="archiving_info" />
+        </facet>
         <facet name="EloraWorkspace">
             <schema name="related_partaker" />
             <schema name="related_customer" />
@@ -71,7 +79,6 @@
         <facet name="EloraRootFolder"/>
         <facet name="EloraStruct" />
         
-        <!-- CAUTION! At the moment, we have no way to limit BasicDocument to REAL basic documents, so CAD and BOM docs also have this facet -->
         <facet name="BasicDocument" />
         <facet name="WorkableDomainChild" />
         <facet name="LockRequiredToEdit" />
@@ -85,14 +92,21 @@
         <facet name="StoreStatesLog">
             <schema name="states_log" />
         </facet>
+        <facet name="ArchivedWorkspaceRoot" />
+        
+        <facet name="Templatable">
+            <schema name="template_info" />
+        </facet>
         
         <!-- Doctypes -->
         <doctype append="true" name="File">
             <schema name="elora_object" />
+            <schema name="elora_viewer"/>
             <facet name="BasicDocument" />
             <facet name="StoreCheckInInfo" />
             <facet name="StoreReviewInfo" />
             <facet name="StoreStatesLog" />
+            <facet name="Templatable" />
         </doctype>
         <doctype append="true" name="Note">
             <schema name="elora_object" />
@@ -128,18 +142,46 @@
         <doctype append="true" name="Workspace">
             <schema name="elora_object" />
             <facet name="EloraWorkspace" />
-            <facet name="LockRequiredToEdit" />
+            <facet name="Archivable" />
             <facet name="StoreStatesLog" />
         </doctype>
         <doctype append="true" name="Domain">
             <facet name="Orderable" />
+            <facet name="EloraStruct" />
         </doctype>
-        <doctype extends="File" name="CadDocument">
+        <doctype append="true" name="WorkspaceRoot">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype append="true" name="TemplateRoot">
+            <facet name="EloraStruct" />
+        </doctype>
+        
+        <doctype extends="Folder" name="DocumentTemplates">
+            <facet name="EloraStruct" />
+        </doctype>
+        <doctype extends="Folder" name="OfficeTemplates">
+            <facet name="EloraStruct" />
+        </doctype>
+        
+        <!-- CadDocument doctype has all the facets and schemas of File + the specific ones -->
+        <doctype extends="Document" name="CadDocument">
+            <schema name="common"/>
+            <schema name="file"/>
+            <schema name="dublincore"/>
+            <schema name="uid"/>
+            <schema name="files"/>
+            <schema name="elora_object" />
             <schema name="cad_document" />
+            <facet name="Downloadable"/>
+            <facet name="Versionable"/>
+            <facet name="Publishable"/>
+            <facet name="Commentable"/>
+            <facet name="HasRelatedText"/>
             <facet name="CadDocument" />
             <facet name="StoreCheckInInfo" />
             <facet name="StoreReviewInfo" />
             <facet name="StoreStatesLog" />
+            <facet name="Templatable" />
         </doctype>
         <doctype extends="CadDocument" name="CadAssembly">
             <schema name="elora_viewer" />
@@ -157,6 +199,7 @@
         <doctype extends="CadDocument" name="CadDesignTable">
             <schema name="cad_design_table" />
         </doctype>
+        
         <doctype extends="Folder" name="StructureRoot">
             <facet name="SuperSpace" />
             <facet name="Orderable" />
@@ -177,14 +220,20 @@
             <facet name="EloraStruct" />
             <facet name="EloraRootFolder"/>
         </doctype>
-        <doctype extends="WorkspaceRoot" name="StructArchived">
+        <doctype extends="Folder" name="StructArchived">
+            <facet name="SuperSpace" />
             <facet name="EloraStruct" />
+            <subtypes>
+                <type>WorkspaceRoot</type>
+            </subtypes>
         </doctype>
-        <doctype extends="Folder" name="FolderArchivedProjects">
+        <doctype extends="WorkspaceRoot" name="FolderArchivedProjects">
             <facet name="EloraStruct" />
+            <facet name="ArchivedWorkspaceRoot"/>
         </doctype>
-        <doctype extends="Folder" name="FolderArchivedWorkspaces">
+        <doctype extends="WorkspaceRoot" name="FolderArchivedWorkspaces">
             <facet name="EloraStruct" />
+            <facet name="ArchivedWorkspaceRoot"/>
         </doctype>
         <doctype extends="Folder" name="StructCadDoc">
             <facet name="EloraStruct" />
@@ -210,9 +259,10 @@
             <schema name="project" />
             <facet name="Commentable" />
             <facet name="EloraWorkspace" />
+            <facet name="Archivable" />
             <facet name="SuperSpace" />
-            <facet name="LockRequiredToEdit" />
             <facet name="StoreStatesLog" />
+            <facet name="Templatable" />
         </doctype>
         <doctype extends="Folder" name="TempFolder">
             <facet name="HiddenInNavigation" />
@@ -236,21 +286,88 @@
     
     <extension point="types" target="org.nuxeo.ecm.platform.types.TypeService">
         
-        <!--  create documents from template ### BEGIN ### -->
         <type id="TemplateRoot">
-          <subtypes>
-            <type>File</type>
-            <type>Project</type>
-            <type>CmPr</type>
-            <type>CmEcr</type>
-            <type>CmEco</type>
-            <type>ProductValidation</type>
-            <type>ProductVerification</type>
-            <type>ProductionProcessValidation</type>
-            <type>ProductionPartApprovalProcess</type>
-          </subtypes>
+            <icon>/icons/template_root_16.png</icon>
+            <bigIcon>/icons/template_root_100.png</bigIcon>
+            <subtypes>
+                <type>DocumentTemplates</type>
+                <type>OfficeTemplates</type>
+            </subtypes>
         </type>
-        <!--  create documents from template ### END ### -->
+        
+        <!-- All subtypes defined under DocumentTemplates must have Templatable facet -->
+        <type id="DocumentTemplates">
+            <label>DocumentTemplates</label>
+            <icon>/icons/template_root_16.png</icon>
+            <bigIcon>/icons/template_root_100.png</bigIcon>
+            <default-view>view_documents</default-view>
+            <description>DocumentTemplates.description</description>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>structure_document_content</contentView>
+            </contentViews>
+            <subtypes>
+                <type>File</type>
+                <type>Folder</type>
+                <type>OrderedFolder</type>
+                <type>Project</type>
+                <type>CmPr</type>
+                <type>CmEcr</type>
+                <type>CmEco</type>
+                <type>ProductValidation</type>
+                <type>ProductVerification</type>
+                <type>ProductionProcessValidation</type>
+                <type>ProductionPartApprovalProcess</type>
+                <type>BomPart</type>
+                <type>BomManufacturerPart</type>
+                <type>BomTool</type>
+                <type>BomPackaging</type>
+                <type>BomSpecification</type>
+                <type>BomProduct</type>
+                <type>BomCustomerProduct</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+            </subtypes>
+        </type>
+        
+        <type id="OfficeTemplates">
+            <label>OfficeTemplates</label>
+            <icon>/icons/template_root_16.png</icon>
+            <bigIcon>/icons/template_root_100.png</bigIcon>
+            <default-view>view_documents</default-view>
+            <description>OfficeTemplates.description</description>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>structure_document_content</contentView>
+            </contentViews>
+            <subtypes>
+                <type>Folder</type>
+                <type>OrderedFolder</type>
+                <type>TemplateSource</type>
+                <type>WebTemplateSource</type>
+            </subtypes>
+        </type>
+      
+        <type id="TemplateSource">
+            <icon>/icons/template_source_16.png</icon>
+            <bigIcon>/icons/template_source_100.png</bigIcon>
+        </type>
         
         <type id="Root">
             <contentViews category="content">
@@ -259,7 +376,7 @@
         </type>
         
         <type id="Domain">
-            <icon>/icons/domain_16.gif</icon>
+            <icon>/icons/domain_16.png</icon>
             <bigIcon>/icons/domain_100.png</bigIcon>
             <contentViews category="content">
                 <contentView>structure_document_content</contentView>
@@ -273,14 +390,14 @@
             </subtypes>
         </type>
         <type id="WorkspaceRoot">
-            <icon>/icons/workspace_root_16.gif</icon>
+            <icon>/icons/workspace_root_16.png</icon>
             <bigIcon>/icons/workspace_root_100.png</bigIcon>
             <subtypes>
                 <type>Project</type>
             </subtypes>
         </type>
         <type id="Workspace">
-            <icon>/icons/workspace_16.gif</icon>
+            <icon>/icons/workspace_16.png</icon>
             <bigIcon>/icons/workspace_100.png</bigIcon>
             <create-view>create_doc_from_template</create-view>
             <layouts mode="any">
@@ -307,7 +424,7 @@
             </deniedSubtypes>
         </type>
         <type id="Folder">
-            <icon>/icons/folder_16.gif</icon>
+            <icon>/icons/folder_16.png</icon>
             <bigIcon>/icons/folder_100.png</bigIcon>
             <subtypes>
                 <type>CadAssembly</type>
@@ -317,27 +434,31 @@
             </subtypes>
         </type>
         <type id="File">
-            <icon>/icons/file_16.gif</icon>
+            <icon>/icons/file_16.png</icon>
             <bigIcon>/icons/file_100.png</bigIcon>
             <create-view>create_doc_from_template</create-view>
             <layouts mode="any">
-                <layout>elora_object</layout>
-                <layout>heading</layout>
-                <layout>file</layout>
             </layouts>
-            <layouts mode="edit">
+            <layouts mode="create">
                 <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>dublincore</layout>
             </layouts>
+            <layouts mode="edit">
+                <layout>elora_object</layout>
+                <layout>heading</layout>
+                <layout>file</layout>
+                <layout>elora_viewer</layout>
+                <layout>dublincore</layout>
+            </layouts>
         </type>
         <type id="Forum">
-            <icon>/icons/forum_16.gif</icon>
+            <icon>/icons/forum_16.png</icon>
             <bigIcon>/icons/forum_100.png</bigIcon>
         </type>
         <type id="Note">
-            <icon>/icons/note_16.gif</icon>
+            <icon>/icons/note_16.png</icon>
             <bigIcon>/icons/note_100.png</bigIcon>
             <layouts mode="any">
                 <layout>elora_object</layout>
@@ -353,7 +474,7 @@
         </type>
         <!-- DAM doctypes -->
         <type id="Audio">
-            <icon>/icons/audio_16.gif</icon>
+            <icon>/icons/audio_16.png</icon>
             <bigIcon>/icons/audio_100.png</bigIcon>
             <layouts mode="any">
                 <layout>elora_object</layout>
@@ -368,7 +489,7 @@
             </layouts>
         </type>
         <type id="Picture">
-            <icon>/icons/picture_16.gif</icon>
+            <icon>/icons/picture_16.png</icon>
             <bigIcon>/icons/picture_100.png</bigIcon>
             <layouts mode="any">
                 <layout>elora_object</layout>
@@ -383,7 +504,7 @@
             </layouts>
         </type>
         <type id="Video">
-            <icon>/icons/video_16.gif</icon>
+            <icon>/icons/video_16.png</icon>
             <bigIcon>/icons/video_100.png</bigIcon>
             <layouts mode="any">
                 <layout>elora_object</layout>
@@ -399,7 +520,7 @@
         </type>
         <!-- End of DAM doctypes -->
         <type id="OrderedFolder">
-            <icon>/icons/ordered_folder_16.gif</icon>
+            <icon>/icons/ordered_folder_16.png</icon>
             <bigIcon>/icons/ordered_folder_100.png</bigIcon>
             <subtypes>
                 <type>CadAssembly</type>
@@ -410,98 +531,102 @@
         </type>
         <type id="CadAssembly">
             <label>CadAssembly</label>
-            <icon>/icons/cad_assembly_16.gif</icon>
+            <icon>/icons/cad_assembly_16.png</icon>
             <bigIcon>/icons/cad_assembly_100.png</bigIcon>
             <category>CadGroup</category>
             <description>CadAssembly.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>summary_cad_assembly</layout>
                 <layout>cad_document</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
                 <layout>cad_document</layout>
                 <layout>cad_assembly</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
         </type>
         <type id="CadPart">
             <label>CadPart</label>
-            <icon>/icons/cad_part_16.gif</icon>
+            <icon>/icons/cad_part_16.png</icon>
             <bigIcon>/icons/cad_part_100.png</bigIcon>
             <category>CadGroup</category>
             <description>CadPart.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>summary_cad_part</layout>
                 <layout>cad_document</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
                 <layout>cad_document</layout>
                 <layout>cad_part</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
         </type>
         <type id="CadDrawing">
             <label>CadDrawing</label>
-            <icon>/icons/cad_drawing_16.gif</icon>
+            <icon>/icons/cad_drawing_16.png</icon>
             <bigIcon>/icons/cad_drawing_100.png</bigIcon>
             <category>CadGroup</category>
             <description>CadDrawing.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>summary_cad_drawing</layout>
                 <layout>cad_document</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
-                <layout>elora_base_viewer</layout>
+                <layout>elora_viewer</layout>
                 <layout>cad_document</layout>
                 <layout>cad_drawing</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
         </type>
         <type id="CadDesignTable">
             <label>CadDesignTable</label>
-            <icon>/icons/cad_design_table_16.gif</icon>
+            <icon>/icons/cad_design_table_16.png</icon>
             <bigIcon>/icons/cad_design_table_100.png</bigIcon>
             <category>CadGroup</category>
             <description>CadDesignTable.description</description>
             <default-view>view_documents</default-view>
+            <create-view>create_doc_from_template</create-view>
             <layouts mode="view">
                 <layout>summary_cad_design_table</layout>
                 <layout>cad_document</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>cad_document</layout>
                 <layout>cad_design_table</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
         </type>
         <type id="StructureRoot">
             <label>StructureRoot</label>
-            <icon>/icons/structure_root_16.gif</icon>
+            <icon>/icons/structure_root_16.png</icon>
             <bigIcon>/icons/structure_root_100.png</bigIcon>
             <category>DocumentRoot</category>
             <description>StructureRoot.description</description>
@@ -524,7 +649,7 @@
         </type>
         <type id="CollaborationRoot">
             <label>CollaborationRoot</label>
-            <icon>/icons/collaboration_root_16.gif</icon>
+            <icon>/icons/collaboration_root_16.png</icon>
             <bigIcon>/icons/collaboration_root_100.png</bigIcon>
             <category>DocumentRoot</category>
             <description>CollaborationRoot.description</description>
@@ -547,7 +672,7 @@
         </type>
         <type id="LibraryRoot">
             <label>LibraryRoot</label>
-            <icon>/icons/library_root_16.gif</icon>
+            <icon>/icons/library_root_16.png</icon>
             <bigIcon>/icons/library_root_100.png</bigIcon>
             <category>DocumentRoot</category>
             <description>LibraryRoot.description</description>
@@ -570,7 +695,7 @@
         </type>
         <type id="StructArchived">
             <label>StructArchived</label>
-            <icon>/icons/struct_archived_16.gif</icon>
+            <icon>/icons/struct_archived_16.png</icon>
             <bigIcon>/icons/struct_archived_100.png</bigIcon>
             <description>StructArchived.description</description>
             <default-view>view_documents</default-view>
@@ -597,7 +722,7 @@
         
         <type id="FolderArchivedProjects">
             <label>FolderArchivedProjects</label>
-            <icon>/icons/folder_archived_projects_16.gif</icon>
+            <icon>/icons/folder_archived_projects_16.png</icon>
             <bigIcon>/icons/folder_archived_projects_100.png</bigIcon>
             <description>FolderArchivedProjects.description</description>
             <default-view>view_documents</default-view>
@@ -623,7 +748,7 @@
         
         <type id="FolderArchivedWorkspaces">
             <label>FolderArchivedWorkspaces</label>
-            <icon>/icons/folder_archived_workspaces_16.gif</icon>
+            <icon>/icons/folder_archived_workspaces_16.png</icon>
             <bigIcon>/icons/folder_archived_workspaces_100.png</bigIcon>
             <description>FolderArchivedWorkspaces.description</description>
             <default-view>view_documents</default-view>
@@ -648,7 +773,7 @@
         </type>
         <type id="StructCadDoc">
             <label>StructCadDoc</label>
-            <icon>/icons/struct_cad_doc_16.gif</icon>
+            <icon>/icons/struct_cad_doc_16.png</icon>
             <bigIcon>/icons/struct_cad_doc_100.png</bigIcon>
             <description>StructCadDoc.description</description>
             <default-view>view_documents</default-view>
@@ -676,7 +801,7 @@
         </type>
         <type id="FolderCadPart">
             <label>FolderCadPart</label>
-            <icon>/icons/folder_cad_part_16.gif</icon>
+            <icon>/icons/folder_cad_part_16.png</icon>
             <bigIcon>/icons/folder_cad_part_100.png</bigIcon>
             <description>FolderCadPart.description</description>
             <default-view>view_documents</default-view>
@@ -702,7 +827,7 @@
         </type>
         <type id="FolderCadAssembly">
             <label>FolderCadAssembly</label>
-            <icon>/icons/folder_cad_assembly_16.gif</icon>
+            <icon>/icons/folder_cad_assembly_16.png</icon>
             <bigIcon>/icons/folder_cad_assembly_100.png</bigIcon>
             <description>FolderCadAssembly.description</description>
             <default-view>view_documents</default-view>
@@ -728,7 +853,7 @@
         </type>
         <type id="FolderCadDrawing">
             <label>FolderCadDrawing</label>
-            <icon>/icons/folder_cad_drawing_16.gif</icon>
+            <icon>/icons/folder_cad_drawing_16.png</icon>
             <bigIcon>/icons/folder_cad_drawing_100.png</bigIcon>
             <description>FolderCadDrawing.description</description>
             <default-view>view_documents</default-view>
@@ -754,7 +879,7 @@
         </type>
         <type id="FolderOtherDoc">
             <label>FolderOtherDoc</label>
-            <icon>/icons/folder_cad_other_16.gif</icon>
+            <icon>/icons/folder_cad_other_16.png</icon>
             <bigIcon>/icons/folder_cad_other_100.png</bigIcon>
             <description>FolderOtherDoc.description</description>
             <default-view>view_documents</default-view>
@@ -787,7 +912,7 @@
         </type>
         <type id="Project">
             <label>Project</label>
-            <icon>/icons/project_16.gif</icon>
+            <icon>/icons/project_16.png</icon>
             <bigIcon>/icons/project_100.png</bigIcon>
             <category>Collaborative</category>
             <description>Project.description</description>
@@ -800,24 +925,26 @@
                 <layout>product_classification</layout>
             </layouts>
             <layouts mode="edit">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>project_edit</layout>
                 <layout>partaker</layout>
                 <layout>product_classification</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
+                <layout>project_external_link</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>project_edit</layout>
                 <layout>partaker</layout>
                 <layout>product_classification</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
+                <layout>project_external_link</layout>
             </layouts>
             <contentViews category="content">
                 <contentView>orderable_document_content</contentView>
@@ -844,7 +971,7 @@
         </type>
         <type id="StructEbom">
             <label>StructEbom</label>
-            <icon>/icons/struct_ebom_16.gif</icon>
+            <icon>/icons/struct_ebom_16.png</icon>
             <bigIcon>/icons/struct_ebom_100.png</bigIcon>
             <description>StructEbom.description</description>
             <default-view>view_documents</default-view>
@@ -898,7 +1025,7 @@
         </type>
         <type id="AdminRoot">
             <label>AdminRoot</label>
-            <icon>/icons/admin_root_16.gif</icon>
+            <icon>/icons/admin_root_16.png</icon>
             <bigIcon>/icons/admin_root_100.png</bigIcon>
             <description>AdminRoot.description</description>
             <default-view>view_documents</default-view>
@@ -923,7 +1050,7 @@
         </type>
         <type id="DocumentationRoot">
             <label>DocumentationRoot</label>
-            <icon>/icons/documentation_root_16.gif</icon>
+            <icon>/icons/documentation_root_16.png</icon>
             <bigIcon>/icons/documentation_root_100.png</bigIcon>
             <description>DocumentationRoot.description</description>
             <default-view>view_documents</default-view>

@@ -23,12 +23,12 @@
       </properties>
     </action>
     
-    <action id="dashboard_user_locked_documents" type="widget" order="20">
+    <!-- <action id="dashboard_user_locked_documents" type="widget" order="20">
       <category>DASHBOARD_LEFT</category>
       <properties>
         <property name="widgetName">dashboard_user_locked_documents</property>
       </properties>
-    </action>
+    </action> -->
   
     
   </extension>

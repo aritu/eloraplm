@@ -10,13 +10,6 @@
                 <description>
                     <p> This widget type displays a PrimeFaces DataTable component. </p>
                 </description>
-                <fields>
-                    <list>false</list>
-                    <complex>false</complex>
-                    <defaultConfiguration>
-                        <field>data</field>
-                    </defaultConfiguration>
-                </fields>
                 <categories>
                     <category>listing</category>
                 </categories>

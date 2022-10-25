@@ -77,7 +77,7 @@ public class BomImpactedItemsTreeBean extends ImpactedItemsTreeBean
             CMEventNames.CM_BOM_IMPACT_MATRIX_CALCULATED,
             CMEventNames.CM_REFRESH_ITEMS_IMPACT_MATRIX })
     @BypassInterceptors
-    public void markTreeToBeRealoded() {
+    public void markTreeToBeReloaded() {
         reloadBomImpactedItems = true;
     }
 

@@ -13,18 +13,15 @@
  */
 package com.aritu.eloraplm.integration.checkin.restoperations.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nuxeo.ecm.core.api.DocumentRef;
 
-import com.aritu.eloraplm.core.util.EloraFileInfo;
+import com.aritu.eloraplm.integration.restoperations.util.CadFileInfoRequestDoc;
 
 /**
  * @author aritu
  *
  */
-public class DoCheckinRequestDoc {
+public class DoCheckinRequestDoc extends CadFileInfoRequestDoc {
 
     private int dbId;
 
@@ -38,12 +35,6 @@ public class DoCheckinRequestDoc {
 
     private boolean unlock;
 
-    private EloraFileInfo contentFile;
-
-    private EloraFileInfo eloraViewerFile;
-
-    private List<EloraFileInfo> cadAttachments;
-
     private DocumentRef structureRootRealRef;
 
     private boolean overwrite;
@@ -53,6 +44,7 @@ public class DoCheckinRequestDoc {
     public DoCheckinRequestDoc(int dbId, int localId, DocumentRef wcRef,
             DocumentRef parentRealRef, String comment, boolean unlock,
             DocumentRef structureRootRealRef, boolean overwrite) {
+        super();
         this.dbId = dbId;
         this.localId = localId;
         this.parentRealRef = parentRealRef;
@@ -61,7 +53,6 @@ public class DoCheckinRequestDoc {
         this.unlock = unlock;
         this.structureRootRealRef = structureRootRealRef;
         this.overwrite = overwrite;
-        cadAttachments = new ArrayList<EloraFileInfo>();
     }
 
     public int getDbId() {
@@ -110,33 +101,6 @@ public class DoCheckinRequestDoc {
 
     public void setUnlock(boolean unlock) {
         this.unlock = unlock;
-    }
-
-    public EloraFileInfo getContentFile() {
-        return contentFile;
-    }
-
-    public void setContentFile(int fileId, String fileName, String batch,
-            String hash) {
-        contentFile = new EloraFileInfo(fileId, fileName, batch, hash);
-    }
-
-    public EloraFileInfo getViewerFile() {
-        return eloraViewerFile;
-    }
-
-    public void setViewerFile(int fileId, String fileName, String batch,
-            String hash) {
-        eloraViewerFile = new EloraFileInfo(fileId, fileName, batch, hash);
-    }
-
-    public List<EloraFileInfo> getCadAttachments() {
-        return cadAttachments;
-    }
-
-    public void addCadAttachmentFile(int fileId, String fileName, String batch,
-            String hash) {
-        cadAttachments.add(new EloraFileInfo(fileId, fileName, batch, hash));
     }
 
     public DocumentRef getStructureRootRealRef() {

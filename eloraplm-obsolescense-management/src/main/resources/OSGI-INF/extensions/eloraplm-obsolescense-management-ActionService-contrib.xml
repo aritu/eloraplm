@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.om.ActionService.contrib">
+    <require>org.nuxeo.ecm.platform.actions</require>
+    <require>com.aritu.eloraplm.webapp.base.ActionService.contrib</require>
+    <require>com.aritu.eloraplm.archiver.ActionService.contrib</require>
+    
+    <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
+        
+        <filter id="create" append="true">
+            <rule grant="true">
+                <permission>AddChildren</permission>
+                <type>OmProcess</type>
+            </rule>
+        </filter>
+        
+        <filter id="viewMakeObsoleteTab">
+            <rule grant="true">
+                <type>OmProcess</type>
+            </rule>
+        </filter>
+        
+        <filter id="omImpactedTableButton">
+            <rule grant="true">
+                <condition>#{webActions.getCurrentTabId('MAIN_TABS') eq 'documents' and webActions.currentTabId eq 'TAB_OM_MAKE_OBSOLETE'
+                    and not omActions.isSourceInEditMode and not empty omActions.sourceDocRealUid
+                    and (currentDocument.currentLifeCycleState eq 'created' or currentDocument.currentLifeCycleState eq 'working')}</condition>
+                <type>OmProcess</type>
+            </rule>
+        </filter>
+        
+        <filter id="canBeArchived" append="true">
+            <rule grant="false">
+                <condition>#{currentDocument.type eq 'OmProcess'
+                    and currentDocument.currentLifeCycleState ne 'completed'
+                    and currentDocument.currentLifeCycleState ne 'rejected'}</condition>
+            </rule>
+        </filter>
+        
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+       
+        <action id="TAB_OM_MAKE_OBSOLETE" link="/incl/tabs/om_make_obsolete.xhtml"
+          order="0" label="eloraplm.tab.om" type="rest_document_link">
+          <category>VIEW_ACTION_LIST</category>
+          <filter-id>viewMakeObsoleteTab</filter-id>
+        </action>
+        
+        
+        <action id="BtnExecuteObsoleteProcess" order="0" label="command.execute"
+            type="link" link="#{omImpactedTableBean.executeProcess()}" icon=""
+            confirm="if(!confirmExecuteOmProcess()) return false;">
+            <category>DATATABLE_BUTTON</category>
+            <filter-id>omImpactedTableButton</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+                <property name="discardSurroundingForm">true</property>
+            </properties>
+        </action>
+        
+    </extension>
+    
+</component>

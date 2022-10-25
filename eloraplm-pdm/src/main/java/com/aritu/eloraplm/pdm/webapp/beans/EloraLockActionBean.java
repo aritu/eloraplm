@@ -13,7 +13,7 @@
  */
 package com.aritu.eloraplm.pdm.webapp.beans;
 
-import static org.jboss.seam.annotations.Install.APPLICATION;
+import static org.jboss.seam.annotations.Install.DEPLOYMENT;
 import static org.nuxeo.ecm.core.api.security.SecurityConstants.EVERYTHING;
 import static org.nuxeo.ecm.core.api.security.SecurityConstants.WRITE_PROPERTIES;
 
@@ -54,7 +54,7 @@ import org.nuxeo.runtime.api.Framework;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
  * @author aritu
@@ -62,7 +62,7 @@ import com.aritu.eloraplm.versioning.EloraVersionLabelService;
  */
 @Name("lockActions")
 @Scope(ScopeType.EVENT)
-@Install(precedence = APPLICATION)
+@Install(precedence = DEPLOYMENT)
 public class EloraLockActionBean implements LockActions {
 
     private static final long serialVersionUID = 1L;
@@ -105,11 +105,10 @@ public class EloraLockActionBean implements LockActions {
             NuxeoPrincipal userName = (NuxeoPrincipal) documentManager.getPrincipal();
             Lock lock = documentManager.getLockInfo(document.getRef());
             try {
-                canLock = lock == null
-                        && (document.hasFacet(
-                                EloraFacetConstants.FACET_ELORA_WORKSPACE)
-                                || EloraDocumentHelper.getIsCurrentStateLockable(
-                                        document))
+                canLock = lock == null && (document.hasFacet(
+                        EloraFacetConstants.FACET_ELORA_WORKSPACE)
+                        || EloraDocumentHelper.getIsCurrentStateLockable(
+                                document))
                         && (userName.isAdministrator()
                                 || isManagerOnDocument(document.getRef())
                                 || documentManager.hasPermission(
@@ -146,8 +145,8 @@ public class EloraLockActionBean implements LockActions {
 
     @Override
     public Boolean getCanUnlockDoc(DocumentModel document) {
-        EloraVersionLabelService eloraVersionLabelService = Framework.getService(
-                EloraVersionLabelService.class);
+        VersionLabelService versionLabelService = Framework.getService(
+                VersionLabelService.class);
         boolean canUnlock = false;
         if (document == null) {
             canUnlock = false;
@@ -174,7 +173,7 @@ public class EloraLockActionBean implements LockActions {
                                 && (!document.isVersionable()
                                         || !document.isCheckedOut()
                                         || (document.getVersionLabel().equals(
-                                                eloraVersionLabelService.getZeroVersion()))));
+                                                versionLabelService.getZeroVersion()))));
             }
         }
         return canUnlock;

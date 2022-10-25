@@ -13,7 +13,7 @@ import org.jboss.seam.annotations.Scope;
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.core.lifecycles.api.LifecycleConfigService;
-import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 
 @Name("lifecycleActions")
 @Scope(CONVERSATION)
@@ -38,10 +38,7 @@ public class LifecycleActionsBean implements Serializable {
     }
 
     public boolean isReleasedState(String lifeCycleState) {
-        if (LifecyclesConfig.releasedStatesList.contains(lifeCycleState)) {
-            return true;
-        }
-        return false;
+        return EloraDocumentHelper.isReleasedState(lifeCycleState);
     }
 
 }

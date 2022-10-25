@@ -11,8 +11,8 @@
             <event>PdmViewerDocOverwrittenEvent</event>
         </listener>
         
-        <listener name="docOverwriteListener" async="false" postCommit="false"
-                class="com.aritu.eloraplm.viewer.listener.DocOverwriteListener" priority="300">
+        <listener name="relatedViewerUpdateOnOverwriteListener" async="true" postCommit="true"
+                class="com.aritu.eloraplm.viewer.listener.RelatedViewerUpdateOnOverwriteListener" priority="300" enabled="${com.aritu.eloraplm.viewer.enabled}">
             <event>PdmOverwrittenEvent</event>
         </listener>
     </extension>

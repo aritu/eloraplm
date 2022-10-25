@@ -13,6 +13,7 @@ import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 
 public class EloraVersioningService extends StandardVersioningService {
 
@@ -20,27 +21,13 @@ public class EloraVersioningService extends StandardVersioningService {
     public String getVersionLabel(DocumentModel docModel) {
         String label;
         try {
-            label = getMajorToDisplay(docModel) + "."
-                    + getMinorToDisplay(docModel);
-            if (docModel.isCheckedOut()) {
-                label += "+";
-            }
+            VersionLabelService vls = Framework.getService(
+                    VersionLabelService.class);
+            label = vls.getVersionLabel(docModel);
         } catch (PropertyNotFoundException e) {
             label = "";
         }
         return label;
-    }
-
-    protected String getMajorToDisplay(DocumentModel docModel) {
-        EloraVersionLabelService versionLabelService = Framework.getService(
-                EloraVersionLabelService.class);
-        return versionLabelService.getMajor(docModel);
-    }
-
-    protected String getMinorToDisplay(DocumentModel docModel) {
-        EloraVersionLabelService versionLabelService = Framework.getService(
-                EloraVersionLabelService.class);
-        return versionLabelService.getMinor(docModel);
     }
 
     @Override
@@ -50,9 +37,9 @@ public class EloraVersioningService extends StandardVersioningService {
 
         // Check if version label is forced
         if (options.containsKey(
-                EloraGeneralConstants.CONTEXT_KEY_DOC_VERSION_LABEL)) {
+                EloraGeneralConstants.CONTEXT_KEY_DOC_VERSION_LABEL_ON_CHECKIN)) {
             String label = (String) options.get(
-                    EloraGeneralConstants.CONTEXT_KEY_DOC_VERSION_LABEL);
+                    EloraGeneralConstants.CONTEXT_KEY_DOC_VERSION_LABEL_ON_CHECKIN);
             return doc.checkIn(label, checkinComment);
 
         } else {
@@ -75,10 +62,13 @@ public class EloraVersioningService extends StandardVersioningService {
         // TODO Hau aldatzen bada, EloraDocumentHelper.checkOut be aldatu behar
         // da.
         String lifecycleState = doc.getLifeCycleState();
+        boolean isReleasedState = EloraDocumentHelper.isReleasedState(
+                lifecycleState);
         // Originally, obsolete is also added
         // if (EloraLifeCycleConstants.APPROVED.equals(lifecycleState) ||
         // EloraLifeCycleConstants.OBSOLETE.equals(lifecycleState)) {
-        if (EloraLifeCycleConstants.APPROVED.equals(lifecycleState)) {
+        if (isReleasedState && doc.getAllowedStateTransitions().contains(
+                EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY)) {
             doc.followTransition(
                     EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY);
             if (session != null) {

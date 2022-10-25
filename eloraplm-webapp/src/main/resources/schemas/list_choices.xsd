@@ -1,0 +1,19 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+xmlns:nxs="https://eloraplm.aritu.com/schemas/core" 
+targetNamespace="https://eloraplm.aritu.com/schemas/core">
+    
+    <xs:complexType name="list_choices">
+        <xs:sequence>
+            <xs:element name="choice" type="nxs:list_choice" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="list_choice">
+        <xs:sequence>
+            <xs:element name="choiceId" type="xs:string" />
+            <xs:element name="labels" type="nxs:localized_labels" />
+            <xs:element name="order" type="xs:integer" />
+        </xs:sequence>
+    </xs:complexType>
+    
+</xs:schema>

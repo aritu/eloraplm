@@ -1,0 +1,32 @@
+<c:if test="true" id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+    <c:if test="#{nxl:isLikePlainMode(widget.mode) or widget.mode == 'pdf'}">#{field_0 ? field_1 : ''}</c:if>
+    <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <ui:fragment rendered="#{field_0 and not empty field_1}">
+            <div class="visibleOnSelection">
+                <h:outputText value="#{messages['eloraplm.message.warning.om.anarchicTopDocsWillBecomeObsolete']}" styleClass="processMessage completeWarning" />
+                <div>
+                    <p><strong><h:outputText value="#{messages['eloraplm.label.om.anarchicTopDocs']}" /></strong></p>
+                    <ui:repeat var="topDocId" value="#{field_1}">
+                        <nxu:set var="topDoc" value="#{eloraWebActions.getDocumentFromId(topDocId)}">
+                            <h:panelGroup layout="block" rendered="#{not empty topDoc}">
+                                <p>
+                                    <nxl:widget name="icon_reference_title" mode="view" value="#{topDoc}" />
+                                    <h:outputText value="&#160;&#160;&#160;" />
+                                    <nxl:widget name="version_and_visualized_type" mode="view" value="#{topDoc}" />
+                                </p>
+                            </h:panelGroup>
+                        </nxu:set>
+                    </ui:repeat>
+                </div>
+            </div>
+        </ui:fragment>
+    </c:if>
+</c:if>

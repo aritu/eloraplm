@@ -1,0 +1,18 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+xmlns:nxs="https://eloraplm.aritu.com/schemas/core" 
+targetNamespace="https://eloraplm.aritu.com/schemas/core">
+    
+    <xs:complexType name="localized_labels">
+        <xs:sequence>
+            <xs:element name="label" type="nxs:localized_label" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="localized_label">
+        <xs:sequence>
+            <xs:element name="locale" type="xs:string" />
+            <xs:element name="label" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    
+</xs:schema>

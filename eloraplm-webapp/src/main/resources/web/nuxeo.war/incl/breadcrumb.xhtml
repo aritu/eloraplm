@@ -60,6 +60,7 @@
               rendered="#{pathElement.link}">
               <nxu:set var="doc" value="#{pathElement.documentModel}">
                 <h:outputText rendered="#{doc.hasSchema('elora_object') and not empty doc.elo.reference}"
+                    styleClass="eloraReference"
                     value="#{doc.hasSchema('elora_object') and not empty doc.elo.reference ? doc.elo.reference.concat(' ') : '' }" />
                 <h:outputText value="#{nxd:titleOrId(doc)}" />
               </nxu:set>

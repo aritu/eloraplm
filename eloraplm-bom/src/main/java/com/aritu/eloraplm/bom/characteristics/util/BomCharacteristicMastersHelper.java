@@ -30,6 +30,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.query.sql.NXQL;
+import org.nuxeo.ecm.core.schema.DocumentType;
 
 import com.aritu.eloraplm.bom.characteristics.BomCharacteristic;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
@@ -37,6 +38,7 @@ import com.aritu.eloraplm.constants.BomCharacteristicsDoctypeConstants;
 import com.aritu.eloraplm.constants.BomCharacteristicsMetadataConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -83,29 +85,27 @@ public class BomCharacteristicMastersHelper {
     }
 
     public static String getBomCharacteristicMasterDocTypeForBomType(
-            String bomType) {
+            String bomTypeName) {
 
         /*String logInitMsg = "[getBomCharacteristicMasterDocTypeForBomType] ";
         log.trace(logInitMsg + "--- ENTER --- bomType = |" + bomType + "|");*/
 
-        String bomCharacteristicDocType = "";
+        DocumentType bomType = EloraDocumentTypesHelper.getDocumentType(
+                bomTypeName);
 
-        switch (bomType) {
-        case EloraDoctypeConstants.BOM_PART:
+        String bomCharacteristicDocType = "";
+        if (EloraDocumentTypesHelper.getDocumentType(
+                EloraDoctypeConstants.BOM_PART).isSuperTypeOf(bomType)) {
             bomCharacteristicDocType = BomCharacteristicsDoctypeConstants.BOM_PART_CHARAC_MASTER_DOCUMENT_TYPE;
-            break;
-        case EloraDoctypeConstants.BOM_PRODUCT:
+        } else if (bomTypeName.equals(EloraDoctypeConstants.BOM_PRODUCT)) {
             bomCharacteristicDocType = BomCharacteristicsDoctypeConstants.BOM_PRODUCT_CHARAC_MASTER_DOCUMENT_TYPE;
-            break;
-        case EloraDoctypeConstants.BOM_TOOL:
+        } else if (bomTypeName.equals(EloraDoctypeConstants.BOM_TOOL)) {
             bomCharacteristicDocType = BomCharacteristicsDoctypeConstants.BOM_TOOL_CHARAC_MASTER_DOCUMENT_TYPE;
-            break;
-        case EloraDoctypeConstants.BOM_PACKAGING:
+        } else if (bomTypeName.equals(EloraDoctypeConstants.BOM_PACKAGING)) {
             bomCharacteristicDocType = BomCharacteristicsDoctypeConstants.BOM_PACKAGING_CHARAC_MASTER_DOCUMENT_TYPE;
-            break;
-        case EloraDoctypeConstants.BOM_SPECIFICATION:
+        } else if (bomTypeName.equals(
+                EloraDoctypeConstants.BOM_SPECIFICATION)) {
             bomCharacteristicDocType = BomCharacteristicsDoctypeConstants.BOM_SPECIFICATION_CHARAC_MASTER_DOCUMENT_TYPE;
-            break;
         }
 
         /*log.trace(logInitMsg + "--- EXIT --- with bomCharacteristicDocType = |"

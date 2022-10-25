@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.impl.VersionModelImpl;
@@ -73,7 +72,7 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
                 if (doc.getCurrentLifeCycleState().equals(
                         EloraLifeCycleConstants.OBSOLETE)) {
                     log.trace(logInitMsg
-                            + "Cannot makeObsolete the document since the it is already in obsolete state.");
+                            + "Cannot makeObsolete the document since it is already in obsolete state.");
                     result.setCannotMakeObsoleteReasonMsg(
                             "eloraplm.message.error.makeobsolete.already.obsolete");
                 } else {
@@ -193,11 +192,47 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
         log.trace(logInitMsg + "--- ENTER --- with doc id = |" + doc.getId()
                 + "|");
 
+        CanMakeObsoleteResult result = canMakeObsoleteDocumentWithoutRelationChecks(
+                session, doc);
+
+        if (result.getCanMakeObsolete()) {
+            List<DocumentModel> incompatibleRelatedDocs = MakeObsoleteHelper.checkRelatedDocumentsCompatibility(
+                    session, doc);
+            if (incompatibleRelatedDocs == null
+                    || incompatibleRelatedDocs.size() == 0) {
+                result.setCanMakeObsolete(true);
+            } else {
+                result.setCanMakeObsolete(false);
+
+                List<String> incompatibleRelatedDocIds = new ArrayList<String>();
+
+                for (DocumentModel incompatibleRelatedDoc : incompatibleRelatedDocs) {
+                    String incompatibleRelatedDocId = incompatibleRelatedDoc.getId();
+                    if (!incompatibleRelatedDocIds.contains(
+                            incompatibleRelatedDocId)) {
+                        incompatibleRelatedDocIds.add(incompatibleRelatedDocId);
+                    }
+                }
+                result.setIncompatibleRelatedDocIds(incompatibleRelatedDocIds);
+            }
+        }
+
+        log.trace(logInitMsg + "--- EXIT --- with canMakeObsolete = |"
+                + result.getCanMakeObsolete() + "|");
+
+        return result;
+    }
+
+    @Override
+    public CanMakeObsoleteResult canMakeObsoleteDocumentWithoutRelationChecks(
+            CoreSession session, DocumentModel doc) throws EloraException {
+        String logInitMsg = "[canMakeObsoleteDoc] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- with doc id = |" + doc.getId()
+                + "|");
+
         CanMakeObsoleteResult result = new CanMakeObsoleteResult();
-
-        // Check that user has permission to change the specified object
         if (session.hasPermission(doc.getRef(), SecurityConstants.WRITE)) {
-
             DocumentModel wcDoc = session.getWorkingCopy(doc.getRef());
             // Check that the WC is not checked out
             if (!wcDoc.isCheckedOut()) {
@@ -209,28 +244,7 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
                     // document
                     if (doc.getAllowedStateTransitions().contains(
                             EloraLifeCycleConstants.TRANS_OBSOLETE)) {
-
-                        List<DocumentModel> incompatibleRelatedDocs = MakeObsoleteHelper.checkRelatedDocumentsCompatibility(
-                                session, doc);
-                        if (incompatibleRelatedDocs == null
-                                || incompatibleRelatedDocs.size() == 0) {
-
-                            result.setCanMakeObsolete(true);
-                        } else {
-                            List<String> incompatibleRelatedDocIds = new ArrayList<String>();
-
-                            for (DocumentModel incompatibleRelatedDoc : incompatibleRelatedDocs) {
-                                String incompatibleRelatedDocId = incompatibleRelatedDoc.getId();
-                                if (!incompatibleRelatedDocIds.contains(
-                                        incompatibleRelatedDocId)) {
-                                    incompatibleRelatedDocIds.add(
-                                            incompatibleRelatedDocId);
-                                }
-                            }
-                            result.setIncompatibleRelatedDocIds(
-                                    incompatibleRelatedDocIds);
-                        }
-
+                        result.setCanMakeObsolete(true);
                     } else {
                         log.trace(logInitMsg
                                 + "Cannot makeObsolete the document since "
@@ -316,6 +330,42 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
         return canMakeObsoletResult;
     }
 
+    @Override
+    public CanMakeObsoleteResult makeObsoleteDocumentInProcess(
+            CoreSession session, DocumentModel doc, String processReference)
+            throws EloraException {
+        String logInitMsg = "[makeObsolete] ["
+                + session.getPrincipal().getName() + "] ";
+
+        log.trace(logInitMsg + "--- ENTER --- with doc id = |" + doc.getId()
+                + "| process reference = |" + processReference + "|");
+        CanMakeObsoleteResult canMakeObsoletResult = new CanMakeObsoleteResult();
+
+        try {
+            canMakeObsoletResult = canMakeObsoleteSingleDocument(session, doc);
+            if (canMakeObsoletResult.getCanMakeObsolete()) {
+                makeObsolete(session, doc, processReference);
+            } else {
+                log.trace(logInitMsg
+                        + "Cannot make obsolete document with id = |"
+                        + doc.getId() + "|. Reason: |"
+                        + canMakeObsoletResult.getCannotMakeObsoleteReasonMsg()
+                        + "|, param: |"
+                        + canMakeObsoletResult.getCannotMakeObsoleteReasonMsgParam());
+            }
+        } catch (Exception e) {
+            log.error(logInitMsg + "Error making obsolete document with id = |"
+                    + doc.getId() + "|. Exception message is: "
+                    + e.getMessage(), e);
+            throw new EloraException(
+                    "Exception thrown: |" + e.getMessage() + "|");
+        }
+
+        log.trace(logInitMsg + "--- EXIT ---");
+
+        return canMakeObsoletResult;
+    }
+
     /* (non-Javadoc)
      * @see com.aritu.eloraplm.pdm.makeobsolete.api.MakeObsoleteService#makeObsoleteDocumentList(java.util.List)
      */
@@ -380,6 +430,11 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
 
     protected void makeObsolete(CoreSession session, DocumentModel doc)
             throws EloraException {
+        makeObsolete(session, doc, null);
+    }
+
+    protected void makeObsolete(CoreSession session, DocumentModel doc,
+            String processReference) throws EloraException {
         String logInitMsg = "[makeObsolete] ["
                 + session.getPrincipal().getName() + "] ";
 
@@ -395,6 +450,9 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
 
             // Fire Nuxeo Event
             String comment = doc.getVersionLabel();
+            if (processReference != null) {
+                comment += " @" + processReference;
+            }
             EloraEventHelper.fireEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc,
                     comment);
 
@@ -408,12 +466,11 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
             }
 
             DocumentModel wcDoc = session.getWorkingCopy(doc.getRef());
-            DocumentRef wcBaseRef = session.getBaseVersion(wcDoc.getRef());
-            DocumentModel baseDoc = session.getDocument(wcBaseRef);
+            DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(wcDoc);
 
-            VersionModel version = new VersionModelImpl();
-            version.setId(doc.getId());
             if (doc.getId().equals(baseDoc.getId())) {
+                VersionModel version = new VersionModelImpl();
+                version.setId(doc.getId());
                 // We cannot follow transition instead of restoring, because it
                 // checks the document out always. This is the only way we know
                 // to change the state without checkin the document out.

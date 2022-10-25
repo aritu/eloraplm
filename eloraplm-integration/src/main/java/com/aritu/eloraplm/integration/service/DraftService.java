@@ -30,9 +30,7 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
-import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
-import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoSchemaConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
@@ -64,10 +62,6 @@ public class DraftService implements DraftManager {
         dcList.add(NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR);
         dcList.add(NuxeoMetadataConstants.NX_DC_CONTRIBUTORS);
         excludedPropertiesFromCopy.put(NuxeoSchemaConstants.DUBLINCORE, dcList);
-        List<String> ltrversList = new ArrayList<String>();
-        ltrversList.add(EloraMetadataConstants.ELORA_LTRVERS_MAJOR);
-        excludedPropertiesFromCopy.put(
-                EloraSchemaConstants.MAJOR_LETTER_VERSIONING, ltrversList);
     }
 
     @Override

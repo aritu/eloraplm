@@ -38,6 +38,18 @@ public class CMBatchProcessingEventNames {
     // DOCS
     public static final String PROMOTE_DOCS = "CMBPPromoteDocs";
 
+    // MODIFIED ITEMS
+    public static final String CHECKOUT_MODIFIED_ITEMS = "CMBPCheckoutModifiedItems";
+
+    public static final String CHECKIN_MODIFIED_ITEMS = "CMBPCheckinModifiedItems";
+
+    public static final String PROMOTE_MODIFIED_ITEMS = "CMBPPromoteModifiedItems";
+
+    public static final String UNDO_CHECKOUT_MODIFIED_ITEMS = "CMBPUndoCheckoutModifiedItems";
+
+    // MODIFIED DOCS
+    public static final String PROMOTE_MODIFIED_DOCS = "CMBPPromoteModifiedDocs";
+
     // GENERAL
     public static final String IN_PROGRESS = "CMBPInProgress";
 

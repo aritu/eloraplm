@@ -30,4 +30,8 @@ public class IntegrationConstants {
 
     public static final String REQUEST_FILTER_ONLY_FAVORITE = "onlyFavorite";
 
+    public static final String REQUEST_FILTER_UID_LIST = "uidList";
+
+    public static final String REQUEST_FILTER_INCLUDE_ARCHIVED = "includeArchived";
+
 }

@@ -3,11 +3,22 @@
 <component name="com.aritu.eloraplm.core.SchedulerService.contrib">
     
     <extension point="schedule" target="org.nuxeo.ecm.core.scheduler.SchedulerService">
+        
         <schedule id="orphanVersionsCleanup">
             <!-- cleanup every day at 1:30 AM -->
             <cronExpression>0 30 1 * * ?</cronExpression>
             <event>orphanVersionsCleanup</event>
         </schedule>
-    </extension>
-    
+        
+        <!-- The scheduler is disabled because the cleanup ends in timeout and we do not know how to solve this issue for now -->
+        <!-- 
+        <schedule id="orphanBinariesCleanup">
+            
+            <cronExpression>0 0 2 * * ?</cronExpression>
+            <event>orphanBinariesCleanup</event>
+        </schedule>
+        -->
+        
+     </extension>
+     
 </component>

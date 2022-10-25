@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.om.WorkspaceArchiverService.contrib">
+    
+    <extension point="archivers" target="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+    
+        <archiver name="omProcess" destinationFolder="FolderArchivedChangeManagement">
+            <condition class="com.aritu.eloraplm.om.archiver.OmArchiverConditions" method="isOmProcessInAllowedState" />
+        </archiver>
+    
+    </extension>
+    
+    <extension point="types" target="com.aritu.eloraplm.core.archiver.api.WorkspaceArchiverService">
+        
+        <type name="OmProcess" archiver="omProcess" />
+        
+    </extension>
+    
+</component>
+

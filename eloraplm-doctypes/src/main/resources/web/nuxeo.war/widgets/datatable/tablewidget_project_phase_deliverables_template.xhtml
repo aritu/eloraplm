@@ -6,55 +6,172 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
     xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+
     
     <c:if test="#{widget.mode == 'edit'}">
         <h:graphicImage id="deliverablesEditPanelIcon"
             value="/icons/deliverables_edit_24.png"
             styleClass="tipsyShow tipsyGravityS"
             title="#{messages['eloraplm.command.project.phase.deliverables.edit']}" />
+        
         <p:overlayPanel id="deliverablesEditPanel" for="deliverablesEditPanelIcon" hideEffect="fade">
-            <nxl:widget name="edit_phase_deliverable" mode="edit" value="#{field}" /> 
+        
+            <p:blockUI block="@form" widgetVar="bui"/>
+       
+            <h:panelGroup id="deliverablesOutput" styleClass="deliverablesOutputClass" >
+                <nxl:widget name="edit_phase_deliverable" mode="edit" value="#{field}" /> 
+            
+                <!-- Remote Commands -->
+                <nxu:set var="methodValue" value="#{'chooseDeliverableDocument'.concat(rowIndex)}" >
+                    <p:remoteCommand name="#{methodValue}" 
+                        process="deliverablesEditPanel" 
+                        partialSubmit="true"
+                        update="@(.deliverablesOutputClass)"
+                        action="#{projectPhasesTableBean.chooseDeliverableDocument}"
+                        oncomplete="PF('bui').hide();" />
+                </nxu:set>
+                
+                <nxu:set var="methodValue" value="#{'chooseDeliverableDocumentVersion'.concat(rowIndex)}" >
+                    <p:remoteCommand name="#{methodValue}" 
+                        process="deliverablesEditPanel" 
+                        partialSubmit="true"
+                        update="@(.deliverablesOutputClass)"
+                        action="#{projectPhasesTableBean.chooseDeliverableDocumentVersion}" 
+                        oncomplete="PF('bui').hide();"/>
+                </nxu:set>
+                
+                <script type="text/javascript">
+                    function chooseDeliverableDocument(dataTableRowIndex, sourceElement) {
+                        PF('bui').show();
+                        deliverableRowIndex = retrieveDeliverableRowIndex(sourceElement);
+                        var optionIndex=document.getElementById('nxw_project_phases_dt:dtForm:nxw_project_phases_dt:'+dataTableRowIndex+':nxw_edit_phase_deliverable:'+deliverableRowIndex+':documentSelectListbox');
+                        var selectedDocumentId=optionIndex.options[optionIndex.selectedIndex].value; 
+                        var selectedDocumentElement=document.getElementById('nxw_project_phases_dt:dtForm:nxw_project_phases_dt:'+dataTableRowIndex+':nxw_edit_phase_deliverable:'+deliverableRowIndex+':selectedDocumentWcProxyId');
+                        selectedDocumentElement.value=selectedDocumentId;
+                        window['chooseDeliverableDocument'+dataTableRowIndex]([{name:'dataTableRowIndex', value:dataTableRowIndex}, {name:'deliverableRowIndex', value:deliverableRowIndex}, {name:'documentId', value:selectedDocumentId}]);
+                    }
+                    function chooseDeliverableDocumentVersion(dataTableRowIndex, sourceElement) {
+                        PF('bui').show();
+                        deliverableRowIndex = retrieveDeliverableRowIndex(sourceElement);
+                        var optionIndex=document.getElementById('nxw_project_phases_dt:dtForm:nxw_project_phases_dt:'+dataTableRowIndex+':nxw_edit_phase_deliverable:'+deliverableRowIndex+':versionSelectListbox');
+                        var selectedDocumentId= optionIndex.options[optionIndex.selectedIndex].value; 
+                        window['chooseDeliverableDocumentVersion'+dataTableRowIndex]([{name:'dataTableRowIndex', value:dataTableRowIndex}, {name:'deliverableRowIndex', value:deliverableRowIndex}, {name:'documentId', value:selectedDocumentId}]);
+                    }
+                    function unanchorDeliverableDocument(dataTableRowIndex, sourceElement) {
+                        PF('bui').show();
+                        deliverableRowIndex = retrieveDeliverableRowIndex(sourceElement);
+                        var optionIndex=document.getElementById('nxw_project_phases_dt:dtForm:nxw_project_phases_dt:'+dataTableRowIndex+':nxw_edit_phase_deliverable:'+deliverableRowIndex+':unanchorSelectListbox');
+                        var selectedDocumentId= optionIndex.options[optionIndex.selectedIndex].value; 
+                        window['chooseDeliverableDocumentVersion'+dataTableRowIndex]([{name:'dataTableRowIndex', value:dataTableRowIndex}, {name:'deliverableRowIndex', value:deliverableRowIndex}, {name:'documentId', value:selectedDocumentId}]);
+                    }
+                   
+                    function retrieveDeliverableRowIndex(sourceElement) {
+                         if (typeof (sourceElement) === 'string') {
+                            sourceId = sourceElement;
+                        } else {
+                            sourceId = jQuery(sourceElement).attr('id');
+                        }
+                        sourceIdSplited = sourceId.split(/[\s:]+/);
+                        deliverableRowIndex =  sourceIdSplited[sourceIdSplited.length - 2];
+                        return deliverableRowIndex;
+                    }
+                </script>
+                
+            </h:panelGroup>
         </p:overlayPanel>
     </c:if>
     
     <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
-        <ui:fragment rendered="#{not empty field and not empty field.name}">
+        <ui:fragment rendered="#{not empty field}">
             
-            <nxu:set var="iconClass" value="#{field.isRequired ?
-                (not empty field.document ? 'required-deliverables-added'
-                    : 'required-deliverables-empty')
-                : 'required-deliverables-none'}">
+            <nxu:set var="deliverablesStatus" value="#{projectActions.getDeliverablesStatus(field)}">
+            
+            <nxu:set var="iconClass" value="#{deliverablesStatus == 'allOptional' ? 'deliverables-allOptional' : 
+                (deliverablesStatus == 'notDefined' ? 'deliverables-notDefined' : 
+                (deliverablesStatus == 'notAnchored' ? 'deliverables-notAnchored' : 
+                (deliverablesStatus == 'completed' ? 'deliverables-completed' : '')))}">
                 
-            <nxu:set var="iconImage" value="#{field.isRequired ? '/icons/deliverables_required_16.png' : '/icons/deliverables_16.png'}">
+            <nxu:set var="iconTitle" value="#{deliverablesStatus == 'allOptional' ? 'eloraplm.label.project.phase.deliverables.status.allOptional' : 
+                (deliverablesStatus == 'notDefined' ? 'eloraplm.label.project.phase.deliverables.status.notDefined' : 
+                (deliverablesStatus == 'notAnchored' ? 'eloraplm.label.project.phase.deliverables.status.notAnchored' : 
+                (deliverablesStatus == 'completed' ? 'eloraplm.label.project.phase.deliverables.status.completed' : '')))}">
             
-            <nxu:set var="iconTitle" value="#{field.isRequired ?
-                (not empty field.document ? 'eloraplm.label.project.phase.deliverables.required.added'
-                    : 'eloraplm.label.project.phase.deliverables.required.empty')
-                : 'eloraplm.label.project.phase.deliverables.required.none'}">
-                
-                <h:panelGroup styleClass="#{iconClass}">
-                    <h:graphicImage id="deliverablesPanelIcon" value="#{iconImage}" styleClass="tipsyShow tipsyGravityS" title="#{messages[iconTitle]}" />
-                </h:panelGroup>
-            
+                    <h:panelGroup styleClass="#{iconClass}">
+                        <h:graphicImage id="deliverablesPanelIcon" 
+                                        value="/icons/deliverables_16.png" 
+                                        styleClass="tipsyShow tipsyGravityS" 
+                                        title="#{messages[iconTitle]}" />
+                    </h:panelGroup>
+                    
             </nxu:set>
             </nxu:set>
             </nxu:set>
             
             <p:overlayPanel id="deliverablesPanel" for="deliverablesPanelIcon" hideEffect="fade">
-                <h:dataTable value="#{field}" columnClasses="labelColumn,fieldColumn" styleClass="dataTableLine">
+                <h:dataTable value="#{field}" var="deliverable" columnClasses="labelColumn,fieldColumn" styleClass="dataTableLine">
                     <h:column>
                         <f:facet name="header">#{messages['eloraplm.label.project.phase.deliverable.name']}</f:facet>
-                        <h:outputLabel value="#{field.name}" for="deliverable" styleClass="#{field.isRequired ? 'required' : ''}" />
+                        <h:outputLabel value="#{deliverable.name}" for="deliverable" styleClass="#{deliverable.isRequired ? 'required' : ''}" />
+                    </h:column>
+                    <h:column pt:style="text-align:left;">
+                        <f:facet name="header">#{messages['eloraplm.label.project.phase.deliverable.document']}</f:facet>
+                        
+                        <ui:fragment rendered="#{not empty deliverable.documentWCProxy and eloraDocument.existsUid(deliverable.documentWCProxy) and empty deliverable.documentAV}">
+                            <nxu:set var="deliverableDocumentWCProxy" value="#{eloraDocument.getDocumentFromUid(deliverable.documentWCProxy)}">
+                                <span>
+                                <nxl:widget name="icon_reference_title" mode="view" value="#{deliverableDocumentWCProxy}" />
+                                </span>
+                                <span style="margin-left: 5px">
+                                <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{deliverableDocumentWCProxy}"/>
+                                </span>
+                                <span style="margin-left: 5px">
+                                <nxl:widget name="colored_lifecycle_state" mode="view" value="#{deliverableDocumentWCProxy}" />
+                                </span>
+                            </nxu:set>
+                        </ui:fragment>
+                        
+                        <ui:fragment rendered="#{not empty deliverable.documentWCProxy and not eloraDocument.existsUid(deliverable.documentWCProxy) and empty deliverable.documentAV}">
+                            <span style="margin-left:5px;font-style:italic;color:grey;">
+                                <h:outputText value="#{messages['eloraplm.message.warning.project.deliverable.document.proxyDoesNotExistInProjectContent']}" />
+                            </span>
+                        </ui:fragment>
+                        
+                        <ui:fragment rendered="#{not empty deliverable.documentAV and eloraDocument.existsUid(deliverable.documentAV)}">
+                            <nxu:set var="deliverableDocumentAV" value="#{eloraDocument.getDocumentFromUid(deliverable.documentAV)}">
+                                <span>
+                                <nxl:widget name="icon_reference_title" mode="view" value="#{deliverableDocumentAV}" />
+                                </span>
+                                <span style="margin-left: 5px">
+                                <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{deliverableDocumentAV}"/>
+                                </span>
+                                <span style="margin-left: 5px">
+                                <nxl:widget name="colored_lifecycle_state" mode="view" value="#{deliverableDocumentAV}" />
+                                </span>
+                            </nxu:set>
+                            
+                            <h:graphicImage value="/icons/badge_anchored_16.png" style="vertical-align: middle;margin: auto;">
+                                <f:attribute name="title" value="#{messages['eloraplm.label.project.phase.deliverable.documentIsAnchored']}" />
+                                <f:attribute name="styleClass" value="tipsyShow" />
+                            </h:graphicImage>
+                            
+                        </ui:fragment>
+
+                        <h:outputText value="(unable to read document)" rendered="#{not empty deliverable.document and not eloraDocument.existsUid(deliverable.document)}" />
                     </h:column>
                     <h:column>
-                        <f:facet name="header">#{messages['eloraplm.label.project.phase.deliverable.document']}</f:facet>
-                        <nxl:widget name="icon_reference_title" mode="view" value="#{eloraDocument.existsUid(field.document) ?
-                            eloraDocument.getDocumentFromUid(field.document) : null}" />
-                        <h:outputText value="(unable to read document)" rendered="#{not empty field.document and not eloraDocument.existsUid(field.document)}" />
+                        <f:facet name="header">#{messages['eloraplm.label.project.phase.deliverable.link']}</f:facet>
+                        <nxl:widgetType
+                                name="external_link"
+                                value="#{deliverable}"
+                                field="link"
+                                mode="view" />
                     </h:column>
                 </h:dataTable>
             </p:overlayPanel>
+            
         </ui:fragment>
     </c:if>
     

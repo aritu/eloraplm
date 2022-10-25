@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.versioning.TypeService.contrib">
+    <require>org.nuxeo.ecm.core.CoreExtensions</require>
+    <require>org.nuxeo.nuxeo.ecm.platform.audio.doctype</require>
+    <require>org.nuxeo.ecm.platform.picture.coreTypes</require>
+    <require>org.nuxeo.nuxeo.ecm.platform.video.doctype</require>
+    <require>com.aritu.eloraplm.doctypes.TypeService.contrib</require>
+    <require>com.aritu.eloraplm.bom.TypeService.contrib</require>
+    <require>com.aritu.eloraplm.bom.lists.TypeService.contrib</require>
+    
+    <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+        <schema name="version_label" prefix="vlbl" src="schemas/version_label.xsd"/>
+    </extension>
+    
+    <!-- Override -->
+    <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService">
+        
+        <!-- Basic documents -->
+        <doctype append="true" name="File">
+            <schema name="version_label"/>
+        </doctype>
+        <doctype append="true" name="Note">
+            <schema name="version_label"/>
+        </doctype>
+        <doctype append="true" name="Video">
+            <schema name="version_label"/>
+        </doctype>
+        <doctype append="true" name="Picture">
+            <schema name="version_label"/>
+        </doctype>
+        <doctype append="true" name="Audio">
+            <schema name="version_label"/>
+        </doctype>
+        
+        <!-- CAD & Item -->
+        <doctype append="true" name="CadDocument">
+            <schema name="version_label"/>
+        </doctype>
+        <doctype append="true" name="BomDocument">
+            <schema name="version_label"/>
+        </doctype>
+        
+        <!-- Other doctypes -->
+        <doctype append="true" name="BomList">
+            <schema name="version_label"/>
+        </doctype>
+    
+    </extension>
+    
+</component>

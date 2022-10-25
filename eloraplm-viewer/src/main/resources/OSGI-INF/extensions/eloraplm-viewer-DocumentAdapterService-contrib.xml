@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.viewer.DocumentAdapterService.contrib">
+
+     <extension target="org.nuxeo.ecm.core.api.DocumentAdapterService" point="adapters">
+    
+        <adapter class="com.aritu.eloraplm.viewer.methodexecuter.MethodExecuter" 
+            factory="com.aritu.eloraplm.viewer.methodexecuter.MethodExecuterFactory" />
+      
+    </extension>
+    
+</component>

@@ -13,7 +13,6 @@
  */
 package com.aritu.eloraplm.webapp.base.beans;
 
-import static org.jboss.seam.ScopeType.PAGE;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -35,6 +35,7 @@ import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 
+import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraGroupConstants;
 import com.aritu.eloraplm.constants.EloraPageProvidersConstants;
@@ -47,7 +48,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
  */
 
 @Name("switchActions")
-@Scope(PAGE)
+@Scope(ScopeType.PAGE)
 public class SwitchActionsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -83,6 +84,8 @@ public class SwitchActionsBean implements Serializable {
     protected ArrayList<String> selectedDocumentListToBeSwitched = new ArrayList<String>();
 
     protected boolean isDisabledSwitchButton = true;
+
+    protected boolean showJustLibraryRoots = false;
 
     // -------------------- getters and setters ---- START ----
     public String getOriginEloraRootFolderUid() {
@@ -243,7 +246,12 @@ public class SwitchActionsBean implements Serializable {
 
     public Boolean getCanSwitchCurrentDocEloraRootFolder() {
         DocumentModel currentDocument = navigationContext.getCurrentDocument();
-        return getCanSwitchDocEloraRootFolder(currentDocument);
+        return getCanSwitchDocEloraRootFolder(currentDocument, true);
+    }
+
+    public Boolean getCanSwitchCurrentDocLibraryRootFolder() {
+        DocumentModel currentDocument = navigationContext.getCurrentDocument();
+        return getCanSwitchDocEloraRootFolder(currentDocument, false);
     }
 
     /**
@@ -251,7 +259,8 @@ public class SwitchActionsBean implements Serializable {
      * @param document
      * @return
      */
-    public Boolean getCanSwitchDocEloraRootFolder(DocumentModel document) {
+    public Boolean getCanSwitchDocEloraRootFolder(DocumentModel document,
+            boolean isForAdminOrPowerUser) {
         String logInitMsg = "[getCanSwitchDocEloraRootFolder] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER ---");
@@ -274,9 +283,19 @@ public class SwitchActionsBean implements Serializable {
 
                 NuxeoPrincipal currentUser = (NuxeoPrincipal) documentManager.getPrincipal();
 
-                if (currentUser.isAdministrator() || currentUser.isMemberOf(
-                        EloraGroupConstants.POWER_USERS_GROUP)) {
+                if (isForAdminOrPowerUser && (currentUser.isAdministrator()
+                        || currentUser.isMemberOf(
+                                EloraGroupConstants.POWER_USERS_GROUP))) {
                     canSwitch = true;
+                    showJustLibraryRoots = false;
+                } else if (!isForAdminOrPowerUser
+                        && !document.hasFacet(
+                                EloraFacetConstants.FACET_ELORA_WORKSPACE)
+                        && !(currentUser.isAdministrator()
+                                || currentUser.isMemberOf(
+                                        EloraGroupConstants.POWER_USERS_GROUP))) {
+                    canSwitch = true;
+                    showJustLibraryRoots = true;
                 }
             }
         }
@@ -315,7 +334,11 @@ public class SwitchActionsBean implements Serializable {
                                 EloraFacetConstants.FACET_CAD_DOCUMENT)
                         || document.hasFacet(
                                 EloraFacetConstants.FACET_BASIC_DOCUMENT))) {
-            pageProviderName = EloraPageProvidersConstants.STRUCTURE_COLLABORATION_LIBRARY_ROOT_WC_DOC_SUGG;
+            if (showJustLibraryRoots) {
+                pageProviderName = EloraPageProvidersConstants.LIBRARY_ROOT_WC_DOC_SUGG;
+            } else {
+                pageProviderName = EloraPageProvidersConstants.STRUCTURE_COLLABORATION_LIBRARY_ROOT_WC_DOC_SUGG;
+            }
         } else if (document.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)
                 || document.hasFacet(EloraFacetConstants.FACET_CAD_DOCUMENT)
                 || document.hasFacet(EloraFacetConstants.FACET_BASIC_DOCUMENT)
@@ -356,16 +379,24 @@ public class SwitchActionsBean implements Serializable {
             // function of the facet
             DocumentModelList docListToBeSwitched = new DocumentModelListImpl();
 
+            DocumentRef originEloraRootFolderRef = new IdRef(
+                    originEloraRootFolderUid);
+            boolean originRootFolderIsLibraryRoot = documentManager.getDocument(
+                    originEloraRootFolderRef).getType().equals(
+                            EloraDoctypeConstants.LIBRARY_ROOT);
+
             DocumentRef targetEloraRootFolderRef = new IdRef(
                     targetEloraRootFolderUid);
 
             if (document.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)) {
                 docListToBeSwitched = EloraStructureHelper.retrieveDocListToBeSwitchedForBomDoc(
-                        document, targetEloraRootFolderRef, recursiveSwitch);
+                        document, originRootFolderIsLibraryRoot,
+                        targetEloraRootFolderRef, recursiveSwitch);
             } else if (document.hasFacet(
                     EloraFacetConstants.FACET_CAD_DOCUMENT)) {
                 docListToBeSwitched = EloraStructureHelper.retrieveDocListToBeSwitchedForCadDoc(
-                        document, targetEloraRootFolderRef, recursiveSwitch);
+                        document, originRootFolderIsLibraryRoot,
+                        targetEloraRootFolderRef, recursiveSwitch);
             }
 
             if (docListToBeSwitched != null && docListToBeSwitched.size() > 0) {

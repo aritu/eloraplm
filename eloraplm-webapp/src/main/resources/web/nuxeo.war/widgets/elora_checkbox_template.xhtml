@@ -1,0 +1,19 @@
+<f:subview
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h:selectBooleanCheckbox id="value_field" value="#{field}">
+
+        <p:ajax process="@this"
+            partialSubmit="true"
+            update="#{widgetProperty_update}" />
+            
+        <f:validator validatorId="selectBooleanCheckboxValidator" disabled="#{not widgetProperty_required}" />
+        
+    </h:selectBooleanCheckbox>
+    
+    <h:message for="value_field" styleClass="errorMessage" />
+    
+</f:subview>

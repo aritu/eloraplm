@@ -1,0 +1,63 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+xmlns:nxs="https://eloraplm.aritu.com/schemas/workflow_question"
+xmlns:elo="https://eloraplm.aritu.com/schemas/core"
+targetNamespace="https://eloraplm.aritu.com/schemas/workflow_question">
+    
+    <xs:import namespace="https://eloraplm.aritu.com/schemas/core" schemaLocation="localized_labels.xsd" />
+    <xs:import namespace="https://eloraplm.aritu.com/schemas/core" schemaLocation="list_choices.xsd" />
+    
+    
+    <!-- ID -->
+    <!-- ** -->
+    
+    <xs:element name="workflowId" type="xs:string" />
+    
+    <xs:element name="nodeId" type="xs:string" />
+    
+    <xs:element name="questionId" type="xs:string" />
+    
+    <!-- General metadata -->
+    <!-- ********************** -->
+    
+    <xs:element name="isModel" type="xs:boolean" />
+    
+    <xs:element name="model">
+        <xs:simpleType>
+            <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+    </xs:element>
+    
+    <xs:element name="parentDoc">
+        <xs:simpleType>
+            <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+    </xs:element>
+    
+    <!-- Question type metadata -->
+    <!-- ********************** -->
+    
+    <xs:element name="type" type="xs:string" />
+    
+    <xs:element name="numberMaxIntegerPlaces" type="xs:integer"/>
+    <xs:element name="numberMaxDecimalPlaces" type="xs:integer"/>
+    
+    <xs:element name="stringMaxLength" type="xs:integer"/>
+    
+    <xs:element name="listChoices" type="elo:list_choices"/>
+    
+    
+    <!-- Common definition metadata -->
+    <!-- ************************** -->
+    
+    <xs:element name="defaultValue" type="xs:string"/>
+    
+    <xs:element name="labels" type="elo:localized_labels" />
+    
+    <xs:element name="required" type="xs:boolean" default="false"/>
+    
+    <xs:element name="obsolete" type="xs:boolean" default="false"/>
+    
+    <xs:element name="order" type="xs:integer" />
+    
+</xs:schema>

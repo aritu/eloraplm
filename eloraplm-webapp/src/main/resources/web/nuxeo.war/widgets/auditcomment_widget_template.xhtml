@@ -9,7 +9,7 @@
 <c:if test="#{nxl:isLikePlainMode(widget.mode)}">#{messages[field_0.comment]}</c:if>
 <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
 
-  <h:outputText value="#{messages[field_0.comment]}" converter="auditCommentConverter" escape="false" />
+  <h:outputText value="#{messages[field_0.comment]}" converter="auditCommentConverter" styleClass="#{widget.properties.styleClass}" escape="false" />
   <c:choose>
     <c:when test="#{useRepeatRenderTime}">
       <ui:fragment rendered="#{not empty field_0.linkedDoc}">
@@ -49,7 +49,7 @@
 </c:if>
 <c:if test="#{widget.mode == 'pdf'}">
 <nxp:html>
-  <h:outputText value="#{messages[field_0.comment]}" />
+  <h:outputText value="#{messages[field_0.comment]}" styleClass="#{widget.properties.styleClass}" />
   <c:choose>
     <c:when test="#{useRepeatRenderTime}">
       <ui:fragment rendered="#{not empty field_0.linkedDoc}">

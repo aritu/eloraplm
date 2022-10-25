@@ -5,6 +5,10 @@
     <extension point="thumbnailFactory" target="org.nuxeo.ecm.core.api.thumbnail.ThumbnailService">
         <thumbnailFactory name="thumbnailEloraViewerFactory" docType="BomPart"
             factoryClass="com.aritu.eloraplm.thumbnails.ThumbnailEloraViewerFactory" />
+        <thumbnailFactory name="thumbnailEloraViewerFactory" docType="Software"
+            factoryClass="com.aritu.eloraplm.thumbnails.ThumbnailEloraViewerFactory" />
+        <thumbnailFactory name="thumbnailEloraViewerFactory" docType="ElectronicComponent"
+            factoryClass="com.aritu.eloraplm.thumbnails.ThumbnailEloraViewerFactory" />
         <thumbnailFactory name="thumbnailEloraViewerFactory" docType="BomManufacturerPart"
             factoryClass="com.aritu.eloraplm.thumbnails.ThumbnailEloraViewerFactory" />
         <thumbnailFactory name="thumbnailEloraViewerFactory" docType="BomTool"

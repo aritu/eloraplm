@@ -35,6 +35,7 @@
         
         <!-- Admin -->
         <operation class="com.aritu.eloraplm.integration.admin.restoperations.MakeItemsObsolete" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.admin.restoperations.CleanOrphanBinaries" replace="true" />
         
         <!-- EloraPlm -->
         <operation class="com.aritu.eloraplm.integration.restoperations.ArchiveWorkspace" replace="true" />
@@ -46,4 +47,17 @@
         
     </extension>
     
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="chains" >
+        
+        <chain id="Elora.Plm.ArchiveWorkspaceAndNavigateTo">
+            <operation id="Context.FetchDocument"/>
+            <operation id="Context.RestoreDocumentInputFromScript">
+                <param name="script" type="string">This[0]</param>
+            </operation>
+            
+            <operation id="Elora.Plm.ArchiveWorkspace" />
+            <operation id="Seam.NavigateTo" />
+        </chain>
+        
+    </extension>
 </component>

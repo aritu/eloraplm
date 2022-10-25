@@ -3,8 +3,9 @@
 <component name="com.aritu.eloraplm.codecreation.DirectoryUIManager.contrib">
 
   <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
-    <directory name="elora_code_types" layout="vocabulary" sortField="id" />
+    <directory name="elora_code_types" layout="elora_code_types" sortField="id" />
     <directory name="elora_code_masks" layout="elora_code_masks" sortField="id" />
+    <directory name="elora_code_conditions" layout="elora_code_conditions" sortField="id" />
   </extension>
 
 </component>

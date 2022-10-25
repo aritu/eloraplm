@@ -37,4 +37,10 @@ public class ModifierDescriptor {
 
     @XNodeList(value = "text", type = ModifierTextDescriptor[].class, componentType = ModifierTextDescriptor.class)
     public ModifierTextDescriptor[] texts;
+
+    @XNodeList(value = "rect", type = ModifierRectDescriptor[].class, componentType = ModifierRectDescriptor.class)
+    public ModifierRectDescriptor[] rects;
+
+    @XNodeList(value = "image", type = ModifierImageDescriptor[].class, componentType = ModifierImageDescriptor.class)
+    public ModifierImageDescriptor[] images;
 }

@@ -13,35 +13,23 @@
  */
 package com.aritu.eloraplm.integration.restoperations.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.DocumentRef;
-
-import com.aritu.eloraplm.core.util.EloraFileInfo;
 
 /**
  * @author aritu
  *
  */
-public class UpdateCadDocumentsRequestDoc {
+public class UpdateCadDocumentsRequestDoc extends CadFileInfoRequestDoc {
 
     private DocumentRef realRef;
 
     private Properties properties;
 
-    private EloraFileInfo contentFile;
-
-    private EloraFileInfo eloraViewerFile;
-
-    private List<EloraFileInfo> cadAttachments;
-
     public UpdateCadDocumentsRequestDoc(DocumentRef realRef) {
+        super();
         this.realRef = realRef;
-        // Initialize properties and lists
         properties = new Properties();
-        cadAttachments = new ArrayList<EloraFileInfo>();
     }
 
     public DocumentRef getRealRef() {
@@ -60,30 +48,4 @@ public class UpdateCadDocumentsRequestDoc {
         properties.put(key, value);
     }
 
-    public EloraFileInfo getContentFile() {
-        return contentFile;
-    }
-
-    public void setContentFile(int fileId, String fileName, String batch,
-            String hash) {
-        contentFile = new EloraFileInfo(fileId, fileName, batch, hash);
-    }
-
-    public EloraFileInfo getViewerFile() {
-        return eloraViewerFile;
-    }
-
-    public void setViewerFile(int fileId, String fileName, String batch,
-            String hash) {
-        eloraViewerFile = new EloraFileInfo(fileId, fileName, batch, hash);
-    }
-
-    public List<EloraFileInfo> getCadAttachments() {
-        return cadAttachments;
-    }
-
-    public void addCadAttachmentFile(int fileId, String fileName, String batch,
-            String hash) {
-        cadAttachments.add(new EloraFileInfo(fileId, fileName, batch, hash));
-    }
 }

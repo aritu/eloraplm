@@ -151,7 +151,7 @@ body {
     font-weight: bold;
     margin: 0 .9em .9em 0;
     text-decoration: none;
-    text-shadow: 0px 0px 1px rgb(0, 50, 150);
+    text-shadow: 0px 0px 2px rgb(0, 50, 150);
 }
 
 .login_button:hover {

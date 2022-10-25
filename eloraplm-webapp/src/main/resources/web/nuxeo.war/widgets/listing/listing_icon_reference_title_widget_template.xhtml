@@ -20,7 +20,10 @@
       <span id="docRefTarget:#{field_1}">
       
         <nxu:graphicImage value="/icons/badge_proxy_12.png"
-        styleClass="proxyBadge" rendered="#{field_0.isProxy()}"/>
+            styleClass="proxyBadge" rendered="#{field_0.isProxy()}"/>
+        
+        <nxu:graphicImage value="/icons/badge_template_12.png"
+            styleClass="templateBadge" rendered="#{eloraDocumentTemplatesActions.isTemplate(field_0)}"/>
         
         <span id="docRef:#{field_1}" class="cell" docRef="#{field_1}">
         
@@ -65,6 +68,7 @@
     
             <nxd:restDocumentLink document="#{linkTargetDoc}"
               tab="#{widgetProperty_tab}" subTab="#{widgetProperty_subTab}"
+              tabs="#{nxu:test(tabWidgetTabs == null, widgetProperty_tabs, tabWidgetTabs)}" 
               target="#{widgetProperty_target}" styleClass="documentTitleLink" rendered="#{field_0 != null and !empty linkTargetDoc}">
                 
                <c:if test="#{widgetProperty_localize}">
@@ -87,7 +91,8 @@
       <nxd:restDocumentLink document="#{field_0}"
         newConversation="true" target="_blank"
         tab="#{widgetProperty_tab}"
-        subTab="#{widgetProperty_subTab}">
+        subTab="#{widgetProperty_subTab}"
+        tabs="#{nxu:test(tabWidgetTabs == null, widgetProperty_tabs, tabWidgetTabs)}">
         <nxu:graphicImage value="/icons/external.gif"
           style="vertical-align:middle"
           alt="#{messages['permalink.newTab']}"

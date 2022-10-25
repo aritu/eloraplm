@@ -57,17 +57,23 @@ div[id$="datatablePanel"]
     padding: 0;
 }
 
-.ui-datatable table.bigFont
+.ui-datatable table.bigFont,
+.ui-widget.ui-datatable table.bigFont,
+.ui-widget .ui-widget.ui-datatable table.bigFont
 {
     font-size: 1.1em;
 }
 
-.ui-datatable
+.ui-datatable,
+.ui-widget.ui-datatable,
+.ui-widget .ui-widget.ui-datatable
 {
     font-size: 0.9em;
 }
 
 .ui-datatable table.smallFont
+.ui-widget.ui-datatable table.smallFont,
+.ui-widget .ui-widget.ui-datatable table.smallFont
 {
     font-size: 0.8em;
 }
@@ -183,6 +189,7 @@ div[id$="datatablePanel"]
 {
     vertical-align: middle;
     border: none;
+    line-height: revert;
 }
 
 .ui-datatable .ui-datatable-header .tableHeaderButtons .button
@@ -315,12 +322,14 @@ div[id$="datatablePanel"]
 }
 
 /* HAU BEHARREZKOA DA?? */
+/*
 .ui-datatable td.selection-checkbox
 {
     color: #5cf;
     font-size: 15px;
     vertical-align: middle;
 }
+*/
 
 .ui-datatable tr.ui-state-highlight > td,
 .ui-datatable .ui-widget-content tr.ui-state-highlight > td,
@@ -384,12 +393,34 @@ div[id$="datatablePanel"]
     border-bottom: none;
 }
 
+.ui-datatable .ui-widget-header
+{
+    background: #f8f9fb;
+    border: 1px solid #e6e9ef;
+}
+
 .ui-datatable .ui-state-default
 {
     background-image: none;
     background-color: #f8f9fb;
     border: 1px solid #e6e9ef;
     color: #000;
+}
+
+.ui-datatable .ui-selection-column
+{
+    width: 35px;
+    text-align: center;
+}
+
+.ui-datatable .ui-chkbox-box.ui-state-default
+{
+    border: 1px solid #5cf;
+}
+
+.ui-datatable .ui-chkbox-box.ui-state-disabled
+{
+    opacity: .15;
 }
 
 .ui-datatable thead th
@@ -413,3 +444,77 @@ td.datatableColumn.alignRight
     background-color: #f8f9fb;
 }
 
+
+.ui-datatable .iconColumn
+{
+    width: 2.6em;
+}
+
+.visibleOnSelection
+{
+    display: none;
+}
+
+.ui-state-highlight .visibleOnSelection
+{
+    display: block;
+}
+
+
+.nx-page .ui-widget-header.ui-dialog-titlebar
+{
+    background: #f3f6f9;
+    border-bottom: 1px solid #e6e9ef;
+    margin: 0;
+    padding: 1em 1.7em;
+    color: #053832;
+    font-size: 1.2em;
+}
+
+.nx-page .ui-widget-header.ui-dialog-titlebar .ui-icon
+{
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    background: transparent url('/nuxeo/img/fancybox/fancybox.png') -40px 0px;
+    cursor: pointer;
+    z-index: 42000;
+}
+
+.nx-page .ui-dialog .ui-dialog-content
+{
+    padding: 0;
+}
+
+.nx-page .ui-dialog .ui-dialog-content .dialogButtons
+{
+    background-color: #f3f6f9;
+    border-top: 1px solid #e6e9ef;
+    font-size: 1.1em;
+    margin: 0;
+    padding: 1em 1.8em 0.5em;
+}
+
+button.ui-state-default,
+.ui-widget-content button.ui-state-default
+{
+    background: none #fff;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    color: #42444e;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    height: 30px;
+    letter-spacing: 0.05rem;
+    line-height: 30px;
+    margin: 0 0.5rem 0.5rem 0;
+    padding: 0 1.1em;
+    text-align: center;
+    text-decoration: none;
+    transition: all 300ms ease 0s;
+    white-space: nowrap;
+}

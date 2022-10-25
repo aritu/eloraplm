@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.aritu.eloraplm</groupId>
         <artifactId>eloraplm-parent</artifactId>
-        <version>20200917</version>
+        <version>20221021</version>
     </parent>
 
     <properties>
@@ -69,5 +67,43 @@
         </dependency>
 
     </dependencies>
+
+<!--     <build> -->
+<!--         <plugins> -->
+<!--             <plugin> -->
+<!--                 <groupId>org.apache.maven.plugins</groupId> -->
+<!--                 <artifactId>maven-antrun-plugin</artifactId> -->
+<!--                 <version>3.0.0</version> -->
+<!--                 <executions> -->
+<!--                     <execution> -->
+<!--                         <id>separate-seam-classes</id> -->
+<!--                         <phase>process-classes</phase> -->
+<!--                         <configuration> -->
+<!--                             <target> -->
+<!--                                 <taskdef resource="net/sf/antcontrib/antlib.xml" /> -->
+<!--                                 <ant antfile="${basedir}/../build.xml" /> -->
+<!--                             </target> -->
+<!--                         </configuration> -->
+<!--                         <goals> -->
+<!--                             <goal>run</goal> -->
+<!--                         </goals> -->
+<!--                     </execution> -->
+<!--                 </executions> -->
+<!--                 <dependencies> -->
+<!--                     <dependency> -->
+<!--                         <groupId>ant-contrib</groupId> -->
+<!--                         <artifactId>ant-contrib</artifactId> -->
+<!--                         <version>1.0b3</version> -->
+<!--                         <exclusions> -->
+<!--                             <exclusion> -->
+<!--                                 <groupId>ant</groupId> -->
+<!--                                 <artifactId>ant</artifactId> -->
+<!--                             </exclusion> -->
+<!--                         </exclusions> -->
+<!--                     </dependency> -->
+<!--                 </dependencies> -->
+<!--             </plugin> -->
+<!--         </plugins> -->
+<!--     </build> -->
 
 </project>

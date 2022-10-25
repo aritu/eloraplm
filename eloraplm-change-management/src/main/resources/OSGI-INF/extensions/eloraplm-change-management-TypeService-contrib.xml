@@ -19,8 +19,9 @@
     
     <facet name="CMProcess" />
     
-    <doctype extends="Folder" name="FolderArchivedChangeManagement">
+    <doctype extends="WorkspaceRoot" name="FolderArchivedChangeManagement">
         <facet name="EloraStruct" />
+        <facet name="ArchivedWorkspaceRoot"/>
     </doctype>
 
     <doctype extends="Folder" name="CmPr">
@@ -29,11 +30,12 @@
         <schema name="cm_pr"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
+        <facet name="Archivable" />
         <facet name="SuperSpace"/>
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
-        <facet name="AutomaticCode"/>
         <facet name="StoreStatesLog" />
+        <facet name="Templatable" />
     </doctype>
 
     <doctype extends="Folder" name="CmEcr">
@@ -46,11 +48,12 @@
         <schema name="cm_bom_impacted_items"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
+        <facet name="Archivable" />
         <facet name="SuperSpace"/>
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
-        <facet name="AutomaticCode"/>
         <facet name="StoreStatesLog" />
+        <facet name="Templatable" />
     </doctype>
 
     <doctype extends="Folder" name="CmEco">
@@ -63,11 +66,12 @@
         <schema name="cm_bom_impacted_items"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
+        <facet name="Archivable" />
         <facet name="SuperSpace"/>
         <facet name="CMProcess" />
         <facet name="LockRequiredToEdit" />
-        <facet name="AutomaticCode"/>
         <facet name="StoreStatesLog" />
+        <facet name="Templatable" />
     </doctype>
     
   </extension>
@@ -91,7 +95,7 @@
     
     <type id="FolderArchivedChangeManagement">
         <label>FolderArchivedChangeManagement</label>
-        <icon>/icons/folder_archived_change_management_16.gif</icon>
+        <icon>/icons/folder_archived_change_management_16.png</icon>
         <bigIcon>/icons/folder_archived_change_management_100.png</bigIcon>
         <description>FolderArchivedChangeManagement.description
         </description>
@@ -111,11 +115,16 @@
                 document_trash_content
             </contentView>
         </contentViews>
+        <subtypes>
+            <type>CmPr</type>
+            <type>CmEcr</type>
+            <type>CmEco</type>
+        </subtypes>
     </type>
 
    <type id="CmPr">
       <label>CmPr</label>
-      <icon>/icons/cm_pr_16.gif</icon>
+      <icon>/icons/cm_pr_16.png</icon>
       <bigIcon>/icons/cm_pr_100.png</bigIcon>
       <category>CMGroup</category>
       <description>CmPr.description</description>
@@ -128,14 +137,14 @@
         <layout>product_classification</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_auto</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>cm_pr</layout>
         <layout>responsible</layout>
         <layout>planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>
@@ -156,7 +165,7 @@
 
    <type id="CmEcr">
       <label>CmEcr</label>
-      <icon>/icons/cm_ecr_16.gif</icon>
+      <icon>/icons/cm_ecr_16.png</icon>
       <bigIcon>/icons/cm_ecr_100.png</bigIcon>
       <category>CMGroup</category>
       <description>CmEcr.description</description>
@@ -170,14 +179,14 @@
         <layout>cm_modified</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_auto</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>cm_ecr</layout>
         <layout>responsible</layout>
         <layout>planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>
@@ -198,7 +207,7 @@
 
    <type id="CmEco">
       <label>CmEco</label>
-      <icon>/icons/cm_eco_16.gif</icon>
+      <icon>/icons/cm_eco_16.png</icon>
       <bigIcon>/icons/cm_eco_100.png</bigIcon>
       <category>CMGroup</category>
       <description>CmEco.description</description>
@@ -212,14 +221,14 @@
         <layout>cm_modified</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_auto</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>cm_eco</layout>
         <layout>responsible</layout>
         <layout>planning</layout>
         <layout>partaker</layout>
         <layout>product_classification</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>

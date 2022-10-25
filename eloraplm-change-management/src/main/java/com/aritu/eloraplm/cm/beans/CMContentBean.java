@@ -31,6 +31,8 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import com.aritu.eloraplm.cm.util.CMHelper;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.om.util.OmQueryFactory;
 import com.aritu.eloraplm.queries.util.EloraQueryHelper;
 
 /**
@@ -115,6 +117,18 @@ public class CMContentBean implements Serializable {
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 
+                // Retrieve OM processes where the current document (AV) is in
+                // the source or the processed list
+                query = OmQueryFactory.getOmProcessesBySourceDocQuery(
+                        currentDoc.getId());
+                EloraQueryHelper.executeQueryAndAppendResultUidList(query,
+                        uidCollection, documentManager);
+
+                query = OmQueryFactory.getOmProcessesByProcessedDocQuery(
+                        currentDoc.getId());
+                EloraQueryHelper.executeQueryAndAppendResultUidList(query,
+                        uidCollection, documentManager);
+
             } else {
 
                 // Retrieve the CM processes where current document (WC) is
@@ -140,6 +154,22 @@ public class CMContentBean implements Serializable {
                         currentDoc);
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
+
+                // Get the base version (AV) and retrieve OM processes where it
+                // is in the source or the processed list
+                DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(
+                        currentDoc);
+                if (baseDoc != null) {
+                    query = OmQueryFactory.getOmProcessesBySourceDocQuery(
+                            baseDoc.getId());
+                    EloraQueryHelper.executeQueryAndAppendResultUidList(query,
+                            uidCollection, documentManager);
+
+                    query = OmQueryFactory.getOmProcessesByProcessedDocQuery(
+                            baseDoc.getId());
+                    EloraQueryHelper.executeQueryAndAppendResultUidList(query,
+                            uidCollection, documentManager);
+                }
             }
 
             if (!uidCollection.isEmpty()) {

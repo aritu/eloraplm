@@ -1,4 +1,7 @@
-id,label,obsolete
-id_spcl1_1,Specification Line 1,0
-id_spcl1_2,Specification Line 2,0
-id_spcl1_3,Specification Line 3,0
+id,label,obsolete,ordering
+"Product quality","Calidad de producto","0","001"
+"Supplier Quality","Calidad de proveedores","0","002"
+"Technical features","Características Técnicas","0","003"
+"Certifications","Certificaciones","0","004"
+"Approvals","Homologaciones","0","005"
+"Legal regulations","Regulaciones legales","0","006"

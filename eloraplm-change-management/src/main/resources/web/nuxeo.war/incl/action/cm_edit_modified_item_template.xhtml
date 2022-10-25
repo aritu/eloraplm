@@ -42,6 +42,8 @@
                       <nxl:widget name="cm_edit_origin_item" mode="view" value="#{treeBean}" />
                       <h:outputText value="&#160;&#160;&#160;" />
                       <nxl:widget name="cm_edit_origin_item_version" mode="view" value="#{treeBean}" />
+                      <h:outputText value="&#160;&#160;&#160;" />
+                      <nxl:widget name="cm_edit_origin_item_state" mode="view" value="#{treeBean}" />
                     </ui:fragment>
                 </td>
               </tr>
@@ -86,7 +88,7 @@
                     <!-- if action == replace, display destination item selection and destination item version selection -->
                     <ui:fragment rendered="#{treeBean.editAction eq 'id_replace' and treeBean.editAction != null and treeBean.editActionMsg == null}">
                      <nxu:set var="pageProviderName" value="#{treeBean.getPageProviderNameForEditModifiedItemReplaceDestinationItem()}">
-                        <nxl:widgetType name="eloraSingleDocumentSuggestion" mode="edit"
+                        <nxl:widgetType name="singleDocumentSuggestion" mode="edit"
                             ajaxReRender="destinationItemMsgPanel includeInImpactMatrixPanelLabel includeInImpactMatrixPanel commentPanelLabel commentPanel buttonsPanel"
                             value="#{treeBean}" 
                             field="editDestinationItemWcUid"
@@ -94,8 +96,10 @@
                             width="100%"
                             placeholder="eloraplm.placeholder.suggestion.cm.destinationItem"
                             pageProviderName="#{pageProviderName}"
+                            documentSchemas="dublincore,common,elora_object,template_info"
                             required="true"
-                            additionalOperationParameters="eloraPassQueryTermsTwice">
+                            additionalOperationParameters="eloraPassQueryTermsTwice"
+                        >
                         </nxl:widgetType>
                         <h:message for="editDestinationItemWcUid" class="errorMessage" />
                         
@@ -106,6 +110,8 @@
                       <nxl:widget name="cm_edit_destination_item" mode="view" value="#{treeBean}" />
                       <h:outputText value="&#160;&#160;&#160;" />
                       <nxl:widget name="cm_edit_destination_item_version" mode="view" value="#{treeBean}" />
+                      <h:outputText value="&#160;&#160;&#160;" />
+                      <nxl:widget name="cm_edit_destination_item_state" mode="view" value="#{treeBean}" />
                     </ui:fragment>
                   </h:panelGroup>
                   

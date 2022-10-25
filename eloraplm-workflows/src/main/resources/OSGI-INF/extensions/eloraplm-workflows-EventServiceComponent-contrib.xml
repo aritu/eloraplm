@@ -1,14 +1,15 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.workflows.EventServiceComponent.contrib">
-    <require>org.nuxeo.ecm.platform.routing.cleanup.config</require>
-    
-    <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
+
+    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
         
-        <listener name="workflowInstancesCleanup" async="true" postCommit="true" class="com.aritu.eloraplm.workflows.listener.DocumentRoutingWorkflowInstancesCleanup">
-            <event>workflowInstancesCleanup</event>
+        <!-- It has to be executed after nodeTaskQuestionsWriter -->
+        <listener name="workflowReportCreator" async="false" postCommit="false" 
+                  class="com.aritu.eloraplm.workflows.listener.WorkflowReportCreatorListener" priority="200">
+            <event>workflowTaskCompleted</event>
         </listener>
         
     </extension>
-    
+
 </component>

@@ -49,7 +49,8 @@ public class CmAsyncBatchProcessInfoBean implements Serializable {
     @Observer(value = { CMBatchProcessingEventNames.IN_PROGRESS })
     @BypassInterceptors
     public void markBatchProcessAsInProgress(String cmProcessDocId,
-            String itemType, String processingAction, int totalCount) {
+            String itemType, String itemClass, String processingAction,
+            int totalCount) {
         String logInitMsg = "[markBatchProcessAsInProgress] ";
         log.trace(logInitMsg + "--- ENTER --- ");
         log.trace(logInitMsg + "cmProcessDocId = |" + cmProcessDocId
@@ -58,7 +59,7 @@ public class CmAsyncBatchProcessInfoBean implements Serializable {
 
         if (!cmProcessesInProgress.containsKey(cmProcessDocId)) {
             BatchProcessInfo processInfo = new BatchProcessInfo(itemType,
-                    processingAction, totalCount, 0, true, 1);
+                    itemClass, processingAction, totalCount, 0, true, 1);
             cmProcessesInProgress.put(cmProcessDocId, processInfo);
         }
         log.trace(logInitMsg + "--- EXIT --- ");

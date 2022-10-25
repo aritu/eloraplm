@@ -29,6 +29,16 @@ import com.aritu.eloraplm.exceptions.EloraException;
 
 public interface CheckinManager {
 
+    DocumentModel forceCheckinDocument(DocumentModel doc, String checkinComment)
+            throws EloraException, CheckinNotAllowedException,
+            DocumentNotCheckedOutException,
+            BomCharacteristicsValidatorException;
+
+    DocumentModel forceCheckinDocument(DocumentModel doc, String checkinComment,
+            String clientName, String processReference) throws EloraException,
+            CheckinNotAllowedException, DocumentNotCheckedOutException,
+            BomCharacteristicsValidatorException;
+
     DocumentModel checkinDocument(DocumentModel doc, String checkinComment,
             boolean unlock) throws EloraException, CheckinNotAllowedException,
             DocumentNotCheckedOutException,

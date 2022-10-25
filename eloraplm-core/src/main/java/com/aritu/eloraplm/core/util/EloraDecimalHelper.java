@@ -130,13 +130,14 @@ public class EloraDecimalHelper {
     }
 
     public static void validateDecimalValue(Locale locale, String value,
-            String maxIntegers, String maxDecimals) throws ValidatorException {
+            Integer maxIntegers, Integer maxDecimals)
+            throws ValidatorException {
         validateDecimalValue(locale, value, value, maxIntegers, maxDecimals);
     }
 
     public static void validateDecimalValue(Locale locale,
-            String submittedValue, String convertedValue, String maxIntegers,
-            String maxDecimals) throws ValidatorException {
+            String submittedValue, String convertedValue, Integer maxIntegers,
+            Integer maxDecimals) throws ValidatorException {
 
         String logInitMsg = "[validateDecimalValue] ";
         log.trace(
@@ -154,16 +155,18 @@ public class EloraDecimalHelper {
                         - decimalPlaces;
 
                 if (maxIntegers == null) {
-                    maxIntegers = EloraConfig.generalConfigMap.get(
-                            EloraConfigConstants.KEY_DECIMAL_MAX_INTEGER_PLACES);
+                    maxIntegers = Integer.parseInt(
+                            EloraConfig.generalConfigMap.get(
+                                    EloraConfigConstants.KEY_DECIMAL_MAX_INTEGER_PLACES));
                 }
-                int maxIntegerPlaces = Integer.parseInt(maxIntegers);
+                int maxIntegerPlaces = maxIntegers;
 
                 if (maxDecimals == null) {
-                    maxDecimals = EloraConfig.generalConfigMap.get(
-                            EloraConfigConstants.KEY_DECIMAL_MAX_DECIMAL_PLACES);
+                    maxDecimals = Integer.parseInt(
+                            EloraConfig.generalConfigMap.get(
+                                    EloraConfigConstants.KEY_DECIMAL_MAX_DECIMAL_PLACES));
                 }
-                int maxDecimalPlaces = Integer.parseInt(maxDecimals);
+                int maxDecimalPlaces = maxDecimals;
 
                 if (integerPlaces > maxIntegerPlaces
                         || decimalPlaces > maxDecimalPlaces) {

@@ -1,9 +1,7 @@
-id,label,obsolete
-id_itemType1,Component,0
-id_itemType2,Assembly,0
-id_itemType3,Material,0
-id_itemType4,Software,0
-id_itemType5,Finished good,0
-id_itemType6,Package,0
-id_itemType7,Cast,0
-id_itemType8,Note,0
+id,label,obsolete,ordering
+"finished good","Producto teminado","0","001"
+"component","Componente","0","002"
+"standard","Normalizado","0","003"
+"material","Material","0","004"
+"information","Información","0","005"
+"note","Nota","0","006"

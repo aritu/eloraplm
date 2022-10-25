@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
@@ -28,6 +30,9 @@ import com.aritu.eloraplm.exceptions.EloraException;
  */
 public class LifecycleConfigServiceImpl extends DefaultComponent
         implements LifecycleConfigService {
+
+    private static final Log log = LogFactory.getLog(
+            LifecycleConfigServiceImpl.class);
 
     private static final String XP_STATES = "states";
 
@@ -146,7 +151,7 @@ public class LifecycleConfigServiceImpl extends DefaultComponent
     public List<String> getLockableStateList() {
         List<String> matchingStates = new ArrayList<String>();
         for (Map.Entry<String, StateDescriptor> e : states.entrySet()) {
-            if (e.getValue().lockable != null && e.getValue().lockable) {
+            if (e.getValue().lockable) {
                 matchingStates.add(e.getKey());
             }
         }
@@ -207,6 +212,26 @@ public class LifecycleConfigServiceImpl extends DefaultComponent
         return 0;
     }
 
+    @Override
+    public List<String> getFinalStateList() {
+        List<String> matchingStates = new ArrayList<String>();
+        for (Map.Entry<String, StateDescriptor> e : states.entrySet()) {
+            if (e.getValue().finalState) {
+                matchingStates.add(e.getKey());
+            }
+        }
+        return matchingStates;
+    }
+
+    @Override
+    public boolean isFinalState(String state) {
+        StateDescriptor sd = getStateConfig(state);
+        if (sd != null) {
+            return sd.finalState;
+        }
+        return false;
+    }
+
     // ------------------------
     // Transitions
     // ------------------------
@@ -260,38 +285,57 @@ public class LifecycleConfigServiceImpl extends DefaultComponent
 
     private boolean isTransitionPermitted(CoreSession session,
             List<String> permissionFilters) {
+
+        String logInitMsg = "[isTransitionPermitted] ["
+                + session.getPrincipal().getName() + "] ";
+
         if (permissionFilters == null || permissionFilters.isEmpty()) {
             return true;
         }
 
-        Principal principal = session.getPrincipal();
-        if (principal != null) {
+        try {
 
-            // Admin and power users can always follow the transition
-            NuxeoPrincipal user = (NuxeoPrincipal) principal;
-            if (user.isAdministrator() || user.isMemberOf("powerusers")) {
-                return true;
+            Principal principal = session.getPrincipal();
+            if (principal != null) {
+
+                // Admin and power users can always follow the transition
+                NuxeoPrincipal user = (NuxeoPrincipal) principal;
+                if (user.isAdministrator() || user.isMemberOf("powerusers")) {
+                    return true;
+                }
+
+                List<String> userFilters = permissionFilters.stream().filter(
+                        x -> x.startsWith("user:")).collect(
+                                Collectors.toList());
+                List<String> groupFilters = permissionFilters.stream().filter(
+                        x -> x.startsWith("group:")).collect(
+                                Collectors.toList());
+
+                List<String> allowedUsers = new ArrayList<String>();
+                for (String u : userFilters) {
+                    allowedUsers.add(u.substring("user:".length()));
+                }
+
+                for (String g : groupFilters) {
+                    String groupName = g.substring("group:".length());
+                    if (getUserManager().getGroup(groupName) == null) {
+                        log.error(logInitMsg + "Group = |" + groupName
+                                + "| does not exist in Elora. Nobody will be granted to execute the transition.");
+                        return false;
+                    }
+                    allowedUsers.addAll(
+                            getUserManager().getUsersInGroupAndSubGroups(
+                                    groupName));
+                }
+
+                if (allowedUsers.contains(principal.getName())) {
+                    return true;
+                }
             }
 
-            List<String> userFilters = permissionFilters.stream().filter(
-                    x -> x.startsWith("user:")).collect(Collectors.toList());
-            List<String> groupFilters = permissionFilters.stream().filter(
-                    x -> x.startsWith("group:")).collect(Collectors.toList());
-
-            List<String> allowedUsers = new ArrayList<String>();
-            for (String u : userFilters) {
-                allowedUsers.add(u.substring("user:".length()));
-            }
-
-            for (String g : groupFilters) {
-                allowedUsers.addAll(
-                        getUserManager().getUsersInGroupAndSubGroups(
-                                g.substring("group:".length())));
-            }
-
-            if (allowedUsers.contains(principal.getName())) {
-                return true;
-            }
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            return false;
         }
 
         return false;

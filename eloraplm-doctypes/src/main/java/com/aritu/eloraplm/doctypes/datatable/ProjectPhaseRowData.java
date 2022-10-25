@@ -14,6 +14,7 @@
 package com.aritu.eloraplm.doctypes.datatable;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.aritu.eloraplm.datatable.BaseRowData;
@@ -31,11 +32,13 @@ public class ProjectPhaseRowData extends BaseRowData {
 
     private String type;
 
+    private String title;
+
     private String description;
 
     private String manager;
 
-    private Map<String, Object> deliverable;
+    private List<Map<String, Object>> deliverables;
 
     private Date realStartDate;
 
@@ -47,23 +50,31 @@ public class ProjectPhaseRowData extends BaseRowData {
 
     private String comment;
 
+    private String result;
+
+    private boolean obsolete;
+
     public ProjectPhaseRowData(String id, String parentId, String type,
-            String description, String manager, Map<String, Object> deliverable,
-            Date realStartDate, Date plannedEndDate, Date realEndDate,
-            int progress, String comment, boolean isNew, boolean isModified,
+            String title, String description, String manager,
+            List<Map<String, Object>> deliverables, Date realStartDate,
+            Date plannedEndDate, Date realEndDate, int progress, String comment,
+            String result, boolean obsolete, boolean isNew, boolean isModified,
             boolean isRemoved) {
         super(id, isNew, isModified, isRemoved);
 
         this.parentId = parentId;
         this.type = type;
+        this.title = title;
         this.description = description;
         this.manager = manager;
-        this.deliverable = deliverable;
+        this.deliverables = deliverables;
         this.realStartDate = realStartDate;
         this.plannedEndDate = plannedEndDate;
         this.realEndDate = realEndDate;
         this.progress = progress;
         this.comment = comment;
+        this.result = result;
+        this.obsolete = obsolete;
     }
 
     public String getParentId() {
@@ -82,6 +93,14 @@ public class ProjectPhaseRowData extends BaseRowData {
         this.type = type;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -98,12 +117,12 @@ public class ProjectPhaseRowData extends BaseRowData {
         this.manager = manager;
     }
 
-    public Map<String, Object> getDeliverable() {
-        return deliverable;
+    public List<Map<String, Object>> getDeliverables() {
+        return deliverables;
     }
 
-    public void setDeliverable(Map<String, Object> deliverable) {
-        this.deliverable = deliverable;
+    public void setDeliverables(List<Map<String, Object>> deliverables) {
+        this.deliverables = deliverables;
     }
 
     public Date getRealStartDate() {
@@ -144,6 +163,22 @@ public class ProjectPhaseRowData extends BaseRowData {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public boolean getObsolete() {
+        return obsolete;
+    }
+
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
     }
 
 }

@@ -1,0 +1,35 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+    <span style="display: inline-flex;">
+    <nxu:set var="taskDoc" value="#{eloraWebActions.getDocumentFromId(rowData.taskId)}">
+        <h:outputText value="#{messages[workflowFormActions.getNodeTitle(rowData.workflowId, rowData.nodeId)]}" />
+        &#160;
+        <span style="font-weight: normal;">
+            <nxl:widgetType name="multipleUsersSuggestion" mode="view" value="#{taskDoc.task}" field="actors" />
+        </span>
+        
+        <h:panelGroup rendered="#{not empty taskDoc.task.delegatedActors}">
+            
+            &#160;&#8594;&#160;
+            
+            <span style="font-weight: normal;">
+                <nxl:widgetType name="multipleUsersSuggestion" mode="view" value="#{taskDoc.task}" field="delegatedActors" />
+            </span>
+            
+        </h:panelGroup>
+        
+        &#160;
+        <h:outputText value="#{rowData.taskExecuted.time}" style="font-weight: normal;">
+            <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
+        </h:outputText>
+    </nxu:set>
+    </span>
+    
+</ui:composition>
+

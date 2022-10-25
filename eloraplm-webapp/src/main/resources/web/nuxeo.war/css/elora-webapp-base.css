@@ -1,12 +1,18 @@
 /*
  * Webapp Base style modifications for EloraPlm
  */
- 
+
+.prewrap
+{
+    white-space: pre-wrap;
+}
+
+
 #ambiance-notification
 {
     z-index: 99998;
 }
- 
+
 .nx-page .select2-drop
 {
     z-index: 99999;
@@ -69,6 +75,13 @@
     vertical-align: middle;
 }
 
+.breadcrumbs .eloraReference
+{
+    padding: .1em .1em .1em .3em;
+    border-radius: 3px;
+    margin-right: .4em;
+}
+
 h1 .eloraReference
 {
     background-color: #053832;
@@ -128,6 +141,141 @@ table.treetable tbody td.ellipsisWhenOverflow
     padding: 0.2em 0.4em;
 }
 
+#treeExplorer .ui-widget-content
+{
+    border: none;
+    font-size: .9em;
+    background: transparent;
+}
+
+#treeExplorer img
+{
+    vertical-align: middle;
+    margin-right: .5em;
+}
+
+#treeExplorer .ui-tree
+{
+    width: 100%;
+}
+
+#treeExplorer .ui-tree .ui-treenode
+{
+    padding: .25em;
+}
+
+#treeExplorer li.currentDoc > .ui-treenode-content > .ui-treenode-label
+{
+    background-color: #eee;
+}
+
+#treeExplorer li.domain > .ui-treenode-content > .ui-treenode-label
+{
+    font-weight: bold;
+}
+
+#treeExplorer .ui-treenode-label
+{
+    padding: .1em .5em;
+    border-radius: .2em;
+}
+
+#treeExplorer .structureRefreshButton
+{
+    background: transparent;
+    border: none;
+    float: right;
+    position: relative;
+    z-index: 10000;
+}
+
+
+.nxMainContainer #column_sidebar_browse #nxw_treeExplorerTabs_tab_content
+{
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+.nxMainContainer #column_sidebar_clipboard
+{
+    font-size: 0.85em;
+}
+
+.nxMainContainer #column_sidebar_clipboard .userClipboard
+{
+    width: 340px;
+}
+
+#column_sidebar_buttons .sidebar_badge
+{
+    background-color: #1c5531;
+    color: #fff;
+    font-weight: bold;
+    padding: .2em .35em;
+    border-radius: 50%;
+    margin: 0;
+    position: relative;
+    top: -5em;
+    left: 1em;
+    line-height: 1em;
+    text-align: center;
+    width: 16px;
+    height: 16px;
+    display: flex;
+}
+
+#sidebar_tasks_container
+{
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    display: flex;
+    height: calc(100% - 20px);
+    margin-top: 20px;
+}
+
+.sidebar_task_card
+{
+    padding: 0em 2em 1.5em 2em;
+    margin: .5em 1em;
+    border-bottom: 1px solid #eee;
+    line-height: 1.8em;
+    max-width: 50em;
+}
+
+.sidebar_task_header
+{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.sidebar_task_title
+{
+    color: #053832;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.sidebar_task_dates
+{
+    font-size: .9em;
+    text-transform: uppercase;
+    word-spacing: 1.2em;
+    margin-bottom: 1em;
+}
+
+.sidebar_task_dates .label
+{
+    word-spacing: normal;
+}
+
+.sidebar_task_link
+{
+    border-left: 5px solid #888;
+    padding: 0 .5em;
+}
+
 #headerRevision
 {
     font-size: 1.4em;
@@ -180,6 +328,11 @@ table.treetable tbody td.ellipsisWhenOverflow
     vertical-align: text-bottom;
 }
 
+#nxw_newDocument_after_view_box .documentType a
+{
+    display: flex;
+}
+
 .goToWcMessage
 {
     text-align: center;
@@ -193,13 +346,44 @@ table.treetable tbody td.ellipsisWhenOverflow
 .isObsoleteMessage
 {
     color: #fff;
-    text-align: center;
     display: block;
-    padding: 0.3em 2em;
+    padding: 0.8em 2em 0.8em 1.3em;
     margin: 0.3em 0;
     background-color: #053832;
-    border: 1px solid #000;
-    border-radius: 4px;
+    border-left: 6px solid #a8aaa5;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    font-weight: bold;
+    clear: both;
+}
+
+.isObsoleteMessage::before {
+    content: "✝ ";
+    color: #a8aaa5;
+    font-size: 1.9em;
+    vertical-align: middle;
+}
+
+.isArchivedMessage
+{
+    color: #fff;
+    display: block;
+    padding: 0.8em 2em 0.8em 2.8em;
+    margin: 0.3em 0;
+    background: #555 url('/nuxeo/icons/message_archived_16.png') 0.7em 1em / 16px no-repeat;
+    border-left: 6px solid #ea0;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    font-weight: bold;
+    clear: both;
+}
+
+.isTemplateMessage
+{
+    color: #fff;
+    display: block;
+    padding: 0.8em 2em 0.8em 2.8em;
+    margin: 0.3em 0;
+    background: #a5f url('/nuxeo/icons/message_template_16.png') 0.7em 1em / 16px no-repeat;
+    border-left: 6px solid #518;
     box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
     font-weight: bold;
     clear: both;
@@ -228,6 +412,11 @@ table.treetable tbody td.ellipsisWhenOverflow
 .visualizedTypeProxy
 {
     text-decoration: underline;
+}
+
+.versionAndVisualizedType
+{
+    white-space: nowrap;
 }
 
 .lifeCycleStateLabel
@@ -275,6 +464,24 @@ table.treetable tbody td.ellipsisWhenOverflow
     color: #e22;
 }
 
+.dataInput .dataTable,
+.dataInput .dataTableLine
+{
+    border: 1px solid #e6e9ef;
+    padding: 0.7em 0.6em 0.7em 0;
+}
+
+.dataInput .dataTable th,
+.dataInput .dataTableLine th,
+.dataInput .dataOutput th,
+.dataInput .dataList th
+{
+    background-color: #f8f9fb;
+    border-color: #e6e9ef;
+    border-width: 1px;
+    padding: 0.7em 0.4em 0.7em 0;
+}
+
 .dataTable.widgetTable th, .dataTable.widgetTable td
 {
     border-color: #e6e9ef;
@@ -297,6 +504,27 @@ table.treetable tbody td.ellipsisWhenOverflow
     top: 3px;
 }
 
+.iconColumn img.templateBadge
+{
+    display: inline-block;
+    position: relative;
+    margin-left: -16px;
+    left: 6px;
+    top: 3px;
+}
+
+.smallTable .iconColumn img.templateBadge
+{
+    left: -2px;
+    top: -2px;
+}
+
+table.treetable img.templateBadge
+{
+    position: relative;
+    top: 2px;
+}
+
 .iconColumn .documentIcon
 {
     display: inline-block;
@@ -315,6 +543,15 @@ table.treetable tbody td.ellipsisWhenOverflow
     overflow: hidden;
     display: inline-block;
     white-space: nowrap;
+}
+
+.resultOk {
+    color: #053832;
+}
+
+.resultKo {
+    font-weight: bold;
+    color: #c22;
 }
 
 .nx-page .contentViewHeaderSortTooltip.sortIndex a
@@ -374,6 +611,21 @@ table.treetable tbody td.ellipsisWhenOverflow
     color: #fff;
 }
 
+.nx-page .single_tasks_block .buttonsGadget input[disabled],
+.nx-page .single_tasks_block .buttonsGadget input[disabled]:hover
+{
+    display: initial;
+}
+
+.nx-page input[type="text"].editableButLikeViewMode
+{
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    position: relative;
+    top: -0.5em;
+}
+
  
 .filteredValues
 {
@@ -417,7 +669,8 @@ table.treetable tbody td.ellipsisWhenOverflow
 }
 */
 
-html.nx-page input.button.disabled[type="submit"]:disabled {
+html.nx-page input.button.disabled[type="submit"]:disabled
+{
     display: initial;
 }
 
@@ -440,6 +693,13 @@ html.nx-page input.button.disabled[type="submit"]:disabled {
 }
 
 
+.nx-page select.checkedOutSelected
+{
+    color: #b323ef;
+    border: 1px solid #b323ef;
+}
+
+
 .nx-page input.numberInput[type="text"]
 {
     width:200px;
@@ -455,17 +715,96 @@ html.nx-page input.button.disabled[type="submit"]:disabled {
     margin-bottom: 0;
 }
 
-.opaqueBlockUI {
+.opaqueBlockUI
+{
     background: #fff url(/nuxeo/img/standart_waiter.gif) center center no-repeat;
     opacity: 1;
 }
 
-.logClientName {
+.logClientName
+{
     color: #8a4;
 }
 
-.logProcessReference {
+.logProcessReference
+{
     color: #a84;
+}
+
+.ui-widget.ui-tabs
+{
+    font-size: 1em;
+}
+
+.ui-tabs.ui-widget-content.borderless
+{
+    border: none
+}
+
+.ui-tabs.ui-widget-content.borderless .ui-tabs-nav.ui-widget-header
+{
+    background: none;
+    border-bottom: 1px solid #053832;
+}
+
+.ui-tabs.ui-widget-content.borderless .ui-tabs-nav li
+{
+    border-radius: 0;
+}
+
+.ui-tabs.ui-widget-content.borderless .ui-tabs-nav li.ui-tabs-selected
+{
+    position: relative;
+    top: 2px;
+    border-bottom: none;
+    border-left: 1px solid #053832;
+    border-right: 1px solid #053832;
+    border-top: 2px solid #053832;
+    background: #fff;
+}
+
+.ui-tabs.ui-widget-content.borderless .ui-tabs-nav li
+{
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+}
+
+.ui-tabs.ui-widget-content.borderless .ui-tabs-nav li.ui-state-default:hover
+{
+    box-shadow: none;
+}
+
+.workflow_start_node
+{
+    text-shadow: 1px 1px 2px #92c938, -1px -1px 2px #92c938, -1px 1px 2px #92c938, 1px -1px 2px #92c938;
+}
+.workflow_end_node
+{
+    text-shadow: 1px 1px 2px #f04545, -1px -1px 2px #f04545, -1px 1px 2px #f04545, 1px -1px 2px #f04545;
+}
+
+.workflow_start_node,
+.workflow_end_node
+{
+    line-height: 1em;
+    padding-top: .75em;
+}
+
+.workflow_simple_task
+{
+    padding-top: .2em;
+    line-height: 1.5em;
+}
+
+.targetDiv
+{
+    overflow-y: scroll;
+}
+
+/* Fix to display required asterisk correctly when handledLabels */
+td.fieldColumn > table > tbody > tr > td.labelColumn
+{
+    padding-right: 1em;
 }
 
 /*
@@ -492,6 +831,14 @@ html.nx-page input.button.disabled[type="submit"]:disabled {
 }
 
 #eloraMetadataHeading.BomPart
+{
+    border-color: #779500;
+}
+#eloraMetadataHeading.Software
+{
+    border-color: #779500;
+}
+#eloraMetadataHeading.ElectronicComponent
 {
     border-color: #779500;
 }
@@ -523,7 +870,26 @@ html.nx-page input.button.disabled[type="submit"]:disabled {
 {
     border-color: #784421;
 }
-
+#eloraMetadataHeading.ProductionProcessValidation
+{
+    border-color: #7f2aff;
+}
+#eloraMetadataHeading.ProductValidation
+{
+    border-color: #668000;
+}
+#eloraMetadataHeading.ProductVerification
+{
+    border-color: #a80;
+}
+#eloraMetadataHeading.ProductionPartApprovalProcess
+{
+    border-color: #a40;
+}
+#eloraMetadataHeading.OmProcess
+{
+    border-color: #9a6d00;
+}
 /* Colored percentage */
 
 .percentageLabel
@@ -612,7 +978,31 @@ table.dataTable .percentageLabel
 {
     background-color: #fffaf0;
 }
-
+.ui-datatable table.datatable tr.rowphaseobsolete
+{
+    border-bottom: 2px solid #ddd;
+    color: #a8aaa5;
+    font-style: italic;
+    /* background: #e4e4e2; */
+}
+.ui-datatable tr.rowphaseobsolete > td
+{
+    /* background: #e4e4e2; */
+    color: #a8aaa5;
+    font-style: italic;
+}
+.ui-datatable tr.rowsubphaseobsolete > td
+{
+    /* background: #e4e4e2; */
+    color: #a8aaa5;
+    font-style: italic;
+}
+.ui-datatable tr.rowgateobsolete > td
+{
+    /* background: #e4e4e2; */
+    color: #a8aaa5;
+    font-style: italic;
+}
 .ui-datatable td .required-deliverables-empty
 {
     background-color: #fad;
@@ -627,6 +1017,35 @@ table.dataTable .percentageLabel
     border-radius: 50%;
 }
 
+.ui-datatable td .deliverables-allOptional
+{
+    background-color: #d3d3d3;
+    padding: 7px;
+    border-radius: 50%;
+}
+
+.ui-datatable td .deliverables-notDefined
+{
+    background-color: #faa;
+    padding: 7px;
+    border-radius: 50%;
+}
+
+.ui-datatable td .deliverables-notAnchored
+{
+    background-color: #fca;
+    padding: 7px;
+    border-radius: 50%;
+}
+
+.ui-datatable td .deliverables-completed
+{
+    background-color: #dfa;
+    padding: 7px;
+    border-radius: 50%;
+}
+
+
 .eloraFancyBoxTable {
     border-collapse: separate;
     border-spacing: 0px 20px;
@@ -635,4 +1054,39 @@ table.dataTable .percentageLabel
 #fancybox-content .eloraFancyBoxTable .labelColumn {
   width: 12em;
   white-space:nowrap;
+}
+
+.summaryTable {
+    font-size: 0.9em;
+}
+
+.attachmentType {
+    margin-left: 2em;
+    padding: 0 0.5em;
+    color: #a0a0a0;
+    font-size: 0.9em;
+}
+
+/* Bom list comparison row styles */
+
+.ui-datatable td.separator,
+.ui-datatable tr.rowFirstMissing > td.separator,
+.ui-datatable tr.rowSecondMissing > td.separator
+{
+    background-color: lightgray;
+}
+
+.ui-datatable tr.rowDiffQuantity > td
+{
+    background-color: lightblue;
+}
+
+.ui-datatable tr.rowFirstMissing > td
+{
+    background-color: #fff0ee;
+}
+
+.ui-datatable tr.rowSecondMissing > td
+{
+    background-color: #faffcb;
 }

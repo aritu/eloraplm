@@ -34,4 +34,18 @@ public class ViewerConstants {
     public static final String POST_PROCESSOR_RESOLVE_USERNAME = "resolveUsername";
 
     public static final String POST_PROCESSOR_TO_UPPER_CASE = "toUpperCase";
+
+    public static final String POST_PROCESSOR_TRANSFORM_DATE_FROM_UTC_TO_MAD = "transformDateFromUtcToMad";
+
+    public static final String POST_PROCESSOR_TRANSFORM_DATE_FROM_UTC_TO_MAD_HYPHEN = "transformDateFromUtcToMadHyphen";
+
+    public static final String POST_PROCESSOR_TRANSLATE_TO_ES_UPPER_CASE = "translateToEsUpperCase";
+
+    public static final String POST_PROCESSOR_DISPLAY_MAJOR = "displayMajor";
+
+    // SOURCE constants
+    public static final String SOURCE_CURRENT_DOC = "currentDocument";
+
+    public static final String SOURCE_RELATED_DOC = "relatedDocument";
+
 }

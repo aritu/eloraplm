@@ -128,6 +128,14 @@ public class MakeObsoleteHelper {
 
         if (!relatedDocuments.isEmpty()) {
             for (DocumentModel relatedDoc : relatedDocuments) {
+
+                // We exclude deleted documents from the check
+                if (session.getWorkingCopy(
+                        relatedDoc.getRef()).getCurrentLifeCycleState().equals(
+                                EloraLifeCycleConstants.NX_DELETED)) {
+                    continue;
+                }
+
                 if (!LifecyclesConfig.isSupported(
                         relatedDoc.getCurrentLifeCycleState(),
                         EloraLifeCycleConstants.STATUS_OBSOLETE)) {
@@ -139,7 +147,8 @@ public class MakeObsoleteHelper {
                             + relatedDoc.getId() + "| has state = |"
                             + relatedDoc.getCurrentLifeCycleState()
                             + "|. It does not support "
-                            + EloraLifeCycleConstants.STATUS_OBSOLETE + " children.");
+                            + EloraLifeCycleConstants.STATUS_OBSOLETE
+                            + " children.");
                 }
             }
         }
@@ -202,7 +211,8 @@ public class MakeObsoleteHelper {
                             + relatedDoc.getId() + "| has state = |"
                             + relatedDoc.getCurrentLifeCycleState()
                             + "|. It does not support "
-                            + EloraLifeCycleConstants.STATUS_OBSOLETE + " children.");
+                            + EloraLifeCycleConstants.STATUS_OBSOLETE
+                            + " children.");
                 }
             }
         }

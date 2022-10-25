@@ -197,6 +197,9 @@
             <fields>
               <field>data.preprocessedComment</field>
             </fields>
+            <properties mode="any">
+                <property name="styleClass">prewrap</property>
+            </properties>
           </widget>
     
           <widget name="eventLC" type="text">

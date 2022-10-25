@@ -99,11 +99,12 @@ public class ManufacturerPartTreeBean extends EditableRelationTreeBean
     }
 
     @Override
-    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic) {
+    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic,
+            boolean isInverse) {
         setPredicateUri(EloraRelationConstants.BOM_MANUFACTURER_HAS_PART);
         // TODO: Antes de meter el igual hay que chequear que ese part no
         // tenga ningún manufacturer part de este proveedor
-        super.addRelationNode(currentDoc, isAnarchic);
+        super.addRelationNode(currentDoc, isAnarchic, isInverse);
     }
 
     @Override

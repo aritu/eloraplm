@@ -43,6 +43,7 @@ import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.api.ObjectList;
 import com.aritu.eloraplm.core.relations.api.PredicateList;
 import com.aritu.eloraplm.core.relations.api.SubjectList;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 
 /**
  * // TODO: write class general comment
@@ -181,6 +182,8 @@ public class EloraCoreGraph extends CoreGraph {
 
             String isManual = getIsManual(statement);
 
+            String isTemplate = getIsTemplate(statement);
+
             // end of custom metadata
 
             String comment = getComment(statement);
@@ -261,6 +264,12 @@ public class EloraCoreGraph extends CoreGraph {
                         EloraMetadataConstants.ELORA_RELEXT_ISMANUAL,
                         Boolean.parseBoolean(isManual));
             }
+            if (isTemplate != null) {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE,
+                        Boolean.parseBoolean(isTemplate));
+            }
+
             // end of custom metadata
 
             return rel;
@@ -310,7 +319,7 @@ public class EloraCoreGraph extends CoreGraph {
         protected void softDelete(Statement statement) {
 
             String query = "SELECT * FROM " + docType;
-            query = whereBuilder(query, statement);
+            query = whereBuilder(query, statement, session);
             if (query == null) {
                 return;
             }
@@ -382,7 +391,7 @@ public class EloraCoreGraph extends CoreGraph {
         protected void update(Statement oldStmt, Statement newStmt) {
 
             String query = "SELECT * FROM " + docType;
-            query = whereBuilder(query, oldStmt);
+            query = whereBuilder(query, oldStmt, session);
             if (query == null) {
                 return;
             }
@@ -457,6 +466,8 @@ public class EloraCoreGraph extends CoreGraph {
 
             String isManual = getIsManual(statement);
 
+            String isTemplate = getIsTemplate(statement);
+
             // end of custom metadata
 
             String comment = getComment(statement);
@@ -514,30 +525,51 @@ public class EloraCoreGraph extends CoreGraph {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_ORDERING,
                         Integer.parseInt(ordering));
+            } else {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_ORDERING, null);
             }
 
             if (directorOrdering != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING,
                         Integer.parseInt(directorOrdering));
+            } else {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING,
+                        null);
             }
 
             if (viewerOrdering != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
                         Integer.parseInt(viewerOrdering));
+            } else {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
+                        null);
             }
 
             if (inverseViewerOrdering != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
                         Integer.parseInt(inverseViewerOrdering));
+            } else {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
+                        null);
             }
 
             if (isManual != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_ISMANUAL,
                         Boolean.parseBoolean(isManual));
+            }
+
+            if (isTemplate != null) {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE,
+                        Boolean.parseBoolean(isTemplate));
             }
             // end of custom metadata
 
@@ -574,9 +606,10 @@ public class EloraCoreGraph extends CoreGraph {
                     + ", " + EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING
                     + ", "
                     + EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING
-                    + ", " + EloraMetadataConstants.ELORA_RELEXT_ISMANUAL
-                    + " FROM " + docType;
-            query = whereBuilder(query, statement);
+                    + ", " + EloraMetadataConstants.ELORA_RELEXT_ISMANUAL + ", "
+                    + EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE + " FROM "
+                    + docType;
+            query = whereBuilder(query, statement, session);
 
             if (query == null) {
                 statements = EMPTY_STATEMENTS;
@@ -616,6 +649,8 @@ public class EloraCoreGraph extends CoreGraph {
                             EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING));
                     Boolean isManual = Boolean.parseBoolean(String.valueOf(
                             map.get(EloraMetadataConstants.ELORA_RELEXT_ISMANUAL)));
+                    Boolean isTemplate = Boolean.parseBoolean(String.valueOf(
+                            map.get(EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE)));
                     // end of custom metadata
 
                     Resource predicate = NodeFactory.createResource(pred);
@@ -646,6 +681,7 @@ public class EloraCoreGraph extends CoreGraph {
                     setViewerOrdering(statement, viewerOrdering);
                     setInverseViewerOrdering(statement, inverseViewerOrdering);
                     setIsManual(statement, isManual);
+                    setIsTemplate(statement, isTemplate);
                     // end of custom metadata
 
                     statements.add(statement);
@@ -714,6 +750,10 @@ public class EloraCoreGraph extends CoreGraph {
         return getStringProperty(statement, EloraRelationConstants.IS_MANUAL);
     }
 
+    protected static String getIsTemplate(Statement statement) {
+        return getStringProperty(statement, EloraRelationConstants.IS_TEMPLATE);
+    }
+
     protected static void setQuantity(Statement statement, String quantity) {
         setStringProperty(statement, EloraRelationConstants.QUANTITY, quantity);
     }
@@ -746,10 +786,18 @@ public class EloraCoreGraph extends CoreGraph {
                 isManual.toString());
     }
 
-    @Override
-    protected String whereBuilder(String query, Statement statement) {
+    protected static void setIsTemplate(Statement statement,
+            Boolean isTemplate) {
+        setStringProperty(statement, EloraRelationConstants.IS_TEMPLATE,
+                isTemplate.toString());
+    }
+
+    protected String whereBuilder(String query, Statement statement,
+            CoreSession session) {
         List<Object> params = new ArrayList<>(3);
         List<String> clauses = new ArrayList<>(3);
+        boolean subjectIsTemplate = false;
+        boolean objectIsTemplate = false;
 
         // Predicates
         Node p = statement.getPredicate();
@@ -828,6 +876,11 @@ public class EloraCoreGraph extends CoreGraph {
                 if (sn.id != null) {
                     clauses.add(REL_SOURCE_ID + " = ?");
                     params.add(sn.id);
+                    if (sn.id != null) {
+                        if (EloraDocumentHelper.isTemplate(sn.id, session)) {
+                            subjectIsTemplate = true;
+                        }
+                    }
                 } else {
                     clauses.add(REL_SOURCE_URI + " = ?");
                     params.add(sn.uri);
@@ -864,6 +917,12 @@ public class EloraCoreGraph extends CoreGraph {
                 if (on.id != null) {
                     clauses.add(REL_TARGET_ID + " = ?");
                     params.add(on.id);
+                    if (on.id != null) {
+                        if (EloraDocumentHelper.isTemplate(on.id, session)) {
+                            objectIsTemplate = true;
+                        }
+                    }
+
                 } else if (on.uri != null) {
                     clauses.add(REL_TARGET_URI + " = ?");
                     params.add(on.uri);
@@ -872,6 +931,19 @@ public class EloraCoreGraph extends CoreGraph {
                     params.add(on.string);
                 }
 
+            }
+        }
+
+        if (s == null || o == null) {
+            if (s != null && !subjectIsTemplate) {
+                clauses.add(EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE
+                        + " = ?");
+                params.add(false);
+            }
+            if (o != null && !objectIsTemplate) {
+                clauses.add(EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE
+                        + " = ?");
+                params.add(false);
             }
         }
 

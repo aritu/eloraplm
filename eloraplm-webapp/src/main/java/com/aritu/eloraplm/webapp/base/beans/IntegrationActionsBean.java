@@ -13,7 +13,7 @@
  */
 package com.aritu.eloraplm.webapp.base.beans;
 
-import static org.jboss.seam.ScopeType.CONVERSATION;
+import static org.jboss.seam.ScopeType.PAGE;
 
 import java.io.Serializable;
 import org.jboss.seam.annotations.Name;
@@ -26,7 +26,7 @@ import com.aritu.eloraplm.constants.EloraConfigConstants;
  *
  */
 @Name("integrationActions")
-@Scope(CONVERSATION)
+@Scope(PAGE)
 public class IntegrationActionsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;

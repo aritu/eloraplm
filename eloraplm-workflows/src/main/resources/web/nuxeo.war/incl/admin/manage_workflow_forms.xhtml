@@ -1,0 +1,20 @@
+<div xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    class="mainNoTabs">
+    
+    <script type="text/javascript">
+        function updateQuestionId(event) {
+             var value = createCleanId(event.target.value);
+             var prefix = event.target.id.replace(event.target.id.split(":").pop(), "");
+             jQuery("input[name^='"+prefix+"nxw_questionId']").val(value);
+        }
+    </script>
+    
+    <h3>#{messages['eloraplm.title.workflows.forms']}</h3>
+    
+    <nxl:widget name="workflow_questions_dt" mode="edit" value="#{workflowQuestionsTableBean}" />
+    
+</div>

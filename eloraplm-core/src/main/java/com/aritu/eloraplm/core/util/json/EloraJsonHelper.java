@@ -15,7 +15,10 @@ package com.aritu.eloraplm.core.util.json;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -345,6 +348,64 @@ public class EloraJsonHelper {
                 }
             }
         }
+        return value;
+    }
+
+    /**
+     * @param item
+     * @param fieldName
+     * @param isMandatory
+     * @return
+     * @throws EloraException
+     */
+    public static List<String> getJsonFieldAsStringList(JsonNode item,
+            String fieldName, boolean isMandatory) throws EloraException {
+
+        List<String> value = new ArrayList<String>();
+
+        String errorMsg = null;
+
+        if (isItemValid(item) && isFieldNameValid(item, fieldName)) {
+            if (isMandatory) {
+                if (!item.has(fieldName)) {
+                    errorMsg = fieldName + " is missing.";
+                    throw new EloraException(errorMsg);
+                }
+                if (!item.get(fieldName).isArray()) {
+                    errorMsg = fieldName + " is not Array.";
+                    throw new EloraException(errorMsg);
+                }
+                Iterator<JsonNode> valueIt = item.get(fieldName).getElements();
+                while (valueIt.hasNext()) {
+                    JsonNode valueNode = valueIt.next();
+                    if (!valueNode.isTextual()) {
+                        errorMsg = fieldName + " is not an Array of Strings.";
+                        throw new EloraException(errorMsg);
+                    }
+                    value.add(valueNode.getValueAsText());
+                }
+
+            } else {
+                if (item.has(fieldName)) {
+                    if (!item.get(fieldName).isArray()) {
+                        errorMsg = fieldName + " is not Array.";
+                        throw new EloraException(errorMsg);
+                    }
+                    Iterator<JsonNode> valueIt = item.get(
+                            fieldName).getElements();
+                    while (valueIt.hasNext()) {
+                        JsonNode valueNode = valueIt.next();
+                        if (!valueNode.isTextual()) {
+                            errorMsg = fieldName
+                                    + " is not an Array of Strings.";
+                            throw new EloraException(errorMsg);
+                        }
+                        value.add(valueNode.getValueAsText());
+                    }
+                }
+            }
+        }
+
         return value;
     }
 

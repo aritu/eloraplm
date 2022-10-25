@@ -13,8 +13,11 @@
  */
 package com.aritu.eloraplm.codecreation.util;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,11 +29,13 @@ import org.nuxeo.ecm.core.uidgen.UIDGeneratorService;
 import org.nuxeo.ecm.core.uidgen.UIDSequencer;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.codecreation.api.CodeCreationService;
 import com.aritu.eloraplm.config.util.CodeCreationConfigHelper;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
+import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.constants.CodeCreationConfigConstants;
-import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
+import com.aritu.eloraplm.core.util.ExpressionEvaluator;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -44,18 +49,11 @@ public class CodeCreationHelper {
     protected static UIDGeneratorService service = Framework.getService(
             UIDGeneratorService.class);
 
-    /**
-     * Create the code automatically
-     *
-     * @param doc
-     * @param username
-     * @return
-     * @throws Exception
-     */
-    public static String createCode(DocumentModel doc, String username)
-            throws EloraException {
+    protected static CodeCreationService ccs = Framework.getService(
+            CodeCreationService.class);
 
-        return createCode(doc.getType(), username);
+    public static String getModeForType(String type) {
+        return ccs.getModeForType(type);
     }
 
     /**
@@ -66,12 +64,12 @@ public class CodeCreationHelper {
      * @return
      * @throws Exception
      */
-    public static String createCode(String doctype, String username)
+    public static String createCode(DocumentModel doc, String username)
             throws EloraException {
 
         String logInitMsg = "[createCode] [" + username + "] ";
 
-        CodeCreationInfo cci = getCodeCreationInfoForDoctype(doctype);
+        CodeCreationInfo cci = getCodeCreationInfoForDoc(doc);
         int nextValue = incrementAndReturnNextValue(cci.getSequenceKey());
         String code = buildCode(cci, nextValue);
         log.trace(logInitMsg + "Code created for new document: |" + code + "|");
@@ -84,49 +82,82 @@ public class CodeCreationHelper {
      * @return
      * @throws EloraException
      */
-    public static CodeCreationInfo getCodeCreationInfoForDoctype(String doctype)
+    public static CodeCreationInfo getCodeCreationInfoForDoc(DocumentModel doc)
             throws EloraException {
 
-        EloraConfigRow codeMask = CodeCreationConfigHelper.getMaskConfigForDoctype(
+        String doctype = doc.getType();
+        EloraConfigTable codeCreationConfig = CodeCreationConfigHelper.getCodeCreationConfig(
                 doctype);
+        List<String> maskIds = new ArrayList<String>();
 
-        if (codeMask == null || codeMask.isEmpty()) {
+        for (EloraConfigRow configRow : codeCreationConfig.getValues()) {
+            String maskId = (String) configRow.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_TYPES_MASK_ID);
+            String conditionId = (String) configRow.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_TYPES_CONDITION_ID);
+            // Check if condition is satisfied
+            if (conditionId != null && conditionId.length() > 0) {
+                EloraConfigRow codeCondition = CodeCreationConfigHelper.getConditionConfig(
+                        conditionId);
+                boolean conditionIsSatisfied = evaluateCondition(doc,
+                        conditionId, codeCondition);
+                if (conditionIsSatisfied) {
+                    maskIds.add(maskId);
+                }
+            } else {
+                maskIds.add(maskId);
+            }
+        }
+
+        if (maskIds.size() == 0) {
             throw new EloraException(
-                    "There is no mask configured for current doctype.");
+                    "There is no mask configured for current doctype |"
+                            + doctype + "|.");
+        } else if (maskIds.size() > 1) {
+            throw new EloraException(
+                    "There are more than one mask configured for current doctype |"
+                            + doctype + "|.");
+        } else {
+            EloraConfigRow codeMask = CodeCreationConfigHelper.getMaskConfig(
+                    maskIds.get(0));
+            if (codeMask == null || codeMask.isEmpty()) {
+                throw new EloraException(
+                        "There is no mask configured for current doctype |"
+                                + doctype + "|.");
+            }
+
+            String prefix = "";
+            Object prefixValue = codeMask.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_MASKS_PREFIX);
+            if (prefixValue != null) {
+                prefix = prefixValue.toString();
+            }
+            String suffix = "";
+            Object suffixValue = codeMask.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_MASKS_SUFFIX);
+            if (suffixValue != null) {
+                suffix = suffixValue.toString();
+            }
+
+            int digits = (int) (long) codeMask.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_MASKS_DIGITS);
+            int minValue = (int) (long) codeMask.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_MASKS_MINVALUE);
+            int maxValue = (int) (long) codeMask.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_MASKS_MAXVALUE);
+
+            String sequenceKey = "";
+            Object sequenceKeyValue = codeMask.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_MASKS_SEQUENCEKEY);
+            if (sequenceKeyValue != null) {
+                sequenceKey = sequenceKeyValue.toString();
+            }
+
+            CodeCreationInfo cci = new CodeCreationInfo(prefix, suffix, digits,
+                    minValue, maxValue, sequenceKey);
+
+            return cci;
         }
-
-        String prefix = "";
-        Object prefixValue = codeMask.getProperty(
-                CodeCreationConfigConstants.PROP_CODE_MASKS_PREFIX);
-        if (prefixValue != null) {
-            prefix = prefixValue.toString();
-        }
-        String suffix = "";
-        Object suffixValue = codeMask.getProperty(
-                CodeCreationConfigConstants.PROP_CODE_MASKS_SUFFIX);
-        if (suffixValue != null) {
-            suffix = suffixValue.toString();
-        }
-
-        int digits = (int) (long) codeMask.getProperty(
-                CodeCreationConfigConstants.PROP_CODE_MASKS_DIGITS);
-        int minValue = (int) (long) codeMask.getProperty(
-                CodeCreationConfigConstants.PROP_CODE_MASKS_MINVALUE);
-        int maxValue = (int) (long) codeMask.getProperty(
-                CodeCreationConfigConstants.PROP_CODE_MASKS_MAXVALUE);
-
-        String sequenceKey = "";
-        Object sequenceKeyValue = codeMask.getProperty(
-                CodeCreationConfigConstants.PROP_CODE_MASKS_SEQUENCEKEY);
-        if (sequenceKeyValue != null) {
-            sequenceKey = sequenceKeyValue.toString();
-        }
-
-        CodeCreationInfo cci = new CodeCreationInfo(prefix, suffix, digits,
-                minValue, maxValue, sequenceKey);
-
-        return cci;
-
     }
 
     public static int incrementAndReturnNextValue(String sequenceKey)
@@ -137,6 +168,7 @@ public class CodeCreationHelper {
         }
 
         UIDSequencer seq = service.getSequencer("hibernateSequencer");
+        sequenceKey = replaceDateVariables(sequenceKey);
         int nextValue = seq.getNext(sequenceKey);
 
         if (nextValue == 0) {
@@ -189,14 +221,12 @@ public class CodeCreationHelper {
         return sb.toString();
     }
 
-    public static boolean isGenerateAutomaticCode(DocumentModel doc,
-            String value) {
+    public static boolean isGenerateAutomaticCode(DocumentModel doc) {
 
-        if (!doc.hasFacet(EloraFacetConstants.FACET_AUTOMATIC_CODE)) {
-            return false;
-        }
-
-        if (value != null && !value.isEmpty()) {
+        String mode = getModeForType(doc.getType());
+        if (mode.equals(CodeCreationService.CODE_CREATION_TYPE_MODE_MANUAL)
+                || mode.equals(
+                        CodeCreationService.CODE_CREATION_TYPE_MODE_MANUAL_REQUIRED)) {
             return false;
         }
 
@@ -212,6 +242,84 @@ public class CodeCreationHelper {
         }
 
         return true;
-
     }
+
+    private static boolean evaluateCondition(DocumentModel doc,
+            String conditionId, EloraConfigRow codeCondition)
+            throws EloraException {
+        String logInitMsg = "[evaluateCondition] ";
+
+        boolean conditionIsSatisfied = false;
+
+        try {
+            String className = (String) codeCondition.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_CONDITIONS_CLASSNAME);
+            String methodName = (String) codeCondition.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_CONDITIONS_METHODNAME);
+
+            String methodParams = "";
+            Class[] methodParamsClassesArray = null;
+            Object[] methodParamsObjectsArray = null;
+            Object methodParamsValue = codeCondition.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_CONDITIONS_METHODPARAMS);
+            if (methodParamsValue != null) {
+                methodParams = methodParamsValue.toString();
+                // convert methodParams to Class array
+                String[] methodParamsArrayStr = methodParams.split(",");
+                methodParamsClassesArray = new Class[methodParamsArrayStr.length
+                        + 1];
+                methodParamsObjectsArray = new Object[methodParamsClassesArray.length];
+                methodParamsClassesArray[0] = DocumentModel.class;
+                methodParamsObjectsArray[0] = doc;
+                for (int i = 0; i < methodParamsArrayStr.length; i++) {
+                    methodParamsClassesArray[i
+                            + 1] = methodParamsArrayStr[i].getClass();
+                    methodParamsObjectsArray[i + 1] = methodParamsArrayStr[i];
+                }
+            }
+
+            String operator = (String) codeCondition.getProperty(
+                    CodeCreationConfigConstants.PROP_CODE_CONDITIONS_OPERATOR);
+
+            // Validate that the operator has a valid value. For the instance,
+            // there is a list of allowed operators.
+            if (isValidOperator(operator)) {
+                String conditionValue = (String) codeCondition.getProperty(
+                        CodeCreationConfigConstants.PROP_CODE_CONDITIONS_VALUE);
+
+                // Evaluate the condition
+                Class<?> conditionClass = Class.forName(className);
+                Object conditionClassObject = conditionClass.newInstance();
+                Method conditionMethod = conditionClassObject.getClass().getMethod(
+                        methodName, methodParamsClassesArray);
+
+                Object conditionEvalutionResult = conditionMethod.invoke(null,
+                        methodParamsObjectsArray);
+
+                // compare result with expected value in function of the
+                // operator
+                conditionIsSatisfied = ExpressionEvaluator.evaluateExpression(
+                        conditionEvalutionResult, conditionValue, operator);
+
+            }
+        } catch (Exception e) {
+            log.error(logInitMsg
+                    + "Exception evaluating the code creation condition. conditonId = |"
+                    + conditionId + "|", e);
+            throw new EloraException(
+                    "Error evaluating the code creation condition: "
+                            + e.getMessage());
+        }
+
+        return conditionIsSatisfied;
+    }
+
+    private static boolean isValidOperator(String operator) {
+        boolean isValid = false;
+        if (ExpressionEvaluator.getSupportedOperators().contains(operator)) {
+            isValid = true;
+        }
+        return isValid;
+    }
+
 }

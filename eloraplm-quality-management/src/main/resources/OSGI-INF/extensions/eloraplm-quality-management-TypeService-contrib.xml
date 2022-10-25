@@ -11,8 +11,9 @@
         <facet name="QmProcess"/>
         
         <!-- Doctypes -->
-        <doctype extends="Folder" name="FolderArchivedQualityManagement">
+        <doctype extends="WorkspaceRoot" name="FolderArchivedQualityManagement">
             <facet name="EloraStruct" />
+            <facet name="ArchivedWorkspaceRoot"/>
         </doctype>
         
         <doctype extends="Folder" name="ProductValidation">
@@ -24,13 +25,13 @@
             <schema name="related_customer"/>
             <schema name="related_manufacturer"/>
             <schema name="responsible"/>
-            <facet name="AutomaticCode"/>
             <facet name="Commentable"/>
             <facet name="EloraWorkspace"/>
+            <facet name="Archivable" />
             <facet name="SuperSpace"/>
             <facet name="QmProcess" />
-            <facet name="LockRequiredToEdit" />
             <facet name="StoreStatesLog" />
+            <facet name="Templatable" />
         </doctype>
         <doctype extends="Folder" name="ProductVerification">
             <schema name="elora_object"/>
@@ -41,13 +42,13 @@
             <schema name="related_customer"/>
             <schema name="related_manufacturer"/>
             <schema name="responsible"/>
-            <facet name="AutomaticCode"/>
             <facet name="Commentable"/>
             <facet name="EloraWorkspace"/>
+            <facet name="Archivable" />
             <facet name="SuperSpace"/>
             <facet name="QmProcess" />
-            <facet name="LockRequiredToEdit" />
             <facet name="StoreStatesLog" />
+            <facet name="Templatable" />
         </doctype>
         <doctype extends="Folder" name="ProductionProcessValidation">
             <schema name="elora_object"/>
@@ -58,13 +59,13 @@
             <schema name="related_customer"/>
             <schema name="related_manufacturer"/>
             <schema name="responsible"/>
-            <facet name="AutomaticCode"/>
             <facet name="Commentable"/>
             <facet name="EloraWorkspace"/>
+            <facet name="Archivable" />
             <facet name="SuperSpace"/>
             <facet name="QmProcess" />
-            <facet name="LockRequiredToEdit" />
             <facet name="StoreStatesLog" />
+            <facet name="Templatable" />
         </doctype>
         <doctype extends="Folder" name="ProductionPartApprovalProcess">
             <schema name="elora_object"/>
@@ -75,13 +76,13 @@
             <schema name="related_customer"/>
             <schema name="related_manufacturer"/>
             <schema name="responsible"/>
-            <facet name="AutomaticCode"/>
             <facet name="Commentable"/>
             <facet name="EloraWorkspace"/>
+            <facet name="Archivable" />
             <facet name="SuperSpace"/>
             <facet name="QmProcess" />
-            <facet name="LockRequiredToEdit" />
             <facet name="StoreStatesLog" />
+            <facet name="Templatable" />
         </doctype>
         
     </extension>
@@ -96,7 +97,7 @@
         
         <type id="FolderArchivedQualityManagement">
             <label>FolderArchivedQualityManagement</label>
-            <icon>/icons/folder_archived_quality_management_16.gif</icon>
+            <icon>/icons/folder_archived_quality_management_16.png</icon>
             <bigIcon>/icons/folder_archived_quality_management_100.png</bigIcon>
             <description>FolderArchivedQualityManagement.description
             </description>
@@ -116,11 +117,17 @@
                     document_trash_content
                 </contentView>
             </contentViews>
+             <subtypes>
+                <type>ProductValidation</type>
+                <type>ProductVerification</type>
+                <type>ProductionProcessValidation</type>
+                <type>ProductionPartApprovalProcess</type>
+            </subtypes>
         </type>
         
         <type id="ProductValidation">
             <label>ProductValidation</label>
-            <icon>/icons/product_validation_16.gif</icon>
+            <icon>/icons/product_validation_16.png</icon>
             <bigIcon>/icons/product_validation_100.png</bigIcon>
             <category>QualityManagement</category>
             <description>ProductValidation.description</description>
@@ -133,13 +140,13 @@
                 <layout>partaker</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_auto</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>qm_product_process</layout>
                 <layout>responsible</layout>
                 <layout>planning</layout>
                 <layout>partaker</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
@@ -169,12 +176,14 @@
                 <type>BomSpecification</type>
                 <type>BomProduct</type>
                 <type>BomCustomerProduct</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
             </subtypes>
         </type>
         
         <type id="ProductVerification">
             <label>ProductVerification</label>
-            <icon>/icons/product_verification_16.gif</icon>
+            <icon>/icons/product_verification_16.png</icon>
             <bigIcon>/icons/product_verification_100.png</bigIcon>
             <category>QualityManagement</category>
             <description>ProductVerification.description</description>
@@ -187,13 +196,13 @@
                 <layout>partaker</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_auto</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>qm_product_process</layout>
                 <layout>responsible</layout>
                 <layout>planning</layout>
                 <layout>partaker</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
@@ -223,12 +232,14 @@
                 <type>BomSpecification</type>
                 <type>BomProduct</type>
                 <type>BomCustomerProduct</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
             </subtypes>
         </type>
         
         <type id="ProductionProcessValidation">
             <label>ProductionProcessValidation</label>
-            <icon>/icons/production_process_validation_16.gif</icon>
+            <icon>/icons/production_process_validation_16.png</icon>
             <bigIcon>/icons/production_process_validation_100.png</bigIcon>
             <category>QualityManagement</category>
             <description>ProductionProcessValidation.description</description>
@@ -241,13 +252,13 @@
                 <layout>partaker</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_auto</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>qm_product_process</layout>
                 <layout>responsible</layout>
                 <layout>planning</layout>
                 <layout>partaker</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
@@ -277,12 +288,14 @@
                 <type>BomSpecification</type>
                 <type>BomProduct</type>
                 <type>BomCustomerProduct</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
             </subtypes>
         </type>
         
         <type id="ProductionPartApprovalProcess">
             <label>ProductionPartApprovalProcess</label>
-            <icon>/icons/production_part_approval_process_16.gif</icon>
+            <icon>/icons/production_part_approval_process_16.png</icon>
             <bigIcon>/icons/production_part_approval_process_100.png</bigIcon>
             <category>QualityManagement</category>
             <description>ProductionPartApprovalProcess.description</description>
@@ -295,13 +308,13 @@
                 <layout>partaker</layout>
             </layouts>
             <layouts mode="any">
-                <layout>elora_object_reference_auto</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>qm_part_process</layout>
                 <layout>responsible</layout>
                 <layout>planning</layout>
                 <layout>partaker</layout>
-                <layout>subjects</layout>
+<!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
             </layouts>
@@ -331,6 +344,8 @@
                 <type>BomSpecification</type>
                 <type>BomProduct</type>
                 <type>BomCustomerProduct</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
             </subtypes>
         </type>
         

@@ -1,0 +1,39 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+    <nxu:set var="answeredWorkflows" value="#{workflowAnswersTableBean.answeredWorkflows}">
+        
+        <c:if test="#{empty answeredWorkflows}">
+            <h:outputText value="#{messages['eloraplm.message.info.noAnsweredWorkflows']}" styleClass="processMessage completeInfo" />
+        </c:if>
+        
+        <c:if test="#{not empty answeredWorkflows}">
+            <p:tabView styleClass="borderless" activeIndex="#{workflowAnswersTableBean.activeTabIndex}">
+                
+                <p:ajax event="tabChange" listener="#{workflowAnswersTableBean.onTabChange}" update="workflow_dt_container" />
+                
+                <c:forEach var="tab" items="#{workflowAnswersTableBean.answeredWorkflows}">
+                    <p:tab id="#{tab}" title="#{messages[workflowFormActions.getWorkflowTitle(tab)]}" >
+                        <ui:remove>
+                        <!-- // We cannot use the tabs normally because the datatable crashes, so here the tabview is just for the tab buttons. -->
+                        </ui:remove>
+                    </p:tab>
+                </c:forEach>
+                
+            </p:tabView>
+            
+            <h:panelGroup id="workflow_dt_container">
+                <nxl:widget name="workflow_answers_dt" mode="view" value="#{workflowAnswersTableBean}" />
+            </h:panelGroup>
+        </c:if>
+        
+    </nxu:set>
+    
+</ui:composition>

@@ -1,0 +1,11 @@
+id,label,obsolete,ordering
+"1","Especificación de producto","0","1"
+"2","Comercial","0","2"
+"3","Calidad","0","3"
+"4","Calidad de aprovisionamiento","0","4"
+"5","Proceso Fabricación","0","5"
+"6","Control económico","0","6"
+"7","Informes","0","7"
+"8","Cliente","0","8"
+"9","Proveedor","0","9"
+"10","Varios","0","99"

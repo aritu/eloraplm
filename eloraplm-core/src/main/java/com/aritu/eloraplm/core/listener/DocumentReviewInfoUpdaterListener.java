@@ -25,6 +25,7 @@ import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.ReviewInfoHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -51,6 +52,11 @@ public class DocumentReviewInfoUpdaterListener implements EventListener {
 
             // Check that we are handling the right event
             if (isEventHandled(event)) {
+                // Check event context to see if we have to skip review info
+                if (docEventCtx.hasProperty("default/"
+                        + EloraGeneralConstants.CONTEXT_SKIP_REVIEW_INFO)) {
+                    return;
+                }
 
                 // Get the document model from the event context
                 DocumentModel doc = docEventCtx.getSourceDocument();

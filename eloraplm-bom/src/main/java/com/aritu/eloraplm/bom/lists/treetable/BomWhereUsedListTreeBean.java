@@ -31,6 +31,7 @@ import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextInvalidation;
+import org.nuxeo.runtime.api.Framework;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -70,8 +71,13 @@ public class BomWhereUsedListTreeBean extends CoreTreeBean
         DocumentModel currentDoc = getCurrentDocument();
         try {
             log.trace(logInitMsg + "Creating tree...");
-            BomWhereUsedListNodeService nodeService = new BomWhereUsedListNodeService(
-                    documentManager, bomList.getId());
+
+            BomListNodeService nodeService = Framework.getService(
+                    BomListNodeService.class);
+            nodeService.init(documentManager, 0,
+                    BomListNodeService.TREE_DIRECTION_COMPOSITION,
+                    bomList.getId());
+
             setRoot(nodeService.getRoot(currentDoc));
             setHasUnreadableNodes(false);
             setIsInvalid(false);

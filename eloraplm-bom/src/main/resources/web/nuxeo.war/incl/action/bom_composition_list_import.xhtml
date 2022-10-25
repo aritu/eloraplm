@@ -34,13 +34,14 @@
                             <h:inputHidden id="importSourceUid"
                                 value="#{bomCompositionListTreeBean.importSourceUid}" />
                             <nxl:widgetType
-                                name="eloraSingleDocumentSuggestion"
+                                name="singleDocumentSuggestion"
                                 mode="edit" ajaxReRender="importSourceUid"
                                 value="#{bomCompositionListTreeBean}"
                                 field="importSourceUid" translated="true"
                                 width="100%"
-                                placeholder="eloraplm.label.bom.list.import.searchPopupTitle"
+                                placeholder="eloraplm.label.bom.list.searchPopupTitle"
                                 pageProviderName="bom_document_wc_suggestion"
+                                documentSchemas="dublincore,common,elora_object,template_info"
                                 additionalOperationParameters="eloraPassQueryTermsTwice">
                             </nxl:widgetType>
                         </a4j:outputPanel>

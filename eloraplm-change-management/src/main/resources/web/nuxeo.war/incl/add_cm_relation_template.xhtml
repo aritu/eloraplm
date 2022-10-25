@@ -43,13 +43,14 @@
                         <h:inputHidden id="objectDocumentUid"
                             value="#{relationBean.objectDocumentUid}" required="true" />
                         <nxl:widgetType
-                            name="eloraSingleDocumentSuggestion"
+                            name="singleDocumentSuggestion"
                             mode="edit" ajaxReRender="objectDocumentUid"
                             value="#{relationBean}"
                             field="objectDocumentUid" translated="true"
                             width="100%"
                             placeholder="#{placeholder}"
                             pageProviderName="#{pageProviderName}"
+                            documentSchemas="dublincore,common,elora_object,template_info"
                             additionalOperationParameters="eloraPassQueryTermsTwice">
                         </nxl:widgetType>
                     </a4j:outputPanel>

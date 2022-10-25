@@ -1,15 +1,21 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:f="http://java.sun.com/jsf/core"
-  >
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    >
 
-      <h:outputLink value="#{eloraWebActions.getEloraDownloadLink()}">
-        <h:graphicImage value="/icons/contextual_menu/download.png" styleClass="smallIcon tipsyShow tipsyGravitySE"
-          title="#{messages['eloraplm.label.downloadAndOpen']}"
-          alt="#{messages['eloraplm.label.downloadAndOpen']}" />
-        <f:ajax listener="#{eloraWebActions.registerDownloadAndOpenAction}" event="click" />
-      </h:outputLink>
+    <nxu:set var="downloadLink" value="#{eloraWebActions.getEloraDownloadLink()}">
+    <c:if test="#{not empty downloadLink}">
+          <h:outputLink value="#{downloadLink}">
+            <h:graphicImage value="/icons/contextual_menu/download.png" styleClass="smallIcon tipsyShow tipsyGravitySE"
+              title="#{messages['eloraplm.label.downloadAndOpen']}"
+              alt="#{messages['eloraplm.label.downloadAndOpen']}" />
+            <f:ajax listener="#{eloraWebActions.registerDownloadAndOpenAction}" event="click" />
+          </h:outputLink>
+      </c:if>
+    </nxu:set>
 
 </ui:composition> 

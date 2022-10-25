@@ -15,6 +15,8 @@ package com.aritu.eloraplm.export.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -26,6 +28,8 @@ import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
@@ -189,6 +193,21 @@ public class BlobStructure {
                 NuxeoMetadataConstants.NX_FILE_CONTENT);
         if (blob != null) {
             blobs.add(blob);
+        }
+
+        // Add CAD attachments
+        if (cadChild.hasSchema(EloraSchemaConstants.CAD_ATTACHMENTS)) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> cadAtts = (List<Map<String, Object>>) cadChild.getPropertyValue(
+                    EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS);
+            if (cadAtts != null && !cadAtts.isEmpty()) {
+                for (Map<String, Object> cadAtt : cadAtts) {
+                    Blob attBlob = (Blob) cadAtt.get("file");
+                    if (attBlob != null) {
+                        blobs.add(attBlob);
+                    }
+                }
+            }
         }
     }
 

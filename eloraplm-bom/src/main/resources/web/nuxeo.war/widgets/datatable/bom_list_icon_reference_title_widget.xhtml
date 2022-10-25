@@ -1,0 +1,17 @@
+<f:subview
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"  
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  >
+    
+   <ui:fragment rendered="#{field != null and !field.isExternalSource}">
+        <nxl:widget name="treewidget_bom_icon_reference_title" mode="view" value="#{field}" />
+   </ui:fragment>
+   
+   <ui:fragment rendered="#{field != null and field.isExternalSource}">
+        <nxl:widget name="treewidget_bom_erp_icon_reference_title" mode="view" value="#{field}" />
+   </ui:fragment>
+  
+</f:subview>

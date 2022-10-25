@@ -15,14 +15,14 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-core-EventServiceCompone
  ml,OSGI-INF/extensions/eloraplm-config-WebLayoutManager-contrib.xml,O
  SGI-INF/extensions/eloraplm-versioning-ActionService-contrib.xml,OSGI
  -INF/extensions/eloraplm-versioning-VersioningService-contrib.xml,OSG
- I-INF/extensions/eloraplm-versioning-majorLetter-TypeService-contrib.
- xml,OSGI-INF/extensions/eloraplm-versioning-majorLetter-EventServiceC
- omponent-contrib.xml,OSGI-INF/extensions/eloraplm-versioning-EloraVer
- sionLabelService-contrib.xml,OSGI-INF/extensions/eloraplm-core-Operat
- ionServiceComponent-contrib.xml,OSGI-INF/extensions/eloraplm-core-Not
- ificationService-contrib.xml,OSGI-INF/extensions/eloraplm-core-Schedu
- lerService-contrib.xml,OSGI-INF/extensions/LifecycleConfigService.xml
- ,OSGI-INF/extensions/EloraConfigManager.xml,OSGI-INF/extensions/Elora
- DocumentRelationManager.xml,OSGI-INF/extensions/eloraplm-elasticsearc
- h-EventServiceComponent-contrib.xml
+ I-INF/extensions/eloraplm-core-OperationServiceComponent-contrib.xml,
+ OSGI-INF/extensions/eloraplm-core-SchedulerService-contrib.xml,OSGI-I
+ NF/extensions/LifecycleConfigService.xml,OSGI-INF/extensions/EloraCon
+ figManager.xml,OSGI-INF/extensions/EloraDocumentRelationManager.xml,O
+ SGI-INF/extensions/eloraplm-elasticsearch-EventServiceComponent-contr
+ ib.xml,OSGI-INF/extensions/eloraplm-versioning-TypeService-contrib.xm
+ l,OSGI-INF/extensions/eloraplm-versioning-EventServiceComponent-contr
+ ib.xml,OSGI-INF/extensions/VersionLabelService.xml,OSGI-INF/extension
+ s/WorkspaceArchiverService.xml,OSGI-INF/extensions/eloraplm-core-Elor
+ aPersistenceComponent-contrib.xml
 

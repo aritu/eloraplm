@@ -14,8 +14,12 @@
 
 package com.aritu.eloraplm.viewer.listener;
 
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.contexts.Contexts;
@@ -23,16 +27,19 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.Messages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.SystemPrincipal;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventContext;
 import org.nuxeo.ecm.core.event.EventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.constants.ViewerConstants;
+import com.aritu.eloraplm.constants.ViewerEventNames;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.OverwriteOriginalViewerException;
 import com.aritu.eloraplm.viewer.api.ViewerFileService;
 
@@ -53,16 +60,36 @@ public class ViewerFileCreationListener implements EventListener {
         EventContext eventContext = event.getContext();
         if (eventContext instanceof DocumentEventContext) {
             if (isEventHandled(event)) {
-                DocumentEventContext docEventContext = (DocumentEventContext) eventContext;
-                DocumentModel doc = docEventContext.getSourceDocument();
-
-                if (docEventContext.getPrincipal() instanceof SystemPrincipal) {
-                    return;
-                }
-
                 String logInitMsg = "[handleEvent] ["
                         + event.getContext().getPrincipal().getName() + "] ";
                 log.trace(logInitMsg + "--- ENTER --- ");
+
+                DocumentEventContext docEventContext = (DocumentEventContext) eventContext;
+                DocumentModel doc = docEventContext.getSourceDocument();
+
+                // Templates do not have viewer files
+                if (EloraDocumentHelper.isTemplate(doc)) {
+                    return;
+                }
+
+                // Check event context to see if viewer file creation should be
+                // skipped
+                if (docEventContext.hasProperty(
+                        EloraGeneralConstants.CONTEXT_SKIP_VIEWER_FILE_CREATION)) {
+                    boolean skipViewerFileCreation = (boolean) docEventContext.getProperty(
+                            EloraGeneralConstants.CONTEXT_SKIP_VIEWER_FILE_CREATION);
+                    log.trace(logInitMsg + "skipViewerFileCreation = |"
+                            + skipViewerFileCreation + "|");
+                    if (skipViewerFileCreation) {
+                        return;
+                    }
+                }
+
+                /* RelatedViewerUpdateOnOverwriteListener fires the event in unrestricted mode, so the principal is system
+                if (docEventContext.getPrincipal() instanceof SystemPrincipal) {
+                    return;
+                }
+                */
 
                 if (doc.hasSchema(EloraSchemaConstants.ELORA_VIEWER)) {
 
@@ -90,13 +117,25 @@ public class ViewerFileCreationListener implements EventListener {
                                 ViewerFileService.class);
 
                         vfs.createViewer(doc, action);
+
+                        // Launch event indicating viewer file has been created
+                        Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+                        ctxProperties.put(
+                                EloraGeneralConstants.CONTEXT_KEY_ACTION,
+                                action);
+                        EloraEventHelper.fireEvent(
+                                ViewerEventNames.VIEWER_FILE_CREATED_EVENT, doc,
+                                ctxProperties);
+
                     } catch (OverwriteOriginalViewerException e) {
+                        log.error(logInitMsg + e.getMessage(), e);
                         FacesMessages facesMessages = (FacesMessages) Contexts.getConversationContext().get(
                                 FacesMessages.class);
                         facesMessages.add(StatusMessage.Severity.WARN,
                                 Messages.instance().get(
                                         "eloraplm.message.error.viewer.overwriteOriginalViewerException"));
                     } catch (Exception e) {
+                        log.error(logInitMsg + e.getMessage(), e);
                         FacesMessages facesMessages = (FacesMessages) Contexts.getConversationContext().get(
                                 FacesMessages.class);
                         facesMessages.add(StatusMessage.Severity.ERROR,

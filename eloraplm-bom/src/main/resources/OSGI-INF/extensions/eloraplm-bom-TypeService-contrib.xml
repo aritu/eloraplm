@@ -15,6 +15,7 @@
        <schema name="bom_customer_product" prefix="bomcustprod" src="schemas/bom_customer_product.xsd"/>
        <schema name="product_classification" prefix="prodclass" src="schemas/product_classification.xsd"/>
        <schema name="part_classification" prefix="partclass" src="schemas/part_classification.xsd"/>
+       <schema name="software" prefix="soft" src="schemas/software.xsd"/>
   </extension>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
@@ -32,31 +33,42 @@
     </facet>
     
     <!-- Doctypes -->
+    
+    <!-- BomDocument doctype has all the facets and schemas of File + the specific ones -->
+    <doctype extends="Document" name="BomDocument">
+        <schema name="common"/>
+        <schema name="file"/>
+        <schema name="dublincore"/>
+        <schema name="uid"/>
+        <schema name="files"/>
+        <schema name="elora_object" />
+        <facet name="Downloadable"/>
+        <facet name="Versionable"/>
+        <facet name="Publishable"/>
+        <facet name="Commentable"/>
+        <facet name="HasRelatedText"/>
+        <facet name="BomDocument" />
+        <facet name="StoreCheckInInfo" />
+        <facet name="StoreReviewInfo" />
+        <facet name="StoreStatesLog" />
+        <facet name="Templatable" />
+    </doctype>
   
-    <doctype extends="File" name="BomPart">
+    <doctype extends="BomDocument" name="BomPart">
       <schema name="elora_viewer"/>
       <schema name="responsible"/>
       <schema name="bom_item"/>
       <schema name="bom_part"/>
       <schema name="part_classification"/>
-      <facet name="BomDocument" />
-      <facet name="AutomaticCode"/>
-      <facet name="StoreCheckInInfo" />
-      <facet name="StoreReviewInfo" />
-      <facet name="StoreStatesLog" />
     </doctype>
 
-    <doctype extends="File" name="BomManufacturerPart">
+    <doctype extends="BomDocument" name="BomManufacturerPart">
       <schema name="elora_viewer"/>
       <schema name="responsible"/>
       <schema name="bom_manufacturer_part"/>
-      <facet name="BomDocument" />
-      <facet name="StoreCheckInInfo" />
-      <facet name="StoreReviewInfo" />
-      <facet name="StoreStatesLog" />
     </doctype>
 
-    <doctype extends="File" name="BomTool">
+    <doctype extends="BomDocument" name="BomTool">
       <schema name="elora_viewer"/>
       <schema name="responsible"/>
       <schema name="bom_item"/>
@@ -65,14 +77,9 @@
       <schema name="owner"/>
       <schema name="related_customer"/>
       <schema name="related_manufacturer"/>
-      <facet name="BomDocument" />
-      <facet name="AutomaticCode"/>
-      <facet name="StoreCheckInInfo" />
-      <facet name="StoreReviewInfo" />
-      <facet name="StoreStatesLog" />
     </doctype>
 
-    <doctype extends="File" name="BomPackaging">
+    <doctype extends="BomDocument" name="BomPackaging">
       <schema name="elora_viewer"/>
       <schema name="responsible"/>
       <schema name="bom_item"/>
@@ -80,45 +87,36 @@
       <schema name="related_partaker"/>
       <schema name="related_customer"/>
       <schema name="related_manufacturer"/>
-      <facet name="BomDocument" />
-      <facet name="AutomaticCode"/>
-      <facet name="StoreCheckInInfo" />
-      <facet name="StoreReviewInfo" />
-      <facet name="StoreStatesLog" />
     </doctype>
 
-    <doctype extends="File" name="BomSpecification">
+    <doctype extends="BomDocument" name="BomSpecification">
       <schema name="elora_viewer"/>
       <schema name="note"/>
       <schema name="responsible"/>
       <schema name="bom_item"/>
       <schema name="bom_specification"/>
-      <facet name="BomDocument" />
-      <facet name="AutomaticCode"/>
     </doctype>
 
-    <doctype extends="File" name="BomProduct">
+    <doctype extends="BomDocument" name="BomProduct">
       <schema name="elora_viewer"/>
       <schema name="responsible"/>
       <schema name="bom_item"/>
       <schema name="product_classification"/>
       <schema name="bom_product"/>
       <schema name="related_customer"/>
-      <facet name="BomDocument" />
-      <facet name="AutomaticCode"/>
-      <facet name="StoreCheckInInfo" />
-      <facet name="StoreReviewInfo" />
-      <facet name="StoreStatesLog" />
     </doctype>
 
-    <doctype extends="File" name="BomCustomerProduct">
+    <doctype extends="BomDocument" name="BomCustomerProduct">
       <schema name="elora_viewer"/>
       <schema name="responsible"/>
       <schema name="bom_customer_product"/>
-      <facet name="BomDocument" />
-      <facet name="StoreCheckInInfo" />
-      <facet name="StoreReviewInfo" />
-      <facet name="StoreStatesLog" />
+    </doctype>
+    
+    <doctype extends="BomPart" name="Software">
+      <schema name="software"/>
+    </doctype>
+    
+    <doctype extends="BomPart" name="ElectronicComponent">
     </doctype>
 
     <doctype extends="Folder" name="StructEbom">
@@ -172,7 +170,7 @@
 
     <type id="FolderBomPart">
       <label>FolderBomPart</label>
-      <icon>/icons/folder_bom_part_16.gif</icon>
+      <icon>/icons/folder_bom_part_16.png</icon>
       <bigIcon>/icons/folder_bom_part_100.png</bigIcon>
       <description>FolderBomPart.description</description>
       <default-view>view_documents</default-view>
@@ -194,12 +192,14 @@
       <subtypes>
         <type>BomPart</type>
         <type>FolderBomPart</type>
+        <type>Software</type>
+        <type>ElectronicComponent</type>
       </subtypes>      
    </type>
 
     <type id="FolderBomManufacturerPart">
       <label>FolderBomManufacturerPart</label>
-      <icon>/icons/folder_bom_manufacturer_part_16.gif</icon>
+      <icon>/icons/folder_bom_manufacturer_part_16.png</icon>
       <bigIcon>/icons/folder_bom_manufacturer_part_100.png</bigIcon>
       <description>FolderBomManufacturerPart.description</description>
       <default-view>view_documents</default-view>
@@ -226,7 +226,7 @@
 
     <type id="FolderBomTool">
       <label>FolderBomTool</label>
-      <icon>/icons/folder_bom_tool_16.gif</icon>
+      <icon>/icons/folder_bom_tool_16.png</icon>
       <bigIcon>/icons/folder_bom_tool_100.png</bigIcon>
       <description>FolderBomTool.description</description>
       <default-view>view_documents</default-view>
@@ -253,7 +253,7 @@
    
     <type id="FolderBomPackaging">
       <label>FolderBomPackaging</label>
-      <icon>/icons/folder_bom_packaging_16.gif</icon>
+      <icon>/icons/folder_bom_packaging_16.png</icon>
       <bigIcon>/icons/folder_bom_packaging_100.png</bigIcon>
       <description>FolderBomPackaging.description</description>
       <default-view>view_documents</default-view>
@@ -280,7 +280,7 @@
 
     <type id="FolderBomSpecification">
       <label>FolderBomSpecification</label>
-      <icon>/icons/folder_bom_specification_16.gif</icon>
+      <icon>/icons/folder_bom_specification_16.png</icon>
       <bigIcon>/icons/folder_bom_specification_100.png</bigIcon>
       <description>FolderBomSpecification.description</description>
       <default-view>view_documents</default-view>
@@ -307,7 +307,7 @@
       
     <type id="FolderBomProduct">
       <label>FolderBomProduct</label>
-      <icon>/icons/folder_bom_product_16.gif</icon>
+      <icon>/icons/folder_bom_product_16.png</icon>
       <bigIcon>/icons/folder_bom_product_100.png</bigIcon>
       <description>FolderBomProduct.description</description>
       <default-view>view_documents</default-view>
@@ -334,7 +334,7 @@
 
     <type id="FolderBomCustomerProduct">
       <label>FolderBomCustomerProduct</label>
-      <icon>/icons/folder_bom_customer_product_16.gif</icon>
+      <icon>/icons/folder_bom_customer_product_16.png</icon>
       <bigIcon>/icons/folder_bom_customer_product_100.png</bigIcon>
       <description>FolderBomCustomerProduct.description</description>
       <default-view>view_documents</default-view>
@@ -361,25 +361,26 @@
 
     <type id="BomPart">
       <label>BomPart</label>
-      <icon>/icons/bom_part_16.gif</icon>
+      <icon>/icons/bom_part_16.png</icon>
       <bigIcon>/icons/bom_part_100.png</bigIcon>
       <category>BomGroup</category>
       <description>BomPart.description</description>
       <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
       <layouts mode="view">
         <layout>summary_bom_part</layout>
         <layout>responsible</layout>
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>bom_item</layout>
         <layout>responsible</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_part</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>
@@ -387,22 +388,23 @@
  
    <type id="BomManufacturerPart">
       <label>BomManufacturerPart</label>
-      <icon>/icons/bom_manufacturer_part_16.gif</icon>
+      <icon>/icons/bom_manufacturer_part_16.png</icon>
       <bigIcon>/icons/bom_manufacturer_part_100.png</bigIcon>
       <category>BomGroup</category>
       <description>BomManufacturerPart.description</description>
       <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
       <layouts mode="view">
         <layout>responsible</layout>
       </layouts>
       <layouts mode="any">
-        <layout>manufacturer_reference</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>bom_manufacturer_part_manufacturers</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>responsible</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>
@@ -410,12 +412,13 @@
  
     <type id="BomTool">
       <label>BomTool</label>
-      <icon>/icons/bom_tool_16.gif</icon>
+      <icon>/icons/bom_tool_16.png</icon>
       <bigIcon>/icons/bom_tool_100.png</bigIcon>
       <category>BomGroup</category>
       <description>BomTool.description</description>
       <default-view>view_documents</default-view>
-       <layouts mode="view">
+      <create-view>create_doc_from_template</create-view>
+      <layouts mode="view">
         <!-- <layout>summary_bom_tool</layout>  Nothing to be defined for the instance, since bommToolClassification is already included in the summary section. -->
         <layout>related_partaker</layout>
         <layout>owner</layout>
@@ -425,7 +428,7 @@
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
@@ -436,7 +439,7 @@
         <layout>owner</layout>
         <layout>related_customer</layout>
         <layout>related_manufacturer</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>
@@ -444,12 +447,13 @@
  
     <type id="BomPackaging">
       <label>BomPackaging</label>
-      <icon>/icons/bom_packaging_16.gif</icon>
+      <icon>/icons/bom_packaging_16.png</icon>
       <bigIcon>/icons/bom_packaging_100.png</bigIcon>
       <category>BomGroup</category>
       <description>BomPackaging.description</description>
       <default-view>view_documents</default-view>
-       <layouts mode="view">
+      <create-view>create_doc_from_template</create-view>
+      <layouts mode="view">
         <!-- <layout>summary_bom_tool</layout>  Nothing to be defined for the instance, since bommToolClassification is already included in the summary section. -->
         <layout>related_partaker</layout>
         <layout>related_customer</layout>
@@ -458,7 +462,7 @@
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
@@ -468,7 +472,7 @@
         <layout>related_partaker</layout>
         <layout>related_customer</layout>
         <layout>related_manufacturer</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>
@@ -476,25 +480,26 @@
 
     <type id="BomSpecification">
       <label>BomSpecification</label>
-      <icon>/icons/bom_specification_16.gif</icon>
+      <icon>/icons/bom_specification_16.png</icon>
       <bigIcon>/icons/bom_specification_100.png</bigIcon>
       <category>BomGroup</category>
       <description>BomSpecification.description</description>
       <default-view>view_documents</default-view>
-       <layouts mode="view">
+      <create-view>create_doc_from_template</create-view>
+      <layouts mode="view">
         <!-- <layout>summary_bom_tool</layout>  Nothing to be defined for the instance, since bommToolClassification is already included in the summary section. -->
         <layout>responsible</layout>
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>bom_item</layout>
         <layout>responsible</layout>
         <layout>bom_specification</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>note</layout>
         <layout>rights</layout>
         <layout>expired</layout>
@@ -503,18 +508,19 @@
   
      <type id="BomProduct">
       <label>BomProduct</label>
-      <icon>/icons/bom_product_16.gif</icon>
+      <icon>/icons/bom_product_16.png</icon>
       <bigIcon>/icons/bom_product_100.png</bigIcon>
       <category>BomGroup</category>
       <description>BomProduct.description</description>
       <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
       <layouts mode="view">
         <layout>summary_bom_product</layout>
         <layout>responsible</layout>
         <layout>summary_bom_item</layout>
       </layouts>
       <layouts mode="any">
-        <layout>elora_object_reference_required</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
@@ -522,7 +528,7 @@
         <layout>responsible</layout>
         <layout>product_classification</layout>
         <layout>bom_product</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>
@@ -530,22 +536,79 @@
 
    <type id="BomCustomerProduct">
       <label>BomCustomerProduct</label>
-      <icon>/icons/bom_customer_product_16.gif</icon>
+      <icon>/icons/bom_customer_product_16.png</icon>
       <bigIcon>/icons/bom_customer_product_100.png</bigIcon>
       <category>BomGroup</category>
       <description>BomCustomerProduct.description</description>
       <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
       <layouts mode="view">
         <layout>responsible</layout>
       </layouts>
       <layouts mode="any">
-        <layout>customer_reference</layout>
+        <layout>elora_object</layout>
         <layout>heading</layout>
         <layout>bom_customer_product_customers</layout>
         <layout>file</layout>
         <layout>elora_viewer</layout>
         <layout>responsible</layout>
-        <layout>subjects</layout>
+<!--         <layout>subjects</layout> -->
+        <layout>rights</layout>
+        <layout>expired</layout>
+      </layouts>
+   </type>
+   
+   <type id="Software">
+      <label>Software</label>
+      <icon>/icons/software_16.png</icon>
+      <bigIcon>/icons/software_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>Software.description</description>
+      <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
+      <layouts mode="view">
+        <layout>summary_bom_part</layout>
+        <layout>software</layout>
+        <layout>responsible</layout>
+        <layout>summary_bom_item</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object</layout>
+        <layout>heading</layout>
+        <layout>bom_item</layout>
+        <layout>responsible</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_part</layout>
+        <layout>software</layout>        
+<!--         <layout>subjects</layout> -->
+        <layout>rights</layout>
+        <layout>expired</layout>
+      </layouts>
+   </type>
+   
+   <type id="ElectronicComponent">
+      <label>ElectronicComponent</label>
+      <icon>/icons/electronic_component_16.png</icon>
+      <bigIcon>/icons/electronic_component_100.png</bigIcon>
+      <category>BomGroup</category>
+      <description>ElectronicComponent.description</description>
+      <default-view>view_documents</default-view>
+      <create-view>create_doc_from_template</create-view>
+      <layouts mode="view">
+        <layout>summary_bom_part</layout>
+        <layout>responsible</layout>
+        <layout>summary_bom_item</layout>
+      </layouts>
+      <layouts mode="any">
+        <layout>elora_object</layout>
+        <layout>heading</layout>
+        <layout>bom_item</layout>
+        <layout>responsible</layout>
+        <layout>file</layout>
+        <layout>elora_viewer</layout>
+        <layout>bom_part</layout>
+<!--         <layout>subjects</layout> -->
         <layout>rights</layout>
         <layout>expired</layout>
       </layouts>
@@ -566,19 +629,23 @@
         <type>BomSpecification</type>
         <type>BomProduct</type>
         <type>BomCustomerProduct</type>
+        <type>Software</type>
+        <type>ElectronicComponent</type>
       </subtypes>
     </type>
     
     <type id="Project">
-      <subtypes>
-        <type>BomPart</type>
-        <type>BomManufacturerPart</type>
-        <type>BomTool</type>
-        <type>BomPackaging</type>
-        <type>BomSpecification</type>
-        <type>BomProduct</type>
-        <type>BomCustomerProduct</type>
-      </subtypes>
+        <subtypes>
+            <type>BomPart</type>
+            <type>BomManufacturerPart</type>
+            <type>BomTool</type>
+            <type>BomPackaging</type>
+            <type>BomSpecification</type>
+            <type>BomProduct</type>
+            <type>BomCustomerProduct</type>
+            <type>Software</type>
+            <type>ElectronicComponent</type>
+        </subtypes>
     </type>
  
     <type id="CmEco">
@@ -590,19 +657,23 @@
             <type>BomSpecification</type>
             <type>BomProduct</type>
             <type>BomCustomerProduct</type>
+            <type>Software</type>
+            <type>ElectronicComponent</type>
         </subtypes>
     </type>
     
     <type id="Folder">
-      <subtypes>
-        <type>BomPart</type>
-        <type>BomManufacturerPart</type>
-        <type>BomTool</type>
-        <type>BomPackaging</type>
-        <type>BomSpecification</type>
-        <type>BomProduct</type>
-        <type>BomCustomerProduct</type>
-      </subtypes>
+        <subtypes>
+            <type>BomPart</type>
+            <type>BomManufacturerPart</type>
+            <type>BomTool</type>
+            <type>BomPackaging</type>
+            <type>BomSpecification</type>
+            <type>BomProduct</type>
+            <type>BomCustomerProduct</type>
+            <type>Software</type>
+            <type>ElectronicComponent</type>
+        </subtypes>
     </type>
     
   </extension>

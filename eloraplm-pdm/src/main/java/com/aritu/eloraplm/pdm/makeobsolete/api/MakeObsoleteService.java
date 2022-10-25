@@ -57,4 +57,24 @@ public interface MakeObsoleteService {
             CoreSession session, List<DocumentModel> docs)
             throws EloraException;
 
+    /**
+     * @param session
+     * @param doc
+     * @return
+     * @throws EloraException
+     */
+    public CanMakeObsoleteResult canMakeObsoleteDocumentWithoutRelationChecks(
+            CoreSession session, DocumentModel doc) throws EloraException;
+
+    /**
+     * @param session
+     * @param doc
+     * @param processReference
+     * @return
+     * @throws EloraException
+     */
+    public CanMakeObsoleteResult makeObsoleteDocumentInProcess(
+            CoreSession session, DocumentModel doc, String processReference)
+            throws EloraException;
+
 }

@@ -23,7 +23,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.runtime.api.Framework;
 
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
  * Override Nuxeo Document.Unlock so that it follows EloraPLM's rules: Nuxeo
@@ -66,10 +66,13 @@ public class UnlockDocument {
 
     private boolean canUnlock(DocumentModel doc) {
         // TODO PowerUsers?
-        EloraVersionLabelService evls = Framework.getService(
-                EloraVersionLabelService.class);
+        VersionLabelService vls = Framework.getService(
+                VersionLabelService.class);
+        if (!doc.isLocked()) {
+            return false;
+        }
         if (doc.isVersionable() && doc.isCheckedOut()
-                && !doc.getVersionLabel().equals(evls.getZeroVersion())) {
+                && !doc.getVersionLabel().equals(vls.getZeroVersion())) {
             return false;
         }
 

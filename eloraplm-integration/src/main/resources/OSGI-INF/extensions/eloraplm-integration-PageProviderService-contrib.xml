@@ -11,6 +11,7 @@
                 AND ecm:isVersion = 0
                 AND ecm:currentLifeCycleState != 'deleted'
                 AND ecm:isProxy = 0
+                AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
                 AND ecm:primaryType IN (?)
                 AND collectionMember:collectionIds/* = ?
             </pattern>
@@ -29,6 +30,7 @@
                 AND ecm:isVersion = 0
                 AND ecm:parentId IS NOT NULL
                 AND ecm:currentLifeCycleState != 'deleted'
+                AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
                 AND (elo:reference ILIKE '?' OR ecm:fulltext.dc:title LIKE '?')
             </pattern>
             <sort column="elo:orderingPriority" ascending="true" />
@@ -46,13 +48,29 @@
                 AND ecm:isProxy = 0
                 AND ecm:isVersion = 0
                 AND ecm:parentId IS NOT NULL
-                AND ecm:currentLifeCycleState != 'deleted' 
+                AND ecm:currentLifeCycleState != 'deleted'
+                AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
                 AND (elo:reference ILIKE '?' OR ecm:fulltext.dc:title LIKE '?')
             </pattern>
             <sort column="elo:orderingPriority" ascending="true" />
             <sort column="elo:reference" ascending="true" />
             <sort column="dc:title" ascending="true" />
             <pageSize>10</pageSize>
+        </coreQueryPageProvider>
+        
+        <coreQueryPageProvider name="int_workable_domain_children">
+            <property name="maxResults">PAGE_SIZE</property>
+            <pattern escapeParameters="true" quoteParameters="false">
+                SELECT * FROM Document
+                WHERE ecm:mixinType = 'WorkableDomainChild'
+                AND ecm:mixinType != 'HiddenInNavigation'
+                AND ecm:isProxy = 0
+                AND ecm:currentLifeCycleState != 'deleted'
+                AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+            </pattern>
+            <sort column="elo:reference" ascending="true" />
+            <sort column="dc:title" ascending="true" />
+            <pageSize>100</pageSize>
         </coreQueryPageProvider>
         
     </extension>

@@ -1,16 +1,23 @@
 <ui:composition
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:p="http://primefaces.org/ui">
     
     <ui:fragment rendered="#{not empty currentSingleTasks}">
         <div class="workflowTasksMessage">
             <span>#{messages['eloraplm.wf.label.tasksToDo']}</span>
-            <input type="button"
+            &#160;
+            <p:commandButton
                 onclick="javascript: jQuery('#header_single_tasks_pane').toggle();"
-                value="#{messages['eloraplm.wf.label.showHideTasks']}" />
+                value="#{messages['eloraplm.wf.label.showHideTasks']}"
+                ajax="true"
+                action="#{workflowActions.toggleIsTasksPaneExpanded}"
+                process="@this"
+                partialSubmit="true"
+                immediate="true" />
         </div>
-        <div id="header_single_tasks_pane" style="display: none;">
+        <div id="header_single_tasks_pane" style="#{facesContext.isValidationFailed() or workflowActions.isTasksPaneExpanded ? '' : 'display: none;'}">
             <nxl:widget name="summary_current_document_single_tasks" mode="edit" value="#{currentDocument}" />
         </div>
     </ui:fragment>

@@ -1,0 +1,164 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:a4j="http://richfaces.org/a4j"  
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+>
+    <ui:remove>
+    
+    @TODO asyncProcessing???
+    
+    </ui:remove>
+    
+    <c:if test="#{(currentDocument.lockInfo.owner != currentUser and currentDocument.currentLifeCycleState != 'asyncProcessing')
+                  or (currentDocument.lockInfo.owner == currentUser)}">
+        <ui:include src="document_not_editable_warning.xhtml"/>
+    </c:if>
+    
+    <h2>
+        <h:outputText value="#{messages['eloraplm.title.om.process']}" />
+    </h2>
+    
+    <h:panelGroup styleClass="content" layout="block">
+        
+        <h:form id="makeObsoleteForm" styleClass="grayBox">
+            <h:panelGroup>
+                <a4j:outputPanel>
+                    <table>
+                        <tr>
+                            <td class="labelColumn"><strong><h:outputLabel value="#{messages['label.description']}:" /></strong></td>
+                            <td class="fieldColumn">#{currentDocument.dc.description}</td>
+                        </tr>
+                        <tr><td colspan="2">&#160;</td></tr>
+                        <tr>
+                            <td class="labelColumn"><strong><h:outputLabel value="#{messages['eloraplm.label.om.docToMakeObsolete']}:" /></strong></td>
+                            <td class="fieldColumn">
+                                <span id="viewSourceDocSpan" class="#{omActions.isSourceInEditMode ? 'hidden' : ''}">
+                                    <nxu:set var="savedSourceDoc" value="#{eloraWebActions.getDocumentFromId(currentDocument.omp.sourceDocRealUid)}">
+                                        <nxl:widget name="icon_reference_title" mode="view" value="#{savedSourceDoc}" />
+                                        <h:outputText value="&#160;&#160;&#160;" />
+                                        <nxl:widget name="version_and_visualized_type" mode="view" value="#{savedSourceDoc}" />
+                                        <h:outputText value="&#160;&#160;&#160;" />
+                                        <nxl:widget name="colored_lifecycle_state" mode="view" value="#{savedSourceDoc}" />
+                                        <h:outputText value="&#160;&#160;&#160;" />
+                                        <h:panelGroup rendered="#{currentDocument.omp.includePreviousVersions}">
+                                            <h:outputText value="#{messages['eloraplm.messages.om.previousVersionsIncluded']}" />
+                                            <h:outputText value="&#160;&#160;&#160;" />
+                                        </h:panelGroup>
+                                    </nxu:set>
+                                    
+                                    <p:commandButton actionListener="#{omActions.setIsSourceInEditMode(true)}"
+                                        immediate="true"
+                                        value="#{messages['eloraplm.command.edit']}"
+                                        process="@this"
+                                        styleClass="button"
+                                        disabled="#{currentDocument.currentLifeCycleState ne 'created'}"
+                                        ajax="false" />
+                                    
+                                    <p:commandButton actionListener="#{omImpactedTableBean.calculateImpactedDocs}"
+                                        value="#{messages['eloraplm.command.calculate']}"
+                                        process="@this"
+                                        styleClass="button"
+                                        disabled="#{empty omActions.sourceDocRealUid or
+                                            (currentDocument.currentLifeCycleState ne 'created' and currentDocument.currentLifeCycleState ne 'working')}"
+                                        ajax="false" />
+                                    
+                                </span>
+                                
+                                <span id="editSourceDocSpan" class="#{not omActions.isSourceInEditMode ? 'hidden' : ''}">
+                                    <nxl:widgetType name="singleDocumentSuggestion" mode="edit"
+                                        ajaxReRender="obsoleteSourceDocRealUid obsoleteFormButtons"
+                                        value="#{omActions}" field="sourceDocWcUid"
+                                        translated="true"
+                                        width="100%"
+                                        placeholder="#{messages['eloraplm.label.suggestion.om.sourceDoc.placeholder']}"
+                                        pageProviderName="cad_bom_non_obsolete_wc_suggestion"
+                                        required="true"
+                                        documentSchemas="dublincore,common,elora_object,template_info"
+                                        additionalOperationParameters="eloraPassQueryTermsTwice">
+                                    </nxl:widgetType>
+                                    
+                                    <h:panelGroup id="obsoleteSourceDocRealUid">
+                                        <ui:fragment rendered="#{omActions.sourceDocWcUid != null}">
+                                            <c:choose>
+                                                <c:when test="${omActions.sourceDocVersionList != null and omActions.sourceDocVersionList.size() > 0}">
+                                                    <h:selectOneListbox id="sourceDocRealUid"
+                                                        styleClass="dataInputText"
+                                                        size="1"
+                                                        value="#{omActions.sourceDocRealUid}">
+                                                        
+                                                        <nxu:selectItems value="#{omActions.sourceDocVersionList}"
+                                                            var="version" itemValue="#{version.key}"
+                                                            itemLabel="#{version.value}" />
+                                                        
+                                                        <f:ajax event="change" execute="@this" render="obsoleteFormButtons includeAllPreviousVersions"/>
+                                                    </h:selectOneListbox>
+                                                    
+                                                    <nxu:set var="sourceDocRealRef" value="#{eloraWebActions.getDocumentRefFromId(omActions.sourceDocRealUid)}">
+                                                        <h:panelGroup id="includeAllPreviousVersions" rendered="#{fn:length(eloraWebActions.getDocumentVersionRefs(sourceDocRealRef)) gt 1}">
+                                                            <h:selectBooleanCheckbox 
+                                                                disabled="#{eloraWebActions.isBaseVersion(sourceDocRealRef)}"
+                                                                value="#{omActions.includeAllPreviousVersions}"  />
+                                                            <h:outputLabel for="includeAllPreviousVersions" value="#{messages['eloraplm.label.om.includeAllPreviousVersions']}" />
+                                                        </h:panelGroup>
+                                                    </nxu:set>
+                                                    
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <h:outputText value="#{messages['eloraplm.message.om.emptySourceDocVersionList']}"  class="errorMessage"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                    <h:panelGroup id="obsoleteFormButtons">
+                                        <ui:fragment rendered="#{omActions.sourceDocRealUid != null}">
+                                            <h:commandButton value="#{messages['command.save']}" styleClass="button" action="#{omActions.saveSourceDoc}" />
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </a4j:outputPanel>
+            </h:panelGroup>
+        </h:form>
+        
+        <br />
+        <h:outputText value="#{messages['eloraplm.message.warning.om.allVersionsWillObsoleteIfBaseIsSelected']}" styleClass="processMessage completeWarning" />
+        
+        <h:panelGroup>
+            
+            <div>
+                <ui:fragment>
+                    <h3><h:outputText value="#{messages['eloraplm.title.om.impactList']}" /></h3>
+                    
+                    <nxl:widget name="om_imp_dt" mode="#{currentDocument.currentLifeCycleState eq 'completed'
+                        or currentDocument.currentLifeCycleState eq 'rejected' ? 'view' : 'edit'}" value="#{omImpactedTableBean}" />
+                    
+                </ui:fragment>
+            </div>
+            
+            <br />
+            <h:outputText value="#{messages['eloraplm.message.info.om.docsProcessingOrder']}" styleClass="processMessage completeInfo" />
+            
+            <div>
+                <ui:fragment>
+                    <h3><h:outputText value="#{messages['eloraplm.title.om.processedList']}" /></h3>
+                    
+                    <nxl:widget name="om_proc_dt" mode="view" value="#{omProcessedTableBean}" />
+                    
+                </ui:fragment>
+                
+            </div>
+            
+        </h:panelGroup>
+        
+    </h:panelGroup>
+    
+</ui:composition>

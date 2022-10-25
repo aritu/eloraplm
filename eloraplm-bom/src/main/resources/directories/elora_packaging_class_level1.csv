@@ -1,4 +1,15 @@
-id,label,obsolete
-id_pkcl1_1,Packaging Line 1,0
-id_pkcl1_2,Packaging Line 2,0
-id_pkcl1_3,Packaging Line 3,0
+id,label,obsolete,ordering
+"Cushioning","Amortiguación","0","001"
+"Tray","Bandeja","0","002"
+"Bag","Bolsa","0","003"
+"CardboarBox","Caja de cartón","0","004"
+"Closure","Cierre","0","005"
+"Pail","Cubeta","0","006"
+"Wrapper","Envoltorio","0","007"
+"Label","Etiqueta","0","008"
+"Strapping","Fleje","0","009"
+"Weatherproofing","Impermeabilización","0","010"
+"Crate","Jaula","0","011"
+"Bracing","Refuerzo","0","012"
+"Divider","Separador","0","013"
+"Packaging ink","Tinta de Embalaje","0","014"

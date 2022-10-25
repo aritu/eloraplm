@@ -36,6 +36,16 @@
           title="#{messages['label.permalink']}"/>
       </nxd:restDocumentLink>
     </span>
+    
+    <h:panelGroup rendered="#{currentUser.isAdministrator() or currentUser.isMemberOf('powerusers')}">
+        <a href="#" onclick="copyTextToClipboard('#{field.id}'); return false;">
+            <h:graphicImage value="/icons/badge_uid_16.png"
+                style="vertical-align:middle"
+                styleClass="tipsyShow tipsyGravityS"
+                alt="UID"
+                title="#{messages['eloraplm.label.uid.copy']}"/>
+        </a>
+    </h:panelGroup>
 
     <nxu:set var="actions"
       value="#{webActions.getActionsList('DOCUMENT_HEADER_ACTIONS_LIST')}"

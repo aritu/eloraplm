@@ -1,0 +1,4 @@
+id,label,obsolete,ordering
+"ConfigurationFile","eloraplm.label.cad.attachments.type.ConfigurationFile","0","1"
+"DesignBinder","eloraplm.label.cad.attachments.type.DesignBinder","0","2"
+"DLName","eloraplm.label.cad.attachments.type.DLName","0","3"

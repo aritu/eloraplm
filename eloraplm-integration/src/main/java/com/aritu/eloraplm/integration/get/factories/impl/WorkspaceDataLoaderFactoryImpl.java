@@ -33,9 +33,8 @@ public class WorkspaceDataLoaderFactoryImpl
             throws EloraException {
         switch (doc.getType()) {
         case NuxeoDoctypeConstants.WORKSPACE:
-            return new GeneralWorkspaceDataLoader(doc);
         case EloraDoctypeConstants.PROJECT:
-            return new ProjectDataLoader(doc);
+            return new GeneralWorkspaceDataLoader(doc);
         default:
             return null;
         }

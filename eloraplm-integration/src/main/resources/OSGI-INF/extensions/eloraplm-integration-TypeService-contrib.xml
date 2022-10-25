@@ -45,13 +45,13 @@
 
         <type id="CadAssemblyDraft">
             <label>CadAssemblyDraft</label>
-            <icon>/icons/cad_assembly_draft_16.gif</icon>
+            <icon>/icons/cad_assembly_draft_16.png</icon>
             <bigIcon>/icons/cad_assembly_draft_100.png</bigIcon>
             <category>EloraDraft</category>
             <description>CadAssemblyDraft.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
@@ -59,7 +59,7 @@
                 <layout>cad_assembly</layout>
             </layouts>
             <layouts mode="edit">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
@@ -71,13 +71,13 @@
         
         <type id="CadPartDraft">
             <label>CadPartDraft</label>
-            <icon>/icons/cad_part_draft_16.gif</icon>
+            <icon>/icons/cad_part_draft_16.png</icon>
             <bigIcon>/icons/cad_part_draft_100.png</bigIcon>
             <category>CadGroup</category>
             <description>CadPartDraft.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
@@ -85,7 +85,7 @@
                 <layout>cad_part</layout>
             </layouts>
             <layouts mode="edit">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
@@ -97,13 +97,13 @@
 
         <type id="CadDrawingDraft">
             <label>CadDrawingDraft</label>
-            <icon>/icons/cad_drawing_draft_16.gif</icon>
+            <icon>/icons/cad_drawing_draft_16.png</icon>
             <bigIcon>/icons/cad_drawing_draft_100.png</bigIcon>
             <category>CadGroup</category>
             <description>CadDrawingDraft.description</description>
             <default-view>view_documents</default-view>
             <layouts mode="any">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
@@ -111,7 +111,7 @@
                 <layout>cad_drawing</layout>
             </layouts>
             <layouts mode="edit">
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>elora_viewer</layout>
@@ -123,7 +123,7 @@
         
         <type id="CadDesignTableDraft">
             <label>CadDesignTableDraft</label>
-            <icon>/icons/cad_design_table_draft_16.gif</icon>
+            <icon>/icons/cad_design_table_draft_16.png</icon>
             <bigIcon>/icons/cad_design_table_draft_100.png</bigIcon>
             <category>CadGroup</category>
             <description>CadDesignTableDraft.description</description>
@@ -131,7 +131,7 @@
             <layouts mode="any">
                 <layout>heading</layout>
                 <layout>file</layout>
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>cad_document</layout>
                 <layout>cad_design_table</layout>
             </layouts>
@@ -139,7 +139,7 @@
                 <layout>heading</layout>
                 <layout>file</layout>
                 <layout>dublincore</layout>
-                <layout>elora_object_reference_required</layout>
+                <layout>elora_object</layout>
                 <layout>cad_document</layout>
                 <layout>cad_design_table</layout>
             </layouts>
@@ -147,7 +147,7 @@
         
         <type id="FolderDraft">
             <label>FolderDraft</label>
-            <icon>/icons/folder_draft_16.gif</icon>
+            <icon>/icons/folder_draft_16.png</icon>
             <bigIcon>/icons/folder_draft_100.png</bigIcon>
             <category>Collaborative</category>
             <description>FolderDraft.description</description>
@@ -171,7 +171,7 @@
         
         <type id="OrderedFolderDraft">
             <label>OrderedFolderDraft</label>
-            <icon>/icons/ordered_folder_draft_16.gif</icon>
+            <icon>/icons/ordered_folder_draft_16.png</icon>
             <bigIcon>/icons/ordered_folder_draft_100.png</bigIcon>
             <category>Collaborative</category>
             <description>OrderedFolderDraft.description</description>

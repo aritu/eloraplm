@@ -24,6 +24,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -147,6 +148,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -168,6 +170,9 @@
           </predicate>
            <predicate parameter="cad:cadClassification" operator="IN">
             <field schema="elora_search" name="cad_cadClassification" />
+          </predicate>
+          <predicate parameter="cad:cadMaterial" operator="ILIKE">
+            <field schema="elora_search" name="cad_cadMaterial" />
           </predicate>
           <predicate parameter="dc:creator" operator="IN">
             <field schema="elora_search" name="dc_creator" />
@@ -259,12 +264,12 @@
         <whereClause docType="EloraBasicDocsSearch">
           <fixedPart>
             ecm:mixinType = 'BasicDocument'
-            AND  ecm:primaryType IN ('File', 'Note', 'Audio', 'Picture', 'Video')
             AND ecm:isVersion = 0
             AND ecm:isProxy = 0
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -379,6 +384,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -499,6 +505,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -616,6 +623,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -739,6 +747,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -858,13 +867,13 @@
         <property name="coreSession">#{documentManager}</property>
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraBomPartsSearch">
-          <fixedPart>
-            ecm:primaryType = 'BomPart'
-            AND ecm:isVersion = 0
+          <fixedPart statement="SELECT * FROM BomPart">
+            ecm:isVersion = 0
             AND ecm:isProxy = 0
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -982,6 +991,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -1091,6 +1101,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -1166,7 +1177,7 @@
         <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
           translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
           showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
+        <layout name="project_listing_table" title="document_listing"
           translateTitle="true" iconPath="/icons/document_listing_icon.png"
           showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
       </resultLayouts>
@@ -1200,6 +1211,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
@@ -1296,6 +1308,126 @@
       </flags>
     </contentView>
     
+    <contentView name="elora_locked_documents_search">
+      <title>label.EloraSearch.lockedDocuments</title>
+      <translateTitle>true</translateTitle>
+      <showTitle>false</showTitle>
+      <emptySentence>label.content.empty.search</emptySentence>
+      <translateEmptySentence>true</translateEmptySentence>
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+        <whereClause docType="EloraLockedDocsSearch">
+          <fixedPart>
+            ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot', 'WorkspaceRoot', 'Favorites')
+            AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
+            AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
+            AND ecm:lockOwner IS NOT NULL
+            AND ecm:isVersion = 0
+            AND ecm:isProxy = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND ecm:parentId IS NOT NULL
+            AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
+          </fixedPart>
+          <!-- <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+            <field schema="default_search" name="ecm_fulltext" />
+          </predicate>
+          <predicate parameter="elo:reference" operator="ILIKE">
+            <field schema="elora_search" name="elo_reference" />
+          </predicate>
+          <predicate parameter="dc:title" operator="FULLTEXT">
+            <field schema="elora_search" name="dc_title_fulltext" /> 
+          </predicate> -->
+          <predicate parameter="ecm:lockOwner" operator="IN">
+            <field schema="elora_search" name="lock_owner" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="ecm:lockCreated">
+            <field schema="elora_search" name="lock_created_min"/>
+            <field schema="elora_search" name="lock_created_max"/>
+          </predicate>
+          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+            <field schema="elora_search" name="system_currentLifeCycleState" />
+          </predicate>
+          <predicate parameter="ecm:mixinType" operator="IN">
+            <field schema="elora_search" name="system_mixinType" />
+          </predicate>
+          <predicate parameter="ecm:primaryType" operator="IN">
+            <field schema="elora_search" name="system_primaryType" />
+          </predicate>
+          <!-- <predicate parameter="cust:customers" operator="IN">
+            <field schema="elora_search" name="search_customer" />
+          </predicate>
+          <predicate parameter="manu:manufacturers" operator="IN">
+            <field schema="elora_search" name="search_manufacturer" />
+          </predicate>
+          <predicate parameter="resp:responsible" operator="IN">
+            <field schema="elora_search" name="search_responsible" />
+          </predicate>  -->
+          <predicate parameter="dc:creator" operator="IN">
+            <field schema="elora_search" name="dc_creator" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="dc:created">
+            <field name="dc_created_min" schema="default_search"/>
+            <field name="dc_created_max" schema="default_search"/>
+          </predicate>
+          <predicate parameter="dc:lastContributor" operator="IN">
+            <field schema="elora_search" name="dc_lastContributor" />
+          </predicate>
+          <predicate operator="BETWEEN" parameter="dc:modified">
+            <field name="dc_modified_min" schema="default_search"/>
+            <field name="dc_modified_max" schema="default_search"/>
+          </predicate>
+          <predicate operator="BETWEEN" parameter="dc:expired">
+            <field schema="elora_search" name="dc_expired_min"/>
+            <field schema="elora_search" name="dc_expired_max"/>
+          </predicate>
+          <predicate parameter="ecm:path" operator="STARTSWITH">
+            <field schema="default_search" name="ecm_path" />
+          </predicate>
+          <predicate parameter="ecm:tag" operator="IN">
+            <field schema="default_search" name="ecm_tags" />
+          </predicate>
+        </whereClause>
+        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" />
+        <pageSize>20</pageSize>
+      </coreQueryPageProvider>
+      <searchLayout name="elora_locked_documents_search_layout" />
+      <waitForExecution>true</waitForExecution>
+      <waitForExecutionSentence>
+        label.search.waitForExecution
+      </waitForExecutionSentence>
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChanged</event>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+      <cacheSize>10</cacheSize>
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+      <resultColumns>
+        #{searchDocument.cvd.selectedLayoutColumns}
+      </resultColumns>
+      <resultLayout>
+        #{searchDocument.cvd.resultLayoutName}
+      </resultLayout>
+      <flags>
+        <flag>SEARCH</flag>
+      </flags>
+    </contentView>
+    
     
      <!-- Override simple_search content view in order to change the query -->
     <contentView name="simple_search">
@@ -1319,6 +1451,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
             AND ecm:parentId IS NOT NULL
             AND SORTED_COLUMN IS NOT NULL
+            AND templ:isTemplate != 1
           </fixedPart>
           <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />

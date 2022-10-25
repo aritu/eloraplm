@@ -20,9 +20,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,6 +42,7 @@ import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.LifeCycleConstants;
 import org.nuxeo.ecm.core.api.Lock;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
+import org.nuxeo.ecm.core.api.PropertyException;
 import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
@@ -50,6 +51,7 @@ import org.nuxeo.ecm.core.api.impl.CompoundFilter;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.api.impl.FacetFilter;
 import org.nuxeo.ecm.core.api.impl.LifeCycleFilter;
+import org.nuxeo.ecm.core.api.model.Property;
 import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.core.model.Document;
 import org.nuxeo.ecm.core.model.Session;
@@ -98,7 +100,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.UnlockCheckedOutDocumentException;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.aritu.eloraplm.queries.util.EloraQueryHelper;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 public class EloraDocumentHelper {
 
@@ -155,11 +157,11 @@ public class EloraDocumentHelper {
             if (principal.isAdministrator()
                     || principal.getName().equals(lockOwner)) {
 
-                EloraVersionLabelService eloraVersionLabelService = Framework.getService(
-                        EloraVersionLabelService.class);
+                VersionLabelService versionLabelService = Framework.getService(
+                        VersionLabelService.class);
                 if (wcDoc.isVersionable() && wcDoc.isCheckedOut()
                         && !(wcDoc.getVersionLabel().equals(
-                                eloraVersionLabelService.getZeroVersion()))) {
+                                versionLabelService.getZeroVersion()))) {
                     throw new UnlockCheckedOutDocumentException(wcDoc);
                 }
 
@@ -249,7 +251,8 @@ public class EloraDocumentHelper {
         doc.setPropertyValue(VersioningService.MINOR_VERSION_PROP,
                 Long.valueOf(splittedVersionLabel[1]));
 
-        doc.putContextData(EloraGeneralConstants.CONTEXT_KEY_DOC_VERSION_LABEL,
+        doc.putContextData(
+                EloraGeneralConstants.CONTEXT_KEY_DOC_VERSION_LABEL_ON_CHECKIN,
                 versionLabel);
 
         return doc;
@@ -385,11 +388,17 @@ public class EloraDocumentHelper {
         return null;
     }
 
-    public static void relateBatchWithDoc(DocumentModel doc, int fileId,
-            String batch, String fileType, String fileName, String hash)
+    public static <T extends EloraFileInfo> void relateBatchWithDoc(
+            DocumentModel doc, String fileType, T fileInfo)
             throws EloraException {
         String logInitMsg = "[relateBatchWithDoc] ";
         try {
+            EloraFileInfo fi = fileInfo;
+            int fileId = fi.getFileId();
+            String batch = fi.getBatch();
+            String fileName = fi.getFileName();
+            String hash = fi.getHash();
+
             BatchManager bm = Framework.getLocalService(BatchManager.class);
             Blob blob = bm.getBlob(batch, String.valueOf(fileId));
 
@@ -447,10 +456,13 @@ public class EloraDocumentHelper {
                     blob.setFilename(fileName);
                 }
 
-                DocumentHelper.addBlob(
-                        doc.getProperty(
-                                EloraMetadataConstants.ELORA_CADATTS_FILES),
-                        blob);
+                // Add attachment type
+                CadAttachmentInfo caddatt = (CadAttachmentInfo) fileInfo;
+                String attType = caddatt.getType();
+
+                addCadAttachment(doc.getProperty(
+                        EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS), blob,
+                        attType);
                 break;
             case EloraGeneralConstants.FILE_TYPE_VIEWER:
                 if (fileName != null) {
@@ -478,9 +490,18 @@ public class EloraDocumentHelper {
         }
     }
 
-    public static void setupCheckIn(
-            EloraVersionLabelService versionLabelService, DocumentModel doc,
-            String checkinComment) {
+    public static void addCadAttachment(Property p, Blob blob, String attType)
+            throws PropertyException {
+        HashMap<String, Serializable> map = new HashMap<String, Serializable>();
+        map.put("file", (Serializable) blob);
+        map.put("filename", blob.getFilename());
+        map.put("type", attType);
+
+        p.addValue(map);
+    }
+
+    public static void setupCheckIn(VersionLabelService versionLabelService,
+            DocumentModel doc, String checkinComment) {
         // Save and check in the document
         doc.putContextData(VersioningService.CHECKIN_COMMENT, checkinComment);
 
@@ -552,13 +573,22 @@ public class EloraDocumentHelper {
             if (doc.isVersion()) {
                 doc.putContextData(CoreSession.ALLOW_VERSION_WRITE,
                         Boolean.TRUE);
-                doc.putContextData("disableMajorLetterTranslation",
+                doc.putContextData(
+                        VersionLabelService.OPT_DISABLE_VERSION_LABEL_TRANSLATION,
                         Boolean.TRUE);
             }
         } catch (Exception e) {
             // TODO: handle exception
             throw new EloraException(e.getMessage());
         }
+    }
+
+    public static DocumentModel getWcDocumentByReference(CoreSession session,
+            String reference) throws EloraException {
+
+        String query = EloraQueryFactory.getWcDocsByReference(reference);
+
+        return EloraQueryHelper.executeGetFirstQuery(query, session);
     }
 
     /**
@@ -609,8 +639,8 @@ public class EloraDocumentHelper {
     public static String calculateNextMajorVersion(DocumentModel realDoc)
             throws EloraException {
 
-        EloraVersionLabelService versionLabelService = Framework.getService(
-                EloraVersionLabelService.class);
+        VersionLabelService versionLabelService = Framework.getService(
+                VersionLabelService.class);
         Long major = (Long) realDoc.getPropertyValue(
                 VersioningService.MAJOR_VERSION_PROP);
 
@@ -620,16 +650,15 @@ public class EloraDocumentHelper {
             major++;
         }
 
-        return versionLabelService.translateMajor(major).toString();
-
+        return versionLabelService.translateMajor(major);
     }
 
     // TODO Probau ondo dabilela
     public static String calculateNextMinorVersion(DocumentModel realDoc)
             throws EloraException {
 
-        EloraVersionLabelService versionLabelService = Framework.getService(
-                EloraVersionLabelService.class);
+        VersionLabelService versionLabelService = Framework.getService(
+                VersionLabelService.class);
         Long minor = (Long) realDoc.getPropertyValue(
                 VersioningService.MINOR_VERSION_PROP);
 
@@ -641,14 +670,13 @@ public class EloraDocumentHelper {
             minor = (long) 0;
         }
 
-        return versionLabelService.translateMinor(minor).toString();
+        return versionLabelService.translateMinor(minor);
 
     }
 
     // TODO Probau ondo dabilela
-    public static String calculateNextVersionLabel(
-            EloraVersionLabelService versionLabelService, DocumentModel realDoc)
-            throws EloraException {
+    public static String calculateNextVersionLabel(VersionLabelService vls,
+            DocumentModel realDoc) throws EloraException {
         String nextVersionLabel = "";
 
         Long major = (Long) realDoc.getPropertyValue(
@@ -656,8 +684,7 @@ public class EloraDocumentHelper {
         Long minor = (Long) realDoc.getPropertyValue(
                 VersioningService.MINOR_VERSION_PROP);
 
-        String nextIncrement = calculateNextVersionIncrement(
-                versionLabelService, realDoc);
+        String nextIncrement = calculateNextVersionIncrement(vls, realDoc);
         switch (nextIncrement) {
         case "major":
             major++;
@@ -671,8 +698,8 @@ public class EloraDocumentHelper {
                     "Unsupported increment option when calculating the next version label.");
         }
 
-        nextVersionLabel = versionLabelService.translateMajor(major).toString()
-                + "." + versionLabelService.translateMinor(minor).toString();
+        nextVersionLabel = vls.translateMajor(major) + vls.getVersionSeparator()
+                + vls.translateMinor(minor);
 
         return nextVersionLabel;
 
@@ -680,8 +707,7 @@ public class EloraDocumentHelper {
 
     // TODO Probau ondo dabilela
     public static String calculateNextVersionIncrement(
-            EloraVersionLabelService versionLabelService,
-            DocumentModel realDoc) {
+            VersionLabelService versionLabelService, DocumentModel realDoc) {
 
         long major = ((Long) realDoc.getPropertyValue(
                 VersioningService.MAJOR_VERSION_PROP)).longValue();
@@ -735,7 +761,9 @@ public class EloraDocumentHelper {
             // We have to emulate the saveDocument, the document has to follow a
             // transition in some states
             String lifecycleState = doc.getCurrentLifeCycleState();
-            if (EloraLifeCycleConstants.APPROVED.equals(lifecycleState)) {
+            boolean isReleasedState = isReleasedState(lifecycleState);
+            if (isReleasedState && doc.getAllowedStateTransitions().contains(
+                    EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY)) {
                 doc.followTransition(
                         EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY);
             }
@@ -811,15 +839,39 @@ public class EloraDocumentHelper {
         return restoredDocument;
     }
 
-    public static void relateDocumentWithBinaries(DocumentModel wcDoc,
-            EloraFileInfo fileInfo, String type, CoreSession session)
-            throws EloraException {
+    /**
+     * Relate blob from batch with document
+     *
+     * @param doc
+     * @param fileInfo
+     * @param type
+     * @throws EloraException
+     */
+    public static void relateDocumentWithBinary(DocumentModel doc,
+            EloraFileInfo fileInfo, String fileType) throws EloraException {
 
         if (fileInfo != null) {
             if (fileInfo.getBatch() != null && fileInfo.getFileName() != null) {
-                EloraDocumentHelper.relateBatchWithDoc(wcDoc,
-                        fileInfo.getFileId(), fileInfo.getBatch(), type,
-                        fileInfo.getFileName(), fileInfo.getHash());
+                EloraDocumentHelper.relateBatchWithDoc(doc, fileType, fileInfo);
+            }
+        }
+    }
+
+    /**
+     * Relate blob list from batch with document
+     *
+     * @param doc
+     * @param fileInfoList
+     * @param type
+     * @throws EloraException
+     */
+    public static void relateDocumentWithBinaries(DocumentModel doc,
+            List<EloraFileInfo> fileInfoList, String type)
+            throws EloraException {
+
+        if (fileInfoList != null) {
+            for (EloraFileInfo fileInfo : fileInfoList) {
+                relateDocumentWithBinary(doc, fileInfo, type);
             }
         }
     }
@@ -911,8 +963,8 @@ public class EloraDocumentHelper {
         if (releasedDocs.size() > 0) {
             boolean completed = false;
             for (DocumentModel releasedDoc : releasedDocs) {
-                String promotableMajor = releasedDoc.getPropertyValue(
-                        NuxeoMetadataConstants.NX_UID_MAJOR_VERSION).toString();
+                Long promotableMajor = (Long) releasedDoc.getPropertyValue(
+                        NuxeoMetadataConstants.NX_UID_MAJOR_VERSION);
                 if (promotableMajor.equals(majorVersion)) {
                     // If one of them has majorVersion then finish
                     completed = true;
@@ -949,6 +1001,37 @@ public class EloraDocumentHelper {
         DocumentModelList result = session.query(query, limit);
 
         return result;
+    }
+
+    public static List<DocumentModel> getPreviousVersions(CoreSession session,
+            DocumentModel avDoc) throws EloraException {
+        List<DocumentModel> versions = new ArrayList<DocumentModel>();
+
+        // Check if the AV is Base - If it is, then all versions are considered
+        // previous
+        DocumentModel wcDoc = session.getWorkingCopy(avDoc.getRef());
+
+        DocumentModel baseDoc = getBaseVersion(wcDoc);
+        if (baseDoc != null && baseDoc.getId().equals(avDoc.getId())) {
+            versions = session.getVersions(wcDoc.getRef());
+            versions.remove(avDoc);
+        }
+        // If it is not Base, then we get versions with lower major or same
+        // major & lower minor
+        else {
+
+            long major = (long) avDoc.getPropertyValue(
+                    VersioningService.MAJOR_VERSION_PROP);
+            long minor = (long) avDoc.getPropertyValue(
+                    VersioningService.MINOR_VERSION_PROP);
+
+            String query = EloraQueryFactory.getPreviousVersionsQuery(
+                    avDoc.getType(), wcDoc.getId(), major, minor);
+
+            versions = session.query(query);
+        }
+
+        return versions;
     }
 
     public static boolean isReleased(DocumentModel doc) throws EloraException {
@@ -999,7 +1082,6 @@ public class EloraDocumentHelper {
      */
     public static boolean isEditable(DocumentModel doc) {
         CoreSession session = doc.getCoreSession();
-        String currentUser = doc.getCoreSession().getPrincipal().getName();
 
         // We don't check that it is not a proxy, because in some cases we enter
         // the function through a proxy
@@ -1015,17 +1097,11 @@ public class EloraDocumentHelper {
                 // Non-versionable, but lock required
                 if (doc.hasFacet(
                         EloraFacetConstants.FACET_LOCK_REQUIRED_TO_EDIT)) {
-                    if (doc.isLocked() && doc.getLockInfo().getOwner().equals(
-                            currentUser)) {
-                        return true;
-                    }
+                    return isLockedByMe(doc);
                 }
                 // Non-versionable and free to edit
                 else {
-                    if (!doc.isLocked() || doc.getLockInfo().getOwner().equals(
-                            currentUser)) {
-                        return true;
-                    }
+                    return isNotLockedOrLockedByMe(doc);
                 }
             }
         }
@@ -1042,16 +1118,36 @@ public class EloraDocumentHelper {
         }
     }
 
-    public static void checkThatIsCheckedOutByMe(DocumentModel doc)
+    public static void checkThatIsCheckedOut(DocumentModel doc)
             throws DocumentNotCheckedOutException {
-        // String logInitMsg = "[checkThatIsCheckedOutByMe]";
-
-        String currentUser = doc.getCoreSession().getPrincipal().getName();
-        if (!doc.isCheckedOut() || !(doc.isLocked()
-                && doc.getLockInfo().getOwner().equals(currentUser))) {
+        if (!doc.isCheckedOut()) {
             throw new DocumentNotCheckedOutException(doc);
         }
-        // log.trace(logInitMsg + "Document checked out by user");
+    }
+
+    public static void checkThatIsCheckedOutByMe(DocumentModel doc)
+            throws DocumentNotCheckedOutException {
+        if (!doc.isCheckedOut() || !isLockedByMe(doc)) {
+            throw new DocumentNotCheckedOutException(doc);
+        }
+    }
+
+    public static boolean isLockedByMe(DocumentModel doc) {
+        String currentUser = doc.getCoreSession().getPrincipal().getName();
+        if (doc.isLocked()
+                && doc.getLockInfo().getOwner().equals(currentUser)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNotLockedOrLockedByMe(DocumentModel doc) {
+        String currentUser = doc.getCoreSession().getPrincipal().getName();
+        if (!doc.isLocked()
+                || doc.getLockInfo().getOwner().equals(currentUser)) {
+            return true;
+        }
+        return false;
     }
 
     public static void copyProperties(DocumentModel from, DocumentModel to) {
@@ -1081,6 +1177,7 @@ public class EloraDocumentHelper {
         List<String> ignoredSchemas = new ArrayList<String>();
         ignoredSchemas.add(NuxeoMetadataConstants.NX_SCHEMA_UID);
         ignoredSchemas.add(EloraSchemaConstants.STATES_LOG);
+        ignoredSchemas.add(EloraSchemaConstants.VERSION_LABEL);
 
         for (String schema : to.getSchemas()) {
             if (from.hasSchema(schema) && !ignoredSchemas.contains(schema)) {
@@ -1360,17 +1457,155 @@ public class EloraDocumentHelper {
 
         boolean result = false;
 
-        DocumentModel parentDoc = session.getParentDocument(doc.getRef());
-
-        if (parentDoc != null) {
-            if (parentDoc.getType().equals(
-                    NuxeoDoctypeConstants.TEMPLATE_ROOT)) {
-                return true;
-            } else {
-                result = isDocumentUnderTemplateRoot(parentDoc, session);
+        // We cut the loop if it gets to the Root.
+        if (!doc.getType().equals(NuxeoDoctypeConstants.ROOT)) {
+            DocumentModel parentDoc = getParentDoc(doc, session);
+            if (parentDoc != null) {
+                if (parentDoc.getType().equals(
+                        NuxeoDoctypeConstants.TEMPLATE_ROOT)) {
+                    return true;
+                } else {
+                    result = isDocumentUnderTemplateRoot(parentDoc, session);
+                }
             }
         }
+
         return result;
+    }
+
+    public static boolean isTemplate(String docId, CoreSession session) {
+        DocumentModel doc = session.getDocument(new IdRef(docId));
+        return isTemplate(doc);
+    }
+
+    public static boolean isTemplatable(DocumentModel doc) {
+        return doc.hasFacet(EloraFacetConstants.FACET_TEMPLATABLE);
+    }
+
+    public static boolean isTemplate(DocumentModel doc) {
+        boolean isTemplate = false;
+        if (isTemplatable(doc)) {
+            isTemplate = (boolean) doc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_TEMPL_IS_TEMPLATE);
+        }
+        return isTemplate;
+    }
+
+    public static DocumentModel getParentDoc(DocumentModel doc,
+            CoreSession session) {
+        DocumentModel parentDoc = null;
+
+        // We do not use session.getParentDocument, because when we call it
+        // before document creation it fails, but parent ref always works
+        if (session.hasPermission(doc.getParentRef(), SecurityConstants.READ)) {
+            parentDoc = session.getDocument(doc.getParentRef());
+        }
+
+        return parentDoc;
+    }
+
+    public static boolean isReleasedState(String lifeCycleState) {
+        if (LifecyclesConfig.releasedStatesList.contains(lifeCycleState)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static List<DocumentModel> calculateDocVersionList(String docWcUid,
+            boolean onlyReleasedVersions, CoreSession session)
+            throws EloraException {
+
+        String logInitMsg = "[calculateDocVersionList] ["
+                + session.getPrincipal().getName() + "] ";
+
+        try {
+            DocumentModelList docVersionList = new DocumentModelListImpl();
+
+            if (onlyReleasedVersions) {
+                DocumentModel wcDoc = session.getDocument(new IdRef(docWcUid));
+                if (wcDoc == null) {
+                    log.error(logInitMsg + "Document with uid |" + docWcUid
+                            + "| does not exist.");
+                    throw new EloraException("Document with uid |" + docWcUid
+                            + "| does not exist.");
+                }
+
+                String query = EloraQueryFactory.getReleasedDocsQuery(
+                        wcDoc.getType(), docWcUid,
+                        QueriesConstants.SORT_ORDER_ASC);
+
+                docVersionList = session.query(query);
+            } else {
+                List<DocumentModel> versions = session.getVersions(
+                        new IdRef(docWcUid));
+                if (versions != null && versions.size() > 0) {
+                    for (int i = 0; i < versions.size(); i++) {
+                        docVersionList.add(versions.get(i));
+                    }
+                }
+            }
+            return docVersionList;
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(e.getMessage());
+        }
+    }
+
+    public static Map<String, String> convertDocVersionListIntoMap(
+            List<DocumentModel> docVersionList) {
+
+        Map<String, String> versionList = new LinkedHashMap<String, String>();
+
+        if (docVersionList != null && docVersionList.size() > 0) {
+            for (DocumentModel doc : docVersionList) {
+                String docUid = doc.getId();
+                String versionLabel = doc.getVersionLabel();
+                versionList.put(docUid, versionLabel);
+            }
+        }
+        return versionList;
+    }
+
+    public static boolean isArchived(DocumentModel workspace) {
+        if (workspace != null
+                && workspace.hasFacet(EloraFacetConstants.FACET_ARCHIVABLE)
+                && workspace.getPropertyValue(
+                        EloraMetadataConstants.ELORA_ARC_ISARCHIVED) != null) {
+            return (boolean) workspace.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ARC_ISARCHIVED);
+        }
+
+        return false;
+    }
+
+    /**
+     * Validates if the specified document reference is valid. If it is not
+     * valid, an EloraException is thrown with the failure reason as message.
+     *
+     * @param session
+     * @param reference
+     * @param docType
+     * @param excludedUid
+     * @throws EloraException
+     */
+    public static void validateDocumentReference(CoreSession session,
+            String reference, String docType, String excludedUid)
+            throws EloraException {
+
+        String logInitMsg = "[validateDocumentReference] ["
+                + session.getPrincipal().getName() + "] ";
+
+        // Check that there is not already another document with the
+        // same reference and type excluding the specified docUid (excludedUid)
+        long docsWithSameReferenceAndType = 0;
+        docsWithSameReferenceAndType = EloraQueryFactory.unrestrictedCountWcDocsByTypeAndReferenceAndCreatorExcludingUid(
+                session, docType, reference, null, excludedUid);
+        if (docsWithSameReferenceAndType > 0) {
+            String errorMsg = "Validation failed: The reference |" + reference
+                    + "| has already been used by another document of the same type.";
+            log.error(logInitMsg + errorMsg);
+            throw new EloraException(errorMsg);
+        }
     }
 
 }

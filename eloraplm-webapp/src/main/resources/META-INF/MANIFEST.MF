@@ -26,22 +26,24 @@ Nuxeo-Component: OSGI-INF/extensions/eloraplm-dashboard-ContentViewSer
  -TrashService-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-We
  bLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-W
  ebResources-contrib.xml,OSGI-INF/extensions/eloraplm-dashboard-Action
- Service-contrib.xml,OSGI-INF/extensions/eloraplm-container-archive-Ac
- tionService-contrib.xml,OSGI-INF/extensions/eloraplm-container-archiv
- e-WebResources-contrib.xml,OSGI-INF/extensions/eloraplm-history-Actio
- nService-contrib.xml,OSGI-INF/extensions/eloraplm-history-NXAuditEven
- tsService-contrib.xml,OSGI-INF/extensions/eloraplm-history-PageProvid
- erService-contrib.xml,OSGI-INF/extensions/eloraplm-history-WebLayoutM
- anager-contrib.xml,OSGI-INF/extensions/eloraplm-history-WebResources-
- contrib.xml,OSGI-INF/extensions/eloraplm-history-VersionRemoveChecker
- Service-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-clipboard-Act
- ionService-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-clipboard-
- WebResources-contrib.xml,OSGI-INF/extensions/eloraplm-virtual-navigat
- ion-ContentViewService.xml,OSGI-INF/extensions/eloraplm-virtual-navig
- ation-DirectoryTreeService-contrib.xml,OSGI-INF/extensions/eloraplm-v
- irtual-navigation-TypeService-contrib.xml,OSGI-INF/extensions/elorapl
- m-webapp-templateCreation-config.xml,OSGI-INF/extensions/eloraplm-dat
- atable-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-data
- table-WebResources-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-ba
- se-SeamRemotingJSBuilderComponent-contrib.xml
+ Service-contrib.xml,OSGI-INF/extensions/eloraplm-history-ActionServic
+ e-contrib.xml,OSGI-INF/extensions/eloraplm-history-NXAuditEventsServi
+ ce-contrib.xml,OSGI-INF/extensions/eloraplm-history-PageProviderServi
+ ce-contrib.xml,OSGI-INF/extensions/eloraplm-history-WebLayoutManager-
+ contrib.xml,OSGI-INF/extensions/eloraplm-history-WebResources-contrib
+ .xml,OSGI-INF/extensions/eloraplm-history-VersionRemoveCheckerService
+ -contrib.xml,OSGI-INF/extensions/eloraplm-webapp-clipboard-ActionServ
+ ice-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-clipboard-WebReso
+ urces-contrib.xml,OSGI-INF/extensions/eloraplm-virtual-navigation-Con
+ tentViewService.xml,OSGI-INF/extensions/eloraplm-virtual-navigation-D
+ irectoryTreeService-contrib.xml,OSGI-INF/extensions/eloraplm-virtual-
+ navigation-TypeService-contrib.xml,OSGI-INF/extensions/eloraplm-webap
+ p-templateCreation-config.xml,OSGI-INF/extensions/eloraplm-datatable-
+ WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-datatable-W
+ ebResources-contrib.xml,OSGI-INF/extensions/eloraplm-webapp-base-Seam
+ RemotingJSBuilderComponent-contrib.xml,OSGI-INF/extensions/eloraplm-w
+ ebapp-base-SQLDirectoryFactory-contrib.xml,OSGI-INF/extensions/elorap
+ lm-webapp-NavTreeService-contrib.xml,OSGI-INF/extensions/eloraplm-arc
+ hiver-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-archiver
+ -WebResources-contrib.xml
 

@@ -35,7 +35,7 @@ import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.versioning.EloraVersionLabelService;
+import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
  * @author aritu
@@ -80,8 +80,8 @@ public class WorkspaceProxyActionBean implements Serializable {
     @In(create = true)
     protected Map<String, String> messages;
 
-    protected EloraVersionLabelService versionLabelService = Framework.getService(
-            EloraVersionLabelService.class);
+    protected VersionLabelService versionLabelService = Framework.getService(
+            VersionLabelService.class);
 
     protected List<DocumentVersionInformation> documentVersions;
 

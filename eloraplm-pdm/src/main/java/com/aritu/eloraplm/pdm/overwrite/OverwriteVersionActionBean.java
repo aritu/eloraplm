@@ -52,8 +52,8 @@ public class OverwriteVersionActionBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Log log = LogFactory.getLog(
-            OverwriteVersionActionBean.class);
+    private static final Log log = LogFactory
+            .getLog(OverwriteVersionActionBean.class);
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -73,8 +73,8 @@ public class OverwriteVersionActionBean implements Serializable {
     @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
 
-    protected DocumentValidationService validator = Framework.getService(
-            DocumentValidationService.class);
+    protected DocumentValidationService validator = Framework
+            .getService(DocumentValidationService.class);
 
     private String justification;
 
@@ -96,11 +96,14 @@ public class OverwriteVersionActionBean implements Serializable {
             TransactionHelper.startTransaction();
 
             DocumentModel currentDoc = getCurrentDocument();
+            // We have to refresh the document at least for Nuxeo Drive, so that
+            // it takes the last modifications properly
+            currentDoc.refresh();
             log.trace(logInitMsg + "Overwrite document |" + currentDoc.getId()
                     + "|");
             checkCheckout(currentDoc);
-            DocumentModel baseVersionDoc = EloraDocumentHelper.getBaseVersion(
-                    currentDoc);
+            DocumentModel baseVersionDoc = EloraDocumentHelper
+                    .getBaseVersion(currentDoc);
             if (baseVersionDoc == null) {
                 throw new EloraException("Document |" + currentDoc.getId()
                         + "| has no base version. Probably because it has no AVs.");
@@ -119,12 +122,12 @@ public class OverwriteVersionActionBean implements Serializable {
                 currentDoc.removeLock();
             }
 
-            resetTabList(currentTabAction, currentSubTabAction);
-            navigationContext.invalidateCurrentDocument();
+            invalidateAndResetTabList(currentTabAction, currentSubTabAction);
 
             // Seam Event
-            Events.instance().raiseEvent(PdmEventNames.PDM_OVERWRITTEN_EVENT,
-                    currentDoc);
+            Events.instance()
+                    .raiseEvent(PdmEventNames.PDM_OVERWRITTEN_EVENT,
+                            currentDoc);
 
             facesMessages.add(StatusMessage.Severity.INFO,
                     messages.get("eloraplm.message.success.overwriteVersion"));
@@ -134,17 +137,18 @@ public class OverwriteVersionActionBean implements Serializable {
             facesMessages.add(StatusMessage.Severity.ERROR,
                     messages.get(
                             "eloraplm.message.error.pdm.checkinNotAllowed"),
-                    e.getErrorDocument().getPropertyValue(
-                            EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                    e.getErrorDocument()
+                            .getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE),
                     e.getErrorDocument().getTitle());
             TransactionHelper.setTransactionRollbackOnly();
             navigationContext.invalidateCurrentDocument();
         } catch (BomCharacteristicsValidatorException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(
-                            "eloraplm.message.error.pdm.characteristicsRequired"),
-                    e.getDocument().getPropertyValue(
-                            EloraMetadataConstants.ELORA_ELO_REFERENCE),
+            facesMessages.add(StatusMessage.Severity.ERROR, messages
+                    .get("eloraplm.message.error.pdm.characteristicsRequired"),
+                    e.getDocument()
+                            .getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE),
                     e.getDocument().getTitle());
             TransactionHelper.setTransactionRollbackOnly();
             navigationContext.invalidateCurrentDocument();
@@ -173,8 +177,8 @@ public class OverwriteVersionActionBean implements Serializable {
         try {
             EloraDocumentHelper.checkThatIsCheckedOutByMe(currentDoc);
         } catch (DocumentNotCheckedOutException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.documentNotCheckedOutByMe"));
+            facesMessages.add(StatusMessage.Severity.ERROR, messages
+                    .get("eloraplm.message.error.documentNotCheckedOutByMe"));
         }
     }
 
@@ -186,8 +190,9 @@ public class OverwriteVersionActionBean implements Serializable {
         return currentDoc;
     }
 
-    private void resetTabList(Action currentTabAction,
+    private void invalidateAndResetTabList(Action currentTabAction,
             Action currentSubTabAction) {
+        navigationContext.invalidateCurrentDocument();
         webActions.resetTabList();
         List<Action> tabActionsList = webActions.getTabsList();
         if (tabActionsList.contains(currentTabAction)) {

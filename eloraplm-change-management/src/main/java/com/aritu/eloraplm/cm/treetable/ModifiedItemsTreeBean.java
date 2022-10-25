@@ -23,6 +23,7 @@ import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraPageProvidersConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.treetable.CoreTreeBean;
 import com.aritu.eloraplm.webapp.util.EloraAjax;
@@ -148,8 +149,16 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         return itemType;
     }
 
+    public void reloadTree(TreeNode selectedNode) {
+        createRoot(selectedNode);
+    }
+
     @Override
     public void createRoot() {
+        createRoot(null);
+    }
+
+    public void createRoot(TreeNode selectedNode) {
         String logInitMsg = "[createRoot] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -157,7 +166,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         try {
             DocumentModel currentDoc = getCurrentDocument();
             nodeService = new ModifiedItemsNodeService(documentManager,
-                    itemType);
+                    itemType, selectedNode, messages);
             setRoot(nodeService.getRoot(currentDoc));
             setIsDirty(false);
             setHasUnreadableNodes(false);
@@ -225,14 +234,12 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     }
 
     public void refreshNode(TreeTable table, TreeNode node,
-            String triggeredField, boolean updateChildren)
-            throws EloraException {
+            String triggeredField, boolean updateChildren) {
         refreshNode(node, triggeredField);
         EloraAjax.updateTreeTableRow(table, node.getRowKey(), updateChildren);
     }
 
-    public void refreshNode(TreeNode node, String triggeredField)
-            throws EloraException {
+    public void refreshNode(TreeNode node, String triggeredField) {
         String logInitMsg = "[refreshNode] ["
                 + documentManager.getPrincipal().getName() + "] ";
         // log.trace(logInitMsg + "--- ENTER --- ");
@@ -577,29 +584,30 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
             }
             break;
         case CMConstants.ITEM_TYPE_BOM:
-            switch (originItemDocType) {
-            case (EloraDoctypeConstants.BOM_PART):
+            if (EloraDocumentTypesHelper.getDocumentType(
+                    EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
+                            EloraDocumentTypesHelper.getDocumentType(
+                                    originItemDocType))) {
                 pageProviderName = EloraPageProvidersConstants.BOM_PART_WC_DOC_SUGG;
-                break;
-            case (EloraDoctypeConstants.BOM_MANUFACTURER_PART):
+            } else if (originItemDocType.equals(
+                    (EloraDoctypeConstants.BOM_MANUFACTURER_PART))) {
                 pageProviderName = EloraPageProvidersConstants.BOM_MANUFACTURER_PART_WC_DOC_SUGG;
-                break;
-            case (EloraDoctypeConstants.BOM_TOOL):
+            } else if (originItemDocType.equals(
+                    (EloraDoctypeConstants.BOM_TOOL))) {
                 pageProviderName = EloraPageProvidersConstants.BOM_TOOL_WC_DOC_SUGG;
-                break;
-            case (EloraDoctypeConstants.BOM_PACKAGING):
+            } else if (originItemDocType.equals(
+                    (EloraDoctypeConstants.BOM_PACKAGING))) {
                 pageProviderName = EloraPageProvidersConstants.BOM_PACKAGING_WC_DOC_SUGG;
-                break;
-            case (EloraDoctypeConstants.BOM_SPECIFICATION):
+            } else if (originItemDocType.equals(
+                    (EloraDoctypeConstants.BOM_SPECIFICATION))) {
                 pageProviderName = EloraPageProvidersConstants.BOM_SPECIFICATION_WC_DOC_SUGG;
-                break;
-            case (EloraDoctypeConstants.BOM_PRODUCT):
+            } else if (originItemDocType.equals(
+                    (EloraDoctypeConstants.BOM_PRODUCT))) {
                 pageProviderName = EloraPageProvidersConstants.BOM_PRODUCT_WC_DOC_SUGG;
-                break;
-            case (EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT):
+            } else if (originItemDocType.equals(
+                    (EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT))) {
                 pageProviderName = EloraPageProvidersConstants.BOM_CUSTOMER_PRODUCT_WC_DOC_SUGG;
-                break;
-            default:
+            } else {
                 pageProviderName = EloraPageProvidersConstants.BOM_WC_DOC_SUGG;
             }
             break;
@@ -686,7 +694,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                 /*
                 // if the origin is a BOM or CAD, retrieve only RELEASED
                 // versions of the document, otherwise all the versions
-
+                
                 if (getOriginItemWc().hasFacet(
                         EloraFacetConstants.FACET_CAD_DOCUMENT)
                         || getOriginItemWc().hasFacet(
@@ -698,7 +706,8 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                 // Calculate the version list for the selected origin item
                 // and the default selected value
                 Map<String, String> versionList = CMHelper.calculateOriginVersionList(
-                        documentManager, originItemWcUid, onlyReleasedVersion);
+                        documentManager, originItemWcUid, onlyReleasedVersion,
+                        messages);
                 setOriginItemVersionList(versionList);
 
                 // By default, select the last element of the list
@@ -918,7 +927,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                     Map<String, String> versionList = CMHelper.calculateModifiableItemVersionList(
                             documentManager, destinationItemWcUid);
                     setDestinationItemVersionList(versionList);
-                    
+
                     // By default, select the last element of the list
                     if (versionList != null && versionList.size() > 0) {
                         setDestinationItemRealUid(
@@ -957,10 +966,10 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                 } else {
                     setIsManaged(false);
                 }
-                
+
                 setComment(CMTreeBeanHelper.calculateModifiedItemComment(action,
                         getCurrentDocument(), originItem, destinationItem));
-                
+
                 setIsImpactable(CMHelper.getIsImpactable(originItem.getType(),
                         action, destinationItemRealUid));
                 setIncludeInImpactMatrix(
@@ -983,7 +992,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     /*public Map<String, String> getDestinationItemVersionList() {
         return destinationItemVersionList;
     }
-    
+
     public void setDestinationItemVersionList(
             Map<String, String> destinationItemVersionList) {
         this.destinationItemVersionList = destinationItemVersionList;
@@ -1118,7 +1127,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         if (includeOriginItem) {
             // reset originItem component
             UIInput originSuggestInputComponent = (UIInput) component.findComponent(
-                    "nxw_eloraSingleDocumentSuggestion_select2");
+                    "nxw_singleDocumentSuggestion_select2");
             if (originSuggestInputComponent != null) {
                 EditableValueHolder originSuggestInput = originSuggestInputComponent;
                 if (originSuggestInput != null) {
@@ -1150,7 +1159,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
         // reset destinationItemSuggestInputComponent
         UIInput destinationItemSuggestInputComponent = (UIInput) component.findComponent(
-                "nxw_eloraSingleDocumentSuggestion_1_select2");
+                "nxw_singleDocumentSuggestion_1_select2");
         if (destinationItemSuggestInputComponent != null) {
             EditableValueHolder destinationItemSuggestInput = destinationItemSuggestInputComponent;
             if (destinationItemSuggestInput != null) {
@@ -1373,11 +1382,11 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                 } else {
                     setEditIsManaged(false);
                 }
-
+                
                 setEditComment(CMTreeBeanHelper.calculateModifiedItemComment(
                         editAction, getCurrentDocument(), editOriginItem,
                         editDestinationItem));
-
+                
                 setEditIsImpactable(
                         CMHelper.getIsImpactable(editOriginItem.getType(),
                                 editAction, editDestinationItemRealUid));
@@ -1401,7 +1410,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     /* public Map<String, String> getEditDestinationItemVersionList() {
         return editDestinationItemVersionList;
     }
-
+    
     public void setEditDestinationItemVersionList(
             Map<String, String> editDestinationItemVersionList) {
         this.editDestinationItemVersionList = editDestinationItemVersionList;
@@ -1528,7 +1537,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         if (includeOriginItem) {
             // reset originItem component
             UIInput originSuggestInputComponent = (UIInput) component.findComponent(
-                    "nxw_eloraSingleDocumentSuggestion_select2");
+                    "nxw_singleDocumentSuggestion_select2");
             if (originSuggestInputComponent != null) {
                 EditableValueHolder originSuggestInput = originSuggestInputComponent;
                 if (originSuggestInput != null) {
@@ -1560,7 +1569,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
         // reset destinationItemSuggestInputComponent
         UIInput destinationItemSuggestInputComponent = (UIInput) component.findComponent(
-                "nxw_eloraSingleDocumentSuggestion_1_select2");
+                "nxw_singleDocumentSuggestion_1_select2");
         if (destinationItemSuggestInputComponent != null) {
             EditableValueHolder destinationItemSuggestInput = destinationItemSuggestInputComponent;
             if (destinationItemSuggestInput != null) {
