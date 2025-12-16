@@ -3,6 +3,7 @@
  */
 package com.aritu.eloraplm.viewer.util;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -112,9 +113,14 @@ public class PdfWriterHelper {
         try {
             PDDocumentCatalog catalog = pdfDoc.getDocumentCatalog();
             List<?> pageList = catalog.getAllPages();
+            int pageNumber = 1;
             for (Object obj : pageList) {
                 PDPage page = (PDPage) obj;
-                writePage(pdfDoc, page);
+                if (!modifier.applyOnlyOnFirstPage
+                        || (modifier.applyOnlyOnFirstPage && pageNumber == 1)) {
+                    writePage(pdfDoc, page, pageNumber);
+                }
+                pageNumber++;
             }
 
             file = File.createTempFile(blob.getFilename(), "_temp.pdf");
@@ -145,7 +151,7 @@ public class PdfWriterHelper {
             PDDocumentCatalog catalog = pdfDoc.getDocumentCatalog();
             List<?> pageList = catalog.getAllPages();
             PDPage page = (PDPage) pageList.get(pageNumber - 1);
-            writePage(pdfDoc, page);
+            writePage(pdfDoc, page, pageNumber);
             file = File.createTempFile(blob.getFilename(), "_temp.pdf");
             pdfDoc.save(file);
 
@@ -156,11 +162,18 @@ public class PdfWriterHelper {
         return file;
     }
 
-    private void writePage(PDDocument pdfDoc, PDPage page)
+    private void writePage(PDDocument pdfDoc, PDPage page, int pageNumber)
             throws IOException, EloraException {
 
         PDPageContentStream cs = new PDPageContentStream(pdfDoc, page, true,
                 true, true);
+
+        if (page.findRotation() == 90) {
+            AffineTransform at = new AffineTransform(0, 1, -1, 0,
+                    page.findMediaBox().getWidth(), 0);
+            cs.concatenate2CTM(at);
+        }
+
         page = addGraphicsState(page, OPAQUE_GS_ID, 1f);
 
         try {
@@ -171,7 +184,7 @@ public class PdfWriterHelper {
 
                 for (ModifierLineDescriptor line : modifier.lines) {
                     if (line != null) {
-                        processLine(cs, page, line);
+                        processLine(cs, page, pageNumber, line);
                     }
                 }
             }
@@ -181,7 +194,7 @@ public class PdfWriterHelper {
                 for (int r = 0; r < modifier.rects.length; r++) {
                     ModifierRectDescriptor rect = modifier.rects[r];
                     if (rect != null) {
-                        processRect(cs, page, r, rect);
+                        processRect(cs, page, pageNumber, r, rect);
                     }
                 }
             }
@@ -191,7 +204,7 @@ public class PdfWriterHelper {
                 for (int i = 0; i < modifier.images.length; i++) {
                     ModifierImageDescriptor image = modifier.images[i];
                     if (image != null) {
-                        processImage(pdfDoc, cs, page, i, image);
+                        processImage(pdfDoc, cs, page, pageNumber, i, image);
                     }
                 }
 
@@ -202,7 +215,7 @@ public class PdfWriterHelper {
                 for (int t = 0; t < modifier.texts.length; t++) {
                     ModifierTextDescriptor text = modifier.texts[t];
                     if (text != null) {
-                        processText(cs, page, t, text);
+                        processText(cs, page, pageNumber, t, text);
                     }
                 }
             }
@@ -230,11 +243,13 @@ public class PdfWriterHelper {
         return page;
     }
 
-    private void processText(PDPageContentStream cs, PDPage page, int t,
-            ModifierTextDescriptor text) throws EloraException, IOException {
+    private void processText(PDPageContentStream cs, PDPage page,
+            int pageNumber, int t, ModifierTextDescriptor text)
+            throws EloraException, IOException {
 
         if (ConditionEvaluatorHelper.fulfillsConditions(currentDoc, relatedDoc,
-                action, text.conditions, text.allConditionsRequired)) {
+                action, pageNumber, text.conditions,
+                text.allConditionsRequired)) {
 
             String value = getTextValue(currentDoc, relatedDoc, text);
 
@@ -327,6 +342,11 @@ public class PdfWriterHelper {
         float pageWidth = mbox.getWidth();
         float pageHeight = mbox.getHeight();
 
+        if (page.findRotation() == 90) {
+            pageWidth = mbox.getHeight();
+            pageHeight = mbox.getWidth();
+        }
+
         String refPointXOption = refPointOption != null
                 && refPointOption[0] != null ? refPointOption[0]
                         : modifier.defaultRefPointOption[0];
@@ -385,10 +405,12 @@ public class PdfWriterHelper {
     }
 
     private void processLine(PDPageContentStream cs, PDPage page,
-            ModifierLineDescriptor line) throws IOException, EloraException {
+            int pageNumber, ModifierLineDescriptor line)
+            throws IOException, EloraException {
 
         if (ConditionEvaluatorHelper.fulfillsConditions(currentDoc, relatedDoc,
-                action, line.conditions, line.allConditionsRequired)) {
+                action, pageNumber, line.conditions,
+                line.allConditionsRequired)) {
 
             Float[] refPoint0 = getRefPoint(page, line.refPointOption0);
             Float[] refPoint1 = getRefPoint(page, line.refPointOption1);
@@ -400,11 +422,13 @@ public class PdfWriterHelper {
         }
     }
 
-    private void processRect(PDPageContentStream cs, PDPage page, int r,
-            ModifierRectDescriptor rect) throws IOException, EloraException {
+    private void processRect(PDPageContentStream cs, PDPage page,
+            int pageNumber, int r, ModifierRectDescriptor rect)
+            throws IOException, EloraException {
 
         if (ConditionEvaluatorHelper.fulfillsConditions(currentDoc, relatedDoc,
-                action, rect.conditions, rect.allConditionsRequired)) {
+                action, pageNumber, rect.conditions,
+                rect.allConditionsRequired)) {
 
             Float[] refPoint = getRefPoint(page, rect.refPointOption);
 
@@ -435,11 +459,12 @@ public class PdfWriterHelper {
     }
 
     private void processImage(PDDocument document, PDPageContentStream cs,
-            PDPage page, int i, ModifierImageDescriptor image)
+            PDPage page, int pageNumber, int i, ModifierImageDescriptor image)
             throws IOException, EloraException {
 
         if (ConditionEvaluatorHelper.fulfillsConditions(currentDoc, relatedDoc,
-                action, image.conditions, image.allConditionsRequired)) {
+                action, pageNumber, image.conditions,
+                image.allConditionsRequired)) {
 
             Float[] refPoint = getRefPoint(page, image.refPointOption);
 
@@ -452,7 +477,7 @@ public class PdfWriterHelper {
             }
 
             URL url = this.getClass().getClassLoader().getResource(
-                    "web/nuxeo.war" + image.path);
+                    "nuxeo.war" + image.path);
             BufferedImage tmp_img = ImageIO.read(url);
             BufferedImage buff_img = new BufferedImage(tmp_img.getWidth(),
                     tmp_img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);

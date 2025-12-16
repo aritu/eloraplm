@@ -9,7 +9,7 @@
         </strong></p>
         <ui:repeat var="errorMessage" value="#{lifecycleTransitionActions.getErrorList()}">
             <div class="fullWidth processMessage completeError">
-                <h:outputText value="#{messages[errorMessage]}" />
+                <h:outputText value="#{messages[errorMessage.message]}" />
             </div>
         </ui:repeat>
     </h:panelGroup>

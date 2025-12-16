@@ -22,13 +22,11 @@ package com.aritu.eloraplm.constants;
  */
 public class CMEventNames {
 
-    public static final String CM_BOM_MODIFIED_ITEMS_SAVED = "BomModifiedItemsSaved";
-
-    public static final String CM_BOM_IMPACT_MATRIX_CALCULATED = "BomIMCalculated";
-
-    public static final String CM_DOC_MODIFIED_ITEMS_SAVED = "DocModifiedItemsSaved";
+    public static final String CM_MODIFIED_ITEMS_SAVED = "ModifiedItemsSaved";
 
     public static final String CM_DOC_IMPACT_MATRIX_CALCULATED = "DocIMCalculated";
+
+    public static final String CM_IMPACT_MATRIX_CALCULATED = "IMCalculated";
 
     public static final String CM_MODIFIED_ITEMS_DERIVED_FROM_IMPACTED_DOCS_ADDED = "ModifiedItemsDerivedFromImpactedDocsAdded";
 
@@ -54,8 +52,6 @@ public class CMEventNames {
 
     public static final String CM_ITEMS_BATCH_CHECK_IN_EVENT = "CmItemsBatchCheckInEvent";
 
-    public static final String CM_ITEMS_BATCH_OVERWRITE_EVENT = "CmItemsBatchOverwriteEvent";
-
     public static final String CM_ITEMS_BATCH_PROMOTE_EVENT = "CmItemsBatchPromoteEvent";
 
     public static final String CM_ITEMS_BATCH_UNDO_CHECKOUT_EVENT = "CmItemsBatchUndoCheckoutEvent";
@@ -65,6 +61,10 @@ public class CMEventNames {
     public static final String CM_DOCS_BATCH_UNLOCK_EVENT = "CmDocsBatchUnlockEvent";
 
     public static final String CM_DOCS_BATCH_PROMOTE_EVENT = "CmDocsBatchPromoteEvent";
+
+    public static final String CM_DOCS_BATCH_BASIC_DOC_CHECKOUT_EVENT = "CmDocsBatchBasicDocsCheckoutEvent";
+
+    public static final String CM_DOCS_BATCH_BASIC_DOC_CHECKIN_EVENT = "CmDocsBatchBasicDocsCheckinEvent";
 
     // Batch processes (Modified Items and Modified Docs)
     public static final String CM_MODIF_DOCS_BATCH_LOCK_EVENT = "CmModifiedDocsBatchLockEvent";

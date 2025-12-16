@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: com.aritu.eloraplm.securitypolicy
+Bundle-Name: eloraplm-security-policy
+Bundle-Version: 1.0.qualifier
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Aritu S Coop
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-security-policy-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-ActionService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-WebLayoutManager-contrib.xml,
+ OSGI-INF/extensions/SecurityConfigService.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-viewer-EventServiceComponent-contrib.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-history-NXAuditEventsService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-OperationServiceComponent-contrib.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-DraftServicePublisher-contrib.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-contrib.xml,
+ OSGI-INF/extensions/UserManagerWithSecurityLevel.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-WebResources-contrib.xml,
+ OSGI-INF/extensions/eloraplm-security-policy-EventServiceComponent-contrib.xml

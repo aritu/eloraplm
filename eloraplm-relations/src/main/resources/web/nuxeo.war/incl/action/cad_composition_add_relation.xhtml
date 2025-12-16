@@ -1,27 +1,63 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:c="http://java.sun.com/jsp/jstl/core"
-  >
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+    <ui:include src="add_relation_template.xhtml">
+        <ui:param
+            name="treeBean"
+            value="#{cadCompositionTreeBean}"
+        />
+        <ui:param
+            name="treeTableClientId"
+            value=":nxw_cad_comp_tt:ttForm"
+        />
+        <ui:param
+            name="placeholder"
+            value="eloraplm.placeholder.suggestion.relation.searchByReferenceOrTitle"
+        />
 
-  <ui:include src="add_relation_template.xhtml">
-    <ui:param name="treeBean" value="#{cadCompositionTreeBean}" />
-    <ui:param name="placeholder" value="eloraplm.placeholder.suggestion.relation.searchByReferenceOrTitle" />
-    
-<!--     TODO CadDesignTable?? -->
-    <c:if test="#{currentDocument.type eq 'CadPart'}">
-        <ui:param name="pageProviderName" value="cad_part_wc_suggestion" />
-    </c:if>
-    <c:if test="#{currentDocument.type ne 'CadPart'}">
-        <ui:param name="pageProviderName" value="cad_assembly_part_wc_suggestion" />
-    </c:if>
-    
-    <ui:param name="isEditablePredicate" value="true" />
-    <ui:param name="isEditableOrdering" value="true" />
-    <ui:param name="orderingLabel" value="eloraplm.label.number" />
-    <ui:param name="isEditableQuantity" value="true" />
-    <ui:param name="isAnarchic" value="false" />
-    <ui:param name="subjectDocument" value="#{currentDocument}" />
-</ui:include>
+        <!--     TODO CadDesignTable?? -->
+        <c:if test="#{currentDocument.type eq 'CadPart'}">
+            <ui:param
+                name="pageProviderName"
+                value="cad_part_wc_suggestion"
+            />
+        </c:if>
+        <c:if test="#{currentDocument.type ne 'CadPart'}">
+            <ui:param
+                name="pageProviderName"
+                value="cad_assembly_part_wc_suggestion"
+            />
+        </c:if>
 
+        <ui:param
+            name="isEditablePredicate"
+            value="true"
+        />
+        <ui:param
+            name="isEditableVersion"
+            value="true"
+        />
+        <ui:param
+            name="relationLabelsVocabulary"
+            value="elora_cad_predicates"
+        />
+        <ui:param
+            name="isEditableOrdering"
+            value="true"
+        />
+        <ui:param
+            name="orderingLabel"
+            value="eloraplm.label.number"
+        />
+        <ui:param
+            name="isEditableQuantity"
+            value="true"
+        />
+        <ui:param
+            name="isAnarchic"
+            value="false"
+        />
+    </ui:include>
 </ui:composition>

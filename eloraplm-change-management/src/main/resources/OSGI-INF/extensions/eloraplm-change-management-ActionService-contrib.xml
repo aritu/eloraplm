@@ -56,14 +56,7 @@
       </rule>
     </filter>
 
-    <filter id="viewBomModifiedItemsTab">
-        <rule grant="true">
-          <type>CmEco</type>
-          <type>CmEcr</type>
-        </rule>
-    </filter>
-    
-    <filter id="viewDocModifiedItemsTab">
+    <filter id="viewModifiedItemsTab">
         <rule grant="true">
           <type>CmEco</type>
           <type>CmEcr</type>
@@ -84,19 +77,11 @@
         </rule>
     </filter>
     
-    <filter id="cmBomModifiedItemsTreeButtons">
+    <filter id="cmModifiedsTreeButtons">
         <rule grant="true">
             <type>CmEcr</type>
             <type>CmEco</type>
-            <condition>#{webActions.currentTabId eq 'TAB_CM_BOM_MODIFIED_ITEMS_TREETABLE'}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="cmDocModifiedItemsTreeButtons">
-        <rule grant="true">
-            <type>CmEcr</type>
-            <type>CmEco</type>
-            <condition>#{webActions.currentTabId eq 'TAB_CM_DOC_MODIFIED_ITEMS_TREETABLE'}</condition>
+            <condition>#{webActions.currentTabId eq 'TAB_CM_MODIFIED_ITEMS_TREETABLE'}</condition>
         </rule>
     </filter>
     
@@ -120,17 +105,22 @@
         <rule grant="true">
             <facet>CMProcess</facet>
         </rule>
+        <rule grant="false">
+            <type>CmEcr</type>
+            <type>CmEco</type>
+        </rule>
+    </filter>
+    
+    <filter id="hasEcoHeader">        
+        <rule grant="true">
+            <type>CmEcr</type>
+            <type>CmEco</type>
+        </rule>
     </filter>
     
     <filter id="hasWorkspaceHeader" append="true">
         <rule grant="false">
             <facet>CMProcess</facet>
-        </rule>
-    </filter>
-    
-    <filter id="cmAddModifiedItemsDerivedFromImpactedDocsEnabled">
-        <rule grant="true">
-             <condition>#{eloraWebActions.isAddModifiedItemsDerivedFromImpactedDocsEnabled()}</condition>
         </rule>
     </filter>
 
@@ -148,17 +138,11 @@
     </action>
     
     <!-- Modified and impacted items tabs -->
-    
-    <action id="TAB_CM_BOM_MODIFIED_ITEMS_TREETABLE" link="/incl/tabs/cm_bom_modified_items.xhtml"
-      order="30" label="label.com.aritu.eloraplm.cm.tab.bomModifiedItems" type="rest_document_link">
+        
+    <action id="TAB_CM_MODIFIED_ITEMS_TREETABLE" link="/incl/tabs/cm_modified_items.xhtml"
+      order="30" label="label.com.aritu.eloraplm.cm.tab.modifiedItems" type="rest_document_link">
       <category>VIEW_ACTION_LIST</category>
-      <filter-id>viewBomModifiedItemsTab</filter-id>
-    </action>
-    
-    <action id="TAB_CM_DOC_MODIFIED_ITEMS_TREETABLE" link="/incl/tabs/cm_doc_modified_items.xhtml"
-      order="31" label="label.com.aritu.eloraplm.cm.tab.docModifiedItems" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>viewDocModifiedItemsTab</filter-id>
+      <filter-id>viewModifiedItemsTab</filter-id>
     </action>
     
     <action id="TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE" link="/incl/tabs/cm_bom_impacted_items.xhtml"
@@ -174,74 +158,7 @@
     </action>
     
     <!-- Treetable buttons -->
-    
-    <!-- Modified and impacted items Treetable related buttons -->
-    <action id="BtnAddBomModifiedItem" order="10" label="eloraplm.command.cm.modifiedItem.add" type="fancybox" icon="/icons/action_add_16.png">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="width">800</property>
-        <property name="height">800</property>
-        <property name="autoDimensions">false</property>
-        <property name="include">/incl/action/cm_add_bom_modified_item.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddDocModifiedItem" order="10" label="eloraplm.command.cm.modifiedItem.add" type="fancybox" icon="/icons/action_add_16.png">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>cmDocModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="width">800</property>
-        <property name="height">800</property>
-        <property name="autoDimensions">false</property>
-        <property name="include">/incl/action/cm_add_doc_modified_item.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnCalculateBomImpactMatrix" order="20" label="eloraplm.command.cm.calculateImpactMatrix" type="link" link="#{cmBomModifiedItemsTreeBean.calculateImpactMatrix}" icon="/icons/action_calculate_im_16.png">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnCalculateDocImpactMatrix" order="20" label="eloraplm.command.cm.calculateImpactMatrix" type="link" link="#{cmDocModifiedItemsTreeBean.calculateImpactMatrix}" icon="/icons/action_calculate_im_16.png">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>cmDocModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-   
-    <action id="BtnSaveBomModifiedItemsTreetable" order="100" label="command.save" type="link" link="#{cmBomModifiedItemsTreeBean.saveTree}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveDocModifiedItemsTreetable" order="100" label="command.save" type="link" link="#{cmDocModifiedItemsTreeBean.saveTree}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>cmDocModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
+      
     <action id="BtnSaveBomImpactedItemsTreetable" order="100" label="command.save" type="link" link="#{cmBomImpactedItemsTreeBean.saveTree}" icon="">
       <category>TREETABLE_BUTTON</category>
       <filter-id>cmBomImpactedItemsTreeButtons</filter-id>
@@ -261,137 +178,6 @@
         <property name="styleClass">button mainAction</property>
       </properties>
     </action>
-    
-    <action id="BtnAddModifiedItemsDerivedFromImpactedDocs" order="15" label="eloraplm.command.cm.modifiedItem.addDerivedItems" type="link"  link="#{cmBomModifiedItemsTreeBean.addModifiedItemsDerivedFromImpactedDocs}" icon="/icons/action_add_16.png">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <filter-id>cmAddModifiedItemsDerivedFromImpactedDocsEnabled</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <!-- Selection buttons -->
-    
-    <action id="BtnEditBomModifiedItem" order="15" label="eloraplm.command.cm.modifiedItem.edit" type="fancybox" icon="/icons/action_edit_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="width">800</property>
-        <property name="height">800</property>
-        <property name="autoDimensions">false</property>
-        <property name="include">/incl/action/cm_edit_bom_modified_item.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnEditDocModifiedItem" order="15" label="eloraplm.command.cm.modifiedItem.edit" type="fancybox" icon="/icons/action_edit_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmDocModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="width">800</property>
-        <property name="height">800</property>
-        <property name="autoDimensions">false</property>
-        <property name="include">/incl/action/cm_edit_doc_modified_item.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnLockModifiedItem" order="20" label="command.lock" type="link" link="#{cmBomModifiedItemsTreeBean.lock}" icon="/icons/action_lock_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnLockModifiedDoc" order="20" label="command.lock" type="link" link="#{cmDocModifiedItemsTreeBean.lock}" icon="/icons/action_lock_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmDocModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnCheckoutBomModifiedItem" order="22" label="eloraplm.command.checkOut" type="link" link="#{cmBomModifiedItemsTreeBean.checkOut}" 
-            icon="/icons/action_check_out_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnCheckinBomModifiedItem" order="25" label="eloraplm.command.checkIn" type="fancybox" icon="/icons/action_check_in_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="include">/incl/action/cm_checkin_document.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-        <property name="visibleByDefault">true</property>
-      </properties>
-    </action>
-    
-    <action id="BtnPromoteBomModifiedItem" order="28" label="eloraplm.command.promote" type="fancybox" icon="/icons/action_promote_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="include">/incl/action/cm_promote_item.xhtml</property>
-        <property name="width">90%</property>
-        <property name="height">90%</property>
-        <property name="autoDimensions">false</property> 
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-        <property name="visibleByDefault">true</property>
-      </properties>
-    </action>
-    
-    <action id="BtnPromoteDocModifiedItem" order="25" label="eloraplm.command.promote" type="fancybox" icon="/icons/action_promote_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmDocModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="include">/incl/action/cm_promote_document.xhtml</property>
-        <property name="width">90%</property>
-        <property name="height">90%</property>
-        <property name="autoDimensions">false</property> 
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-        <property name="visibleByDefault">true</property>
-      </properties>
-    </action>
-    
-    
-    <action id="BtnUnlockModifiedItem" order="30" label="command.unlock" type="link" link="#{cmBomModifiedItemsTreeBean.unlock}" icon="/icons/action_unlock_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmBomModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnUnlockModifiedDoc" order="30" label="command.unlock" type="link" link="#{cmDocModifiedItemsTreeBean.unlock}" icon="/icons/action_unlock_16.png">
-      <category>TREETABLE_SELECTION_BUTTON</category>
-      <filter-id>cmDocModifiedItemsTreeButtons</filter-id>
-      <properties>
-        <property name="addForm">true</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
     
      <action id="BtnEditBomImpactedItems" order="90" label="eloraplm.command.cm.impactedItems.edit" type="fancybox" icon="/icons/action_edit_16.png">
       <category>TREETABLE_SELECTION_BUTTON</category>
@@ -413,45 +199,10 @@
       </properties>
     </action>
     
-    
-    <!-- Process relations Tab buttons -->
-    
-    <action id="BtnAddPRRelation" order="20" label="eloraplm.command.relation.add.isManagedIn" type="fancybox" icon="">
-      <category>CM_PROCESS_RELATION_BUTTON</category>
-      <filter-id>isCmPr</filter-id>
-      <properties>
-        <property name="include">/incl/action/cm_pr_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddECRRelation" order="20" label="eloraplm.command.relation.add.isManagedIn" type="fancybox" icon="">
-      <category>CM_PROCESS_RELATION_BUTTON</category>
-      <filter-id>isCmEcr</filter-id>
-      <properties>
-        <property name="include">/incl/action/cm_ecr_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddECORelation" order="20" label="eloraplm.command.relation.add.isManagedIn" type="fancybox" icon="">
-      <category>CM_PROCESS_RELATION_BUTTON</category>
-      <filter-id>isCmEco</filter-id>
-      <properties>
-        <property name="include">/incl/action/cm_eco_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <!-- End of Process relations Tab buttons -->
-    
      <!-- CM tab -->
      
-     <action id="TAB_CM" link="/incl/tabs/cm.xhtml" order="103" label="eloraplm.label.cm" type="rest_document_link">
-      <filter-id>isCadOrBomDocument</filter-id>
+    <action id="TAB_CM" link="/incl/tabs/cm.xhtml" order="103" label="eloraplm.label.cm" type="rest_document_link">
+      <filter-id>isCadBomOrBasicDocument</filter-id>
       <category>VIEW_ACTION_LIST</category>
     </action>
     
@@ -460,6 +211,14 @@
         <filter-id>hasCmHeader</filter-id>
         <properties>
             <property name="template">/widgets/actions/cm_metadata_header.xhtml</property>
+        </properties>
+    </action>
+    
+    <action id="cm_eco_document_header" order="1" type="template">
+        <category>DOCUMENT_HEADER</category>
+        <filter-id>hasEcoHeader</filter-id>
+        <properties>
+            <property name="template">/widgets/actions/cm_eco_metadata_header.xhtml</property>
         </properties>
     </action>
     

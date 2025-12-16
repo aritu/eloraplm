@@ -49,6 +49,17 @@ public class EloraCheckinHelper {
 
     private static final Log log = LogFactory.getLog(EloraCheckinHelper.class);
 
+    /**
+     * Extra validations for CAD documents that are not based on the schemas:
+     *
+     * - Title required
+     *
+     * - Reference required
+     *
+     * @param doc
+     * @param session
+     * @return
+     */
     public static List<ValidationErrorItem> validateCadDocument(
             DocumentModel doc, CoreSession session) {
         String logInitMsg = "[validateCadDocument] ["
@@ -134,7 +145,13 @@ public class EloraCheckinHelper {
                 String constraintName = constraint.getDescription().getName();
                 Object invalidValue = violation.getInvalidValue();
                 Locale locale = EloraMessageHelper.getLocale(session);
-                for (ConstraintViolation.PathNode pathNode : violation.getPath()) {
+                // We only treat the first path node (as it should be the
+                // metadata, just the info we want)
+                // Other path nodes are not interesting for the user, and they
+                // duplicate the same violation
+                List<PathNode> pathNodes = violation.getPath();
+                if (!pathNodes.isEmpty()) {
+                    ConstraintViolation.PathNode pathNode = pathNodes.get(0);
                     // We don't want to block the operation
                     // when a resolver fails
                     String fieldName = pathNode.getField().getName().toString();

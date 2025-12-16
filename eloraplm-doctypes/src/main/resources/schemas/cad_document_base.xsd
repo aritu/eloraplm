@@ -1,0 +1,71 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cad_document" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cad_document"
+    xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+    
+    <!-- WE CANNOT PLACE INCLUDES HERE, THE INCLUDES MUST GO IN THE cad_documentXXX.xsd schemas of each implantation -->
+    
+    <xs:element name="authoringTool" type="xs:string" nillable="false" nxsv:nillable="false" />
+    <xs:element name="authoringToolVersion" type="xs:string" nillable="false" nxsv:nillable="false" />
+    <xs:element name="activeConfiguration" type="xs:string" />
+    <xs:element name="cadClassification" >
+        <xs:simpleType>
+            <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cadClassHierarchical" />
+        </xs:simpleType>
+    </xs:element>
+<!-- To be deleted after migration -->
+    <xs:element name="cadMaterial" type="xs:string" />
+<!-- ///////////////////////////// -->
+    <xs:element name="materials" type="nxs:materialListType" />
+    
+    <xs:element name="materialNotes" type="xs:string" />
+    
+    <xs:element name="mass">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="massUnit" type="xs:string" default="kg"/>
+    <xs:element name="volume">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="volumeUnit" type="xs:string" default="m3"/>
+    <xs:element name="surface">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="surfaceUnit" type="xs:string" default="m2"/>
+    <xs:element name="integrationTool" type="xs:string" />
+    
+    <xs:element name="isWeldment" type="xs:boolean" default="false" />
+    
+    <xs:element name="derivedOutputs" type="nxs:derivedOutputListType" />
+    
+    <xs:complexType name="derivedOutputListType">
+        <xs:sequence>
+            <xs:element name="derivedOutput" type="nxs:derivedOutputType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="derivedOutputType">
+        <xs:sequence>
+            <xs:element name="type">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cad_derived_output_type" />
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="file" type="nxs:content" />
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

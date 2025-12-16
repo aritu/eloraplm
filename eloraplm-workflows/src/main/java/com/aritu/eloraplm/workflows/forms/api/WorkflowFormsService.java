@@ -66,7 +66,8 @@ public interface WorkflowFormsService {
             throws EloraException;
 
     DocumentModelList getNodeQuestionsForDoc(CoreSession session, String wfId,
-            String nodeId, String docId) throws EloraException;
+            String wfInstanceId, String nodeId, String docId)
+            throws EloraException;
 
     DocumentModel createQuestion(CoreSession session, String wfId,
             String nodeId, String questionId, boolean isModel, String model,
@@ -89,12 +90,14 @@ public interface WorkflowFormsService {
             GraphRoute route, DocumentModel doc) throws EloraException;
 
     void initializeNodeTaskAnswersForDocument(CoreSession session,
-            GraphRoute route, Task task);
+            String wfInstanceId, GraphRoute route, Task task);
 
-    void writeNodeTaskAnswersForDocument(CoreSession session, GraphRoute route,
-            GraphNode node, Task task, DocumentModel targetDoc, String action);
+    void writeNodeTaskAnswersForDocument(CoreSession session,
+            String wfInstanceId, GraphRoute route, GraphNode node, Task task,
+            DocumentModel targetDoc, String action);
 
     Map<String, DocumentModelList> copyQuestionsForDocument(CoreSession session,
-            String wfId, DocumentModel doc) throws EloraException;
+            String wfId, String wfInstanceId, DocumentModel doc)
+            throws EloraException;
 
 }

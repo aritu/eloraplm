@@ -1,0 +1,64 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxd="http://nuxeo.org/nxweb/document"
+>
+
+    <h:panelGrid columns="2" columnClasses="labelColumn,fieldColumn">
+        <h:panelGroup>
+            <ui:include src="/widgets/incl/label_template.xhtml">
+                <ui:param name="label" value="#{widget.label}" />
+                <ui:param name="helpLabel" value="#{widget.helpLabel}" />
+                <ui:param name="translated" value="#{widget.translated}" />
+                <ui:param name="required" value="#{required}" />
+            </ui:include>
+        </h:panelGroup>
+            
+        <h:panelGroup>
+            <c:choose>
+                <c:when test="#{layout.mode == 'create' or layout.mode == 'edit'}">
+                    <h:selectOneListbox 
+                        id="#{widget.id}_select_vault"
+                        styleClass="dataInputText"
+                        size="1"
+                        value="#{field}">
+                        <f:selectItem itemValue="#{null}" itemLabel="" />
+                        <nxu:selectItems 
+                            value="#{structureHelper.getVaultFoldersMap()}" 
+                            var="vaultFolder" 
+                            itemValue="#{vaultFolder.key}" 
+                            itemLabel="#{vaultFolder.value}" />
+                    </h:selectOneListbox>
+                    <h:message for="vaultfolder" class="errorMessage" id="vaultfolderMsg" />
+                </c:when>
+
+                <c:when test="#{(layout.mode == 'view' or layout.mode == 'summary') and field != null}">
+                    <nxu:set var="doc" value="#{eloraWebActions.getDocumentFromId(field)}">
+                        <nxd:restDocumentLink document="#{doc}">
+                            <h:outputText value="#{nxd:titleOrId(doc)}" />
+                        </nxd:restDocumentLink>
+                    </nxu:set>
+                </c:when>
+
+                <c:otherwise>
+                    <nxu:set var="doc" value="#{eloraWebActions.getDocumentFromId(field)}">
+                        <h:outputText value="#{doc.title}" />
+                    </nxu:set>
+                </c:otherwise>
+            </c:choose>
+        </h:panelGroup>
+    </h:panelGrid>
+    
+    <h:outputScript>
+        <c:if test="#{layout.mode == 'create' and field == null}">
+            jQuery(document).ready(function() {
+                jQuery('#document_create\\:nxl_elora_object\\:#{widget.id}_select_vault').val('#{structureHelper.getVaultFolderInitialValue()}');
+            });
+        </c:if>
+    </h:outputScript>
+
+</ui:composition>

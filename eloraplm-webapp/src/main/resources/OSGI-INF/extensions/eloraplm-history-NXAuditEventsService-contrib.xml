@@ -25,20 +25,20 @@
         <event name="CheckedOutAndRelationReplacedEvent" />
         <event name="BomIMCalculated" />
         <event name="DocIMCalculated" />
-        <event name="BomModifiedItemsSaved" />
-        <event name="DocModifiedItemsSaved" />
+        <event name="ModifiedItemsSaved" />        
         <event name="CmImpactedItemsChangesSavedEvent" />
         <event name="CmImpactedDocsChangesSavedEvent" />
         <event name="CmItemsBatchLockEvent" />
         <event name="CmItemsBatchUnlockEvent" />
         <event name="CmItemsBatchExecuteActionsEvent" />
         <event name="CmItemsBatchCheckInEvent" />
-        <event name="CmItemsBatchOverwriteEvent" />
         <event name="CmItemsBatchUndoCheckoutEvent" />
         <event name="CmItemsBatchPromoteEvent" />
         <event name="CmDocsBatchLockEvent" />
         <event name="CmDocsBatchUnlockEvent" />
         <event name="CmDocsBatchPromoteEvent" />
+        <event name="CmDocsBatchBasicDocsCheckoutEvent" />
+        <event name="CmDocsBatchBasicDocsCheckinEvent" />
         <event name="CmModifiedDocsBatchLockEvent" />
         <event name="CmModifiedDocsBatchUnlockEvent" />
         <event name="CmModifiedDocsPromoteEvent" />
@@ -56,6 +56,12 @@
         <event name="OmImpactCalculated" />
         <event name="OmImpactProcessed" />
         <event name="ViewerFileCreatedEvent" />
+        <event name="EloraOemsCsvImported" />
+        <event name="DocumentDuplicated" />
+        <event name="MetadataMappingApplied" />
+        <event name="LaunchMetadataMappingOriginListener" />
+        <event name="LaunchMetadataMappingDestinationListener" />
+        <event name="LinkedCharacteristicsUpdated" />
         
         
         <!-- Disable events enabled by default -->

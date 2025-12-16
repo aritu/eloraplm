@@ -11,10 +11,8 @@
     <doctype extends="Document" name="BomList">
       <schema name="common"/>
       <schema name="dublincore"/>
-      <schema name="uid"/>
       <schema name="bom_list"/>
       <facet name="HiddenInNavigation"/>
-      <facet name="Versionable"/>
     </doctype>
     
     <!--  Folder for BomLists -->

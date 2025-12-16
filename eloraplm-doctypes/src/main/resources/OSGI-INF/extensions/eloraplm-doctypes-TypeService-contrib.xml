@@ -13,43 +13,30 @@
     <require>org.nuxeo.platform.TemplateSources.types.contrib</require>
     
     <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
-        <schema name="elora_object" prefix="elo"
-            src="schemas/elora_object.xsd" />
-        <schema name="elora_viewer" prefix="elovwr"
-            src="schemas/elora_viewer.xsd" />
-        <schema name="cad_document" prefix="cad"
-            src="schemas/cad_document.xsd" />
-        <schema name="cad_drawing" prefix="caddrw"
-            src="schemas/cad_drawing.xsd" />
-        <schema name="cad_design_table" prefix="caddtb"
-            src="schemas/cad_design_table.xsd" />
-        <schema name="owner" prefix="own"
-            src="schemas/owner.xsd" />
+        <schema name="elora_object" prefix="elo" src="schemas/elora_object.xsd" />
+        <schema name="elora_viewer" prefix="elovwr" src="schemas/elora_viewer.xsd" />
+        <schema name="cad_document" prefix="cad" src="schemas/cad_document.xsd" />
+        <schema name="cad_drawing" prefix="caddrw" src="schemas/cad_drawing.xsd" />
+        <schema name="cad_design_table" prefix="caddtb" src="schemas/cad_design_table.xsd" />
+        <schema name="owner" prefix="own" src="schemas/owner.xsd" />
         <schema name="planning" prefix="plan" src="schemas/planning.xsd" />
         <schema name="project" prefix="prj" src="schemas/project.xsd" />
-        <schema name="related_partaker" prefix="ptk"
-            src="schemas/related_partaker.xsd" />
-        <schema name="related_customer" prefix="cust"
-            src="schemas/related_customer.xsd" />
-        <schema name="related_manufacturer" prefix="manu"
-            src="schemas/related_manufacturer.xsd" />
-        <schema name="responsible" prefix="resp"
-            src="schemas/responsible.xsd" />
-        <!-- <schema name="related_supplier" prefix="supp" src="schemas/related_supplier.xsd"/> -->
-        <schema name="elora_advanced_search" prefix="eloadvsrch"
-            src="schemas/elora_advanced_search.xsd" />
-        <schema name="cad_attachments" prefix="cadatts"
-            src="schemas/cad_attachments.xsd" />
-        <schema name="check_in_info" prefix="checkin"
-            src="schemas/check_in_info.xsd" />
-        <schema name="review_info" prefix="review"
-            src="schemas/review_info.xsd" />
-        <schema name="states_log" prefix="stlog" 
-            src="schemas/states_log.xsd" />
-        <schema name="archiving_info" prefix="arc" 
-            src="schemas/archiving_info.xsd" /> 
-        <schema name="template_info" prefix="templ" 
-            src="schemas/template_info.xsd" />
+        <schema name="related_partaker" prefix="ptk" src="schemas/related_partaker.xsd" />
+        <schema name="related_customer" prefix="cust" src="schemas/related_customer.xsd" />
+        <schema name="related_supplier" prefix="supp" src="schemas/related_supplier.xsd"/>
+        <!-- TODO Manufacturer>Supplier migratzen denean kentzeko -->
+        <schema name="related_manufacturer" prefix="manu" src="schemas/related_manufacturer.xsd" />
+        <schema name="related_oem" prefix="oem" src="schemas/related_oem.xsd" />
+        <schema name="responsible" prefix="resp" src="schemas/responsible.xsd" />
+        <schema name="elora_advanced_search" prefix="eloadvsrch" src="schemas/elora_advanced_search.xsd" />
+        <schema name="elora_basic_audit_search" prefix="ebas" src="schemas/elora_basic_audit_search.xsd" />
+        <schema name="cad_attachments" prefix="cadatts" src="schemas/cad_attachments.xsd" />
+        <schema name="check_in_info" prefix="checkin" src="schemas/check_in_info.xsd" />
+        <schema name="review_info" prefix="review" src="schemas/review_info.xsd" />
+        <schema name="states_log" prefix="stlog" src="schemas/states_log.xsd" />
+        <schema name="archiving_info" prefix="arc" src="schemas/archiving_info.xsd" /> 
+        <schema name="template_info" prefix="templ" src="schemas/template_info.xsd" />
+        <schema name="cad_part" prefix="cadprt" src="schemas/cad_part.xsd" />
     </extension>
     
     <extension point="configuration" target="org.nuxeo.ecm.core.schema.TypeService">
@@ -73,6 +60,8 @@
         <facet name="EloraWorkspace">
             <schema name="related_partaker" />
             <schema name="related_customer" />
+            <schema name="related_supplier" />
+            <!-- TODO Manufacturer>Supplier migratzen denean kentzeko -->
             <schema name="related_manufacturer" />
             <schema name="responsible" />
         </facet>
@@ -97,6 +86,10 @@
         <facet name="Templatable">
             <schema name="template_info" />
         </facet>
+        
+        <facet name="DocumentWithContent" />
+        
+        <facet name="VaultFolder" />
         
         <!-- Doctypes -->
         <doctype append="true" name="File">
@@ -159,6 +152,12 @@
         <doctype extends="Folder" name="DocumentTemplates">
             <facet name="EloraStruct" />
         </doctype>
+        
+        <doctype extends="Folder" name="DocumentTemplatesRoot">
+            <facet name="EloraStruct" />
+            <facet name="EloraRootFolder"/>
+        </doctype>
+        
         <doctype extends="Folder" name="OfficeTemplates">
             <facet name="EloraStruct" />
         </doctype>
@@ -190,6 +189,7 @@
         <doctype extends="CadDocument" name="CadPart">
             <schema name="elora_viewer" />
             <schema name="cad_attachments" />
+            <schema name="cad_part" />
         </doctype>
         <doctype extends="CadDocument" name="CadDrawing">
             <schema name="cad_drawing" />
@@ -250,6 +250,13 @@
         <doctype extends="Folder" name="FolderOtherDoc">
             <facet name="EloraStruct" />
         </doctype>
+        <doctype extends="Folder" name="VaultFolder"> 
+            <facet name="EloraStruct" />
+            <facet name ="VaultFolder" />
+        </doctype>
+        <doctype extends="VaultFolder" name="OtherDocVaultFolder"> 
+        </doctype>
+        
         <doctype extends="Folder" name="StructEbom">
             <facet name="EloraStruct" />
         </doctype>
@@ -271,6 +278,9 @@
         <doctype name="EloraAdvancedSearch" extends="AdvancedSearch">
             <schema name="elora_advanced_search" />
         </doctype>
+        <doctype name="EloraBasicAuditSearch" extends="BasicAuditSearch">
+            <schema name="elora_basic_audit_search" />
+        </doctype>
         <doctype extends="Folder" name="AdminRoot">
             <facet name="SuperSpace" />
             <facet name="EloraStruct" />
@@ -282,6 +292,33 @@
             <facet name="EloraStruct" />
             <facet name="EloraRootFolder"/>
         </doctype>
+        
+        <!-- DocumentWithContent to extend real documents from it. NOT versionable. -->
+        <doctype extends="Folder" name="DocumentWithContent">
+            <schema name="file"/>
+            <schema name="uid"/>
+            <schema name="files"/>
+            <schema name="elora_object" />
+            
+            <facet name="DocumentWithContent" />
+            <facet name="StoreStatesLog" />
+            
+            <facet name="Downloadable"/>
+            <facet name="Publishable"/>
+            <facet name="Commentable"/>
+            <facet name="HasRelatedText"/>
+        </doctype>
+        
+        <!-- Versionable version of DocumentWithContent. -->
+        <!-- TODO FIX problems to make content work with versions -->
+        <!-- 
+        <doctype extends="DocumentWithContent" name="VersionableDocumentWithContent">
+            <facet name="Versionable"/>
+            <facet name="StoreCheckInInfo" />
+            <facet name="StoreReviewInfo" />
+        </doctype>
+        -->
+        
     </extension>
     
     <extension point="types" target="org.nuxeo.ecm.platform.types.TypeService">
@@ -293,9 +330,16 @@
                 <type>DocumentTemplates</type>
                 <type>OfficeTemplates</type>
             </subtypes>
+            <deniedSubtypes>
+                <type>Workspace</type>
+                <type>TemplateSource</type>
+                <type>WebTemplateSource</type>
+            </deniedSubtypes>
         </type>
         
-        <!-- All subtypes defined under DocumentTemplates must have Templatable facet -->
+        <!-- All subtypes defined under DocumentTemplates must have Templatable facet, 
+             except DocumentTemplatesRoot documents 
+        -->
         <type id="DocumentTemplates">
             <label>DocumentTemplates</label>
             <icon>/icons/template_root_16.png</icon>
@@ -313,6 +357,7 @@
                 <contentView>structure_document_content</contentView>
             </contentViews>
             <subtypes>
+                <type>DocumentTemplatesRoot</type>
                 <type>File</type>
                 <type>Folder</type>
                 <type>OrderedFolder</type>
@@ -325,7 +370,46 @@
                 <type>ProductionProcessValidation</type>
                 <type>ProductionPartApprovalProcess</type>
                 <type>BomPart</type>
-                <type>BomManufacturerPart</type>
+                <type>BomTool</type>
+                <type>BomPackaging</type>
+                <type>BomSpecification</type>
+                <type>BomProduct</type>
+                <type>BomCustomerProduct</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+                <type>CadAssembly</type>
+                <type>CadPart</type>
+                <type>CadDrawing</type>
+                <type>CadDesignTable</type>
+            </subtypes>
+        </type>
+        
+        <type id="DocumentTemplatesRoot">
+            <label>DocumentTemplatesRoot</label>
+            <icon>/icons/document_templates_root_16.png</icon>
+            <bigIcon>/icons/document_templates_root_100.png</bigIcon>
+            <category>DocumentRoot</category>
+            <default-view>view_documents</default-view>
+            <description>DocumentTemplatesRoot.description</description>
+            <layouts mode="any">
+                <layout>document_templates_root</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>structure_document_content</contentView>
+            </contentViews>
+            <subtypes>
+                <type>File</type>
+                <type>Folder</type>
+                <type>OrderedFolder</type>
+                <type>Project</type>
+                <type>CmPr</type>
+                <type>CmEcr</type>
+                <type>CmEco</type>
+                <type>ProductValidation</type>
+                <type>ProductVerification</type>
+                <type>ProductionProcessValidation</type>
+                <type>ProductionPartApprovalProcess</type>
+                <type>BomPart</type>
                 <type>BomTool</type>
                 <type>BomPackaging</type>
                 <type>BomSpecification</type>
@@ -392,6 +476,9 @@
         <type id="WorkspaceRoot">
             <icon>/icons/workspace_root_16.png</icon>
             <bigIcon>/icons/workspace_root_100.png</bigIcon>
+            <contentViews category="content">
+                <contentView>document_content_ordered_date</contentView>
+            </contentViews>
             <subtypes>
                 <type>Project</type>
             </subtypes>
@@ -421,6 +508,9 @@
             </subtypes>
             <deniedSubtypes>
                 <type>Workspace</type>
+                <type>TemplateSource</type>
+                <type>WebTemplateSource</type>
+                <type>Collection</type>
             </deniedSubtypes>
         </type>
         <type id="Folder">
@@ -432,11 +522,19 @@
                 <type>CadDrawing</type>
                 <type>CadDesignTable</type>
             </subtypes>
+            <deniedSubtypes>
+                <type>TemplateSource</type>
+                <type>WebTemplateSource</type>
+                <type>Collection</type>
+            </deniedSubtypes>
         </type>
         <type id="File">
             <icon>/icons/file_16.png</icon>
             <bigIcon>/icons/file_100.png</bigIcon>
             <create-view>create_doc_from_template</create-view>
+            <views>
+                <view id="duplicate" value="duplicate_document" />
+            </views>
             <layouts mode="any">
             </layouts>
             <layouts mode="create">
@@ -460,6 +558,9 @@
         <type id="Note">
             <icon>/icons/note_16.png</icon>
             <bigIcon>/icons/note_100.png</bigIcon>
+            <views>
+                <view id="duplicate" value="duplicate_document" />
+            </views>
             <layouts mode="any">
                 <layout>elora_object</layout>
                 <layout>heading</layout>
@@ -476,6 +577,9 @@
         <type id="Audio">
             <icon>/icons/audio_16.png</icon>
             <bigIcon>/icons/audio_100.png</bigIcon>
+            <views>
+                <view id="duplicate" value="duplicate_document" />
+            </views>
             <layouts mode="any">
                 <layout>elora_object</layout>
                 <layout>heading</layout>
@@ -491,6 +595,9 @@
         <type id="Picture">
             <icon>/icons/picture_16.png</icon>
             <bigIcon>/icons/picture_100.png</bigIcon>
+            <views>
+                <view id="duplicate" value="duplicate_document" />
+            </views>
             <layouts mode="any">
                 <layout>elora_object</layout>
                 <layout>heading</layout>
@@ -506,6 +613,9 @@
         <type id="Video">
             <icon>/icons/video_16.png</icon>
             <bigIcon>/icons/video_100.png</bigIcon>
+            <views>
+                <view id="duplicate" value="duplicate_document" />
+            </views>
             <layouts mode="any">
                 <layout>elora_object</layout>
                 <layout>heading</layout>
@@ -734,7 +844,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>document_content</contentView>
+                <contentView>document_content_ordered_date</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -760,7 +870,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>document_content</contentView>
+                <contentView>document_content_ordered_date</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -899,9 +1009,39 @@
                 </contentView>
             </contentViews>
             <subtypes>
-                <type>Folder</type>
-                <type>OrderedFolder</type>
-                <type>Forum</type>
+                <type>OtherDocVaultFolder</type>
+                <type>File</type>
+                <type>Note</type>
+                <type>CadDesignTable</type>
+                <type>Picture</type>
+                <type>Video</type>
+                <type>Audio</type>
+                
+            </subtypes>
+        </type>
+        <type id="OtherDocVaultFolder">
+            <label>OtherDocVaultFolder</label>
+            <icon>/icons/other_doc_vault_folder_16.png</icon>
+            <bigIcon>/icons/other_doc_vault_folder_100.png</bigIcon>
+            <description>OtherDocVaultFolder.description</description>
+            <default-view>view_documents</default-view>
+            <layouts mode="any">
+                <layout>heading</layout>
+            </layouts>
+            <layouts mode="edit">
+                <layout>heading</layout>
+                <layout>dublincore</layout>
+            </layouts>
+            <contentViews category="content">
+                <contentView>document_content</contentView>
+            </contentViews>
+            <contentViews category="trash_content">
+                <contentView showInExportView="false">
+                    document_trash_content
+                </contentView>
+            </contentViews>
+            <subtypes>
+                <type>OtherDocVaultFolder</type>
                 <type>File</type>
                 <type>Note</type>
                 <type>CadDesignTable</type>
@@ -933,7 +1073,7 @@
 <!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
-                <layout>project_external_link</layout>
+                <layout>external_link</layout>
             </layouts>
             <layouts mode="any">
                 <layout>elora_object</layout>
@@ -944,7 +1084,7 @@
 <!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
-                <layout>project_external_link</layout>
+                <layout>external_link</layout>
             </layouts>
             <contentViews category="content">
                 <contentView>orderable_document_content</contentView>

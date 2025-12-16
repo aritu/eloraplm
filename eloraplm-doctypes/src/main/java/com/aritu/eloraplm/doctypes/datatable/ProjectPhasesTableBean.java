@@ -31,8 +31,6 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -41,11 +39,12 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
+
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.ProjectConstants;
 import com.aritu.eloraplm.constants.QueriesConstants;
-import com.aritu.eloraplm.datatable.EditableDocBasedTableBean;
+import com.aritu.eloraplm.datatable.EditableDocBasedTable;
 import com.aritu.eloraplm.datatable.RowData;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
@@ -55,12 +54,13 @@ import com.aritu.eloraplm.queries.EloraQueryFactory;
  * @author aritu
  *
  */
-@Name("projectPhasesTableBean")
+@Name(ProjectPhasesTableBean.NAME)
 @Scope(CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class ProjectPhasesTableBean extends EditableDocBasedTableBean
-        implements Serializable {
+public class ProjectPhasesTableBean extends EditableDocBasedTable {
+
+    public static final String NAME = "projectPhasesTableBean";
 
     private static final long serialVersionUID = 1L;
 
@@ -200,15 +200,14 @@ public class ProjectPhasesTableBean extends EditableDocBasedTableBean
             log.trace(logInitMsg + "Table created.");
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty data attribute and set isInvalid attribute to true
+            setData(new ArrayList<RowData>());
+            setIsInvalid(true);
+            setHasUnreadableRows(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.datatable.createData"));
         }
-    }
-
-    @Override
-    @Factory(value = "projectPhasesData", scope = ScopeType.EVENT)
-    public List<RowData> getDataFromFactory() {
-        return getData();
     }
 
     @Override
@@ -262,7 +261,8 @@ public class ProjectPhasesTableBean extends EditableDocBasedTableBean
         if (getParentId() == null) {
             String maxRowId = rowIdList.stream().filter(not(x -> x.contains(
                     ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR))).max(
-                            String::compareTo).orElse(null);
+                            String::compareTo)
+                    .orElse(null);
             if (maxRowId == null) {
                 rowId = ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID;
             } else {
@@ -272,8 +272,10 @@ public class ProjectPhasesTableBean extends EditableDocBasedTableBean
         } else {
             String maxRowId = rowIdList.stream().filter(
                     x -> x.startsWith(getParentId()
-                            + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR)).max(
-                                    String::compareTo).orElse(null);
+                            + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR))
+                    .max(
+                            String::compareTo)
+                    .orElse(null);
             if (maxRowId == null) {
                 rowId = getParentId()
                         + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
@@ -510,12 +512,15 @@ public class ProjectPhasesTableBean extends EditableDocBasedTableBean
                 + documentManager.getPrincipal().getName() + "] ";
 
         try {
-            String dataTableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
-                    "dataTableRowIndex");
-            String deliverableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
-                    "deliverableRowIndex");
-            String documentIdParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
-                    "documentId");
+            String dataTableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext()
+                    .getRequestParameterMap().get(
+                            "dataTableRowIndex");
+            String deliverableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext()
+                    .getRequestParameterMap().get(
+                            "deliverableRowIndex");
+            String documentIdParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+                    .get(
+                            "documentId");
 
             log.trace(logInitMsg + "dataTableRowIndexParam = |"
                     + dataTableRowIndexParam + "|, deliverableRowIndexParam = |"
@@ -579,12 +584,15 @@ public class ProjectPhasesTableBean extends EditableDocBasedTableBean
                 + documentManager.getPrincipal().getName() + "] ";
 
         try {
-            String dataTableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
-                    "dataTableRowIndex");
-            String deliverableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
-                    "deliverableRowIndex");
-            String documentIdParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(
-                    "documentId");
+            String dataTableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext()
+                    .getRequestParameterMap().get(
+                            "dataTableRowIndex");
+            String deliverableRowIndexParam = FacesContext.getCurrentInstance().getExternalContext()
+                    .getRequestParameterMap().get(
+                            "deliverableRowIndex");
+            String documentIdParam = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+                    .get(
+                            "documentId");
 
             log.trace(logInitMsg + "dataTableRowIndexParam = |"
                     + dataTableRowIndexParam + "|, deliverableRowIndexParam = |"
@@ -811,7 +819,8 @@ public class ProjectPhasesTableBean extends EditableDocBasedTableBean
         if (parentRowId == null) {
             String maxRowId = rowIdList.stream().filter(not(x -> x.contains(
                     ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR))).max(
-                            String::compareTo).orElse(null);
+                            String::compareTo)
+                    .orElse(null);
             if (maxRowId == null) {
                 rowId = ProjectConstants.PROJECT_PHASE_FIRST_ROW_ID;
             } else {
@@ -820,8 +829,10 @@ public class ProjectPhasesTableBean extends EditableDocBasedTableBean
         } else {
             String maxRowId = rowIdList.stream().filter(
                     x -> x.startsWith(parentRowId
-                            + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR)).max(
-                                    String::compareTo).orElse(null);
+                            + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR))
+                    .max(
+                            String::compareTo)
+                    .orElse(null);
             if (maxRowId == null) {
                 rowId = parentRowId
                         + ProjectConstants.PROJECT_PHASE_ROW_ID_SEPARATOR
@@ -967,32 +978,32 @@ public class ProjectPhasesTableBean extends EditableDocBasedTableBean
     public void propagateDate(ProjectPhaseRowData row, String field) {
         String id = row.getId();
         switch (field) {
-        case "realStartDate":
-            Date realStartDate = row.getRealStartDate();
-            getData().stream().filter(r -> !r.getId().equals(id)
-                    && r.getId().startsWith(id)).forEach(a -> {
-                        ((ProjectPhaseRowData) a).setRealStartDate(
-                                realStartDate);
-                        a.setIsModified(true);
-                    });
-            break;
-        case "realEndDate":
-            Date realEndDate = row.getRealEndDate();
-            getData().stream().filter(r -> !r.getId().equals(id)
-                    && r.getId().startsWith(id)).forEach(a -> {
-                        ((ProjectPhaseRowData) a).setRealEndDate(realEndDate);
-                        a.setIsModified(true);
-                    });
-            break;
-        case "plannedEndDate":
-            Date plannedEndDate = row.getPlannedEndDate();
-            getData().stream().filter(r -> !r.getId().equals(id)
-                    && r.getId().startsWith(id)).forEach(a -> {
-                        ((ProjectPhaseRowData) a).setPlannedEndDate(
-                                plannedEndDate);
-                        a.setIsModified(true);
-                    });
-            break;
+            case "realStartDate":
+                Date realStartDate = row.getRealStartDate();
+                getData().stream().filter(r -> !r.getId().equals(id)
+                        && r.getId().startsWith(id)).forEach(a -> {
+                            ((ProjectPhaseRowData) a).setRealStartDate(
+                                    realStartDate);
+                            a.setIsModified(true);
+                        });
+                break;
+            case "realEndDate":
+                Date realEndDate = row.getRealEndDate();
+                getData().stream().filter(r -> !r.getId().equals(id)
+                        && r.getId().startsWith(id)).forEach(a -> {
+                            ((ProjectPhaseRowData) a).setRealEndDate(realEndDate);
+                            a.setIsModified(true);
+                        });
+                break;
+            case "plannedEndDate":
+                Date plannedEndDate = row.getPlannedEndDate();
+                getData().stream().filter(r -> !r.getId().equals(id)
+                        && r.getId().startsWith(id)).forEach(a -> {
+                            ((ProjectPhaseRowData) a).setPlannedEndDate(
+                                    plannedEndDate);
+                            a.setIsModified(true);
+                        });
+                break;
         }
 
         setIsDirty(true);

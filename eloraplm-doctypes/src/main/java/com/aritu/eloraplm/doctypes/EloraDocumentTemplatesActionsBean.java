@@ -63,7 +63,9 @@ import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoSchemaConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraStructureHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.SameReferenceAlreadyExistsForTypeException;
 import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
@@ -78,7 +80,7 @@ public class EloraDocumentTemplatesActionsBean extends InputController
     private static final Log log = LogFactory.getLog(
             EloraDocumentTemplatesActionsBean.class);
 
-    private static final long serialVersionUID = -4031259222075515590L;
+    private static final long serialVersionUID = 1L;
 
     @In(create = true, required = false)
     private transient CoreSession documentManager;
@@ -117,8 +119,11 @@ public class EloraDocumentTemplatesActionsBean extends InputController
 
     @Override
     public DocumentModelList getTemplates(String targetTypeName) {
+        String logInitMsg = "[getTemplates] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
         if (documentManager == null) {
-            log.error("Unable to access documentManager");
+            log.error(logInitMsg + "Unable to access documentManager");
             return null;
         }
 
@@ -130,8 +135,20 @@ public class EloraDocumentTemplatesActionsBean extends InputController
             }
         }
 
-        templates = DocCreationFromTemplateHelper.getDocumentTemplates(
-                documentManager, targetTypeName);
+        DocumentModel currentDocument = navigationContext.getCurrentDocument();
+        try {
+            String currentDocumentEloraRootFolderUid = EloraStructureHelper.getEloraRootFolderUid(
+                    currentDocument, documentManager);
+
+            templates = DocCreationFromTemplateHelper.getDocumentTemplates(
+                    documentManager, targetTypeName,
+                    currentDocumentEloraRootFolderUid);
+        } catch (EloraException e) {
+            log.error(
+                    logInitMsg + "Unable to retrieve templates. Error message: "
+                            + e.getMessage(),
+                    e);
+        }
 
         return templates;
     }
@@ -217,6 +234,11 @@ public class EloraDocumentTemplatesActionsBean extends InputController
                 return navigationContext.navigateToDocument(created,
                         "after-create");
             }
+        } catch (SameReferenceAlreadyExistsForTypeException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.automaticCodeCreation"));
+            TransactionHelper.setTransactionRollbackOnly();
         } catch (EloraException e) {
             log.error(
                     logInitMsg + "Uncontrolled exception: "

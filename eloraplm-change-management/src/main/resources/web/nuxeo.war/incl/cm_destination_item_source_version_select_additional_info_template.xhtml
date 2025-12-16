@@ -1,0 +1,16 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    >
+    
+    <ui:fragment rendered="#{field_0 != null and !empty field_0 and value.defaultDestinationItemSourceVersionUid != null and !empty value.defaultDestinationItemSourceVersionUid and field_0.id != value.defaultDestinationItemSourceVersionUid}">
+        <h:graphicImage value="/icons/badge_source_changed_20.png" style="vertical-align: middle;">
+             <f:attribute name="title" value="#{messages['eloraplm.label.cm.destinationItemSourceVersionIsNotDefaultOne']}" />
+             <f:attribute name="styleClass" value="tipsyShow" />
+        </h:graphicImage>
+    </ui:fragment>
+    
+</ui:composition>
+    

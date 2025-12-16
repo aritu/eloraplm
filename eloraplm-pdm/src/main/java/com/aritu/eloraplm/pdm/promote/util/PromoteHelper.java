@@ -3,6 +3,8 @@ package com.aritu.eloraplm.pdm.promote.util;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.NXCore;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -19,6 +21,8 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 public class PromoteHelper {
+
+    private static final Log log = LogFactory.getLog(PromoteHelper.class);
 
     private PromoteHelper() {
     }
@@ -106,8 +110,10 @@ public class PromoteHelper {
 
         if (isPropagated) {
             if (!isTransitionAllowsConfig(transition)) {
-                msg = checkParentNodeAndMissingDocs(doc, parentState,
-                        childState, stmt, messages, msg);
+                if (!LifecyclesConfig.isSupported(childState, parentState)) {
+                    msg = messages.get(
+                            "eloraplm.message.error.state.not.supported");
+                }
             }
         } else {
             if (!isTransitionAllowedConfig(transition)) {
@@ -120,24 +126,31 @@ public class PromoteHelper {
         return msg;
     }
 
-    private static String checkParentNodeAndMissingDocs(DocumentModel doc,
-            String parentState, String childState, Statement stmt,
-            Map<String, String> messages, String msg) throws EloraException {
-        if (LifecyclesConfig.isSupported(childState, parentState)) {
-            // TODO: Tendria que sacar todos los hijos ?? No
-            // solo los de este predicate ?? El drawing puede tener otro
-            // tipo de statements a otras piezas ??
-            msg = checkTreeMissingDocSupportedStates(doc, childState, stmt,
-                    messages, msg);
-        } else {
-            msg = messages.get("eloraplm.message.error.state.not.supported");
-        }
-        return msg;
-    }
+    // private static String checkParentNodeAndMissingDocs(DocumentModel doc,
+    // String parentState, String childState, Statement stmt,
+    // Map<String, String> messages, String msg,
+    // List<String> docsMarkedToPromote) throws EloraException {
+    // if (LifecyclesConfig.isSupported(childState, parentState)) {
+    // // TODO: Tendria que sacar todos los hijos ?? No
+    // // solo los de este predicate ?? El drawing puede tener otro
+    // // tipo de statements a otras piezas ??
+    // msg = checkTreeMissingDocSupportedStates(doc, childState, stmt,
+    // messages, msg, docsMarkedToPromote);
+    // } else {
+    // msg = messages.get("eloraplm.message.error.state.not.supported");
+    // }
+    // return msg;
+    // }
 
-    private static String checkTreeMissingDocSupportedStates(DocumentModel doc,
+    public static String checkTreeMissingDocSupportedStates(DocumentModel doc,
             String childState, Statement stmt, Map<String, String> messages,
-            String msg) throws EloraException {
+            String msg, List<String> docsMarkedToPromote) {
+
+        String logInitMsg = "[checkTreeMissingDocSupportedStates] ["
+                + doc.getCoreSession().getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "Docs Marked to Promote: |"
+                + docsMarkedToPromote.toString() + "|");
+
         List<Statement> childStmts = RelationHelper.getStatements(
                 EloraRelationConstants.ELORA_GRAPH_NAME, doc,
                 stmt.getPredicate());
@@ -145,8 +158,19 @@ public class PromoteHelper {
             if (!childStmt.getObject().equals(stmt.getObject())) {
                 DocumentModel child = RelationHelper.getDocumentModel(
                         childStmt.getObject(), doc.getCoreSession());
+
+                // If it is in the list of docs marked to promote, skip further
+                // checks
+                if (docsMarkedToPromote.contains(child.getId())) {
+                    continue;
+                }
+
                 if (!LifecyclesConfig.isSupported(childState,
                         child.getCurrentLifeCycleState())) {
+
+                    log.trace(logInitMsg + "Conflicting child UID: |"
+                            + child.getId() + "|");
+
                     msg = messages.get(
                             "eloraplm.message.error.state.not.supported.by.not.visible.children");
                     break;

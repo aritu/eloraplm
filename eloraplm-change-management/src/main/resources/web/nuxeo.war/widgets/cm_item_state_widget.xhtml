@@ -1,20 +1,34 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:c="http://java.sun.com/jstl/core">
-  
-  <ui:fragment rendered="#{field != null and !empty field}">
-  
-    <h:outputText 
-      value="#{messages[field.concat('.abbr')]}"
-      styleClass="lifeCycleStateLabel hollow tipsyShow"
-      style="border-color: #{lifecycleActions.getLifeCycleStateColor(field)}; color: #{lifecycleActions.getLifeCycleStateColor(field)};">
-       <f:attribute name="title" value="#{messages[field]}" />
-    </h:outputText>
-  
-  </ui:fragment>
-  
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <ui:fragment rendered="#{field != null and !empty field}">
+            <h:outputText
+                value="#{messages[field.concat('.abbr')]}"
+                styleClass="lifeCycleStateLabel hollow tipsyShow"
+                style="
+                    border-color: #{lifecycleActions.getLifeCycleStateColor(
+                            field
+                        )};
+                    color: #{lifecycleActions.getLifeCycleStateColor(field)};
+                "
+            >
+                <f:attribute
+                    name="title"
+                    value="#{messages[field]}"
+                />
+            </h:outputText>
+        </ui:fragment>
+    </c:if>
+
+    <c:if test="#{widget.mode == 'csv'}">
+        <ui:fragment rendered="#{field != null and !empty field}">
+            <h:outputText value="#{messages[field]}" />
+        </ui:fragment>
+    </c:if>
 </ui:composition>

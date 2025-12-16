@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:rich="http://richfaces.org/rich">
+  
+  <h:panelGroup layout="block" id="#{widget.id}" >
+  
+      <ui:fragment rendered="#{field.type == 'number'}">
+        <nxl:widget name="bom_charac_number_value" mode="view" value="#{field.numberValue}" />
+      </ui:fragment>
+  
+      <ui:fragment rendered="#{field.type == 'string'}">
+        <h:outputText value="#{field.stringValue}" />
+      </ui:fragment>
+  
+      <ui:fragment rendered="#{field.type == 'date'}">
+        <nxl:widgetType name="datetime"
+                        value="#{field.dateValue}" 
+                        mode="view" pattern="#{nxu:basicDateFormatter()}" />
+      </ui:fragment>
+  
+      <ui:fragment rendered="#{field.type == 'boolean'}">
+            <h:outputText rendered="#{field.booleanValue != null and field.booleanValue}" value="#{messages['label.true']}" />
+            <h:outputText rendered="#{field.booleanValue != null and !field.booleanValue}" value="#{messages['label.false']}" />
+      </ui:fragment>
+  
+      <ui:fragment rendered="#{field.type == 'list'}" >
+        <h:outputText value="#{field.listValue}" />
+      </ui:fragment> 
+  
+  </h:panelGroup>
+  
+</ui:composition>

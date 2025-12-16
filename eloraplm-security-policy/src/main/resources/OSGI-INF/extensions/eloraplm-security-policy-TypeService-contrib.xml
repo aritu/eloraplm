@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.securitypolicy.TypeService.contrib">
+    
+    <require>org.nuxeo.ecm.directory.types</require>
+    <require>com.aritu.eloraplm.doctypes.TypeService.contrib</require>
+    <require>com.aritu.eloraplm.bom.TypeService.contrib</require>
+    
+    <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+        <schema name="security_info" prefix="sec" src="schemas/security_info.xsd" />
+        <schema name="group" src="schemas/group.xsd" override="true" />
+    </extension>
+    
+    <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService" >
+        <facet name="HasSecurityInfo">
+            <schema name="security_info" />
+        </facet>
+        
+        <doctype append="true" name="BomDocument">
+            <facet name="HasSecurityInfo" />
+        </doctype>
+        <doctype append="true" name="CadDocument">
+            <facet name="HasSecurityInfo" />
+        </doctype>
+        <doctype append="true" name="BasicDocument">
+            <facet name="HasSecurityInfo" />
+        </doctype>        
+        <doctype append="true" name="File">
+            <facet name="HasSecurityInfo" />
+        </doctype>
+        
+    </extension>
+    
+</component>

@@ -14,7 +14,10 @@
 package com.aritu.eloraplm.integration.restoperations;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
@@ -44,6 +47,9 @@ import com.aritu.eloraplm.core.util.EloraStructureHelper;
 public class EloraFileManagerImport {
 
     public static final String ID = "FileManager.Import";
+
+    private static final Log log = LogFactory.getLog(
+            EloraFileManagerImport.class);
 
     @Context
     protected CoreSession session;
@@ -81,8 +87,24 @@ public class EloraFileManagerImport {
     @OperationMethod
     public DocumentModelList run(BlobList blobs)
             throws OperationException, IOException {
+
+        String logInitMsg = "[run] [" + session.getPrincipal().getName() + "] ";
+
         DocumentModelList result = new DocumentModelListImpl();
+
+        log.trace(logInitMsg + "Blobs to import (unfiltered): " + blobs.size());
+
+        if (blobs != null && blobs.size() > 1) {
+            // Remove duplicate blobs
+            blobs = new BlobList(
+                    blobs.stream().distinct().collect(Collectors.toList()));
+        }
+
+        log.trace(logInitMsg + "Actual blobs to import (distinct): "
+                + blobs.size());
+
         for (Blob blob : blobs) {
+            log.trace(blob.getFilename());
             result.add(run(blob));
         }
         return result;

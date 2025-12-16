@@ -1,0 +1,24 @@
+<f:subview
+    id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+>
+    <ui:fragment rendered="#{field_0.data != null}">
+        <nxl:widget
+            name="listing_reference"
+            mode="#{widget.mode}"
+            value="#{field_0}"
+        />
+    </ui:fragment>
+
+    <ui:fragment rendered="#{field_0.data == null}">
+        <nxl:widget
+            name="treewidget_bom_erp_reference"
+            mode="#{widget.mode}"
+            value="#{field_0}"
+        />
+    </ui:fragment>
+</f:subview>

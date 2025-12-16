@@ -1,0 +1,41 @@
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+    template="/incl/action/widgets/primefaces_dialog_base_template.xhtml"
+>
+    <ui:define name="dialog_content">
+        <nxl:layout
+            name="link_char_add_linked_characteristics"
+            mode="edit"
+            value="#{linkedCharacteristicsTableBean}"
+        />
+    </ui:define>
+
+    <ui:define name="dialog_buttons">
+        <p:commandButton
+            value="#{messages['eloraplm.command.add']}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccess(xhr, status, args, #{pfDialogId});"
+            styleClass="button mainAction"
+            actionListener="#{linkedCharacteristicsTableBean.addRow}"
+            process="@form"
+            update="@form :nxw_link_char_dt:dtForm:dt"
+        />
+
+        <p:commandButton
+            type="button"
+            value="#{messages['command.cancel']}"
+            immediate="true"
+            process="@none"
+            styleClass="button"
+            onclick="PF('#{pfDialogId}').hide();"
+        />
+    </ui:define>
+</ui:decorate>

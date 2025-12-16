@@ -1,51 +1,45 @@
-<ui:composition
+<ui:decorate
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:c="http://java.sun.com/jsp/jstl/core"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
-    xmlns:nxu="http://nuxeo.org/nxweb/util"
-    xmlns:p="http://primefaces.org/ui">
+    template="/incl/action/widgets/primefaces_dialog_base_template.xhtml"
+>
+    <ui:define name="dialog_content">
+        <nxl:layout
+            name="workflow_question"
+            mode="create"
+            value="#{workflowQuestionsTableBean}"
+        />
+    </ui:define>
 
-    <h3>
-        <h:outputText value="#{messages['eloraplm.title.workflows.forms.question.add']}" />
-    </h3>
-    
-    <h:form id="#{fancyboxFormId}">
-        
-        <h:panelGroup styleClass="content" layout="block" style="min-height: 500px">
-            
-            <nxl:layout name="workflow_question" mode="create" value="#{workflowQuestionsTableBean}" />
-            
-        </h:panelGroup>
+    <ui:define name="dialog_buttons">
+        <p:commandButton
+            value="#{messages['command.add']}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccess(xhr, status, args, #{pfDialogId});"
+            styleClass="button mainAction"
+            actionListener="#{workflowQuestionsTableBean.addRow()}"
+            process="@form"
+            update="@form :nxw_workflow_questions_dt:dtForm"
+        />
 
-        <div class="buttonsGadget">
-            
-            <h:commandButton value="#{messages['command.add']}"
-                styleClass="button"
-                actionListener="#{workflowQuestionsTableBean.addRow()}">
-                <f:param name="btnAddWorkflowQuestion" value="true" />
-                
-                <f:ajax execute="@form"
-                    render="@form
-                    :#{component.namingContainer.parent.namingContainer.clientId}:global_flag_validation_failed_render
-                    :#{component.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:dtForm:#{tableWidgetId}" />
-            </h:commandButton>
-                
-            <h:commandButton value="#{messages['command.cancel']}" styleClass="button">
-                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
-            </h:commandButton>
-            
-        </div>
-        
-    </h:form>
-    
-    <h:panelGroup id="global_flag_validation_failed_render">
-        <h:outputText style="display: none;" value="#{param.btnAddWorkflowQuestion}" />
-        <h:outputScript rendered="#{not empty param.btnAddWorkflowQuestion and !facesContext.isValidationFailed()}">
-            jQuery.fancybox.close();
-        </h:outputScript>
-    </h:panelGroup>
+        <p:commandButton
+            type="button"
+            value="#{messages['command.cancel']}"
+            immediate="true"
+            process="@none"
+            styleClass="button"
+            onclick="PF('#{pfDialogId}').hide();"
+        />
+    </ui:define>
 
-</ui:composition>
+    <ui:define name="dialog_scripts">
+        <script>
+            function onQuestionTypeChanged(xhr, status, args, dialog) {
+                PF(dialog.id).resetPosition();
+            }
+        </script>
+    </ui:define>
+</ui:decorate>

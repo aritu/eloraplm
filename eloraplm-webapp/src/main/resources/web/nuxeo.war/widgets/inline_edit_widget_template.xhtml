@@ -1,23 +1,41 @@
-<c:if test="true"
+<c:if
+    test="true"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
-    xmlns:p="http://primefaces.org/ui">
-    
-    <p:cellEditor>
+    xmlns:p="http://primefaces.org/ui"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <p:cellEditor>
+            <nxl:subWidget>
+                <c:if test="#{widget.properties.facet eq 'output'}">
+                    <f:facet name="output">
+                        <nxl:widget
+                            widget="#{widget}"
+                            value="#{fieldOrValue}"
+                        />
+                    </f:facet>
+                </c:if>
+                <c:if test="#{widget.properties.facet eq 'input'}">
+                    <f:facet name="input">
+                        <nxl:widget
+                            widget="#{widget}"
+                            value="#{fieldOrValue}"
+                        />
+                    </f:facet>
+                </c:if>
+            </nxl:subWidget>
+        </p:cellEditor>
+    </c:if>
+    <c:if test="#{widget.mode == 'csv'}">
         <nxl:subWidget>
             <c:if test="#{widget.properties.facet eq 'output'}">
-                <f:facet name="output">
-                    <nxl:widget widget="#{widget}" value="#{fieldOrValue}" />
-                </f:facet>
-            </c:if>
-            <c:if test="#{widget.properties.facet eq 'input'}">
-                <f:facet name="input">
-                    <nxl:widget widget="#{widget}" value="#{fieldOrValue}" />
-                </f:facet>
+                <nxl:widget
+                    widget="#{widget}"
+                    value="#{fieldOrValue}"
+                />
             </c:if>
         </nxl:subWidget>
-    </p:cellEditor>
-    
+    </c:if>
 </c:if>

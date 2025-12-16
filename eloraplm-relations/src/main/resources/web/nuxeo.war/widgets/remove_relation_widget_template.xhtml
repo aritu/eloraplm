@@ -10,7 +10,8 @@
             image="/icons/row_delete_16.png"
             title="#{messages['eloraplm.command.remove']}"
             alt=""
-            rendered="#{isSpecial == 'false' and not nodeData.isRemoved}">
+            rendered="#{isSpecial == 'false' and not nodeData.isRemoved}"
+            styleClass="listing-icon-button">
             
             <p:ajax
                 listener="#{treeBean.markRelationNodeAsRemoved(component.namingContainer, node, currentDocument, isAnarchic)}"
@@ -26,7 +27,8 @@
             image="/icons/row_undo_delete_16.png"
             title="#{messages['eloraplm.command.undoRemove']}"
             alt=""
-            rendered="#{isSpecial == 'false' and nodeData.isRemoved}">
+            rendered="#{isSpecial == 'false' and nodeData.isRemoved}"
+            styleClass="listing-icon-button">
             
             <p:ajax
                 listener="#{treeBean.unmarkRelationNodeAsRemoved(component.namingContainer, node, currentDocument, isAnarchic)}"
@@ -44,6 +46,7 @@
             alt=""
             style="cursor: not-allowed"
             rendered="#{isSpecial == 'true'}"
+            styleClass="listing-icon-button disabled"
             />
         
     </h:panelGroup>

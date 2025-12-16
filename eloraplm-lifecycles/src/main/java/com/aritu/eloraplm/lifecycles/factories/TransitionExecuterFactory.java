@@ -19,7 +19,7 @@ package com.aritu.eloraplm.lifecycles.factories;
  */
 public interface TransitionExecuterFactory {
 
-    TransitionExecuter getTransitionExecuter(String transition,
-            String lifecycle);
+    TransitionExecuter getTransitionExecuter(String lifecycle,
+            String transition);
 
 }

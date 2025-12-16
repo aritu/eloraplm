@@ -45,7 +45,7 @@ public class BlobStructure {
 
     private static BlobList blobs;
 
-    private static List<Resource> hierarchicalAndSuppressedPredicates;
+    private static List<Resource> hierarchAndSupprPredicates;
 
     private static List<Resource> specialPredicates;
 
@@ -69,22 +69,21 @@ public class BlobStructure {
     }
 
     private static void loadConfiguration() {
-        loadHierarchicalAndSuppressedRelations();
+        loadHierarchAndSupprRelations();
         loadSpecialRelations();
         loadDirectAndIconOnlyRelations();
     }
 
-    private static void loadHierarchicalAndSuppressedRelations() {
-        List<String> hierarchicalAndSuppressedRelationsList = new ArrayList<String>();
-        hierarchicalAndSuppressedRelationsList.addAll(
+    private static void loadHierarchAndSupprRelations() {
+        List<String> hierarchAndSupprRelationsList = new ArrayList<String>();
+        hierarchAndSupprRelationsList.addAll(
                 RelationsConfig.cadHierarchicalRelationsList);
-        hierarchicalAndSuppressedRelationsList.addAll(
+        hierarchAndSupprRelationsList.addAll(
                 RelationsConfig.cadSuppressedRelationsList);
 
-        hierarchicalAndSuppressedPredicates = new ArrayList<Resource>();
-        for (String predicateUri : hierarchicalAndSuppressedRelationsList) {
-            hierarchicalAndSuppressedPredicates.add(
-                    new ResourceImpl(predicateUri));
+        hierarchAndSupprPredicates = new ArrayList<Resource>();
+        for (String predicateUri : hierarchAndSupprRelationsList) {
+            hierarchAndSupprPredicates.add(new ResourceImpl(predicateUri));
         }
     }
 
@@ -119,7 +118,7 @@ public class BlobStructure {
             RelationManager relationManager, CoreSession session)
             throws EloraException {
         List<Statement> statements = getStatements(doc, true,
-                hierarchicalAndSuppressedPredicates);
+                hierarchAndSupprPredicates);
         processStatements(doc, statements, false, false, relationManager,
                 session);
     }

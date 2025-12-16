@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.pdm.webapp.WebLayoutManager.contrib">
+    
+    <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <widget name="checkin_info" type="documentActions">
+          <labels>
+            <label mode="any"></label>
+          </labels>
+          <properties widgetMode="any">
+            <property name="category">CHECKIN_INFO</property>
+          </properties>
+        </widget>
+        
+    </extension>
+
+</component>

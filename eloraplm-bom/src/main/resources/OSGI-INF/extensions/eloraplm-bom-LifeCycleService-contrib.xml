@@ -7,7 +7,6 @@
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         <types>
           <type name="BomPart">eloraBomLifeCycle</type>
-          <type name="BomManufacturerPart">eloraBomLifeCycle</type>
           <type name="BomTool">eloraBomLifeCycle</type>
           <type name="BomPackaging">eloraBomLifeCycle</type>
           <type name="BomSpecification">eloraBomLifeCycle</type>
@@ -19,7 +18,6 @@
           
           <type name="StructEbom">default</type>
           <type name="FolderBomPart">default</type>
-          <type name="FolderBomManufacturerPart">default</type>
           <type name="FolderBomTool">default</type>
           <type name="FolderBomPackaging">default</type>
           <type name="FolderBomSpecification">default</type>

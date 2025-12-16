@@ -19,6 +19,7 @@ import java.util.List;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
+import com.aritu.eloraplm.lifecycles.util.ErrorInfo;
 
 /**
  * @author aritu
@@ -48,9 +49,9 @@ public class DefaultTransitionExecuter implements TransitionExecuter {
     }
 
     @Override
-    public List<String> getErrorList() {
+    public List<ErrorInfo> getErrorList() {
         // For now we don't use this method
-        return new ArrayList<String>();
+        return new ArrayList<ErrorInfo>();
     }
 
     @Override
@@ -61,6 +62,11 @@ public class DefaultTransitionExecuter implements TransitionExecuter {
     @Override
     public boolean hasToFireDefaultEvent() {
         return true;
+    }
+
+    @Override
+    public boolean hasInnerForm() {
+        return false;
     }
 
 }

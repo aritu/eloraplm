@@ -41,20 +41,35 @@ public class CMConstants {
     // ACTION VALUES
     public static final String ACTION_CHANGE = "id_change";
 
+    public static final String ACTION_OVERWRITE = "id_overwrite";
+
     public static final String ACTION_REPLACE = "id_replace";
 
     public static final String ACTION_REMOVE = "id_remove";
 
     public static final String ACTION_IGNORE = "id_ignore";
 
+    // OVERWRITE OPTIONS
+    public static final String OVERWRITE_OPTION_LEVEL1 = "level1";
+
+    public static final String OVERWRITE_OPTION_TOP_ASSEMBLIES = "topAssemblies";
+
+    public static final String IM_CALCULATION_METHOD_AUTOMATIC = "automatic";
+
+    public static final String IM_CALCULATION_METHOD_MANUAL = "manual";
+
     // FIELDS and ACTIONS TRIGERRING REFRESH NODE ACTION
     public static final String TRIGGER_FIELD_ACTION = "action";
 
     public static final String TRIGGER_FIELD_IS_MANAGED = "isManaged";
 
-    public static final String TRIGGER_FIELD_DESTINATION_ITEM_UID = "destinationItemUid";
+    public static final String TRIGGER_FIELD_DESTINATION_ITEM = "destinationItem";
+
+    public static final String TRIGGER_FIELD_DESTINATION_ITEM_SOURCE_VERSION = "destinationItemSourceVersion";
 
     public static final String TRIGGER_ACTION_LOAD_DESTINATION_VERSIONS = "loadDestinationVersions";
+
+    public static final String TRIGGER_ACTION_LOAD_DESTINATION_SOURCE_VERSIONS = "loadDestinationSourceVersions";
 
     // MODIFIABLE ATTRIBUTES
     public static final String MODIFIABLE_ATTRIBUTE_ACTION = "action";
@@ -68,8 +83,26 @@ public class CMConstants {
 
     public static final String COMMENT_IGNORE_SINCE_ANCESTOR_IS_IGNORE = "Ignore: since it's ancestor action is Ignore";
 
+    public static final String COMMENT_IGNORE_SINCE_DERIVED_FROM_ITEM_IS_IGNORE = "Ignore: since derived from an item that is Ignore";
+
+    public static final String COMMENT_IGNORE_SINCE_DERIVED_FROM_DOC_IS_IGNORE = "Ignore: since derived from a document that is Ignore";
+
     public static final String COMMENT_IGNORE_SINCE_ORIGIN_SAME_AS_REPLACE_DESTINATION = "Ignore: origin item is the same as the modification destination, so there is nothing to change";
 
     public static final String COMMENT_IGNORE_SINCE_ITEM_IGNORED = "Ignore: since ITEM ignored";
+
+    public static final String COMMENT_IGNORE_SINCE_ITEM_TYPE_GENERAL_SPECIFICATION = "Ignore: since item is a General Specification";
+
+    public static final String COMMENT_IGNORE_SINCE_ITEM_TYPE_SPECIFICATION = "Ignore: since item is a Specification";
+
+    public static final String COMMENT_IGNORE_SINCE_ITEM_TYPE_BASIC_DOCUMENT = "Ignore: since item is a Document";
+
+    // VERSIONS LABELS
+    public static final String VERSION_LABEL_WC = " (WC)";
+
+    // DEFAULT SOURCE VERSIONS
+    public static final String SOURCE_VERSION_ORIGIN_VERSION = "originVersion";
+
+    public static final String SOURCE_VERSION_WORKING_COPY = "workingCopy";
 
 }

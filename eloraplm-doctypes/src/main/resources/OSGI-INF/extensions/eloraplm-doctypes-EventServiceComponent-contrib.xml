@@ -2,10 +2,22 @@
 
 <component name="com.aritu.eloraplm.doctypes.EventServiceComponent.contrib">
 
+    <require>org.nuxeo.ecm.platform.thumbnail.listener</require>
     <require>filemanager.core.listener.icon</require>
+    
     <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
-        <listener async="false" class="com.aritu.eloraplm.thumbnails.CheckViewerBlobUpdateListener" name="checkViewerBlobUpdate" postCommit="false" priority="999">
+        <!-- Disable default listener -->
+        <listener name="checkBlobUpdate" enabled="false" async="false" postCommit="false" class="org.nuxeo.ecm.platform.thumbnail.listener.CheckBlobUpdateListener" priority="999">
+            <event>documentCreated</event>
             <event>beforeDocumentModification</event>
+        </listener>/>
+        
+        <listener name="eloCheckBlobUpdate" async="false" class="com.aritu.eloraplm.thumbnails.EloraCheckBlobUpdateListener" postCommit="false" priority="999">
+            <event>documentCreated</event>
+            <event>beforeDocumentModification</event>
+            <event>PdmRestoredEvent</event>
+            <!-- not needed as after this we will have one of the other events -->
+            <!-- <event>ViewerFileCreatedEvent</event> -->
         </listener>
         
         <!-- Mimetype icon updater -->
@@ -18,6 +30,29 @@
         <listener name="docCreationInitialActionsProcessor" async="false" postCommit="false" class="com.aritu.eloraplm.doctypes.DocCreationInitialActionsProcessor" priority="120">
             <event>documentCreated</event>
         </listener>
+        
+        <!-- Synchronous thumbnail update -->
+        <listener name="updateThumbListenerSync" async="false" postCommit="false"
+            class="com.aritu.eloraplm.doctypes.listener.UpdateThumbnailListenerSync" priority="999">
+            <event>scheduleThumbnailUpdateSync</event>
+        </listener>
+        
+        <!-- VaultFolder Management -->
+        <listener name="vaultFolderManagementListener" async="false" postCommit="false"
+            class="com.aritu.eloraplm.doctypes.listener.VaultFolderManagementListener" priority="120">
+            <event>documentCreated</event>
+            <event>documentRemoved</event>
+            <event>documentModified</event>
+        </listener>
+        
+        <!-- DocumentTemplatesRoot Management -->
+        <listener name="documentTemplatesRootManagementListener" async="false" postCommit="false"
+            class="com.aritu.eloraplm.doctypes.listener.DocumentTemplatesRootManagementListener" priority="120">
+            <event>documentCreated</event>
+            <event>documentRemoved</event>
+            <event>documentModified</event>
+        </listener>
+        
     
     </extension>
 

@@ -21,6 +21,7 @@ import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
+import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.blob.binary.BinaryManagerStatus;
 import org.nuxeo.ecm.core.storage.sql.management.SQLRepositoryStatus;
@@ -28,6 +29,7 @@ import org.nuxeo.ecm.core.storage.sql.management.SQLRepositoryStatusMBean;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.integration.admin.restoperations.util.CleanOrphanBinariesResponse;
+import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 
 /**
  * @author aritu
@@ -51,7 +53,7 @@ public class CleanOrphanBinaries {
     private CleanOrphanBinariesResponse response;
 
     @OperationMethod
-    public String run() throws EloraException {
+    public Blob run() throws EloraException {
 
         String logInitMsg = "[run] [" + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -115,6 +117,6 @@ public class CleanOrphanBinaries {
 
         log.trace(logInitMsg + "--- EXIT ---");
 
-        return response.convertToJson();
+        return EloraIntegrationHelper.createJSONBlob(response.convertToJson());
     }
 }

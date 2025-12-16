@@ -36,8 +36,6 @@ public class EloraDoctypeConstants {
 
     public static final String BOM_SPECIFICATION = "BomSpecification";
 
-    public static final String BOM_MANUFACTURER_PART = "BomManufacturerPart";
-
     public static final String BOM_CUSTOMER_PRODUCT = "BomCustomerProduct";
 
     public static final String BOM_LIST = "BomList";
@@ -68,6 +66,10 @@ public class EloraDoctypeConstants {
 
     public static final String STRUCTURE_EBOM = "StructEbom";
 
+    public static final String WORKSPACE_ROOT = "WorkspaceRoot";
+
+    public static final String ADMIN_ROOT = "AdminRoot";
+
     public static final String FOLDER_ARCHIVED_CHANGE_MANAGEMENT = "FolderArchivedChangeManagement";
 
     public static final String FOLDER_ARCHIVED_QUALITY_MANAGEMENT = "FolderArchivedQualityManagement";
@@ -77,4 +79,10 @@ public class EloraDoctypeConstants {
     public static final String FOLDER_ARCHIVED_WORKSPACES = "FolderArchivedWorkspaces";
 
     public static final String TEMP_FOLDER = "TempFolder";
+
+    public static final String OTHER_DOC_VAULT_FOLDER = "OtherDocVaultFolder";
+
+    public static final String DOCUMENT_TEMPLATES = "DocumentTemplates";
+
+    public static final String DOCUMENT_TEMPLATES_ROOT = "DocumentTemplatesRoot";
 }

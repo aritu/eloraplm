@@ -1,0 +1,65 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+>
+    <h:outputScript
+        library="js"
+        name="primefaces_dialog.js"
+        target="#{pageJsTarget}"
+    />
+
+    <p:commandButton
+        rendered="#{value.lockConflicts.size > 0}"
+        icon="pi pi-lock"
+        styleClass="rounded-button ui-button-warning"
+        pt:data-tooltip="#{messages['eloraplm.message.warning.cm.lockConflicts']}"
+        process="@this"
+        onstart="onPfDialogActionStart()"
+        actionListener="#{pfDialogActions.initDialog(
+                value,
+                currentDocument,
+                'eloraplm.title.cm.lockconflicts',
+                '/incl/treetable/cm_lock_conflict_items.xhtml',
+                true,false,true,null,null,null,null)}"
+        oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+        update=":glb_pf_dlg_panel"
+    />
+
+    <p:button
+        rendered="#{value.passedItems}"
+        icon="pi pi-arrow-up"
+        style="cursor: initial"
+        styleClass="rounded-button ui-button-warning"
+        pt:data-tooltip="#{messages['eloraplm.message.warning.cm.passedItems']}"
+        onclick="return false"
+    />
+
+    <p:button
+        rendered="#{value.promotePendingItems}"
+        icon="pi pi-thumbs-up"
+        style="cursor: initial"
+        styleClass="rounded-button ui-button-warning"
+        pt:data-tooltip="#{messages['eloraplm.message.warning.cm.promotePendingItems']}"
+        onclick="return false"
+    />
+
+    <p:button
+        rendered="#{value.updatePendingCharacterizedItems}"
+        icon="pi pi-hashtag"
+        style="cursor: initial"
+        styleClass="rounded-button ui-button-warning"
+        pt:data-tooltip="#{messages['eloraplm.message.warning.cm.updatePendingCharacterizedItems']}"
+        onclick="return false"
+    />
+
+    <p:divider
+        layout="vertical"
+        style="display: inline; padding: 0.4rem 0"
+        rendered="#{value.lockConflicts.size > 0 or value.passedItems or value.promotePendingItems or value.updatePendingCharacterizedItems}"
+    />
+</ui:composition>

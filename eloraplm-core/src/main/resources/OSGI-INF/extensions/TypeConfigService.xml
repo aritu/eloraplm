@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.core.types.api.TypeConfigService">
+    <documentation>
+        Service to configure types beyond Nuxeo's configuration options.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.core.types.api.TypeConfigServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.core.types.api.TypeConfigService"/>
+    </service>
+    
+    <extension-point name="types">
+        <documentation>
+            Used to configure types.
+            <code>
+                <type id="..." color="#000000" />
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.core.types.api.TypeDescriptor" />
+    </extension-point>
+
+</component> 

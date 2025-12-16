@@ -52,6 +52,7 @@ import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.versioning.VersionLabelService;
@@ -107,6 +108,8 @@ public class EloraLockActionBean implements LockActions {
             try {
                 canLock = lock == null && (document.hasFacet(
                         EloraFacetConstants.FACET_ELORA_WORKSPACE)
+                        || document.getType().equals(
+                                NuxeoDoctypeConstants.TEMPLATE_SOURCE)
                         || EloraDocumentHelper.getIsCurrentStateLockable(
                                 document))
                         && (userName.isAdministrator()

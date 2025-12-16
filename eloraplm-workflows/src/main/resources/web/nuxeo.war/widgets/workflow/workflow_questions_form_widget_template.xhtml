@@ -8,7 +8,7 @@
     xmlns:nxu="http://nuxeo.org/nxweb/util"
     xmlns:p="http://primefaces.org/ui">
     
-    <nxu:set var="userLocale" value="#{fn:substring(userProfileActions.userProfile.userprofile.locale, 0, 2)}" >
+    <nxu:set var="userLocale" value="#{fn:substring(restHelper.getLocaleString(), 0, 2)}" >
         
         <nxu:inputList value="#{field_0}" model="answer" diff="true" >
             

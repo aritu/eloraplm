@@ -13,8 +13,6 @@
  */
 package com.aritu.eloraplm.workflows.restoperations;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -22,6 +20,7 @@ import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
+
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -34,9 +33,6 @@ import com.aritu.eloraplm.exceptions.EloraException;
 public class DisableVersioningDocument {
 
     public static final String ID = "Elora.Plm.DisableVersioningDocument";
-
-    private static final Log log = LogFactory.getLog(
-            DisableVersioningDocument.class);
 
     @Context
     private CoreSession session;

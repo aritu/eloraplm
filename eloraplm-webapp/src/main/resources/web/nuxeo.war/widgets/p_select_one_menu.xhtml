@@ -1,0 +1,87 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+    <p:selectOneMenu
+        id="#{widget.id}_pf_select"
+        value="#{field_0}"
+        required="#{widgetProperty_required}"
+        disabled="#{widgetProperty_disabled}"
+        style="#{widgetProperty_style}"
+        styleClass="#{widgetProperty_styleClass}"
+        filter="#{widgetProperty_filter}"
+        filterMatchMode="#{widgetProperty_filterMatchMode}"
+        tabindex="#{widgetProperty_tabindex}"
+    >
+        <f:selectItem
+            itemValue="#{null}"
+            itemLabel=" "
+        />
+        <c:if test="#{widget.properties.optionsInMap}">
+            <nxu:selectItems
+                value="#{field_1}"
+                var="item"
+                itemValue="#{item.key}"
+                itemLabel="#{widget.properties.localize ? messages[item.value] : item.value}"
+            >
+                <c:if test="#{not empty widget.properties.ordering}">
+                    <f:attribute
+                        name="ordering"
+                        value="#{widget.properties.ordering}"
+                    />
+                </c:if>
+            </nxu:selectItems>
+        </c:if>
+        <c:if test="#{not widget.properties.optionsInMap}">
+            <nxu:selectItems
+                value="#{field_1}"
+                var="item"
+                itemValue="#{item.value}"
+                itemLabel="#{widget.properties.localize ? messages[item.label] : item.label}"
+            >
+                <c:if test="#{not empty widget.properties.ordering}">
+                    <f:attribute
+                        name="ordering"
+                        value="#{widget.properties.ordering}"
+                    />
+                </c:if>
+            </nxu:selectItems>
+        </c:if>
+
+        <c:if test="#{not empty widget.properties.converter}">
+            <f:converter converterId="#{widget.properties.converter}" />
+            <f:attribute
+                name="options"
+                value="#{field_1}"
+            />
+            <f:attribute
+                name="session"
+                value="#{documentManager}"
+            />
+        </c:if>
+
+        <c:if test="#{not empty widget.properties.selectTemplate}">
+            <f:attribute
+                name="var"
+                value="o"
+            />
+            <ui:include src="#{widget.properties.selectTemplate}" />
+        </c:if>
+
+        <c:if test="#{not empty widget.properties.templateForListener}">
+            <ui:include src="#{widget.properties.templateForListener}" />
+        </c:if>
+
+        <c:if test="#{not empty widget.properties.appendTo}">
+            <f:attribute
+                name="appendTo"
+                value="#{widget.properties.appendTo}"
+            />
+        </c:if>
+    </p:selectOneMenu>
+</ui:composition>

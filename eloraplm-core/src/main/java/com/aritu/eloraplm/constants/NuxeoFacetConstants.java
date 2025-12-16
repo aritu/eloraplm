@@ -26,4 +26,6 @@ public class NuxeoFacetConstants {
 
     public static final String FACET_VERSIONABLE = "Versionable";
 
+    public static final String FACET_THUMBNAIL = "Thumbnail";
+
 }

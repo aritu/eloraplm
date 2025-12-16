@@ -15,12 +15,16 @@ package com.aritu.eloraplm.workflows.forms.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 
@@ -39,18 +43,20 @@ public class WorkflowFormsHelper {
 
     public static final String WORKFLOW_LABEL_PREFIX = "eloraplm.wf.label.";
 
-    public static List<String> getDistinctAnsweredWorkflowIdsForDoc(
+    private static final Log log = LogFactory.getLog(WorkflowFormsHelper.class);
+
+    public static Map<String, List<String>> getDistinctAnsweredWorkflowAndInstanceIdsForDoc(
             CoreSession session, DocumentModel doc) {
 
         return new UnrestrictedSessionRunner("default") {
-            List<String> answeredWorkflows = new ArrayList<String>();
+            Map<String, List<String>> answeredWorkflowsAndInstances = new HashMap<String, List<String>>();
 
             @Override
             public void run() {
 
                 IterableQueryResult it = null;
                 try {
-                    String q = WorkflowFormsQueryFactory.getDistinctAnsweredWorkflowIdsForDoc(
+                    String q = WorkflowFormsQueryFactory.getDistinctAnsweredWorkflowInstancesForDoc(
                             doc.getId());
                     it = session.queryAndFetch(q, NXQL.NXQL);
                     if (it.size() > 0) {
@@ -61,13 +67,28 @@ public class WorkflowFormsHelper {
 
                             String ansWfId = (String) map.get(pfx
                                     + WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID);
-                            if (ansWfId != null) {
-                                answeredWorkflows.add(ansWfId);
+                            String ansInstanceId = (String) map.get(pfx
+                                    + WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_INSTANCE_ID);
+                            if (ansWfId != null && ansInstanceId != null) {
+
+                                if (!answeredWorkflowsAndInstances.containsKey(
+                                        ansWfId)) {
+                                    answeredWorkflowsAndInstances.put(ansWfId,
+                                            new ArrayList<String>());
+                                }
+                                if (!answeredWorkflowsAndInstances.get(
+                                        ansWfId).contains(ansInstanceId)) {
+                                    answeredWorkflowsAndInstances.get(
+                                            ansWfId).add(ansInstanceId);
+                                }
                             }
                         }
                     }
                 } catch (Exception e) {
-                    // log.error("ERROR: " + e.getMessage());
+                    log.error("ERROR: " + e.getMessage());
+                    // We only can throw a runtime exception here, like
+                    // NuxeoException
+                    throw new NuxeoException(e.getMessage());
                 } finally {
                     if (it != null) {
                         it.close();
@@ -75,9 +96,9 @@ public class WorkflowFormsHelper {
                 }
             }
 
-            public List<String> runAndReturnList() {
+            public Map<String, List<String>> runAndReturnList() {
                 runUnrestricted();
-                return answeredWorkflows;
+                return answeredWorkflowsAndInstances;
             }
         }.runAndReturnList();
     }

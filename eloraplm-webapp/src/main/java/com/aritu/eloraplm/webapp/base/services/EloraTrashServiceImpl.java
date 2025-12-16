@@ -23,7 +23,6 @@ import org.nuxeo.ecm.core.api.LifeCycleConstants;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.core.trash.TrashInfo;
-import org.nuxeo.ecm.core.trash.TrashService;
 import org.nuxeo.ecm.core.trash.TrashServiceImpl;
 
 /**
@@ -33,8 +32,7 @@ import org.nuxeo.ecm.core.trash.TrashServiceImpl;
  * @author aritu
  *
  */
-public class EloraTrashServiceImpl extends TrashServiceImpl
-        implements TrashService {
+public class EloraTrashServiceImpl extends TrashServiceImpl {
 
     @Override
     protected TrashInfo getInfo(List<DocumentModel> docs, Principal principal,

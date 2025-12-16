@@ -25,7 +25,8 @@ public interface EloraCSVImporter {
     String launchImport(CoreSession session, String parentPath, File csvFile,
             String csvFileName, File relationsCsvFile,
             String relationsCsvFileName, File proxiesCsvFile,
-            String proxiesCsvFileName, EloraCSVImporterOptions options);
+            String proxiesCsvFileName, File commentsCsvFile,
+            String commentsCsvFileName, EloraCSVImporterOptions options);
 
     EloraCSVImportStatus getImportStatus(String id);
 
@@ -59,11 +60,23 @@ public interface EloraCSVImporter {
     List<EloraCSVImportLog> getProxiesLastImportLogs(String id, int max,
             EloraCSVImportLog.Status... status);
 
+    List<EloraCSVImportLog> getCommentsImportLogs(String id);
+
+    List<EloraCSVImportLog> getCommentsImportLogs(String id,
+            EloraCSVImportLog.Status... status);
+
+    List<EloraCSVImportLog> getCommentsLastImportLogs(String id, int max);
+
+    List<EloraCSVImportLog> getCommentsLastImportLogs(String id, int max,
+            EloraCSVImportLog.Status... status);
+
     EloraCSVImportResult getImportResult(String id);
 
     EloraCSVImportResult getRelationsImportResult(String id);
 
     EloraCSVImportResult getProxiesImportResult(String id);
+
+    EloraCSVImportResult getCommentsImportResult(String id);
 
     DocumentModel getImportResultDoc(String id);
 }

@@ -13,8 +13,6 @@
  */
 package com.aritu.eloraplm.datatable;
 
-import com.aritu.eloraplm.exceptions.EloraException;
-
 /**
  * @author aritu
  *
@@ -29,7 +27,6 @@ public interface EditableTableService extends TableService {
      * @param isModified
      * @param isRemoved
      * @return
-     * @throws EloraException
      */
     RowData createRowData(String rowId, boolean isNew, boolean isModified,
             boolean isRemoved);

@@ -1,0 +1,27 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    >
+    <nxu:set var="doc" value="#{eloraWebActions.getDocumentFromId(o)}">
+    <p:column>
+        <span class="eloraReference">
+            #{doc.elo.reference}
+        </span>
+    </p:column>
+    
+    <p:column>
+        #{doc.title}
+    </p:column>
+    
+    <nxu:set var="stateColor" value="#{lifecycleActions.getLifeCycleStateColor(doc.currentLifeCycleState)}">
+    <p:column>
+        <span class="lifeCycleStateLabel hollow" style="color: #{stateColor}; border-color: #{stateColor}">
+            #{messages[doc.currentLifeCycleState.concat(".abbr")]}
+        </span>
+    </p:column>
+    </nxu:set>
+    </nxu:set>
+    
+</ui:composition>

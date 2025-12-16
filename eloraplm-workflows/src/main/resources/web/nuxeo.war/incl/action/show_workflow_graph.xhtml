@@ -1,0 +1,36 @@
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="/incl/action/widgets/primefaces_dialog_just_content_template.xhtml">
+    
+    <ui:define name="dialog_content">
+        
+        <h:panelGroup>
+            
+            <h:panelGroup id="workflow_graph_target" layout="block" styleClass="targetDiv">
+                <p:blockUI block="workflow_graph_target" widgetVar="workflow_graph_target_blocker" animate="false" styleClass="opaqueBlockUI middleSpinner">
+                    <i class="pi pi-spin pi-spinner"></i>
+                </p:blockUI>
+            </h:panelGroup>
+        </h:panelGroup>
+        
+        <h:outputScript>
+            function showWorkflowGraph(lang, routeId) {
+                var targetId = 'workflow_graph_target';
+                loadGraph(routeId, lang, targetId);
+            }
+            
+            PFJQ(document).ready(function(){
+                PF('workflow_graph_target_blocker').show();
+                PFJQ('#glb_pf_dlg #glb_pf_dlg_title').text('#{messages[actionValue.document.title]}'); 
+                showWorkflowGraph('#{restHelper.getLocaleString()}', '#{actionValue.document.id}');
+                PF('workflow_graph_target_blocker').hide();
+            });
+        </h:outputScript>
+        
+    </ui:define>
+    
+</ui:decorate>

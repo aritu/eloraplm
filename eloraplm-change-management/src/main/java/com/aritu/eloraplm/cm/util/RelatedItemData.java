@@ -27,6 +27,8 @@ public class RelatedItemData {
 
     private String quantity;
 
+    private String relation;
+
     /**
      * @param docModel
      * @param quantity
@@ -35,6 +37,14 @@ public class RelatedItemData {
         super();
         this.docModel = docModel;
         this.quantity = quantity;
+        setRelation(null);
+    }
+
+    public RelatedItemData(DocumentModel docModel, String quantity,
+            String relation) {
+        this.docModel = docModel;
+        this.quantity = quantity;
+        setRelation(relation);
     }
 
     public DocumentModel getDocModel() {
@@ -51,6 +61,14 @@ public class RelatedItemData {
 
     public void setQuantity(String quantity) {
         this.quantity = quantity;
+    }
+
+    public String getRelation() {
+        return relation;
+    }
+
+    public void setRelation(String relation) {
+        this.relation = relation;
     }
 
 }

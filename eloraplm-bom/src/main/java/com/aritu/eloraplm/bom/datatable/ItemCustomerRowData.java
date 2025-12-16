@@ -24,6 +24,8 @@ import com.aritu.eloraplm.datatable.BaseRowData;
  */
 public class ItemCustomerRowData extends BaseRowData {
 
+    private static final long serialVersionUID = 1L;
+
     private DocumentModel customerProductDoc;
 
     public ItemCustomerRowData(String id, DocumentModel customerProductDoc,

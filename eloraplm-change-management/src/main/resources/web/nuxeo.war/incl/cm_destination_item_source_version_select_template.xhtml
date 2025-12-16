@@ -1,0 +1,111 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+    <p:column styleClass="vers_sel_panel_version">
+        <f:facet name="header">
+            <h:outputText value="#{messages['eloraplm.label.version']}" />
+        </f:facet>
+        <h:outputText value="#{o.getVersionLabel()}" />
+    </p:column>
+
+    <c:if
+        test="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.versionlabel.showexternal')}"
+    >
+        <p:column styleClass="vers_sel_panel_externalversion">
+            <h:outputText
+                rendered="#{o.hasSchema('bom_item')}"
+                value="#{o.bomitem.externalVersion}"
+            />
+        </p:column>
+    </c:if>
+
+    <p:column>
+        <nxu:set
+            var="isOriginVersion"
+            value="#{d['originUid'] eq o.id}"
+        >
+            <nxu:set
+                var="isBaseVersion"
+                value="#{d['baseUid'] eq o.id}"
+            >
+                <nxu:set
+                    var="defaultOrigin"
+                    value="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.cm.default.destination.source.version')
+            eq 'originVersion'}"
+                >
+                    <nxu:set
+                        var="defaultWorkingCopy"
+                        value="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.cm.default.destination.source.version')
+            eq 'workingCopy'}"
+                    >
+                        <f:facet name="header">
+                            <h:outputText value="" />
+                        </f:facet>
+
+                        <h:outputText
+                            value="("
+                            rendered="#{isOriginVersion or isBaseVersion}"
+                        />
+                        <h:outputText
+                            value="#{messages['eloraplm.label.cm.eco.sourceVersion.origin']}#{defaultOrigin ? '*' : ''}"
+                            rendered="#{d['originUid'] eq o.id}"
+                        />
+                        <h:outputText
+                            value=" + "
+                            rendered="#{d['originUid'] eq o.id and d['baseUid'] eq o.id}"
+                        />
+                        <h:outputText
+                            value="#{messages['eloraplm.label.cm.eco.sourceVersion.workingCopy']}#{defaultWorkingCopy ? '*' : ''}"
+                            rendered="#{d['baseUid'] eq o.id}"
+                        />
+                        <h:outputText
+                            value=")"
+                            rendered="#{isOriginVersion or isBaseVersion}"
+                        />
+                    </nxu:set>
+                </nxu:set>
+            </nxu:set>
+        </nxu:set>
+    </p:column>
+
+    <p:column styleClass="vers_sel_panel_comment">
+        <f:facet name="header">
+            <h:outputText
+                value="#{messages['eloraplm.label.checkinComment']}"
+            />
+        </f:facet>
+        <h:outputText
+            value="#{o.getCheckinComment()}"
+            title="#{o.getCheckinComment()}"
+        />
+    </p:column>
+
+    <nxu:set
+        var="stateColor"
+        value="#{lifecycleActions.getLifeCycleStateColor(o.currentLifeCycleState)}"
+    >
+        <p:column styleClass="vers_sel_panel_state">
+            <f:facet name="header">
+                <h:outputText value="#{messages['label.lifecycle']}" />
+            </f:facet>
+            <span
+                class="lifeCycleStateLabel hollow"
+                style="color: #{stateColor}; border-color: #{stateColor}"
+            >
+                #{messages[o.currentLifeCycleState.concat(".abbr")]}
+            </span>
+        </p:column>
+    </nxu:set>
+
+    <f:facet name="footer">
+        <h:outputText
+            value="*: #{messages['eloraplm.label.cm.eco.sourceVersion.default']}"
+        />
+    </f:facet>
+</ui:composition>

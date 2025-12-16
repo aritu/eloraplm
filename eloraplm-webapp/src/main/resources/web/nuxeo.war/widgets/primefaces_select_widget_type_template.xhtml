@@ -1,0 +1,67 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <h:panelGroup
+        rendered="#{empty widget.properties.visible or eloraWebActions.evaluateBoolean(widget.properties.visible)}"
+    >
+        <ui:remove>
+            <!-- EDIT MODE -->
+        </ui:remove>
+        <c:if test="#{widget.mode == 'edit'}">
+            <c:if test="#{not widget.properties.multiple}">
+                <ui:include src="/widgets/p_select_one_menu.xhtml" />
+            </c:if>
+            <c:if test="#{widget.properties.multiple}">
+                <ui:include src="/widgets/p_select_checkbox_menu.xhtml" />
+            </c:if>
+            <h:message
+                for="#{widget.id}_pf_select"
+                styleClass="errorMessage"
+            />
+        </c:if>
+
+        <ui:remove>
+            <!-- VIEW / CSV MODE -->
+        </ui:remove>
+        <c:if test="#{widget.mode == 'view' or widget.mode == 'csv'}">
+            <h:panelGroup rendered="#{not empty field_0}">
+                <c:if test="#{not widget.properties.multiple}">
+                    <c:if test="#{not empty widget.properties.viewTemplate}">
+                        <ui:include src="#{widget.properties.viewTemplate}" />
+                    </c:if>
+                    <c:if test="#{empty widget.properties.viewTemplate}">
+                        <h:outputText value="#{field_0}" />
+                    </c:if>
+                </c:if>
+                <c:if test="#{widget.properties.multiple}">
+                    <ui:repeat
+                        var="item"
+                        value="#{field_0}"
+                        varStatus="s"
+                    >
+                        <c:if
+                            test="#{not empty widget.properties.viewTemplate}"
+                        >
+                            <ui:include
+                                src="#{widget.properties.viewTemplate}"
+                            />
+                        </c:if>
+                        <c:if test="#{empty widget.properties.viewTemplate}">
+                            <h:outputText value="#{item}" />
+                        </c:if>
+                        <h:outputText
+                            value=", "
+                            rendered="#{not s.last}"
+                        />
+                    </ui:repeat>
+                </c:if>
+            </h:panelGroup>
+        </c:if>
+    </h:panelGroup>
+</ui:composition>

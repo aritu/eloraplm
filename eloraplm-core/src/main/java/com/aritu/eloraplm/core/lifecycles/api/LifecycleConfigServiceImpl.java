@@ -40,10 +40,6 @@ public class LifecycleConfigServiceImpl extends DefaultComponent
 
     private static final String XP_CONFIG = "config";
 
-    private static final String TRANSITION_DIRECTION_DEMOTE = "demote";
-
-    private static final String TRANSITION_DIRECTION_PROMOTE = "promote";
-
     private Map<String, StateDescriptor> states;
 
     private Map<String, TransitionDescriptor> transitions;

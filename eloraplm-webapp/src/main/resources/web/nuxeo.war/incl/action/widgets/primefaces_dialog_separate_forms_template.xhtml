@@ -1,0 +1,33 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+    <nxu:set var="pfDialogContentFormId" value="#{pfDialogFormId}_content">
+    <nxu:set var="pfDialogButtonsFormId" value="#{pfDialogFormId}_buttons">
+        
+        <p:blockUI block="#{pfDialogId}_inner_panel" widgetVar="#{pfDialogBlockerId}" animate="false" styleClass="opaqueBlockUI middleSpinner">
+            <i class="pi pi-spin pi-spinner"></i>
+        </p:blockUI>
+        
+        <h:form id="#{pfDialogContentFormId}">
+            <h:panelGroup id="#{pfDialogContentId}" layout="block" class="dialog-content">
+                <ui:insert name="dialog_content" />
+            </h:panelGroup>
+        </h:form>
+        
+        <h:form id="#{pfDialogButtonsFormId}">
+            <h:panelGroup id="#{pfDialogButtonsId}" layout="block" class="dialogButtons">
+                <ui:insert name="dialog_buttons" />
+            </h:panelGroup>
+        </h:form>
+        
+        <ui:insert name="dialog_scripts" />
+        
+    </nxu:set>
+    </nxu:set>
+    
+</ui:composition>
+

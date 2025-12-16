@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxr="http://nuxeo.org/nxweb/resources"
+  xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+  <base href="#{baseURL}" />
+
+  <nxu:set var="page" value="#{themeStylingService.getPage(pageName)}">
+    <c:if test="#{page != null}">
+      <nxr:meta charset="#{page.charset}" />
+      
+      <link rel="icon" type="image/svg+xml" href="/nuxeo/icons/favicon.svg" />
+      <link rel="icon" type="image/png" href="/nuxeo/icons/favicon.png" />
+      <link rel="shortcut icon" type="image/x-icon" href="/nuxeo/icons/favicon.ico" />
+      
+      <ui:include src="page_resources.xhtml" />
+      
+      <h:outputScript type="text/javascript" name="js/fix-primefaces-conflicts.js" target="bodystart" />
+      
+    </c:if>
+  </nxu:set>
+
+</ui:composition>

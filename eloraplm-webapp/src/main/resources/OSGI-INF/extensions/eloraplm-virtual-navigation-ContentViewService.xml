@@ -59,10 +59,10 @@
 
 
     <!-- ############ -->
-    <!-- Manufacturer -->
+    <!-- Supplier -->
     <!-- ############ -->
-    <contentView name="byManufacturerContentView_vnav">
-      <title>label.virtualnavigation.manufacturer</title>
+    <contentView name="bySupplierContentView_vnav">
+      <title>label.virtualnavigation.supplier</title>
       <translateTitle>true</translateTitle>
       <iconPath>/icons/document_listing_icon.png</iconPath>
       <showTitle>true</showTitle>
@@ -74,10 +74,8 @@
         <whereClause docType="VNav">
         <fixedPart>
             (
-            ((ecm:primaryType IN ('BomTool', 'BomPackaging') OR ecm:mixinType IN ('EloraWorkspace'))
-            AND manu:manufacturers LIKE ?)
-            OR
-            (ecm:primaryType IN ('BomManufacturerPart') AND bommanpart:manufacturer LIKE  ?)
+                ecm:mixinType IN ('DesignItem', 'EloraWorkspace')
+                AND supp:suppliers/*/supplier LIKE ?
             )
             AND ecm:mixinType NOT IN ('HiddenInNavigation','EloraStruct', 'EloraDraft')
             AND ecm:isVersion = 0
@@ -86,8 +84,7 @@
             AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
-        <parameter>#{(searchDocument.vnav.manu_manufacturer).concat('%')}</parameter>
-        <parameter>#{(searchDocument.vnav.manu_manufacturer).concat('%')}</parameter>
+        <parameter>#{(searchDocument.vnav.supp_supplier).concat('%')}</parameter>
         <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />
         <sort column="dc:title" ascending="true" />

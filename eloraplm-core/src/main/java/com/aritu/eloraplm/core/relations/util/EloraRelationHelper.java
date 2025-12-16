@@ -15,8 +15,10 @@
 package com.aritu.eloraplm.core.relations.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -40,14 +42,17 @@ import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.EloraCoreGraph;
+import com.aritu.eloraplm.core.relations.RelationGraph;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.api.ObjectList;
 import com.aritu.eloraplm.core.relations.api.PredicateList;
+import com.aritu.eloraplm.core.relations.api.SubjectList;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.RelationNotAllowedException;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 public class EloraRelationHelper {
@@ -86,7 +91,7 @@ public class EloraRelationHelper {
 
         List<String> relationsWithoutStateControl = getRelationsWithoutStateControl();
         for (Statement stmt : stmts) {
-            if (EloraRelationConstants.HAS_ELORA_DRAFT_RELATION.equals(
+            if (!RelationsConfig.versionedRelationsList.contains(
                     stmt.getPredicate().getUri())) {
                 continue;
             }
@@ -128,8 +133,8 @@ public class EloraRelationHelper {
         return noStateControlRelationList;
     }
 
-    public static void copyAllRelationsButAnarchicsToVersion(DocumentModel from,
-            DocumentModel to,
+    public static void copyAllVersionedRelationsButAnarchicsToVersion(
+            DocumentModel from, DocumentModel to,
             EloraDocumentRelationManager eloraDocumentRelationManager)
             throws CheckinNotAllowedException, EloraException {
 
@@ -141,7 +146,9 @@ public class EloraRelationHelper {
                 EloraRelationConstants.ELORA_GRAPH_NAME, from, null);
         for (Statement stmt : stmts) {
             if (!RelationsConfig.bomAnarchicRelationsList.contains(
-                    stmt.getPredicate().getUri())) {
+                    stmt.getPredicate().getUri())
+                    && RelationsConfig.versionedRelationsList.contains(
+                            stmt.getPredicate().getUri())) {
                 DocumentModel object = RelationHelper.getDocumentModel(
                         stmt.getObject(), session);
                 if (object == null) {
@@ -169,6 +176,8 @@ public class EloraRelationHelper {
      * Creates a relation based on an statement. Now it is used from template
      * creation. In this case we don't need to restore any wc relations or
      * create relations to a specific version
+     *
+     * @throws RelationNotAllowedException
      */
     public static void copyRelation(DocumentModel subject, DocumentModel object,
             EloraDocumentRelationManager eloraDocumentRelationManager,
@@ -226,7 +235,8 @@ public class EloraRelationHelper {
                     eloraStmtInfo.getDirectorOrdering(),
                     eloraStmtInfo.getViewerOrdering(),
                     eloraStmtInfo.getInverseViewerOrdering(),
-                    eloraStmtInfo.getIsManual());
+                    eloraStmtInfo.getIsManual(), eloraStmtInfo.getDesignators(),
+                    eloraStmtInfo.getIsExcludedFromMapping());
             log.trace(logInitMsg + "Relation added from |"
                     + subjectLastVersion.getId() + "| to |"
                     + stmt.getObject().toString() + "| with predicate |"
@@ -261,7 +271,7 @@ public class EloraRelationHelper {
             DocumentModel versionObject, String predicate,
             EloraStatementInfo eloraStmtInfo,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession session) {
+            CoreSession session) throws RelationNotAllowedException {
         // RelationHelper.removeRelation(wcDoc, eloraStmtInfo.getPredicate(),
         // versionObject);
         eloraDocumentRelationManager.softDeleteRelation(session, wcDoc,
@@ -274,7 +284,8 @@ public class EloraRelationHelper {
                 eloraStmtInfo.getDirectorOrdering(),
                 eloraStmtInfo.getViewerOrdering(),
                 eloraStmtInfo.getInverseViewerOrdering(),
-                eloraStmtInfo.getIsManual());
+                eloraStmtInfo.getIsManual(), eloraStmtInfo.getDesignators(),
+                eloraStmtInfo.getIsExcludedFromMapping());
     }
 
     private static void addDocumentRelation(DocumentModel subjectLastVersion,
@@ -293,7 +304,8 @@ public class EloraRelationHelper {
                     eloraStmtInfo.getDirectorOrdering(),
                     eloraStmtInfo.getViewerOrdering(),
                     eloraStmtInfo.getInverseViewerOrdering(),
-                    eloraStmtInfo.getIsManual());
+                    eloraStmtInfo.getIsManual(), eloraStmtInfo.getDesignators(),
+                    eloraStmtInfo.getIsExcludedFromMapping());
             log.trace(logInitMsg + "Relation added from |"
                     + subjectLastVersion.getId() + "| to |"
                     + objectLastVersion.getId() + "| with predicate |"
@@ -359,8 +371,7 @@ public class EloraRelationHelper {
 
         // TODO: Sacar de configuracion!!!
         String[] anarchicPredicateList = { EloraRelationConstants.BOM_HAS_BOM,
-                EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT,
-                EloraRelationConstants.BOM_MANUFACTURER_HAS_PART };
+                EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT };
         for (String predicateUri : anarchicPredicateList) {
             Resource predicateResource = new ResourceImpl(predicateUri);
             List<Statement> stmts = EloraRelationHelper.getSubjectStatements(
@@ -397,7 +408,9 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getDirectorOrdering(),
                             eloraStmtInfo.getViewerOrdering(),
                             eloraStmtInfo.getInverseViewerOrdering(),
-                            eloraStmtInfo.getIsManual());
+                            eloraStmtInfo.getIsManual(),
+                            eloraStmtInfo.getDesignators(),
+                            eloraStmtInfo.getIsExcludedFromMapping());
                     log.trace(logInitMsg + "Relation added from |"
                             + subjectBaseDoc.getId() + "| to |"
                             + objectBaseDoc.getId() + "| with predicate |"
@@ -437,15 +450,91 @@ public class EloraRelationHelper {
         // Remove actual relations
         log.trace(logInitMsg + "About to remove actual relations of doc |"
                 + doc.getId() + "|");
-        // RelationHelper.removeRelation(doc, null, null);
-        eloraDocumentRelationManager.softDeleteRelation(session, doc, null,
-                null);
+        // Remove only versioned relation predicates
+        eloraDocumentRelationManager.softDeleteRelation(session, doc,
+                RelationsConfig.versionedRelationsList, null);
         log.trace(logInitMsg + "All relations removed from doc |" + doc.getId()
                 + "|");
 
         // TODO: Hay otra funcion copyRelations que habria que juntar con esta
         copyAllRelations(subjectVersion, doc, eloraDocumentRelationManager,
                 session);
+    }
+
+    public static void restoreCMRelationsAfterCheckoutFromVersion(
+            DocumentModel doc, VersionModel version,
+            EloraDocumentRelationManager eloraDocumentRelationManager,
+            List<String> excludedDocsVersionSeriesIds, CoreSession session)
+            throws EloraException {
+        String logInitMsg = "[restoreRelations] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "Restoring relations of doc:|" + doc.getId()
+                + "|");
+
+        if (!EloraDocumentHelper.isWorkingCopy(doc)) {
+            doc = session.getWorkingCopy(doc.getRef());
+        }
+
+        DocumentModel subjectVersion = session.getDocumentWithVersion(
+                doc.getRef(), version);
+
+        // Remove actual relations except excluded ones
+        log.trace(logInitMsg + "About to remove actual relations of doc |"
+                + doc.getId() + "|");
+
+        deleteAllRelationsExceptExcludedRelations(doc,
+                eloraDocumentRelationManager, excludedDocsVersionSeriesIds,
+                session);
+
+        log.trace(logInitMsg + "All relations removed from doc |" + doc.getId()
+                + "|");
+
+        // Copy all relations except excluded ones
+        copyAllRelationsExceptExcludedRelations(subjectVersion, doc,
+                eloraDocumentRelationManager, excludedDocsVersionSeriesIds,
+                session);
+    }
+
+    protected static void deleteAllRelationsExceptExcludedRelations(
+            DocumentModel doc,
+            EloraDocumentRelationManager eloraDocumentRelationManager,
+            List<String> excludedDocsVersionSeriesIds, CoreSession session)
+            throws EloraException {
+
+        String logInitMsg = "[deleteAllRelationsExceptExcludedRelations] ["
+                + session.getPrincipal().getName() + "] ";
+
+        // Find all relations having specified document as subject.
+        // Then, delete all of them excepting the documents that are included in
+        // the excluded relations list.
+        List<Statement> stmts = RelationHelper.getStatements(
+                EloraRelationConstants.ELORA_GRAPH_NAME, doc, null);
+
+        for (Statement stmt : stmts) {
+            DocumentModel object = RelationHelper.getDocumentModel(
+                    stmt.getObject(), session);
+            if (object == null) {
+                log.error(logInitMsg
+                        + "Object is null. Relation is broken or unreadable. predicateUri = |"
+                        + stmt.getPredicate().getUri() + "|, subject docId = |"
+                        + doc.getId() + "|");
+                throw new EloraException(
+                        "Object is null. Relation is broken or unreadable.");
+            }
+
+            if (object.isProxy()) {
+                throw new EloraException(
+                        "Relation to a proxy document is not possible");
+            }
+
+            // Comparison is done based on the version series id
+            if (!excludedDocsVersionSeriesIds.contains(
+                    object.getVersionSeriesId())) {
+                eloraDocumentRelationManager.softDeleteRelation(session, doc,
+                        stmt.getPredicate().getUri(), object);
+            }
+        }
+
     }
 
     private static void restoreAnarchicRelations(DocumentModel doc,
@@ -478,7 +567,7 @@ public class EloraRelationHelper {
     private static void copyRelationsToTheRestOfObjectVersions(
             DocumentModel doc, DocumentModel object, Statement stmt,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession session) {
+            CoreSession session) throws RelationNotAllowedException {
         String logInitMsg = "[copyRelationsToTheRestOfObjectVersions] ["
                 + session.getPrincipal().getName() + "] ";
 
@@ -503,7 +592,9 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getDirectorOrdering(),
                             eloraStmtInfo.getViewerOrdering(),
                             eloraStmtInfo.getInverseViewerOrdering(),
-                            eloraStmtInfo.getIsManual());
+                            eloraStmtInfo.getIsManual(),
+                            eloraStmtInfo.getDesignators(),
+                            eloraStmtInfo.getIsExcludedFromMapping());
                 } catch (RelationAlreadyExistsException e) {
                     log.trace(logInitMsg
                             + "Anarchic relation already exists but is ignored");
@@ -579,7 +670,9 @@ public class EloraRelationHelper {
                         eloraStmtInfo.getDirectorOrdering(),
                         eloraStmtInfo.getViewerOrdering(),
                         eloraStmtInfo.getInverseViewerOrdering(),
-                        eloraStmtInfo.getIsManual());
+                        eloraStmtInfo.getIsManual(),
+                        eloraStmtInfo.getDesignators(),
+                        eloraStmtInfo.getIsExcludedFromMapping());
             } else {
                 DocumentModel objectWc = session.getSourceDocument(
                         object.getRef());
@@ -595,7 +688,9 @@ public class EloraRelationHelper {
                                 eloraStmtInfo.getDirectorOrdering(),
                                 eloraStmtInfo.getViewerOrdering(),
                                 eloraStmtInfo.getInverseViewerOrdering(),
-                                eloraStmtInfo.getIsManual());
+                                eloraStmtInfo.getIsManual(),
+                                eloraStmtInfo.getDesignators(),
+                                eloraStmtInfo.getIsExcludedFromMapping());
                     } catch (RelationAlreadyExistsException e) {
                         log.trace(logInitMsg
                                 + "Anarchic relation already exists but is ignored");
@@ -609,7 +704,9 @@ public class EloraRelationHelper {
                             eloraStmtInfo.getDirectorOrdering(),
                             eloraStmtInfo.getViewerOrdering(),
                             eloraStmtInfo.getInverseViewerOrdering(),
-                            eloraStmtInfo.getIsManual());
+                            eloraStmtInfo.getIsManual(),
+                            eloraStmtInfo.getDesignators(),
+                            eloraStmtInfo.getIsExcludedFromMapping());
                 }
             }
         }
@@ -617,6 +714,102 @@ public class EloraRelationHelper {
                 + "| to |" + to.getId() + "|");
     }
 
+    public static void copyAllRelationsExceptExcludedRelations(
+            DocumentModel from, DocumentModel to,
+            EloraDocumentRelationManager eloraDocumentRelationManager,
+            List<String> excludedDocsVersionSeriesIds, CoreSession session)
+            throws EloraException {
+
+        String logInitMsg = "[copyAllRelationsExceptExcludedRelations] ["
+                + session.getPrincipal().getName() + "] ";
+
+        log.trace(logInitMsg + "Copy all relations from:|" + from.getId()
+                + "| to |" + to.getId() + "| except excluding ones.");
+
+        List<Statement> stmts = RelationHelper.getStatements(
+                EloraRelationConstants.ELORA_GRAPH_NAME, from, null);
+
+        for (Statement stmt : stmts) {
+            DocumentModel object = RelationHelper.getDocumentModel(
+                    stmt.getObject(), session);
+            if (object == null) {
+                log.error(logInitMsg
+                        + "Object is null. Relation is broken or unreadable. predicateUri = |"
+                        + stmt.getPredicate().getUri() + "|, subject docId = |"
+                        + from.getId() + "|");
+                throw new EloraException(
+                        "Object is null. Relation is broken or unreadable.");
+            }
+
+            if (object.isProxy()) {
+                throw new EloraException(
+                        "Relation to a proxy document is not possible");
+            }
+
+            if (!excludedDocsVersionSeriesIds.contains(
+                    object.getVersionSeriesId())) {
+                EloraStatementInfo eloraStmtInfo = new EloraStatementInfoImpl(
+                        stmt);
+
+                if (isOtherDocument(object)) {
+                    eloraDocumentRelationManager.addRelation(session, to,
+                            stmt.getObject(), stmt.getPredicate().getUri());
+                } else if (!object.isVersionable()) {
+                    eloraDocumentRelationManager.addRelation(session, to,
+                            stmt.getObject(), stmt.getPredicate().getUri(),
+                            eloraStmtInfo.getComment(),
+                            eloraStmtInfo.getQuantity(),
+                            eloraStmtInfo.getOrdering(),
+                            eloraStmtInfo.getDirectorOrdering(),
+                            eloraStmtInfo.getViewerOrdering(),
+                            eloraStmtInfo.getInverseViewerOrdering(),
+                            eloraStmtInfo.getIsManual(),
+                            eloraStmtInfo.getDesignators(),
+                            eloraStmtInfo.getIsExcludedFromMapping());
+                } else {
+                    if (RelationsConfig.bomAnarchicRelationsList.contains(
+                            stmt.getPredicate().getUri())) {
+                        try {
+                            eloraDocumentRelationManager.addRelation(session,
+                                    to, object, stmt.getPredicate().getUri(),
+                                    eloraStmtInfo.getComment(),
+                                    eloraStmtInfo.getQuantity(),
+                                    eloraStmtInfo.getOrdering(),
+                                    eloraStmtInfo.getDirectorOrdering(),
+                                    eloraStmtInfo.getViewerOrdering(),
+                                    eloraStmtInfo.getInverseViewerOrdering(),
+                                    eloraStmtInfo.getIsManual(),
+                                    eloraStmtInfo.getDesignators(),
+                                    eloraStmtInfo.getIsExcludedFromMapping());
+                        } catch (RelationAlreadyExistsException e) {
+                            log.trace(logInitMsg
+                                    + "Anarchic relation already exists but is ignored");
+                        }
+                    } else {
+                        eloraDocumentRelationManager.addRelation(session, to,
+                                object, stmt.getPredicate().getUri(),
+                                eloraStmtInfo.getComment(),
+                                eloraStmtInfo.getQuantity(),
+                                eloraStmtInfo.getOrdering(),
+                                eloraStmtInfo.getDirectorOrdering(),
+                                eloraStmtInfo.getViewerOrdering(),
+                                eloraStmtInfo.getInverseViewerOrdering(),
+                                eloraStmtInfo.getIsManual(),
+                                eloraStmtInfo.getDesignators(),
+                                eloraStmtInfo.getIsExcludedFromMapping());
+                    }
+                }
+            }
+        }
+        log.trace(logInitMsg + "Relations copied from:|" + from.getId()
+                + "| to |" + to.getId() + "|");
+    }
+
+    /**
+     * @param subjectDoc
+     * @param predicate
+     * @return
+     */
     public static List<Statement> getStatements(DocumentModel subjectDoc,
             Resource predicate) {
         List<Resource> predicates = new ArrayList<Resource>();
@@ -624,6 +817,11 @@ public class EloraRelationHelper {
         return getStatements(subjectDoc, predicates);
     }
 
+    /**
+     * @param subjectDoc
+     * @param predicates
+     * @return
+     */
     public static List<Statement> getStatements(DocumentModel subjectDoc,
             List<Resource> predicates) {
 
@@ -639,6 +837,34 @@ public class EloraRelationHelper {
                 null);
     }
 
+    /**
+     * @param subjectDocs
+     * @param predicateResource
+     * @return
+     */
+    public static List<Statement> getStatements(List<DocumentModel> subjectDocs,
+            Resource predicateResource) {
+
+        if (subjectDocs.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        EloraCoreGraph eg = (EloraCoreGraph) getRelationManager().getGraphByName(
+                EloraRelationConstants.ELORA_GRAPH_NAME);
+
+        List<QNameResource> subjectResources = convertDocListToResources(
+                subjectDocs);
+
+        return eg.getStatements(new SubjectList(subjectResources),
+                predicateResource, null);
+    }
+
+    /**
+     * @param subjectDoc
+     * @param predicate
+     * @param objectDocs
+     * @return
+     */
     public static List<Statement> getStatements(DocumentModel subjectDoc,
             Resource predicate, List<DocumentModel> objectDocs) {
 
@@ -658,6 +884,10 @@ public class EloraRelationHelper {
                 new ObjectList(objectResources));
     }
 
+    /**
+     * @param objectDocs
+     * @return
+     */
     private static List<QNameResource> convertDocListToResources(
             List<DocumentModel> objectDocs) {
         List<QNameResource> list = new ArrayList<>();
@@ -667,6 +897,13 @@ public class EloraRelationHelper {
         return list;
     }
 
+    /**
+     * @param graphName
+     * @param subjectDoc
+     * @param predicate
+     * @param objectDoc
+     * @return
+     */
     public static Statement getStatement(String graphName,
             DocumentModel subjectDoc, Resource predicate,
             DocumentModel objectDoc) {
@@ -685,6 +922,11 @@ public class EloraRelationHelper {
         }
     }
 
+    /**
+     * @param objectDoc
+     * @param predicates
+     * @return
+     */
     public static List<Statement> getSubjectStatementsByPredicateList(
             DocumentModel objectDoc, List<Resource> predicates) {
 
@@ -724,6 +966,84 @@ public class EloraRelationHelper {
         return getRelationManager().getGraphByName(graphName).getStatements(
                 null, predicateResource, objectDocResource);
     }
+
+    /**
+     * @param objectDocs
+     * @param predicateResource
+     * @return
+     */
+    public static List<Statement> getSubjectStatements(
+            List<DocumentModel> objectDocs, Resource predicateResource) {
+
+        if (objectDocs.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        EloraCoreGraph eg = (EloraCoreGraph) getRelationManager().getGraphByName(
+                EloraRelationConstants.ELORA_GRAPH_NAME);
+
+        List<QNameResource> objectResources = convertDocListToResources(
+                objectDocs);
+
+        return eg.getStatements(null, predicateResource,
+                new ObjectList(objectResources));
+    }
+
+    public static DocumentModelList getSubjectDocumentsNotExcludedFromMapping(
+            Resource predicat, DocumentModel objectDocument) {
+        DocumentModelList subjectDocs = new DocumentModelListImpl();
+
+        List<Statement> subjectStmts = getSubjectStatements(objectDocument,
+                predicat);
+
+        if (subjectStmts != null && subjectStmts.size() > 0) {
+
+            for (Statement subjectStmt : subjectStmts) {
+                EloraStatementInfo subjectEloraStmtInfo = new EloraStatementInfoImpl(
+                        subjectStmt);
+
+                if (subjectEloraStmtInfo.getIsExcludedFromMapping() == null
+                        || !subjectEloraStmtInfo.getIsExcludedFromMapping()) {
+                    DocumentModel subjectDoc = RelationHelper.getDocumentModel(
+                            subjectStmt.getSubject(),
+                            objectDocument.getCoreSession());
+                    if (subjectDoc != null) {
+                        subjectDocs.add(subjectDoc);
+                    }
+                }
+            }
+        }
+
+        return subjectDocs;
+    }
+
+    public static DocumentModelList getObjectDocumentsNotExcludedFromMapping(
+            DocumentModel subjectDoc, Resource predicate) {
+        DocumentModelList objectDocs = new DocumentModelListImpl();
+
+        List<Statement> objectStmts = getStatements(subjectDoc, predicate);
+
+        if (objectStmts != null && objectStmts.size() > 0) {
+
+            for (Statement objectStmt : objectStmts) {
+                EloraStatementInfo objectEloraStmtInfo = new EloraStatementInfoImpl(
+                        objectStmt);
+
+                if (objectEloraStmtInfo.getIsExcludedFromMapping() == null
+                        || !objectEloraStmtInfo.getIsExcludedFromMapping()) {
+                    DocumentModel objectDoc = RelationHelper.getDocumentModel(
+                            objectStmt.getObject(),
+                            subjectDoc.getCoreSession());
+                    if (objectDoc != null) {
+                        objectDocs.add(objectDoc);
+                    }
+                }
+            }
+        }
+
+        return objectDocs;
+    }
+    // *********************************************************************
 
     /**
      * @return
@@ -770,6 +1090,16 @@ public class EloraRelationHelper {
             }
         }
         return latestReleased;
+    }
+
+    public static DocumentModel getLatestRelatedVersion(CoreSession session,
+            List<DocumentModel> wcDocs) {
+        List<String> uidList = EloraDocumentHelper.getUidListFromDocList(
+                wcDocs);
+        Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
+                wcDocs);
+        String type = wcDocs.get(0).getType();
+        return getLatestRelatedVersion(session, majorVersion, uidList, type);
     }
 
     public static DocumentModel getLatestRelatedVersion(CoreSession session,
@@ -846,18 +1176,10 @@ public class EloraRelationHelper {
     public static boolean existsRelation(DocumentModel subject,
             DocumentModel object, String predicateUri, CoreSession session) {
 
-        EloraCoreGraph eg = (EloraCoreGraph) getRelationManager().getGraphByName(
+        RelationGraph graph = (RelationGraph) EloraRelationHelper.getRelationManager().getGraphByName(
                 EloraRelationConstants.ELORA_GRAPH_NAME);
-        List<Statement> stmts = eg.getStatements(
-                RelationHelper.getDocumentResource(subject),
-                new ResourceImpl(predicateUri),
-                RelationHelper.getDocumentResource(object));
-
-        if (stmts.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return CommonRelationHelper.existsRelation(graph, subject, object,
+                predicateUri, session);
     }
 
     public static DocumentModelList getAllVersionsOfRelatedObject(
@@ -888,8 +1210,19 @@ public class EloraRelationHelper {
 
     public static boolean isCircularRelation(DocumentModel currentDoc,
             DocumentModel addedDoc, boolean isInverse, CoreSession session) {
+        String logInitMsg = "[isCircularRelation] ["
+                + session.getPrincipal().getName() + "] ";
+
         try {
-            checkCircularRelation(currentDoc, addedDoc, isInverse, session);
+            log.trace(logInitMsg + "Checking circular relations when adding |"
+                    + addedDoc.getId() + "| to |" + currentDoc.getId()
+                    + "|, inverse=|" + String.valueOf(isInverse) + "| ...");
+
+            checkCircularRelation(currentDoc,
+                    Arrays.asList(new DocumentModel[] { addedDoc }), isInverse,
+                    session, 1);
+
+            log.trace(logInitMsg + "No circular relations found.");
             return false;
         } catch (EloraException e) {
             return true;
@@ -899,29 +1232,37 @@ public class EloraRelationHelper {
     // TODO: Que sea mas eficiente sacando las relaciones de una lista de
     // predicates. Hay que saber cuales queremos
     private static void checkCircularRelation(DocumentModel currentDoc,
-            DocumentModel addedDoc, boolean isInverse, CoreSession session)
-            throws EloraException {
+            List<DocumentModel> docsToCheckAgainst, boolean isInverse,
+            CoreSession session, int level) throws EloraException {
 
-        if (currentDoc.getId().equals(addedDoc.getId())) {
+        if (level == 1 && docsToCheckAgainst.size() == 1
+                && docsToCheckAgainst.get(0).getId().equals(
+                        currentDoc.getId())) {
             throw new EloraException("Circular relation adding document");
         }
 
         List<Statement> stmts;
+        List<DocumentModel> levelDocs = new ArrayList<DocumentModel>();
         if (!isInverse) {
-            stmts = RelationHelper.getStatements(
-                    EloraRelationConstants.ELORA_GRAPH_NAME, addedDoc, null);
+            stmts = EloraRelationHelper.getStatements(docsToCheckAgainst, null);
         } else {
-            stmts = EloraRelationHelper.getSubjectStatements(
-                    EloraRelationConstants.ELORA_GRAPH_NAME, addedDoc, null);
+            stmts = EloraRelationHelper.getSubjectStatements(docsToCheckAgainst,
+                    null);
         }
-        for (Statement stmt : stmts) {
-            DocumentModel relatedDoc;
-            Node node = !isInverse ? stmt.getObject() : stmt.getSubject();
-            relatedDoc = RelationHelper.getDocumentModel(node, session);
-            if (relatedDoc.getId().equals(currentDoc.getId())) {
-                throw new EloraException("Circular relation adding document");
+        if (stmts.size() > 0) {
+            for (Statement stmt : stmts) {
+                DocumentModel relatedDoc;
+                Node node = !isInverse ? stmt.getObject() : stmt.getSubject();
+                relatedDoc = RelationHelper.getDocumentModel(node, session);
+                if (relatedDoc.getId().equals(currentDoc.getId())) {
+                    throw new EloraException(
+                            "Circular relation adding document");
+                }
+                levelDocs.add(relatedDoc);
             }
-            checkCircularRelation(currentDoc, relatedDoc, isInverse, session);
+
+            checkCircularRelation(currentDoc, levelDocs, isInverse, session,
+                    ++level);
         }
 
     }
@@ -941,6 +1282,25 @@ public class EloraRelationHelper {
             resourceList.add(predicateResource);
         }
         return resourceList;
+    }
+
+    public static boolean hasBasicDocsWithViewerOrdering(DocumentModel doc) {
+        Resource predicateResource = new ResourceImpl(
+                EloraRelationConstants.BOM_HAS_DOCUMENT);
+
+        List<Statement> stmts = getStatements(doc, predicateResource);
+
+        if (stmts.size() > 0) {
+            for (Statement stmt : stmts) {
+                EloraStatementInfoImpl stmtInfo = new EloraStatementInfoImpl(
+                        stmt);
+                Integer viewerOrdering = stmtInfo.getViewerOrdering();
+                if (viewerOrdering != null && viewerOrdering > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

@@ -1,81 +1,102 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core">
-
-    <script type="text/javascript">
-
-    jQuery(document).ready(function() {
-        resizeLifecycleTransitionsWindow();
-    });
-    
-    function initLifecycleTransitionScreen(data) {
-        if(data.status == "success") {
-            resizeLifecycleTransitionsWindow();
-        }
-    }
-
-    function resizeLifecycleTransitionsWindow() {
-        jQuery('#fancybox-wrap').css('width', 'auto');
-        jQuery('#fancybox-content').css('width', 'auto');
-        jQuery('#fancybox-content .content').css('height', 'auto');
-        jQuery('#fancybox-content .content').css('max-height', jQuery(window).height() - 200 + 'px');
-        jQuery.fancybox.resize();
-        jQuery.fancybox.center();
-    }
-    
-    </script>
-    
-    <h3>
-        <h:outputText value="#{messages[windowTitle]}" />
-    </h3>
-    
-    <h:panelGroup styleClass="content" layout="block">
-    
-        <h:form id="demote_promote_main">
-            
-            <h:panelGrid columns="4" columnClasses="labelColumn,fieldColumn,labelColumn,fieldColumn">
-                <h:outputLabel for="transition" value="#{messages['eloraplm.label.lifecycles.transition']}" styleClass="required" />
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="/incl/action/widgets/primefaces_dialog_no_content_form_template.xhtml"
+>
+    <ui:define name="dialog_content">
+        <h:form id="demote_promote_filter">
+            <h:panelGrid
+                columns="5"
+                columnClasses="labelColumn,fieldColumn,gap,labelColumn,fieldColumn"
+            >
+                <h:outputLabel
+                    for="transition"
+                    value="#{messages['eloraplm.label.lifecycles.transition']}"
+                    styleClass="required"
+                />
                 <h:panelGroup>
-                    <h:selectOneMenu id="transition" value="#{lifecycleTransitionActions.transition}" required="true">
-                        <f:selectItem itemLabel="" itemValue="#{null}" />
-                        <f:selectItems value="#{lifecycleTransitionActions.transitions}" var="item" itemLabel="#{messages[item]}" />
-                        <f:ajax
+                    <h:selectOneMenu
+                        id="transition"
+                        value="#{lifecycleTransitionActions.transition}"
+                        required="true"
+                    >
+                        <f:selectItem
+                            itemLabel=""
+                            itemValue="#{null}"
+                        />
+                        <f:selectItems
+                            value="#{lifecycleTransitionActions.transitions}"
+                            var="item"
+                            itemLabel="#{messages[item]}"
+                        />
+                        <p:ajax
                             listener="#{lifecycleTransitionActions.init()}"
-                            render="previousScreen :#{component.namingContainer.parent.namingContainer.clientId}:demote_promote_buttons"
-                            onevent="initLifecycleTransitionScreen" />
+                            update=":previousScreen :glb_pf_dlg_form_buttons"
+                            process="@this"
+                            partialSubmit="true"
+                            onstart="PF('#{pfDialogBlockerId}').show();"
+                            oncomplete="onTransitionSelected(xhr, status, args, #{pfDialogId});"
+                        />
                     </h:selectOneMenu>
-                    <h:message for="transition" class="errorMessage" />
+                    <h:message
+                        for="transition"
+                        class="errorMessage"
+                    />
                 </h:panelGroup>
-                <h:outputLabel for="lifecycle" value="#{messages['eloraplm.label.lifecycle']}" />
-                <h:outputText id="lifecycle" value="#{messages[currentDocument.getLifeCyclePolicy()]}" />
+                <div style="width: 5rem"></div>
+                <h:outputLabel
+                    for="lifecycle"
+                    value="#{messages['eloraplm.label.lifecycle']}"
+                />
+                <h:outputText
+                    id="lifecycle"
+                    value="#{messages[currentDocument.getLifeCyclePolicy()]}"
+                />
             </h:panelGrid>
-            
-            <h:panelGroup id="previousScreen" layout="block">
-                <ui:include src="#{lifecycleTransitionActions.getPreviousScreen()}">
-                </ui:include>
-            </h:panelGroup>
-            
-          </h:form>
-          
-    </h:panelGroup>
+        </h:form>
 
-    <h:form id="demote_promote_buttons">
-        <div class="buttonsGadget">
+        <h:panelGroup
+            id="previousScreen"
+            styleClass="demote-promote-previous-screen"
+            layout="block"
+        >
+            <ui:include src="#{lifecycleTransitionActions.getPreviousScreen()}">
+            </ui:include>
+        </h:panelGroup>
+    </ui:define>
 
-            <h:commandButton id="executeButton"
-                value="#{messages[buttonLabel]}"
-                styleClass="button"
-                action="#{lifecycleTransitionActions.execute}"
-                disabled="#{not lifecycleTransitionActions.canBeExecuted()}">
-            </h:commandButton>
+    <ui:define name="dialog_buttons">
+        <p:commandButton
+            id="executeButton"
+            value="#{messages[buttonLabel]}"
+            styleClass="button mainAction"
+            action="#{lifecycleTransitionActions.execute}"
+            disabled="#{not lifecycleTransitionActions.canBeExecuted()}"
+            onclick="handlePfDialogStart(#{pfDialogId});#{lifecycleTransitionActions.hasInnerForm() ? ' submitDemotePromoteInnerForm();' : ''}"
+            oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+            process="@form"
+            update="@form"
+        />
 
-            <h:commandButton value="#{messages['command.cancel']}"
-                styleClass="button">
-                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
-            </h:commandButton>
+        <p:commandButton
+            type="button"
+            value="#{messages['command.cancel']}"
+            immediate="true"
+            process="@none"
+            styleClass="button"
+            onclick="PF('#{pfDialogId}').hide();"
+        />
+    </ui:define>
 
-        </div>
-    </h:form>
-
-</ui:composition>
+    <ui:define name="dialog_scripts">
+        <h:outputScript>
+            function onTransitionSelected(xhr, status, args, dialog) { if(status
+            != "success" &amp;&amp; !args.validationFailed) { PFJQ('#' +
+            dialog.id + '_error_msg').show(); } PF(dialog.id +
+            '_blocker').hide(); PF(dialog.id).resetPosition(); }
+        </h:outputScript>
+    </ui:define>
+</ui:decorate>

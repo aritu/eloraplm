@@ -1,0 +1,26 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="#{pfDialogFormId}">
+        
+        <p:blockUI block="#{pfDialogFormId}" widgetVar="#{pfDialogBlockerId}" animate="false" styleClass="opaqueBlockUI middleSpinner">
+            <i class="pi pi-spin pi-spinner"></i>
+        </p:blockUI>
+        
+        <h:panelGroup id="#{pfDialogContentId}" layout="block" class="dialog-content">
+            <ui:insert name="dialog_content" />
+        </h:panelGroup>
+        
+        <h:panelGroup id="#{pfDialogButtonsId}" layout="block" class="dialogButtons">
+            <ui:insert name="dialog_buttons" />
+        </h:panelGroup>
+        
+    </h:form>
+    
+    <ui:insert name="dialog_scripts" />
+    
+</ui:composition>
+

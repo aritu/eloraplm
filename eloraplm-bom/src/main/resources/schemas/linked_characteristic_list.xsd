@@ -1,0 +1,34 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/linked_characteristics" 
+targetNamespace="http://www.nuxeo.org/ecm/project/schemas/linked_characteristics"
+xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+
+
+  <xs:complexType name="linkedCharacteristicType">
+    <xs:sequence>
+      <xs:element name="linkedDocument">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      
+      <xs:element name="linkedDocumentCharacteristicId" type="xs:string"/>
+     
+      <xs:element name="showInReport" type="xs:boolean" default="false"/>
+      
+      <xs:element name="orderInReport" type="xs:integer" />
+      
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="linkedCharacteristicListType">
+    <xs:sequence>
+      <xs:element name="linkedCharacteristic" type="nxs:linkedCharacteristicType" minOccurs="0"
+        maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="linkedCharacteristicList" type="nxs:linkedCharacteristicListType"/>
+
+</xs:schema>

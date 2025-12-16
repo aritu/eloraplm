@@ -37,7 +37,7 @@
                                 value="#{label.label}"
                                 required="#{isDefaultLocale}"
                                 onkeyup="#{isDefaultLocale ? widget.properties.onDefaultLocaleUpdated : ''}"
-                                style="min-width: 15em;" />
+                                style="min-width: #{not empty widget.properties.minWidth ? widget.properties.minWidth : '15em'};" />
                                 
                             <h:message for="label-#{label.locale}" styleClass="errorMessage" />
                         </h:panelGroup>

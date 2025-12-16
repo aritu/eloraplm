@@ -1,0 +1,347 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <a4j:region>
+        <div>
+            <h:outputText
+                styleClass="avert"
+                value="#{messages['eloraplm.message.csv.importer.composition.info']}"
+            />
+        </div>
+
+        <div style="margin-top: 12px">
+            <nxu:set
+                var="importStatus"
+                value="#{eloraCompositionCsvImportActions.importStatus}"
+            >
+                <nxu:set
+                    var="importScheduled"
+                    value="#{not empty importStatus and importStatus.isScheduled()}"
+                >
+                    <nxu:set
+                        var="importRunning"
+                        value="#{not empty importStatus and importStatus.isRunning()}"
+                    >
+                        <nxu:set
+                            var="importComplete"
+                            value="#{not empty importStatus and importStatus.isComplete()}"
+                        >
+                            <a4j:outputPanel
+                                id="csv_import_form_panel"
+                                layout="block"
+                            >
+                                <ui:fragment
+                                    rendered="#{not importScheduled and not importRunning and not importComplete}"
+                                >
+                                    <h:form
+                                        id="importCsvRichUploadForm"
+                                        execute="@this"
+                                        enctype="multipart/form-data"
+                                        disableDoubleClickShield="true"
+                                    >
+                                        <p class="popUpDescription">
+                                            <h:outputText
+                                                value="#{messages['eloraplm.label.csv.import.composition.launch.description']}"
+                                            />
+                                        </p>
+                                        <p class="popUpDescription">
+                                            <h:outputText
+                                                value="#{messages['eloraplm.label.csv.import.composition.file.example']}"
+                                            />
+                                            <br />
+                                            <ui:fragment
+                                                rendered="#{!eloraCompositionCsvImportActions.isElectronicEnabled}"
+                                            >
+                                                <h:outputText
+                                                    value="#{messages['eloraplm.label.csv.import.composition.file.example.note']}"
+                                                />
+                                            </ui:fragment>
+                                            <ui:fragment
+                                                rendered="#{eloraCompositionCsvImportActions.isElectronicEnabled}"
+                                            >
+                                                <h:outputText
+                                                    value="#{messages['eloraplm.label.csv.import.composition.file.example.note.ceeEnabled']}"
+                                                />
+                                            </ui:fragment>
+                                        </p>
+                                        <p>
+                                            <ui:fragment
+                                                rendered="#{!eloraCompositionCsvImportActions.isElectronicEnabled}"
+                                            >
+                                                <div
+                                                    style="
+                                                        background-color: #f3f6f9;
+                                                        margin-bottom: 10px;
+                                                        padding: 10px;
+                                                        font-style: italic;
+                                                    "
+                                                >
+                                                    "Reference","Quantity","Order"<br />
+                                                    "REF1","2","1"<br />
+                                                    "REF2","3","2"<br />
+                                                </div>
+                                            </ui:fragment>
+                                            <ui:fragment
+                                                rendered="#{eloraCompositionCsvImportActions.isElectronicEnabled}"
+                                            >
+                                                <div
+                                                    style="
+                                                        background-color: #f3f6f9;
+                                                        margin-bottom: 10px;
+                                                        padding: 10px;
+                                                        font-style: italic;
+                                                    "
+                                                >
+                                                    "Reference","Quantity","Order","Designators"<br />
+                                                    "REF1","2","1","Designator1,
+                                                    Designator2, Designator3"<br />
+                                                    "REF2","3","2","DesignatorA,
+                                                    DesignatorB, DesignatorC"<br />
+                                                </div>
+                                            </ui:fragment>
+                                        </p>
+
+                                        <rich:fileUpload
+                                            fileUploadListener="#{eloraCompositionCsvImportActions.uploadListener}"
+                                            maxFilesQuantity="1"
+                                            immediateUpload="true"
+                                            acceptedTypes="csv"
+                                            listHeight="60"
+                                            execute="@this"
+                                            locale="#{localeSelector.localeString}"
+                                            id="csvFileUpload"
+                                        />
+                                    </h:form>
+                                </ui:fragment>
+                            </a4j:outputPanel>
+
+                            <a4j:outputPanel
+                                id="csv_import_panel"
+                                layout="block"
+                            >
+                                <ui:fragment
+                                    rendered="#{importScheduled or importRunning or importComplete}"
+                                >
+                                    <a4j:poll
+                                        interval="5000"
+                                        render="csv_import_panel 
+                        :eloraMetadataHeading 
+                        :nxw_bom_comp_tt:ttForm:tt"
+                                        enabled="#{importScheduled or importRunning}"
+                                    />
+
+                                    <ui:fragment rendered="#{importScheduled}">
+                                        <h4>
+                                            <h:outputText
+                                                styleClass="processMessage scheduled"
+                                                value="#{messages['label.csv.import.scheduled']}"
+                                            />
+                                        </h4>
+                                        <h:outputFormat
+                                            value="#{messages['label.csv.import.scheduled.status']}"
+                                        >
+                                            <f:param
+                                                value="#{importStatus.positionInQueue}"
+                                            />
+                                            <f:param
+                                                value="#{importStatus.queueSize}"
+                                            />
+                                        </h:outputFormat>
+                                    </ui:fragment>
+
+                                    <ui:fragment rendered="#{importRunning}">
+                                        <h4>
+                                            <h:outputText
+                                                styleClass="processMessage running"
+                                                value="#{messages['label.csv.import.importing']} #{eloraCompositionCsvImportActions.importingCSVFilename}"
+                                            />
+                                        </h4>
+                                    </ui:fragment>
+
+                                    <!-- summary -->
+                                    <ui:fragment rendered="#{importComplete}">
+                                        <h:outputText
+                                            styleClass="processMessage completeSuccess"
+                                            value="#{messages['label.csv.import.complete']}"
+                                        />
+                                        <h4>
+                                            <h:outputText
+                                                value="#{messages['label.csv.import.complete.summary']}"
+                                            />
+                                        </h4>
+
+                                        <nxu:set
+                                            var="importResult"
+                                            value="#{eloraCompositionCsvImportActions.importResult}"
+                                        >
+                                            <table class="dataOutput">
+                                                <tr>
+                                                    <td class="success">
+                                                        <h:outputText
+                                                            value="#{messages['label.csv.import.result.successLine']}"
+                                                        />
+                                                    </td>
+                                                    <td class="success">
+                                                        #{importResult.successLineCount}
+                                                        /
+                                                        #{importResult.totalLineCount}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="avert">
+                                                        <h:outputText
+                                                            value="#{messages['label.csv.import.result.skippedLine']}"
+                                                        />
+                                                    </td>
+                                                    <td class="avert">
+                                                        #{importResult.skippedLineCount}
+                                                        /
+                                                        #{importResult.totalLineCount}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="error">
+                                                        <h:outputText
+                                                            value="#{messages['label.csv.import.result.errorLine']}"
+                                                        />
+                                                    </td>
+                                                    <td class="error">
+                                                        #{importResult.errorLineCount}
+                                                        /
+                                                        #{importResult.totalLineCount}
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </nxu:set>
+                                    </ui:fragment>
+
+                                    <!-- report -->
+                                    <ui:fragment
+                                        rendered="#{importRunning or importComplete}"
+                                    >
+                                        <nxu:set
+                                            var="importLogs"
+                                            value="#{nxu:test(importRunning, eloraCompositionCsvImportActions.getLastLogs(50), eloraCompositionCsvImportActions.getSkippedAndErrorLogs())}"
+                                        >
+                                            <ui:fragment
+                                                rendered="#{not empty importLogs}"
+                                            >
+                                                <h4>
+                                                    <h:outputText
+                                                        value="#{messages['label.csv.import.complete.report']}"
+                                                    />
+                                                </h4>
+                                                <div
+                                                    class="jsCsvImportResultDiv"
+                                                    style="overflow-y: auto"
+                                                >
+                                                    <p:dataTable
+                                                        var="importLog"
+                                                        value="#{importLogs}"
+                                                        tableStyleClass="datatable"
+                                                    >
+                                                        <nxu:set
+                                                            var="style"
+                                                            value="#{nxu:test(importLog.success, 'success', nxu:test(importLog.skipped, 'avert', 'error'))}"
+                                                        >
+                                                            <nxu:set
+                                                                var="message"
+                                                                value="#{nxu:test(importLog.success, 'label.csv.import.success', nxu:test(importLog.skipped, 'label.csv.import.skipped', 'label.csv.import.error'))}"
+                                                            >
+                                                                <p:column
+                                                                    headerText="#{messages['label.csv.import.importResult.line']}"
+                                                                >
+                                                                    <h:outputText
+                                                                        styleClass="#{style}"
+                                                                        value="#{messages['label.csv.import.line']} #{importLog.line}"
+                                                                    />
+                                                                </p:column>
+                                                                <p:column
+                                                                    headerText="#{messages['label.csv.import.importResult.type']}"
+                                                                >
+                                                                    <h:outputText
+                                                                        styleClass="#{style}"
+                                                                        value="#{messages[message]}"
+                                                                    />
+                                                                </p:column>
+                                                                <p:column
+                                                                    headerText="#{messages['label.csv.import.importResult.content']}"
+                                                                >
+                                                                    <h:outputText
+                                                                        value="#{importLog.getI18nMessage(localeSelector.locale)}"
+                                                                    />
+                                                                </p:column>
+                                                            </nxu:set>
+                                                        </nxu:set>
+                                                    </p:dataTable>
+                                                </div>
+                                            </ui:fragment>
+                                        </nxu:set>
+                                    </ui:fragment>
+
+                                    <script type="text/javascript">
+                                        jQuery(".jsCsvImportResultDiv").each(
+                                            function () {
+                                                this.scrollTop =
+                                                    this.scrollHeight;
+                                            }
+                                        );
+                                    </script>
+                                </ui:fragment>
+                            </a4j:outputPanel>
+
+                            <a4j:outputPanel id="csv_import_buttons">
+                                <h:form>
+                                    <p class="buttonsGadget">
+                                        <ui:fragment
+                                            rendered="#{not importScheduled and not importRunning and not importComplete}"
+                                        >
+                                            <a4j:commandButton
+                                                value="#{messages['eloraplm.command.csv.import.composition']}"
+                                                action="#{eloraCompositionCsvImportActions.importCompositionCSVFile}"
+                                                render="csv_import_form_panel csv_import_panel csv_import_buttons
+                        :eloraMetadataHeading 
+                        :nxw_bom_comp_tt:ttForm:tt"
+                                                styleClass="button mainAction"
+                                            />
+                                            <button
+                                                class="button"
+                                                onclick="jQuery.fancybox.close(); return false;"
+                                            >
+                                                #{messages['command.cancel']}
+                                            </button>
+                                        </ui:fragment>
+                                        <ui:fragment
+                                            rendered="#{importScheduled or importRunning or importComplete}"
+                                        >
+                                            <a4j:commandButton
+                                                value="#{messages['command.csv.start.new']}"
+                                                action="#{eloraCompositionCsvImportActions.resetState()}"
+                                                render="csv_import_form_panel csv_import_panel csv_import_buttons"
+                                                styleClass="button mainAction"
+                                            />
+                                            <a4j:commandButton
+                                                value="#{messages['command.close']}"
+                                                action="#{eloraCompositionCsvImportActions.resetState()}"
+                                                render="csv_import_form_panel csv_import_panel csv_import_buttons"
+                                                styleClass="button"
+                                                oncomplete="jQuery.fancybox.close(); return false;"
+                                            />
+                                        </ui:fragment>
+                                    </p>
+                                </h:form>
+                            </a4j:outputPanel>
+                        </nxu:set>
+                    </nxu:set>
+                </nxu:set>
+            </nxu:set>
+        </div>
+    </a4j:region>
+</ui:composition>

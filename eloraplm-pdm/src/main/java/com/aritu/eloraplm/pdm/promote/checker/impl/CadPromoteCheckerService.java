@@ -64,8 +64,6 @@ public class CadPromoteCheckerService extends PromoteCheckerService {
 
     private List<Resource> specialPredicates;
 
-    private List<String> hierarchicalAndDirectAndSpecialPredicates;
-
     @Override
     public List<Resource> getHierarchicalAndDirectPredicates() {
         return hierarchicalAndDirectPredicates;
@@ -314,7 +312,6 @@ public class CadPromoteCheckerService extends PromoteCheckerService {
         setDirectPredicates();
         setSpecialPredicates();
         setHierarchicalAndDirectPredicates();
-        setHierarchicalAndDirectAndSpecialPredicates();
 
     }
 
@@ -327,16 +324,6 @@ public class CadPromoteCheckerService extends PromoteCheckerService {
         directPredicates = new ArrayList<String>();
         directPredicates.addAll(RelationsConfig.cadDirectRelationsList);
         directPredicates.addAll(RelationsConfig.cadSpecialRelationsList);
-    }
-
-    private void setHierarchicalAndDirectAndSpecialPredicates() {
-        hierarchicalAndDirectAndSpecialPredicates = new ArrayList<String>();
-        hierarchicalAndDirectAndSpecialPredicates.addAll(
-                RelationsConfig.cadHierarchicalRelationsList);
-        hierarchicalAndDirectAndSpecialPredicates.addAll(
-                RelationsConfig.cadDirectRelationsList);
-        hierarchicalAndDirectAndSpecialPredicates.addAll(
-                RelationsConfig.cadSpecialRelationsList);
     }
 
     private void setHierarchicalAndDirectPredicates() {

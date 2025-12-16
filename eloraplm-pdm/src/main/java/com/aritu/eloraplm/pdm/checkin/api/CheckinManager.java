@@ -50,8 +50,5 @@ public interface CheckinManager {
             DocumentNotCheckedOutException,
             BomCharacteristicsValidatorException;
 
-    void checkThatRelationIsAllowed(DocumentModel subjectDoc,
-            String predicateUri, DocumentModel objectDoc, String quantity)
-            throws EloraException;
 
 }

@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -32,13 +34,24 @@ import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
+import com.aritu.eloraplm.bom.lists.util.EloraBomListExternalData;
 import com.aritu.eloraplm.cm.ImpactedItem;
+import com.aritu.eloraplm.cm.service.ChangeManagementService;
 import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.cm.util.CMQueryFactory;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMDoctypeConstants;
+import com.aritu.eloraplm.constants.CMMetadataConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
+import com.aritu.eloraplm.queries.util.EloraQueryHelper;
+import com.aritu.eloraplm.relations.treetable.BomListExternalData;
 import com.aritu.eloraplm.treetable.NodeManager;
 
 /**
@@ -58,15 +71,32 @@ public class ImpactedItemsNodeService implements NodeManager {
 
     protected Map<String, String> messages;
 
+    protected List<DocumentModel> lockConflicts;
+
+    protected boolean promotePendingItems;
+
+    protected boolean passedItems;
+
+    protected boolean updatePendingCharacterizedItems;
+
+    protected boolean existsCharacterizedItems;
+
     public ImpactedItemsNodeService(CoreSession session, String itemType,
             Map<String, String> messages) throws EloraException {
         this.session = session;
         this.itemType = itemType;
         this.messages = messages;
         nodeId = 0;
+        lockConflicts = new ArrayList<DocumentModel>();
+        promotePendingItems = false;
+        passedItems = false;
+        updatePendingCharacterizedItems = false;
+        existsCharacterizedItems = false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aritu.eloraplm.treetable.NodeService#getRoot(java.lang.Object)
      */
     @Override
@@ -75,6 +105,10 @@ public class ImpactedItemsNodeService implements NodeManager {
         String logInitMsg = "[getRoot] [" + session.getPrincipal().getName()
                 + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
+
+        passedItems = false;
+        updatePendingCharacterizedItems = false;
+        existsCharacterizedItems = false;
 
         DocumentModel currentDoc = (DocumentModel) parentObject;
 
@@ -96,7 +130,7 @@ public class ImpactedItemsNodeService implements NodeManager {
 
         level++;
 
-        root = createImpactedItemsRootTree(currentDoc, itemType, root, level);
+        root = createImpactedItemsRootTree(currentDoc, root, level);
 
         log.trace(logInitMsg + "--- EXIT ---");
 
@@ -104,7 +138,7 @@ public class ImpactedItemsNodeService implements NodeManager {
     }
 
     private TreeNode createImpactedItemsRootTree(DocumentModel currentDoc,
-            String itemType, TreeNode root, int level) throws EloraException {
+            TreeNode root, int level) throws EloraException {
 
         String logInitMsg = "[createImpactedItemsRootTree] ["
                 + session.getPrincipal().getName() + "] ";
@@ -112,129 +146,64 @@ public class ImpactedItemsNodeService implements NodeManager {
 
         IterableQueryResult countIt = null;
         IterableQueryResult it = null;
-        IterableQueryResult countMIIt = null;
         try {
 
             // First, check if this process has any impacted items. If yes,
             // search modified items and then their impacted ones for creating
             // the tree.
             String query = CMQueryFactory.getCountImpactedItemsQuery(
-                    currentDoc.getId(), itemType);
+                    currentDoc.getId());
             countIt = session.queryAndFetch(query, NXQL.NXQL);
 
             if (countIt.iterator().hasNext()) {
-                Map<String, Serializable> cuntMap = countIt.iterator().next();
-                String resultCountStr = cuntMap.get(
-                        "COUNT(" + NXQL.ECM_UUID + ")").toString();
-                int resultCount = Integer.valueOf(resultCountStr);
-
+                int resultCount = calculateCount(countIt);
                 log.trace(logInitMsg + "DB query resultCount = |" + resultCount
                         + "|");
-
                 if (resultCount > 0) {
-                    query = CMQueryFactory.getModifiedItemsQuery(
-                            currentDoc.getId(), itemType);
+                    query = CMQueryFactory.getModifiedItemsByDerivedFromQuery(
+                            currentDoc.getId(), null);
+
                     it = session.queryAndFetch(query, NXQL.NXQL);
-
                     if (it.size() > 0) {
-
-                        String pfx = CMHelper.getModifiedItemListMetadaName(
-                                itemType);
+                        String pfx = CMMetadataConstants.MODIFIED_ITEM_LIST;
 
                         for (Map<String, Serializable> map : it) {
-
                             String originItemUid = (String) map.get(
                                     pfx + "/*1/originItem");
 
-                            // Verify that this modified item has any impacted
-                            // item
-                            query = CMQueryFactory.getCountImpactedItemsByModifiedItemQuery(
-                                    currentDoc.getId(), itemType,
-                                    originItemUid);
-                            countMIIt = session.queryAndFetch(query, NXQL.NXQL);
+                            ImpactedItemsNodeData modifiedNodeData = createModifiedNodeData(
+                                    level, pfx, map);
 
-                            if (countMIIt.iterator().hasNext()) {
-                                Map<String, Serializable> countMIMap = countMIIt.iterator().next();
-                                String resultcountMIStr = countMIMap.get(
-                                        "COUNT(" + NXQL.ECM_UUID
-                                                + ")").toString();
-                                int resultcountMI = Integer.valueOf(
-                                        resultcountMIStr);
+                            nodeId++;
 
-                                log.trace(logInitMsg
-                                        + "DB query resultcountMI = |"
-                                        + resultcountMI + "|");
+                            TreeNode node = new DefaultTreeNode(
+                                    modifiedNodeData, root);
+                            node.setExpanded(true);
 
-                                if (resultcountMI > 0) {
-                                    Long rowNumber = (Long) map.get(
-                                            pfx + "/*1/rowNumber");
-                                    String currentNodeId = (String) map.get(
-                                            pfx + "/*1/nodeId");
-                                    String parentNodeId = (String) map.get(
-                                            pfx + "/*1/parentNodeId");
-                                    String originItemWcUid = (String) map.get(
-                                            pfx + "/*1/originItemWc");
-                                    String action = (String) map.get(
-                                            pfx + "/*1/action");
-                                    String destinationItemUid = (String) map.get(
-                                            pfx + "/*1/destinationItem");
-                                    String destinationItemWcUid = (String) map.get(
-                                            pfx + "/*1/destinationItemWc");
-                                    boolean isManaged = (boolean) map.get(
-                                            pfx + "/*1/isManaged");
-                                    String type = (String) map.get(
-                                            pfx + "/*1/type");
-                                    String comment = (String) map.get(
-                                            pfx + "/*1/comment");
-                                    boolean isUpdated = (boolean) map.get(
-                                            pfx + "/*1/isUpdated");
+                            if (!itemType.equals(modifiedNodeData.getType())) {
 
-                                    DocumentModel originItem = null;
-                                    if (originItemUid != null) {
-                                        originItem = session.getDocument(
-                                                new IdRef(originItemUid));
-                                    }
-                                    DocumentModel originItemWc = null;
-                                    if (originItemWcUid != null) {
-                                        originItemWc = session.getDocument(
-                                                new IdRef(originItemWcUid));
-                                    }
-                                    DocumentModel destinationItem = null;
-                                    if (destinationItemUid != null) {
-                                        destinationItem = session.getDocument(
-                                                new IdRef(destinationItemUid));
-                                    }
-                                    DocumentModel destinationItemWc = null;
-                                    if (destinationItemWcUid != null) {
-                                        destinationItemWc = session.getDocument(
-                                                new IdRef(
-                                                        destinationItemWcUid));
-                                    }
+                                root = processDerivedModifiedItems(currentDoc,
+                                        root,
+                                        CMMetadataConstants.MODIFIED_ITEM_LIST,
+                                        level, originItemUid, node);
 
-                                    ImpactedItemsNodeData nodeData = new ImpactedItemsNodeData(
-                                            String.valueOf(nodeId), level,
-                                            rowNumber, currentNodeId,
-                                            parentNodeId, true, originItem,
-                                            null, originItem, originItemWc, "",
-                                            "", false, false, action, true,
-                                            destinationItem, destinationItemWc,
-                                            true, isManaged, true, false, type,
-                                            comment, true, isUpdated);
+                            } else {
 
-                                    nodeId++;
-
-                                    TreeNode node = new DefaultTreeNode(
-                                            nodeData, root);
-                                    node.setExpanded(true);
-
-                                    level++;
-                                    root = createImpactedItemsChildNodesTree(
-                                            currentDoc, itemType, originItemUid,
-                                            action, destinationItemWcUid,
-                                            currentNodeId, root, node, level);
+                                String destinationItemWcUid = null;
+                                if (modifiedNodeData.getDestinationItemWc() != null) {
+                                    destinationItemWcUid = modifiedNodeData.getDestinationItemWc().getId();
                                 }
+
+                                root = createImpactedItemsChildNodesTree(
+                                        currentDoc, originItemUid,
+                                        modifiedNodeData.getAction(),
+                                        destinationItemWcUid,
+                                        modifiedNodeData.getNodeId(), root,
+                                        node, level, false);
                             }
-                            countMIIt.close();
+
+                            root = processDerivedItemsFromCad(currentDoc, root,
+                                    level, originItemUid, node);
                         }
                     }
                 }
@@ -251,9 +220,6 @@ public class ImpactedItemsNodeService implements NodeManager {
             throw new EloraException(
                     "Exception thrown: |" + e.getMessage() + "|");
         } finally {
-            if (countMIIt != null) {
-                countMIIt.close();
-            }
             if (countIt != null) {
                 countIt.close();
             }
@@ -266,11 +232,204 @@ public class ImpactedItemsNodeService implements NodeManager {
         return root;
     }
 
-    private TreeNode createImpactedItemsChildNodesTree(DocumentModel currentDoc,
-            String itemType, String modifiedItemUid, String modifiedItemAction,
-            String modifiedItemDestinationWcUid, String modifiedItemNodeId,
-            TreeNode root, TreeNode parentNode, int level)
+    private TreeNode processDerivedItemsFromCad(DocumentModel currentDoc,
+            TreeNode root, int level, String originItemUid, TreeNode node)
             throws EloraException {
+        if (itemType.equals(CMConstants.ITEM_TYPE_BOM)) {
+            // We need an extra node to paint the
+            // derived items as its children
+
+            String query = CMQueryFactory.getCountDerivedImpactedItemsQuery(
+                    currentDoc.getId(), originItemUid, itemType);
+
+            long countResult = EloraQueryHelper.executeCountQuery(query,
+                    NXQL.ECM_UUID, session);
+
+            if (countResult > 0) {
+
+                ImpactedItemsNodeData derivedsGroupNodeData = createDerivedsGroupNodeData(
+                        (ImpactedItemsNodeData) node.getData(), level);
+
+                TreeNode derivedsMainNode = new DefaultTreeNode(
+                        derivedsGroupNodeData, node);
+                derivedsMainNode.setExpanded(true);
+
+                String derivedsMainNodeId = ((ImpactedItemsNodeData) derivedsMainNode.getData()).getNodeId();
+
+                root = createImpactedItemsChildNodesTree(currentDoc,
+                        originItemUid, CMConstants.ACTION_CHANGE, null,
+                        derivedsMainNodeId, root, derivedsMainNode, level,
+                        true);
+            }
+        }
+        return root;
+    }
+
+    private TreeNode processDerivedModifiedItems(DocumentModel currentDoc,
+            TreeNode root, String pfx, int level, String originItemUid,
+            TreeNode parentNode) throws EloraException {
+
+        String query = CMQueryFactory.getModifiedItemsByDerivedFromQuery(
+                currentDoc.getId(), originItemUid);
+
+        IterableQueryResult derivedIt = null;
+        derivedIt = session.queryAndFetch(query, NXQL.NXQL);
+
+        if (derivedIt.size() > 0) {
+            level++;
+            for (Map<String, Serializable> derivedMap : derivedIt) {
+
+                String derivedType = (String) derivedMap.get(pfx + "/*1/type");
+                if (!itemType.equals(derivedType)) {
+                    continue;
+                }
+
+                if (itemType.equals(CMConstants.ITEM_TYPE_DOC)) {
+                    String originItemWcUid = (String) derivedMap.get(
+                            pfx + "/*1/originItem");
+                    DocumentModel originItem = session.getDocument(
+                            new IdRef(originItemWcUid));
+                    if (originItem.getType().equals(
+                            EloraDoctypeConstants.CAD_DRAWING)
+                            || EloraDocumentHelper.isBasicDocument(
+                                    originItem)) {
+                        continue;
+                    }
+                }
+
+                ImpactedItemsNodeData derivedModifiedNodeData = createModifiedNodeData(
+                        level, pfx, derivedMap);
+
+                nodeId++;
+
+                TreeNode node = new DefaultTreeNode(derivedModifiedNodeData,
+                        parentNode);
+                node.setExpanded(true);
+
+                String destinationItemWcUid = null;
+                if (derivedModifiedNodeData.getDestinationItemWc() != null) {
+                    destinationItemWcUid = derivedModifiedNodeData.getDestinationItemWc().getId();
+                }
+
+                root = createImpactedItemsChildNodesTree(currentDoc,
+                        originItemUid, derivedModifiedNodeData.getAction(),
+                        destinationItemWcUid,
+                        derivedModifiedNodeData.getNodeId(), root, node, level,
+                        false);
+            }
+        }
+        derivedIt.close();
+
+        return root;
+    }
+
+    private ImpactedItemsNodeData createModifiedNodeData(int level, String pfx,
+            Map<String, Serializable> map) {
+
+        Long rowNumber = (Long) map.get(pfx + "/*1/rowNumber");
+        String currentNodeId = (String) map.get(pfx + "/*1/nodeId");
+        String parentNodeId = (String) map.get(pfx + "/*1/parentNodeId");
+        String originItemUid = (String) map.get(pfx + "/*1/originItem");
+        String originItemWcUid = (String) map.get(pfx + "/*1/originItemWc");
+        String action = (String) map.get(pfx + "/*1/action");
+        String destinationItemUid = (String) map.get(
+                pfx + "/*1/destinationItem");
+        String destinationItemWcUid = (String) map.get(
+                pfx + "/*1/destinationItemWc");
+        String destinationItemSourceVersionUid = (String) map.get(
+                pfx + "/*1/destinationItemSourceVersion");
+        boolean isManaged = (boolean) map.get(pfx + "/*1/isManaged");
+        String type = (String) map.get(pfx + "/*1/type");
+        String comment = (String) map.get(pfx + "/*1/comment");
+        boolean isUpdated = (boolean) map.get(pfx + "/*1/isUpdated");
+
+        DocumentModel originItem = null;
+        if (originItemUid != null) {
+            originItem = session.getDocument(new IdRef(originItemUid));
+        }
+        DocumentModel originItemWc = null;
+        if (originItemWcUid != null) {
+            originItemWc = session.getDocument(new IdRef(originItemWcUid));
+        }
+        DocumentModel destinationItem = null;
+        if (destinationItemUid != null) {
+            destinationItem = session.getDocument(
+                    new IdRef(destinationItemUid));
+        }
+        DocumentModel destinationItemWc = null;
+        if (destinationItemWcUid != null) {
+            destinationItemWc = session.getDocument(
+                    new IdRef(destinationItemWcUid));
+        }
+
+        String defaultDestinationItemSourceVersionUid = null;
+        DocumentModel defaultDestinationItemSourceVersion = CMHelper.calculateDefaultDestinationItemSourceVersion(
+                destinationItemWc, originItem, action);
+        if (defaultDestinationItemSourceVersion != null) {
+            defaultDestinationItemSourceVersionUid = defaultDestinationItemSourceVersion.getId();
+        }
+
+        DocumentModel destinationItemSourceVersion = null;
+        if (destinationItemSourceVersionUid != null) {
+            destinationItemSourceVersion = session.getDocument(
+                    new IdRef(destinationItemSourceVersionUid));
+        }
+
+        // Modified item in impacted tree
+        ImpactedItemsNodeData nodeData = new ImpactedItemsNodeData(
+                String.valueOf(nodeId), level, rowNumber, currentNodeId,
+                parentNodeId, null, true, originItem, null, originItem,
+                originItemWc, "", "", false, false, action, true,
+                destinationItem, destinationItemWc,
+                defaultDestinationItemSourceVersionUid,
+                destinationItemSourceVersion, true, true, isManaged, true,
+                false, type, comment, true, isUpdated, false, null, messages);
+        return nodeData;
+    }
+
+    private ImpactedItemsNodeData createDerivedsGroupNodeData(
+            ImpactedItemsNodeData modifiedNodeData, int level) {
+
+        Long rowNumber = 1L;
+        String currentNodeId = "000000";
+        String parentNodeId = modifiedNodeData.getNodeId();
+        String action = CMConstants.ACTION_CHANGE;
+        boolean isManaged = true;
+        String type = CMConstants.ITEM_TYPE_BOM;
+        String comment = null;
+        boolean isUpdated = false;
+        DocumentModel originItem = null;
+        DocumentModel originItemWc = null;
+        DocumentModel destinationItem = null;
+        DocumentModel destinationItemWc = null;
+        String defaultDestinationItemSourceVersionUid = null;
+        DocumentModel destinationItemSourceVersion = null;
+
+        // Modified item in impacted tree
+        ImpactedItemsNodeData nodeData = new ImpactedItemsNodeData(
+                String.valueOf(nodeId), level++, rowNumber, currentNodeId,
+                parentNodeId, null, true, originItem, null, originItem,
+                originItemWc, "", "", false, false, action, true,
+                destinationItem, destinationItemWc,
+                defaultDestinationItemSourceVersionUid,
+                destinationItemSourceVersion, true, true, isManaged, true,
+                false, type, comment, true, isUpdated, false, null, messages);
+        return nodeData;
+    }
+
+    private int calculateCount(IterableQueryResult countIt) {
+        Map<String, Serializable> countMap = countIt.iterator().next();
+        String resultCountStr = countMap.get(
+                "COUNT(" + NXQL.ECM_UUID + ")").toString();
+        int resultCount = Integer.valueOf(resultCountStr);
+        return resultCount;
+    }
+
+    private TreeNode createImpactedItemsChildNodesTree(DocumentModel currentDoc,
+            String modifiedItemUid, String modifiedItemAction,
+            String modifiedItemDestinationWcUid, String modifiedItemNodeId,
+            TreeNode root, TreeNode parentNode, int level,
+            boolean processDeriveds) throws EloraException {
 
         String logInitMsg = "[createImpactedItemsChildNodesTree] ["
                 + session.getPrincipal().getName() + "] ";
@@ -282,7 +441,8 @@ public class ImpactedItemsNodeService implements NodeManager {
         // The HashMap contains: for each parentNodeId, its related
         // impactedItems ordered by rowNumber
         HashMap<String, ArrayList<ImpactedItem>> impactedItems = retrieveImpactedItemsByModifiedItem(
-                currentDoc.getId(), itemType, modifiedItemUid);
+                currentDoc.getId(), modifiedItemUid, modifiedItemNodeId,
+                processDeriveds);
 
         // Create the tree in function of the retrieved structure.
         // First parent is the modified item itself.
@@ -298,7 +458,8 @@ public class ImpactedItemsNodeService implements NodeManager {
     }
 
     private HashMap<String, ArrayList<ImpactedItem>> retrieveImpactedItemsByModifiedItem(
-            String cmProcessUid, String itemType, String modifiedItemUid)
+            String cmProcessUid, String modifiedItemUid,
+            String modifiedItemNodeId, boolean processDeriveds)
             throws EloraException {
 
         String logInitMsg = "[retrieveImpactedItemsByModifiedItem] ["
@@ -310,20 +471,19 @@ public class ImpactedItemsNodeService implements NodeManager {
         IterableQueryResult it = null;
         try {
             String query = CMQueryFactory.getImpactedItemsByModifiedQuery(
-                    cmProcessUid, itemType, modifiedItemUid);
+                    cmProcessUid, modifiedItemUid, itemType, processDeriveds);
+
             it = session.queryAndFetch(query, NXQL.NXQL);
 
             if (it.size() > 0) {
 
-                String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
+                String pfx = CMMetadataConstants.IMPACTED_ITEM_LIST;
 
                 for (Map<String, Serializable> map : it) {
                     Long rowNumber = (Long) map.get(pfx + "/*1/rowNumber");
                     String currentNodeId = (String) map.get(pfx + "/*1/nodeId");
-                    String parentNodeId = (String) map.get(
-                            pfx + "/*1/parentNodeId");
-                    String parentItemUid = (String) map.get(
-                            pfx + "/*1/parentItem");
+                    String derivedFromUid = (String) map.get(
+                            pfx + "/*1/derivedFrom");
                     String originItemUid = (String) map.get(
                             pfx + "/*1/originItem");
                     String originItemWcUid = (String) map.get(
@@ -339,6 +499,8 @@ public class ImpactedItemsNodeService implements NodeManager {
                             pfx + "/*1/destinationItem");
                     String destinationItemWcUid = (String) map.get(
                             pfx + "/*1/destinationItemWc");
+                    String destinationItemSourceVersionUid = (String) map.get(
+                            pfx + "/*1/destinationItemSourceVersion");
                     boolean isManaged = (boolean) map.get(
                             pfx + "/*1/isManaged");
                     boolean isManual = (boolean) map.get(pfx + "/*1/isManual");
@@ -346,13 +508,41 @@ public class ImpactedItemsNodeService implements NodeManager {
                     String comment = (String) map.get(pfx + "/*1/comment");
                     boolean isUpdated = (boolean) map.get(
                             pfx + "/*1/isUpdated");
+                    boolean isDerived = (boolean) map.get(
+                            pfx + "/*1/isDerived");
+                    String refNodeId = (String) map.get(pfx + "/*1/refNodeId");
+
+                    boolean isFromMbom = (boolean) map.get(
+                            pfx + "/*1/isFromMbom");
+
+                    String externalReference = (String) map.get(
+                            pfx + "/*1/externalReference");
+                    String externalName = (String) map.get(
+                            pfx + "/*1/externalName");
+
+                    String parentNodeId;
+                    String parentItemUid;
+
+                    if (isDerived) {
+                        parentNodeId = modifiedItemNodeId;
+                        parentItemUid = modifiedItemUid;
+                    } else {
+                        parentNodeId = (String) map.get(
+                                pfx + "/*1/parentNodeId");
+                        parentItemUid = (String) map.get(
+                                pfx + "/*1/parentItem");
+                    }
 
                     ImpactedItem impactedItem = new ImpactedItem(rowNumber,
-                            currentNodeId, parentNodeId, modifiedItemUid,
-                            parentItemUid, originItemUid, originItemWcUid,
-                            predicate, quantity, isAnarchic, isDirectObject,
-                            action, destinationItemUid, destinationItemWcUid,
-                            isManaged, isManual, type, comment, isUpdated);
+                            currentNodeId, parentNodeId, derivedFromUid,
+                            modifiedItemUid, parentItemUid, originItemUid,
+                            originItemWcUid, predicate, quantity, isAnarchic,
+                            isDirectObject, action, destinationItemUid,
+                            destinationItemWcUid,
+                            destinationItemSourceVersionUid, isManaged,
+                            isManual, type, comment, isUpdated, isDerived,
+                            refNodeId, isFromMbom, externalReference,
+                            externalName);
 
                     if (impactedItems.containsKey(parentNodeId)) {
                         impactedItems.get(parentNodeId).add(impactedItem);
@@ -387,87 +577,23 @@ public class ImpactedItemsNodeService implements NodeManager {
             String parentNodeId, String parentItemAction,
             String modifiedItemAction, String modifiedItemDestinationWcUid) {
 
-        String logInitMsg = "[fillTreeWithImpactedItems] ["
-                + session.getPrincipal().getName() + "] ";
-
         if (impactedItems.containsKey(parentNodeId)) {
 
             ArrayList<ImpactedItem> impactedItemListByParentNodeId = impactedItems.get(
                     parentNodeId);
 
+            level++;
+
             for (ImpactedItem impactedItem : impactedItemListByParentNodeId) {
 
-                DocumentModel modifiedItem = null;
-                if (impactedItem.getModifiedItem() != null) {
-                    modifiedItem = session.getDocument(
-                            new IdRef(impactedItem.getModifiedItem()));
-                }
-                DocumentModel parentItem = null;
-                if (impactedItem.getParentItem() != null) {
-                    parentItem = session.getDocument(
-                            new IdRef(impactedItem.getParentItem()));
-                }
-                DocumentModel originItem = null;
-                String originItemType = null;
-                if (impactedItem.getOriginItem() != null) {
-                    originItem = session.getDocument(
-                            new IdRef(impactedItem.getOriginItem()));
-                    if (originItem != null) {
-                        originItemType = originItem.getType();
-                    }
-                }
-                DocumentModel originItemWc = null;
-                if (impactedItem.getOriginItemWc() != null) {
-                    originItemWc = session.getDocument(
-                            new IdRef(impactedItem.getOriginItemWc()));
-                }
-                DocumentModel destinationItem = null;
-                if (impactedItem.getDestinationItem() != null) {
-                    destinationItem = session.getDocument(
-                            new IdRef(impactedItem.getDestinationItem()));
-                }
-
-                DocumentModel destinationItemWc = null;
-                if (impactedItem.getDestinationItemWc() != null) {
-                    destinationItemWc = session.getDocument(
-                            new IdRef(impactedItem.getDestinationItemWc()));
-                }
-
-                // Calculate if editable fields are editable or not in
-                // function of the item values
-                boolean destinationItemVersionIsReadOnly = CMTreeBeanHelper.calculateDestinationItemVersionListIsReadOnlyValue(
-                        impactedItem.getAction(), impactedItem.isManaged());
-
-                boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
-                        impactedItem.getAction(), destinationItem);
-
-                boolean actionIsReadOnly = CMTreeBeanHelper.calculatedImpactedItemActionIsReadOnlyValue(
-                        impactedItem.getAction(),
-                        impactedItem.getOriginItemWc(), originItemType,
-                        modifiedItemAction, modifiedItemDestinationWcUid,
-                        parentItemAction);
-
-                ImpactedItemsNodeData nodeData = new ImpactedItemsNodeData(
-                        String.valueOf(nodeId), level,
-                        impactedItem.getRowNumber(), impactedItem.getNodeId(),
-                        impactedItem.getParentNodeId(), false, modifiedItem,
-                        parentItem, originItem, originItemWc,
-                        impactedItem.getPredicate(), impactedItem.getQuantity(),
-                        impactedItem.isAnarchic(),
-                        impactedItem.isDirectObject(), impactedItem.getAction(),
-                        actionIsReadOnly, destinationItem, destinationItemWc,
-                        destinationItemVersionIsReadOnly,
-                        impactedItem.isManaged(), isManagedIsReadOnly,
-                        impactedItem.isManual(), impactedItem.getType(),
-                        impactedItem.getComment(), false,
-                        impactedItem.isUpdated());
+                ImpactedItemsNodeData nodeData = createImpactedItemsNodeData(
+                        level, parentItemAction, modifiedItemAction,
+                        modifiedItemDestinationWcUid, impactedItem);
 
                 nodeId++;
 
                 TreeNode node = new DefaultTreeNode(nodeData, parentNode);
                 node.setExpanded(true);
-
-                level++;
 
                 // recursive call
                 root = fillTreeWithImpactedItems(root, node, level,
@@ -479,8 +605,205 @@ public class ImpactedItemsNodeService implements NodeManager {
         return root;
     }
 
-    public void saveTree(DocumentModel currentDoc, TreeNode root)
-            throws EloraException {
+    private ImpactedItemsNodeData createImpactedItemsNodeData(int level,
+            String parentItemAction, String modifiedItemAction,
+            String modifiedItemDestinationWcUid, ImpactedItem impactedItem) {
+
+        DocumentModel modifiedItem = null;
+        if (impactedItem.getModifiedItem() != null) {
+            modifiedItem = session.getDocument(
+                    new IdRef(impactedItem.getModifiedItem()));
+        }
+        DocumentModel parentItem = null;
+        if (impactedItem.getParentItem() != null) {
+            parentItem = session.getDocument(
+                    new IdRef(impactedItem.getParentItem()));
+        }
+        DocumentModel originItem = null;
+        String originItemType = null;
+        if (impactedItem.getOriginItem() != null) {
+            originItem = session.getDocument(
+                    new IdRef(impactedItem.getOriginItem()));
+            if (originItem != null) {
+                originItemType = originItem.getType();
+            }
+        }
+        DocumentModel originItemWc = null;
+        if (impactedItem.getOriginItemWc() != null) {
+            originItemWc = session.getDocument(
+                    new IdRef(impactedItem.getOriginItemWc()));
+        }
+        DocumentModel destinationItem = null;
+        if (impactedItem.getDestinationItem() != null) {
+            destinationItem = session.getDocument(
+                    new IdRef(impactedItem.getDestinationItem()));
+        }
+
+        DocumentModel destinationItemWc = null;
+        if (impactedItem.getDestinationItemWc() != null) {
+            destinationItemWc = session.getDocument(
+                    new IdRef(impactedItem.getDestinationItemWc()));
+        }
+
+        String defaultDestinationItemSourceVersionUid = null;
+        DocumentModel defaultDestinationItemSourceVersion = CMHelper.calculateDefaultDestinationItemSourceVersion(
+                destinationItemWc, originItem, impactedItem.getAction());
+        if (defaultDestinationItemSourceVersion != null) {
+            defaultDestinationItemSourceVersionUid = defaultDestinationItemSourceVersion.getId();
+        }
+
+        DocumentModel destinationItemSourceVersion = null;
+        if (impactedItem.getDestinationItemSourceVersion() != null) {
+            destinationItemSourceVersion = session.getDocument(
+                    new IdRef(impactedItem.getDestinationItemSourceVersion()));
+        }
+
+        DocumentModel derivedFrom = null;
+        if (impactedItem.getDerivedFrom() != null) {
+            derivedFrom = session.getDocument(
+                    new IdRef(impactedItem.getDerivedFrom()));
+        }
+
+        // Calculate if editable fields are editable or not in
+        // function of the item values
+        boolean destinationItemVersionIsReadOnly = CMTreeBeanHelper.calculateDestinationItemVersionListIsReadOnlyValue(
+                impactedItem.getAction(), impactedItem.isManaged());
+
+        boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
+                impactedItem.getAction(), destinationItem);
+
+        boolean actionIsReadOnly = CMTreeBeanHelper.calculatedImpactedItemActionIsReadOnlyValue(
+                impactedItem.getAction(), impactedItem.getOriginItemWc(),
+                impactedItem.getIsFromMbom(), originItemType,
+                modifiedItemAction, modifiedItemDestinationWcUid,
+                parentItemAction);
+
+        checkWarnings(originItem, destinationItem, destinationItemWc,
+                impactedItem.isManaged());
+
+        boolean isCharacterized = destinationItem == null ? false
+                : BomCharacteristicsHelper.isCharacterizedItem(destinationItem);
+
+        // TODO: Mirar cómo separar el tema de Mbom de Elora y Copreci
+
+        BomListExternalData bomListExternalData = new EloraBomListExternalData(
+                impactedItem.getExternalReference(),
+                impactedItem.getExternalName(), null, true);
+
+        boolean destinationItemSourceVersionIsReadOnly = CMTreeBeanHelper
+                .calculateDestinationItemSourceVersionIsReadOnlyValue(
+                        destinationItem, impactedItem.isManaged());
+
+        ImpactedItemsNodeData nodeData = new ImpactedItemsNodeData(
+                String.valueOf(nodeId), level, impactedItem.getRowNumber(),
+                impactedItem.getNodeId(), impactedItem.getParentNodeId(),
+                derivedFrom, false, modifiedItem, parentItem, originItem,
+                originItemWc, impactedItem.getPredicate(),
+                impactedItem.getQuantity(), impactedItem.isAnarchic(),
+                impactedItem.isDirectObject(), impactedItem.getAction(),
+                actionIsReadOnly, destinationItem, destinationItemWc,
+                defaultDestinationItemSourceVersionUid,
+                destinationItemSourceVersion, destinationItemVersionIsReadOnly,
+                destinationItemSourceVersionIsReadOnly,
+                impactedItem.isManaged(), isManagedIsReadOnly,
+                impactedItem.isManual(), impactedItem.getType(),
+                impactedItem.getComment(), false, impactedItem.isUpdated(),
+                impactedItem.isDerived(), impactedItem.getRefNodeId(),
+                impactedItem.getIsFromMbom(), isCharacterized,
+                bomListExternalData, messages);
+
+        return nodeData;
+    }
+
+    private void checkWarnings(DocumentModel originItem,
+            DocumentModel destinationItem, DocumentModel destinationItemWc,
+            boolean managed) {
+
+        if (destinationItem == null) {
+            return;
+        }
+
+        checkLockConflicts(destinationItem, managed);
+
+        if (!passedItems || !promotePendingItems
+                || !updatePendingCharacterizedItems) {
+            checkItemProblems(originItem, destinationItem, destinationItemWc,
+                    managed);
+        }
+    }
+
+    private void checkItemProblems(DocumentModel originItem,
+            DocumentModel destinationItem, DocumentModel destinationItemWc,
+            boolean managed) {
+
+        if (!passedItems || !promotePendingItems) {
+            checkPromotePendingAndPassedItems(destinationItem,
+                    destinationItemWc, managed);
+        }
+
+        if (destinationItem.hasSchema(EloraSchemaConstants.BOM_ITEM)
+                && !updatePendingCharacterizedItems) {
+            checkPendingCharacterizedItems(destinationItem, managed);
+        }
+    }
+
+    private void checkPendingCharacterizedItems(DocumentModel destinationItem,
+            boolean managed) {
+        boolean isCharacterizedItem = BomCharacteristicsHelper.isCharacterizedItem(
+                destinationItem);
+
+        if (isCharacterizedItem) {
+            existsCharacterizedItems = true;
+        }
+
+        if (isCharacterizedItem && (destinationItem.isCheckedOut()
+                || (!destinationItem.isCheckedOut() && !managed))) {
+            updatePendingCharacterizedItems = true;
+        }
+    }
+
+    private void checkPromotePendingAndPassedItems(
+            DocumentModel destinationItem, DocumentModel destinationItemWc,
+            boolean managed) {
+
+        boolean destIsPreliminary = EloraLifeCycleConstants.PRELIMINARY.equals(
+                destinationItem.getCurrentLifeCycleState());
+
+        boolean hasAtLeastOneApprovedVersion = false;
+        Long previousApprovedVersions = EloraQueryFactory.countApprovedVersionsOfDocumentQuery(
+                session, destinationItemWc.getId(),
+                destinationItemWc.getType());
+        if (previousApprovedVersions > 0) {
+            hasAtLeastOneApprovedVersion = true;
+        }
+
+        if (managed && destIsPreliminary && hasAtLeastOneApprovedVersion) {
+            String baseVersionId = EloraDocumentHelper.getBaseVersion(
+                    destinationItemWc).getId();
+            if (!baseVersionId.equals(destinationItem.getId())) {
+                passedItems = true;
+            } else {
+                promotePendingItems = true;
+            }
+        }
+    }
+
+    private void checkLockConflicts(DocumentModel destinationItem,
+            boolean managed) {
+        String currentUser = session.getPrincipal().getName();
+        if (destinationItem.isLocked() && !managed
+                && !destinationItem.getLockInfo().getOwner().equals(
+                        currentUser)) {
+            if (!lockConflicts.contains(destinationItem)) {
+                lockConflicts.add(destinationItem);
+            }
+        }
+    }
+
+    public void saveTree(DocumentModel currentDoc, TreeNode root,
+            List<TreeNode> actionChangeTreeNodeList,
+            ChangeManagementService cmService)
+            throws EloraException, DocumentUnreadableException {
 
         String logInitMsg = "[saveTree] [" + session.getPrincipal().getName()
                 + "] ";
@@ -488,8 +811,8 @@ public class ImpactedItemsNodeService implements NodeManager {
 
         List<ImpactedItem> impactedItems = getImpactedItemsListFromTree(root);
 
-        CMHelper.saveImpactedItemListInCMProcess(session, currentDoc, itemType,
-                impactedItems);
+        cmService.saveImpactedItemListInCMProcess(session, currentDoc, itemType,
+                impactedItems, actionChangeTreeNodeList);
 
     }
 
@@ -516,7 +839,8 @@ public class ImpactedItemsNodeService implements NodeManager {
     }
 
     public void refreshNode(DocumentModel cmProcess, TreeNode node,
-            String trigger) throws EloraException {
+            String trigger, List<TreeNode> actionChangeTreeNodeList)
+            throws EloraException {
 
         String logInitMsg = "[refreshNode] [" + session.getPrincipal().getName()
                 + "] ";
@@ -528,6 +852,12 @@ public class ImpactedItemsNodeService implements NodeManager {
                 CMConstants.TRIGGER_ACTION_LOAD_DESTINATION_VERSIONS)) {
 
             CMTreeBeanHelper.loadDestinationVersions(nodeData, session,
+                    messages);
+
+        } else if (trigger.equals(
+                CMConstants.TRIGGER_ACTION_LOAD_DESTINATION_SOURCE_VERSIONS)) {
+
+            CMTreeBeanHelper.loadDestinationSourceVersions(nodeData, session,
                     messages);
 
         } else {
@@ -551,36 +881,49 @@ public class ImpactedItemsNodeService implements NodeManager {
                 // element is marked as managed.
                 if (action.equals(CMConstants.ACTION_IGNORE)) {
                     nodeData.setDestinationItem(null);
-                    nodeData.setDestinationItemUid(null);
                     nodeData.setDestinationItemVersionList(null);
                     nodeData.setDestinationItemWc(null);
+                    nodeData.setDestinationItemSourceVersion(null);
+                    nodeData.setDestinationItemSourceVersionList(null);
                     nodeData.setDestinationItemVersionIsReadOnly(true);
+                    nodeData.setDestinationItemSourceVersionIsReadOnly(true);
                     nodeData.setIsManaged(true);
                     nodeData.setIsManagedIsReadOnly(true);
                 }
-                if (action.equals(CMConstants.ACTION_CHANGE)) {
+                if (action.equals(CMConstants.ACTION_CHANGE)
+                        || action.equals(CMConstants.ACTION_OVERWRITE)) {
                     // set as destinationItem and destinationItemWc the originWC
                     DocumentModel destinationItem = nodeData.getOriginItemWc();
                     nodeData.setDestinationItem(destinationItem);
                     nodeData.setDestinationItemWc(destinationItem);
-                    String destinationItemUid = destinationItem.getId();
-                    nodeData.setDestinationItemUid(destinationItemUid);
-                    Map<String, String> destinationItemVersionList = new HashMap<String, String>();
-                    destinationItemVersionList.put(destinationItemUid,
-                            destinationItem.getVersionLabel() + " (WC)");
+                    List<SelectItem> destinationItemVersionList = new ArrayList<SelectItem>();
+                    destinationItemVersionList.add(new SelectItem(
+                            destinationItem, destinationItem.getVersionLabel()
+                                    + CMConstants.VERSION_LABEL_WC));
                     nodeData.setDestinationItemVersionList(
                             destinationItemVersionList);
+                    CMHelper.setDestinationItemSourceVersionInformation(
+                            nodeData, messages);
                     nodeData.setDestinationItemVersionIsReadOnly(false);
-                    nodeData.setIsManaged(false);
+                    boolean isManaged = false;
+                    boolean destinationItemSourceVersionIsReadOnly = CMTreeBeanHelper
+                            .calculateDestinationItemSourceVersionIsReadOnlyValue(
+                                    destinationItem, isManaged);
+                    nodeData.setDestinationItemSourceVersionIsReadOnly(
+                            destinationItemSourceVersionIsReadOnly);
+                    nodeData.setIsManaged(isManaged);
                     boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
                             action, nodeData.getOriginItemWc());
                     nodeData.setIsManagedIsReadOnly(isManagedIsReadOnly);
                 }
 
+                actionChangeTreeNodeList.add(node);
+
                 String comment = CMTreeBeanHelper.calculateComment(cmProcess,
                         action);
                 nodeData.setComment(comment);
-                refreshChildNodes(node, action, comment);
+                refreshChildNodes(node, action, comment,
+                        actionChangeTreeNodeList);
 
             } else if (trigger.equals(CMConstants.TRIGGER_FIELD_IS_MANAGED)) {
 
@@ -588,9 +931,15 @@ public class ImpactedItemsNodeService implements NodeManager {
                         nodeData, session, messages);
 
             } else if (trigger.equals(
-                    CMConstants.TRIGGER_FIELD_DESTINATION_ITEM_UID)) {
+                    CMConstants.TRIGGER_FIELD_DESTINATION_ITEM)) {
 
-                CMTreeBeanHelper.processRefreshNodeTriggeredByDestinationItemUid(
+                CMTreeBeanHelper.processRefreshNodeTriggeredByDestinationItem(
+                        nodeData, session);
+
+            } else if (trigger.equals(
+                    CMConstants.TRIGGER_FIELD_DESTINATION_ITEM_SOURCE_VERSION)) {
+
+                CMTreeBeanHelper.processRefreshNodeTriggeredByDestinationItemSourceVersion(
                         nodeData, session);
             }
         }
@@ -598,8 +947,8 @@ public class ImpactedItemsNodeService implements NodeManager {
         log.trace(logInitMsg + "--- EXIT ---");
     }
 
-    private void refreshChildNodes(TreeNode node, String action, String comment)
-            throws EloraException {
+    private void refreshChildNodes(TreeNode node, String action, String comment,
+            List<TreeNode> actionChangeTreeNodeList) throws EloraException {
 
         if (action.equals(CMConstants.ACTION_IGNORE)) {
 
@@ -611,6 +960,17 @@ public class ImpactedItemsNodeService implements NodeManager {
             for (TreeNode childNode : node.getChildren()) {
                 ImpactedItemsNodeData childNodeData = (ImpactedItemsNodeData) childNode.getData();
 
+                if (childNodeData.getIsFromMbom()
+                        && childNodeData.getOriginItem() == null) {
+                    continue;
+                }
+
+                if (EloraDocumentHelper.isBasicDocument(
+                        childNodeData.getOriginItem())
+                        && !action.equals(CMConstants.ACTION_IGNORE)) {
+                    continue;
+                }
+
                 // If childNode is already MANAGED and its action is NOT IGNORE,
                 // do not change it.
                 if (childNodeData.getIsManaged()
@@ -618,6 +978,8 @@ public class ImpactedItemsNodeService implements NodeManager {
                                 CMConstants.ACTION_IGNORE)) {
                     // nothing to do
                 } else {
+                    actionChangeTreeNodeList.add(node);
+
                     boolean actionIsReadOnly = true;
                     // EXCEPTION: if this child node is a CadDrawing,
                     // action should always be editable
@@ -632,26 +994,39 @@ public class ImpactedItemsNodeService implements NodeManager {
                     childNodeData.setAction(CMConstants.ACTION_IGNORE);
                     childNodeData.setActionIsReadOnly(actionIsReadOnly);
                     childNodeData.setDestinationItem(null);
-                    childNodeData.setDestinationItemUid(null);
                     childNodeData.setDestinationItemVersionList(null);
                     childNodeData.setDestinationItemWc(null);
+                    childNodeData.setDestinationItemSourceVersion(null);
+                    childNodeData.setDestinationItemSourceVersionList(null);
                     childNodeData.setDestinationItemVersionIsReadOnly(true);
+                    childNodeData.setDestinationItemSourceVersionIsReadOnly(
+                            true);
                     childNodeData.setIsManaged(true);
                     childNodeData.setIsManagedIsReadOnly(true);
                     childNodeData.setComment(
                             CMConstants.COMMENT_IGNORE_SINCE_ANCESTOR_IS_IGNORE);
                 }
 
-                refreshChildNodes(childNode, action, comment);
+                refreshChildNodes(childNode, action, comment,
+                        actionChangeTreeNodeList);
             }
-        }
-
-        if (action.equals(CMConstants.ACTION_CHANGE)) {
+        } else if (action.equals(CMConstants.ACTION_CHANGE)
+                || action.equals(CMConstants.ACTION_OVERWRITE)) {
             // -- action = CHANGE and NOT readOnly
             // -- destinationItem = WC
             // -- isManaged = false and NOT readOnly
             for (TreeNode childNode : node.getChildren()) {
                 ImpactedItemsNodeData childNodeData = (ImpactedItemsNodeData) childNode.getData();
+
+                if (childNodeData.getIsFromMbom()
+                        && childNodeData.getOriginItem() == null) {
+                    continue;
+                }
+
+                if (EloraDocumentHelper.isBasicDocument(
+                        childNodeData.getOriginItem())) {
+                    continue;
+                }
 
                 // If childNode is already MANAGED and its action is NOT IGNORE,
                 // do not change it.
@@ -660,31 +1035,60 @@ public class ImpactedItemsNodeService implements NodeManager {
                                 CMConstants.ACTION_IGNORE)) {
                     // nothing to do
                 } else {
+                    actionChangeTreeNodeList.add(childNode);
+
                     childNodeData.setIsModified(true);
                     childNodeData.setIsUpdated(true);
-                    childNodeData.setAction(CMConstants.ACTION_CHANGE);
+                    childNodeData.setAction(action);
                     childNodeData.setActionIsReadOnly(false);
                     DocumentModel destinationItem = childNodeData.getOriginItemWc();
                     childNodeData.setDestinationItem(destinationItem);
                     childNodeData.setDestinationItemWc(destinationItem);
-                    String destinationItemUid = destinationItem.getId();
-                    childNodeData.setDestinationItemUid(destinationItemUid);
-                    Map<String, String> destinationItemVersionList = new HashMap<String, String>();
-                    destinationItemVersionList.put(destinationItemUid,
-                            destinationItem.getVersionLabel() + " (WC)");
+                    List<SelectItem> destinationItemVersionList = new ArrayList<SelectItem>();
+                    destinationItemVersionList.add(new SelectItem(
+                            destinationItem, destinationItem.getVersionLabel()
+                                    + CMConstants.VERSION_LABEL_WC));
                     childNodeData.setDestinationItemVersionList(
                             destinationItemVersionList);
+                    CMHelper.setDestinationItemSourceVersionInformation(
+                            childNodeData, messages);
                     childNodeData.setDestinationItemVersionIsReadOnly(false);
-                    childNodeData.setIsManaged(false);
+                    boolean isManaged = false;
+                    boolean destinationItemSourceVersionIsReadOnly = CMTreeBeanHelper
+                            .calculateDestinationItemSourceVersionIsReadOnlyValue(
+                                    destinationItem, isManaged);
+                    childNodeData.setDestinationItemSourceVersionIsReadOnly(
+                            destinationItemSourceVersionIsReadOnly);
+                    childNodeData.setIsManaged(isManaged);
                     boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
                             action, childNodeData.getOriginItemWc());
                     childNodeData.setIsManagedIsReadOnly(isManagedIsReadOnly);
                     childNodeData.setComment(comment);
                 }
 
-                refreshChildNodes(childNode, action, comment);
+                refreshChildNodes(childNode, action, comment,
+                        actionChangeTreeNodeList);
             }
         }
     }
 
+    public List<DocumentModel> getLockConflicts() {
+        return lockConflicts;
+    }
+
+    public boolean getPromotePendingItems() {
+        return promotePendingItems;
+    }
+
+    public boolean getPassedItems() {
+        return passedItems;
+    }
+
+    public boolean getUpdatePendingCharacterizedItems() {
+        return updatePendingCharacterizedItems;
+    }
+
+    public boolean getExistsCharacterizedItems() {
+        return existsCharacterizedItems;
+    }
 }

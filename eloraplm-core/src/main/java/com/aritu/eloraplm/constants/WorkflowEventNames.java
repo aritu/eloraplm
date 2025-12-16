@@ -28,6 +28,10 @@ public class WorkflowEventNames {
 
     public static final String WF_WORKFLOW_TASK_COMPLETED = "workflowTaskCompleted";
 
+    public static final String WF_WORKFLOW_REPORT_CREATION_FORCED = "WorkflowReportCreationForced";
+
+    public static final String WF_AFTER_WORKFLOW_FINISH = "afterWorkflowFinish";
+
     /* Workflow Forms events */
 
     public static final String WF_FORMS_ANSWERS_UPDATED = "WfFormsAnswersUpdated";

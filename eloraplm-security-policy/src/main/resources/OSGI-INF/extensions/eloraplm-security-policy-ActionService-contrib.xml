@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.securitypolicy.ActionService.contrib">  
+  <require>com.aritu.eloraplm.webapp.base.ActionService.contrib</require>
+  
+  <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+    
+    <filter id="hasSecurityInfo" append="true">
+        <rule grant="true">
+            <facet>HasSecurityInfo</facet>
+        </rule>
+    </filter>
+    
+  </extension>
+  
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+    
+    <action id="header_security_level_info" order="10" type="widget" enabled="true">
+      <category>HEADER_RIGHT_MIDDLE_INFO</category>
+      <properties>
+        <property name="widgetName">header_security_level_info</property>
+      </properties>
+      <filter-id>hasSecurityInfo</filter-id>
+    </action>
+    
+    <action id="TAB_PERMISSIONS" link="/permissions/elora_document_permissions.xhtml"
+      order="130" label="action.view.permissions" icon="/icons/file.gif">
+      <category>VIEW_ACTION_LIST</category>
+      <properties>
+        <!-- NXP-18320: disable ajax support on Polymer tabs -->
+        <property name="ajaxSupport">false</property>
+      </properties>
+    </action>
+    
+    <action id="contentWidgetViewerFile" enabled="false" />
+    
+    <!-- Content widgets -->
+    <action id="contentWidgetSecurityViewerFile" type="template" order="20">
+      <category>CONTENT_WIDGET</category>
+      <filter-id>hasSecurityInfo</filter-id>
+      <properties>
+        <property name="template">/widgets/summary/content_widget_security_viewer_file_template.xhtml</property>
+      </properties>
+    </action>
+
+  </extension>
+  
+</component> 

@@ -14,9 +14,9 @@
 package com.aritu.eloraplm.relations.treetable;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+
+import javax.faces.model.SelectItem;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.relations.api.Statement;
@@ -38,9 +38,8 @@ public class BaseRelationNodeData extends BaseNodeData
     private DocumentModel wcDoc;
 
     // TODO Statementa gehitu danez, predicateUri, quantity, etab. sobran dauz,
-    // baina
-    // lortu behar da moduren bat balio horreik gordetzeko benetan erlazio bat
-    // sortu gabe. graph.add() ein barik posible da?
+    // baina lortu behar da moduren bat balio horreik gordetzeko benetan erlazio
+    // bat sortu gabe. graph.add() ein barik posible da?
     private Statement stmt;
 
     private String predicateUri;
@@ -59,6 +58,10 @@ public class BaseRelationNodeData extends BaseNodeData
 
     private Boolean isManual;
 
+    private String designators;
+
+    private Boolean isExcludedFromMapping;
+
     private List<String> iconOnlyRelations;
 
     private boolean isSpecial;
@@ -67,7 +70,7 @@ public class BaseRelationNodeData extends BaseNodeData
     // (conceptual) direct
     private boolean isDirect;
 
-    private Map<String, String> versionList;
+    private List<SelectItem> versionList;
 
     private boolean isExternalSource;
 
@@ -77,8 +80,8 @@ public class BaseRelationNodeData extends BaseNodeData
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, Integer ordering) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity, null,
-                ordering, null, null, null, null, false, false, false, null,
-                false, false);
+                ordering, null, null, null, null, null, null, false, false,
+                false, null, false, false);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
@@ -88,19 +91,21 @@ public class BaseRelationNodeData extends BaseNodeData
             boolean isSpecial, boolean isDirect) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering, null, null,
-                isSpecial, isDirect, false, null, false, false);
+                null, null, isSpecial, isDirect, false, null, false, false);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, String comment,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering, Boolean isManual, boolean isSpecial,
+            Integer inverseViewerOrdering, Boolean isManual, String designators,
+            Boolean isExcludedFromMapping, boolean isSpecial,
             boolean isDirect) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering,
-                inverseViewerOrdering, isManual, isSpecial, isDirect, false,
-                null, false, false);
+                inverseViewerOrdering, isManual, designators,
+                isExcludedFromMapping, isSpecial, isDirect, false, null, false,
+                false);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
@@ -111,7 +116,7 @@ public class BaseRelationNodeData extends BaseNodeData
             boolean isRemoved) {
         this(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering, null, null,
-                isSpecial, isDirect, false, null, isNew, isRemoved);
+                null, null, isSpecial, isDirect, false, null, isNew, isRemoved);
     }
 
     public BaseRelationNodeData(String id, int level, String docId,
@@ -120,7 +125,7 @@ public class BaseRelationNodeData extends BaseNodeData
             BomListExternalData bomListExternalData) {
 
         this(id, level, docId, data, wcDoc, null, null, quantity, null,
-                ordering, null, null, null, false, false, false,
+                ordering, null, null, null, false, null, false, false, false,
                 isExternalSource, bomListExternalData, false, false);
     }
 
@@ -128,10 +133,10 @@ public class BaseRelationNodeData extends BaseNodeData
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, String comment,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering, Boolean isManual, boolean isSpecial,
-            boolean isDirect, boolean isExternalSource,
-            BomListExternalData bomListExternalData, boolean isNew,
-            boolean isRemoved) {
+            Integer inverseViewerOrdering, Boolean isManual, String designators,
+            Boolean isExcludedFromMapping, boolean isSpecial, boolean isDirect,
+            boolean isExternalSource, BomListExternalData bomListExternalData,
+            boolean isNew, boolean isRemoved) {
         super(id, level, isNew, isRemoved);
 
         this.docId = docId;
@@ -146,18 +151,20 @@ public class BaseRelationNodeData extends BaseNodeData
         this.viewerOrdering = viewerOrdering;
         this.inverseViewerOrdering = inverseViewerOrdering;
         this.isManual = isManual;
+        this.designators = designators;
+        this.isExcludedFromMapping = isExcludedFromMapping;
         this.isSpecial = isSpecial;
         this.isDirect = isDirect;
         this.isExternalSource = isExternalSource;
         this.bomListExternalData = bomListExternalData;
 
-        versionList = new LinkedHashMap<String, String>();
+        versionList = new ArrayList<SelectItem>();
         if (docId != null && data != null) {
             String versionLabel = data.getVersionLabel();
             if (!data.isImmutable()) {
                 versionLabel += " (WC)";
             }
-            versionList.put(docId, versionLabel);
+            versionList.add(new SelectItem(data, versionLabel));
         }
 
         iconOnlyRelations = new ArrayList<String>();
@@ -284,6 +291,44 @@ public class BaseRelationNodeData extends BaseNodeData
     }
 
     @Override
+    public void toggleIsManual() {
+        if (isManual != null) {
+            isManual = !isManual;
+        } else {
+            isManual = true;
+        }
+    }
+
+    @Override
+    public String getDesignators() {
+        return designators;
+    }
+
+    @Override
+    public void setDesignators(String designators) {
+        this.designators = designators;
+    }
+
+    @Override
+    public Boolean getIsExcludedFromMapping() {
+        return isExcludedFromMapping;
+    }
+
+    @Override
+    public void setIsExcludedFromMapping(Boolean isExcludedFromMapping) {
+        this.isExcludedFromMapping = isExcludedFromMapping;
+    }
+
+    @Override
+    public void toggleIsExcludedFromMapping() {
+        if (isExcludedFromMapping != null) {
+            isExcludedFromMapping = !isExcludedFromMapping;
+        } else {
+            isExcludedFromMapping = true;
+        }
+    }
+
+    @Override
     public boolean getIsSpecial() {
         return isSpecial;
     }
@@ -313,12 +358,12 @@ public class BaseRelationNodeData extends BaseNodeData
     }
 
     @Override
-    public Map<String, String> getVersionList() {
+    public List<SelectItem> getVersionList() {
         return versionList;
     }
 
     @Override
-    public void setVersionList(Map<String, String> versionList) {
+    public void setVersionList(List<SelectItem> versionList) {
         this.versionList = versionList;
     }
 
@@ -407,6 +452,22 @@ public class BaseRelationNodeData extends BaseNodeData
             return false;
         }
         if (viewerOrdering != other.viewerOrdering) {
+            return false;
+        }
+        if (isManual != other.isManual) {
+            return false;
+        }
+        if (designators == null) {
+            if (other.designators != null) {
+                return false;
+            }
+        } else if (!designators.equals(other.designators)) {
+            return false;
+        }
+        if (isExcludedFromMapping != other.isExcludedFromMapping) {
+            return false;
+        }
+        if (inverseViewerOrdering != other.inverseViewerOrdering) {
             return false;
         }
         if (predicateUri == null) {

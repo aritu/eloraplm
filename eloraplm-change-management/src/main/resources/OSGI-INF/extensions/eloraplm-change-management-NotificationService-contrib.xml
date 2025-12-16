@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.change.management.NotificationService.contrib">
+
+  <extension point="templates" target="org.nuxeo.ecm.platform.ec.notification.service.NotificationService">
+    <template name="lockConflictNotification" src="templates/lockConflictNotification.ftl"/>    
+  </extension>
+
+</component>

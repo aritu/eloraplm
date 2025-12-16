@@ -1,445 +1,457 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.bom.ActionService.contrib">
-  <require>org.nuxeo.ecm.platform.actions</require>
-  <require>com.aritu.eloraplm.webapp.base.ActionService.contrib</require>
+    <require>org.nuxeo.ecm.platform.actions</require>
+    <require>com.aritu.eloraplm.webapp.base.ActionService.contrib</require>
 
-  <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
-  
-    <filter append="true" id="create">
-      <rule grant="true">
-        <permission>AddChildren</permission>
-        <type>FolderBomPart</type>
-        <type>FolderBomManufacturerPart</type>
-        <type>FolderBomTool</type>
-        <type>FolderBomPackaging</type>
-        <type>FolderBomSpecification</type>
-        <type>FolderBomProduct</type>
-        <type>FolderBomCustomerProduct</type>
-      </rule>
-    </filter>
-    
-    <filter id="isBomPart">
-        <rule grant="true">
-          <type>BomPart</type>
-          <type>Software</type>
-          <type>ElectronicComponent</type>
-        </rule>
-    </filter>
-    
-    <filter id="isCustomerProduct">
-        <rule grant="true">
-          <type>BomCustomerProduct</type>
-        </rule>
-    </filter>
-    
-    <filter id="isManufacturerPart">
-        <rule grant="true">
-          <type>BomManufacturerPart</type>
-        </rule>
-    </filter>
-    
-    <filter id="isNotCustomerProduct">
-        <rule grant="false">
-          <type>BomCustomerProduct</type>
-        </rule>
-    </filter>
-    
-    <filter id="isNotManufacturerPart">
-        <rule grant="false">
-          <type>BomManufacturerPart</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomCompositionTreeButtons">
-        <rule grant="false">
-            <condition>#{webActions.currentSubTabId ne 'TAB_BOM_COMPOSITION_EBOM'}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="bomDocumentsTreeButtons">
-        <rule grant="false">
-            <condition>#{webActions.currentTabId ne 'TAB_BOM_DOCUMENTS'}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="bomItemTreeButtons">
-        <rule grant="false">
-            <condition>#{webActions.currentTabId ne 'TAB_BOM_ITEMS'}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddSpecificationTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_SPECIFICATIONS'}</condition>
-          <type>BomPart</type>
-          <type>BomProduct</type>
-          <type>BomPackaging</type>
-          <type>BomTool</type>
-          <type>Software</type>
-          <type>ElectronicComponent</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddGeneralSpecificationTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
-          <type>BomPart</type>
-          <type>BomProduct</type>
-          <type>BomPackaging</type>
-          <type>BomTool</type>
-          <type>Software</type>
-          <type>ElectronicComponent</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddProductTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
-          <type>BomPackaging</type>
-          <type>BomTool</type>
-          <type>BomSpecification</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddPartTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
-          <type>BomPackaging</type>
-          <type>BomTool</type>
-          <type>BomSpecification</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddToolTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
-          <type>BomSpecification</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddInverseToolTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
-          <type>BomPart</type>
-          <type>BomProduct</type>
-          <type>Software</type>
-          <type>ElectronicComponent</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddPackagingTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
-          <type>BomSpecification</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddInversePackagingTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
-          <type>BomPart</type>
-          <type>BomProduct</type>
-          <type>Software</type>
-          <type>ElectronicComponent</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddCustomerProductTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_ITEM_CUSTOMERS'}</condition>
-          <type>BomProduct</type>
-        </rule>
-    </filter>
-    
-    <filter id="bomAddManufacturerPartTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_SOURCING'}</condition>
-          <type>BomPart</type>
-        </rule>
-    </filter>
-    
-    <filter id="customerAddProductTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS_CUSTOMER_PRODUCT'}</condition>
-          <type>BomCustomerProduct</type>
-        </rule>
-    </filter>
-    
-    <filter id="manufacturerAddPartTreeButton">
-        <rule grant="true">
-          <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS_MANUFACTURER_PART'}</condition>
-          <type>BomManufacturerPart</type>
-        </rule>
-    </filter>
-    
-    <filter id="itemCustomersTableButton">
-        <rule grant="true">
-            <condition>#{webActions.currentTabId eq 'TAB_ITEM_CUSTOMERS'}</condition>
-            <type>BomProduct</type>
-        </rule>
-    </filter>
-    
-    <filter id="isBomProduct">
-        <rule grant="true">
-          <type>BomProduct</type>
-        </rule>
-    </filter>
-    
-    <filter id="isBomTool">
-        <rule grant="true">
-          <type>BomTool</type>
-        </rule>
-    </filter>
-    
-    <filter id="isBomPackaging">
-        <rule grant="true">
-          <type>BomPackaging</type>
-        </rule>
-    </filter>
-    
-    <filter id="isBomSpecification">
-        <rule grant="true">
-          <type>BomSpecification</type>
-        </rule>
-    </filter>
-    
-    <filter id="isNotBomSpecification">
-      <rule grant="false">
-        <type>BomSpecification</type>
-      </rule>
-    </filter>
-    
-    <filter id="isBomPartOrBomProduct">
-        <rule grant="true">
-          <type>BomPart</type>
-          <type>Software</type>
-          <type>ElectronicComponent</type>
-          <type>BomProduct</type>
-        </rule>
-    </filter>
-    
-    <filter id="showBringRelatedXButtons">
-        <rule grant="false">
-            <condition>#{not eloraWebActions.isInAWorkspace()}</condition>
-            <condition>#{not mainTabsActions.isOnMainTab('documents')}</condition>
-            <condition>#{selectedDocuments.size() eq 0}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="hasDefaultHeader" append="true">
-        <rule grant="true">
-            <facet>BomDocument</facet>
-        </rule>
-    </filter>
-    
-  </extension>
-  
-  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
-  
-   <!-- New default widget in summary panel left for displaying document type, CAD part type and description -->
-    <action id="summary_current_bom_document_types_and_description" order="10" type="widget" enabled="true">
-      <category>SUMMARY_PANEL_LEFT</category>
-      <properties>
-        <property name="widgetName">summary_current_bom_document_types_and_description</property>
-      </properties>
-      <filter-id>isBomDocument</filter-id>
-      <filter-id>isNotManufacturerPart</filter-id>
-      <filter-id>isNotCustomerProduct</filter-id>
-    </action>
-    
-    <action id="summary_current_manufacturer_part_primary_info" order="10" type="widget" enabled="true">
-      <category>SUMMARY_PANEL_LEFT</category>
-      <properties>
-        <property name="widgetName">summary_current_manufacturer_part_primary_info</property>
-      </properties>
-      <filter-id>isManufacturerPart</filter-id>
-    </action>
-    
-    <action id="summary_current_customer_product_primary_info" order="10" type="widget" enabled="true">
-      <category>SUMMARY_PANEL_LEFT</category>
-      <properties>
-        <property name="widgetName">summary_current_customer_product_primary_info</property>
-      </properties>
-      <filter-id>isCustomerProduct</filter-id>
-    </action>
-    
-    <!-- default actions on right panel -->
-    
-    <action id="summary_bom_cad_documents" type="widget" order="100">
-      <category>SUMMARY_PANEL_RIGHT</category>
-      <properties>
-        <property name="widgetName">summary_bom_cad_documents</property>
-      </properties>
-      <filter-id>isBomDocument</filter-id>
-    </action>
-    
-    <action id="summary_bom_documents" type="widget" order="150">
-      <category>SUMMARY_PANEL_RIGHT</category>
-      <properties>
-        <property name="widgetName">summary_bom_documents</property>
-      </properties>
-      <filter-id>isBomDocument</filter-id>
-    </action>
-    
-    <action id="summary_bom_has_bom_documents" type="widget" order="200">
-      <category>SUMMARY_PANEL_RIGHT</category>
-      <properties>
-        <property name="widgetName">summary_bom_has_bom_documents</property>
-      </properties>
-      <filter-id>isBomDocument</filter-id>
-    </action>
-    
-    <action id="summary_manufacturer_has_part_documents" type="widget" order="100">
-      <category>SUMMARY_PANEL_RIGHT</category>
-      <properties>
-        <property name="widgetName">summary_manufacturer_has_part_documents</property>
-      </properties>
-      <filter-id>isManufacturerPart</filter-id>
-    </action>
-    
-    <action id="summary_customer_has_product_documents" type="widget" order="100">
-      <category>SUMMARY_PANEL_RIGHT</category>
-      <properties>
-        <property name="widgetName">summary_customer_has_product_documents</property>
-      </properties>
-      <filter-id>isCustomerProduct</filter-id>
-    </action>
+    <extension point="filters"
+        target="org.nuxeo.ecm.platform.actions.ActionService">
 
-    <!-- end of default actions on right panel -->
-    
-    <!-- tabs -->
-    
-    <action id="TAB_BOM_COMPOSITION" label="eloraplm.tab.bom.composition" link="/incl/tabs/bom_composition.xhtml" order="30" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isBomDocument</filter-id>
-      <filter-id>isNotCustomerProduct</filter-id>
-      <filter-id>isNotManufacturerPart</filter-id>
-      <filter-id>isNotBomSpecification</filter-id>
-    </action>
-    
-    <action id="TAB_BOM_COMPOSITION_EBOM" link="/incl/tabs/bom_composition_ebom.xhtml" order="0" label="eloraplm.tab.bom.ebom" type="rest_document_link">
-      <category>TAB_BOM_COMPOSITION_sub_tab</category>
-      <filter-id>isBomDocument</filter-id>
-    </action>
-    
-    <action id="TAB_BOM_WHERE_USED" label="eloraplm.tab.bom.whereUsed" link="/incl/tabs/bom_where_used.xhtml" order="40" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isBomDocument</filter-id>
-      <filter-id>isNotCustomerProduct</filter-id>
-      <filter-id>isNotManufacturerPart</filter-id>
-      <filter-id>isNotCheckedOut</filter-id>      
-    </action>
-    
-    <action id="TAB_BOM_WHERE_USED_EBOM" link="/incl/tabs/bom_where_used_ebom.xhtml" order="0" label="eloraplm.tab.bom.ebom" type="rest_document_link">
-      <category>TAB_BOM_WHERE_USED_sub_tab</category>
-      <filter-id>isBomDocument</filter-id>
-<!--       <filter-id>isNotBomSpecification</filter-id> -->
-      <filter-id>isNotCheckedOut</filter-id>
-    </action>
-    
-    <action id="TAB_BOM_DOCUMENTS" label="eloraplm.tab.bom.documents" link="/incl/tabs/bom_documents.xhtml" order="50" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isBomDocument</filter-id>
-    </action>
-    
-    <action id="TAB_BOM_SOURCING" link="/incl/tabs/bom_sourcing_content.xhtml"
-      order="70" label="label.com.aritu.eloraplm.relations.tab.bomSourcing" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isBomPart</filter-id>
-      
-    </action>
-    
-    <action id="TAB_ITEM_CUSTOMERS" link="/incl/tabs/item_customers_content.xhtml"
-      order="70" label="eloraplm.tab.item.customers" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isBomProduct</filter-id>
-    </action>
-    
-    <action id="TAB_BOM_ITEMS" link="/incl/tabs/bom_items_content.xhtml"
-      order="80" label="label.com.aritu.eloraplm.relations.tab.items" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isBomDocument</filter-id>
-      <filter-id>isNotCustomerProduct</filter-id>
-      <filter-id>isNotManufacturerPart</filter-id>
-    </action>
-    
-    <action id="TAB_BOM_ITEMS_MANUFACTURER_PART" link="/incl/tabs/manufacturer_part_items_content.xhtml"
-      order="80" label="label.com.aritu.eloraplm.relations.tab.items" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isManufacturerPart</filter-id>
-    </action>
-    
-    <action id="TAB_BOM_SPECIFICATIONS" link="/incl/tabs/bom_specifications_content.xhtml"
-      order="80" label="label.com.aritu.eloraplm.relations.tab.specifications" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isBomDocument</filter-id>
-      <filter-id>isNotBomSpecification</filter-id>
-    </action>
-    
-    <action id="TAB_CAD_BOM_ITEMS" link="/incl/tabs/cad_bom_items_content.xhtml"
-      order="80" label="label.com.aritu.eloraplm.relations.tab.items" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isCadDocument</filter-id>
-    </action>
-    
-    <action id="TAB_DOC_BOM_ITEMS" link="/incl/tabs/cad_bom_items_content.xhtml"
-      order="80" label="label.com.aritu.eloraplm.relations.tab.items" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>isBasicDocument</filter-id>
-    </action>
+        <filter append="true" id="create">
+            <rule grant="true">
+                <permission>AddChildren</permission>
+                <type>FolderBomPart</type>
+                <type>FolderBomTool</type>
+                <type>FolderBomPackaging</type>
+                <type>FolderBomSpecification</type>
+                <type>FolderBomProduct</type>
+                <type>FolderBomCustomerProduct</type>
+            </rule>
+        </filter>
+
+        <filter id="isBomPart">
+            <rule grant="true">
+                <type>BomPart</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+            </rule>
+        </filter>
+
+        <filter id="isCustomerProduct">
+            <rule grant="true">
+                <type>BomCustomerProduct</type>
+            </rule>
+        </filter>
+
+        <filter id="isNotCustomerProduct">
+            <rule grant="false">
+                <type>BomCustomerProduct</type>
+            </rule>
+        </filter>
+
+        <filter id="bomCompositionTreeButtons">
+            <rule grant="false">
+                <condition>#{webActions.currentSubTabId ne 'TAB_BOM_COMPOSITION_EBOM'}</condition>
+            </rule>
+        </filter>
+
+        <filter id="bomDocumentsTreeButtons">
+            <rule grant="false">
+                <condition>#{webActions.currentTabId ne 'TAB_BOM_DOCUMENTS'}</condition>
+            </rule>
+        </filter>
+
+        <filter id="bomItemTreeButtons">
+            <rule grant="false">
+                <condition>#{webActions.currentTabId ne 'TAB_BOM_ITEMS'}</condition>
+            </rule>
+        </filter>
+
+        <filter id="bomAddSpecificationTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_SPECIFICATIONS'}</condition>
+                <type>BomPart</type>
+                <type>BomProduct</type>
+                <type>BomPackaging</type>
+                <type>BomTool</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+            </rule>
+        </filter>
+
+        <filter id="bomAddGeneralSpecificationTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
+                <type>BomPart</type>
+                <type>BomProduct</type>
+                <type>BomPackaging</type>
+                <type>BomTool</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+            </rule>
+        </filter>
+
+        <filter id="bomAddProductTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
+                <type>BomPackaging</type>
+                <type>BomTool</type>
+                <type>BomSpecification</type>
+            </rule>
+        </filter>
+
+        <filter id="bomAddPartTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
+                <type>BomPackaging</type>
+                <type>BomTool</type>
+                <type>BomSpecification</type>
+            </rule>
+        </filter>
+
+        <filter id="bomAddToolTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
+                <type>BomSpecification</type>
+            </rule>
+        </filter>
+
+        <filter id="bomAddInverseToolTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
+                <type>BomPart</type>
+                <type>BomProduct</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+            </rule>
+        </filter>
+
+        <filter id="bomAddPackagingTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
+                <type>BomSpecification</type>
+            </rule>
+        </filter>
+
+        <filter id="bomAddInversePackagingTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS'}</condition>
+                <type>BomPart</type>
+                <type>BomProduct</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+            </rule>
+        </filter>
+
+        <filter id="bomAddCustomerProductTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_ITEM_CUSTOMERS'}</condition>
+                <type>BomProduct</type>
+            </rule>
+        </filter>
+
+        <filter id="customerAddProductTreeButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_ITEMS_CUSTOMER_PRODUCT'}</condition>
+                <type>BomCustomerProduct</type>
+            </rule>
+        </filter>
+
+        <filter id="itemCustomersTableButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_ITEM_CUSTOMERS'}</condition>
+                <type>BomProduct</type>
+            </rule>
+        </filter>
+
+        <filter id="itemSuppliersTableButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_SOURCING'}</condition>
+            </rule>
+        </filter>
+
+        <filter id="itemOemsTableButton">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_BOM_SOURCING'}</condition>
+                <type>BomPart</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+            </rule>
+        </filter>
+
+        <filter id="isBomProduct">
+            <rule grant="true">
+                <type>BomProduct</type>
+            </rule>
+        </filter>
+
+        <filter id="isBomTool">
+            <rule grant="true">
+                <type>BomTool</type>
+            </rule>
+        </filter>
+
+        <filter id="isBomPackaging">
+            <rule grant="true">
+                <type>BomPackaging</type>
+            </rule>
+        </filter>
+
+        <filter id="isBomSpecification">
+            <rule grant="true">
+                <type>BomSpecification</type>
+            </rule>
+        </filter>
+
+        <filter id="isNotBomSpecification">
+            <rule grant="false">
+                <type>BomSpecification</type>
+            </rule>
+        </filter>
+
+        <filter id="isBomPartOrBomProduct">
+            <rule grant="true">
+                <type>BomPart</type>
+                <type>Software</type>
+                <type>ElectronicComponent</type>
+                <type>BomProduct</type>
+            </rule>
+        </filter>
+
+        <filter id="isDesignItem">
+            <rule grant="true">
+                <facet>DesignItem</facet>
+            </rule>
+        </filter>
+
+        <filter id="showBringRelatedXButtons">
+            <rule grant="false">
+                <condition>#{not eloraWebActions.isInAWorkspace()}</condition>
+                <condition>#{not mainTabsActions.isOnMainTab('documents')}</condition>
+                <condition>#{selectedDocuments.size() eq 0}</condition>
+            </rule>
+        </filter>
+
+        <filter id="hasDefaultHeader" append="true">
+            <rule grant="true">
+                <facet>BomDocument</facet>
+            </rule>
+        </filter>
+
+    </extension>
+
+    <extension point="actions"
+        target="org.nuxeo.ecm.platform.actions.ActionService">
+
+        <!-- New default widget in summary panel left for displaying document 
+            type, CAD part type and description -->
+        <action
+            id="summary_current_bom_document_types_and_description"
+            order="10" type="widget" enabled="true">
+            <category>SUMMARY_PANEL_LEFT</category>
+            <properties>
+                <property name="widgetName">summary_current_bom_document_types_and_description</property>
+            </properties>
+            <filter-id>isBomDocument</filter-id>
+            <filter-id>isNotCustomerProduct</filter-id>
+        </action>
+
+        <action
+            id="summary_current_customer_product_primary_info"
+            order="10" type="widget" enabled="true">
+            <category>SUMMARY_PANEL_LEFT</category>
+            <properties>
+                <property name="widgetName">summary_current_customer_product_primary_info</property>
+            </properties>
+            <filter-id>isCustomerProduct</filter-id>
+        </action>
+
+        <!-- default actions on right panel -->
+
+        <action id="summary_bom_cad_documents" type="widget"
+            order="100">
+            <category>SUMMARY_PANEL_RIGHT</category>
+            <properties>
+                <property name="widgetName">summary_bom_cad_documents</property>
+            </properties>
+            <filter-id>isBomDocument</filter-id>
+        </action>
+
+        <action id="summary_bom_documents" type="widget"
+            order="150">
+            <category>SUMMARY_PANEL_RIGHT</category>
+            <properties>
+                <property name="widgetName">summary_bom_documents</property>
+            </properties>
+            <filter-id>isBomDocument</filter-id>
+        </action>
+
+        <action id="summary_bom_has_bom_documents" type="widget"
+            order="200">
+            <category>SUMMARY_PANEL_RIGHT</category>
+            <properties>
+                <property name="widgetName">summary_bom_has_bom_documents</property>
+            </properties>
+            <filter-id>isBomDocument</filter-id>
+        </action>
+
+        <action id="summary_customer_has_product_documents"
+            type="widget" order="100">
+            <category>SUMMARY_PANEL_RIGHT</category>
+            <properties>
+                <property name="widgetName">summary_customer_has_product_documents</property>
+            </properties>
+            <filter-id>isCustomerProduct</filter-id>
+        </action>
+
+        <!-- end of default actions on right panel -->
+
+        <!-- tabs -->
+
+        <action id="TAB_BOM_COMPOSITION"
+            label="eloraplm.tab.bom.composition"
+            link="/incl/tabs/bom_composition.xhtml" order="30"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>isBomDocument</filter-id>
+            <filter-id>isNotCustomerProduct</filter-id>
+            <filter-id>isNotBomSpecification</filter-id>
+        </action>
+
+        <action id="TAB_BOM_COMPOSITION_EBOM"
+            link="/incl/tabs/bom_composition_ebom.xhtml" order="0"
+            label="eloraplm.tab.bom.ebom" type="rest_document_link">
+            <category>TAB_BOM_COMPOSITION_sub_tab</category>
+            <filter-id>isBomDocument</filter-id>
+        </action>
+
+        <action id="TAB_BOM_WHERE_USED"
+            label="eloraplm.tab.bom.whereUsed"
+            link="/incl/tabs/bom_where_used.xhtml" order="40"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>isBomDocument</filter-id>
+            <filter-id>isNotCustomerProduct</filter-id>
+            <filter-id>isNotCheckedOut</filter-id>
+        </action>
+
+        <action id="TAB_BOM_WHERE_USED_EBOM"
+            link="/incl/tabs/bom_where_used_ebom.xhtml" order="0"
+            label="eloraplm.tab.bom.ebom" type="rest_document_link">
+            <category>TAB_BOM_WHERE_USED_sub_tab</category>
+            <filter-id>isBomDocument</filter-id>
+            <!-- <filter-id>isNotBomSpecification</filter-id> -->
+            <filter-id>isNotCheckedOut</filter-id>
+        </action>
+
+        <action id="TAB_BOM_DOCUMENTS"
+            label="eloraplm.tab.bom.documents"
+            link="/incl/tabs/bom_documents.xhtml" order="50"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>isBomDocument</filter-id>
+        </action>
+
+        <action id="TAB_BOM_SOURCING"
+            link="/incl/tabs/bom_sourcing_content.xhtml" order="70"
+            label="label.com.aritu.eloraplm.relations.tab.bomSourcing"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>isDesignItem</filter-id>
+        </action>
+
+        <action id="TAB_ITEM_CUSTOMERS"
+            link="/incl/tabs/item_customers_content.xhtml" order="70"
+            label="eloraplm.tab.item.customers"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>isBomProduct</filter-id>
+        </action>
+
+        <action id="TAB_BOM_ITEMS"
+            link="/incl/tabs/bom_items_content.xhtml" order="80"
+            label="label.com.aritu.eloraplm.relations.tab.items"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>isBomDocument</filter-id>
+            <filter-id>isNotCustomerProduct</filter-id>
+        </action>
+
+        <action id="TAB_BOM_SPECIFICATIONS"
+            link="/incl/tabs/bom_specifications_content.xhtml"
+            order="80"
+            label="label.com.aritu.eloraplm.relations.tab.specifications"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>isBomDocument</filter-id>
+            <filter-id>isNotBomSpecification</filter-id>
+        </action>
         
-    <!-- Documents Tab buttons -->
-    
-    <action id="BtnAddBomDocumentRelation" order="20" label="eloraplm.command.relation.add.document" type="fancybox" icon="">
-      <category>BOM_DOCUMENTS_TREETABLE_BUTTON</category>
-      <filter-id>bomDocumentsTreeButtons</filter-id>
-      <filter-id>isEditable</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_documents_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveBomDocumentRelations" order="30" label="command.save" type="link" link="#{bomDocumentsTreeBean.save(currentDocument, currentDocument, false)}" icon="">
-      <category>BOM_DOCUMENTS_TREETABLE_BUTTON</category>
-      <filter-id>bomDocumentsTreeButtons</filter-id>
-      <filter-id>isEditable</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddBomCadDocumentRelation" order="20" label="eloraplm.command.relation.add.cadDocument" type="fancybox" icon="">
-      <category>BOM_CAD_DOCUMENTS_TREETABLE_BUTTON</category>
-      <filter-id>bomDocumentsTreeButtons</filter-id>
-      <filter-id>isEditable</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_cad_documents_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveBomCadDocumentRelations" order="30" label="command.save" type="link" link="#{bomCadDocumentsTreeBean.save(currentDocument, currentDocument, false)}" icon="">
-      <category>BOM_CAD_DOCUMENTS_TREETABLE_BUTTON</category>
-      <filter-id>bomCadDocumentsTreeButtons</filter-id>
-      <filter-id>isEditable</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
-    <!-- end of Documents Tab buttons -->
-    
-    
-    <!-- Customer Tab buttons -->
-    <!-- Customers DataTable buttons -->
-    
-        <action id="BtnAddCustomer" order="20" label="eloraplm.command.item.customers.add" type="fancybox" icon="">
+        <action id="TAB_DOC_ITEMS"
+            link="/incl/tabs/doc_items_content.xhtml" order="80"
+            label="label.com.aritu.eloraplm.relations.tab.items"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>isCadOrBasicDocument</filter-id>
+        </action>
+
+        <!-- Documents Tab buttons -->
+
+        <action id="BtnAddBomDocumentRelation" order="20"
+            label="eloraplm.command.relation.add.document"
+            type="pfdialog" icon="">
+            <category>BOM_DOCUMENTS_TREETABLE_BUTTON</category>
+            <filter-id>bomDocumentsTreeButtons</filter-id>
+            <filter-id>isEditable</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_documents_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnSaveBomDocumentRelations" order="30"
+            label="command.save" type="link"
+            link="#{bomDocumentsTreeBean.save(currentDocument, currentDocument, false)}"
+            icon="">
+            <category>BOM_DOCUMENTS_TREETABLE_BUTTON</category>
+            <filter-id>bomDocumentsTreeButtons</filter-id>
+            <filter-id>isEditable</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddBomCadDocumentRelation" order="20"
+            label="eloraplm.command.relation.add.cadDocument"
+            type="pfdialog" icon="">
+            <category>BOM_CAD_DOCUMENTS_TREETABLE_BUTTON</category>
+            <filter-id>bomDocumentsTreeButtons</filter-id>
+            <filter-id>isEditable</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_cad_documents_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnSaveBomCadDocumentRelations" order="30"
+            label="command.save" type="link"
+            link="#{bomCadDocumentsTreeBean.save(currentDocument, currentDocument, false)}"
+            icon="">
+            <category>BOM_CAD_DOCUMENTS_TREETABLE_BUTTON</category>
+            <filter-id>bomCadDocumentsTreeButtons</filter-id>
+            <filter-id>isEditable</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+
+        <!-- end of Documents Tab buttons -->
+
+
+        <!-- Customer Tab buttons -->
+        <!-- Customers DataTable buttons -->
+
+        <action id="BtnAddCustomer" order="20"
+            label="eloraplm.command.item.customers.add" type="fancybox"
+            icon="">
             <category>DATATABLE_BUTTON</category>
             <filter-id>itemCustomersTableButton</filter-id>
             <properties>
@@ -448,8 +460,10 @@
                 <property name="styleClass">button</property>
             </properties>
         </action>
-        
-        <action id="BtnSaveCustomers" order="30" label="command.save" type="link" link="#{itemCustomersTableBean.save()}" icon="">
+
+        <action id="BtnSaveCustomers" order="30"
+            label="command.save" type="link"
+            link="#{itemCustomersTableBean.save()}" icon="">
             <category>DATATABLE_BUTTON</category>
             <filter-id>itemCustomersTableButton</filter-id>
             <properties>
@@ -457,272 +471,336 @@
                 <property name="styleClass">button mainAction</property>
             </properties>
         </action>
+
+        <!-- End of Customers DataTable buttons -->
+
+
+        <!-- end of Customer Product Treetable buttons -->
+        <!-- end of Customer Tab buttons -->
+
+        <!-- Sourcing Tab buttons -->
         
-    <!-- End of Customers DataTable buttons -->
-    
-     
-     <!-- end of Customer Product Treetable buttons -->    
-    <!-- end of Customer Tab buttons -->
-    
-     <!-- Sourcing Tab buttons -->    
-     <!-- Manufacturer Part Treetable buttons -->
-     
-     <action id="BtnCreateManufacturerPartRelation" order="20" label="eloraplm.command.relation.create.manufacturerPart" type="fancybox" icon="">
-        <category>TREETABLE_INVERSE_BUTTON</category>
-        <filter-id>bomAddManufacturerPartTreeButton</filter-id>
-        <filter-id>isNotZeroVersion</filter-id>
-        <properties>
-          <property name="include">/incl/action/part_create_manufacturer_relation.xhtml</property>
-          <property name="ajaxSupport">true</property>
-          <property name="styleClass">button</property>
-        </properties>
-    </action>
-    
-    <action id="BtnAddManufacturerPartRelation" order="20" label="eloraplm.command.relation.add.manufacturerPart" type="fancybox" icon="">
-        <category>TREETABLE_INVERSE_BUTTON</category>
-        <filter-id>bomAddManufacturerPartTreeButton</filter-id>
-        <filter-id>isNotZeroVersion</filter-id>
-        <properties>
-          <property name="include">/incl/action/part_has_manufacturer_add_relation.xhtml</property>
-          <property name="ajaxSupport">true</property>
-          <property name="styleClass">button</property>
-        </properties>
-    </action>
-    
-    <action id="BtnManufacturerAddPartTreeButton" order="20" label="eloraplm.command.relation.add.part" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>manufacturerAddPartTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/manufacturer_has_part_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveManufacturerPartRelations" order="30" label="command.save" type="link" link="#{manufacturerPartTreeBean.save(currentDocument, currentDocument, true)}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>manufacturerAddPartTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveManufacturerPartInverseRelations" order="30" label="command.save" type="link" link="#{manufacturerPartInverseTreeBean.save(currentDocument, currentDocument, true, true)}" icon="">
-      <category>TREETABLE_INVERSE_BUTTON</category>
-      <filter-id>bomAddManufacturerPartTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-     
-     <!-- end of Manufacturer Part Treetable buttons -->    
-    <!-- end of Sourcing Tab buttons -->
-    
-    
-    <!-- Ebom composition Treetable buttons -->
-    
-    <action id="BtnAddBomHasPartRelation" order="20" label="eloraplm.command.relation.add.part" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomCompositionTreeButtons</filter-id>
-      <filter-id>isBomPartOrBomProduct</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_composition_part_product_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddBomHasProductRelation" order="20" label="eloraplm.command.relation.add.product" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomCompositionTreeButtons</filter-id>
-      <filter-id>isBomProduct</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_composition_add_product_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddToolHasToolRelation" order="20" label="eloraplm.command.relation.add.tool" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomCompositionTreeButtons</filter-id>
-      <filter-id>isBomTool</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_composition_tool_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddPackagingHasPackagingRelation" order="20" label="eloraplm.command.relation.add.packaging" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomCompositionTreeButtons</filter-id>
-      <filter-id>isBomPackaging</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_composition_packaging_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveBomEbomRelations" order="30" label="command.save" type="link" link="#{bomCompositionEbomTreeBean.save(currentDocument, currentDocument, false)}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomCompositionTreeButtons</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddSpecificationTreeButton" order="20" label="eloraplm.command.relation.add.specification" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomAddSpecificationTreeButton</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_specification_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveBomSpecificationRelations" order="30" label="command.save" type="link" link="#{bomSpecificationTreeBean.save(currentDocument, currentDocument, false)}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomAddSpecificationTreeButton</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
-    <!-- end of Treetable buttons -->
-    
-    
-    <!-- Item Treetable buttons -->
-    
-    <action id="BtnAddProductTreeButton" order="20" label="eloraplm.command.relation.add.product" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomAddProductTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_product_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddPartTreeButton" order="20" label="eloraplm.command.relation.add.part" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomAddPartTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_part_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddToolTreeButton" order="20" label="eloraplm.command.relation.add.tool" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomAddToolTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_tool_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddPackagingTreeButton" order="20" label="eloraplm.command.relation.add.packaging" type="fancybox" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomAddPackagingTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_packaging_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddGeneralSpecificationTreeButton" order="20" label="eloraplm.command.relation.add.general.specification" type="fancybox" icon="">
-      <category>TREETABLE_INVERSE_BUTTON</category>
-      <filter-id>bomAddGeneralSpecificationTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_general_specification_add_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddInverseToolTreeButton" order="20" label="eloraplm.command.relation.add.tool" type="fancybox" icon="">
-      <category>TREETABLE_INVERSE_BUTTON</category>
-      <filter-id>bomAddInverseToolTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_tool_add_inverse_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnAddInversePackagingTreeButton" order="20" label="eloraplm.command.relation.add.packaging" type="fancybox" icon="">
-      <category>TREETABLE_INVERSE_BUTTON</category>
-      <filter-id>bomAddInversePackagingTreeButton</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="include">/incl/action/bom_has_packaging_add_inverse_relation.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveBomItemRelations" order="30" label="command.save" type="link" link="#{bomItemTreeBean.save(currentDocument, currentDocument, true)}" icon="">
-      <category>TREETABLE_BUTTON</category>
-      <filter-id>bomItemTreeButtons</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
-    <action id="BtnSaveBomItemInverseRelations" order="30" label="command.save" type="link" link="#{bomItemInverseTreeBean.save(currentDocument, currentDocument, true, true)}" icon="">
-      <category>TREETABLE_INVERSE_BUTTON</category>
-      <filter-id>bomItemTreeButtons</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-        <property name="styleClass">button mainAction</property>
-      </properties>
-    </action>
-    
-    <!-- end of Item Treetable buttons -->
-    
-    <!-- Document selection actions -->
-    
-    <action id="BtnBringRelatedBoms" link="#{wsBomActions.createRelatedBomProxies}"
-      label="eloraplm.command.bom.createRelatedBomProxies" icon="" order="50">
-      <category>CURRENT_SELECTION_LIST</category>
-      <category>ORDERABLE_CURRENT_SELECTION_LIST</category>
-      <filter-id>showBringRelatedXButtons</filter-id>
-    </action>
-    
-    <action id="BtnBringRelatedDocs" link="#{wsBomActions.createRelatedDocProxies}"
-      label="eloraplm.command.bom.createRelatedDocProxies" icon="" order="60">
-      <category>CURRENT_SELECTION_LIST</category>
-      <category>ORDERABLE_CURRENT_SELECTION_LIST</category>
-      <filter-id>showBringRelatedXButtons</filter-id>
-    </action>
-    
-    <!-- end of Document selection actions -->
+        
+        
+        <action id="BtnAddSupplier" order="20"
+            label="eloraplm.command.item.suppliers.add" type="pfdialog"
+            icon="">
+            <category>SUPPLIERS_DT_BUTTON</category>
+            <filter-id>itemSuppliersTableButton</filter-id>
+            <filter-id>isDesignItem</filter-id>
+            <properties>
+                <property name="include">/incl/action/datatable/add_item_supplier.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.command.item.suppliers.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
 
-    <!-- end of tabs -->
+        <action id="BtnSaveSuppliers" order="30" label="command.save"
+            type="link" link="#{itemSuppliersTableBean.save()}" icon="">
+            <category>SUPPLIERS_DT_BUTTON</category>
+            <filter-id>itemSuppliersTableButton</filter-id>
+            <filter-id>isDesignItem</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
 
-  </extension>
-  
+        <!-- Oems DataTable buttons -->
+        <action id="BtnAddOem" order="20"
+            label="eloraplm.command.item.oems.add" type="pfdialog"
+            icon="">
+            <category>DATATABLE_BUTTON</category>
+            <filter-id>itemOemsTableButton</filter-id>
+            <properties>
+                <property name="include">/incl/action/datatable/add_item_oem.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.command.item.oems.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnSaveOems" order="30" label="command.save"
+            type="link" link="#{itemOemsTableBean.save()}" icon="">
+            <category>DATATABLE_BUTTON</category>
+            <filter-id>itemOemsTableButton</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+
+        <!-- End of Oems DataTable buttons -->
+
+        <!-- end of Sourcing Tab buttons -->
+
+
+        <!-- Ebom composition Treetable buttons -->
+
+        <action id="BtnAddBomHasPartRelation" order="20"
+            label="eloraplm.command.relation.add.part" type="pfdialog"
+            icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomCompositionTreeButtons</filter-id>
+            <filter-id>isBomPartOrBomProduct</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_composition_part_product_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddBomHasProductRelation" order="20"
+            label="eloraplm.command.relation.add.product"
+            type="pfdialog" icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomCompositionTreeButtons</filter-id>
+            <filter-id>isBomProduct</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_composition_add_product_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddToolHasToolRelation" order="20"
+            label="eloraplm.command.relation.add.tool" type="pfdialog"
+            icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomCompositionTreeButtons</filter-id>
+            <filter-id>isBomTool</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_composition_tool_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddPackagingHasPackagingRelation"
+            order="20" label="eloraplm.command.relation.add.packaging"
+            type="pfdialog" icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomCompositionTreeButtons</filter-id>
+            <filter-id>isBomPackaging</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_composition_packaging_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnSaveBomEbomRelations" order="30"
+            label="command.save" type="link"
+            link="#{bomCompositionEbomTreeBean.save(currentDocument, currentDocument, false)}"
+            icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomCompositionTreeButtons</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddSpecificationTreeButton" order="20"
+            label="eloraplm.command.relation.add.specification"
+            type="pfdialog" icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomAddSpecificationTreeButton</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_has_specification_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnSaveBomSpecificationRelations" order="30"
+            label="command.save" type="link"
+            link="#{bomSpecificationTreeBean.save(currentDocument, currentDocument, false)}"
+            icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomAddSpecificationTreeButton</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+
+        <!-- end of Treetable buttons -->
+
+
+        <!-- Item Treetable buttons -->
+
+        <action id="BtnAddProductTreeButton" order="20"
+            label="eloraplm.command.relation.add.product"
+            type="pfdialog" icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomAddProductTreeButton</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_has_product_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddPartTreeButton" order="20"
+            label="eloraplm.command.relation.add.part" type="pfdialog"
+            icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomAddPartTreeButton</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_has_part_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddToolTreeButton" order="20"
+            label="eloraplm.command.relation.add.tool" type="pfdialog"
+            icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomAddToolTreeButton</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_has_tool_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddPackagingTreeButton" order="20"
+            label="eloraplm.command.relation.add.packaging"
+            type="pfdialog" icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomAddPackagingTreeButton</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_has_packaging_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddGeneralSpecificationTreeButton"
+            order="20"
+            label="eloraplm.command.relation.add.general.specification"
+            type="pfdialog" icon="">
+            <category>TREETABLE_INVERSE_BUTTON</category>
+            <filter-id>bomAddGeneralSpecificationTreeButton</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_has_general_specification_add_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddInverseToolTreeButton" order="20"
+            label="eloraplm.command.relation.add.tool" type="pfdialog"
+            icon="">
+            <category>TREETABLE_INVERSE_BUTTON</category>
+            <filter-id>bomAddInverseToolTreeButton</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_has_tool_add_inverse_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnAddInversePackagingTreeButton" order="20"
+            label="eloraplm.command.relation.add.packaging"
+            type="pfdialog" icon="">
+            <category>TREETABLE_INVERSE_BUTTON</category>
+            <filter-id>bomAddInversePackagingTreeButton</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="include">/incl/action/bom_has_packaging_add_inverse_relation.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.relation.add</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+        <action id="BtnSaveBomItemRelations" order="30"
+            label="command.save" type="link"
+            link="#{bomItemTreeBean.save(currentDocument, currentDocument, true)}"
+            icon="">
+            <category>TREETABLE_BUTTON</category>
+            <filter-id>bomItemTreeButtons</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+
+        <action id="BtnSaveBomItemInverseRelations" order="30"
+            label="command.save" type="link"
+            link="#{bomItemInverseTreeBean.save(currentDocument, currentDocument, true, true)}"
+            icon="">
+            <category>TREETABLE_INVERSE_BUTTON</category>
+            <filter-id>bomItemTreeButtons</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">button mainAction</property>
+            </properties>
+        </action>
+
+        <!-- end of Item Treetable buttons -->
+
+        <!-- Document selection actions -->
+
+        <action id="BtnBringRelatedBoms"
+            link="#{wsBomActions.createRelatedBomProxies}"
+            label="eloraplm.command.bom.createRelatedBomProxies" icon=""
+            order="50">
+            <category>CURRENT_SELECTION_LIST</category>
+            <category>ORDERABLE_CURRENT_SELECTION_LIST</category>
+            <filter-id>showBringRelatedXButtons</filter-id>
+        </action>
+
+        <action id="BtnBringRelatedDocs"
+            link="#{wsBomActions.createRelatedDocProxies}"
+            label="eloraplm.command.bom.createRelatedDocProxies" icon=""
+            order="60">
+            <category>CURRENT_SELECTION_LIST</category>
+            <category>ORDERABLE_CURRENT_SELECTION_LIST</category>
+            <filter-id>showBringRelatedXButtons</filter-id>
+        </action>
+
+        <!-- end of Document selection actions -->
+
+        <!-- end of tabs -->
+
+    </extension>
 
 </component> 

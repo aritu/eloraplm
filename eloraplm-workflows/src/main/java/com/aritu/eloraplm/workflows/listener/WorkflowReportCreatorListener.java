@@ -14,6 +14,7 @@
 package com.aritu.eloraplm.workflows.listener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventContext;
 import org.nuxeo.ecm.core.event.EventListener;
@@ -34,6 +36,8 @@ import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.platform.routing.core.impl.GraphRoute;
 import org.nuxeo.ecm.platform.task.Task;
 import org.nuxeo.runtime.api.Framework;
+import org.nuxeo.runtime.transaction.TransactionHelper;
+import org.nuxeo.template.api.TemplateInput;
 
 import com.aritu.eloraplm.constants.WorkflowEventNames;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
@@ -51,7 +55,6 @@ public class WorkflowReportCreatorListener implements EventListener {
 
     @Override
     public void handleEvent(Event event) {
-        // String logInitMsg = "[handleEvent] ";
 
         EventContext eventContext = event.getContext();
         if (eventContext instanceof DocumentEventContext) {
@@ -61,24 +64,31 @@ public class WorkflowReportCreatorListener implements EventListener {
 
                 try {
 
-                    Task task = (Task) eventContext.getProperty("taskInstance");
-                    String wfInstDocUid = task.getVariable(
-                            "routeInstanceDocId");
+                    GraphRoute route = null;
+                    String wfInstanceId = null;
+                    if (event.getName().equals(
+                            WorkflowEventNames.WF_WORKFLOW_REPORT_CREATION_FORCED)) {
+                        wfInstanceId = (String) eventContext.getProperty(
+                                "workflowInstanceId");
+                    } else {
+                        Task task = (Task) eventContext.getProperty(
+                                "taskInstance");
+                        wfInstanceId = task.getVariable("routeInstanceDocId");
+                    }
 
-                    if (wfInstDocUid != null) {
+                    if (wfInstanceId != null) {
                         DocumentModel wfInstance = session.getDocument(
-                                new IdRef(wfInstDocUid));
-                        GraphRoute route = wfInstance.getAdapter(
-                                GraphRoute.class);
+                                new IdRef(wfInstanceId));
+                        route = wfInstance.getAdapter(GraphRoute.class);
+                    }
 
+                    if (route != null) {
                         if (!route.isDone()) {
                             // We only want to execute it after the workflow is
-                            // finished.
-                            // We should use afterRouteFinish or
-                            // afterWorkflowFinish
-                            // events, but those are executed before the last
-                            // workflowTaskCompleted event, so the last
-                            // answers data is not saved.
+                            // finished. We should use afterRouteFinish or
+                            // afterWorkflowFinish events, but those are
+                            // executed before the last workflowTaskCompleted
+                            // event, so the last answers data is not saved.
                             return;
                         }
 
@@ -96,6 +106,11 @@ public class WorkflowReportCreatorListener implements EventListener {
                                                     "yyyy-MM-dd HH:mm").format(
                                                             new Date()));
                             params.put("templateId", templateId);
+                            // We pass the instance ID as param
+                            List<TemplateInput> templateParams = new ArrayList<TemplateInput>();
+                            templateParams.add(new TemplateInput("wfInstanceId",
+                                    wfInstanceId));
+                            params.put("params", templateParams);
 
                             AutomationService automationService = Framework.getService(
                                     AutomationService.class);
@@ -114,6 +129,19 @@ public class WorkflowReportCreatorListener implements EventListener {
                     log.error("[handleEvent] Uncontrolled exception: "
                             + e.getClass().getName() + ". " + e.getMessage(),
                             e);
+
+                    // Tell the event the exception must be bubbled
+                    event.markBubbleException();
+
+                    // Rollback the transaction
+                    TransactionHelper.setTransactionRollbackOnly();
+                    event.markRollBack();
+
+                    // Throw NuxeoException to be handled in UI layer
+                    throw new NuxeoException(
+                            "Error creating workflow report. Error message:"
+                                    + e.getClass().getName() + "."
+                                    + e.getMessage());
                 }
 
             }
@@ -132,7 +160,8 @@ public class WorkflowReportCreatorListener implements EventListener {
     }
 
     protected List<String> getHandledEventsName() {
-        return Arrays.asList(WorkflowEventNames.WF_WORKFLOW_TASK_COMPLETED);
+        return Arrays.asList(WorkflowEventNames.WF_WORKFLOW_TASK_COMPLETED,
+                WorkflowEventNames.WF_WORKFLOW_REPORT_CREATION_FORCED);
     }
 
 }

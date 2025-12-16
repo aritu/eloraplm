@@ -1,4 +1,5 @@
 .nx-page a,
+.nx-page a:link,
 .nx-page a:visited
 {
     color: #053832;
@@ -31,11 +32,6 @@ h1
     /* 1,6 * 0,8 = 1,25em */ 
     font-size: 1.25em;
     margin-bottom: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    white-space: nowrap;
-    width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6, .mainTitle
@@ -167,7 +163,8 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 {
     z-index: 40000;
     background-color: #1c5531;
-    border-bottom: 1px solid #2c874e;
+    border-bottom: 1px solid #0b4420;
+    box-shadow: 0 0 2px 1px #0b4420;
     color: #fff;
     height: 60px;
     padding: 5px;
@@ -237,7 +234,6 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 .mainTabs a:link,
 .mainTabs a:visited
 {
-
     color: #fff;
 }
 
@@ -294,16 +290,16 @@ h1, h2, h3, h4, h5, h6, .mainTitle
 
 }
 
-.ui-sidebar
+.nx-page .ui-sidebar
 {
     padding: 0;
     border: none;
 }
 
-.ui-sidebar-left
+.nx-page .ui-sidebar-left
 {
     top: 61px;
-    padding: 0 0 0 48px;
+    padding: 1rem 1rem 1rem calc(1rem + 48px);
 }
 
 #column_sidebar_buttons
@@ -424,12 +420,13 @@ table.listItem td
     vertical-align: middle;
 
 }
-
+/*
 .ui-dialog.ui-widget
 {
     font-size: 1em;
     z-index: 40010 !important;
 }
+*/
 
 #fancybox-wrap
 {
@@ -705,3 +702,9 @@ a .group:hover
     border-color: #ff0044;
     background-image: url('/nuxeo/icons/message_error_16.png');
 }
+
+.nx-page .label-info
+{
+    background-color: #a0c3b0;
+}
+

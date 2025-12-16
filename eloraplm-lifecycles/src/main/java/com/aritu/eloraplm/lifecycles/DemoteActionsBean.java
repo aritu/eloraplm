@@ -1,38 +1,44 @@
 package com.aritu.eloraplm.lifecycles;
 
-import static org.jboss.seam.ScopeType.PAGE;
+import static org.jboss.seam.ScopeType.CONVERSATION;
 import static org.jboss.seam.annotations.Install.FRAMEWORK;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.core.Events;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 
 @Name("demoteActions")
-@Scope(PAGE)
+@Scope(CONVERSATION)
 @Install(precedence = FRAMEWORK)
-public class DemoteActionsBean extends LifecycleTransitionsActionsBean {
+@AutomaticDocumentBasedInvalidation
+public class DemoteActionsBean extends LifecycleTransitionsActions {
 
     private static final long serialVersionUID = 1L;
 
     @Override
     public List<String> getTransitions() {
         if (transitions.isEmpty()) {
-            DocumentModel doc = navigationContext.getCurrentDocument();
+            DocumentModel doc = getCurrentDocument();
             if (doc != null) {
                 transitions = LifecyclesConfig.getVisibleDemoteTransitions(doc);
-
-                // if (transitions.size() >= 1) {
-                // transition = transitions.get(0);
-                // init();
-                // }
-
+                /* Disabled because after executing it loads the next transition data and we cannot avoid it for now
+                if (transitions.size() == 1) {
+                    setTransition(transitions.get(0));
+                    init();
+                }
+                */
             }
 
         }
@@ -41,20 +47,24 @@ public class DemoteActionsBean extends LifecycleTransitionsActionsBean {
 
     @Override
     public void execute() {
-        super.execute();
+        DocumentModel doc = getCurrentDocument();
+        String previousState = doc.getCurrentLifeCycleState();
 
-        DocumentModel doc = navigationContext.getCurrentDocument();
+        super.execute();
 
         // Seam event
         Events.instance().raiseEvent(PdmEventNames.PDM_DEMOTED_EVENT, doc);
-        
+
         if (hasToFireDefaultEvent()) {
-            
+
             // Nuxeo Event
             doc.refresh();
             String comment = doc.getVersionLabel();
+            Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+            ctxProperties.put("comment", comment);
+            ctxProperties.put("previousState", previousState);
             EloraEventHelper.fireEvent(PdmEventNames.PDM_DEMOTED_EVENT, doc,
-                    comment);
+                    ctxProperties);
         }
 
         navigationContext.invalidateCurrentDocument();

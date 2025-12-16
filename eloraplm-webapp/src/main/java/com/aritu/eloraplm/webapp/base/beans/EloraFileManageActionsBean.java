@@ -24,8 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -42,7 +42,6 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.platform.ui.web.util.files.FileUtils;
-import org.nuxeo.ecm.webapp.filemanager.FileManageActions;
 import org.nuxeo.ecm.webapp.filemanager.FileManageActionsBean;
 import org.nuxeo.ecm.webapp.filemanager.NxUploadedFile;
 import org.nuxeo.runtime.api.Framework;
@@ -50,8 +49,7 @@ import org.nuxeo.runtime.api.Framework;
 @Name("eloraFileManageActions")
 @Scope(ScopeType.EVENT)
 @Install(precedence = Install.FRAMEWORK)
-public class EloraFileManageActionsBean extends FileManageActionsBean
-        implements FileManageActions {
+public class EloraFileManageActionsBean extends FileManageActionsBean {
 
     private static final Log log = LogFactory.getLog(
             EloraFileManageActionsBean.class);

@@ -25,6 +25,7 @@ import org.nuxeo.ecm.core.api.validation.DocumentValidationService;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationService.Forcing;
 
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
+import com.aritu.eloraplm.bom.linked.characteristics.util.LinkedCharacteristicsHelper;
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
@@ -65,6 +66,9 @@ public class OverwriteVersionHelper {
                 BomCharacteristicsConstants.IS_DOC_WITH_CHARAC_FILTER_ID)) {
             BomCharacteristicsHelper.verifyBomCharacteristicsRequiredConstraint(
                     sourceDoc);
+            LinkedCharacteristicsHelper.updateLinkedCharacteristicsIfRequired(session,
+                    sourceDoc,
+                    BomCharacteristicsConstants.LINKED_CHARACS_UPDATED_BY_OVERWRITE);
         }
 
         // Nuxeo Event (viewer creation listens this event)
@@ -167,10 +171,12 @@ public class OverwriteVersionHelper {
                 + baseVersionDoc.getId() + "|");
         log.trace("Start to copy all relations to doc |"
                 + baseVersionDoc.getId() + "|");
-        EloraRelationHelper.copyAllRelationsButAnarchicsToVersion(currentDoc,
+
+        EloraRelationHelper.copyAllVersionedRelationsButAnarchicsToVersion(currentDoc,
                 baseVersionDoc, eloraDocumentRelationManager);
         log.trace("Finished to copy all relations to doc |"
                 + baseVersionDoc.getId() + "|");
+
     }
 
     private static void removeRelations(DocumentModel baseVersionDoc,

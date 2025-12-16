@@ -1,0 +1,38 @@
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    
+    template="/incl/action/widgets/primefaces_dialog_no_content_form_template.xhtml">
+    
+    <ui:define name="dialog_content">
+        <ui:include src="/incl/action/elora_promote_tree.xhtml">
+            <ui:param name="actionBean" value="#{actionBean}" />
+            <ui:param name="promoteDoc" value="#{promoteDoc}" />
+        </ui:include>
+    </ui:define>
+    
+    
+    <ui:define name="dialog_buttons">
+        
+        <p:commandButton
+            id="executeButton"
+            value="#{messages['eloraplm.command.promote']}"
+            styleClass="button mainAction"
+            action="#{actionBean.runPromote()}"
+            disabled="#{not promoteTreeBean.allOK}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+            process="@form"
+            update="@form"
+        />
+        
+        <p:commandButton type="button" value="#{messages['command.cancel']}"
+            immediate="true" process="@none"
+            styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+        />
+        
+    </ui:define>
+    
+</ui:decorate>

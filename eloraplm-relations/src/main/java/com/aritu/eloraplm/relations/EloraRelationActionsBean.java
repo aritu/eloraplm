@@ -14,7 +14,6 @@
 
 package com.aritu.eloraplm.relations;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,23 +21,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.event.ActionEvent;
-
-import com.aritu.eloraplm.constants.EloraFacetConstants;
-import com.aritu.eloraplm.constants.EloraRelationConstants;
-import com.aritu.eloraplm.core.EloraDocContextBoundActionBean;
-import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
-import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
-import com.aritu.eloraplm.core.util.EloraDocumentHelper;
-import com.aritu.eloraplm.exceptions.EloraException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.annotations.intercept.BypassInterceptors;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -46,7 +37,6 @@ import org.nuxeo.ecm.platform.relations.api.Node;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.Subject;
-import org.nuxeo.ecm.platform.relations.api.RelationManager;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import org.nuxeo.ecm.platform.relations.web.NodeInfo;
@@ -54,14 +44,20 @@ import org.nuxeo.ecm.platform.relations.web.NodeInfoImpl;
 import org.nuxeo.ecm.platform.relations.web.StatementInfo;
 import org.nuxeo.ecm.platform.relations.web.StatementInfoComparator;
 import org.nuxeo.ecm.platform.relations.web.StatementInfoImpl;
-import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 
+import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.constants.PdmEventNames;
+import com.aritu.eloraplm.core.DocumentContextBoundActions;
+import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.exceptions.EloraException;
+
 @Name("eloraRelationActions")
-@Scope(ScopeType.EVENT)
+@Scope(ScopeType.CONVERSATION)
 @AutomaticDocumentBasedInvalidation
-public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
-        implements Serializable {
+public class EloraRelationActionsBean extends DocumentContextBoundActions {
 
     private static final Log log = LogFactory.getLog(
             EloraRelationActionsBean.class);
@@ -125,135 +121,6 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
-
-    @In(create = true)
-    protected NavigationContext navigationContext;
-
-    @In(create = true)
-    protected EloraDocumentRelationManager eloraDocumentRelationManager;
-
-    @In(create = true)
-    protected RelationManager relationManager;
-
-    @In(create = true)
-    protected Map<String, String> messages;
-
-    @In(create = true, required = false)
-    protected FacesMessages facesMessages;
-
-    // TODO HONEIK ERABILTZEN DIE??
-
-    protected String predicateUri;
-
-    protected String objectDocumentUid;
-
-    protected String objectDocumentTitle;
-
-    protected String comment;
-
-    protected String quantity = "1";
-
-    protected Integer ordering;
-
-    protected Integer directorOrdering;
-
-    protected Integer viewerOrdering;
-
-    protected Integer inverseViewerOrdering;
-
-    protected Boolean showCreateForm = false;
-
-    // popupDisplayed flag for preventing relation_search content view execution
-    // until search button clicked
-    protected Boolean popupDisplayed = false;
-
-    public String getPredicateUri() {
-        return predicateUri;
-    }
-
-    public void setPredicateUri(String predicateUri) {
-        this.predicateUri = predicateUri;
-    }
-
-    public String getObjectDocumentUid() {
-        return objectDocumentUid;
-    }
-
-    public void setObjectDocumentUid(String objectDocumentUid) {
-        this.objectDocumentUid = objectDocumentUid;
-    }
-
-    public String getObjectDocumentTitle() {
-        return objectDocumentTitle;
-    }
-
-    public void setObjectDocumentTitle(String objectDocumentTitle) {
-        this.objectDocumentTitle = objectDocumentTitle;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
-    }
-
-    public Integer getOrdering() {
-        return ordering;
-    }
-
-    public void setOrdering(Integer ordering) {
-        this.ordering = ordering;
-    }
-
-    public Integer getDirectorOrdering() {
-        return directorOrdering;
-    }
-
-    public void setDirectorOrdering(Integer directorOrdering) {
-        this.directorOrdering = directorOrdering;
-    }
-
-    public Integer getViewerOrdering() {
-        return viewerOrdering;
-    }
-
-    public void setViewerOrdering(Integer viewerOrdering) {
-        this.viewerOrdering = viewerOrdering;
-    }
-
-    public Integer getInverseViewerOrdering() {
-        return inverseViewerOrdering;
-    }
-
-    public void setInverseViewerOrdering(Integer inverseViewerOrdering) {
-        this.inverseViewerOrdering = inverseViewerOrdering;
-    }
-
-    public Boolean getShowCreateForm() {
-        return showCreateForm;
-    }
-
-    public void toggleCreateForm(ActionEvent event) {
-        showCreateForm = !showCreateForm;
-    }
-
-    public Boolean getPopupDisplayed() {
-        return popupDisplayed;
-    }
-
-    public void setPopupDisplayed(Boolean popupDisplayed) {
-        this.popupDisplayed = popupDisplayed;
-    }
 
     // ------------
     // Outgoing
@@ -558,6 +425,8 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
             for (Map.Entry<String, List<String>> entry : idMap.entrySet()) {
                 List<String> relatedUids = entry.getValue();
                 if (relatedUids.size() > 1) {
+                    // TODO IBAI getLatestRelatedVersion(CoreSession session,
+                    // List<DocumentModel> wcDocs) erabili eta testeatu
                     Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
                             docMap.get(entry.getKey()));
                     String type = docMap.get(entry.getKey()).get(0).getType();
@@ -674,5 +543,20 @@ public class EloraRelationActionsBean extends EloraDocContextBoundActionBean
     @Override
     protected void resetBeanCache(DocumentModel newCurrentDocumentModel) {
         resetStatements();
+    }
+
+    @Override
+    @Observer(value = { PdmEventNames.PDM_CHECKED_OUT_EVENT,
+            PdmEventNames.PDM_CHECKED_IN_EVENT,
+            PdmEventNames.PDM_CHECKOUT_UNDONE_EVENT,
+            PdmEventNames.PDM_OVERWRITTEN_EVENT,
+            PdmEventNames.PDM_PROMOTED_EVENT,
+            PdmEventNames.PDM_DEMOTED_EVENT }, create = false)
+    @BypassInterceptors
+    public void forceReset(DocumentModel doc) {
+        if (getCurrentDocument() != null
+                && getCurrentDocument().getId().equals(doc.getId())) {
+            super.forceReset();
+        }
     }
 }

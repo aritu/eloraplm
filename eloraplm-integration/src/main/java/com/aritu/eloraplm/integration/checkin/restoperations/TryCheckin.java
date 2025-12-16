@@ -17,6 +17,7 @@ package com.aritu.eloraplm.integration.checkin.restoperations;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -34,7 +35,6 @@ import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -59,7 +59,7 @@ import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.VersionStatusConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
-import com.aritu.eloraplm.core.util.EloraEventTypes;
+import com.aritu.eloraplm.core.util.IntegrationEventNames;
 import com.aritu.eloraplm.core.util.EloraLockInfo;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
@@ -365,22 +365,50 @@ public class TryCheckin {
                 for (JsonNode propItem : properties) {
                     String property = EloraJsonHelper.getJsonFieldAsString(
                             propItem, "property", false);
-                    String value = EloraJsonHelper.getJsonFieldAsString(
+                    // TODO Seguruenik hau mapeoko motaren arabera era batera
+                    // edo bestera hartu beharko da
+                    Serializable value = EloraJsonHelper.getJsonFieldAsString(
                             propItem, "value", false, false, true);
                     if (property != null && value != null) {
 
                         // Uppercase the reference
                         if (property.equals(
                                 EloraMetadataConstants.ELORA_ELO_REFERENCE)) {
-                            value = value.toUpperCase();
+                            String strValue = (String) value;
+                            value = strValue.toUpperCase();
                         }
                         // Round decimal values
                         else if (EloraUnitConversionHelper.isDecimalProperty(
-                                property)
-                                && (value != null && !value.isEmpty()
-                                        && !value.equals("0"))) {
-                            value = EloraUnitConversionHelper.roundDecimalValue(
-                                    property, value);
+                                property)) {
+                            // Set empty values as null to avoid validation
+                            // errors
+                            String strValue = (String) value;
+                            if (strValue.isEmpty()) {
+                                strValue = null;
+                            }
+                            if (strValue != null && !strValue.equals("0")) {
+                                String measure = EloraUnitConversionHelper.getMeasureForProperty(
+                                        property);
+                                if (measure != null) {
+                                    strValue = EloraUnitConversionHelper.roundDecimalValue(
+                                            measure, strValue);
+                                }
+                            }
+                            value = strValue;
+                        }
+
+                        // TODO REMOVE WHEN FIXED - cad:materials testua
+                        // zerrendara pasatzeko partxea, mapeoa konpondu arte
+                        else if (property.equals(
+                                EloraMetadataConstants.ELORA_CAD_MATERIALS)) {
+                            String strValue = (String) value;
+                            if (!strValue.isEmpty()) {
+                                String[] splittedValue = strValue.split("\\|");
+                                value = new ArrayList<String>(
+                                        Arrays.asList(splittedValue));
+                            } else {
+                                value = null;
+                            }
                         }
 
                         requestDoc.addProperty(property, value);
@@ -514,7 +542,8 @@ public class TryCheckin {
         session.save();
 
         // Raise BEFORE_TCI_FOLDER_VALIDATION event
-        EloraEventHelper.fireEvent(EloraEventTypes.BEFORE_TCI_FOLDER_VALIDATION,
+        EloraEventHelper.fireEvent(
+                IntegrationEventNames.BEFORE_TCI_FOLDER_VALIDATION,
                 draftFolder);
 
         TryCheckinResponseFolder responseFolder = new TryCheckinResponseFolder(
@@ -579,7 +608,8 @@ public class TryCheckin {
 
             // Raise BEFORE_TCI_FOLDER_VALIDATION event
             EloraEventHelper.fireEvent(
-                    EloraEventTypes.BEFORE_TCI_FOLDER_VALIDATION, draftFolder);
+                    IntegrationEventNames.BEFORE_TCI_FOLDER_VALIDATION,
+                    draftFolder);
 
             TryCheckinResponseFolder responseFolder = new TryCheckinResponseFolder(
                     requestFolder.getLocalId(), existingFolder.getId(),
@@ -666,9 +696,22 @@ public class TryCheckin {
                 draftManager.getTempFolderPath(session,
                         requestDoc.getStructureRootRealRef()),
                 nameForPath, requestDoc.getType());
+
+        // Set as precreated
         newDoc.putContextData(
                 LifeCycleConstants.INITIAL_LIFECYCLE_STATE_OPTION_NAME,
                 EloraLifeCycleConstants.PRECREATED);
+
+        // TODO If we want to enable automatic creation -> if reference is empty
+        // in request and the type is defined as "auto", then we generate a new
+        // code in the last moment (must be in the final TryCheckin, OR IN THE
+        // DOCHECKIN)
+
+        // Skip automatic code creation
+        newDoc.putContextData(
+                EloraGeneralConstants.CONTEXT_SKIP_AUTOMATIC_CODE_CREATION,
+                true);
+
         newDoc = createDocWithoutValidation(newDoc);
         log.trace(logInitMsg + "Empty document |" + newDoc.getId()
                 + "| created.");
@@ -860,23 +903,22 @@ public class TryCheckin {
         String title = null;
         String description = null;
         String reference = null;
-        Properties properties = requestDoc.getProperties();
+        Map<String, Serializable> properties = requestDoc.getProperties();
         if (properties.containsKey(NuxeoMetadataConstants.NX_DC_TITLE)
                 && properties.get(NuxeoMetadataConstants.NX_DC_TITLE) != null) {
-            title = properties.get(
-                    NuxeoMetadataConstants.NX_DC_TITLE).toString();
+            title = (String) properties.get(NuxeoMetadataConstants.NX_DC_TITLE);
         }
         if (properties.containsKey(NuxeoMetadataConstants.NX_DC_DESCRIPTION)
                 && properties.get(
                         NuxeoMetadataConstants.NX_DC_DESCRIPTION) != null) {
-            description = properties.get(
-                    NuxeoMetadataConstants.NX_DC_DESCRIPTION).toString();
+            description = (String) properties.get(
+                    NuxeoMetadataConstants.NX_DC_DESCRIPTION);
         }
         if (properties.containsKey(EloraMetadataConstants.ELORA_ELO_REFERENCE)
                 && properties.get(
                         EloraMetadataConstants.ELORA_ELO_REFERENCE) != null) {
-            reference = properties.get(
-                    EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
+            reference = (String) properties.get(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE);
         }
 
         String wcUid = requestDoc.getWcRef() != null
@@ -983,14 +1025,18 @@ public class TryCheckin {
         // TryCheckin, so that we don't loose any change made between the first
         // TryCheckin and this one, to correct any metadata.
         if (setProperties) {
-            for (Entry<String, String> entry : requestDoc.getProperties().entrySet()) {
+            for (Entry<String, Serializable> entry : requestDoc.getProperties().entrySet()) {
                 draftDoc.setPropertyValue(entry.getKey(), entry.getValue());
             }
-        }
 
-        // Raise BEFORE_TCI_DOC_VALIDATION event
-        EloraEventHelper.fireEvent(EloraEventTypes.BEFORE_TCI_DOC_VALIDATION,
-                draftDoc);
+            // Raise BEFORE_TCI_DOC_VALIDATION event
+            Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+            ctxProperties.put("requestDoc", requestDoc);
+
+            EloraEventHelper.fireEvent(
+                    IntegrationEventNames.BEFORE_TCI_DOC_VALIDATION, draftDoc,
+                    ctxProperties);
+        }
 
         UniqueReferenceChecker checker = new UniqueReferenceChecker(session,
                 errorList, draftDoc, requestDoc, wcUid);

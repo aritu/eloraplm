@@ -2,32 +2,29 @@ package com.aritu.eloraplm.relations.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
-
-import org.jboss.seam.annotations.Factory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.international.StatusMessage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.TreeNode;
 
 import com.aritu.eloraplm.constants.EloraRelationConstants;
-import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
-import com.aritu.eloraplm.relations.treetable.EditableRelationTreeBean;
+import com.aritu.eloraplm.exceptions.EloraException;
 
-@Name("containerTreeBean")
+@Name(ContainerTreeBean.NAME)
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class ContainerTreeBean extends EditableRelationTreeBean
-        implements Serializable {
+public class ContainerTreeBean extends EditableRelationTree {
+
+    public static final String NAME = "containerTreeBean";
+
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(ContainerTreeBean.class);
@@ -102,12 +99,6 @@ public class ContainerTreeBean extends EditableRelationTreeBean
             boolean isInverse) {
         setPredicateUri(EloraRelationConstants.CONTAINER_HAS_CONTAINER);
         super.addRelationNode(currentDoc, isAnarchic, isInverse);
-    }
-
-    @Override
-    @Factory(value = "containerRoot", scope = ScopeType.EVENT)
-    public TreeNode getRootFromFactory() {
-        return getRoot();
     }
 
 }

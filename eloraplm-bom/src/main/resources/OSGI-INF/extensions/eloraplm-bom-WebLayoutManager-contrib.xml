@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.bom.WebLayoutManager.contrib">
+    <require>com.aritu.eloraplm.doctypes.WebLayoutManager.contrib</require>
 
     <extension
         target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
@@ -16,17 +17,6 @@
             <rows>
                 <row>
                     <widget>bomCustprodCustomer</widget>
-                </row>
-            </rows>
-        </layout>
-
-        <layout name="bom_manufacturer_part_manufacturers">
-            <templates>
-                <template mode="any">/layouts/layout_default_template.xhtml</template>
-            </templates>
-            <rows>
-                <row>
-                    <widget>bomManpartManufacturer</widget>
                 </row>
             </rows>
         </layout>
@@ -60,24 +50,6 @@
                 </row>
                 <row>
                     <widget>bomProdClassification</widget>
-                </row>
-            </rows>
-        </layout>
-
-        <layout
-            name="summary_current_manufacturer_part_primary_info">
-            <templates>
-                <template mode="any">/layouts/layout_default_template.xhtml</template>
-            </templates>
-            <rows>
-                <row>
-                    <widget>type_icon_and_text</widget>
-                </row>
-                <row>
-                    <widget>bomManpartManufacturer</widget>
-                </row>
-                <row>
-                    <widget>description_if_schema_dc</widget>
                 </row>
             </rows>
         </layout>
@@ -267,12 +239,12 @@
                 </row>
             </rows>
         </layout>
-        
+
         <layout name="software">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
             </templates>
-            <rows>                
+            <rows>
                 <row>
                     <widget>checksum</widget>
                 </row>
@@ -281,7 +253,7 @@
                 </row>
             </rows>
         </layout>
-        
+
         <layout name="external_version">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -964,21 +936,48 @@
         <!-- End of Classification Vocabularies -->
 
 
-
         <!-- treetable layouts -->
 
         <layout name="bom_comp_tt">
             <templates>
                 <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_reference_title">
                     <properties mode="any">
                         <property name="columnStyleClass">ellipsisWhenOverflow</property>
-                        <property name="columnHeading">label.content.header.title
-                        </property>
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{nodeData.data.elo.reference}</property>
+                        <property name="filterBy">#{nodeData.data.elo.reference}
+                            #{nodeData.data.title}</property>
+                        <property name="filterMatchMode">contains</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>treewidget_bom_icon_reference_title</widget>
+                </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
                 </column>
                 <column name="bom_classification">
                     <properties mode="any">
@@ -990,15 +989,20 @@
                 </column>
                 <column name="download_link">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_download_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.download</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>listing_viewer_file_download_link</widget>
                 </column>
                 <column name="lock">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
                     </properties>
                     <widget>treewidget_lock_icon</widget>
                 </column>
@@ -1013,6 +1017,8 @@
                     <properties mode="any">
                         <property name="columnStyle">width: 9em;</property>
                         <property name="columnHeading">label.lifecycle</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{messages[nodeData.data.currentLifeCycleState]}</property>
                     </properties>
                     <widget>listing_colored_lifecycle_state</widget>
                 </column>
@@ -1023,23 +1029,48 @@
                     </properties>
                     <widget>treewidget_editable_quantity</widget>
                 </column>
+                <column name="designators">
+                    <properties mode="any">
+                        <property name="hidden">#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.electronic.enabled')
+                            and bomCompositionEbomTreeBean.hasElectronicComponents ? 'false' :
+                            'true'}</property>
+                        <property name="columnHeading">eloraplm.column.bom.designators</property>
+                    </properties>
+                    <widget>treewidget_designators</widget>
+                </column>
                 <column name="part_number">
                     <properties mode="any">
                         <property name="columnStyle">width: 6em;</property>
-                        <property name="columnHeading">eloraplm.label.bom.partNumber</property>
+                        <property name="columnHeading">eloraplm.label.bom.partNumber.abbrev</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{nodeData.ordering}</property>
+                        <property name="sortOrder">asc</property>
                     </properties>
                     <widget>treewidget_editable_ordering</widget>
                 </column>
                 <column name="is_manual">
                     <properties mode="any">
-                        <property name="columnStyle">width: 5em;</property>
-                        <property name="columnHeading">eloraplm.label.bom.isManual</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_is_manual_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.isManual</property>
+                        <!--                         <property name="filterBy">#{nodeData.isManual}</property> -->
+                        <!--                         <property name="filterMatchMode">exact</property> -->
+                        <!--                         <property
+                        name="filterTemplate">/incl/pf_filter_tristate_boolean.xhtml</property> -->
                     </properties>
-                    <widget>treewidget_editable_isManual</widget>
+                    <widget>is_manual_switch</widget>
+                </column>
+                <column name="is_excluded_from_mapping">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_mapping_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.mapping</property>
+                    </properties>
+                    <widget>is_excluded_from_mapping_switch</widget>
                 </column>
                 <column name="remove">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
+                        <property name="columnStyle">width: 32px;</property>
                         <property name="columnStyleClass">alignCenter</property>
                     </properties>
                     <widget>bom_composition_ebom_remove_relation
@@ -1050,24 +1081,51 @@
                 <property name="headerFiltersTemplate">/incl/bom_composition_header_filters.xhtml</property>
                 <property name="tableTitle">title.treetable.bomComposition</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">true</property>
-                <property name="sortBy">#{nodeData['ordering']}</property>
-                <property name="sortOrder">ascending</property>
-                <property name="factory">#{bomCompositionEbomRoot}</property>
+                <property name="sortable">true</property>
+                <property name="useFilters">false</property>
             </properties>
         </layout>
 
         <layout name="bom_where_tt">
             <templates>
                 <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_reference_title">
                     <properties mode="any">
                         <property name="columnStyleClass">ellipsisWhenOverflow</property>
                         <property name="columnHeading">label.content.header.title</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{nodeData.data.elo.reference}</property>
+                        <property name="filterBy">#{nodeData.data.elo.reference}
+                            #{nodeData.data.title}</property>
+                        <property name="filterMatchMode">contains</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>treewidget_bom_icon_reference_title</widget>
+                </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
                 </column>
                 <column name="bom_classification">
                     <properties mode="any">
@@ -1079,21 +1137,26 @@
                 </column>
                 <column name="download_link">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_download_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.download</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>listing_viewer_file_download_link</widget>
                 </column>
                 <column name="lock">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
                     </properties>
                     <widget>treewidget_lock_icon</widget>
                 </column>
                 <column name="version">
                     <properties mode="any">
-                        <property name="columnStyle">width: 7em;</property>
+                        <property name="columnStyle">width: 140px;</property>
                         <property name="columnHeading">label.version</property>
                     </properties>
                     <widget>treewidget_version_wc_av</widget>
@@ -1102,6 +1165,8 @@
                     <properties mode="any">
                         <property name="columnStyle">width: 9em;</property>
                         <property name="columnHeading">label.lifecycle</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{messages[nodeData.data.currentLifeCycleState]}</property>
                     </properties>
                     <widget>listing_colored_lifecycle_state</widget>
                 </column>
@@ -1117,34 +1182,66 @@
                 <property name="headerFiltersTemplate">/incl/bom_where_used_header_filters.xhtml</property>
                 <property name="tableTitle">title.treetable.bomWhereUsed</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">false</property>
-                <property name="factory">#{bomWhereUsedEbomRoot}</property>
+                <property name="sortable">true</property>
+                <property name="useFilters">false</property>
             </properties>
         </layout>
 
         <layout name="bom_cad_tt">
             <templates>
                 <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_reference_title">
                     <properties mode="any">
                         <property name="columnStyleClass">ellipsisWhenOverflow</property>
                         <property name="columnHeading">label.content.header.title</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
+                        <property name="sortOrder">asc</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>treewidget_bom_icon_reference_title</widget>
                 </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
+                </column>
                 <column name="download_link">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_download_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.download</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>listing_viewer_file_download_link</widget>
                 </column>
                 <column name="lock">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
                     </properties>
                     <widget>treewidget_lock_icon</widget>
                 </column>
@@ -1187,10 +1284,17 @@
                     <widget>treewidget_editable_director_ordering
                     </widget>
                 </column>
+                <column name="is_excluded_from_mapping">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_mapping_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.mapping</property>
+                    </properties>
+                    <widget>is_excluded_from_mapping_switch</widget>
+                </column>
                 <column name="remove">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
                     </properties>
                     <widget>bom_cad_documents_remove_relation</widget>
                 </column>
@@ -1199,41 +1303,68 @@
                 <property name="headerFiltersTemplate">/incl/bom_cad_documents_header_filters.xhtml</property>
                 <property name="tableTitle">eloraplm.label.treetable.bom.cadDocuments</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">true</property>
-                <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
-                <property name="sortOrder">ascending</property>
+                <property name="sortable">true</property>
                 <!-- We need to use an alternative widget because we have 
                     two treetables in the same tab -->
                 <property name="alternativeButtonsWidget">bomCadDocumentsTreetableButtons</property>
-                <property name="factory">#{bomCadDocumentsRoot}</property>
             </properties>
         </layout>
 
         <layout name="bom_doc_tt">
             <templates>
                 <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_reference_title">
                     <properties mode="any">
-                        <property name="columnStyleClass">ellipsisWhenOverflow
-                        </property>
-                        <property name="columnHeading">label.content.header.title
-                        </property>
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
+                        <property name="sortOrder">asc</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>treewidget_bom_icon_reference_title</widget>
                 </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
+                </column>
                 <column name="download_link">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_download_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.download</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>listing_viewer_file_download_link</widget>
                 </column>
                 <column name="lock">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
                     </properties>
                     <widget>treewidget_lock_icon</widget>
                 </column>
@@ -1268,10 +1399,17 @@
                     </properties>
                     <widget>treewidget_editable_viewer_ordering</widget>
                 </column>
+                <column name="is_excluded_from_mapping">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_mapping_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.mapping</property>
+                    </properties>
+                    <widget>is_excluded_from_mapping_switch</widget>
+                </column>
                 <column name="remove">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
                     </properties>
                     <widget>bom_documents_remove_relation</widget>
                 </column>
@@ -1280,19 +1418,17 @@
                 <property name="headerFiltersTemplate">/incl/bom_documents_header_filters.xhtml</property>
                 <property name="tableTitle">eloraplm.label.treetable.bom.documents</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">true</property>
-                <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
-                <property name="sortOrder">ascending</property>
+                <property name="sortable">true</property>
                 <!-- We need to use an alternative widget because we have 
                     two treetables in the same tab -->
                 <property name="alternativeButtonsWidget">bomDocumentsTreetableButtons</property>
-                <property name="factory">#{bomDocumentsRoot}</property>
             </properties>
         </layout>
 
         <layout name="bom_spec_tt">
             <templates>
                 <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_reference_title">
@@ -1302,7 +1438,30 @@
                         <property name="columnHeading">label.content.header.title
                         </property>
                     </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
+                    </properties>
                     <widget>treewidget_bom_icon_reference_title</widget>
+                </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
                 </column>
                 <column name="bom_classification">
                     <properties mode="any">
@@ -1316,15 +1475,20 @@
                 </column>
                 <column name="download_link">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_download_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.download</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>listing_viewer_file_download_link</widget>
                 </column>
                 <column name="lock">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
                     </properties>
                     <widget>treewidget_lock_icon</widget>
                 </column>
@@ -1338,43 +1502,47 @@
                 <column name="lifecycle_state">
                     <properties mode="any">
                         <property name="columnStyle">width: 9em;</property>
-                        <property name="columnHeading">label.lifecycle
-                        </property>
+                        <property name="columnHeading">label.lifecycle</property>
                     </properties>
                     <widget>listing_colored_lifecycle_state</widget>
                 </column>
                 <column name="quantity">
                     <properties mode="any">
                         <property name="columnStyle">width: 6em;</property>
-                        <property name="columnHeading">label.content.header.quantity
-                        </property>
+                        <property name="columnHeading">label.content.header.quantity</property>
                     </properties>
                     <widget>listing_quantity</widget>
                 </column>
                 <column name="viewerOrdering">
                     <properties mode="any">
                         <property name="columnStyle">width: 6em;</property>
-                        <property name="columnHeading">eloraplm.label.viewer.ordering
-                        </property>
+                        <property name="columnHeading">eloraplm.label.viewer.ordering</property>
                     </properties>
                     <widget>treewidget_editable_viewer_ordering</widget>
                 </column>
+                <column name="is_excluded_from_mapping">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_mapping_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.mapping</property>
+                    </properties>
+                    <widget>is_excluded_from_mapping_switch</widget>
+                </column>
                 <column name="remove">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
                     </properties>
                     <widget>bom_specification_remove_relation</widget>
                 </column>
             </columns>
             <properties mode="any">
-                <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+                <property name="headerFiltersTemplate">
+                    /incl/bom_direct_relation_header_filters.xhtml</property>
                 <property name="tableTitle">title.treetable.bomSpecifications</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">true</property>
+                <property name="sortable">true</property>
                 <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
                 <property name="sortOrder">ascending</property>
-                <property name="factory">#{bomSpecificationRoot}</property>
             </properties>
         </layout>
 
@@ -1382,6 +1550,7 @@
         <layout name="bom_item_tt">
             <templates>
                 <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_reference_title">
@@ -1391,7 +1560,30 @@
                         <property name="columnHeading">label.content.header.title
                         </property>
                     </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
+                    </properties>
                     <widget>treewidget_bom_icon_reference_title</widget>
+                </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
                 </column>
                 <column name="bom_classification">
                     <properties mode="any">
@@ -1405,15 +1597,20 @@
                 </column>
                 <column name="download_link">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_download_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.download</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>listing_viewer_file_download_link</widget>
                 </column>
                 <column name="lock">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
                     </properties>
                     <widget>treewidget_lock_icon</widget>
                 </column>
@@ -1448,38 +1645,70 @@
                     </properties>
                     <widget>treewidget_editable_viewer_ordering</widget>
                 </column>
+                <column name="is_excluded_from_mapping">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_mapping_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.mapping</property>
+                    </properties>
+                    <widget>is_excluded_from_mapping_switch</widget>
+                </column>
                 <column name="remove">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
                     </properties>
                     <widget>bom_item_remove_relation</widget>
                 </column>
             </columns>
             <properties mode="any">
-                <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+                <property name="headerFiltersTemplate">
+                    /incl/bom_direct_relation_header_filters.xhtml</property>
                 <property name="tableTitle">title.treetable.bomItem.outgoingRelations</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">true</property>
+                <property name="sortable">true</property>
                 <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
                 <property name="sortOrder">ascending</property>
-                <property name="factory">#{bomItemRoot}</property>
             </properties>
         </layout>
 
         <layout name="bom_item_inv_tt">
             <templates>
                 <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_reference_title">
                     <properties mode="any">
-                        <property name="columnStyleClass">ellipsisWhenOverflow
-                        </property>
-                        <property name="columnHeading">label.content.header.title
-                        </property>
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
+                        <property name="sortOrder">asc</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>treewidget_bom_icon_reference_title</widget>
+                </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
                 </column>
                 <column name="bom_classification">
                     <properties mode="any">
@@ -1493,15 +1722,20 @@
                 </column>
                 <column name="download_link">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_download_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.download</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>listing_viewer_file_download_link</widget>
                 </column>
                 <column name="lock">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
                     </properties>
                     <widget>treewidget_lock_icon</widget>
                 </column>
@@ -1537,67 +1771,102 @@
                     <widget>treewidget_editable_inverse_viewer_ordering
                     </widget>
                 </column>
+                <column name="is_excluded_from_mapping">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_mapping_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.mapping</property>
+                    </properties>
+                    <widget>is_excluded_from_mapping_switch</widget>
+                </column>
                 <column name="remove">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
                     </properties>
                     <widget>bom_item_remove_inverse_relation</widget>
                 </column>
             </columns>
             <properties mode="any">
-                <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
+                <property name="headerFiltersTemplate">
+                    /incl/bom_direct_relation_header_filters.xhtml</property>
                 <property name="tableTitle">title.treetable.bomItem.incomingRelations</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">true</property>
-                <property name="isInverse">true</property>
-                <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
-                <property name="sortOrder">ascending</property>
-                <property name="factory">#{bomItemInverseRoot}</property>
+                <property name="sortable">true</property>
+                <property name="inverse">true</property>
             </properties>
         </layout>
 
-        <layout name="man_part_tt">
+        <layout name="doc_item_tt">
             <templates>
                 <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_reference_title">
                     <properties mode="any">
-                        <property name="columnStyleClass">ellipsisWhenOverflow
-                        </property>
-                        <property name="columnHeading">label.content.header.title
-                        </property>
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{nodeData.data.elo.reference}</property>
+                        <property name="filterBy">#{nodeData.data.elo.reference}
+                            #{nodeData.data.title}</property>
+                        <property name="filterMatchMode">contains</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>treewidget_bom_icon_reference_title</widget>
+                </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
                 </column>
                 <column name="bom_classification">
                     <properties mode="any">
                         <property name="columnStyle">width: 20%;</property>
-                        <property name="columnStyleClass">ellipsisWhenOverflow
-                        </property>
-                        <property name="columnHeading">eloraplm.label.bomClassification
-                        </property>
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">eloraplm.label.bomClassification</property>
                     </properties>
                     <widget>listing_bom_classification</widget>
                 </column>
                 <column name="download_link">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_download_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.download</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
                     </properties>
                     <widget>listing_viewer_file_download_link</widget>
                 </column>
                 <column name="lock">
                     <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
                     </properties>
                     <widget>treewidget_lock_icon</widget>
                 </column>
                 <column name="version">
                     <properties mode="any">
-                        <property name="columnStyle">width: 7em;</property>
+                        <property name="columnStyle">width: 140px;</property>
                         <property name="columnHeading">label.version</property>
                     </properties>
                     <widget>treewidget_version_wc_av</widget>
@@ -1605,118 +1874,26 @@
                 <column name="lifecycle_state">
                     <properties mode="any">
                         <property name="columnStyle">width: 9em;</property>
-                        <property name="columnHeading">label.lifecycle
-                        </property>
+                        <property name="columnHeading">label.lifecycle</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{messages[nodeData.data.currentLifeCycleState]}</property>
                     </properties>
                     <widget>listing_colored_lifecycle_state</widget>
                 </column>
                 <column name="quantity">
                     <properties mode="any">
                         <property name="columnStyle">width: 6em;</property>
-                        <property name="columnHeading">label.content.header.quantity
-                        </property>
+                        <property name="columnHeading">label.content.header.quantity</property>
                     </properties>
                     <widget>listing_quantity</widget>
                 </column>
-                <column name="remove">
-                    <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
-                    </properties>
-                    <widget>manufacturer_part_remove_relation</widget>
-                </column>
             </columns>
             <properties mode="any">
-                <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
-                <property name="tableTitle">title.treetable.parts</property>
+                <property name="headerFiltersTemplate">/incl/doc_items_header_filters.xhtml</property>
+                <property name="tableTitle">title.treetable.doc.items</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">true</property>
-                <property name="isInverse">false</property>
-                <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
-                <property name="sortOrder">ascending</property>
-                <property name="factory">#{manufacturerPartRoot}</property>
-            </properties>
-        </layout>
-
-        <layout name="man_part_inv_tt">
-            <templates>
-                <template mode="any">/layouts/layout_treetable_template.xhtml</template>
-            </templates>
-            <columns>
-                <column name="icon_reference_title">
-                    <properties mode="any">
-                        <property name="columnStyleClass">ellipsisWhenOverflow
-                        </property>
-                        <property name="columnHeading">label.content.header.title
-                        </property>
-                    </properties>
-                    <widget>treewidget_bom_icon_reference_title</widget>
-                </column>
-                <column name="bom_classification">
-                    <properties mode="any">
-                        <property name="columnStyle">width: 20%;</property>
-                        <property name="columnStyleClass">ellipsisWhenOverflow
-                        </property>
-                        <property name="columnHeading">eloraplm.label.bomClassification
-                        </property>
-                    </properties>
-                    <widget>listing_bom_classification</widget>
-                </column>
-                <column name="download_link">
-                    <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
-                    </properties>
-                    <widget>listing_viewer_file_download_link</widget>
-                </column>
-                <column name="lock">
-                    <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
-                    </properties>
-                    <widget>treewidget_lock_icon</widget>
-                </column>
-                <column name="version">
-                    <properties mode="any">
-                        <property name="columnStyle">width: 7em;</property>
-                        <property name="columnHeading">label.version</property>
-                    </properties>
-                    <widget>treewidget_version_wc_av</widget>
-                </column>
-                <column name="lifecycle_state">
-                    <properties mode="any">
-                        <property name="columnStyle">width: 9em;</property>
-                        <property name="columnHeading">label.lifecycle
-                        </property>
-                    </properties>
-                    <widget>listing_colored_lifecycle_state</widget>
-                </column>
-                <column name="quantity">
-                    <properties mode="any">
-                        <property name="columnStyle">width: 6em;</property>
-                        <property name="columnHeading">label.content.header.quantity
-                        </property>
-                    </properties>
-                    <widget>listing_quantity</widget>
-                </column>
-                <column name="remove">
-                    <properties mode="any">
-                        <property name="columnStyle">width: 40px;</property>
-                        <property name="columnStyleClass">alignCenter</property>
-                    </properties>
-                    <widget>manufacturer_part_remove_inverse_relation
-                    </widget>
-                </column>
-            </columns>
-            <properties mode="any">
-                <property name="headerFiltersTemplate">/incl/bom_direct_relation_header_filters.xhtml</property>
-                <property name="tableTitle">title.treetable.manufacturerParts</property>
-                <property name="tableStyle">table-layout: auto;</property>
-                <property name="isSortable">true</property>
-                <property name="isInverse">true</property>
-                <property name="sortBy">#{nodeData['data']['elo']['reference']}</property>
-                <property name="sortOrder">ascending</property>
-                <property name="factory">#{manufacturerPartInverseRoot}</property>
+                <property name="sortable">true</property>
+                <property name="useFilters">false</property>
             </properties>
         </layout>
 
@@ -1727,6 +1904,7 @@
         <layout name="item_customers_dt">
             <templates>
                 <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="customer">
@@ -1751,7 +1929,6 @@
                 <property name="tableTitle">eloraplm.title.item.customers</property>
                 <property name="tableStyle">table-layout: auto;</property>
                 <property name="removeRows">true</property>
-                <property name="factory">#{itemCustomersData}</property>
             </properties>
 
             <widget name="tableWidget_customer"
@@ -1803,6 +1980,273 @@
 
         </layout>
 
+
+        <layout name="item_suppliers_dt">
+            <templates>
+                <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="supplier">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">eloraplm.label.supplier</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['supplier']}</property>
+                    </properties>
+                    <widget>tableWidget_supplier</widget>
+                </column>
+                <column name="preference">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">eloraplm.label.supplier.preference</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['preference']}</property>
+                        <property name="sortOrder">asc</property>
+                    </properties>
+                    <widget>tableWidget_preference</widget>
+                </column>
+                <column name="partNumber">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">eloraplm.label.supplier.partNumber</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['partNumber']}</property>
+                    </properties>
+                    <widget>tableWidget_partNumber</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="headerFiltersTemplate"></property>
+                <property name="tableTitle">eloraplm.title.item.suppliers</property>
+                <property name="tableStyle">table-layout: auto;</property>
+                <property name="alternativeButtonsWidget">suppliersDtButton</property>
+                <property name="sortable">true</property>
+                <property name="sortMode">single</property>
+            </properties>
+            <properties mode="edit">
+                <property name="inlineEdit">true</property>
+                <property name="removeRows">true</property>
+            </properties>
+
+            <widget name="tableWidget_supplier"
+                type="selectOneDirectory">
+                <labels>
+                    <label mode="any">Supplier</label>
+                </labels>
+                <fields>
+                    <field>supplier</field>
+                </fields>
+                <widgetModes>
+                    <mode value="any">view</mode>
+                </widgetModes>
+                <properties mode="any">
+                    <property name="directoryName">elora_erpSuppliers
+                    </property>
+                </properties>
+            </widget>
+            <widget name="tableWidget_preference" type="inline_edit_widget">
+                <labels>
+                    <label mode="any">eloraplm.label.oem.preference</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>preference</field>
+                </fields>
+                <subWidgets>
+                    <widget name="view" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
+                    </widget>
+                    <widget name="edit" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">input</property>
+                            <property name="required">true</property>
+                        </properties>
+                    </widget>
+                </subWidgets>
+            </widget>
+            <widget name="tableWidget_partNumber" type="inline_edit_widget">
+                <labels>
+                    <label mode="any">eloraplm.label.oem.partNumber</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>partNumber</field>
+                </fields>
+                <subWidgets>
+                    <widget name="view" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
+                    </widget>
+                    <widget name="edit" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">input</property>
+                            <property name="required">true</property>
+                        </properties>
+                    </widget>
+                </subWidgets>
+            </widget>
+        </layout>
+
+
+        <layout name="item_oems_dt">
+            <templates>
+                <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="oem_manufacturer">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">eloraplm.label.oem.manufacturer</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['manufacturer']}</property>
+                    </properties>
+                    <widget>tableWidget_manufacturer</widget>
+                </column>
+                <column name="oem_preference">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">eloraplm.label.oem.preference</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['preference']}</property>
+                        <property name="sortOrder">asc</property>
+                    </properties>
+                    <widget>tableWidget_preference</widget>
+                </column>
+                <column name="oem_partNumber">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">eloraplm.label.oem.partNumber</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['partNumber']}</property>
+                    </properties>
+                    <widget>tableWidget_partNumber</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="headerFiltersTemplate"></property>
+                <property name="tableTitle">eloraplm.title.item.oems</property>
+                <property name="tableStyle">table-layout: auto;</property>
+                <property name="sortable">true</property>
+                <property name="sortMode">single</property>
+            </properties>
+            <properties mode="edit">
+                <property name="inlineEdit">true</property>
+                <property name="removeRows">true</property>
+            </properties>
+
+            <widget name="tableWidget_manufacturer" type="selectOneDirectory">
+                <labels>
+                    <label mode="any">eloraplm.label.oem.manufacturer</label>
+                </labels>
+                <fields>
+                    <field>manufacturer</field>
+                </fields>
+                <widgetModes>
+                    <mode value="any">view</mode>
+                </widgetModes>
+                <properties mode="any">
+                    <property name="directoryName">elora_erpOems</property>
+                </properties>
+            </widget>
+            <widget name="tableWidget_preference" type="inline_edit_widget">
+                <labels>
+                    <label mode="any">eloraplm.label.oem.preference</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>preference</field>
+                </fields>
+                <subWidgets>
+                    <widget name="view" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
+                    </widget>
+                    <widget name="edit" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">input</property>
+                            <property name="required">true</property>
+                        </properties>
+                    </widget>
+                </subWidgets>
+            </widget>
+            <widget name="tableWidget_partNumber" type="inline_edit_widget">
+                <labels>
+                    <label mode="any">eloraplm.label.oem.partNumber</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>partNumber</field>
+                </fields>
+                <subWidgets>
+                    <widget name="view" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
+                    </widget>
+                    <widget name="edit" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">input</property>
+                            <property name="required">true</property>
+                        </properties>
+                    </widget>
+                </subWidgets>
+            </widget>
+        </layout>
+
         <!-- end of datatable layouts -->
 
         <layout name="product_classification">
@@ -1815,7 +2259,7 @@
                 </row>
             </rows>
         </layout>
-        
+
         <layout name="product_classification_required">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -1823,6 +2267,17 @@
             <rows>
                 <row>
                     <widget>bomProdClassificationRequired</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <layout name="specification_classification_required">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>bomSpecificationClassificationRequired</widget>
                 </row>
             </rows>
         </layout>
@@ -1841,17 +2296,6 @@
             <labels>
                 <label mode="any" />
             </labels>
-        </widget>
-
-        <widget
-            name="summary_current_manufacturer_part_primary_info"
-            type="summary_current_doc_primary_info">
-            <labels>
-                <label mode="any" />
-            </labels>
-            <properties widgetMode="any">
-                <property name="primaryInfoLayout">summary_current_manufacturer_part_primary_info</property>
-            </properties>
         </widget>
 
         <widget
@@ -1879,7 +2323,23 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomItemTypes</property>
+                <property name="contains">true</property>
                 <property name="required">false</property>
+            </properties>
+        </widget>
+
+        <widget name="listing_bomItemType" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.bomitem.itemType</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bomitem.bomItemType</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_bomItemTypes</property>
+                <property name="localize">true</property>
+                <property name="displayIdAndLabel">true</property>
             </properties>
         </widget>
 
@@ -1894,6 +2354,7 @@
             </fields>
             <properties widgetMode="any">
                 <property name="directoryName">elora_erpCustomers</property>
+                <property name="contains">true</property>
                 <property name="required">false</property>
             </properties>
         </widget>
@@ -1918,6 +2379,9 @@
                     <fields>
                         <field>bomitem:estimatedCost</field>
                     </fields>
+                    <properties widgetMode="any">
+                        <property name="maxDecimalPlaces">3</property>
+                    </properties>
                 </widget>
                 <widget name="bomItemCostUnit"
                     type="suggestOneDirectory">
@@ -1938,6 +2402,16 @@
             </subWidgets>
         </widget>
 
+        <widget name="listing_estimatedCostAndUnit" type="listing_estimatedCostAndUnit">
+            <labels>
+                <label mode="any">label.widget.bomitem.estimatedCost</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bomitem.estimatedCost</field>
+                <field>data.bomitem.costUnit</field>
+            </fields>
+        </widget>
 
         <widget name="bomPartClassification"
             type="suggestOneDirectory">
@@ -1945,37 +2419,47 @@
                 <label mode="any">label.widget.bompart.partClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>partclass:partClassification</field>
             </fields>
             <widgetModes>
-                <mode value="view">#{currentDocument.hasSchema('part_classification')?'view':'hidden'}
+                <mode value="view">
+                    #{currentDocument.hasSchema('part_classification')?'view':'hidden'}
                 </mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomPartClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
             </properties>
         </widget>
-        
+
         <widget name="bomPartClassificationRequired"
             type="suggestOneDirectory">
             <labels>
                 <label mode="any">label.widget.bompart.partClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>partclass:partClassification</field>
             </fields>
             <widgetModes>
-                <mode value="view">#{currentDocument.hasSchema('part_classification')?'view':'hidden'}
+                <mode value="view">
+                    #{currentDocument.hasSchema('part_classification')?'view':'hidden'}
                 </mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomPartClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">true</property>
             </properties>
@@ -1989,6 +2473,19 @@
             <fields>
                 <field>bompart:material</field>
             </fields>
+        </widget>
+
+        <widget name="bomPartMaterialRequired" type="text">
+            <labels>
+                <label mode="any">label.widget.bompart.material</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>bompart:material</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="required">true</property>
+            </properties>
         </widget>
 
         <widget name="bomPartUnit" type="suggestOneDirectory">
@@ -2022,6 +2519,21 @@
             </properties>
         </widget>
 
+        <widget name="listing_bomPartSource" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.bompart.source</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bompart.source</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_bomSource</property>
+                <property name="localize">true</property>
+                <property name="displayIdAndLabel">true</property>
+            </properties>
+        </widget>
+
         <widget name="bomPartMass" type="measure_value_and_unit">
             <labels>
                 <label mode="any">label.widget.bompart.mass</label>
@@ -2030,6 +2542,17 @@
             <fields>
                 <field>bompart:mass</field>
                 <field>bompart:massUnit</field>
+            </fields>
+        </widget>
+
+        <widget name="listing_bomPartMass" type="listing_measure_value_and_unit">
+            <labels>
+                <label mode="any">label.widget.bompart.mass</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bompart.mass</field>
+                <field>data.bompart.massUnit</field>
             </fields>
         </widget>
 
@@ -2045,9 +2568,21 @@
             </fields>
         </widget>
 
+        <widget name="listing_bomPartVolume" type="listing_measure_value_and_unit">
+            <labels>
+                <label mode="any">label.widget.bompart.volume</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bompart.volume</field>
+                <field>data.bompart.volumeUnit</field>
+            </fields>
+        </widget>
+
         <!-- <widget name="bomPartSurface" type="measure_value_and_unit"> 
             <labels> <label mode="any">label.widget.bompart.surface</label> </labels> 
-            <translated>true</translated> <fields> <field>bompart:surface</field> <field>bompart:surfaceUnit</field> 
+            <translated>true</translated> <fields> <field>bompart:surface</field>
+        <field>bompart:surfaceUnit</field> 
             </fields> </widget> -->
 
         <widget name="bomPartStandard" type="suggestOneDirectory">
@@ -2062,6 +2597,21 @@
                 <property name="directoryName">elora_bomStandard</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
+            </properties>
+        </widget>
+
+        <widget name="listing_bomPartStandard" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.bompart.standard</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bompart.standard</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_bomStandard</property>
+                <property name="localize">true</property>
+                <property name="displayIdAndLabel">true</property>
             </properties>
         </widget>
 
@@ -2099,6 +2649,9 @@
                 <label mode="any">label.widget.bomprod.productClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>prodclass:productClassification</field>
@@ -2110,17 +2663,21 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomProductClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
             </properties>
         </widget>
-        
+
         <widget name="bomProdClassificationRequired"
             type="suggestOneDirectory">
             <labels>
                 <label mode="any">label.widget.bomprod.productClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>prodclass:productClassification</field>
@@ -2132,6 +2689,7 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomProductClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">true</property>
             </properties>
@@ -2151,7 +2709,22 @@
                 <property name="required">false</property>
             </properties>
         </widget>
-        
+
+        <widget name="listing_bomProdUnit" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.bomprod.unit</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bomprod.unit</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_units_of_measure</property>
+                <property name="localize">true</property>
+                <property name="displayIdAndLabel">true</property>
+            </properties>
+        </widget>
+
         <widget name="bomProdMass" type="measure_value_and_unit">
             <labels>
                 <label mode="any">label.widget.bomprod.mass</label>
@@ -2162,7 +2735,18 @@
                 <field>bomprod:massUnit</field>
             </fields>
         </widget>
-        
+
+        <widget name="listing_bomProdMass" type="listing_measure_value_and_unit">
+            <labels>
+                <label mode="any">label.widget.bomprod.mass</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bomprod.mass</field>
+                <field>data.bomprod.massUnit</field>
+            </fields>
+        </widget>
+
         <widget name="bomProdVolume" type="measure_value_and_unit">
             <labels>
                 <label mode="any">label.widget.bomprod.volume</label>
@@ -2173,7 +2757,18 @@
                 <field>bomprod:volumeUnit</field>
             </fields>
         </widget>
-    
+
+        <widget name="listing_bomProdVolume" type="listing_measure_value_and_unit">
+            <labels>
+                <label mode="any">label.widget.bomprod.volume</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.bomprod.volume</field>
+                <field>data.bomprod.volumeUnit</field>
+            </fields>
+        </widget>
+
         <!--
         <widget name="bomProdSurface" type="measure_value_and_unit">
             <labels>
@@ -2193,6 +2788,9 @@
                 <label mode="any">label.widget.bomtool.toolClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>bomtool:toolClassification</field>
@@ -2203,6 +2801,7 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomToolClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
             </properties>
@@ -2214,6 +2813,9 @@
                 <label mode="any">label.widget.bompackaging.packagingClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>bompack:packagingClassification</field>
@@ -2224,6 +2826,7 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomPackagingClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
             </properties>
@@ -2235,6 +2838,9 @@
                 <label mode="any">label.widget.bomspecification.specificationClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>bomspec:specificationClassification</field>
@@ -2245,17 +2851,20 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomSpecificationClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
             </properties>
         </widget>
-        
-        <widget name="bomSpecificationClassificationRequired"
-            type="suggestOneDirectory">
+
+        <widget name="bomSpecificationClassificationRequired" type="suggestOneDirectory">
             <labels>
                 <label mode="any">label.widget.bomspecification.specificationClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>bomspec:specificationClassification</field>
@@ -2266,49 +2875,8 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomSpecificationClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
-                <property name="required">true</property>
-            </properties>
-        </widget>
-
-        <widget name="bomManpartManufacturer"
-            type="suggestOneDirectory">
-            <labels>
-                <label mode="any">label.widget.bommanpart.manufacturer
-                </label>
-            </labels>
-            <fields>
-                <field>bommanpart:manufacturer</field>
-            </fields>
-            <properties widgetMode="any">
-                <property name="directoryName">elora_erpManufacturers</property>
-                <property name="required">false</property>
-            </properties>
-        </widget>
-
-        <widget name="bomManpartManufacturerReference"
-            type="text">
-            <labels>
-                <label mode="any">label.widget.bommanpart.manufacturerReference
-                </label>
-            </labels>
-            <translated>true</translated>
-            <fields>
-                <field>bommanpart:manufacturerReference</field>
-            </fields>
-        </widget>
-
-        <widget name="bomManufacturerList"
-            type="suggestOneDirectory">
-            <labels>
-                <label mode="any">label.widget.bommanpart.manufacturer
-                </label>
-            </labels>
-            <fields>
-                <field></field>
-            </fields>
-            <properties widgetMode="any">
-                <property name="directoryName">elora_erpManufacturers</property>
                 <property name="required">true</property>
             </properties>
         </widget>
@@ -2323,6 +2891,7 @@
             </fields>
             <properties widgetMode="any">
                 <property name="directoryName">elora_erpCustomers</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">true</property>
             </properties>
@@ -2338,7 +2907,7 @@
                 <field>bomcustprod:customerReference</field>
             </fields>
         </widget>
-        
+
         <widget name="checksum" type="text">
             <labels>
                 <label mode="any">label.widget.software.checksum</label>
@@ -2348,7 +2917,7 @@
                 <field>soft:checksum</field>
             </fields>
         </widget>
-        
+
         <widget name="externalVersion" type="text">
             <labels>
                 <label mode="any">label.widget.bomitem.externalVersion</label>
@@ -2367,7 +2936,8 @@
             </labels>
             <properties mode="any">
                 <property name="documentRelations">#{outgoingBomDocumentRelations}</property>
-                <property name="docStatementsInfo">#{eloraRelationActions.outgoingBomDocStatementsInfo}</property>
+                <property name="showVersion">true</property>
+                <property name="showState">true</property>
             </properties>
             <controls mode="any">
                 <control name="requireSurroundingForm">true</control>
@@ -2383,7 +2953,8 @@
             </labels>
             <properties mode="any">
                 <property name="documentRelations">#{outgoingBomCadDocumentRelations}</property>
-                <property name="docStatementsInfo">#{eloraRelationActions.outgoingBomCadDocStatementsInfo}</property>
+                <property name="showVersion">true</property>
+                <property name="showState">true</property>
             </properties>
             <controls mode="any">
                 <control name="requireSurroundingForm">true</control>
@@ -2411,10 +2982,9 @@
                         <label mode="any"></label>
                     </labels>
                     <properties mode="any">
-                        <property name="documentRelations">#{outgoingBomHasBomRelations}
-                        </property>
-                        <property name="docStatementsInfo">#{eloraRelationActions.outgoingBomHasBomStatementsInfo}
-                        </property>
+                        <property name="documentRelations">#{outgoingBomHasBomRelations}</property>
+                        <property name="showVersion">true</property>
+                        <property name="showState">true</property>
                     </properties>
                     <controls mode="any">
                         <control name="requireSurroundingForm">true</control>
@@ -2433,10 +3003,9 @@
                         <label mode="any"></label>
                     </labels>
                     <properties mode="any">
-                        <property name="documentRelations">#{incomingBomHasBomRelations}
-                        </property>
-                        <property name="docStatementsInfo">#{eloraRelationActions.incomingBomHasBomStatementsInfo}
-                        </property>
+                        <property name="documentRelations">#{incomingBomHasBomRelations}</property>
+                        <property name="showVersion">true</property>
+                        <property name="showState">true</property>
                         <property name="inverse">true</property>
                     </properties>
                     <controls mode="any">
@@ -2452,22 +3021,6 @@
             </subWidgets>
         </widget>
 
-        <widget name="summary_manufacturer_has_part_documents"
-            type="summary_related_documents">
-            <labels>
-                <label mode="any">label.widgetBlock.title.PartDocuments
-                </label>
-            </labels>
-            <properties mode="any">
-                <property name="documentRelations">#{outgoingManufacturerPartRelations}</property>
-                <property name="docStatementsInfo">#{EloraManufacturerRelationBean.outgoingManufacturerPartStatementsInfo}</property>
-            </properties>
-            <controls mode="any">
-                <control name="requireSurroundingForm">true</control>
-                <control name="handleLabels">true</control>
-            </controls>
-        </widget>
-
         <widget name="summary_customer_has_product_documents"
             type="summary_related_documents">
             <labels>
@@ -2476,7 +3029,8 @@
             </labels>
             <properties mode="any">
                 <property name="documentRelations">#{outgoingCustomerProductRelations}</property>
-                <property name="docStatementsInfo">#{eloraRelationActions.outgoingCustomerProductStatementsInfo}</property>
+                <property name="showVersion">true</property>
+                <property name="showState">true</property>
             </properties>
             <controls mode="any">
                 <control name="requireSurroundingForm">true</control>
@@ -2485,6 +3039,26 @@
         </widget>
 
         <!-- treetable widgets -->
+
+        <widget name="treewidget_designators" type="text_with_listener">
+            <labels>
+                <label mode="any">eloraplm.column.bom.designators</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>designators</field>
+            </fields>
+            <properties mode="any">
+                <property name="style">height: 2em; padding: 0.3em 0.5em;</property>
+                <property name="editable">#{nodeData.level == '1'}</property>
+                <property name="visible">#{nodeData.data.type == 'ElectronicComponent'}</property>
+            </properties>
+            <properties mode="edit">
+                <property name="templateForListener">
+                    /incl/mark_as_modified_listener_for_relation.xhtml</property>
+                <property name="styleClass">blurAfter1sInput</property>
+            </properties>
+        </widget>
 
 
         <widget name="treewidget_bom_icon_reference_title"
@@ -2497,7 +3071,6 @@
                 <field>data</field>
                 <field>data.ref</field>
                 <field>predicateUri</field>
-                <field>comment</field>
                 <field>data.elo.reference</field>
                 <field>wcDoc</field>
             </fields>
@@ -2508,21 +3081,17 @@
         </widget>
 
 
-
         <widget name="bom_comp_tt" type="treetable">
             <labels>
-                <label mode="any">label.treetable.bom.composition
-                </label>
+                <label mode="any">label.treetable.bom.composition</label>
             </labels>
-            <fields>
-                <field>data</field>
-            </fields>
             <widgetModes>
-                <mode value="any">#{eloraWebActions.isEditable() ?'edit'
+                <mode value="edit">#{eloraWebActions.isEditable() ?'edit'
                     : 'view'}</mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="treetableLayout">bom_comp_tt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
@@ -2530,48 +3099,40 @@
             <labels>
                 <label mode="any">label.treetable.bom.whereUsed</label>
             </labels>
-            <fields>
-                <field>data</field>
-            </fields>
             <widgetModes>
-                <mode value="any">view</mode>
+                <mode value="edit">view</mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="treetableLayout">bom_where_tt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
         <widget name="bom_cad_tt" type="treetable">
             <labels>
-                <label mode="any">eloraplm.label.treetable.bom.cadDocuments
-                </label>
+                <label mode="any">eloraplm.label.treetable.bom.cadDocuments</label>
             </labels>
-            <fields>
-                <field>data</field>
-            </fields>
             <widgetModes>
-                <mode value="any">#{eloraWebActions.isEditable() ? 'edit'
+                <mode value="edit">#{eloraWebActions.isEditable() ? 'edit'
                     : 'view'}</mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="treetableLayout">bom_cad_tt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
         <widget name="bom_doc_tt" type="treetable">
             <labels>
-                <label mode="any">eloraplm.label.treetable.bom.documents
-                </label>
+                <label mode="any">eloraplm.label.treetable.bom.documents</label>
             </labels>
-            <fields>
-                <field>data</field>
-            </fields>
             <widgetModes>
-                <mode value="any">#{eloraWebActions.isEditable() ? 'edit'
+                <mode value="edit">#{eloraWebActions.isEditable() ? 'edit'
                     : 'view'}</mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="treetableLayout">bom_doc_tt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
@@ -2580,15 +3141,13 @@
                 <label mode="any">label.treetable.bom.specifications
                 </label>
             </labels>
-            <fields>
-                <field>data</field>
-            </fields>
             <widgetModes>
-                <mode value="any">#{eloraWebActions.isEditable() ? 'edit'
+                <mode value="edit">#{eloraWebActions.isEditable() ? 'edit'
                     : 'view'}</mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="treetableLayout">bom_spec_tt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
@@ -2596,17 +3155,15 @@
             <labels>
                 <label mode="any">label.treetable.bom.items</label>
             </labels>
-            <fields>
-                <field>data</field>
-            </fields>
             <widgetModes>
-                <mode value="any">#{
+                <mode value="edit">#{
                     nxd:hasPermission(currentDocument, 'Write')
                     and not currentDocument.isVersion() ? 'edit' : 'view'}
                 </mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="treetableLayout">bom_item_tt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
@@ -2614,11 +3171,8 @@
             <labels>
                 <label mode="any">label.treetable.bom.items</label>
             </labels>
-            <fields>
-                <field>data</field>
-            </fields>
             <widgetModes>
-                <mode value="any">#{
+                <mode value="edit">#{
                     nxd:hasPermission(currentDocument,
                     'Read')
                     and not currentDocument.isVersion() ? 'edit'
@@ -2627,46 +3181,20 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="treetableLayout">bom_item_inv_tt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
-        <widget name="man_part_tt" type="treetable">
+        <widget name="doc_item_tt" type="treetable">
             <labels>
-                <label mode="any">label.treetable.bom.items</label>
+                <label mode="any">label.treetable.doc.items</label>
             </labels>
-            <fields>
-                <field>data</field>
-            </fields>
             <widgetModes>
-                <mode value="any">#{
-                    nxd:hasPermission(currentDocument, 'Write')
-                    and currentDocument.isLocked()
-                    and currentDocumentLockDetails['document.locker'] eq currentUser
-                    and not currentDocument.isVersion() ? 'edit' : 'view'}
-                </mode>
+                <mode value="edit">view</mode>
             </widgetModes>
             <properties widgetMode="any">
-                <property name="treetableLayout">man_part_tt</property>
-            </properties>
-        </widget>
-
-        <widget name="man_part_inv_tt" type="treetable">
-            <labels>
-                <label mode="any">label.treetable.bom.items</label>
-            </labels>
-            <fields>
-                <field>data</field>
-            </fields>
-            <widgetModes>
-                <mode value="any">#{
-                    nxd:hasPermission(currentDocument,
-                    'Read')
-                    and not currentDocument.isVersion() ? 'edit'
-                    : 'view'}
-                </mode>
-            </widgetModes>
-            <properties widgetMode="any">
-                <property name="treetableLayout">man_part_inv_tt</property>
+                <property name="treetableLayout">doc_item_tt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
@@ -2680,7 +3208,7 @@
                 </label>
             </labels>
             <widgetModes>
-                <mode value="any">#{
+                <mode value="edit">#{
                     nxd:hasPermission(currentDocument, 'Write')
                     and (not currentDocument.isLocked()
                     or currentDocumentLockDetails['document.locker'] eq currentUser)
@@ -2689,6 +3217,41 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="datatableLayout">item_customers_dt</property>
+                <property name="exportable">true</property>
+            </properties>
+        </widget>
+
+        <widget name="item_suppliers_dt" type="datatable">
+            <labels>
+                <label mode="any">label.datatable.bom.composition
+                </label>
+            </labels>
+            <widgetModes>
+                <mode value="edit">#{
+                    nxd:hasPermission(currentDocument, 'Write')
+                    and (not currentDocument.isLocked()
+                    or currentDocumentLockDetails['document.locker'] eq currentUser)
+                    and not currentDocument.isVersion() ? 'edit' : 'view'}
+                </mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="datatableLayout">item_suppliers_dt</property>
+                <property name="exportable">true</property>
+            </properties>
+        </widget>
+
+        <widget name="item_oems_dt" type="datatable">
+            <widgetModes>
+                <mode value="edit">#{
+                    nxd:hasPermission(currentDocument, 'Write')
+                    and (not currentDocument.isLocked()
+                    or currentDocumentLockDetails['document.locker'] eq currentUser)
+                    and not currentDocument.isVersion() ? 'edit' : 'view'}
+                </mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="datatableLayout">item_oems_dt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
 
@@ -2817,48 +3380,6 @@
             </properties>
         </widget>
 
-        <widget name="manufacturer_part_remove_relation"
-            type="template">
-            <labels>
-                <label mode="any"></label>
-            </labels>
-            <translated>true</translated>
-            <fields>
-                <field>level</field>
-                <field>isSpecial</field>
-            </fields>
-            <widgetModes>
-                <mode value="edit">view</mode>
-                <mode value="any">hidden</mode>
-            </widgetModes>
-            <properties mode="any">
-                <property name="template">
-                    /widgets/manufacturer_part_remove_relation_widget.xhtml
-                </property>
-            </properties>
-        </widget>
-
-        <widget name="manufacturer_part_remove_inverse_relation"
-            type="template">
-            <labels>
-                <label mode="any"></label>
-            </labels>
-            <translated>true</translated>
-            <fields>
-                <field>level</field>
-                <field>isSpecial</field>
-            </fields>
-            <widgetModes>
-                <mode value="edit">view</mode>
-                <mode value="any">hidden</mode>
-            </widgetModes>
-            <properties mode="any">
-                <property name="template">
-                    /widgets/manufacturer_part_remove_inverse_relation_widget.xhtml
-                </property>
-            </properties>
-        </widget>
-
         <widget name="listing_bom_classification" type="template">
             <labels>
                 <label mode="any">eloraplm.label.bomClassification
@@ -2899,6 +3420,23 @@
             </controls>
         </widget>
 
+        <widget name="suppliersDtButton"
+            type="documentActionsWithForms">
+            <properties widgetMode="view">
+                <property name="category">SUPPLIERS_DT_BUTTON</property>
+                <property name="overallDisplay">horizontal_block</property>
+            </properties>
+        </widget>
+
+        <widget name="designators" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.relation.designators</label>
+            </labels>
+            <fields>
+                <field>designators</field>
+            </fields>
+        </widget>
+
     </extension>
 
     <extension
@@ -2917,10 +3455,7 @@
                         This widget displays the document type, BOM item, description and
                         classification of the current BOM document.
                     </p>
-                    <p>
-                        It requires the following variables to be
-                        present in the EL context:
-                        <ul>
+                    <p> It requires the following variables to be present in the EL context: <ul>
                             <li>currentDocument: the current document
                             </li>
                         </ul>
@@ -2951,10 +3486,7 @@
                     <p>
                         This widget displays the primary info of current document.
                     </p>
-                    <p>
-                        It requires the following variables to be
-                        present in the EL context:
-                        <ul>
+                    <p> It requires the following variables to be present in the EL context: <ul>
                             <li>currentDocument: the current document
                             </li>
                         </ul>

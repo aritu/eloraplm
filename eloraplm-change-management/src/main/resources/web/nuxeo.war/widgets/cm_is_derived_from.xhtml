@@ -1,0 +1,40 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxd="http://nuxeo.org/nxweb/document"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <!--  if is derived from another item -->
+        <ui:fragment rendered="#{field_0 != null}">
+            <nxu:set
+                var="messageTitle"
+                value="#{field_0.elo.reference} - #{field_0.title}"
+            />
+
+            <nxd:restDocumentLink document="#{field_0}">
+                <h:graphicImage
+                    value="/icons/badge_derived_16.png"
+                    style="vertical-align: middle"
+                >
+                    <f:attribute
+                        name="title"
+                        value="#{nxu:translate(messages['eloraplm.label.cm.derivedFrom'], messageTitle)}"
+                    />
+                    <f:attribute
+                        name="styleClass"
+                        value="tipsyShow"
+                    />
+                </h:graphicImage>
+            </nxd:restDocumentLink>
+        </ui:fragment>
+    </c:if>
+    <c:if test="#{widget.mode == 'csv'}">
+        <h:outputText
+            value="#{field ? messages['label.yes'] : messages['label.no']}"
+        />
+    </c:if>
+</ui:composition>

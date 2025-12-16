@@ -13,8 +13,8 @@
  */
 package com.aritu.eloraplm.webapp.base.beans;
 
-import static org.jboss.seam.annotations.Install.DEPLOYMENT;
 import static org.jboss.seam.ScopeType.CONVERSATION;
+import static org.jboss.seam.annotations.Install.DEPLOYMENT;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -34,13 +34,15 @@ import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
 import org.nuxeo.ecm.core.api.validation.DocumentValidationException;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
-import org.nuxeo.ecm.webapp.contentbrowser.DocumentActions;
 import org.nuxeo.ecm.webapp.contentbrowser.DocumentActionsBean;
+import org.nuxeo.ecm.webapp.helpers.EventManager;
 import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
 
 /**
@@ -52,8 +54,7 @@ import com.aritu.eloraplm.core.util.EloraStructureHelper;
 @Name("documentActions")
 @Scope(CONVERSATION)
 @Install(precedence = DEPLOYMENT)
-public class EloraDocumentActionsBean extends DocumentActionsBean
-        implements DocumentActions, Serializable {
+public class EloraDocumentActionsBean extends DocumentActionsBean {
 
     private static final long serialVersionUID = 1L;
 
@@ -118,11 +119,13 @@ public class EloraDocumentActionsBean extends DocumentActionsBean
                         EloraMetadataConstants.ELORA_ELOVWR_FILE, baseFile);
             }
 
-            newDocument = documentManager.createDocument(newDocument);
-            returnDoc = newDocument;
+            returnDoc = documentManager.createDocument(newDocument);
 
-            EloraStructureHelper.moveDocToEloraStructureAndCreateProxyIfRequired(
-                    newDocument, parentDoc);
+            if (!EloraDocumentHelper.isDocumentUnderTemplateRoot(returnDoc,
+                    documentManager)) {
+                returnDoc = EloraStructureHelper.moveDocToEloraStructureAndCreateProxyIfRequired(
+                        returnDoc, parentDoc);
+            }
 
         } catch (DocumentValidationException e) {
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -132,10 +135,10 @@ public class EloraDocumentActionsBean extends DocumentActionsBean
         }
         documentManager.save();
 
-        logDocumentWithTitle("Created the document: ", newDocument);
+        logDocumentWithTitle("Created the document: ", returnDoc);
         facesMessages.add(StatusMessage.Severity.INFO,
                 messages.get("document_saved"),
-                messages.get(newDocument.getType()));
+                messages.get(returnDoc.getType()));
 
         Events.instance().raiseEvent(EventNames.DOCUMENT_CHILDREN_CHANGED,
                 currentDocument);
@@ -146,6 +149,9 @@ public class EloraDocumentActionsBean extends DocumentActionsBean
     public String updateDocument(DocumentModel doc,
             Boolean restoreCurrentTabs) {
 
+        // ---------------------
+        // ELORA functionality:
+        // ---------------------
         // If viewer base file changes, we must apply the change to the viewer
         // file too.
         if (doc.hasSchema(EloraSchemaConstants.ELORA_VIEWER) && doc.getProperty(
@@ -156,7 +162,82 @@ public class EloraDocumentActionsBean extends DocumentActionsBean
                     baseFile);
         }
 
-        return super.updateDocument(doc, restoreCurrentTabs);
+        // ---------------------------------------------------------------------
+        // This code block has been taken from Nuxeo DocumentActionsBean class
+        // ---------------------------------------------------------------------
+        String tabId = null;
+        String subTabId = null;
+        boolean restoreTabs = Boolean.TRUE.equals(restoreCurrentTabs);
+        if (restoreTabs) {
+            // save current tabs
+            tabId = webActions.getCurrentTabId();
+            subTabId = webActions.getCurrentSubTabId();
+        }
+        Events.instance().raiseEvent(EventNames.BEFORE_DOCUMENT_CHANGED, doc);
+        try {
+            doc = documentManager.saveDocument(doc);
+        } catch (DocumentValidationException e) {
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "label.schema.constraint.violation.documentValidation"),
+                    e.getMessage());
+            return null;
+        }
+
+        // ---------------------
+        // ELORA functionality:
+        // ---------------------
+        // If Vault Folder metadata has been changed, move the document to the
+        // right place
+        // Ignore document templates
+        if (!EloraDocumentHelper.isDocumentUnderTemplateRoot(doc,
+                documentManager)
+                && doc.hasFacet(EloraFacetConstants.FACET_BASIC_DOCUMENT)) {
+            boolean vaultFolderMetadataChanged = EloraStructureHelper.hasVaultFolderMetadataBeenChanged(
+                    doc);
+            if (vaultFolderMetadataChanged) {
+
+                if (doc.isProxy()) {
+                    DocumentModel sourceDoc = documentManager.getWorkingCopy(
+                            doc.getRef());
+                    EloraStructureHelper.moveToEloraStructure(sourceDoc,
+                            vaultFolderMetadataChanged);
+                } else {
+                    doc = EloraStructureHelper.moveToEloraStructure(doc,
+                            vaultFolderMetadataChanged);
+                }
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // This code block has been taken from Nuxeo DocumentActionsBean class
+        // ---------------------------------------------------------------------
+        throwUpdateComments(doc);
+        documentManager.save();
+        // some changes (versioning) happened server-side, fetch new one
+        navigationContext.invalidateCurrentDocument();
+        facesMessages.add(StatusMessage.Severity.INFO,
+                messages.get("document_modified"), messages.get(doc.getType()));
+        EventManager.raiseEventsOnDocumentChange(doc);
+        String res = navigationContext.navigateToDocument(doc, "after-edit");
+        if (restoreTabs) {
+            // restore previously stored tabs;
+            webActions.setCurrentTabId(tabId);
+            webActions.setCurrentSubTabId(subTabId);
+        }
+
+        return res;
+    }
+
+    //
+    // -------------------------------------------------------------------------
+    // This method has been copied from Nuxeo DocumentActionsBean class, since
+    // it is private in the original class.
+    // -------------------------------------------------------------------------
+    // Send the comment of the update to the Core (Taken from Nuxeo 7.10)
+    private void throwUpdateComments(DocumentModel changeableDocument) {
+        if (comment != null && !"".equals(comment)) {
+            changeableDocument.getContextData().put("comment", comment);
+        }
     }
 
 }

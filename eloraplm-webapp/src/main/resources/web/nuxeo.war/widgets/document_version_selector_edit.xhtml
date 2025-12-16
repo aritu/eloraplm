@@ -1,0 +1,107 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+>
+    <nxu:set
+        var="wc"
+        value="#{not empty wcDoc ? wcDoc : documentManager.getWorkingCopy(doc.ref)}"
+    >
+        <nxu:set
+            var="checkedOutStyle"
+            value="#{ wc.id eq doc.id and wc.isCheckedOut() ? 'checkedOutSelected' : ''}"
+        >
+            <p:selectOneMenu
+                id="#{widget.id}_pf_select"
+                value="#{doc}"
+                required="#{widgetProperty_required}"
+                disabled="#{widgetProperty_disabled}"
+                styleClass="versionSelect #{checkedOutStyle} #{widgetProperty_styleClass}"
+                panelStyleClass="versionSelectPanel #{widgetProperty_panelStyleClass}"
+                style="#{widgetProperty_style}"
+                filter="#{widgetProperty_filter}"
+                filterMatchMode="#{widgetProperty_filterMatchMode}"
+                tabindex="#{widgetProperty_tabindex}"
+            >
+                <nxu:selectItems
+                    value="#{versionList}"
+                    var="item"
+                    itemValue="#{item.value}"
+                    itemLabel="#{item.label}"
+                />
+
+                <f:converter converterId="documentModelConverter" />
+                <f:attribute
+                    name="options"
+                    value="#{versionList}"
+                />
+                <f:attribute
+                    name="session"
+                    value="#{documentManager}"
+                />
+
+                <f:attribute
+                    name="var"
+                    value="o"
+                />
+                <ui:include
+                    src="#{not empty widget.properties.selectTemplate ? widget.properties.selectTemplate : '/incl/version_select_template.xhtml' }"
+                />
+
+                <ui:include
+                    src="#{not empty widget.properties.templateForListener ? widget.properties.templateForListener : '/incl/update_version_selector_post_listener.xhtml' }"
+                />
+
+                <c:if test="#{not empty widget.properties.appendTo}">
+                    <f:attribute
+                        name="appendTo"
+                        value="#{widget.properties.appendTo}"
+                    />
+                </c:if>
+            </p:selectOneMenu>
+        </nxu:set>
+
+        <h:panelGroup
+            id="#{widget.id}_post"
+            styleClass="versionSelectPost"
+        >
+            <nxu:set
+                var="versionStatus"
+                value="#{eloraDocument.getVersionStatus(doc, wc)}"
+            >
+                <nxu:set
+                    var="versionStatusMessage"
+                    value="eloraplm.message.versionStatus.#{versionStatus}"
+                >
+                    <h:graphicImage
+                        url="/icons/#{versionStatus}.png"
+                        title="#{messages[versionStatusMessage]}"
+                        styleClass="tipsyShow"
+                        rendered="#{doc.isVersion() and versionStatus ne 'Normal'}"
+                    />
+                </nxu:set>
+            </nxu:set>
+
+            <c:if
+                test="#{not empty widget.properties.templateForAdditionalInfo}"
+            >
+                <ui:include
+                    src="#{widget.properties.templateForAdditionalInfo}"
+                />
+            </c:if>
+
+            <c:if test="#{not empty widget.properties.templateForButton}">
+                <ui:include src="#{widget.properties.templateForButton}" />
+            </c:if>
+        </h:panelGroup>
+    </nxu:set>
+
+    <h:message
+        for="#{widget.id}_pf_select"
+        class="errorMessage"
+    />
+</ui:composition>

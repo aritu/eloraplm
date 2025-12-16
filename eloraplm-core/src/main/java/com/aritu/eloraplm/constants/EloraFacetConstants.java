@@ -40,8 +40,11 @@ public class EloraFacetConstants {
     // Archivable workspaces
     public static final String FACET_ARCHIVABLE = "Archivable";
 
-    // For BOM documents: BomPart, BomManufacturerPart, BomCustomerProduct,...
+    // For BOM documents: BomPart, BomProduct,...
     public static final String FACET_BOM_DOCUMENT = "BomDocument";
+
+    // For design items: BomProduct, BomPart, BomTool, BomPackaging
+    public static final String FACET_DESIGN_ITEM = "DesignItem";
 
     // For basic documents: File, Note, Audio, Picture, Video
     public static final String FACET_BASIC_DOCUMENT = "BasicDocument";
@@ -80,5 +83,12 @@ public class EloraFacetConstants {
     public static final String FACET_HAS_WORKFLOW_FORMS = "HasWorkflowForms";
 
     public static final String FACET_DEFINED_BY_WORKFLOW_FORMS = "DefinedByWorkflowForms";
+
+    public static final String FACET_ASYNCHRONOUS_SUBWORKFLOW = "AsynchronousSubworkflow";
+
+    // Document with content (versionable or unversionable)
+    public static final String FACET_DOCUMENT_WITH_CONTENT = "DocumentWithContent";
+
+    public static final String FACET_VAULT_FOLDER = "VaultFolder";
 
 }

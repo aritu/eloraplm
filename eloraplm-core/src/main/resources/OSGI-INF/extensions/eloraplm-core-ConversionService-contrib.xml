@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.core.ConversionService.contrib">
+    <require>org.nuxeo.ecm.platform.convert.plugins</require>
+    <require>org.nuxeo.ecm.core.convert.plugins</require>
+
+    <extension target="org.nuxeo.ecm.core.convert.service.ConversionServiceImpl" point="converter">
+
+        <converter name="image2pdf" class="com.aritu.eloraplm.core.converter.Image2PdfConverter">
+            <sourceMimeType>image/png</sourceMimeType>
+            <sourceMimeType>image/jpeg</sourceMimeType>
+            <sourceMimeType>image/gif</sourceMimeType>
+            <sourceMimeType>image/bmp</sourceMimeType>
+            <sourceMimeType>image/tiff</sourceMimeType>
+            <sourceMimeType>application/illustrator</sourceMimeType>
+            <sourceMimeType>application/photoshop</sourceMimeType>
+            <sourceMimeType>application/postscript</sourceMimeType>
+            <destinationMimeType>application/pdf</destinationMimeType>
+            <parameters>
+                <parameter name="CommandLineName">converter</parameter>
+            </parameters>
+        </converter>
+    </extension>
+
+</component>

@@ -14,6 +14,7 @@
 
 package com.aritu.eloraplm.integration.admin.restoperations;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +22,13 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
+import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -52,6 +55,7 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.integration.admin.restoperations.util.MakeItemsObsoleteResponse;
+import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 /**
@@ -81,7 +85,7 @@ public class MakeItemsObsolete {
     private List<String> processedUids;
 
     @OperationMethod
-    public String run() throws EloraException {
+    public Blob run() throws EloraException {
 
         String logInitMsg = "[run] [" + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -140,7 +144,7 @@ public class MakeItemsObsolete {
 
         log.trace(logInitMsg + "--- EXIT ---");
 
-        return response.convertToJson();
+        return EloraIntegrationHelper.createJSONBlob(response.convertToJson());
     }
 
     private DocumentModelList getItems(String reference) throws EloraException {
@@ -261,8 +265,14 @@ public class MakeItemsObsolete {
 
         // Check subject document's state
         List<Resource> predicates = new ArrayList<Resource>();
-        predicates.addAll(
-                loadPredicateResources(RelationsConfig.cadRelationsList));
+
+        // All CAD relations except Suppressed
+        List<String> cadRelationsToCheck = new ArrayList<String>(
+                RelationsConfig.cadRelationsList);
+        cadRelationsToCheck.removeAll(
+                RelationsConfig.cadSuppressedRelationsList);
+        predicates.addAll(loadPredicateResources(cadRelationsToCheck));
+
         predicates.addAll(
                 loadPredicateResources(RelationsConfig.bomDirectRelationsList));
         predicates.addAll(loadPredicateResources(
@@ -303,6 +313,7 @@ public class MakeItemsObsolete {
 
     private void makeObsolete(String reference, DocumentModel doc)
             throws EloraException {
+        String previousState = doc.getCurrentLifeCycleState();
 
         doc.followTransition(EloraLifeCycleConstants.TRANS_OBSOLETE);
 
@@ -311,8 +322,11 @@ public class MakeItemsObsolete {
 
         // Nuxeo Event
         String comment = doc.getVersionLabel() + " #Admin";
+        Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+        ctxProperties.put("comment", comment);
+        ctxProperties.put("previousState", previousState);
         EloraEventHelper.fireEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc,
-                comment);
+                ctxProperties);
 
         EloraDocumentHelper.disableVersioningDocument(doc);
         doc = session.saveDocument(doc);

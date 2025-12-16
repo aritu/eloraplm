@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.nuxeo.ecm.automation.core.scripting.CoreFunctions;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.automation.features.PlatformFunctions;
@@ -176,6 +177,11 @@ public class WorkflowFunctions extends CoreFunctions {
         }
 
         return values;
+    }
+
+    public String formatListAsJson(List<String> values) {
+        JSONArray result = new JSONArray(values);
+        return result.toString();
     }
 
 }

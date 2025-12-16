@@ -18,11 +18,11 @@
     </directoryTree>
 
 
-    <!--  Manufacturer virtual navigation -->
-    <directoryTree name="byManufacturerNavigation" label="label.vnav.manufacturer"
-      contentView="byManufacturerContentView_vnav" field="manu_manufacturer" schema="vnav"
-      outcome="manufacturer_virtual_navigation" enabled="true" order="220">
-      <directory>elora_erpManufacturers</directory>
+    <!--  Supplier virtual navigation -->
+    <directoryTree name="bySupplierNavigation" label="label.vnav.supplier"
+      contentView="bySupplierContentView_vnav" field="supp_supplier" schema="vnav"
+      outcome="supplier_virtual_navigation" enabled="true" order="220">
+      <directory>elora_erpSuppliers</directory>
     </directoryTree>
     
 

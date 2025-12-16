@@ -1,0 +1,34 @@
+<project name="eloraplm" default="compile" basedir=".">
+
+    <property name="devbundledir" location="bin/devbundle" />
+    <property name="maindir" location="bin/devbundle/main" />
+    <property name="seamdir" location="bin/devbundle/seam" />
+    <property name="targetclassesdir" location="target/classes" />
+
+    <target name="init">
+        <tstamp />
+        <delete dir="${devbundledir}" />
+        <mkdir dir="${devbundledir}" />
+        <mkdir dir="${maindir}" />
+        <mkdir dir="${seamdir}" />
+    </target>
+
+    <target name="compile" depends="init">
+        <if>
+            <available file="${targetclassesdir}/seam.properties" />
+            <then>
+                <copy todir="${seamdir}">
+                    <fileset dir="${targetclassesdir}">
+                        <include name="**/*Bean.class" />
+                    </fileset>
+                </copy>
+            </then>
+        </if>
+        <copy todir="${maindir}">
+            <fileset dir="${targetclassesdir}">
+                <exclude name="**/*Bean.class" />
+            </fileset>
+        </copy>
+    </target>
+
+</project>

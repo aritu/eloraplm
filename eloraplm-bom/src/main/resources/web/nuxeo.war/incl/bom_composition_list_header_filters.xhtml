@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:h="http://java.sun.com/jsf/html">
+    
+    <h:outputScript library="js" name="primefaces_dialog.js" target="#{pageJsTarget}" />
+    <p:commandButton type="button"
+        icon="pi pi-arrow-right-arrow-left"
+        styleClass="rounded-button ui-button-flat ui-button-secondary"
+        pt:data-tooltip="#{messages['eloraplm.command.treetable.bom.compare']}&#8230;" >
+        
+        <p:ajax
+            immediate="true"
+            listener="#{pfDialogActions.initDialog(
+                            value,
+                            currentDocument,
+                            'eloraplm.title.bom.list.comparison',
+                            '/incl/action/bom_composition_list_comparison.xhtml',
+                            true,false,true,null,null,null,null)}"
+            process="@this"
+            partialSubmit="true"
+            update=":glb_pf_dlg_panel"
+            onstart="onPfDialogActionStart()"
+            oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+        />
+    </p:commandButton>
+    
+</ui:composition>

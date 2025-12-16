@@ -16,10 +16,6 @@ package com.aritu.eloraplm.csvimporter;
 
 import java.util.List;
 
-/**
- * @author <a href="mailto:troger@nuxeo.com">Thomas Roger</a>
- * @since 5.7
- */
 public class EloraCSVImportResult {
 
     protected final long totalLineCount;

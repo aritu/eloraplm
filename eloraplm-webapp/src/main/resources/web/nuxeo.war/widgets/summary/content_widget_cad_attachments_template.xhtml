@@ -1,0 +1,30 @@
+<ui:fragment
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+    <c:set var="hasCadAttachments" value="#{currentDocument.hasSchema('cad_attachments') and !empty currentDocument.cadatts.attachments}" />
+    
+    <!-- CAD Attachments -->
+    <c:if test="#{hasCadAttachments}">
+        <div class="#{fileZoneClass}" context="cadAttachments" id="cadAttachmentsDropZone">
+            <table class="smallTable">
+                <tbody>
+                <c:forEach items="#{currentDocument.cadatts.attachments}" varStatus="loop">
+                    <tr>
+                        <td class="labelColumn">
+                            <h:outputText value=" #{messages['eloraplm.label.summary.download.cadAttachments']}" rendered="#{loop.index == 0}" />
+                        </td>
+                        <td class="fieldColumn">
+                            <nxl:widgetType name="cadAttachmentFile" mode="view" value="#{currentDocument}" field="#{loop.index}" />
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
+
+</ui:fragment>

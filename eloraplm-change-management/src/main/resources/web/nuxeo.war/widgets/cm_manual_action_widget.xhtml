@@ -1,0 +1,48 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  
+<nxu:set var="actionsWithoutChange" value="#{cmModifiedsTreeBean.imOptions.overwriteImpacted and cmModifiedsTreeBean.imOptions.overwriteOption == 'level1' and not cmModifiedsTreeBean.imOptions.createDocIM}" > 
+  <nxu:set var="actionDirectoryName" value="#{field_1 ? 'elora_cmActionModified' : (field_2  == 'DOC' ? 'elora_cmActionImpactedCad' : (actionsWithoutChange ? 'elora_cmActionOverwriteImpactedItem' : 'elora_cmActionImpactedItem'))}">
+
+    <ui:fragment rendered="#{field_3 or widget.mode == 'view'}">
+      <nxl:widgetType name="selectOneDirectory" mode="view" 
+        value="#{field_0}" 
+        directoryName="#{actionDirectoryName}" 
+        localize="true" 
+        displayIdAndLabel="false" 
+        style="min-width: 6em;"
+        notDisplayDefaultOption="true"/>
+    </ui:fragment>
+    
+    <ui:fragment rendered="#{not field_3 and widget.mode == 'edit'}">
+      <nxl:widgetType name="selectOneDirectory" mode="edit" 
+        value="#{field_0}" 
+        directoryName="#{actionDirectoryName}" 
+        localize="true" 
+        displayIdAndLabel="false" 
+        ordering="ordering" 
+        style="min-width: 6em;"
+        notDisplayDefaultOption="true">
+        
+        <p:ajax
+            event="change"
+            listener="#{cmManualImpactedItemsTreeBean.refreshNode(component.namingContainer, node, 'action', false)}"
+            process="@this"
+            partialSubmit="true"
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="markTreeNodeAsModified(false)" />
+        
+      </nxl:widgetType>
+    </ui:fragment>
+    
+  </nxu:set>
+</nxu:set>
+
+</ui:composition>

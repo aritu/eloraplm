@@ -1,0 +1,18 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    id="#{layout.id}"
+>
+    <nxu:set
+        var="exportFormat"
+        value="#{param['format']}"
+    >
+        <nxl:widget
+            name="#{param['widgetName']}"
+            mode="csv"
+            value="#{eloraWebActions.getBeanByName(param['treeBeanName'])}"
+        />
+    </nxu:set>
+</ui:composition>

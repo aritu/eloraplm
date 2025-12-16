@@ -30,22 +30,22 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
-import org.nuxeo.ecm.core.schema.DocumentType;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
+import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.config.util.RelationsConfig;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraPropertiesConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.core.relations.api.RelationManagementService;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
-import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
 import com.aritu.eloraplm.exceptions.CompositionWithMultipleVersionsException;
-import com.aritu.eloraplm.exceptions.EloraException;
 
 public class ItemStructureData {
 
@@ -82,6 +82,8 @@ public class ItemStructureData {
     private List<DocItemRelation> docItemRelationList;
 
     private List<DocItemRelation> selectedDocItemRelations;
+
+    RelationManagementService rms;
 
     public DocumentModel getRootItem() {
         return rootItem;
@@ -150,6 +152,7 @@ public class ItemStructureData {
     public ItemStructureData(DocumentModel item,
             List<DocItemRelation> selectedDocItemRelations, CoreSession session)
             throws CompositionWithMultipleVersionsException {
+        rms = Framework.getService(RelationManagementService.class);
         this.selectedDocItemRelations = selectedDocItemRelations;
         rootItem = item;
         missingItemList = new ArrayList<DocumentModel>();
@@ -229,8 +232,7 @@ public class ItemStructureData {
             DocumentModelList directorDocList = entry.getValue();
             directorOrdering = entry.getKey();
             for (DocumentModel directorDoc : directorDocList) {
-                directorItemList.addAll(
-                        getDirectorsItems(directorDoc, session));
+                getDirectorsItems(directorDoc, session);
             }
         }
         if (!directorItemList.isEmpty()) {
@@ -238,13 +240,12 @@ public class ItemStructureData {
         }
     }
 
-    private Set<String> getDirectorsItems(DocumentModel director,
-            CoreSession session)
+    private void getDirectorsItems(DocumentModel director, CoreSession session)
             throws CompositionWithMultipleVersionsException {
         List<Resource> predicates = getHierarchicalPredicates();
         List<Statement> directorStmts = EloraRelationHelper.getStatements(
                 director, predicates);
-        Set<String> structureItemList = new HashSet<String>();
+        // Set<String> structureItemList = new HashSet<String>();
         for (Statement directorStmt : directorStmts) {
             DocumentModel childDoc = RelationHelper.getDocumentModel(
                     directorStmt.getObject(), session);
@@ -255,16 +256,30 @@ public class ItemStructureData {
             // estructura
             Set<String> docItemList = getDocumentItems(childDoc, directorStmt,
                     session);
-            structureItemList.addAll(docItemList);
+            directorItemList.addAll(docItemList);
         }
         maxItemGlobalOrdering = itemGlobalOrdering;
 
-        return structureItemList;
+        // return structureItemList;
     }
 
     private List<Resource> getHierarchicalPredicates() {
         List<Resource> predicates = new ArrayList<Resource>();
-        for (String predicateUri : RelationsConfig.cadHierarchicalRelationsList) {
+        List<String> predicateUris = new ArrayList<String>(
+                RelationsConfig.cadHierarchicalRelationsList);
+
+        // Exclude ExcludedFromComposition relations
+        predicateUris.remove(
+                EloraRelationConstants.CAD_HAS_EXCLUDED_FROM_COMPOSITION);
+
+        // Exclude BasedOn relations if it is configured so
+        if (Boolean.valueOf(Framework.getProperty(
+                EloraPropertiesConstants.PROP_BOM_GENERATION_EXCLUDE_BASEDON,
+                Boolean.toString(false)))) {
+            predicateUris.remove(EloraRelationConstants.CAD_BASED_ON);
+        }
+
+        for (String predicateUri : predicateUris) {
             Resource predicateResource = new ResourceImpl(predicateUri);
             predicates.add(predicateResource);
         }
@@ -290,10 +305,15 @@ public class ItemStructureData {
                 DocumentModel item = RelationHelper.getDocumentModel(
                         itemStmt.getSubject(), session);
 
-                if (!isCorrectItemType(rootItem, item)) {
+                if (!rms.isRelationAllowed(rootItem,
+                        EloraRelationConstants.BOM_COMPOSED_OF, item)) {
                     addWrongTypeItem(item);
+                    // When an incorrect item is found try to find a correct one
+                    // in current cad's next level recursively.
+                    getDirectorsItems(doc, session);
                     continue;
                 }
+                
 
                 if (currentItemList.contains(item.getVersionSeriesId())
                         && !diffItems.contains(item.getVersionSeriesId())) {
@@ -369,6 +389,8 @@ public class ItemStructureData {
                     item = itemBv;
                 } else {
                     // get latest related
+                    // TODO IBAI getLatestRelatedVersion(CoreSession session,
+                    // List<DocumentModel> wcDocs) erabili eta testeatu
                     List<String> uidList = EloraDocumentHelper.getUidListFromDocList(
                             itemList);
                     Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
@@ -496,45 +518,6 @@ public class ItemStructureData {
         RelationData relationData = new RelationData(ordering, null, quantity,
                 isManual, childItem);
         return relationData;
-    }
-
-    private boolean isCorrectItemType(DocumentModel rootItem,
-            DocumentModel item) {
-        try {
-            checkItemType(rootItem, item);
-            return true;
-        } catch (EloraException e) {
-            return false;
-        }
-    }
-
-    private static void checkItemType(DocumentModel rootItem,
-            DocumentModel item) throws EloraException {
-        List<String> allowedTypes = getAllowedTypeForCurrentDoc(rootItem);
-        if (!allowedTypes.contains(item.getType())) {
-            throw new EloraException("No corresponding type found");
-        }
-    }
-
-    private static List<String> getAllowedTypeForCurrentDoc(
-            DocumentModel item) {
-        List<String> allowedTypes = new ArrayList<String>();
-        String docTypeName = item.getType();
-        DocumentType docType = item.getDocumentType();
-        if (EloraDocumentTypesHelper.getDocumentType(
-                EloraDoctypeConstants.BOM_PART).isSuperTypeOf(docType)
-                || docTypeName.equals(EloraDoctypeConstants.BOM_PRODUCT)) {
-            allowedTypes.addAll(
-                    EloraDocumentTypesHelper.getExtendedDocumentTypeNames(
-                            EloraDoctypeConstants.BOM_PART));
-            allowedTypes.add(EloraDoctypeConstants.BOM_PRODUCT);
-        } else if (docTypeName.equals(EloraDoctypeConstants.BOM_PACKAGING)) {
-            allowedTypes.add(EloraDoctypeConstants.BOM_PACKAGING);
-        } else if (docTypeName.equals(EloraDoctypeConstants.BOM_TOOL)) {
-            allowedTypes.add(EloraDoctypeConstants.BOM_TOOL);
-        } else {
-        }
-        return allowedTypes;
     }
 
     public class DocItemRelation implements Serializable {

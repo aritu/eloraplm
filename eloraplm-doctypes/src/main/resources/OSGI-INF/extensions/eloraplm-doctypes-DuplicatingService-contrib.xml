@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.doctypes.DuplicatingService">
+    
+    <extension point="types" target="com.aritu.eloraplm.core.duplicating.api.DuplicatingService">
+        <type id="File" duplicator="basicDocDuplicator" />
+        <type id="Audio" duplicator="basicDocDuplicator" />
+        <type id="Picture" duplicator="basicDocDuplicator" />
+        <type id="Video" duplicator="basicDocDuplicator" />
+        <type id="Note" duplicator="basicDocDuplicator" />
+    </extension>
+    
+    <extension point="duplicators" target="com.aritu.eloraplm.core.duplicating.api.DuplicatingService">
+        <duplicator id="basicDocDuplicator" />
+    </extension>
+    
+</component> 

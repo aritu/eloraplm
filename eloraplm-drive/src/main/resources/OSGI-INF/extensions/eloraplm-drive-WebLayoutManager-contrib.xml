@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.drive.WebLayoutManager.contrib">
+    
+    <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
+        
+        <layout name="elora_desktop_binaries">
+            <templates>
+                <template mode="any">
+                    /directory/directory_layout_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>elora_desktop_binaries_id</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_platform</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_package</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_info</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_version</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_description</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_url</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_manual_url</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_default</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_obsolete</widget>
+                </row>
+                <row>
+                    <widget>elora_desktop_binaries_ordering</widget>
+                </row>
+            </rows>
+            
+            <widget name="elora_desktop_binaries_id" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.id</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:id</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_platform" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.elora.desktop.binaries.platform</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:platform</field>
+                </fields>
+                <properties widgetMode="any">
+                    <property name="localize">true</property>
+                </properties>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_package" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.elora.desktop.binaries.package</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:package</field>
+                </fields>
+                <properties widgetMode="any">
+                    <property name="localize">true</property>
+                </properties>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_info" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.elora.desktop.binaries.info</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:info</field>
+                </fields>
+                <properties widgetMode="any">
+                    <property name="localize">true</property>
+                </properties>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_version" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.elora.desktop.binaries.version</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:version</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_description" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.elora.desktop.binaries.description</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:description</field>
+                </fields>
+                <properties widgetMode="any">
+                    <property name="localize">true</property>
+                </properties>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_url" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.elora.desktop.binaries.url</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:url</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_manual_url" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.elora.desktop.binaries.manual.url</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:manualUrl</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_default" type="integer_yes_no">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.elora.desktop.binaries.default</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:default</field>
+                </fields>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_obsolete" type="integer_yes_no">
+                <labels>
+                    <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:obsolete</field>
+                </fields>
+            </widget>
+            
+            <widget name="elora_desktop_binaries_ordering" type="int">
+                <labels>
+                    <label mode="any">eloraplm.label.ordering</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>eloraDesktopBinaries:ordering</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="size">10</property>
+                </properties>
+            </widget>
+            
+        </layout>
+        
+    </extension>
+    
+</component>

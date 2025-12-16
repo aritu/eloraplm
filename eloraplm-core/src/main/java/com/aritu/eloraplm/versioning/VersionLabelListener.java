@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.SystemPrincipal;
 import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
 import org.nuxeo.ecm.core.event.Event;
@@ -52,10 +51,6 @@ public class VersionLabelListener implements EventListener {
                 DocumentEventContext docEventContext = (DocumentEventContext) eventContext;
                 DocumentModel doc = docEventContext.getSourceDocument();
                 if (isSkippedDocument(doc)) {
-                    return;
-                }
-
-                if (docEventContext.getPrincipal() instanceof SystemPrincipal) {
                     return;
                 }
 

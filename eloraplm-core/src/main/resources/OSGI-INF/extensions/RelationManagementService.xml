@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.core.relations.api.RelationManagementService">
+
+    <implementation class="com.aritu.eloraplm.core.relations.services.RelationManagementServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.core.relations.api.RelationManagementService"/>
+    </service>
+    
+    <extension-point name="allowedRelations">
+        <documentation>
+            Used to define the allowed source and target types per predicate.
+            
+            <code>
+                <relation predicateUri="...">
+                    <source>
+                        <type>...</type>
+                        <type excludeInherited="true">...</type>
+                        <facet>...</facet>
+                    </source>
+                    <target>
+                        <type>...</type>
+                        <type excludeInherited="true">...</type>
+                        <facet>...</facet>
+                    </target>
+                </relation>
+            </code>
+            
+            <p/>
+            
+            When specifiing types, if excludeInherited is not set as true (default value is false), will allow the specified type and all its inherited types.
+            For example, setting "BomPart" as source will also allow "Software" or "ElectronicComponent".
+            
+            When specifiing facets, all types defined with that facet will be allowed.
+            
+        </documentation>
+        <object class="com.aritu.eloraplm.core.relations.api.AllowedRelationDescriptor" />
+    </extension-point>
+    
+</component>

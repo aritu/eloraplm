@@ -12,7 +12,8 @@
 
 <c:if test="#{currentDocument.hasSchema('dublincore')}">
 
-        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} workingCopy">
+        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} workingCopy"
+            style="border-top: 4px solid #{eloraWebActions.getColorForType(currentDocument.type)};">
         
             <p:panelGrid styleClass="fullWidth">
             
@@ -170,11 +171,12 @@
                         <p:column colspan="4"></p:column>
                     </c:if>
 
+                    <!-- External link -->
                     <p:column>
-                        <h:outputLink value="#{currentDocument.prj.externalLink}"
+                        <h:outputLink value="#{currentDocument.elo.externalLink}"
                             target="_blank"
-                            title="#{messages['eloraplm.label.prj.externalLink']}" styleClass="tipsyShow tipsyGravityE"
-                            rendered="#{not empty currentDocument.prj.externalLink}">
+                            title="#{messages['eloraplm.label.externalLink']}" styleClass="tipsyShow tipsyGravityE"
+                            rendered="#{not empty currentDocument.elo.externalLink}">
                             <h:graphicImage value="/icons/external_link_16.png" style="vertical-align: middle; margin-left: .3em;" />
                         </h:outputLink>
                     </p:column>

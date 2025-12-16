@@ -16,10 +16,6 @@ package com.aritu.eloraplm.csvimporter;
 
 import java.io.Serializable;
 
-/**
- * @author <a href="mailto:troger@nuxeo.com">Thomas Roger</a>
- * @since 5.7
- */
 public class EloraCSVImporterOptions implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -27,21 +27,22 @@ import org.nuxeo.ecm.core.work.api.Work.State;
 import org.nuxeo.ecm.core.work.api.WorkManager;
 import org.nuxeo.runtime.api.Framework;
 
-/**
- * @since 5.7
- */
 public class EloraCSVImporterImpl implements EloraCSVImporter {
 
     @Override
     public String launchImport(CoreSession session, String parentPath,
             File csvFile, String csvFileName, File relationsCsvFile,
             String relationsCsvFileName, File proxiesCsvFile,
-            String proxiesCsvFileName, EloraCSVImporterOptions options) {
+            String proxiesCsvFileName, File commentsCsvFile,
+            String commentsCsvFileName,
+
+            EloraCSVImporterOptions options) {
         EloraCSVImporterWork work = new EloraCSVImporterWork(
                 session.getRepositoryName(), parentPath,
                 session.getPrincipal().getName(), csvFile, csvFileName,
                 relationsCsvFile, relationsCsvFileName, proxiesCsvFile,
-                proxiesCsvFileName, options);
+                proxiesCsvFileName, commentsCsvFile, commentsCsvFileName,
+                options);
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
         workManager.schedule(work,
                 WorkManager.Scheduling.IF_NOT_RUNNING_OR_SCHEDULED);
@@ -99,6 +100,17 @@ public class EloraCSVImporterImpl implements EloraCSVImporter {
     public List<EloraCSVImportLog> getProxiesImportLogs(String id,
             EloraCSVImportLog.Status... status) {
         return getProxiesLastImportLogs(id, -1, status);
+    }
+
+    @Override
+    public List<EloraCSVImportLog> getCommentsImportLogs(String id) {
+        return getCommentsLastImportLogs(id, -1);
+    }
+
+    @Override
+    public List<EloraCSVImportLog> getCommentsImportLogs(String id,
+            EloraCSVImportLog.Status... status) {
+        return getCommentsLastImportLogs(id, -1, status);
     }
 
     @Override
@@ -194,6 +206,34 @@ public class EloraCSVImporterImpl implements EloraCSVImporter {
     }
 
     @Override
+    public List<EloraCSVImportLog> getCommentsLastImportLogs(String id,
+            int max) {
+        WorkManager workManager = Framework.getLocalService(WorkManager.class);
+        Work work = workManager.find(id, null);
+        if (work == null) {
+            work = workManager.find(id, State.COMPLETED);
+            if (work == null) {
+                return Collections.emptyList();
+            }
+        }
+        List<EloraCSVImportLog> commentsImportLogs = ((EloraCSVImporterWork) work).getCommentsImportLogs();
+        max = (max == -1 || max > commentsImportLogs.size())
+                ? commentsImportLogs.size()
+                : max;
+        return commentsImportLogs.subList(commentsImportLogs.size() - max,
+                commentsImportLogs.size());
+    }
+
+    @Override
+    public List<EloraCSVImportLog> getCommentsLastImportLogs(String id, int max,
+            EloraCSVImportLog.Status... status) {
+        List<EloraCSVImportLog> commentsImportLogs = getCommentsLastImportLogs(
+                id, max);
+        return status.length == 0 ? commentsImportLogs
+                : filterImportLogs(commentsImportLogs, status);
+    }
+
+    @Override
     public EloraCSVImportResult getImportResult(String id) {
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
         Work work = workManager.find(id, State.COMPLETED);
@@ -227,6 +267,18 @@ public class EloraCSVImporterImpl implements EloraCSVImporter {
 
         List<EloraCSVImportLog> proxiesImportLogs = ((EloraCSVImporterWork) work).getProxiesImportLogs();
         return EloraCSVImportResult.fromImportLogs(proxiesImportLogs);
+    }
+
+    @Override
+    public EloraCSVImportResult getCommentsImportResult(String id) {
+        WorkManager workManager = Framework.getLocalService(WorkManager.class);
+        Work work = workManager.find(id, State.COMPLETED);
+        if (work == null) {
+            return null;
+        }
+
+        List<EloraCSVImportLog> commentsImportLogs = ((EloraCSVImporterWork) work).getCommentsImportLogs();
+        return EloraCSVImportResult.fromImportLogs(commentsImportLogs);
     }
 
     @Override

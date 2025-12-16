@@ -1,68 +1,228 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.workflows.WebLayoutManager.contrib">
-    
+
+    <require>org.nuxeo.ecm.user.center.dashboard.jsf.layouts.listing</require>
+    <require>org.nuxeo.ecm.platform.routing.dashboard.layouts</require>
+    <require>org.nuxeo.ecm.platform.routing.dm.layouts.webapp</require>
     <require>org.nuxeo.ecm.platform.routing.layouts</require>
     <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
-    
+
     <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
-        
-        <layout name="route_content_view_layout">
-          <templates>
-            <template mode="any">
-              /layouts/layout_listing_ajax_template.xhtml
-            </template>
-          </templates>
-          <properties mode="any">
-            <property name="showListingHeader">true</property>
-            <property name="showRowEvenOddClass">true</property>
-          </properties>
-          <columns>
-            <column>
-              <properties mode="any">
-                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-              </properties>
-              <widget>task_title</widget>
-            </column>
-            <column>
-              <properties mode="any">
-                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-              </properties>
-              <widget>task_assignee</widget>
-            </column>
-            <column>
-              <properties mode="any">
-                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-              </properties>
-              <widget>task_directive</widget>
-            </column>
-            <column>
-              <properties mode="any">
-                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-              </properties>
-              <widget>task_status</widget>
-            </column>
-            <column>
-              <properties mode="any">
-                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-              </properties>
-              <widget>task_comments</widget>
-            </column>
-            <column>
-              <properties mode="any">
-                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-              </properties>
-              <widget>task_start_date</widget>
-            </column>
-            <column>
-              <properties mode="any">
-                <property name="useFirstWidgetLabelAsColumnHeader">true</property>
-              </properties>
-              <widget>task_due_date</widget>
-            </column>
-          </columns>
+
+        <layout name="routing_task_resolution_layout">
+            <templates>
+                <template mode="any">/layouts/layout_grid_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_gridStyleClass_0">gridStyle7</property>
+                        <property name="nxl_gridStyleClass_1">gridStyle5</property>
+                    </properties>
+                    <widget>container_0</widget>
+                    <widget>container_01</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_gridStyleClass_0">gridStyle5</property>
+                        <property name="nxl_gridStyleClass_1">gridStyle7</property>
+                    </properties>
+                    <widget>container</widget>
+                    <widget>container_1</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_gridStyleClass_0">gridStyle12</property>
+                    </properties>
+                    <widget>container_2</widget>
+                </row>
+            </rows>
+            <widget name="container_0" type="container">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field></field>
+                </fields>
+                <controls mode="any">
+                    <control name="handleLabels">true</control>
+                </controls>
+                <properties mode="any">
+                    <property name="hideSubLabels">true</property>
+                    <property name="styleClass">description_block</property>
+                </properties>
+                <subWidgetRefs>
+                    <widget>task_workflow_title</widget>
+                </subWidgetRefs>
+            </widget>
+            <widget name="container_01" type="container">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field></field>
+                </fields>
+                <controls mode="any">
+                    <control name="handleLabels">true</control>
+                </controls>
+                <properties mode="any">
+                    <property name="hideSubLabels">true</property>
+                    <property name="styleClass">horizontal_block</property>
+                </properties>
+                <subWidgets>
+                    <widget name="task_actions" type="layout">
+                        <properties mode="any">
+                            <property name="name">routing_task_actions_layout</property>
+                        </properties>
+                    </widget>
+                </subWidgets>
+            </widget>
+            <widget name="container" type="container">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field></field>
+                </fields>
+                <controls mode="any">
+                    <control name="handleLabels">true</control>
+                </controls>
+                <properties widgetMode="any">
+                    <property name="styleClass">fullWidth</property>
+                </properties>
+                <subWidgets>
+                    <widget name="sub0" type="layout">
+                        <labels>
+                            <label mode="any">routing_task_general_info</label>
+                        </labels>
+                        <translated>false</translated>
+                        <fields />
+                        <properties widgetMode="view">
+                            <property name="name">routing_task_general_info</property>
+                        </properties>
+                        <controls mode="any">
+                            <control name="handleLabels">true</control>
+                            <control name="requireSurroundingForm">true</control>
+                        </controls>
+                    </widget>
+                </subWidgets>
+            </widget>
+            <widget name="container_1" type="container">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field></field>
+                </fields>
+                <controls mode="any">
+                    <control name="handleLabels">true</control>
+                    <control name="requireSurroundingForm">true</control>
+                </controls>
+                <properties widgetMode="any">
+                    <property name="styleClass">grayBox</property>
+                    <property name="hideSubLabels">true</property>
+                </properties>
+                <subWidgetRefs>
+                    <widget>task_layout_with_actions</widget>
+                </subWidgetRefs>
+            </widget>
+            <widget name="container_2" type="container">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field></field>
+                </fields>
+                <controls mode="any">
+                    <control name="handleLabels">true</control>
+                </controls>
+                <subWidgets>
+                    <widget name="sub0" type="contentViewWithForms">
+                        <labels>
+                            <label mode="any"></label>
+                        </labels>
+                        <translated>false</translated>
+                        <properties widgetMode="view">
+                            <property name="showRefreshCommand">false</property>
+                            <property name="foldable">false</property>
+                            <property name="showSyndicationLinks">false</property>
+                            <property name="showPDFExport">false</property>
+                            <property name="showCSVExport">false</property>
+                            <property name="showPageSizeSelector">false</property>
+                            <property name="showFilterForm">false</property>
+                            <property name="contentViewName">task_target_documents</property>
+                        </properties>
+                        <controls mode="any">
+                            <control name="handleLabels">true</control>
+                        </controls>
+                    </widget>
+                </subWidgets>
+            </widget>
         </layout>
-        
+
+
+        <layout name="route_content_view_layout">
+            <templates>
+                <template mode="any">
+                    /layouts/layout_listing_ajax_template.xhtml
+                </template>
+            </templates>
+            <properties mode="any">
+                <property name="showListingHeader">true</property>
+                <property name="showRowEvenOddClass">true</property>
+            </properties>
+            <columns>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>task_title</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>task_assignee</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>task_directive</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>task_status</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>task_comments</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>task_start_date</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>task_due_date</widget>
+                </column>
+            </columns>
+        </layout>
+
         <layout name="task_layout">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -83,6 +243,9 @@
                 </row>
                 <row>
                     <widget>task_simple_directive</widget>
+                    <properties mode="view">
+                        <property name="styleClass">prewrap</property>
+                    </properties>
                 </row>
                 <row>
                     <widget>container_for_task_layout_with_actions</widget>
@@ -102,21 +265,68 @@
                     <widget>task_layout_with_actions</widget>
                 </subWidgetRefs>
             </widget>
-            
+
         </layout>
-        
+
+        <layout name="dashboard_task_listing">
+            <templates>
+                <template mode="any">/layouts/layout_listing_ajax_template.xhtml</template>
+            </templates>
+            <properties mode="any">
+                <property name="showListingHeader">true</property>
+                <property name="showRowEvenOddClass">true</property>
+            </properties>
+            <columns>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>listing_task_workflow_name</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>listing_task_document_title_link</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>listing_task_dueDate</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>listing_task_startDate</widget>
+                </column>
+            </columns>
+        </layout>
+
+        <layout name="graphViewLayout">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>document_show_workflow_graph</widget>
+                </row>
+            </rows>
+        </layout>
+
         <!-- Task form default layouts -->
-        
+
         <layout name="initialWorkflowFormsTaskLayout">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
             </templates>
             <rows>
                 <row>
-                    <widget>comment</widget>
+                    <widget>workflow_questions</widget>
                 </row>
                 <row>
-                    <widget>workflow_questions</widget>
+                    <widget>comment</widget>
                 </row>
             </rows>
             <widget name="comment" type="textarea">
@@ -128,7 +338,7 @@
                 </fields>
             </widget>
         </layout>
-        
+
         <layout name="defaultWorkflowFormsTaskLayout">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -164,11 +374,379 @@
                 </fields>
             </widget>
         </layout>
-        
+
+        <layout name="workflow_info_layout">
+            <templates>
+                <template mode="any">/layouts/layout_grid_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_gridStyleClass_0">gridStyle8</property>
+                        <property name="nxl_gridStyleClass_1">gridStyle4</property>
+                        <property name="nxl_gridStyleClass_2">gridStyle12</property>
+                    </properties>
+                    <widget>workflow_info</widget>
+                    <widget>workflow_buttons</widget>
+                    <widget>current_route_open_tasks</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <!-- Override layout for workflows without forms -->
+        <layout name="workflows_without_forms_layout">
+            <templates>
+                <template mode="any">/layouts/layout_grid_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_gridStyleClass_0">gridStyle8</property>
+                        <property name="nxl_gridStyleClass_1">gridStyle4</property>
+                        <property name="nxl_gridStyleClass_2">gridStyle12</property>
+                        <property name="nxl_gridStyleClass_3">gridStyle12</property>
+                    </properties>
+                    <widget>workflow_info</widget>
+                    <widget>workflow_buttons</widget>
+                    <widget>current_route_open_tasks</widget>
+                    <widget>current_route_previous_tasks</widget>
+                </row>
+            </rows>
+        </layout>
+
+
+        <layout name="conditional_task_step">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>actors</widget>
+                </row>
+                <row>
+                    <widget>directive_conditional_subject</widget>
+                    <widget>directive_conditional_operator</widget>
+                    <widget>directive_conditional_value</widget>
+                    <widget>operatorValidator</widget>
+                </row>
+                <row>
+                    <widget>dueDate</widget>
+                </row>
+            </rows>
+            <widget name="directive_conditional_subject" type="text">
+                <fields>
+                    <field>ctkst:subject</field>
+                </fields>
+                <labels>
+                    <label mode="any">label.review.directive</label>
+                </labels>
+                <translated>true</translated>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                    <property name="validator">
+                        #{eloraRoutingTaskActions.validateSubject}
+                    </property>
+                </properties>
+            </widget>
+            <widget name="directive_conditional_operator" type="template">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <fields>
+                    <field>ctkst:operator</field>
+                </fields>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/routing_directive_operator_widget_template.xhtml
+                    </property>
+                </properties>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            <widget name="directive_conditional_value" type="text">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <fields>
+                    <field>ctkst:value</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="required">true</property>
+                </properties>
+            </widget>
+            <widget name="operatorValidator" type="template">
+                <fields>
+                    <field></field>
+                </fields>
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <properties widgetMode="edit">
+                    <property name="validator">
+                        #{eloraRoutingTaskActions.validateValueForOperator}
+                    </property>
+                    <property name="template">
+                        /widgets/operator_value_validation_widget_template.xhtml
+                    </property>
+                </properties>
+            </widget>
+        </layout>
+
+        <layout name="routing_task_actions_layout">
+            <templates>
+                <template mode="any">/layouts/layout_grid_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="gridRowStyleClass">floatR</property>
+                    </properties>
+                    <widget>go_back_to_tasks_view_widget</widget>
+                    <widget>delegate_task_widget</widget>
+                    <widget>reassign_task_widget</widget>
+                </row>
+            </rows>
+            <widget name="go_back_to_tasks_view_widget" type="documentActionWithForms">
+                <fields>
+                    <field>#{eloraRoutingTaskActions.getTaskInfo(layoutValue, true)}</field>
+                </fields>
+                <properties widgetMode="any">
+                    <property name="actionId">go_back_to_tasks_view</property>
+                    <property name="actionStyleClass">smallButton</property>
+                    <property name="actionsDisplay">buttons</property>
+                    <property name="useAjaxForm">true</property>
+                    <property name="ignoreTemplateProperty">true</property>
+                    <property name="actionContextDocument">#{layoutValue.getDocument()}</property>
+                </properties>
+            </widget>
+            <widget name="reassign_task_widget" type="documentActionWithForms">
+                <fields>
+                    <field>#{eloraRoutingTaskActions.getTaskInfo(layoutValue, true)}</field>
+                </fields>
+                <properties widgetMode="any">
+                    <property name="actionId">reassignTask</property>
+                    <property name="actionStyleClass">smallButton</property>
+                    <property name="actionsDisplay">buttons</property>
+                    <property name="useAjaxForm">true</property>
+                    <property name="ignoreTemplateProperty">true</property>
+                    <property name="actionContextDocument">#{layoutValue.getDocument()}</property>
+                </properties>
+                <widgetModes>
+                    <mode value="any">#{eloraRoutingTaskActions.canBeReassign()?'edit':'hidden'}</mode>
+                </widgetModes>
+            </widget>
+            <widget name="delegate_task_widget" type="documentActionWithForms">
+                <fields>
+                    <field>#{eloraRoutingTaskActions.getTaskInfo(layoutValue, true)}</field>
+                </fields>
+                <properties widgetMode="any">
+                    <property name="actionId">delegateTask</property>
+                    <property name="actionStyleClass">smallButton</property>
+                    <property name="actionsDisplay">buttons</property>
+                    <property name="useAjaxForm">true</property>
+                    <property name="ignoreTemplateProperty">true</property>
+                    <property name="actionContextDocument">#{layoutValue.getDocument()}</property>
+                </properties>
+            </widget>
+        </layout>
+
+        <layout name="routing_user_open_task_search_layout">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>workflow_name</widget>
+                    <widget>task_name</widget>
+                    <widget>initiator</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                        <property name="nxl_colspan_1">1</property>
+                    </properties>
+                    <widget>task_dueDate_min</widget>
+                    <widget>task_dueDate_max</widget>
+                    <widget>actors</widget>
+                </row>
+            </rows>
+            <widget name="workflow_name" type="primefaces_select">
+                <labels>
+                    <label mode="any">eloraplm.wf.label.workflow.type</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>user_open_tasks_cv:task_processId</field>
+                    <field>#{userOpenTasksActions.getWorkflows()}</field>
+                </fields>
+                <properties mode="any">
+                    <property name="style">width: 15em;</property>
+                    <property name="optionsInMap">true</property>
+                    <property name="templateForListener">/incl/simple_form_update_listener.xhtml</property>
+                    <property name="localize">true</property>
+                </properties>
+            </widget>
+            <widget name="task_name" type="primefaces_select">
+                <labels>
+                    <label mode="any">eloraplm.wf.label.task.name</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>user_open_tasks_cv:task_name</field>
+                    <field>#{userOpenTasksActions.getTasks(value.user_open_tasks_cv.task_processId)}</field>
+                </fields>
+                <properties mode="any">
+                    <property name="style">width: 15em;</property>
+                    <property name="optionsInMap">true</property>
+                    <property name="disabled">#{value.user_open_tasks_cv.task_processId == null}</property>
+                    <property name="localize">true</property>
+                </properties>
+            </widget>
+            <widget name="initiator" type="singleUserSuggestion">
+                <labels>
+                    <label mode="any">eloraplm.wf.label.initiator</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>elotaskscv:initiator</field>
+                </fields>
+                <properties mode="any">
+                    <property name="userSuggestionSearchType">USER_TYPE</property>
+                    <property name="minChars">1</property>
+                    <property name="width">370px</property>
+                </properties>
+            </widget>
+            <widget name="task_dueDate_min" type="datetime">
+                <labels>
+                    <label mode="any">label.widget.task_step.dueDate</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>user_open_tasks_cv:task_dueDate_min</field>
+                </fields>
+            </widget>
+            <widget name="task_dueDate_max" type="datetime">
+                <labels>
+                    <label mode="any">label.search.and</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>user_open_tasks_cv:task_dueDate_max</field>
+                </fields>
+            </widget>
+            <widget name="actors" type="multipleUsersSuggestion">
+                <labels>
+                    <label mode="any">eloraplm.wf.label.actors</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>elotaskscv:actors</field>
+                </fields>
+                <properties mode="any">
+                    <property name="minChars">1</property>
+                    <property name="width">370px</property>
+                </properties>
+            </widget>
+            <properties mode="any">
+                <property name="widgetsDisplay">label_top</property>
+            </properties>
+        </layout>
+
+        <layout name="routing_user_open_task_listing">
+            <templates>
+                <template mode="any">
+                    /layouts/layout_listing_ajax_template.xhtml
+                </template>
+                <template mode="csv">
+                    /layouts/layout_listing_csv_template.xhtml
+                </template>
+                <template mode="pdf">
+                    /layouts/layout_listing_pdf_template.xhtml
+                </template>
+            </templates>
+            <properties mode="any">
+                <property name="showListingHeader">true</property>
+                <property name="showRowEvenOddClass">true</property>
+                <property name="display">table</property>
+            </properties>
+            <columns>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">nt:name</property>
+                    </properties>
+                    <widget>routing_task_workflow_name</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>routing_task_name</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>routing_task_target_document</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">nt:directive</property>
+                    </properties>
+                    <widget>routing_task_directive</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                        <property name="sortPropertyName">nt:dueDate</property>
+                    </properties>
+                    <widget>routing_task_duedate</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>routing_task_initiators</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                    </properties>
+                    <widget>routing_task_actors</widget>
+                </column>
+                <column>
+                    <properties mode="any">
+                        <property name="useFirstWidgetLabelAsColumnHeader">false</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="isHidden">true</property>
+                    </properties>
+                    <widget>routing_task_process_btn</widget>
+                </column>
+            </columns>
+        </layout>
+
     </extension>
 
     <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
-        
+
+        <widget name="listing_task_workflow_name" type="task_workflow_name">
+            <labels>
+                <label mode="any">label.route.task.workflowStep</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.task</field>
+                <field>data.task.name</field>
+            </fields>
+        </widget>
+
         <widget name="task_status" type="template">
             <labels>
                 <label mode="any">label.content.header.task.action</label>
@@ -181,7 +759,7 @@
                 <property name="template">/widgets/listing/task_status_widget_template.xhtml</property>
             </properties>
         </widget>
-        
+
         <widget name="task_comments" type="template">
             <labels>
                 <label mode="any">label.content.header.comments</label>
@@ -194,7 +772,7 @@
                 <property name="template">/widgets/listing/task_comments_widget_template.xhtml</property>
             </properties>
         </widget>
-        
+
         <widget name="task_start_date" type="datetime">
             <labels>
                 <label mode="any">label.workflow.task.startdate</label>
@@ -207,7 +785,7 @@
                 <property name="pattern">#{nxu:basicDateAndTimeFormatter()}</property>
             </properties>
         </widget>
-        
+
         <widget name="task_due_date" type="datetime">
             <labels>
                 <label mode="any">label.workflow.task.duedate</label>
@@ -220,7 +798,39 @@
                 <property name="pattern">#{nxu:basicDateFormatter()}</property>
             </properties>
         </widget>
-        
+
+        <widget name="document_show_workflow_graph" type="documentAction">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="actionId">workflow_show_graph</property>
+                <property name="actionContextDocument">#{layout.properties.currentDocumentForRoute}</property>
+                <property name="overallDisplay">horizontal_block</property>
+                <property name="actionStyleClass">smallButton</property>
+                <property name="useAjaxForm">true</property>
+            </properties>
+            <controls mode="any">
+                <control name="handleLabels">true</control>
+            </controls>
+        </widget>
+
+        <widget name="show_workflow_graph" type="action">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="action">
+                    #{webActions.getActionForDocument("workflow_show_graph",null,false)}</property>
+                <property name="styleClass">floatR</property>
+                <property name="actionStyleClass">smallButton</property>
+                <property name="actionsDisplay">buttons</property>
+                <property name="addForm">true</property>
+                <property name="useAjaxForm">true</property>
+                <property name="ignoreTemplateProperty">true</property>
+            </properties>
+        </widget>
+
         <widget name="closed_route_tasks" type="contentViewWithForms">
             <labels>
                 <label mode="any"></label>
@@ -230,8 +840,9 @@
                 <property name="contentViewName">closed_route_steps</property>
             </properties>
         </widget>
-        
-        <widget name="summary_current_document_single_tasks" type="summary_current_document_single_tasks">
+
+        <widget name="summary_current_document_single_tasks"
+            type="summary_current_document_single_tasks">
             <labels>
                 <label mode="any"></label>
             </labels>
@@ -243,17 +854,20 @@
                 <control name="requireSurroundingForm">false</control>
             </controls>
         </widget>
-        
+
         <widget name="task_has_multiple_actors" type="template">
-            <labels><label mode="any"></label></labels>
+            <labels>
+                <label mode="any"></label>
+            </labels>
             <widgetModes>
-                <mode value="view">#{workflowActions.hasTaskMultipleActors(layoutValue.actors) ? 'view' : 'hidden'}</mode>
+                <mode value="view">#{workflowActions.hasTaskMultipleActors(layoutValue.actors) ?
+                    'view' : 'hidden'}</mode>
             </widgetModes>
             <properties widgetMode="any">
                 <property name="template">/widgets/task_has_multiple_actors.xhtml</property>
             </properties>
         </widget>
-        
+
         <!-- Do not show the widget if it is empty -->
         <widget name="task_delegated_users" type="multiplePrefixedUsersSuggestion">
             <labels>
@@ -267,7 +881,72 @@
                 <mode value="view">#{empty layoutValue.delegatedActors ? 'hidden' : 'view'}</mode>
             </widgetModes>
         </widget>
-        
+
+        <widget name="workflow_info" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="template">/widgets/workflow/workflow_info_widget_template.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="workflow_buttons" type="documentActions">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="category">WORKFLOW_BUTTON</property>
+                <property name="actionContextDocument">#{layout.properties.currentDocumentForRoute}</property>
+                <property name="overallDisplay">horizontal_block</property>
+            </properties>
+            <controls mode="any">
+                <control name="handleLabels">true</control>
+            </controls>
+        </widget>
+
+        <widget name="current_route_abandon" type="current_route_abandon">
+            <fields>
+                <field>#{layoutValue.document.id}</field>
+            </fields>
+            <controls mode="any">
+                <control name="requireSurroundingForm">true</control>
+            </controls>
+        </widget>
+
+        <widget name="routing_task_initiators" type="singleUserSuggestion">
+            <labels>
+                <label mode="any">eloraplm.wf.label.initiator
+                </label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.nt.initiator</field>
+            </fields>
+            <properties mode="any">
+                <property name="localize">true</property>
+            </properties>
+        </widget>
+
+        <widget name="routing_task_process_btn" type="listing_process_task">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data</field>
+                <field>data.nt.targetDocumentId</field>
+            </fields>
+            <widgetModes>
+                <mode value="any">#{currentUser.isAdministrator() or
+                    currentUser.isMemberOf('workflowManagers') ?
+                    'view' : 'hidden'}</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="tab">TAB_ROUTE_WORKFLOW</property>
+            </properties>
+        </widget>
+
     </extension>
-    
+
 </component>

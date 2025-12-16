@@ -16,6 +16,7 @@ package com.aritu.eloraplm.templating.beans;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.seam.annotations.In;
@@ -30,6 +31,8 @@ import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.ui.web.util.ComponentUtils;
 import org.nuxeo.runtime.api.Framework;
+import org.nuxeo.template.api.TemplateInput;
+
 import com.aritu.eloraplm.templating.api.TemplatingService;
 
 /**
@@ -60,11 +63,16 @@ public class TemplatingActionsBean implements Serializable {
     }
 
     public String render(DocumentModel doc, String templateId) {
+        return render(doc, templateId, null);
+    }
+
+    public String render(DocumentModel doc, String templateId,
+            List<TemplateInput> params) {
         try {
 
             TemplatingService ts = Framework.getService(
                     TemplatingService.class);
-            Blob rendition = ts.processTemplate(templateId, doc);
+            Blob rendition = ts.processTemplate(templateId, doc, params);
             String filename = rendition.getFilename();
             ComponentUtils.download(doc, null, rendition, filename,
                     "templateRendition");

@@ -19,10 +19,9 @@ import static org.jboss.seam.annotations.Install.APPLICATION;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
@@ -44,9 +43,11 @@ import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
-import com.aritu.eloraplm.datatable.EditableDocBasedTableBean;
+import com.aritu.eloraplm.datatable.EditableDocBasedTable;
 import com.aritu.eloraplm.datatable.RowData;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.RelationNotAllowedException;
 import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
@@ -54,12 +55,13 @@ import com.aritu.eloraplm.versioning.VersionLabelService;
  * @author aritu
  *
  */
-@Name("itemCustomersTableBean")
+@Name(ItemCustomersTableBean.NAME)
 @Scope(CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class ItemCustomersTableBean extends EditableDocBasedTableBean
-        implements Serializable {
+public class ItemCustomersTableBean extends EditableDocBasedTable {
+
+    public static final String NAME = "itemCustomersTableBean";
 
     private static final long serialVersionUID = 1L;
 
@@ -84,17 +86,22 @@ public class ItemCustomersTableBean extends EditableDocBasedTableBean
             log.trace(logInitMsg + "Creating table...");
             setData(tableService.getData(getCurrentDocument()));
             setIsDirty(false);
+        } catch (DocumentUnreadableException e) {
+            log.error(logInitMsg + e.getMessage());
+            // empty data attribute and set hasUnreadableRows attribute to true
+            setData(new ArrayList<RowData>());
+            setHasUnreadableRows(true);
+            setIsInvalid(false);
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty data attribute and set isInvalid attribute to true
+            setData(new ArrayList<RowData>());
+            setIsInvalid(true);
+            setHasUnreadableRows(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.datatable.createData"));
         }
-    }
-
-    @Override
-    @Factory(value = "itemCustomersData", scope = ScopeType.EVENT)
-    public List<RowData> getDataFromFactory() {
-        return getData();
     }
 
     @Override
@@ -158,8 +165,7 @@ public class ItemCustomersTableBean extends EditableDocBasedTableBean
     }
 
     public String createAndRelateCustomerProduct(String customerId,
-            DataTable table, ItemCustomerRowData row, String rowIndex)
-            throws EloraException {
+            DataTable table, ItemCustomerRowData row) throws EloraException {
         DocumentModel currentDoc = getCurrentDocument();
         if (currentDoc.isProxy()) {
             currentDoc = documentManager.getWorkingCopy(currentDoc.getRef());
@@ -175,8 +181,12 @@ public class ItemCustomersTableBean extends EditableDocBasedTableBean
             custProdDoc = documentManager.saveDocument(custProdDoc);
             addRelations(currentDoc, custProdDoc);
             row.setCustomerProductDoc(custProdDoc);
-            refreshRow(table, rowIndex);
 
+        } catch (RelationNotAllowedException e) {
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("eloraplm.label.error.relation.notAllowed"));
+            throw new EloraException(
+                    "Error creating relation: relation not allowed.", e);
         } catch (RelationAlreadyExistsException e) {
             facesMessages.add(StatusMessage.Severity.WARN,
                     messages.get("label.relation.already.exists"));
@@ -214,7 +224,7 @@ public class ItemCustomersTableBean extends EditableDocBasedTableBean
     }
 
     private void addRelations(DocumentModel currentDoc,
-            DocumentModel custProdDoc) {
+            DocumentModel custProdDoc) throws RelationNotAllowedException {
         // Add inverse relation taking custProdDoc as subject, wc -> wc
         eloraDocumentRelationManager.addRelation(documentManager, custProdDoc,
                 currentDoc, EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT, "",

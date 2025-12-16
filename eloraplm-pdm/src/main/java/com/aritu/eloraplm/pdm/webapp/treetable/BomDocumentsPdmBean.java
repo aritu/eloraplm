@@ -15,7 +15,6 @@ package com.aritu.eloraplm.pdm.webapp.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
@@ -32,8 +31,7 @@ import com.aritu.eloraplm.bom.treetable.BomDocumentsTreeBean;
 @Name("bomDocumentsPdm")
 @Scope(ScopeType.EVENT)
 @Install(precedence = APPLICATION)
-public class BomDocumentsPdmBean extends AbstractRelationPdmBean
-        implements Serializable {
+public class BomDocumentsPdmBean extends AbstractRelationPdm {
     private static final long serialVersionUID = 1L;
 
     @In(create = true)

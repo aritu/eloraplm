@@ -37,6 +37,7 @@ import org.nuxeo.ecm.platform.suggestbox.service.SuggestionService;
 
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraMimeTypeConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 
 /**
@@ -100,6 +101,7 @@ public class EloraSuggestOperation {
             result.add(suggestionJSON);
         }
 
-        return Blobs.createBlob(result.toString(), "application/json");
+        return Blobs.createBlob(result.toString(),
+                EloraMimeTypeConstants.APPLICATION_JSON);
     }
 }

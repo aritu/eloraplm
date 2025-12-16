@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.drive.SQLDirectoryFactory.contrib">
+    
+    <extension point="directories" target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory">
+        
+        <directory name="elora_desktop_binaries">
+            <schema>eloraDesktopBinaries</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_desktop_binaries</table>
+            <idField>id</idField>
+            <autoincrementIdField>true</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_desktop_binaries.csv</dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
+        
+    </extension>
+    
+</component>

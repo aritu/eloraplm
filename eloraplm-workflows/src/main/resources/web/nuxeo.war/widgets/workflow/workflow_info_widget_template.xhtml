@@ -1,0 +1,24 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:f="http://java.sun.com/jsf/core">
+    
+    <h:panelGrid columns="2" columnClasses="labelColumn, fieldColumn">
+        
+        <h:outputLabel value="#{messages['eloraplm.wf.label.created']} " />
+        <h:outputText value="#{value.document.dc.created}">
+            <f:convertDateTime pattern="#{nxu:basicDateAndTimeFormatter()}" />
+        </h:outputText>
+        
+        <h:outputLabel value="#{messages['eloraplm.wf.label.initiator']} " />
+        <nxl:widgetType name="singleUserSuggestion" value="#{value}" field="initiator" mode="view" />
+        
+        <h:outputLabel value="#{messages['eloraplm.wf.label.state']} " />
+        <nxl:widget name="colored_lifecycle_state" value="#{value.document}" mode="view" />
+        
+    </h:panelGrid>
+    
+</ui:composition>

@@ -34,6 +34,12 @@
                 <facet>QmProcess</facet>
             </rule>
         </filter>
+        
+        <filter id="viewQmTab">
+            <rule grant="true">
+                <facet>BomDocument</facet>
+            </rule>
+        </filter>
 
     </extension>
     
@@ -49,7 +55,7 @@
         
         <!-- QM tab -->
         <action id="TAB_QM" link="/incl/tabs/qm.xhtml" order="104" label="eloraplm.label.qm" type="rest_document_link">
-            <filter-id>isBomDocument</filter-id>
+            <filter-id>viewQmTab</filter-id>
             <category>VIEW_ACTION_LIST</category>
         </action>
         

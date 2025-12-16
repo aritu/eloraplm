@@ -216,17 +216,10 @@ public class EloraJsonHelper {
      * @return
      * @throws EloraException
      */
-    public static int getJsonFieldAsInt(JsonNode item, String fieldName,
+    public static Integer getJsonFieldAsInt(JsonNode item, String fieldName,
             boolean isMandatory) throws EloraException {
 
-        // TODO::: A qué inicializamos este valor??? En el caso de que sea un
-        // campo NO MANDATORY (isMandatory=false) y el campo no esté presente,
-        // la función devuelve este valor por defecto.
-        // Alternativas:::
-        // 1.- llamar antes a la función item.has(fieldName)
-        // 2.- pasar un valor por defecto cada vez
-        // 3.- utilizar un valor por defecto especial, tipo: 999999999999
-        int value = -1;
+        Integer value = null;
 
         String errorMsg = null;
 
@@ -234,6 +227,10 @@ public class EloraJsonHelper {
             if (isMandatory) {
                 if (!item.has(fieldName)) {
                     errorMsg = fieldName + " is missing.";
+                    throw new EloraException(errorMsg);
+                }
+                if (item.get(fieldName) == null) {
+                    errorMsg = fieldName + " is null.";
                     throw new EloraException(errorMsg);
                 }
                 if (!item.get(fieldName).isInt()) {
@@ -255,17 +252,10 @@ public class EloraJsonHelper {
         return value;
     }
 
-    public static long getJsonFieldAsLong(JsonNode item, String fieldName,
+    public static Long getJsonFieldAsLong(JsonNode item, String fieldName,
             boolean isMandatory) throws EloraException {
 
-        // TODO::: A qué inicializamos este valor??? En el caso de que sea un
-        // campo NO MANDATORY (isMandatory=false) y el campo no esté presente,
-        // la función devuelve este valor por defecto.
-        // Alternativas:::
-        // 1.- llamar antes a la función item.has(fieldName)
-        // 2.- pasar un valor por defecto cada vez
-        // 3.- utilizar un valor por defecto especial, tipo: 999999999999
-        long value = -1;
+        Long value = null;
 
         String errorMsg = null;
 
@@ -273,6 +263,10 @@ public class EloraJsonHelper {
             if (isMandatory) {
                 if (!item.has(fieldName)) {
                     errorMsg = fieldName + " is missing.";
+                    throw new EloraException(errorMsg);
+                }
+                if (item.get(fieldName) == null) {
+                    errorMsg = fieldName + " is null.";
                     throw new EloraException(errorMsg);
                 }
                 // We do a double check since isLong() method returns false if

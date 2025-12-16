@@ -1,67 +1,69 @@
 <ui:composition template="/pages/workspace_page.xhtml"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:c="http://java.sun.com/jstl/core"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:nxu="http://nuxeo.org/nxweb/util"
-  xmlns:p="http://primefaces.org/ui">
-
-  <ui:define name="page title">
-    <h:outputText value="#{nuxeoApplicationName} - #{messages['title.create.document']}" />
-  </ui:define>
-
-  <ui:define name="body">
-    <div class="mainNoTabs">
-    <h3>
-      <h:outputText value="#{messages['title.create.document']} #{messages[typesTool.selectedType.label]}" />
-    </h3>
-    <ui:include src="/incl/message_banner.xhtml" />
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
     
-    #{eloraDocumentTemplatesActions.setTargetType(changeableDocument.type)}
+    <ui:define name="page title">
+        <h:outputText value="#{nuxeoApplicationName} - #{messages['title.create.document']}" />
+    </ui:define>
     
-    <h:form enctype="multipart/form-data" id="document_create">
-      <h:outputScript target="#{pageJsTarget}">
-        jQuery(document).ready(function() {
-          jQuery('#document_create').focusFirst();
-        });
-      </h:outputScript>     
-
-      <f:subview rendered="#{! empty eloraAvailableTemplates}">
-            <table class="dataInput">
-              <tr>
-                <td class="labelColumn"><h:outputText value="#{messages['label.templates.createFrom']}"/></td>
-                <td>
-                  <h:selectOneMenu id="selectTemplate"
-                    value="#{eloraDocumentTemplatesActions.selectedTemplateId}">
-                    <f:selectItem itemValue="" itemLabel="#{messages['label.templates.none']}"/>
-                   <nxu:selectItems value="#{eloraAvailableTemplates}" var="template"
-                             itemValue="#{template.id}" itemLabel="#{template.dublincore.title}"/>
-                   
-                    <p:ajax process="@this" update="@form"
-                        listener="#{eloraDocumentTemplatesActions.setTemplateProperties()}"
-                        onstart="PF('blockUI_docCreation').show();"
-                        oncomplete="PF('blockUI_docCreation').hide();" />
-
-                  </h:selectOneMenu>
-                </td>
-              </tr>
-            </table>
-
-      </f:subview>
-      
-      <p:blockUI block="@form" trigger="#{selectTemplate}" widgetVar="blockUI_docCreation" />
-      
-      <nxl:documentLayout mode="create" value="#{changeableDocument}" />
-      
-      <div class="buttonsGadget">
-        <input type="hidden" name="parentDocumentPath"
-          value="#{currentDocument.pathAsString}" />
-        <nxl:widget name="documentCreateButtons" mode="view" value="#{changeableDocument}" />
-      </div>
-    </h:form>
-    </div>
-  </ui:define>
-
+    <ui:define name="body">
+        <div class="mainNoTabs">
+            <h3>
+                <h:outputText value="#{messages['title.create.document']} #{messages[typesTool.selectedType.label]}" />
+            </h3>
+            
+            <ui:include src="/incl/message_banner.xhtml" />
+            
+            #{eloraDocumentTemplatesActions.setTargetType(changeableDocument.type)}
+            
+            <h:form enctype="multipart/form-data" id="document_create">
+                <h:outputScript target="#{pageJsTarget}">
+                    jQuery(document).ready(function() {
+                        jQuery('#document_create').focusFirst();
+                    });
+                </h:outputScript>
+                
+                <div id="document_create_inner_form">
+                    
+                    <f:subview rendered="#{! empty eloraAvailableTemplates}">
+                        <table class="dataInput">
+                            <tr>
+                                <td class="labelColumn"><h:outputText value="#{messages['label.templates.createFrom']}"/></td>
+                                <td>
+                                    <h:selectOneMenu id="selectTemplate"
+                                        value="#{eloraDocumentTemplatesActions.selectedTemplateId}">
+                                        <f:selectItem itemValue="" itemLabel="#{messages['label.templates.none']}"/>
+                                        <nxu:selectItems value="#{eloraAvailableTemplates}" var="template"
+                                            itemValue="#{template.id}" itemLabel="#{template.dublincore.title}"/>
+                                        <p:ajax process="@this" update="@form"
+                                            listener="#{eloraDocumentTemplatesActions.setTemplateProperties()}"
+                                            onstart="PF('blockUI_docCreation').show();"
+                                            oncomplete="PF('blockUI_docCreation').hide();" />
+                                    </h:selectOneMenu>
+                                </td>
+                            </tr>
+                        </table>
+                        <hr />
+                    </f:subview>
+                    
+                    <p:blockUI block="@form" trigger="#{selectTemplate}" widgetVar="blockUI_docCreation" />
+                    
+                    <nxl:documentLayout mode="create" value="#{changeableDocument}" />
+                    
+                </div>
+                
+                <div class="buttonsGadget">
+                    <input type="hidden" name="parentDocumentPath" value="#{eloraDocument.getNonProxyDocument(currentDocument).pathAsString}" />
+                    <nxl:widget name="documentCreateButtons" mode="view" value="#{changeableDocument}" />
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+    
 </ui:composition>

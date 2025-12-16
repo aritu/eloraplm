@@ -415,29 +415,27 @@ public abstract class AbstractWorkspaceDataLoader
             String childrenVersions, boolean isRootSpecial)
             throws EloraException, DocumentWithoutArchivedVersionsException {
 
-        // Get the Hierarchical relations
-        List<String> hierarchicalAndSuppressedRelations = new ArrayList<String>();
-        hierarchicalAndSuppressedRelations.addAll(
+        // Get the Hierarchical+Suppressed relations
+        List<String> hierarchAndSupprRelations = new ArrayList<String>();
+        hierarchAndSupprRelations.addAll(
                 RelationsConfig.cadHierarchicalRelationsList);
-        hierarchicalAndSuppressedRelations.addAll(
+        hierarchAndSupprRelations.addAll(
                 RelationsConfig.cadSuppressedRelationsList);
 
-        List<Resource> hierarchicalAndSuppressedPredicates = new ArrayList<Resource>();
-        for (String predicateUri : hierarchicalAndSuppressedRelations) {
+        List<Resource> hierarchAndSupprPredicates = new ArrayList<Resource>();
+        for (String predicateUri : hierarchAndSupprRelations) {
             Resource predicate = new ResourceImpl(predicateUri);
-            hierarchicalAndSuppressedPredicates.add(predicate);
+            hierarchAndSupprPredicates.add(predicate);
         }
 
-        List<Statement> hierarchicalAndSuppressedObjects = new ArrayList<Statement>();
-        hierarchicalAndSuppressedObjects.addAll(
-                EloraRelationHelper.getStatements(doc,
-                        hierarchicalAndSuppressedPredicates));
+        List<Statement> hierarchAndSupprObjects = new ArrayList<Statement>();
+        hierarchAndSupprObjects.addAll(EloraRelationHelper.getStatements(doc,
+                hierarchAndSupprPredicates));
 
-        // Treat Hierarchical objects
-        if (!hierarchicalAndSuppressedObjects.isEmpty()) {
-            processStatements(level, source, doc,
-                    hierarchicalAndSuppressedObjects, false, childrenVersions,
-                    isRootSpecial);
+        // Treat Hierarchical+Suppressed objects
+        if (!hierarchAndSupprObjects.isEmpty()) {
+            processStatements(level, source, doc, hierarchAndSupprObjects,
+                    false, childrenVersions, isRootSpecial);
         }
 
         // Get the Direct+Special relations

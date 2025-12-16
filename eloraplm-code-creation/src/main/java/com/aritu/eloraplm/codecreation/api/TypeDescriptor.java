@@ -21,6 +21,8 @@ public class TypeDescriptor {
 
     public String mode = CodeCreationService.CODE_CREATION_TYPE_MODE_MANUAL;
 
+    public boolean editable = CodeCreationService.CODE_CREATION_TYPE_EDITABLE_FALSE;
+
     @XNode("@mode")
     public void setMode(String mode) {
         if (!mode.isEmpty() && Arrays.asList(
@@ -30,5 +32,10 @@ public class TypeDescriptor {
             throw new IllegalArgumentException(
                     "mode must be manual, manualRequired, auto or autoIfEmpty");
         }
+    }
+
+    @XNode("@editable")
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

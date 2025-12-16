@@ -27,7 +27,8 @@ import com.aritu.eloraplm.exceptions.EloraException;
  * @author aritu
  *
  */
-@JsonPropertyOrder({ "result", "errorMessage", "errorList", "processedDocs" })
+@JsonPropertyOrder({ "result", "errorMessage", "processedDocsSize",
+        "errorListSize", "processedDocs", "errorList" })
 public class MakeItemsObsoleteResponse extends EloraGeneralResponse {
 
     Map<String, String> errorList;
@@ -87,6 +88,10 @@ public class MakeItemsObsoleteResponse extends EloraGeneralResponse {
 
     public void removeProcessedReference(String reference) {
         processedDocs.remove(reference);
+    }
+
+    public int getProcessedDocsSize() {
+        return processedDocs.size();
     }
 
     @Override

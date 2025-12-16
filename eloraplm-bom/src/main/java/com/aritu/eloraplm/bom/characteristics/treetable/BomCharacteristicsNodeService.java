@@ -36,6 +36,7 @@ import com.aritu.eloraplm.bom.characteristics.BomCharacteristic;
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsQueryFactory;
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsQueryResultFactory;
+import com.aritu.eloraplm.bom.util.BomHelper;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
 import com.aritu.eloraplm.constants.BomCharacteristicsMetadataConstants;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
@@ -245,7 +246,7 @@ public class BomCharacteristicsNodeService implements NodeManager {
                             orderInReport, required, includeInTitle,
                             unmodifiable, messageType, message);
 
-                    String classificationLabel = BomCharacteristicsHelper.getBomClassificationLabel(
+                    String classificationLabel = BomHelper.getBomClassificationLabel(
                             bomType, classification);
 
                     Locale locale = EloraMessageHelper.getLocale(

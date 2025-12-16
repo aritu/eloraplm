@@ -56,6 +56,10 @@ public class CodeCreationHelper {
         return ccs.getModeForType(type);
     }
 
+    public static boolean getEditableForType(String type) {
+        return ccs.getEditableForType(type);
+    }
+
     /**
      * Create the code automatically
      *
@@ -251,6 +255,9 @@ public class CodeCreationHelper {
 
         boolean conditionIsSatisfied = false;
 
+        log.trace(logInitMsg + "--- ENTER with conditionId = |" + conditionId
+                + "|");
+
         try {
             String className = (String) codeCondition.getProperty(
                     CodeCreationConfigConstants.PROP_CODE_CONDITIONS_CLASSNAME);
@@ -262,7 +269,8 @@ public class CodeCreationHelper {
             Object[] methodParamsObjectsArray = null;
             Object methodParamsValue = codeCondition.getProperty(
                     CodeCreationConfigConstants.PROP_CODE_CONDITIONS_METHODPARAMS);
-            if (methodParamsValue != null) {
+            if (methodParamsValue != null
+                    && methodParamsValue.toString().length() > 0) {
                 methodParams = methodParamsValue.toString();
                 // convert methodParams to Class array
                 String[] methodParamsArrayStr = methodParams.split(",");
@@ -276,6 +284,11 @@ public class CodeCreationHelper {
                             + 1] = methodParamsArrayStr[i].getClass();
                     methodParamsObjectsArray[i + 1] = methodParamsArrayStr[i];
                 }
+            } else {
+                methodParamsClassesArray = new Class[1];
+                methodParamsObjectsArray = new Object[methodParamsClassesArray.length];
+                methodParamsClassesArray[0] = DocumentModel.class;
+                methodParamsObjectsArray[0] = doc;
             }
 
             String operator = (String) codeCondition.getProperty(
@@ -300,7 +313,6 @@ public class CodeCreationHelper {
                 // operator
                 conditionIsSatisfied = ExpressionEvaluator.evaluateExpression(
                         conditionEvalutionResult, conditionValue, operator);
-
             }
         } catch (Exception e) {
             log.error(logInitMsg
@@ -311,6 +323,8 @@ public class CodeCreationHelper {
                             + e.getMessage());
         }
 
+        log.trace(logInitMsg + "--- EXIT --- conditionId = |" + conditionId
+                + "|, conditionIsSatisfied = |" + conditionIsSatisfied + "|");
         return conditionIsSatisfied;
     }
 

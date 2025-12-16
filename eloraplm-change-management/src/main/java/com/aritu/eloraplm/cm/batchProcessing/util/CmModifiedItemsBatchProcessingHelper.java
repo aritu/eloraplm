@@ -13,6 +13,9 @@
  */
 package com.aritu.eloraplm.cm.batchProcessing.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -34,30 +37,45 @@ public class CmModifiedItemsBatchProcessingHelper {
     private static final Log log = LogFactory.getLog(
             CmModifiedItemsBatchProcessingHelper.class);
 
-    public static int checkAndcountTreeDocumentsForPromote(TreeNode root,
-            CoreSession documentManager) throws EloraException {
-        int totalDocs = 0;
+    public static List<CMItemsNodeData> checkAndAddTreeDocumentsForPromote(
+            TreeNode root, CoreSession documentManager) throws EloraException {
 
-        String logInitMsg = "[checkAndcountTreeDocumentsForPromote] ["
+        List<CMItemsNodeData> nodeDataListToProcess = new ArrayList<CMItemsNodeData>();
+
+        String logInitMsg = "[checkAndAddTreeDocumentsForPromote] ["
                 + documentManager.getPrincipal().getName() + "] ";
 
         for (TreeNode childNode : root.getChildren()) {
-
             CMItemsNodeData childNodeData = (CMItemsNodeData) childNode.getData();
-
-            if (!CmBatchProcessingHelper.isIgnored(childNodeData)
-                    && !CmBatchProcessingHelper.isRemoved(childNodeData)) {
-
-                DocumentModel destItem = childNodeData.getDestinationItem();
-                if (!EloraDocumentHelper.isReleased(destItem)) {
-                    totalDocs++;
+            if (canNodeDataBeAddedToPromote(childNodeData)) {
+                nodeDataListToProcess.add(childNodeData);
+            }
+            for (TreeNode derivedNode : childNode.getChildren()) {
+                CMItemsNodeData derivedNodeData = (CMItemsNodeData) derivedNode.getData();
+                if (canNodeDataBeAddedToPromote(derivedNodeData)) {
+                    nodeDataListToProcess.add(derivedNodeData);
                 }
             }
         }
-        log.trace(logInitMsg + "|" + totalDocs + "| documents for promote.");
+        log.trace(logInitMsg + "|" + nodeDataListToProcess.size()
+                + "| documents for checkout.");
 
-        return totalDocs;
+        return nodeDataListToProcess;
+    }
 
+    private static boolean canNodeDataBeAddedToPromote(CMItemsNodeData nodeData)
+            throws EloraException {
+
+        if (CmBatchProcessingHelper.isManaged(nodeData)
+                && !CmBatchProcessingHelper.isIgnored(nodeData)
+                && !CmBatchProcessingHelper.isRemoved(nodeData)) {
+
+            DocumentModel destItem = nodeData.getDestinationItem();
+            if (!EloraDocumentHelper.isReleased(destItem)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

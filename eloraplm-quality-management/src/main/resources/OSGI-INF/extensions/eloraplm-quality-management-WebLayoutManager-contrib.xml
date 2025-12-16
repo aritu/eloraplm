@@ -77,6 +77,7 @@
             </fields>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomProductClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
             </properties>
@@ -92,6 +93,7 @@
             </fields>
             <properties widgetMode="any">
                 <property name="directoryName">elora_bomPartClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
             </properties>

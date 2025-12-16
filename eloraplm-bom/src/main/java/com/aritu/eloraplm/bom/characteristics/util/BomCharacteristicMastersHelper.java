@@ -427,4 +427,44 @@ public class BomCharacteristicMastersHelper {
         return resultCount;
     }
 
+    public static int countBomCharacteristicMastersWithClassification(
+            CoreSession session) throws EloraException {
+
+        String logInitMsg = "[countBomCharacteristicMastersWithClassification] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        int resultCount = 0;
+
+        IterableQueryResult queryResult = null;
+        try {
+            String query = BomCharacteristicMastersQueryFactory.getCountBomCharacteristicMastersWithClassificationQuery();
+
+            queryResult = session.queryAndFetch(query, NXQL.NXQL);
+
+            if (queryResult.iterator().hasNext()) {
+                Map<String, Serializable> map = queryResult.iterator().next();
+                String resultCountStr = map.get(
+                        "COUNT(" + NXQL.ECM_UUID + ")").toString();
+                resultCount = Integer.valueOf(resultCountStr);
+
+                log.trace(logInitMsg + "DB query resultCount = |" + resultCount
+                        + "|");
+            }
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        } finally {
+            if (queryResult != null) {
+                queryResult.close();
+            }
+        }
+
+        log.trace(logInitMsg + "--- EXIT --- with resultCount = |" + resultCount
+                + "|");
+
+        return resultCount;
+    }
+
 }

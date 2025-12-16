@@ -18,9 +18,6 @@
         <property name="coreSession">#{documentManager}</property>
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="AdvancedSearch">
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="advanced_search" name="fulltext_all" />
-          </predicate>
           <predicate parameter="dc:title" operator="FULLTEXT">
             <field schema="advanced_search" name="title" />
           </predicate>
@@ -54,7 +51,7 @@
       <resultLayouts>
         <layout name="structure_document_listing_table" title="document_listing"
           translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="false" />
         <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
           translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
           showSlideshow="true" showEditRows="true" />
@@ -75,10 +72,7 @@
         <coreQueryPageProvider>
         <property name="coreSession">#{documentManager}</property>
         <whereClause docType="AdvancedSearch">
-            <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-                <field schema="advanced_search" name="fulltext_all" />
-            </predicate>
-            <predicate parameter="dc:title" operator="ILIKE">
+            <predicate parameter="dc:title" operator="FULLTEXT">
                 <field schema="advanced_search" name="title" />
             </predicate>
             <predicate parameter="dc:modified" operator="BETWEEN">
@@ -110,7 +104,7 @@
         <cacheSize>10</cacheSize>
         
         <resultLayouts>
-            <layout iconPath="/icons/document_listing_icon.png" name="structure_document_listing_table" showCSVExport="true" showEditColumns="true" showSpreadsheet="true" title="document_listing" translateTitle="true"/>
+            <layout iconPath="/icons/document_listing_icon.png" name="structure_document_listing_table" showCSVExport="true" showEditColumns="false" showSpreadsheet="true" title="document_listing" translateTitle="true"/>
         </resultLayouts>
         
         <selectionList>CURRENT_SELECTION</selectionList>
@@ -129,9 +123,6 @@
         <property name="coreSession">#{documentManager}</property>
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraAdvancedSearch">
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="elora_advanced_search" name="fulltext_all" />
-          </predicate>
           <predicate parameter="dc:title" operator="FULLTEXT">
             <field schema="elora_advanced_search" name="title" />
           </predicate>
@@ -142,11 +133,14 @@
           <predicate parameter="elo:reference" operator="ILIKE">
             <field schema="elora_advanced_search" name="reference" />
           </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="=">
-            <field schema="elora_advanced_search" name="currentLifeCycleState" />
+          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+            <field schema="elora_advanced_search" name="currentLifeCycleStates" />
           </predicate>
           <predicate parameter="dc:lastContributor" operator="=">
             <field schema="elora_advanced_search" name="lastContributor" />
+          </predicate>
+          <predicate parameter="ecm:primaryType" operator="=">
+            <field schema="elora_advanced_search" name="primaryType" />
           </predicate>
           <fixedPart>
             (ecm:parentId = ? OR ecm:ancestorId = ?) AND ecm:isVersion = 0
@@ -154,8 +148,8 @@
             AND ecm:currentLifeCycleState != 'deleted'
           </fixedPart>
         </whereClause>
-        <parameter>#{currentDocument.id}</parameter>
-        <parameter>#{searchDocument.eloadvsrch.searchInSubfolders ? currentDocument.id : '00000000-0000-0000-0000-000000000000'}</parameter>
+        <parameter>#{eloraDocument.getNonProxyDocument(currentDocument).id}</parameter>
+        <parameter>#{searchDocument.eloadvsrch.searchInSubfolders ? eloraDocument.getNonProxyDocument(currentDocument).id : '00000000-0000-0000-0000-000000000000'}</parameter>
         <sort column="elo:reference" ascending="true" />
         <sort column="dc:title" ascending="true" />
         <pageSize>20</pageSize>
@@ -170,7 +164,76 @@
         <event>documentChanged</event>
         <event>documentChildrenChanged</event>
       </refresh>
-      <cacheKey>#{currentDocument.id}</cacheKey>
+      <cacheKey>#{eloraDocument.getNonProxyDocument(currentDocument).id}</cacheKey>
+      <cacheSize>10</cacheSize>
+
+      <resultLayouts>
+        <layout name="document_listing_table" title="document_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon.png"
+          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+          showSlideshow="true" showEditRows="true" />
+      </resultLayouts>
+
+      <selectionList>CURRENT_SELECTION</selectionList>
+      <actions category="CURRENT_SELECTION_LIST" />
+
+    </contentView>
+    
+    <contentView name="document_content_ordered_date">
+
+      <title>label.contentview.document_content</title>
+      <translateTitle>true</translateTitle>
+      <showTitle>false</showTitle>
+
+      <coreQueryPageProvider>
+        <property name="coreSession">#{documentManager}</property>
+        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+        <whereClause docType="EloraAdvancedSearch">
+          <predicate parameter="dc:title" operator="FULLTEXT">
+            <field schema="elora_advanced_search" name="title" />
+          </predicate>
+          <predicate parameter="dc:modified" operator="BETWEEN">
+            <field schema="elora_advanced_search" name="modified_min" />
+            <field schema="elora_advanced_search" name="modified_max" />
+          </predicate>
+          <predicate parameter="elo:reference" operator="ILIKE">
+            <field schema="elora_advanced_search" name="reference" />
+          </predicate>
+          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+            <field schema="elora_advanced_search" name="currentLifeCycleStates" />
+          </predicate>
+          <predicate parameter="dc:lastContributor" operator="=">
+            <field schema="elora_advanced_search" name="lastContributor" />
+          </predicate>
+          <predicate parameter="ecm:primaryType" operator="=">
+            <field schema="elora_advanced_search" name="primaryType" />
+          </predicate>
+          <fixedPart>
+            (ecm:parentId = ? OR ecm:ancestorId = ?) AND ecm:isVersion = 0
+            AND ecm:mixinType != 'HiddenInNavigation'
+            AND ecm:currentLifeCycleState != 'deleted'
+          </fixedPart>
+        </whereClause>
+        <parameter>#{eloraDocument.getNonProxyDocument(currentDocument).id}</parameter>
+        <parameter>#{searchDocument.eloadvsrch.searchInSubfolders ? eloraDocument.getNonProxyDocument(currentDocument).id : '00000000-0000-0000-0000-000000000000'}</parameter>
+        <sort column="dc:modified" ascending="false" />
+        <!-- <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+        <pageSize>20</pageSize>
+      </coreQueryPageProvider>
+
+      <searchLayout name="elora_document_content_filter" />
+      <showFilterForm>true</showFilterForm>
+
+      <showPageSizeSelector>true</showPageSizeSelector>
+      <useGlobalPageSize>true</useGlobalPageSize>
+      <refresh>
+        <event>documentChanged</event>
+        <event>documentChildrenChanged</event>
+      </refresh>
+      <cacheKey>#{eloraDocument.getNonProxyDocument(currentDocument).id}</cacheKey>
       <cacheSize>10</cacheSize>
 
       <resultLayouts>
@@ -197,9 +260,6 @@
         <coreQueryPageProvider>
         <property name="coreSession">#{documentManager}</property>
         <whereClause docType="EloraAdvancedSearch">
-            <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-                <field schema="elora_advanced_search" name="fulltext_all" />
-            </predicate>
             <predicate parameter="dc:title" operator="ILIKE">
                 <field schema="elora_advanced_search" name="title" />
             </predicate>
@@ -210,11 +270,14 @@
             <predicate parameter="elo:reference" operator="ILIKE">
                 <field schema="elora_advanced_search" name="reference" />
             </predicate>
-            <predicate parameter="ecm:currentLifeCycleState" operator="=">
-                <field schema="elora_advanced_search" name="currentLifeCycleState" />
-            </predicate>
+          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+            <field schema="elora_advanced_search" name="currentLifeCycleStates" />
+          </predicate>
             <predicate parameter="dc:lastContributor" operator="=">
                 <field schema="elora_advanced_search" name="lastContributor" />
+            </predicate>
+            <predicate parameter="ecm:primaryType" operator="=">
+                <field schema="elora_advanced_search" name="primaryType" />
             </predicate>
             <fixedPart>
                 (ecm:parentId = ? OR ecm:ancestorId = ?) AND ecm:isVersion = 0
@@ -222,8 +285,8 @@
                 AND ecm:currentLifeCycleState != 'deleted'
             </fixedPart>
             </whereClause>
-            <parameter>#{currentDocument.id}</parameter>
-            <parameter>#{searchDocument.eloadvsrch.searchInSubfolders ? currentDocument.id : '00000000-0000-0000-0000-000000000000'}</parameter>
+            <parameter>#{eloraDocument.getNonProxyDocument(currentDocument).id}</parameter>
+            <parameter>#{searchDocument.eloadvsrch.searchInSubfolders ? eloraDocument.getNonProxyDocument(currentDocument).id : '00000000-0000-0000-0000-000000000000'}</parameter>
             <sort ascending="true" column="ecm:pos"/>
             <sortable>false</sortable>
             <pageSize>20</pageSize>
@@ -238,7 +301,7 @@
             <event>documentChanged</event>
             <event>documentChildrenChanged</event>
         </refresh>
-        <cacheKey>#{currentDocument.id}</cacheKey>
+        <cacheKey>#{eloraDocument.getNonProxyDocument(currentDocument).id}</cacheKey>
         <cacheSize>10</cacheSize>
         
         <resultLayouts>
@@ -263,9 +326,6 @@
         <property name="coreSession">#{documentManager}</property>
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraAdvancedSearch">
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="elora_advanced_search" name="fulltext_all" />
-          </predicate>
           <predicate parameter="dc:title" operator="FULLTEXT">
             <field schema="elora_advanced_search" name="title" />
           </predicate>
@@ -279,6 +339,9 @@
           <predicate parameter="ecm:currentLifeCycleState" operator="=">
             <field schema="elora_advanced_search" name="currentLifeCycleState" />
           </predicate>
+          <predicate parameter="dc:lastContributor" operator="=">
+            <field schema="elora_advanced_search" name="lastContributor" />
+          </predicate>
           <fixedPart>
             ecm:uuid IN (?)
           </fixedPart>
@@ -290,7 +353,7 @@
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
 
-      <searchLayout name="elora_document_content_filter" />
+      <searchLayout name="elora_document_filter" />
       <showFilterForm>true</showFilterForm>
 
       <showPageSizeSelector>true</showPageSizeSelector>
@@ -318,7 +381,7 @@
         <parameter>#{currentDocument.versionSeriesId}</parameter>
       </pageProvider>
 
-      <searchLayout filterDisplayType="quick" name="basicauditsearch"/>
+      <searchLayout name="event_log_search"/>
       <showFilterForm>true</showFilterForm>
 
       <showPageSizeSelector>true</showPageSizeSelector>

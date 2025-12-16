@@ -56,6 +56,12 @@ public class VocabularyContentFactory {
         case EloraConfigConstants.VOC_RELATION_PROPAGATION:
             contentItem = new RelationPropagationVocabularyContent();
             break;
+        case EloraConfigConstants.VOC_CAD_DERIVED_OUTPUTS_CONFIG:
+            contentItem = new CadDerivedOutputsConfigVocabularyContent();
+            break;
+        case EloraConfigConstants.VOC_MCAD_PLUGIN_CONFIG:
+            contentItem = new McadPluginConfigVocabularyContent();
+            break;
         }
 
         if (contentItem != null) {

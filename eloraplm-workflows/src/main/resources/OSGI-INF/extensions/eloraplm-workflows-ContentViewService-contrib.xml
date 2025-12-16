@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.workflows.ContentViewService.contrib">
-    
+    <require>org.nuxeo.ecm.platform.routing.contentView.contrib</require>
+    <require>org.nuxeo.ecm.platform.routing.dashboard.contentviews</require>
+
     <extension point="contentViews" target="org.nuxeo.ecm.platform.ui.web.ContentViewService">
 
         <contentView name="closed_route_steps">
@@ -10,11 +12,12 @@
             <showTitle>true</showTitle>
             <coreQueryPageProvider>
                 <property name="coreSession">#{documentManager}</property>
-                <parameter>#{currentDocument.id}</parameter>
+                <parameter>#{currentDocument.isProxy() ? currentDocument.sourceId :
+                    currentDocument.id}</parameter>
                 <parameter>#{workflowActions.selectedWorkflow.id}</parameter>
                 <whereClause docType="TaskDoc">
                     <fixedPart>
-                        nt:targetDocumentId = ? AND 
+                        nt:targetDocumentId = ? AND
                         nt:processId = ? AND
                         ecm:currentLifeCycleState = 'ended'
                     </fixedPart>
@@ -29,7 +32,7 @@
             <refresh>
                 <event>documentCreated</event>
                 <event>workflowTaskCompleted</event>
-                <event>tasksCacheReset</event>
+                <event>eloraTasksCacheReset</event>
             </refresh>
             <cacheSize>15</cacheSize>
             <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
@@ -39,7 +42,127 @@
                     showPDFExport="false" />
             </resultLayouts>
         </contentView>
-        
+
+        <contentView name="route_past_steps">
+            <title>label.document.routing.past.steps</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>true</showTitle>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <parameter>#{currentDocument.isProxy() ? currentDocument.sourceId :
+                    currentDocument.id}</parameter>
+                <parameter>#{workflowActions.getRelatedWorkflow().getDocument().getId()}</parameter>
+                <whereClause docType="TaskDoc">
+                    <fixedPart>
+                        nt:targetDocumentId = ? AND
+                        nt:processId = ? AND
+                        ecm:currentLifeCycleState = 'ended'
+                    </fixedPart>
+                </whereClause>
+                <pageSize>10</pageSize>
+            </coreQueryPageProvider>
+            <showFilterForm>false</showFilterForm>
+            <showRefreshCommand>false</showRefreshCommand>
+            <showPageSizeSelector>false</showPageSizeSelector>
+            <useGlobalPageSize>false</useGlobalPageSize>
+            <refresh>
+                <event>documentCreated</event>
+                <event>workflowTaskCompleted</event>
+                <event>eloraTasksCacheReset</event>
+            </refresh>
+            <cacheSize>10</cacheSize>
+            <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
+            <resultLayouts>
+                <layout name="route_content_view_layout" title=""
+                    translateTitle="" iconPath="" showCSVExport="false"
+                    showPDFExport="false" />
+            </resultLayouts>
+        </contentView>
+
+        <contentView name="task_target_documents">
+            <title>label.document.routing.participatingDocuments</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>true</showTitle>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <parameter>#{eloraRoutingTaskActions.getCurrentTaskTargetDocumentsIds()}</parameter>
+                <whereClause docType="Document">
+                    <fixedPart>
+                        ecm:uuid IN (?) AND ecm:isCheckedInVersion = 0 AND
+                        ecm:isProxy = 0
+                    </fixedPart>
+                </whereClause>
+                <pageSize>10</pageSize>
+            </coreQueryPageProvider>
+            <showFilterForm>false</showFilterForm>
+            <showPageSizeSelector>false</showPageSizeSelector>
+            <useGlobalPageSize>false</useGlobalPageSize>
+            <refresh>
+                <event>documentCreated</event>
+                <event>documentChanged</event>
+                <event>workflowTaskCompleted</event>
+            </refresh>
+            <cacheSize>10</cacheSize>
+            <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}</cacheKey>
+            <resultLayouts>
+                <layout name="task_related_documents_listing" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="false" showPDFExport="false"
+                    showSyndicationLinks="false" />
+            </resultLayouts>
+        </contentView>
+
+        <contentView name="user_open_tasks">
+            <showTitle>false</showTitle>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <whereClause docType="user_open_tasks_cv">
+                    <predicate parameter="nt:processId" operator="=">
+                        <field schema="user_open_tasks_cv" name="task_processId" />
+                    </predicate>
+                    <predicate parameter="nt:name" operator="=">
+                        <field schema="user_open_tasks_cv" name="task_name" />
+                    </predicate>
+                    <predicate parameter="nt:initiator" operator="=">
+                        <field schema="elora_user_open_tasks_cv" name="initiator" />
+                    </predicate>
+                    <predicate parameter="nt:dueDate" operator="BETWEEN">
+                        <field schema="user_open_tasks_cv" name="task_dueDate_min" />
+                        <field schema="user_open_tasks_cv" name="task_dueDate_max" />
+                    </predicate>
+                    <predicate parameter="nt:actors" operator="IN">
+                        <field schema="elora_user_open_tasks_cv" name="actors" />
+                    </predicate>
+                    <fixedPart>
+                        ecm:mixinType IN ('RoutingTask') AND
+                        ecm:isCheckedInVersion = 0 AND
+                        ecm:currentLifeCycleState =
+                        'opened' AND ecm:isProxy = 0
+                    </fixedPart>
+                </whereClause>
+                <pageSize>10</pageSize>
+            </coreQueryPageProvider>
+            <showFilterForm>true</showFilterForm>
+            <showPageSizeSelector>false</showPageSizeSelector>
+            <useGlobalPageSize>false</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentCreated</event>
+                <event>workflowTaskCompleted</event>
+                <event>workflowNewProcessStarted</event>
+            </refresh>
+            <cacheSize>10</cacheSize>
+            <cacheKey>#{org.jboss.seam.core.manager.currentConversationId}
+            </cacheKey>
+            <searchLayout name="routing_user_open_task_search_layout"
+                filterUnfolded="true" />
+            <resultLayouts>
+                <layout name="routing_user_open_task_listing" title=""
+                    translateTitle="" iconPath="" showCSVExport="true"
+                    showPDFExport="false" />
+            </resultLayouts>
+        </contentView>
+
     </extension>
-    
+
 </component>

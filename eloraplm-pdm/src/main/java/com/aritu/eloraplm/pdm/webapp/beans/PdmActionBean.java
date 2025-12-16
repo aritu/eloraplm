@@ -15,7 +15,6 @@
 package com.aritu.eloraplm.pdm.webapp.beans;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -40,10 +39,10 @@ import org.nuxeo.ecm.webapp.helpers.EventManager;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
-import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
-import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
+import com.aritu.eloraplm.core.pdm.checkout.api.CheckoutService;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
@@ -54,7 +53,7 @@ import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
 import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
-import com.aritu.eloraplm.pdm.util.RelationSwitchHelper;
+import com.aritu.eloraplm.pdm.util.PdmHelper;
 import com.aritu.eloraplm.versioning.VersionLabelService;
 
 @Name("pdmAction")
@@ -86,8 +85,8 @@ public class PdmActionBean implements Serializable {
     @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
 
-    protected VersionLabelService versionLabelService = Framework
-            .getService(VersionLabelService.class);
+    protected VersionLabelService versionLabelService = Framework.getService(
+            VersionLabelService.class);
 
     private String checkinComment;
 
@@ -103,27 +102,29 @@ public class PdmActionBean implements Serializable {
         String logInitMsg = "[checkIn] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
-        CheckinManager checkinManager = Framework
-                .getService(CheckinManager.class);
+        CheckinManager checkinManager = Framework.getService(
+                CheckinManager.class);
         try {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
 
             if (doc.isImmutable()) {
-                facesMessages.add(StatusMessage.Severity.ERROR, messages
-                        .get("eloraplm.message.error.pdm.checkinNotAllowed"));
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.pdm.checkinNotAllowed"));
                 throw new EloraException("Cannot checkin a version");
             }
             try {
                 doc = checkinManager.checkinDocument(doc, checkinComment, true);
             } catch (CheckinNotAllowedException e) {
+                DocumentModel errorDoc = e.getErrorDocument();
                 facesMessages.add(StatusMessage.Severity.ERROR,
                         messages.get(
                                 "eloraplm.message.error.pdm.checkinNotAllowed"),
-                        e.getErrorDocument()
-                                .getPropertyValue(
-                                        EloraMetadataConstants.ELORA_ELO_REFERENCE),
-                        e.getErrorDocument().getTitle());
+                        (errorDoc.hasSchema(EloraSchemaConstants.ELORA_OBJECT)
+                                ? errorDoc.getPropertyValue(
+                                        EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                                : ""),
+                        errorDoc.getTitle());
                 throw new EloraException(e.getMessage());
             } catch (DocumentNotCheckedOutException e) {
                 facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -131,20 +132,22 @@ public class PdmActionBean implements Serializable {
                 throw new EloraException(e.getMessage());
 
             } catch (BomCharacteristicsValidatorException e) {
+                DocumentModel errorDoc = e.getDocument();
                 facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                         "eloraplm.message.error.pdm.characteristicsRequired"),
-                        e.getDocument()
-                                .getPropertyValue(
-                                        EloraMetadataConstants.ELORA_ELO_REFERENCE),
-                        e.getDocument().getTitle());
+                        (errorDoc.hasSchema(EloraSchemaConstants.ELORA_OBJECT)
+                                ? errorDoc.getPropertyValue(
+                                        EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                                : ""),
+                        errorDoc.getTitle());
                 throw new EloraException(e.getMessage());
             }
 
-            invalidateAndResetTabList();
+            PdmHelper.invalidateAndResetTabList(webActions, navigationContext);
 
             // Seam Event
-            Events.instance()
-                    .raiseEvent(PdmEventNames.PDM_CHECKED_IN_EVENT, doc);
+            Events.instance().raiseEvent(PdmEventNames.PDM_CHECKED_IN_EVENT,
+                    doc);
 
             facesMessages.add(StatusMessage.Severity.INFO,
                     messages.get("eloraplm.message.success.checkin"));
@@ -186,8 +189,8 @@ public class PdmActionBean implements Serializable {
             }
 
             VersionModel version = new VersionModelImpl();
-            DocumentModel latestVersion = EloraDocumentHelper
-                    .getLatestVersion(doc);
+            DocumentModel latestVersion = EloraDocumentHelper.getLatestVersion(
+                    doc);
             if (latestVersion == null) {
                 throw new EloraException("Document |" + doc.getId()
                         + "| has no latest version or it is unreadable.");
@@ -211,11 +214,12 @@ public class PdmActionBean implements Serializable {
                 doc.removeLock();
             }
 
-            invalidateAndResetTabList(currentTabAction, currentSubTabAction);
+            PdmHelper.invalidateAndResetTabList(webActions, navigationContext,
+                    currentTabAction, currentSubTabAction);
 
             // Seam event
-            Events.instance()
-                    .raiseEvent(PdmEventNames.PDM_CHECKOUT_UNDONE_EVENT, doc);
+            Events.instance().raiseEvent(
+                    PdmEventNames.PDM_CHECKOUT_UNDONE_EVENT, doc);
 
             // Nuxeo Event
             String comment = doc.getVersionLabel();
@@ -248,51 +252,52 @@ public class PdmActionBean implements Serializable {
     }
 
     public void checkOut(DocumentModel doc) {
-        checkOut(doc, true);
-    }
-
-    public void checkOut(DocumentModel doc, boolean handleCharacteristics) {
         String logInitMsg = "[checkOut] ["
                 + documentManager.getPrincipal().getName() + "] ";
-        log.trace(logInitMsg + "--- ENTER --- with handleCharacteristics = |"
-                + handleCharacteristics + "|");
+        log.trace(logInitMsg + "--- ENTER ---");
+
+        checkOut(doc, null);
+    }
+
+    public void checkOutFromVersion(DocumentModel doc,
+            VersionModel versionFrom) {
+        String logInitMsg = "[checkOutFromVersion] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER ---");
+
+        checkOut(doc, versionFrom);
+    }
+
+    private void checkOut(DocumentModel doc, VersionModel versionFrom) {
+        String logInitMsg = "[checkOut] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER ---");
 
         try {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
 
             if (doc.isImmutable()) {
-                facesMessages.add(StatusMessage.Severity.ERROR, messages
-                        .get("eloraplm.message.error.pdm.checkoutNotAllowed"));
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.pdm.checkoutNotAllowed"));
             }
+            // TODO Honek ez dauka zentzu askorik. Immutable proxyekin nola
+            // dabilen aztertu beharko litzateke, baina WC bada, aurreko lerroan
+            // CHECKOUT NOT ALLOWED errore mezua erakutsiko du, baina aurrera
+            // egingo du?? Seguruenik action-en filtroei esker ez da inoiz
+            // iristen kasu horretara, baina konpondu egin behar da, eta
+            // behintzat CheckoutService-era errore hori ez pasa.
             DocumentModel wcDoc = getWcDoc(doc);
 
-            wcDoc = EloraDocumentHelper.lockDocument(wcDoc);
-            wcDoc = EloraDocumentHelper.checkOutDocument(wcDoc);
+            CheckoutService cos = Framework.getService(CheckoutService.class);
 
-            switchRelatedChildren(wcDoc);
+            wcDoc = cos.checkOutFromVersion(wcDoc, versionFrom);
 
-            // if handleCharacteristics is true and the document may have
-            // characteristics
-            if (handleCharacteristics && EloraDocumentHelper.checkFilter(wcDoc,
-                    BomCharacteristicsConstants.IS_DOC_WITH_CHARAC_FILTER_ID)) {
-                BomCharacteristicsHelper.loadCharacteristicMasters(wcDoc);
-            }
-
-            // We set the document dirty to update lastContributor and modified
-            wcDoc = EloraDocumentHelper.setDocumentDirty(wcDoc);
-            wcDoc = documentManager.saveDocument(wcDoc);
-
-            invalidateAndResetTabList();
+            PdmHelper.invalidateAndResetTabList(webActions, navigationContext);
 
             // Seam event
-            Events.instance()
-                    .raiseEvent(PdmEventNames.PDM_CHECKED_OUT_EVENT, doc);
-
-            // Nuxeo Event
-            String comment = wcDoc.getVersionLabel();
-            EloraEventHelper.fireEvent(PdmEventNames.PDM_CHECKED_OUT_EVENT,
-                    wcDoc, comment);
+            Events.instance().raiseEvent(PdmEventNames.PDM_CHECKED_OUT_EVENT,
+                    doc);
 
             facesMessages.add(StatusMessage.Severity.INFO,
                     messages.get("eloraplm.message.success.checkout"));
@@ -328,37 +333,6 @@ public class PdmActionBean implements Serializable {
             doc = documentManager.getWorkingCopy(doc.getRef());
         }
         return doc;
-    }
-
-    public void switchRelatedChildren(DocumentModel subjectWcDoc)
-            throws EloraException {
-
-        if (!subjectWcDoc.isCheckedOut()) {
-            throw new EloraException("Document is not checked out.");
-        }
-
-        RelationSwitchHelper.switchRelations(documentManager,
-                eloraDocumentRelationManager, subjectWcDoc);
-    }
-
-    private void invalidateAndResetTabList() {
-        Action currentTabAction = webActions.getCurrentTabAction();
-        Action currentSubTabAction = webActions.getCurrentSubTabAction();
-        invalidateAndResetTabList(currentTabAction, currentSubTabAction);
-    }
-
-    private void invalidateAndResetTabList(Action currentTabAction,
-            Action currentSubTabAction) {
-        navigationContext.invalidateCurrentDocument();
-        webActions.resetTabList();
-        List<Action> tabActionsList = webActions.getTabsList();
-        if (tabActionsList.contains(currentTabAction)) {
-            webActions.setCurrentTabAction(currentTabAction);
-            List<Action> subTabActionsList = webActions.getSubTabsList();
-            if (subTabActionsList.contains(currentSubTabAction)) {
-                webActions.setCurrentSubTabAction(currentSubTabAction);
-            }
-        }
     }
 
 }

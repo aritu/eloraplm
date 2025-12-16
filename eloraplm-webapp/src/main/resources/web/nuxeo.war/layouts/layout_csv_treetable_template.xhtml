@@ -1,0 +1,91 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxe="http://nuxeo.org/nxweb/seam/excel"
+    xmlns:e="http://jboss.org/schema/seam/excel"
+    id="#{layout.id}_csv"
+>
+    <nxu:set
+        var="docRefOrTitle"
+        value="#{not empty currentDocument ?
+            (
+                currentDocument.hasSchema('elora_object') and not empty currentDocument.elo.reference ?
+                    currentDocument.elo.reference : currentDocument.title
+            ) : ''}"
+    >
+        <nxu:set
+            var="datetimeSuffix"
+            value="#{eloraWebActions.formatDateWithPattern(currentDate, 'yyyy-MM-dd HH-mm')}"
+        >
+            <nxu:set
+                var="defaultFilename"
+                value="#{docRefOrTitle} #{widget.name} #{datetimeSuffix}"
+            >
+                <e:workbook
+                    type="#{exportFormat}"
+                    filename="#{not empty widget.properties.exportFilename ? eloraWebActions.evaluateString(widget.properties.exportFilename) : defaultFilename }.#{exportFormat eq 'jxl' ? 'xls' : 'csv'}"
+                >
+                    <e:worksheet
+                        value="#{value.getTreeAsList()}"
+                        var="nodeData"
+                        defaultColumnWidth="20"
+                    >
+                        <nxe:column>
+                            <f:facet name="header">
+                                <nxe:cell>
+                                    <h:outputText
+                                        value="#{messages['eloraplm.label.treetable.level']}"
+                                    />
+                                </nxe:cell>
+                            </f:facet>
+                            <nxe:cell
+                                ><h:outputText value="#{nodeData.level}"
+                            /></nxe:cell>
+                        </nxe:column>
+                        <nxl:layoutColumn>
+                            <c:if
+                                test="#{not eloraWebActions.evaluateBoolean(layoutColumn.properties.hidden) and (empty layoutColumn.properties.visible or eloraWebActions.evaluateBoolean(layoutColumn.properties.visible))}"
+                            >
+                                <nxe:column>
+                                    <f:facet name="header">
+                                        <nxe:cell>
+                                            <c:if
+                                                test="#{empty layoutColumn.properties.columnIcon}"
+                                            >
+                                                <h:outputText
+                                                    value="#{messages[eloraWebActions.evaluateString(layoutColumn.properties.columnHeading)]}"
+                                                />
+                                            </c:if>
+                                            <c:if
+                                                test="#{not empty layoutColumn.properties.columnIcon}"
+                                            >
+                                                <h:outputText
+                                                    value="#{messages[eloraWebActions.evaluateString(layoutColumn.properties.columnTooltip)]}"
+                                                />
+                                            </c:if>
+                                        </nxe:cell>
+                                    </f:facet>
+                                    <nxe:cell>
+                                        <nxl:layoutColumnWidget>
+                                            <nxl:widget
+                                                widget="#{widget}"
+                                                mode="#{layout.mode}"
+                                                value="#{nodeData}"
+                                            />
+                                        </nxl:layoutColumnWidget>
+                                    </nxe:cell>
+                                </nxe:column>
+                            </c:if>
+                        </nxl:layoutColumn>
+                    </e:worksheet>
+                </e:workbook>
+            </nxu:set>
+        </nxu:set>
+    </nxu:set>
+</ui:composition>

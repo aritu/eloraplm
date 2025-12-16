@@ -14,10 +14,6 @@
 
 package com.aritu.eloraplm.csvimporter;
 
-/**
- * @author <a href="mailto:troger@nuxeo.com">Thomas Roger</a>
- * @since 5.7
- */
 public class EloraCSVImportStatus {
 
     private final State state;

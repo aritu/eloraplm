@@ -14,17 +14,6 @@
       <dataFile>directories/elora_autocopy_parent_types.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
-  
-    <directory name="elora_default_config">
-      <schema>eloraDefaultConfig</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_default_config</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_default_config.csv</dataFile>
-      <createTablePolicy>on_missing_columns</createTablePolicy>
-    </directory>
     
     <directory name="elora_general_config">
       <schema>vocabulary</schema>
@@ -102,6 +91,39 @@
       <dataFile>directories/elora_checkout_config.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
+    
+    <directory name="elora_cad_derived_output_type">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_derived_output_type</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_derived_output_type.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_cad_derived_outputs_config">
+      <schema>eloraCadDerivedOutputsConfig</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cad_derived_outputs_config</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cad_derived_outputs_config.csv</dataFile>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_document_metadata_mapping">
+        <schema>eloraDocumentMetadataMapping</schema>
+        <dataSource>java:/nxsqldirectory</dataSource>
+        <table>elora_document_metadata_mapping</table>
+        <idField>id</idField>
+        <autoincrementIdField>false</autoincrementIdField>
+        <readOnly>false</readOnly>
+        <dataFile>directories/elora_document_metadata_mapping.csv</dataFile>
+        <createTablePolicy>on_missing_columns</createTablePolicy>
+     </directory>
     
   </extension>
 

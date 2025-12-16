@@ -2,31 +2,31 @@ package com.aritu.eloraplm.bom.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
-
-import org.jboss.seam.annotations.Factory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.international.StatusMessage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextInvalidation;
 import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.TreeNode;
 
+import com.aritu.eloraplm.bom.util.BomWhereUsedExcelExporter;
 import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
-import com.aritu.eloraplm.treetable.CoreTreeBean;
+import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.treetable.CoreTree;
 
-@Name("bomWhereUsedEbomTreeBean")
+@Name(BomWhereUsedEbomTreeBean.NAME)
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class BomWhereUsedEbomTreeBean extends CoreTreeBean
-        implements Serializable {
+public class BomWhereUsedEbomTreeBean extends CoreTree {
+
+    public static final String NAME = "bomWhereUsedEbomTreeBean";
+
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(
@@ -37,6 +37,8 @@ public class BomWhereUsedEbomTreeBean extends CoreTreeBean
     private boolean showObsoleteStateDocuments;
 
     private boolean showDirectDocuments;
+
+    protected boolean isBomWhereUsedExportEnabled;
 
     public boolean getShowUniqueVersionsPerDocument() {
         return showUniqueVersionsPerDocument;
@@ -68,6 +70,10 @@ public class BomWhereUsedEbomTreeBean extends CoreTreeBean
 
     public void setShowDirectDocuments(boolean showDirectDocuments) {
         this.showDirectDocuments = showDirectDocuments;
+    }
+
+    public boolean getIsBomWhereUsedExportEnabled() {
+        return isBomWhereUsedExportEnabled;
     }
 
     @Override
@@ -110,20 +116,36 @@ public class BomWhereUsedEbomTreeBean extends CoreTreeBean
                 + documentManager.getPrincipal().getName() + "] ";
         doc = super.onContextChange(doc);
 
-        if (!(doc.isCheckedOut() == getCurrentDocument().isCheckedOut())) {
-            setCurrentDocument(doc);
-            resetBeanCache(doc);
-            log.trace(logInitMsg
-                    + "Document invalidated: current and new have different checked out status.");
+        if (doc != null) {
+            if (!(doc.isCheckedOut() == getCurrentDocument().isCheckedOut())) {
+                setCurrentDocument(doc);
+                resetBeanCache(doc);
+                log.trace(logInitMsg
+                        + "Document invalidated: current and new have different checked out status.");
+            }
         }
 
         return doc;
     }
 
-    @Override
-    @Factory(value = "bomWhereUsedEbomRoot", scope = ScopeType.EVENT)
-    public TreeNode getRootFromFactory() {
-        return getRoot();
-    }
+    public void exportBomWhereUsed() {
 
+        String logInitMsg = "[exportWhereUsed] ["
+                + documentManager.getPrincipal().getName() + "] ";
+
+        try {
+
+            DocumentModel currentDoc = getCurrentDocument();
+
+            BomWhereUsedExcelExporter excelExporter = new BomWhereUsedExcelExporter(
+                    getRoot(), messages);
+
+            excelExporter.export(currentDoc, true);
+
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.treetable.exportBomWhereUsed"));
+        }
+    }
 }

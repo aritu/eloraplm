@@ -19,6 +19,7 @@ import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.web.NodeInfo;
 import org.nuxeo.ecm.platform.relations.web.StatementInfoImpl;
 
+import com.aritu.eloraplm.constants.CommonRelationConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 
 /**
@@ -136,6 +137,43 @@ public class EloraStatementInfoImpl extends StatementInfoImpl
             isManual = ((Literal) node).getValue();
             if (isManual != null) {
                 return Boolean.parseBoolean(isManual);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getDesignators() {
+        String designators = null;
+        Node node = statement.getProperty(EloraRelationConstants.DESIGNATORS);
+        if (node != null && node.isLiteral()) {
+            designators = ((Literal) node).getValue();
+        }
+        return designators;
+    }
+
+    @Override
+    public Boolean getIsTemplate() {
+        String isTemplate = null;
+        Node node = statement.getProperty(EloraRelationConstants.IS_TEMPLATE);
+        if (node != null && node.isLiteral()) {
+            isTemplate = ((Literal) node).getValue();
+            if (isTemplate != null) {
+                return Boolean.parseBoolean(isTemplate);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean getIsExcludedFromMapping() {
+        String isExcludedFromMapping = null;
+        Node node = statement.getProperty(
+                CommonRelationConstants.RES_COMMREL_IS_EXCLUDED_FROM_MAPPING);
+        if (node != null && node.isLiteral()) {
+            isExcludedFromMapping = ((Literal) node).getValue();
+            if (isExcludedFromMapping != null) {
+                return Boolean.parseBoolean(isExcludedFromMapping);
             }
         }
         return null;

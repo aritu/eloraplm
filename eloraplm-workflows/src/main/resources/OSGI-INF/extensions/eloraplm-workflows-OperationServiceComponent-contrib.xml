@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <component name="com.aritu.eloraplm.workflows.OperationServiceComponent.contrib">
+    <require>org.nuxeo.ecm.platform.routing.operations</require>
     
     <extension point="contextHelpers" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
         <contextHelper id="Wf" class="com.aritu.eloraplm.workflows.automation.WorkflowFunctions"/>
@@ -21,6 +22,28 @@
             <operation id="Workflow.ResumeNode"/>
         </chain>
         
+        <chain id="Elora.Workflow.CompleteTask">
+            <!-- The task is resumed as the assigned user, so does not throw an exception, opposed to ForceResume -->
+            <operation id="Auth.LoginAs">
+                <param type="string" name="name">expr:nodeLastActor</param>
+            </operation>
+            <operation id="Workflow.ResumeNode"/>
+            <operation id="Auth.Logout" />
+        </chain>
+        
+        <chain id="Elora.Workflow.CompleteTaskAndForceReport">
+            <!-- When the last task is completed automatically, Workflow Report creation event is not fired. This chain is a workaround for that case -->
+            <operation id="Auth.LoginAs">
+                <param type="string" name="name">expr:nodeLastActor</param>
+            </operation>
+            <operation id="Workflow.ResumeNode"/>
+            <operation id="Elora.Plm.FireEvent">
+                <param name="name" type="string">WorkflowReportCreationForced</param>
+                <param name="contextProperties" type="properties">expr:workflowInstanceId=@{Context['workflowInstanceId']}</param>
+            </operation>
+            <operation id="Auth.Logout" />
+        </chain>
+        
         <chain id="Elora.Workflow.SaveInitiatorComment">
             <operation id="Context.SetWorkflowVar">
                 <param type="string" name="name">initiatorComment</param>
@@ -33,7 +56,7 @@
             - fetch document
             - get base version of the document
             - check if the document is already approved or not
-            - if it is not already approve, launch approve execution
+            - if it is not already approved, launch approve execution
             - do a refresh
          -->
         <chain id="Elora.Plm.ApproveDocument">
@@ -58,7 +81,7 @@
          -->
         <chain id="Elora.Plm.ApproveDocumentExecution">
             <operation id="Context.FetchDocument"/>
-             <operation id="Context.RunOperation">
+            <operation id="Context.RunOperation">
                 <param name="id" type="string">expr:@{!This[0].isImmutable() ? 'Elora.Plm.GetBaseVersion' : 'voidChain' }</param>
             </operation>
             <operation id="Document.FollowLifecycleTransition">
@@ -144,6 +167,8 @@
     </extension>
     
     <extension point="operations" target="org.nuxeo.ecm.core.operation.OperationServiceComponent" >
+        
+        <operation class="com.aritu.eloraplm.workflows.restoperations.EloraGetGraphOperation" replace="true" />
         
         <operation class="com.aritu.eloraplm.workflows.restoperations.GetLatestDocumentRoute" replace="true" />
         <operation class="com.aritu.eloraplm.workflows.restoperations.GetRouteNodes" replace="true" />

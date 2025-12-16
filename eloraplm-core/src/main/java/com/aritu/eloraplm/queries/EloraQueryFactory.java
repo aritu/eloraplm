@@ -28,7 +28,6 @@ import org.nuxeo.ecm.core.api.LifeCycleConstants;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.core.schema.FacetNames;
 
-import com.aritu.eloraplm.constants.BomCharacteristicsMetadataConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
@@ -49,24 +48,25 @@ import com.aritu.eloraplm.queries.util.EloraQueryHelper;
  */
 public class EloraQueryFactory {
 
-    public static String getEloraStructDocuments() {
+    public static String getDocumentsByUids(List<String> uids) {
+        String quotedUids = EloraQueryHelper.formatList(uids);
         String query = String.format(
-                "SELECT * FROM Document WHERE " + NXQL.ECM_MIXINTYPE
-                        + " = '%s' AND " + NXQL.ECM_MIXINTYPE + " != '%s' AND "
-                        + NXQL.ECM_LIFECYCLESTATE + " != '%s' ORDER BY "
-                        + NuxeoMetadataConstants.NX_DC_TITLE,
-                EloraFacetConstants.FACET_ELORA_STRUCT,
-                NuxeoFacetConstants.FACET_HIDDEN_IN_NAVIGATION,
-                EloraLifeCycleConstants.NX_DELETED);
+                "SELECT * FROM Document WHERE " + NXQL.ECM_UUID + " IN (%s)",
+                quotedUids);
         return query;
     }
 
-    public static String getWcDocsByReference(String reference) {
-        String query = String.format(
-                "SELECT * FROM Document WHERE " + NXQL.ECM_ISPROXY + " = 0 AND "
-                        + EloraMetadataConstants.ELORA_ELO_REFERENCE
-                        + " = '%s' AND " + NXQL.ECM_ISVERSION + " = 0 ",
-                EloraQueryHelper.escapeSpecialChars(reference));
+    // TODO IBAI orderingPriorityren arabera ordenatu? Badaukate? EZ. Edo
+    // EloraStruct facetean gehitu eskema bat horrelako metadatuak gehitzeko?
+    public static String getEloraStructDocuments() {
+        String query = String.format("SELECT * FROM Folder WHERE "
+                + NXQL.ECM_ISPROXY + " = 0 AND " + NXQL.ECM_MIXINTYPE
+                + " = '%s' AND " + NXQL.ECM_MIXINTYPE + " != '%s' AND "
+                + NXQL.ECM_LIFECYCLESTATE + " != '%s' AND " + NXQL.ECM_ISVERSION
+                + " = 0 ORDER BY " + NuxeoMetadataConstants.NX_DC_TITLE,
+                EloraFacetConstants.FACET_ELORA_STRUCT,
+                NuxeoFacetConstants.FACET_HIDDEN_IN_NAVIGATION,
+                EloraLifeCycleConstants.NX_DELETED);
         return query;
     }
 
@@ -147,6 +147,45 @@ public class EloraQueryFactory {
                         + " = '%s' " + " AND " + NXQL.ECM_ISVERSION
                         + " = 0 AND " + NXQL.ECM_ISPROXY + " = 0 ",
                 type, type, EloraQueryHelper.escapeSpecialChars(reference));
+
+        return query;
+    }
+
+    public static String getWcDocsByFacetAndReferenceQuery(String facet,
+            String reference) {
+
+        String query = String.format("SELECT * FROM Document WHERE "
+                + NXQL.ECM_LIFECYCLESTATE + " <> '"
+                + LifeCycleConstants.DELETED_STATE + "'" + " AND "
+                + NXQL.ECM_MIXINTYPE + " = '%s' AND "
+                + EloraMetadataConstants.ELORA_ELO_REFERENCE + " = '%s' AND "
+                + NXQL.ECM_ISVERSION + " = 0 AND " + NXQL.ECM_ISPROXY + " = 0 ",
+                facet, reference);
+
+        return query;
+    }
+
+    /**
+     * Search by type list
+     *
+     * @param types
+     * @param reference
+     * @return
+     */
+    public static String getWcDocsByTypeListAndReferenceQuery(
+            List<String> types, String reference) {
+
+        String unquotedTypes = EloraQueryHelper.formatUnquotedList(types);
+        String quotedTypes = EloraQueryHelper.formatList(types);
+
+        String query = String.format(
+                "SELECT * FROM %s WHERE " + NXQL.ECM_PRIMARYTYPE
+                        + " IN (%s) AND "
+                        + EloraMetadataConstants.ELORA_ELO_REFERENCE
+                        + " = '%s' " + " AND " + NXQL.ECM_ISVERSION
+                        + " = 0 AND " + NXQL.ECM_ISPROXY + " = 0 ",
+                unquotedTypes, quotedTypes,
+                EloraQueryHelper.escapeSpecialChars(reference));
 
         return query;
     }
@@ -379,6 +418,27 @@ public class EloraQueryFactory {
         return query;
     }
 
+    public static long countApprovedVersionsOfDocumentQuery(CoreSession session,
+            String versionVersionableId, String primaryType) {
+        String query = getCountApprovedVersionsOfDocumentQuery(
+                versionVersionableId, primaryType);
+
+        return EloraQueryHelper.executeCountQuery(query, NXQL.ECM_UUID,
+                session);
+    }
+
+    public static String getCountApprovedVersionsOfDocumentQuery(
+            String versionVersionableId, String primaryType) {
+        String query = String.format("SELECT COUNT(" + NXQL.ECM_UUID
+                + ") FROM %s WHERE " + NXQL.ECM_PRIMARYTYPE + " = '%s' AND "
+                + NXQL.ECM_LIFECYCLESTATE + " = '%s' AND "
+                + NXQL.ECM_VERSION_VERSIONABLEID + " = '%s' AND "
+                + NXQL.ECM_ISPROXY + " = 0 AND " + NXQL.ECM_ISVERSION + " = 1",
+                primaryType, primaryType, EloraLifeCycleConstants.APPROVED,
+                versionVersionableId);
+        return query;
+    }
+
     public static String getPreviousVersionsQuery(String type, String wcId,
             long major, long minor) {
 
@@ -400,8 +460,10 @@ public class EloraQueryFactory {
     public static String getTemplateByNameQuery(String templateName) {
         String query = String.format(
                 "SELECT * FROM TemplateSource WHERE "
-                        + NuxeoMetadataConstants.NX_DC_TITLE + " = '%s'",
-                templateName);
+                        + NuxeoMetadataConstants.NX_DC_TITLE + " = '%s'"
+                        + " AND " + NXQL.ECM_ISVERSION + " = 0 AND "
+                        + NXQL.ECM_LIFECYCLESTATE + " <> '%s'",
+                templateName, EloraLifeCycleConstants.NX_DELETED);
         return query;
     }
 
@@ -581,8 +643,8 @@ public class EloraQueryFactory {
      * Returns the list of proxies of the specified document under the specified
      * ancestor.
      *
-     * @param type document type
-     * @param uid document id
+     * @param type       document type
+     * @param uid        document id
      * @param ancestorId ancestor document id
      * @return
      */
@@ -600,7 +662,7 @@ public class EloraQueryFactory {
      * Returns the list of parents of the specified document's proxies.
      *
      * @param type document type
-     * @param uid document id
+     * @param uid  document id
      * @return
      */
     public static String getDocProxyParentsQuery(String type, String uid) {
@@ -668,6 +730,35 @@ public class EloraQueryFactory {
     }
 
     /**
+     * Returns all Other Documents Vault Folders that have the specified
+     * ancestor.
+     *
+     * @param ancestorId
+     * @return
+     */
+    public static String getOtherDocumentsVaultFoldersInsideAncestorQuery(
+            String ancestorId, String orderBy) {
+
+        return getDocumentsByTypeInsideAncestorQuery(
+                EloraDoctypeConstants.OTHER_DOC_VAULT_FOLDER, ancestorId,
+                orderBy);
+    }
+
+    /**
+     * Returns all Other Documents Vault Folders that have the specified
+     * ancestor.
+     *
+     * @param ancestorId
+     * @return
+     */
+    public static String getOtherDocumentsVaultFoldersInsideAncestorQuery(
+            String ancestorId) {
+
+        return getDocumentsByTypeInsideAncestorQuery(
+                EloraDoctypeConstants.OTHER_DOC_VAULT_FOLDER, ancestorId);
+    }
+
+    /**
      * Returns all documents with the provided facet which have the specified
      * ancestor.
      *
@@ -689,28 +780,83 @@ public class EloraQueryFactory {
     }
 
     /**
+     * Returns all documents with the provided document type which have the
+     * specified ancestor.
+     *
+     * @param docType
+     * @param ancestorId
+     * @return
+     */
+    public static String getDocumentsByTypeInsideAncestorQuery(String docType,
+            String ancestorId) {
+
+        String query = String.format(
+                "SELECT * FROM Document WHERE " + NXQL.ECM_LIFECYCLESTATE
+                        + " <> '" + LifeCycleConstants.DELETED_STATE + "'"
+                        + " AND " + NXQL.ECM_PRIMARYTYPE + " = '%s' AND "
+                        + NXQL.ECM_ANCESTORID + " = '%s'",
+                docType, ancestorId);
+
+        return query;
+    }
+
+    /**
+     * Returns all documents with the provided document type which have the
+     * specified ancestor in the given order.
+     *
+     * @param docType
+     * @param ancestorId
+     * @param orderBy
+     * @return
+     */
+    public static String getDocumentsByTypeInsideAncestorQuery(String docType,
+            String ancestorId, String orderBy) {
+
+        String query = getDocumentsByTypeInsideAncestorQuery(docType,
+                ancestorId) + String.format(" ORDER BY %s", orderBy);
+
+        return query;
+    }
+
+    /**
      * Returns all other document proxies which have the specified ancestor.
      *
      * @param ancestorId
      * @return
      */
-    // Same as other_document_proxy_in_content_suggestion core page provider
     public static String getOtherDocumentProxiesInsideAncestorQuery(
             String ancestorId) {
 
         String query = String.format(
-                "SELECT * FROM Document WHERE " + NXQL.ECM_MIXINTYPE
-                        + " NOT IN ('"
+                "SELECT * FROM Document WHERE " + NXQL.ECM_MIXINTYPE + " != '"
                         + NuxeoFacetConstants.FACET_HIDDEN_IN_NAVIGATION
-                        + "', '" + FacetNames.FOLDERISH + "', '"
-                        + EloraFacetConstants.FACET_BOM_DOCUMENT + "', '"
-                        + EloraFacetConstants.FACET_CAD_DOCUMENT + "') AND "
+                        + "' AND " + NXQL.ECM_MIXINTYPE + " IN ('"
+                        + EloraFacetConstants.FACET_BASIC_DOCUMENT + "') AND "
                         + NXQL.ECM_ISPROXY + " = 1 AND " + NXQL.ECM_ISVERSION
                         + " = 0 AND " + NXQL.ECM_LIFECYCLESTATE + " <> '"
                         + LifeCycleConstants.DELETED_STATE + "'" + " AND "
                         + NXQL.ECM_ANCESTORID + " = '%s' ORDER BY %s "
                         + QueriesConstants.SORT_ORDER_ASC,
                 ancestorId, NuxeoMetadataConstants.NX_DC_TITLE);
+        return query;
+    }
+
+    public static String getOtherDocumentProxiesInsideAncestorFilteredByNatureQuery(
+            String ancestorId, String nature) {
+
+        String query = String.format(
+                "SELECT * FROM Document WHERE " + NXQL.ECM_MIXINTYPE + " != '"
+                        + NuxeoFacetConstants.FACET_HIDDEN_IN_NAVIGATION
+                        + "' AND " + NXQL.ECM_MIXINTYPE + " IN ('"
+                        + EloraFacetConstants.FACET_BASIC_DOCUMENT + "') AND "
+                        + NXQL.ECM_ISPROXY + " = 1 AND " + NXQL.ECM_ISVERSION
+                        + " = 0 AND " + NXQL.ECM_LIFECYCLESTATE + " <> '"
+                        + LifeCycleConstants.DELETED_STATE + "'" + " AND "
+                        + NXQL.ECM_ANCESTORID + " = '%s'" + " AND "
+                        + NuxeoMetadataConstants.NX_DC_NATURE
+                        + " = '%s' ORDER BY %s "
+                        + QueriesConstants.SORT_ORDER_ASC,
+                ancestorId, nature, NuxeoMetadataConstants.NX_DC_TITLE);
         return query;
     }
 
@@ -959,21 +1105,6 @@ public class EloraQueryFactory {
         return query;
     }
 
-    public static long countCharacteristicsShownInReport(CoreSession session,
-            String type, String uid) {
-
-        String query = String.format(
-                "SELECT COUNT(" + NXQL.ECM_UUID + ") FROM %s WHERE "
-                        + NXQL.ECM_PRIMARYTYPE + " = '%s' AND " + NXQL.ECM_UUID
-                        + " = '%s' AND " + NXQL.ECM_ISPROXY + " = 0 AND "
-                        + BomCharacteristicsMetadataConstants.BOM_CHARAC_LIST
-                        + "/*/showInReport = 1",
-                type, type, uid);
-
-        return EloraQueryHelper.executeCountQuery(query, NXQL.ECM_UUID,
-                session);
-    }
-
     public static long countObjectRelationsForDocumentByPredicateList(
             CoreSession session, String uid, List<String> predicateUris) {
 
@@ -1031,7 +1162,8 @@ public class EloraQueryFactory {
         return query;
     }
 
-    public static String getWcDocumentsByContentFilename(String filename) {
+    public static String getWcDocumentsByContentFilename(String filename,
+            String type) {
         List<String> fs = new ArrayList<String>();
         fs.add(filename);
 
@@ -1052,14 +1184,100 @@ public class EloraQueryFactory {
 
         Set<String> filenames = new HashSet<String>(fs);
 
-        String query = String.format("SELECT * FROM Document WHERE "
+        if (type == null) {
+            type = "Document";
+        }
+
+        String query = String.format("SELECT * FROM %s WHERE "
+                + NXQL.ECM_MIXINTYPE + " <> '"
+                + EloraFacetConstants.FACET_ELORA_DRAFT + "' AND "
                 + NXQL.ECM_ISPROXY + " = 0 AND " + NXQL.ECM_ISVERSION
                 + " = 0 AND " + NuxeoMetadataConstants.NX_FILE_CONTENT_NAME
-                + " IN (%s) AND " + NXQL.ECM_LIFECYCLESTATE + " <> '%s'",
+                + " IN (%s) AND " + NXQL.ECM_LIFECYCLESTATE + " <> '%s'", type,
                 EloraQueryHelper.formatList(filenames),
                 LifeCycleConstants.DELETED_STATE);
 
         return query;
     }
+
+    public static String getApprovedDesignItemsBySupplier(String supplierId) {
+        String query = String.format("SELECT * FROM Document WHERE "
+                + NXQL.ECM_MIXINTYPE + " = '%s' AND " + NXQL.ECM_ISPROXY
+                + " = 0 AND " + EloraMetadataConstants.ELORA_SUPP_SUPPLIERS
+                + "/*/" + EloraMetadataConstants.ELORA_SUPP_SUPPLIERS_SUPPLIER
+                + " = '%s'" + " AND " + NXQL.ECM_LIFECYCLESTATE + " = '%s'",
+                EloraFacetConstants.FACET_DESIGN_ITEM, supplierId,
+                EloraLifeCycleConstants.APPROVED);
+
+        return query;
+    }
+
+    // --------------------------------------------------
+    // Document Templates related queries
+    // --------------------------------------------------
+    public static String getDocumentTemplatesFolderQuery(String domainUid) {
+        String query = String.format(
+                "SELECT * FROM %s WHERE " + NXQL.ECM_ISPROXY + " = 0 AND "
+                        + NXQL.ECM_LIFECYCLESTATE + " != '%s' AND "
+                        + NXQL.ECM_ANCESTORID + " = '%s'",
+                EloraDoctypeConstants.DOCUMENT_TEMPLATES,
+                EloraLifeCycleConstants.NX_DELETED, domainUid);
+
+        return query;
+    }
+
+    public static String getDocumentTemplatesRootFolderQuery(String sourceUid) {
+        String query = String.format(
+                "SELECT * FROM %s WHERE " + NXQL.ECM_ISPROXY + " = 0 AND "
+                        + NXQL.ECM_LIFECYCLESTATE + " != '%s' AND "
+                        + NuxeoMetadataConstants.NX_DC_SOURCE + " = '%s'",
+                EloraDoctypeConstants.DOCUMENT_TEMPLATES_ROOT,
+                EloraLifeCycleConstants.NX_DELETED, sourceUid);
+        return query;
+    }
+
+    public static String getDocumentTemplatesQuery(String docType,
+            ArrayList<String> documentTemplatesFolderUids,
+            ArrayList<String> vaultFolderUids) {
+        String quotedDocumentTemplatesFolderUids = EloraQueryHelper.formatList(
+                documentTemplatesFolderUids);
+        String quotedVaultFolderUids = EloraQueryHelper.formatList(
+                vaultFolderUids);
+
+        String query = String.format("SELECT * FROM Document WHERE "
+                + NXQL.ECM_PRIMARYTYPE + " = '%s' AND " + NXQL.ECM_ISPROXY
+                + " = 0 AND " + NXQL.ECM_PARENTID + " IN (%s) AND ("
+                + EloraMetadataConstants.ELORA_ELO_VAULT_FOLDER + " is null OR "
+                + EloraMetadataConstants.ELORA_ELO_VAULT_FOLDER
+                + " IN (%s) )AND " + NXQL.ECM_LIFECYCLESTATE
+                + " != '%s' ORDER BY %s", docType,
+                quotedDocumentTemplatesFolderUids, quotedVaultFolderUids,
+                EloraLifeCycleConstants.NX_DELETED,
+                NuxeoMetadataConstants.NX_DC_TITLE);
+
+        return query;
+    }
+
+    public static String getDocumentTemplatesQuery(String docType,
+            ArrayList<String> documentTemplatesFolderUids) {
+
+        String quotedDocumentTemplatesFolderUids = EloraQueryHelper.formatList(
+                documentTemplatesFolderUids);
+
+        String query = String.format(
+                "SELECT * FROM Document WHERE " + NXQL.ECM_PRIMARYTYPE
+                        + " = '%s' AND " + NXQL.ECM_ISPROXY + " = 0 AND "
+                        + NXQL.ECM_PARENTID + " IN (%s) AND "
+                        + EloraMetadataConstants.ELORA_ELO_VAULT_FOLDER
+                        + " is null AND " + NXQL.ECM_LIFECYCLESTATE
+                        + " != '%s' ORDER BY %s",
+                docType, quotedDocumentTemplatesFolderUids,
+                EloraLifeCycleConstants.NX_DELETED,
+                NuxeoMetadataConstants.NX_DC_TITLE);
+
+        return query;
+    }
+
+    // --------------------------------------------------
 
 }

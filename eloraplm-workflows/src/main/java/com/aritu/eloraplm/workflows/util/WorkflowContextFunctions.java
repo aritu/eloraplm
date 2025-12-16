@@ -1,7 +1,10 @@
 package com.aritu.eloraplm.workflows.util;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +16,14 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.query.sql.NXQL;
+import org.nuxeo.ecm.platform.routing.core.impl.GraphRoute;
 import org.nuxeo.ecm.platform.task.Task;
 import org.nuxeo.ecm.platform.ui.web.tag.fn.UserNameResolverHelper;
 import org.nuxeo.template.api.context.DocumentWrapper;
 
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
+import com.aritu.eloraplm.constants.WorkflowConstants;
 import com.aritu.eloraplm.constants.WorkflowMetadataConstants;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.datatable.RowData;
@@ -38,20 +45,59 @@ public class WorkflowContextFunctions {
 
     protected UserNameResolverHelper unr;
 
+    protected CoreSession session;
+
+    protected DocumentModel wfInstance;
+
     public WorkflowContextFunctions(DocumentModel doc,
             DocumentWrapper nuxeoWrapper) {
         this.doc = doc;
         this.nuxeoWrapper = nuxeoWrapper;
+        session = doc.getCoreSession();
     }
 
-    public List<TaskInfo> getWorkflowTasks(String wfId) {
+    protected void setWfInstanceId(String wfInstanceId) {
+        wfInstance = session.getDocument(new IdRef(wfInstanceId));
+    }
+
+    protected DocumentModel getWfInstance(String wfInstanceId) {
+        if (wfInstance == null || !wfInstance.getId().equals(wfInstanceId)) {
+            setWfInstanceId(wfInstanceId);
+        }
+
+        return wfInstance;
+    }
+
+    public String getEuWorkflowTitle(String wfInstanceId) {
+        return getWorkflowTitle(wfInstanceId, "eu_ES");
+    }
+
+    public String getEsWorkflowTitle(String wfInstanceId) {
+        return getWorkflowTitle(wfInstanceId, "es_ES");
+    }
+
+    public String getEnWorkflowTitle(String wfInstanceId) {
+        return getWorkflowTitle(wfInstanceId, "en_US");
+    }
+
+    public String getWorkflowTitle(String wfInstanceId, String locale) {
+        DocumentModel wfInstance = getWfInstance(wfInstanceId);
+        GraphRoute route = wfInstance.getAdapter(GraphRoute.class);
+        String label = route.getTitle();
+        return EloraMessageHelper.getTranslatedMessage(locale, label);
+    }
+
+    public List<TaskInfo> getWorkflowTasks(String wfInstanceId) {
         List<TaskInfo> tasks = new ArrayList<TaskInfo>();
+
+        DocumentModel wfInstance = getWfInstance(wfInstanceId);
+        GraphRoute route = wfInstance.getAdapter(GraphRoute.class);
+        String wfId = route.getModelName();
 
         IterableQueryResult it = null;
         try {
-            CoreSession session = doc.getCoreSession();
             String q = WorkflowFormsQueryFactory.getDistinctAnsweredTaskIdsForDoc(
-                    doc.getId(), wfId);
+                    doc.getId(), wfId, wfInstanceId);
             it = session.queryAndFetch(q, NXQL.NXQL);
             if (it.size() > 0) {
                 String pfx = WorkflowMetadataConstants.WFANS_ANSWERS + "/*1/";
@@ -87,15 +133,16 @@ public class WorkflowContextFunctions {
         return tasks;
     }
 
-    public List<RowData> getTaskAnswers(String wfId, String taskId) {
+    public List<RowData> getTaskAnswers(String wfInstanceId, String taskId) {
 
-        // TODO Query bidez??
+        DocumentModel wfInstance = getWfInstance(wfInstanceId);
+        GraphRoute route = wfInstance.getAdapter(GraphRoute.class);
+        String wfId = route.getModelName();
 
         List<RowData> taskAnswers = new ArrayList<RowData>();
-
         try {
             WorkflowAnswersTableServiceImpl wats = new WorkflowAnswersTableServiceImpl(
-                    wfId);
+                    wfId, wfInstance.getId());
             List<RowData> allAnswers = wats.getData(doc);
             for (RowData row : allAnswers) {
                 WorkflowAnswerRowData answer = (WorkflowAnswerRowData) row;
@@ -121,6 +168,11 @@ public class WorkflowContextFunctions {
                 answer.getQuestionId(), answer.getLabels());
     }
 
+    public String getEnLabel(WorkflowAnswerRowData answer) {
+        return WorkflowFormsHelper.getDisplayLabel("en_US",
+                answer.getQuestionId(), answer.getLabels());
+    }
+
     public String getAnswerEuDisplayValue(WorkflowAnswerRowData answer) {
         return getAnswerDisplayValue(answer, "eu_ES");
     }
@@ -139,21 +191,81 @@ public class WorkflowContextFunctions {
 
         if (answer.getQuestion() == null) {
             String questionId = answer.getQuestionId();
+            Object objValue = answer.getValue();
 
             // WFA
             if (questionId.startsWith(
                     WorkflowFormsService.NODE_VARS_WFANS_PREFIX)) {
-                value = answer.getValue();
+                String type = answer.getType();
+
+                switch (type) {
+
+                case WorkflowConstants.WORKFLOW_ANSWER_TYPE_DATETIME:
+                    DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    value = dtf.format((Date) objValue);
+                    break;
+                case WorkflowConstants.WORKFLOW_ANSWER_TYPE_DATE:
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    value = df.format((Date) objValue);
+                    break;
+                case WorkflowConstants.WORKFLOW_ANSWER_TYPE_BOOLEAN:
+                    value = EloraMessageHelper.getTranslatedMessage(locale,
+                            "label." + (((boolean) objValue) ? "yes" : "no"));
+                    break;
+                case WorkflowConstants.WORKFLOW_ANSWER_TYPE_TEXT:
+                    value = (String) objValue;
+                    break;
+                case WorkflowConstants.WORKFLOW_ANSWER_TYPE_DOCUMENT:
+                    DocumentModel doc = session.getDocument(
+                            new IdRef((String) objValue));
+                    if (doc != null) {
+                        String reference = null;
+                        value = "";
+                        if (doc.hasSchema(EloraSchemaConstants.ELORA_OBJECT)) {
+                            reference = (String) doc.getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE);
+                            value += reference + " ";
+                        }
+                        value += doc.getTitle();
+                    }
+                    break;
+                case WorkflowConstants.WORKFLOW_ANSWER_TYPE_DOCUMENT_LIST:
+                    value = "";
+                    List<String> docValues = new ArrayList<String>();
+                    @SuppressWarnings("unchecked")
+                    List<String> docUids = (List<String>) objValue;
+                    for (String docUid : docUids) {
+                        DocumentModel listdoc = session.getDocument(
+                                new IdRef(docUid));
+                        if (listdoc != null) {
+                            String reference = null;
+                            String listValue = "";
+                            if (listdoc.hasSchema(
+                                    EloraSchemaConstants.ELORA_OBJECT)) {
+                                reference = (String) listdoc.getPropertyValue(
+                                        EloraMetadataConstants.ELORA_ELO_REFERENCE);
+                                listValue += reference + " ";
+                            }
+                            listValue += listdoc.getTitle();
+                            docValues.add(listValue);
+                        }
+                    }
+                    value = String.join(", ", docValues);
+                    break;
+                default:
+                    value = "-";
+                    break;
+                }
             }
             // Action
             else if (questionId.equals(
                     WorkflowMetadataConstants.FIXED_QUESTION_ID_ACTION)) {
                 value = TaskStatusHelper.convertStatus(locale,
-                        answer.getValue(), false);
+                        (String) objValue, false);
             }
             // Comment
             else {
-                value = answer.getValue();
+                value = (String) objValue;
             }
         } else {
 
@@ -170,7 +282,8 @@ public class WorkflowContextFunctions {
         String value = "";
 
         if (answer.getValue() != null) {
-            String twoDigitLocale = locale.substring(0, 2);
+            // TODO WF IBAI Zetako da?
+            // String twoDigitLocale = locale.substring(0, 2);
 
             DocumentModel wfq = answer.getQuestion();
             String type = (String) wfq.getPropertyValue(
@@ -186,7 +299,7 @@ public class WorkflowContextFunctions {
 
             case "text":
             default:
-                value = answer.getValue();
+                value = (String) answer.getValue();
                 break;
             }
         }

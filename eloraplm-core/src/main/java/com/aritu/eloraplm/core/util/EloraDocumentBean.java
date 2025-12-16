@@ -4,8 +4,11 @@ import static org.jboss.seam.ScopeType.CONVERSATION;
 import static org.jboss.seam.annotations.Install.FRAMEWORK;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
@@ -14,11 +17,16 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.ecm.platform.comment.api.CommentableDocument;
 
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
+import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.aritu.eloraplm.versioning.VersionLabelService;
 
 @Name("eloraDocument")
@@ -27,6 +35,8 @@ import com.aritu.eloraplm.versioning.VersionLabelService;
 public class EloraDocumentBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Log log = LogFactory.getLog(EloraDocumentBean.class);
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -64,7 +74,12 @@ public class EloraDocumentBean implements Serializable {
 
     public DocumentModel getWorkingCopy(DocumentModel doc) {
         if (doc != null) {
-            return documentManager.getWorkingCopy(doc.getRef());
+            try {
+                return documentManager.getWorkingCopy(doc.getRef());
+            } catch (NuxeoException e) {
+                log.error("Error getting document working copy. Document id = |"
+                        + doc.getId() + "|" + e.getMessage());
+            }
         }
         return null;
     }
@@ -93,4 +108,70 @@ public class EloraDocumentBean implements Serializable {
         }
         return result;
     }
+
+    public DocumentModel getNonProxyDocument(DocumentModel doc) {
+        if (doc != null) {
+            if (doc.isProxy()) {
+                return documentManager.getSourceDocument(doc.getRef());
+            } else {
+                return doc;
+            }
+        }
+        return null;
+    }
+
+    public String getDocumentLastComment(DocumentModel doc) {
+        String lastComment = "";
+        String logInitMsg = "[getDocumentLastComment] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        try {
+            if (doc != null) {
+                CommentableDocument commentableDoc = doc.getAdapter(
+                        CommentableDocument.class);
+                if (commentableDoc != null) {
+                    List<DocumentModel> comments = commentableDoc.getComments();
+
+                    if (comments != null && comments.size() > 0) {
+
+                        DocumentModel commentDoc = comments.get(
+                                comments.size() - 1);
+
+                        if (commentDoc.getPropertyValue(
+                                NuxeoMetadataConstants.NX_COMMENT_TEXT) != null) {
+                            lastComment = (String) commentDoc.getPropertyValue(
+                                    NuxeoMetadataConstants.NX_COMMENT_TEXT);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+        }
+        return lastComment;
+    }
+
+    public List<DocumentModel> getDocumentsInWsContentFilteredByNature(
+            DocumentModel doc, String nature) {
+
+        DocumentModelList documents = null;
+        String logInitMsg = "[getDocumentsInWsContentFilteredByNature] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        try {
+            if (doc != null) {
+                String contentDocumentListsQuery = EloraQueryFactory.getOtherDocumentProxiesInsideAncestorFilteredByNatureQuery(
+                        doc.getId(), nature);
+                documents = documentManager.query(contentDocumentListsQuery);
+            }
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+        }
+        return documents;
+    }
+
 }

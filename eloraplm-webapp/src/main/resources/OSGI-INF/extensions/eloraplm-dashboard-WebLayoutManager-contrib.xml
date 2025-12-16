@@ -78,6 +78,7 @@
         <column>
           <properties mode="any">
             <property name="useFirstWidgetLabelAsColumnHeader">true</property>
+                <property name="sortPropertyName">dc:modified</property>
           </properties>
           <widget>listing_modification_date</widget>
         </column>

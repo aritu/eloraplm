@@ -18,9 +18,9 @@
             update="@form :eloraMetadataHeading"
             process="@this"
             partialSubmit="true"
-            listener="#{pdmBean.switchChildren}"
-            onstart="PF('treeBlocker_#{treeWidgetId}').show();"
-            onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
+            listener="#{pdmBean.switchChildren(component.namingContainer)}"
+            onstart="PF('#{treeBlockerId}').show();"
+            onsuccess="PF('#{treeBlockerId}').hide();" />
     </h:selectOneListbox>
     
 </ui:composition>

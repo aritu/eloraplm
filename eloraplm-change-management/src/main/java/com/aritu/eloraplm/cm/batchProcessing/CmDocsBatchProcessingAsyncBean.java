@@ -15,6 +15,7 @@ package com.aritu.eloraplm.cm.batchProcessing;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,7 @@ import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.pdm.promote.util.PromoteHelper;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 @AutoCreate
 @Name("cmDocsBatchProcessingAsync")
@@ -84,7 +86,9 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
             List<String> sortedIds, DAG dag,
             Map<String, List<String>> childrenVersionSeriesMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            String transitionToComeBackToPreviousState) {
+            String transitionToComeBackToPreviousState,
+            boolean forcePromotion) {
+
         String logInitMsg = "[promoteAsync] ["
                 + cmProcessDoc.getCoreSession().getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -113,7 +117,7 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
             // Process promotes
             List<String> destinationWcUidList = processPromoteDocs(cmProcessDoc,
                     root, sortedIds, dag, childrenVersionSeriesMap,
-                    eloraDocumentRelationManager, session);
+                    eloraDocumentRelationManager, forcePromotion, session);
             log.trace(logInitMsg + "Finished promoting all docs");
 
             // Set as Managed successfully processed items
@@ -167,7 +171,7 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
             TreeNode root, List<String> sortedIds, DAG dag,
             Map<String, List<String>> childrenVersionSeriesMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager) {
+            boolean forcePromotion, CoreSession documentManager) {
         String logInitMsg = "[processPromoteDocs] ["
                 + documentManager.getPrincipal().getName() + "] ";
 
@@ -203,216 +207,166 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
                 // cambiado nada!
                 TransactionHelper.commitOrRollbackTransaction();
                 TransactionHelper.startTransaction();
-                log.trace(logInitMsg
-                        + "Start checking release or obsolete in major of document |"
-                        + docId + "|");
-                if (PromoteHelper.checkReleasedInMajor(doc, documentManager)) {
-                    log.trace(logInitMsg
-                            + "Finished checking release or obsolete in major of document |"
-                            + docId + "|");
-                    log.trace(logInitMsg
-                            + "Start getting hierarchical children of document |"
-                            + docId + "|");
-                    List<Statement> cadStmts = getCadHierarchicalStmts(doc,
-                            cadHierarchicalAndSpecialAndDirectRelations);
-                    log.trace(logInitMsg
-                            + "Finished getting hierarchical children of document |"
-                            + docId + "|");
-                    List<String> childrenIdList = dag.getChildLabels(docId);
 
-                    for (Statement cadStmt : cadStmts) {
-                        DocumentModel objectCadDoc = RelationHelper.getDocumentModel(
-                                cadStmt.getObject(), documentManager);
-                        if (objectCadDoc == null) {
-                            log.trace(logInitMsg
-                                    + "Throw DocumentUnreadableException  since objectCadDoc is null. cadStmt = |"
-                                    + cadStmt.toString() + "|");
-                            throw new DocumentUnreadableException(
-                                    "Error getting document from statement |"
-                                            + cadStmt.toString() + "|");
+                DocumentModel wcDoc = documentManager.getWorkingCopy(
+                        doc.getRef());
+                
+                boolean hasAtLeastOneApprovedVersion = false;
+                Long previousApprovedVersions = EloraQueryFactory.countApprovedVersionsOfDocumentQuery(
+                        documentManager, wcDoc.getId(), doc.getType());
+                if (previousApprovedVersions > 0) {
+                    hasAtLeastOneApprovedVersion = true;
+                }
+
+                if (hasAtLeastOneApprovedVersion || forcePromotion) {
+                    
+                    log.trace(logInitMsg
+                            + "Start checking release or obsolete in major of document |"
+                            + docId + "|");
+                    if (PromoteHelper.checkReleasedInMajor(doc,
+                            documentManager)) {
+                        log.trace(logInitMsg
+                                + "Finished checking release or obsolete in major of document |"
+                                + docId + "|");
+                        log.trace(logInitMsg
+                                + "Start getting hierarchical children of document |"
+                                + docId + "|");
+                        List<Statement> cadStmts = getCadHierarchicalStmts(doc,
+                                cadHierarchicalAndSpecialAndDirectRelations);
+                        log.trace(logInitMsg
+                                + "Finished getting hierarchical children of document |"
+                                + docId + "|");
+                        List<String> childrenIdList = dag.getChildLabels(docId);
+
+                        for (Statement cadStmt : cadStmts) {
+                            DocumentModel objectCadDoc = RelationHelper.getDocumentModel(
+                                    cadStmt.getObject(), documentManager);
+                            if (objectCadDoc == null) {
+                                log.trace(logInitMsg
+                                        + "Throw DocumentUnreadableException  since objectCadDoc is null. cadStmt = |"
+                                        + cadStmt.toString() + "|");
+                                throw new DocumentUnreadableException(
+                                        "Error getting document from statement |"
+                                                + cadStmt.toString() + "|");
+                            }
+                            List<String> childrenInTreeVersionSeriesIdList = childrenVersionSeriesMap.get(
+                                    docId);
+                            if (childrenInTreeVersionSeriesIdList != null
+                                    && childrenInTreeVersionSeriesIdList.contains(
+                                            objectCadDoc.getVersionSeriesId())) {
+                                if (!childrenIdList.contains(
+                                        objectCadDoc.getId())) {
+                                    log.error(logInitMsg
+                                            + "Document to be promoted has different document version in composition and tree. docId = |"
+                                            + docId + "|, reference =|"
+                                            + reference + "|, title=|" + title
+                                            + "|");
+
+                                    Object[] messageParams = { reference, title,
+                                            objectCadDoc.getPropertyValue(
+                                                    EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                                            objectCadDoc.getTitle() };
+                                    String message = EloraMessageHelper.getTranslatedMessage(
+                                            documentManager,
+                                            "eloraplm.message.error.cm.batch.docCompositionWithDiffDocVersion",
+                                            messageParams);
+                                    ResultType error = new ResultType(
+                                            doc.getId(), reference, title,
+                                            message);
+                                    errorsList.add(error);
+
+                                    TransactionHelper.setTransactionRollbackOnly();
+                                    stopProcessing = true;
+                                    break; // from cadStmts loop
+                                }
+                            } else {
+                                if (!EloraDocumentHelper.isReleased(
+                                        objectCadDoc)) {
+                                    String childReference = objectCadDoc.getPropertyValue(
+                                            EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
+                                    String childTitle = objectCadDoc.getTitle();
+
+                                    log.error(logInitMsg
+                                            + "Document has no released documents in its composition. docId = |"
+                                            + docId + "|, reference =|"
+                                            + reference + "|, title=|" + title
+                                            + "|, childDocId = |"
+                                            + objectCadDoc.getId()
+                                            + "|, child reference = |"
+                                            + childReference
+                                            + "|, child title = |" + childTitle
+                                            + "|");
+
+                                    Object[] messageParams = { childReference,
+                                            childTitle };
+                                    String message = EloraMessageHelper.getTranslatedMessage(
+                                            documentManager,
+                                            "eloraplm.message.error.cm.batch.docWithNoReleasedChild",
+                                            messageParams);
+                                    ResultType error = new ResultType(
+                                            doc.getId(), reference, title,
+                                            message);
+                                    errorsList.add(error);
+
+                                    TransactionHelper.setTransactionRollbackOnly();
+                                    stopProcessing = true;
+                                    break; // from cadStmts loop
+                                }
+                            }
                         }
-                        List<String> childrenInTreeVersionSeriesIdList = childrenVersionSeriesMap.get(
-                                docId);
-                        if (childrenInTreeVersionSeriesIdList != null
-                                && childrenInTreeVersionSeriesIdList.contains(
-                                        objectCadDoc.getVersionSeriesId())) {
-                            if (!childrenIdList.contains(
-                                    objectCadDoc.getId())) {
+                        // executePromote(doc);
+                        if (!stopProcessing) {
+                            if (doc.getAllowedStateTransitions().contains(
+                                    EloraLifeCycleConstants.TRANS_APPROVE)) {
+
+                                processPromote(eloraDocumentRelationManager,
+                                        documentManager, logInitMsg,
+                                        destinationWcUidList,
+                                        cmProcessReference, docId, doc, wcDoc,
+                                        reference, title, warningMsg);
+
+                            } else {
                                 log.error(logInitMsg
-                                        + "Document to be promoted has different document version in composition and tree. docId = |"
+                                        + "Document state does not support actual transition. docId = |"
                                         + docId + "|, reference =|" + reference
                                         + "|, title=|" + title + "|");
 
-                                Object[] messageParams = { reference, title,
-                                        objectCadDoc.getPropertyValue(
-                                                EloraMetadataConstants.ELORA_ELO_REFERENCE),
-                                        objectCadDoc.getTitle() };
                                 String message = EloraMessageHelper.getTranslatedMessage(
                                         documentManager,
-                                        "eloraplm.message.error.cm.batch.docCompositionWithDiffDocVersion",
-                                        messageParams);
+                                        "eloraplm.message.error.cm.batch.docNotAllowedTransition");
                                 ResultType error = new ResultType(doc.getId(),
                                         reference, title, message);
                                 errorsList.add(error);
 
                                 TransactionHelper.setTransactionRollbackOnly();
                                 stopProcessing = true;
-                                break; // from cadStmts loop
-                            }
-                        } else {
-                            if (EloraDocumentHelper.isReleased(objectCadDoc)) {
-                                DocumentModel latestReleased = EloraDocumentHelper.getLatestReleasedVersion(
-                                        objectCadDoc);
-                                if (latestReleased != null) {
-                                    if (!latestReleased.getId().equals(
-                                            objectCadDoc.getId())) {
-
-                                        String childReference = objectCadDoc.getPropertyValue(
-                                                EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
-                                        String childTitle = objectCadDoc.getTitle();
-
-                                        log.warn(logInitMsg
-                                                + "This document has child  released but it is not the latest released. docId = |"
-                                                + docId + "|, reference =|"
-                                                + reference + "|, title=|"
-                                                + title + "| childDocId = |"
-                                                + objectCadDoc.getId()
-                                                + "|, child reference = |"
-                                                + childReference
-                                                + "|, child title = |"
-                                                + childTitle + "|");
-
-                                        Object[] messageParams = {
-                                                childReference, childTitle };
-                                        warningMsg = EloraMessageHelper.getTranslatedMessage(
-                                                documentManager,
-                                                "eloraplm.message.error.cm.batch.docWithNoLastReleasedChild",
-                                                messageParams);
-                                    }
-                                } else {
-                                    log.error(logInitMsg
-                                            + "Could not get latest released version of document |"
-                                            + objectCadDoc.getId() + "|");
-                                }
-                            } else {
-                                String childReference = objectCadDoc.getPropertyValue(
-                                        EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
-                                String childTitle = objectCadDoc.getTitle();
-
-                                log.error(logInitMsg
-                                        + "Document has no released documents in its composition. docId = |"
-                                        + docId + "|, reference =|" + reference
-                                        + "|, title=|" + title
-                                        + "|, childDocId = |"
-                                        + objectCadDoc.getId()
-                                        + "|, child reference = |"
-                                        + childReference + "|, child title = |"
-                                        + childTitle + "|");
-
-                                Object[] messageParams = { childReference,
-                                        childTitle };
-                                String message = EloraMessageHelper.getTranslatedMessage(
-                                        documentManager,
-                                        "eloraplm.message.error.cm.batch.docWithNoReleasedChild",
-                                        messageParams);
-                                ResultType error = new ResultType(doc.getId(),
-                                        reference, title, message);
-                                errorsList.add(error);
-
-                                TransactionHelper.setTransactionRollbackOnly();
-                                stopProcessing = true;
-                                break; // from cadStmts loop
                             }
                         }
+
+                    } else {
+                        log.error(logInitMsg + "Document  with docId = |"
+                                + docId + "|, reference =|" + reference
+                                + "|, title=|" + title
+                                + "| has another released document in the same major");
+
+                        String message = EloraMessageHelper.getTranslatedMessage(
+                                documentManager,
+                                "eloraplm.message.error.cm.batch.docWithReleasedOnMajor");
+                        ResultType error = new ResultType(doc.getId(),
+                                reference, title, message);
+                        errorsList.add(error);
+
+                        TransactionHelper.setTransactionRollbackOnly();
+                        stopProcessing = true;
                     }
-                    // executePromote(doc);
-                    if (!stopProcessing) {
-                        if (doc.getAllowedStateTransitions().contains(
-                                EloraLifeCycleConstants.TRANS_APPROVE)) {
-                            doc.followTransition(
-                                    EloraLifeCycleConstants.TRANS_APPROVE);
-
-                            // Nuxeo Event
-                            // doc.refresh();
-                            String comment = doc.getVersionLabel() + " @"
-                                    + cmProcessReference;
-                            EloraEventHelper.fireEvent(
-                                    PdmEventNames.PDM_PROMOTED_EVENT, doc,
-                                    comment);
-
-                            EloraDocumentHelper.disableVersioningDocument(doc);
-                            doc = documentManager.saveDocument(doc);
-
-                            DocumentModel wcDoc = documentManager.getWorkingCopy(
-                                    doc.getRef());
-                            DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(
-                                    wcDoc);
-                            if (baseDoc == null) {
-                                throw new EloraException("Document |"
-                                        + wcDoc.getId()
-                                        + "| has no base version. Probably because it has no AVs.");
-                            }
-                            if (!baseDoc.getId().equals(doc.getId())) {
-                                VersionModel version = new VersionModelImpl();
-                                version.setId(doc.getId());
-                                EloraDocumentHelper.restoreWorkingCopyToVersion(
-                                        wcDoc, version,
-                                        eloraDocumentRelationManager,
-                                        documentManager);
-                            } else {
-                                EloraDocumentHelper.restoreToVersion(
-                                        wcDoc.getRef(), doc.getRef(), true,
-                                        true, documentManager);
-                            }
-                            documentManager.removeLock(wcDoc.getRef());
-                            // Fire Approved event
-                            EloraEventHelper.fireEvent(
-                                    PdmEventNames.PDM_APPROVED_EVENT, doc);
-
-                            destinationWcUidList.add(wcDoc.getId());
-
-                            ResultType success = new ResultType(docId,
-                                    reference, title, warningMsg);
-                            successList.add(success);
-
-                            log.trace(
-                                    logInitMsg + "Finished promoting document |"
-                                            + docId + "|");
-
-                        } else {
-                            log.error(logInitMsg
-                                    + "Document state does not support actual transition. docId = |"
-                                    + docId + "|, reference =|" + reference
-                                    + "|, title=|" + title + "|");
-
-                            String message = EloraMessageHelper.getTranslatedMessage(
-                                    documentManager,
-                                    "eloraplm.message.error.cm.batch.docNotAllowedTransition");
-                            ResultType error = new ResultType(doc.getId(),
-                                    reference, title, message);
-                            errorsList.add(error);
-
-                            TransactionHelper.setTransactionRollbackOnly();
-                            stopProcessing = true;
-                        }
-                    }
-
                 } else {
-                    log.error(logInitMsg + "Document  with docId = |" + docId
-                            + "|, reference =|" + reference + "|, title=|"
-                            + title
-                            + "| has another released document in the same major");
-
-                    String message = EloraMessageHelper.getTranslatedMessage(
-                            documentManager,
-                            "eloraplm.message.error.cm.batch.docWithReleasedOnMajor");
-                    ResultType error = new ResultType(doc.getId(), reference,
-                            title, message);
-                    errorsList.add(error);
-
-                    TransactionHelper.setTransactionRollbackOnly();
-                    stopProcessing = true;
+                    log.trace(
+                            "Document is not approved because previous version is not "
+                                    + "approved and action is not forced. docId = |"
+                                    + docId + "|, reference =|" + reference
+                                    + "|, title=|" + title);
                 }
+
             } catch (Exception e) {
                 log.error(logInitMsg
                         + "Exception processing Promote on documentId =|"
@@ -447,6 +401,58 @@ public class CmDocsBatchProcessingAsyncBean implements Serializable {
         log.trace(logInitMsg + "--- EXIT ---");
 
         return destinationWcUidList;
+    }
+
+    private DocumentModel processPromote(
+            EloraDocumentRelationManager eloraDocumentRelationManager,
+            CoreSession documentManager, String logInitMsg,
+            List<String> destinationWcUidList, String cmProcessReference,
+            String docId, DocumentModel doc, DocumentModel wcDoc,
+            String reference, String title, String warningMsg)
+            throws EloraException {
+        String previousState = doc.getCurrentLifeCycleState();
+        doc.followTransition(EloraLifeCycleConstants.TRANS_APPROVE);
+
+        // Nuxeo Event
+        // doc.refresh();
+        String comment = doc.getVersionLabel() + " @" + cmProcessReference;
+        Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+        ctxProperties.put("comment", comment);
+        ctxProperties.put("previousState", previousState);
+        EloraEventHelper.fireEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc,
+                ctxProperties);
+
+        EloraDocumentHelper.disableVersioningDocument(doc);
+        doc = documentManager.saveDocument(doc);
+
+        // DocumentModel wcDoc = documentManager.getWorkingCopy(
+        // doc.getRef());
+        DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(wcDoc);
+        if (baseDoc == null) {
+            throw new EloraException("Document |" + wcDoc.getId()
+                    + "| has no base version. Probably because it has no AVs.");
+        }
+        if (!baseDoc.getId().equals(doc.getId())) {
+            VersionModel version = new VersionModelImpl();
+            version.setId(doc.getId());
+            EloraDocumentHelper.restoreWorkingCopyToVersion(wcDoc, version,
+                    eloraDocumentRelationManager, documentManager);
+        } else {
+            EloraDocumentHelper.restoreToVersion(wcDoc.getRef(), doc.getRef(),
+                    true, true, documentManager);
+        }
+        documentManager.removeLock(wcDoc.getRef());
+        // Fire Approved event
+        EloraEventHelper.fireEvent(PdmEventNames.PDM_APPROVED_EVENT, doc);
+
+        destinationWcUidList.add(wcDoc.getId());
+
+        ResultType success = new ResultType(docId, reference, title,
+                warningMsg);
+        successList.add(success);
+
+        log.trace(logInitMsg + "Finished promoting document |" + docId + "|");
+        return doc;
     }
 
     private List<Statement> getCadHierarchicalStmts(DocumentModel doc,

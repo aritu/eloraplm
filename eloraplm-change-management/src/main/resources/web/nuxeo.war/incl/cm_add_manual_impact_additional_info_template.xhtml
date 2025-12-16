@@ -1,0 +1,22 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+>
+    <nxu:set
+        var="item"
+        value="#{value.impactedItem}"
+    >
+        <nxu:set
+            var="stateColor"
+            value="#{lifecycleActions.getLifeCycleStateColor(item.currentLifeCycleState)}"
+        >
+            <span
+                class="lifeCycleStateLabel hollow"
+                style="color: #{stateColor}; border-color: #{stateColor}"
+            >
+                #{messages[item.currentLifeCycleState.concat(".abbr")]}
+            </span>
+        </nxu:set>
+    </nxu:set>
+</ui:composition>

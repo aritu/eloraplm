@@ -48,9 +48,6 @@
         <doctype append="true" name="BomCustomerProduct">
             <facet name="Overwritable" />
         </doctype>
-        <doctype append="true" name="BomManufacturerPart">
-            <facet name="Overwritable" />
-        </doctype>
     </extension>
     
 </component>

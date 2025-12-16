@@ -24,4 +24,8 @@ public final class EloraGroupConstants {
 
     public static final String POWER_USERS_GROUP = "powerusers";
 
+    public static final String VAULT_FOLDER_MANAGERS_GROUP = "vaultFolderManagers";
+
+    public static final String VAULT_FOLDER_GROUP_PREFIX = "gVault_";
+
 }

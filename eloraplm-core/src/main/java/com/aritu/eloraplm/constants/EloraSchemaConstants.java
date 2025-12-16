@@ -27,6 +27,8 @@ public class EloraSchemaConstants {
 
     public static final String CAD_DOCUMENT = "cad_document";
 
+    public static final String CAD_PART = "cad_part";
+
     public static final String CAD_DRAWING = "cad_drawing";
 
     public static final String CAD_DESIGN_TABLE = "cad_design_table";
@@ -35,19 +37,25 @@ public class EloraSchemaConstants {
 
     public static final String VERSION_LABEL = "version_label";
 
+    public static final String VERSION_INFO = "version_info";
+
     public static final String PROJECT = "project";
 
     public static final String RELATED_PARTAKER = "related_partaker";
 
     public static final String RELATED_CUSTOMER = "related_customer";
 
-    public static final String RELATED_MANUFACTURER = "related_manufacturer";
-
     public static final String RELATED_SUPPLIER = "related_supplier";
+
+    public static final String RELATED_OEM = "related_oem";
 
     public static final String BOM_ITEM = "bom_item";
 
     public static final String OVERWRITE_DATA = "overwrite_data";
+
+    public static final String CHECKIN_INFO = "check_in_info";
+
+    public static final String REVIEW_INFO = "review_info";
 
     public static final String STATES_LOG = "states_log";
 

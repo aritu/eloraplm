@@ -23,25 +23,31 @@ import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 
 import com.aritu.eloraplm.config.util.RelationsConfig;
+import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.relations.treetable.BaseRelationNodeData;
 import com.aritu.eloraplm.relations.treetable.RelationNodeData;
 import com.aritu.eloraplm.relations.treetable.RelationNodeService;
-import com.aritu.eloraplm.treetable.NodeManager;
 
 /**
  * @author aritu
  *
  */
-public class BomCompositionNodeService extends RelationNodeService
-        implements NodeManager {
+public class BomCompositionNodeService extends RelationNodeService {
 
     protected boolean showDirectDocuments;
 
     protected int maxOrdering;
 
+    protected boolean hasElectronicComponents;
+
     public int getMaxOrdering() {
         return maxOrdering;
+    }
+
+    public boolean getHasElectronicComponents() {
+        return hasElectronicComponents;
     }
 
     public BomCompositionNodeService(CoreSession session,
@@ -50,7 +56,7 @@ public class BomCompositionNodeService extends RelationNodeService
             throws EloraException {
         super(session);
 
-        treeDirection = TREE_DIRECTION_COMPOSITION;
+        treeDirection = EloraRelationConstants.DIRECTION_COMPOSITION;
         relationType = RELATION_TYPE_BOM;
         nodeId = 0;
         maxOrdering = 0;
@@ -80,16 +86,22 @@ public class BomCompositionNodeService extends RelationNodeService
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
             Integer viewerOrdering, Integer inverseViewerOrdering,
-            Boolean isManual, boolean isSpecial, boolean isDirect) {
+            Boolean isManual, String designators, Boolean isExcludedFromMapping,
+            boolean isSpecial, boolean isDirect) {
 
-        if (ordering != null && ordering > maxOrdering) {
+        if (level == 1 && ordering != null && ordering > maxOrdering) {
             maxOrdering = ordering;
+        }
+
+        if (!hasElectronicComponents && data.getType().equals(
+                EloraDoctypeConstants.ELECTRONIC_COMPONENT)) {
+            hasElectronicComponents = true;
         }
 
         return new BaseRelationNodeData(id, level, docId, data, wcDoc, stmt,
                 predicateUri, quantity, comment, ordering, directorOrdering,
-                viewerOrdering, inverseViewerOrdering, isManual, isSpecial,
-                isDirect);
+                viewerOrdering, inverseViewerOrdering, isManual, designators,
+                isExcludedFromMapping, isSpecial, isDirect);
     }
 
     private void loadConfigurations() throws EloraException {

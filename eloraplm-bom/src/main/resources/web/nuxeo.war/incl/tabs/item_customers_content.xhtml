@@ -4,17 +4,30 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
     xmlns:c="http://java.sun.com/jstl/core"
-    xmlns:nxd="http://nuxeo.org/nxweb/document">
-    
-    <h:panelGroup styleClass="textAlignC displayB" style="margin-bottom: 15px;">
+    xmlns:nxd="http://nuxeo.org/nxweb/document"
+>
+    <h:panelGroup
+        styleClass="textAlignC displayB"
+        style="margin-bottom: 15px"
+    >
         <!-- TODO: Hau include komun batera pasatu, document_not_editable_warning.xhtml dagoen bezala baina zati anarkikoentzat -->
-        <c:if test="#{nxd:hasPermission(currentDocument, 'Write') and not currentDocument.isVersion() and not currentDocument.isProxy()}">
-            <c:if test="#{currentDocument.locked and !(currentDocumentLockDetails['document.locker'] eq currentUser)}">
-                <h:outputText value="#{messages['eloraplm.message.warning.customers.edit.documentLockedByOther']}" class="processMessage completeWarning" />
+        <c:if
+            test="#{nxd:hasPermission(currentDocument, 'Write') and not currentDocument.isVersion() and not currentDocument.isProxy()}"
+        >
+            <c:if
+                test="#{currentDocument.locked and !(currentDocumentLockDetails['document.locker'] eq currentUser)}"
+            >
+                <h:outputText
+                    value="#{messages['eloraplm.message.warning.customers.edit.documentLockedByOther']}"
+                    class="processMessage completeWarning"
+                />
             </c:if>
         </c:if>
     </h:panelGroup>
-    
-    <nxl:widget name="item_customers_dt" mode="view" value="#{itemCustomersTableBean}" />
-    
+
+    <nxl:widget
+        name="item_customers_dt"
+        mode="edit"
+        value="#{itemCustomersTableBean}"
+    />
 </ui:composition>

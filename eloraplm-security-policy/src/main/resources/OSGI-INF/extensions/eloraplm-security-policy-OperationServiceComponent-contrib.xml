@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.securitypolicy.OperationServiceComponent.contrib">
+
+	<!--   Operations -->
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
+
+        <operation class="com.aritu.eloraplm.securitypolicy.restoperations.UpdateDocumentsSecurityInfo" replace="true" />
+
+    </extension>
+    
+</component>
+

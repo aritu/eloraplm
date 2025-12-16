@@ -1,35 +1,49 @@
-<div xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:f="http://java.sun.com/jsf/core">
-
-    <h3>
-        <h:outputText value="#{messages['eloraplm.title.checkIn']}" />
-    </h3>
-
-    <h:form id="#{fancyboxFormId}">
-
-    <h:panelGroup styleClass="content" layout="block">
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    template="/incl/action/widgets/primefaces_dialog_base_template.xhtml">
+    
+    
+    <ui:define name="dialog_content">
+        
         <h:panelGroup>
-            <h:outputLabel for="checkinComment" value="#{messages['eloraplm.label.checkinComment']}:"
-               styleClass="#{currentDocument.hasFacet('BomDocument') ? 'required' : ''}" />
+            <nxl:widget name="checkin_info" mode="view" value="#{currentDocument}" />
         </h:panelGroup>
         
         <h:panelGroup>
-                <h:inputTextarea id="comment" styleClass="dataInputText" value="#{pdmAction.checkinComment}" rows="9" cols="60"
-                    required="#{currentDocument.hasFacet('BomDocument')}" />
+            <h:outputLabel for="checkinComment" value="#{messages['eloraplm.label.checkinComment']}:"
+               styleClass="labelColumn #{document.hasFacet('BomDocument') ? 'required' : ''}" />
+        </h:panelGroup>
+        
+        <h:panelGroup>
+                <h:inputTextarea id="comment" styleClass="dataInputText" value="#{checkinComment}" rows="9" cols="60"
+                    required="#{document.hasFacet('BomDocument')}" />
                 <h:message for="comment" styleClass="errorMessage" />
         </h:panelGroup>
-    </h:panelGroup>
-
-    <div class="buttonsGadget">
-      <h:commandButton value="#{messages['eloraplm.command.checkIn']}" styleClass="button" action="#{pdmAction.checkIn(currentDocument)}" />
-      <h:commandButton value="#{messages['command.cancel']}" styleClass="button">
-        <f:ajax
-          execute="@this"
-          onevent="jQuery.fancybox.close" />
-      </h:commandButton>
-    </div>
-
-  </h:form>
-
-</div>
+        
+    </ui:define>
+    
+    
+    <ui:define name="dialog_buttons">
+        
+        <p:commandButton
+            value="#{messages['eloraplm.command.checkIn']}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+            styleClass="button mainAction"
+            actionListener="#{actionBean.checkIn(document)}"
+            process="@form"
+            update="@form"
+        />
+        
+        <p:commandButton type="button" value="#{messages['command.cancel']}"
+            immediate="true" process="@none"
+            styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+        />
+        
+    </ui:define>
+    
+</ui:decorate>

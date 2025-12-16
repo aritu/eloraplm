@@ -30,7 +30,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
-import com.aritu.eloraplm.cm.util.CMHelper;
+import com.aritu.eloraplm.cm.util.CMQueryFactory;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.om.util.OmQueryFactory;
 import com.aritu.eloraplm.queries.util.EloraQueryHelper;
@@ -95,25 +95,29 @@ public class CMContentBean implements Serializable {
 
                 // Retrieve the CM processes where current document (AV) is
                 // defined as origin or destination of a modified item
-                query = CMHelper.getProcessesByModifiedItemOriginQuery(
-                        currentDoc);
+                query = CMQueryFactory.getProcessesByModifiedItemOriginQuery(
+                        currentDoc.getId());
+
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 
-                query = CMHelper.getProcessesByModifiedItemDestinationQuery(
-                        currentDoc);
+                query = CMQueryFactory.getProcessesByModifiedItemDestinationQuery(
+                        currentDoc.getId());
+
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 
                 // Retrieve the CM processes where current document (AV) is
                 // defined as origin or destination of a impacted item
-                query = CMHelper.getProcessesByImpactedItemOriginQuery(
-                        currentDoc);
+                query = CMQueryFactory.getProcessesByImpactedItemOriginQuery(
+                        currentDoc.getId());
+
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 
-                query = CMHelper.getProcessesByImpactedItemDestinationQuery(
-                        currentDoc);
+                query = CMQueryFactory.getProcessesByImpactedItemDestinationQuery(
+                        currentDoc.getId());
+
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 
@@ -133,25 +137,29 @@ public class CMContentBean implements Serializable {
 
                 // Retrieve the CM processes where current document (WC) is
                 // defined as origin or destination of a modified item
-                query = CMHelper.getProcessesByModifiedItemOriginWcQuery(
-                        currentDoc);
+                query = CMQueryFactory.getProcessesByModifiedItemOriginWcQuery(
+                        currentDoc.getId());
+
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 
-                query = CMHelper.getProcessesByModifiedItemDestinationWcQuery(
-                        currentDoc);
+                query = CMQueryFactory.getProcessesByModifiedItemDestinationWcQuery(
+                        currentDoc.getId());
+
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 
                 // Retrieve the CM processes where current document (WC) is
                 // defined as origin or destination of a impacted item
-                query = CMHelper.getProcessesByImpactedItemOriginWcQuery(
-                        currentDoc);
+                query = CMQueryFactory.getProcessesByImpactedItemOriginWcQuery(
+                        currentDoc.getId());
+
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 
-                query = CMHelper.getProcessesByImpactedItemDestinationWcQuery(
-                        currentDoc);
+                query = CMQueryFactory.getProcessesByImpactedItemDestinationWcQuery(
+                        currentDoc.getId());
+
                 EloraQueryHelper.executeQueryAndAppendResultUidList(query,
                         uidCollection, documentManager);
 

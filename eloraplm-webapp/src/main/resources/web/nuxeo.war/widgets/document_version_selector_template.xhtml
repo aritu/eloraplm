@@ -1,0 +1,66 @@
+<ui:composition
+    id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <nxu:set
+            var="editable"
+            value="#{empty widget.properties.isEditable or eloraWebActions.evaluateBoolean(widget.properties.isEditable)}"
+        >
+            <nxu:set
+                var="d"
+                value="#{widgetProperty_passedData}"
+            >
+                <div class="version-row">
+                    <ui:fragment
+                        rendered="#{field_0 != null and !empty field_0 and widget.mode eq 'edit' and editable}"
+                    >
+                        <ui:include src="document_version_selector_edit.xhtml">
+                            <ui:param
+                                name="doc"
+                                value="#{field_0}"
+                            />
+                            <ui:param
+                                name="versionList"
+                                value="#{field_1}"
+                            />
+                            <ui:param
+                                name="wcDoc"
+                                value="#{field_2}"
+                            />
+                        </ui:include>
+                    </ui:fragment>
+                    <ui:fragment
+                        rendered="#{field_0 != null and !empty field_0 and widget.mode eq 'view' or not editable}"
+                    >
+                        <ui:include src="document_version_selector_view.xhtml">
+                            <ui:param
+                                name="doc"
+                                value="#{field_0}"
+                            />
+                            <ui:param
+                                name="wcDoc"
+                                value="#{field_2}"
+                            />
+                        </ui:include>
+                    </ui:fragment>
+                </div>
+            </nxu:set>
+        </nxu:set>
+    </c:if>
+    <c:if test="#{widget.mode == 'csv'}">
+        <h:outputText value="#{field_0.versionLabel}" />
+        <c:if
+            test="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.versionlabel.showexternal')}"
+        >
+            <h:outputText
+                value=" [#{field_0.bomitem.externalVersion}]"
+                rendered="#{field_0.hasSchema('bom_item') and not empty field_0.bomitem.externalVersion}"
+            />
+        </c:if>
+    </c:if>
+</ui:composition>

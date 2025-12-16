@@ -3,13 +3,12 @@
 <component name="com.aritu.eloraplm.bom.autostructure.ActionService.contrib">
   
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
-
+ 
     <action id="BtnCreateItemStructure" order="20" label="eloraplm.command.bom.updateStructure" type="fancybox" icon="/icons/action_create_structure_16.png">
       <category>DOCUMENT_UPPER_ACTION</category>
-      <filter-id>isEditable</filter-id> -->
+      <filter-id>isEditable</filter-id>
       <filter-id>isBomDocument</filter-id>
       <filter-id>isNotCustomerProduct</filter-id>
-      <filter-id>isNotManufacturerPart</filter-id>
       <filter-id>isNotBomSpecification</filter-id>
       <properties>
         <property name="include">/incl/action/bom_structure_creation.xhtml</property>

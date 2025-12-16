@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.vault.ActionService.contrib">
+    <require>org.nuxeo.connect.client.actions</require>
+    <require>org.nuxeo.ecm.directory.actions</require>
+    
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+        
+       <!-- in order to be able to manage users and groups -->
+       <filter id="usersGroupsManagementAccess" append="true">
+            <rule grant="true">
+                <condition>#{currentUser.isMemberOf('vaultFolderManagers')}</condition>
+            </rule>
+        </filter>
+    
+        <!-- in order to be able to access Administration panel -->
+        <filter id="adminCenterAccess" append="true">
+              <rule grant="true">
+                    <condition>#{currentUser.isMemberOf('vaultFolderManagers')}</condition>
+              </rule>
+        </filter>
+        
+        <!-- in order to be able to update users and groups  -->
+        <filter id="directoriesManagementAccess" append="true">
+            <rule grant="true">
+                <condition>#{currentUser.isMemberOf('vaultFolderManagers')}</condition>
+            </rule>
+        </filter>
+        
+    </extension>
+
+</component>

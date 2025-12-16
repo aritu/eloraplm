@@ -8,7 +8,6 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.webapp.versioning.DocumentVersioning;
 
-import com.aritu.eloraplm.pdm.promote.treetable.NodeDynamicInfo;
 import com.aritu.eloraplm.relations.treetable.BaseRelationNodeData;
 
 public class PromoteNodeData extends BaseRelationNodeData {

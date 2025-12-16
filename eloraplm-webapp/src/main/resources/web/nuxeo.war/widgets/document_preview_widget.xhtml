@@ -1,0 +1,34 @@
+<div xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:c="http://java.sun.com/jstl/core"
+  class="documentPreview">
+
+  <nxu:set var="width"
+    value="#{nxu:test(empty widgetProperty_width, '100%', widgetProperty_width)}"
+    cache="true">
+  <nxu:set var="height"
+    value="#{nxu:test(empty widgetProperty_width, '600px', widgetProperty_height)}"
+    cache="true">
+    
+    <nxu:set var="previewUrl" value="#{eloraPreviewActions.getPreviewUrl(fieldOrValue)}">
+    <c:if test="#{not empty previewUrl}">
+        <iframe id="#{widget.id}_frame" src="#{previewUrl}" frameborder="1"
+            width="#{width}" height="#{height}"  scrolling="auto">
+        </iframe>
+        
+        <script type="text/javascript">
+          jQuery(document).ready(function() {
+            var fancyBox = jQuery('#fancybox-content', window.parent.document);
+            if (fancyBox.length > 0 &amp;&amp; fancyBox.height() > 0) {
+              // we know we are in a fancybox
+              jQuery('##{widget.id}_frame').height(fancyBox.height());
+            }
+          });
+        </script>
+    </c:if>
+    </nxu:set>
+
+  </nxu:set>
+  </nxu:set>
+
+</div>

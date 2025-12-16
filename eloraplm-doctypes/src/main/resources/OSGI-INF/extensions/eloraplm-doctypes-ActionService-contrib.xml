@@ -14,10 +14,12 @@
                 <type>FolderCadAssembly</type>
                 <type>FolderCadDrawing</type>
                 <type>FolderOtherDoc</type>
+                <type>OtherDocVaultFolder</type>
                 <type>Project</type>
                 <type>AdminRoot</type>
                 <type>DocumentationRoot</type>
                 <type>DocumentTemplates</type>
+                <type>DocumentTemplatesRoot</type>
                 <type>OfficeTemplates</type>
             </rule>
         </filter>
@@ -31,6 +33,7 @@
                 <type>FolderCadAssembly</type>
                 <type>FolderCadDrawing</type>
                 <type>FolderOtherDoc</type>
+                <type>OtherDocVaultFolder</type>
                 <type>Project</type>
             </rule>
         </filter>
@@ -94,6 +97,12 @@
             </rule>
         </filter>
         
+        <filter id="documentVersionsTableButtons">
+            <rule grant="true">
+                <condition>#{webActions.currentTabId eq 'TAB_CONTENT_HISTORY' and webActions.currentSubTabId eq 'TAB_ELORA_VERSIONS'}</condition>
+            </rule>
+        </filter>
+        
     </extension>
     
     
@@ -134,6 +143,15 @@
         <action id="BtnSaveProjectPhases" order="30" label="command.save" type="link" link="#{projectPhasesTableBean.save()}" icon="">
           <category>DATATABLE_BUTTON</category>
           <filter-id>projectPhasesTableButtons</filter-id>
+          <properties>
+            <property name="ajaxSupport">true</property>
+            <property name="styleClass">button mainAction</property>
+          </properties>
+        </action>
+        
+        <action id="BtnSaveDocumentVersionComment" order="20" label="command.save" type="link" link="#{documentVersionsTableBean.save()}" icon="">
+          <category>DATATABLE_BUTTON</category>
+          <filter-id>documentVersionsTableButtons</filter-id>
           <properties>
             <property name="ajaxSupport">true</property>
             <property name="styleClass">button mainAction</property>

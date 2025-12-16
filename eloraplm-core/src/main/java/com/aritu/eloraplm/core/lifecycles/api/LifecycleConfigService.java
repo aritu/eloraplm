@@ -15,6 +15,10 @@ import com.aritu.eloraplm.exceptions.EloraException;
  */
 public interface LifecycleConfigService {
 
+    public static final String TRANSITION_DIRECTION_DEMOTE = "demote";
+
+    public static final String TRANSITION_DIRECTION_PROMOTE = "promote";
+
     // States
 
     public List<String> getStatesList();

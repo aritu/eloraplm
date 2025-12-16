@@ -1,0 +1,50 @@
+<ui:decorate
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"  
+  xmlns:p="http://primefaces.org/ui"
+  template="/incl/action/widgets/primefaces_dialog_base_template.xhtml">
+
+    
+        <ui:define name="dialog_content">
+            
+            <p:outputPanel rendered="#{cmDocImpactedItemsTreeBean.passedItems}" >
+                <h:outputText styleClass="processMessage completeWarning" value="#{messages['eloraplm.message.warning.cm.batch.promote.passed.items1']}" /> 
+                <br/>
+                <h:outputText styleClass="processMessage completeWarning" value="#{messages['eloraplm.message.warning.cm.batch.promote.passed.items2']}" />                
+            </p:outputPanel>
+            <br/>
+            <p:outputPanel>
+                <h:outputText styleClass="processMessage completeInfo" value="#{messages['eloraplm.message.info.cm.batch.execute.promote.items1']}" /> 
+                <br/>
+                <h:outputText styleClass="processMessage completeInfo" value="#{messages['eloraplm.message.info.cm.batch.execute.promote.items2']}" />                
+            </p:outputPanel>
+            <br/>
+            <p:outputPanel>
+                <p:outputLabel styleClass="info" for="chkForcePromotion" value="#{messages['eloraplm.command.cm.batch.forcePromote']}" />
+                <p:selectBooleanCheckbox id="chkForcePromotion" value="#{cmDocsBatchProcessing.forcePromotion}"/>
+                <span style="padding:0 0.8rem 0 0.3rem"><h:graphicImage value="/icons/action_promote_16.png" /></span>                
+                <h:outputText styleClass="processMessage completeInfo" value="#{messages['eloraplm.message.info.cm.batch.execute.promote.force.promotion']}" />
+            </p:outputPanel>
+            
+        </ui:define>
+     
+        <ui:define name="dialog_buttons">
+            <p:commandButton
+                value="#{messages['command.execute']}"
+                styleClass="button mainAction"                
+                action="#{cmDocsBatchProcessing.promote}"
+                onstart="handlePfDialogStart(#{pfDialogId});"
+                oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+                process="@form"
+                update="@form"
+            />
+
+            <p:commandButton type="button" value="#{messages['command.cancel']}"
+                immediate="true" process="@none"
+                styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+            />
+          
+        </ui:define>    
+
+</ui:decorate>

@@ -25,6 +25,7 @@ import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.DOCUMENT_PROXY_UPD
 import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.DOCUMENT_REMOVED;
 import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.DOCUMENT_SECURITY_UPDATED;
 import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.DOCUMENT_TAG_UPDATED;
+import static org.nuxeo.ecm.core.api.event.DocumentEventTypes.DOCUMENT_RESTORED;
 
 import java.util.Iterator;
 
@@ -98,6 +99,8 @@ public abstract class EloraIndexingCommandsStacker
         case DOCUMENT_PROXY_UPDATED:
         case PdmEventNames.PDM_CHECKOUT_UNDONE_EVENT:
         case LifeCycleConstants.TRANSITION_EVENT:
+        case DOCUMENT_RESTORED:
+        case PdmEventNames.PDM_RESTORED_EVENT:
             if (doc.isProxy() && !doc.isImmutable() && !proxyRelated) {
                 stackCommand(
                         doc.getCoreSession().getDocument(

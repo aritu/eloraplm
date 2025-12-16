@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.exceptions.COSVisitorException;
@@ -52,9 +54,11 @@ import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.PdmActionConstants;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
+import com.aritu.eloraplm.core.relations.util.RelationSwitchHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
+import com.aritu.eloraplm.core.util.EloraUnitConversionHelper;
 import com.aritu.eloraplm.core.util.StateLogHelper;
 import com.aritu.eloraplm.core.util.json.EloraJsonHelper;
 import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
@@ -75,7 +79,6 @@ import com.aritu.eloraplm.integration.util.IntegrationEventTypes;
 import com.aritu.eloraplm.lifecycles.util.LifecycleHelper;
 import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
 import com.aritu.eloraplm.pdm.overwrite.helper.OverwriteVersionHelper;
-import com.aritu.eloraplm.pdm.util.RelationSwitchHelper;
 
 /**
  * @author aritu
@@ -485,6 +488,40 @@ public class DoCheckin {
                     localId, wcRef, parentRealRef, comment, unlock,
                     structureRootRealRef, overwrite);
 
+            // Get Open Required fix properties
+            JsonNode orfProperties = EloraJsonHelper.getJsonNode(docItem,
+                    "orfProperties", false);
+            if (orfProperties != null) {
+                for (JsonNode propItem : orfProperties) {
+                    String property = EloraJsonHelper.getJsonFieldAsString(
+                            propItem, "property", false);
+                    String value = EloraJsonHelper.getJsonFieldAsString(
+                            propItem, "value", false, false, true);
+                    if (property != null && value != null) {
+
+                        // Round decimal values
+                        if (EloraUnitConversionHelper.isDecimalProperty(
+                                property)) {
+                            // Set empty values as null to avoid validation
+                            // errors
+                            if (value.isEmpty()) {
+                                value = null;
+                            }
+                            if (value != null && !value.equals("0")) {
+                                String measure = EloraUnitConversionHelper.getMeasureForProperty(
+                                        property);
+                                if (measure != null) {
+                                    value = EloraUnitConversionHelper.roundDecimalValue(
+                                            measure, value);
+                                }
+                            }
+                        }
+
+                        requestDoc.addOrfProperty(property, value);
+                    }
+                }
+            }
+
             // Get force metadata
             JsonNode forceMetadata = EloraJsonHelper.getJsonNode(docItem,
                     "forceMetadata", false);
@@ -553,6 +590,27 @@ public class DoCheckin {
                             hash, type);
                 }
             }
+
+            // Get derived outputs
+            JsonNode cadDerivedOutputs = EloraJsonHelper.getJsonNode(docItem,
+                    "cadDerivedOutputs", false);
+            if (cadDerivedOutputs != null) {
+                for (JsonNode derivedOutput : cadDerivedOutputs) {
+                    String fileName = EloraJsonHelper.getJsonFieldAsString(
+                            derivedOutput, "filename", true);
+                    int fileId = EloraJsonHelper.getJsonFieldAsInt(
+                            derivedOutput, "fileId", true);
+                    String batch = EloraJsonHelper.getJsonFieldAsString(
+                            derivedOutput, "batch", true);
+                    String hash = EloraJsonHelper.getJsonFieldAsString(
+                            derivedOutput, "hash", true);
+                    String type = EloraJsonHelper.getJsonFieldAsString(
+                            derivedOutput, "type", true);
+                    requestDoc.addCadDerivedOutput(fileId, fileName, batch,
+                            hash, type);
+                }
+            }
+
             requestDocs.add(requestDoc);
         }
 
@@ -675,6 +733,11 @@ public class DoCheckin {
         EloraEventHelper.fireEvent(
                 IntegrationEventTypes.AFTER_DRAFT_PROPERTIES_COPIED, wcDoc);
 
+        // Update ORF (Open Required Fix) properties
+        if (!requestDoc.getOrfProperties().isEmpty()) {
+            wcDoc = updateOpenRequiredFixProperties(requestDoc, wcDoc);
+        }
+
         // Check if it is a new document
         if (session.getVersionsRefs(wcDoc.getRef()).isEmpty()) {
             responseDoc = processNewDocument(requestDoc, wcDoc);
@@ -684,6 +747,16 @@ public class DoCheckin {
         doCheckinResponse.addDocument(requestDoc.getLocalId(), responseDoc);
 
         log.trace(logInitMsg + "--- EXIT --- ");
+    }
+
+    private DocumentModel updateOpenRequiredFixProperties(
+            DoCheckinRequestDoc requestDoc, DocumentModel wcDoc) {
+
+        for (Entry<String, String> entry : requestDoc.getOrfProperties().entrySet()) {
+            wcDoc.setPropertyValue(entry.getKey(), entry.getValue());
+        }
+
+        return wcDoc;
     }
 
     private DoCheckinResponseDoc processNewDocument(
@@ -781,6 +854,12 @@ public class DoCheckin {
         if (wcDoc.hasSchema(EloraSchemaConstants.CAD_ATTACHMENTS)) {
             DocumentHelper.removeProperty(wcDoc,
                     EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS);
+        }
+
+        // Remove old derived outputs
+        if (wcDoc.hasSchema(EloraSchemaConstants.CAD_DOCUMENT)) {
+            DocumentHelper.removeProperty(wcDoc,
+                    EloraMetadataConstants.ELORA_CAD_DERIVED_OUTPUTS);
         }
 
         // Remove all CAD relations where this wc is subject
@@ -950,12 +1029,6 @@ public class DoCheckin {
             }
         }
 
-        checkinManager.checkThatRelationIsAllowed(subjectWcDoc,
-                requestRel.getPredicate(), objectWcDoc,
-                requestRel.getQuantity());
-        checkinManager.checkThatRelationIsAllowed(subjectDoc,
-                requestRel.getPredicate(), objectDoc, requestRel.getQuantity());
-
         String subjectState = subjectDoc.getCurrentLifeCycleState();
         String objectState = objectDoc.getCurrentLifeCycleState();
 
@@ -968,7 +1041,7 @@ public class DoCheckin {
             throw new EloraException(
                     "Document |" + subjectRef + "| with state |" + subjectState
                             + "| does not support document |" + objectRef
-                            + "| state |" + objectRef + "| ");
+                            + "| state |" + objectState + "| ");
         }
 
         try {
@@ -988,9 +1061,16 @@ public class DoCheckin {
                     + objectWcDoc.getId() + "|. It is ignored");
         }
         // Add relation between versions
-        eloraDocumentRelationManager.addRelation(session, subjectDoc, objectDoc,
-                requestRel.getPredicate(), null, requestRel.getQuantity(),
-                requestRel.getOrdering());
+        try {
+            eloraDocumentRelationManager.addRelation(session, subjectDoc,
+                    objectDoc, requestRel.getPredicate(), null,
+                    requestRel.getQuantity(), requestRel.getOrdering());
+        } catch (RelationAlreadyExistsException e) {
+            log.trace(
+                    logInitMsg + "Relation already exists between subjectDoc: |"
+                            + subjectDoc.getId() + "| and objectDoc: |"
+                            + objectDoc.getId() + "|. It is ignored");
+        }
 
         log.trace(logInitMsg + "Relation between versions with subjectDoc: |"
                 + subjectDoc.getId() + "|, objectDoc: |" + objectDoc.getId()

@@ -57,7 +57,7 @@
                                           placeholder="#{messages['eloraplm.label.suggestion.switchEloraRootFolder.placeholder']}"
                                           pageProviderName="#{pageProviderName}"
                                           documentSchemas="dublincore,common,elora_object,template_info"
-                                          additionalOperationParameters="eloraPassQueryTermsTwice">
+                                          minChars="0">
                                         </nxl:widgetType>
                 
                                         <h:outputLabel value="#{messages['eloraplm.message.error.switchEloraRootFolder.targetStructureRootUidSameAsOrigin']}" 
@@ -162,22 +162,18 @@
                 
             </div>
             
-            <div class="buttonsGadget">
-                            
-              <h:panelGroup id="buttonsPanel">
+            <h:panelGroup layout="block" id="buttonsPanel" styleClass="buttonsGadget">
                 
-
-                <h:commandButton value="#{messages['eloraplm.command.switchEloraRootFolder']}" styleClass="button" 
-                action="#{switchActions.switchCurrentDocumentEloraRootFolder}" disabled="#{switchActions.isDisabledSwitchButton}">
+                <h:commandButton value="#{messages['eloraplm.command.switchEloraRootFolder']}" styleClass="button mainAction" 
+                    action="#{switchActions.switchCurrentDocumentEloraRootFolder}" disabled="#{switchActions.isDisabledSwitchButton}">
                 </h:commandButton>
-                 
-    
+                
                 <h:commandButton value="#{messages['command.cancel']}" styleClass="button" action="#{switchActions.cancelswitchCurrentDocumentEloraRootFolder()}">
                   <f:ajax execute="@this" onevent="jQuery.fancybox.close"/>
                 </h:commandButton>
-              </h:panelGroup>
-            </div>
-        
+                
+            </h:panelGroup>
+            
         </h:form>
     
     </nxu:set>

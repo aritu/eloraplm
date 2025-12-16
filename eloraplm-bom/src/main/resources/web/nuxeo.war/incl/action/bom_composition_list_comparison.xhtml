@@ -1,0 +1,116 @@
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"    
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+    template="/incl/action/widgets/primefaces_dialog_base_template.xhtml">
+    
+    <ui:define name="dialog_content">
+
+        <h3>#{messages['eloraplm.label.bom.list.compare.selectDocs']}</h3>
+        
+        <h:panelGrid columns="6" styleClass="dataInput" columnClasses="labelColumn,fieldColumn,fieldColumn">
+            <span />
+            <a4j:outputPanel>
+                <h:inputHidden id="comparisonFirstDocUid"
+                    value="#{bomListComparisonTableBean.comparisonFirstDocUid}" />
+                <nxl:widgetType
+                    name="singleDocumentSuggestion"
+                    mode="edit" ajaxReRender="comparisonFirstDocUid"
+                    value="#{bomListComparisonTableBean}"
+                    field="comparisonFirstDocUid" translated="true"
+                    width="100%"
+                    placeholder="eloraplm.label.bom.list.searchPopupTitle"
+                    pageProviderName="bom_document_wc_suggestion"
+                    documentSchemas="dublincore,common,elora_object,template_info"
+                    additionalOperationParameters="eloraPassQueryTermsTwice">
+                </nxl:widgetType>
+            </a4j:outputPanel>
+                            
+            <h:panelGroup>
+                <h:selectOneListbox size="1" id="bomListTypeFirstDoc" value="#{bomListComparisonTableBean.bomListTypeFirstDoc}" required="true">
+                    <f:selectItem itemValue="Ebom" itemLabel="#{messages['eloraplm.tab.bom.ebom']}" />
+                    <nxdir:selectItems directoryName="elora_bom_lists" var="item" itemValue="#{item.id}" itemLabel="#{item.eloraBomLists.label}" />
+                </h:selectOneListbox>
+                <h:message for="bomListTypeFirstDoc" class="errorMessage" />
+            </h:panelGroup>
+            
+                            
+            <a4j:outputPanel>
+                <h:inputHidden id="comparisonSecondDocUid"
+                    value="#{bomListComparisonTableBean.comparisonSecondDocUid}" />
+                <nxl:widgetType
+                    name="singleDocumentSuggestion"
+                    mode="edit" ajaxReRender="comparisonSecondDocUid"
+                    value="#{bomListComparisonTableBean}"
+                    field="comparisonSecondDocUid" translated="true"
+                    width="100%"
+                    placeholder="eloraplm.label.bom.list.searchPopupTitle"
+                    pageProviderName="bom_document_wc_suggestion"
+                    documentSchemas="dublincore,common,elora_object,template_info"
+                    additionalOperationParameters="eloraPassQueryTermsTwice">
+                </nxl:widgetType>
+            </a4j:outputPanel>
+            
+            <h:panelGroup>
+                <h:selectOneListbox size="1" id="bomListTypeSecondDoc" value="#{bomListComparisonTableBean.bomListTypeSecondDoc}" required="true">
+                    <f:selectItem itemValue="Ebom" itemLabel="#{messages['eloraplm.tab.bom.ebom']}" />
+                    <nxdir:selectItems directoryName="elora_bom_lists" var="item" itemValue="#{item.id}" itemLabel="#{item.eloraBomLists.label}" />
+                </h:selectOneListbox>
+                <h:message for="bomListTypeSecondDoc" class="errorMessage" />
+            </h:panelGroup>
+            
+            <h:commandButton value="#{messages['eloraplm.command.bom.list.compare']}"
+                styleClass="button mainAction"
+                actionListener="#{bomListComparisonTableBean.createData()}">
+                <p:ajax
+                    process="@form"
+                    update="@form:comparisonResult"
+                    partialSubmit="true"
+                />            
+       
+            </h:commandButton>
+                        
+        </h:panelGrid>
+        
+        <p:divider />
+        
+        <h:panelGroup id="comparisonResult" layout="block">
+            
+            <script type="text/javascript">
+                if(PF('#{pfDialogId}')) {
+                    PF('#{pfDialogId}').resetPosition();
+                }
+            </script>
+            
+            <ui:fragment rendered="#{bomListComparisonTableBean.size > 0 and bomListComparisonTableBean.differentStructure}">
+                <div class="processMessage fullWidth completeWarning">
+                    <h:outputLabel value="#{messages['eloraplm.message.bomList.different.structure']}" />
+                </div>
+            </ui:fragment>            
+            <ui:fragment rendered="#{bomListComparisonTableBean.size > 0 and !bomListComparisonTableBean.differentStructure}">
+                <div class="processMessage fullWidth completeSuccess">
+                    <h:outputLabel value="#{messages['eloraplm.message.bomList.identical.structure']}" />
+                </div>
+            </ui:fragment>
+        
+            <nxl:widget name="bom_list_comparison_dt" mode="view" value="#{bomListComparisonTableBean}" />
+        </h:panelGroup>
+        
+    </ui:define>
+    
+    <ui:define name="dialog_buttons">
+    
+        <p:commandButton type="button" value="#{messages['command.cancel']}"
+            immediate="true" process="@none"
+            styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+        />
+    
+    </ui:define>
+    
+</ui:decorate>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.core.TypeService.contrib">
+    <require>org.nuxeo.ecm.directory.types</require>
+    
+    <!--  Override Nuxeo's l10nvocabulary -->
+    <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+        <schema name="l10nvocabulary" src="schemas/sch_elora_l10nvocabulary.xsd" override="true" />
+    </extension>
+    
+</component>

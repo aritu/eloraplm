@@ -20,7 +20,11 @@ import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.core.api.Blob;
@@ -45,6 +49,8 @@ import com.aritu.eloraplm.config.util.EloraConfig;
 import com.aritu.eloraplm.constants.EloraConfigConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraMimeTypeConstants;
+import com.aritu.eloraplm.constants.EloraPropertiesConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
@@ -247,10 +253,7 @@ public class ViewerFileServiceImpl extends DefaultComponent
     }
 
     private Blob createViewerFileWithDescriptor(DocumentModel doc,
-            TypeDescriptor td, String action)
-            throws OverwriteOriginalViewerException, COSVisitorException,
-            EloraException, IOException, ParseException,
-            UnableToConvertBlobToPdfException {
+            TypeDescriptor td, String action) throws Exception {
 
         String logInitMsg = "[createViewerFileWithDescriptor] ["
                 + doc.getCoreSession().getPrincipal().getName() + "] ";
@@ -270,8 +273,10 @@ public class ViewerFileServiceImpl extends DefaultComponent
 
             File viewerFile = combineBlobsAndGetFile(blobMap);
 
+            viewerFile = updatePdfMetadata(doc, viewerFile);
+
             Blob blob = Blobs.createBlob(viewerFile);
-            blob.setMimeType(ViewerHelper.PDF_MIMETYPE);
+            blob.setMimeType(EloraMimeTypeConstants.APPLICATION_PDF);
             Framework.trackFile(viewerFile, blob);
 
             // Generate filename
@@ -293,6 +298,46 @@ public class ViewerFileServiceImpl extends DefaultComponent
         }
 
         return null;
+    }
+
+    private File updatePdfMetadata(DocumentModel doc, File viewerFile)
+            throws Exception {
+        PDDocument pdfDoc = PDDocument.load(viewerFile);
+        try {
+            PDDocumentInformation info = new PDDocumentInformation();
+
+            // Title
+            String title = "";
+            if (doc.hasSchema(EloraSchemaConstants.ELORA_OBJECT)) {
+                String reference = (String) doc.getPropertyValue(
+                        EloraMetadataConstants.ELORA_ELO_REFERENCE);
+                if (reference != null) {
+                    title += reference + " ";
+                }
+            }
+            title += doc.getTitle();
+            info.setTitle(title);
+            // Author
+            info.setAuthor(Framework.getProperty(
+                    EloraPropertiesConstants.PROP_COMPANY_NAME));
+            // Creator
+            info.setCreator("EloraPLM (https://eloraplm.com)");
+
+            pdfDoc.setDocumentInformation(info);
+
+            // Remove old XMP Metadata
+            PDMetadata metadata = new PDMetadata(pdfDoc);
+            XMPMetadata xmp = new XMPMetadata();
+            metadata.importXMPMetadata(xmp.asByteArray());
+            pdfDoc.getDocumentCatalog().setMetadata(metadata);
+
+            pdfDoc.save(viewerFile);
+
+        } finally {
+            pdfDoc.close();
+        }
+
+        return viewerFile;
     }
 
     private SortedMap<Integer, Blob> processSection(DocumentModel doc,
@@ -408,7 +453,7 @@ public class ViewerFileServiceImpl extends DefaultComponent
         }
 
         if (blob != null) {
-            if (!blob.getMimeType().equals(ViewerHelper.PDF_MIMETYPE)) {
+            if (!blob.getMimeType().equals(EloraMimeTypeConstants.APPLICATION_PDF)) {
                 blob = convertBlobToPdf(blob);
             }
 
@@ -467,18 +512,20 @@ public class ViewerFileServiceImpl extends DefaultComponent
         return map;
     }
 
-    private Blob convertBlobToPdf(Blob blob)
+    @Override
+    public Blob convertBlobToPdf(Blob blob)
             throws UnableToConvertBlobToPdfException {
         Blob result = null;
 
         BlobHolder bh = new SimpleBlobHolder(blob);
         ConversionService cs = Framework.getService(ConversionService.class);
         if (cs.getConverterName(blob.getMimeType(),
-                ViewerHelper.PDF_MIMETYPE) == null) {
+                EloraMimeTypeConstants.APPLICATION_PDF) == null) {
             throw new UnableToConvertBlobToPdfException(
-                    "No converter available for the source file to create a PDF.");
+                    "No converter available for the source file to create a PDF. Source file mime type = |"
+                            + blob.getMimeType() + "|");
         }
-        BlobHolder resultBh = cs.convertToMimeType(ViewerHelper.PDF_MIMETYPE,
+        BlobHolder resultBh = cs.convertToMimeType(EloraMimeTypeConstants.APPLICATION_PDF,
                 bh, new HashMap<String, Serializable>());
 
         if (resultBh != null) {

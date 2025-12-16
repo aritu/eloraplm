@@ -13,11 +13,20 @@
  */
 package com.aritu.eloraplm.cm.treetable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.nuxeo.ecm.core.api.DocumentModel;
+import javax.faces.model.SelectItem;
 
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
+
+import com.aritu.eloraplm.cm.util.CMHelper;
+import com.aritu.eloraplm.constants.CMConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.treetable.BaseNodeData;
 
 /**
@@ -35,6 +44,8 @@ public abstract class CMItemsNodeData extends BaseNodeData {
     protected String nodeId;
 
     protected String parentNodeId;
+
+    protected DocumentModel derivedFrom;
 
     protected boolean isModifiedItem;
 
@@ -58,13 +69,19 @@ public abstract class CMItemsNodeData extends BaseNodeData {
 
     protected DocumentModel destinationItem;
 
-    private String destinationItemUid;
-
     protected DocumentModel destinationItemWc;
 
-    protected Map<String, String> destinationItemVersionList;
+    protected List<SelectItem> destinationItemVersionList;
+
+    protected String defaultDestinationItemSourceVersionUid;
+
+    protected DocumentModel destinationItemSourceVersion;
+
+    protected List<SelectItem> destinationItemSourceVersionList;
 
     protected boolean destinationItemVersionIsReadOnly;
+
+    protected boolean destinationItemSourceVersionIsReadOnly;
 
     protected boolean isManaged;
 
@@ -82,20 +99,25 @@ public abstract class CMItemsNodeData extends BaseNodeData {
 
     public CMItemsNodeData(String id, int level, boolean isNew,
             boolean isRemoved, boolean isModified, Long rowNumber,
-            String nodeId, String parentNodeId, boolean isModifiedItem,
-            DocumentModel parentItem, DocumentModel originItem,
-            DocumentModel originItemWc, String predicate, String quantity,
-            boolean isAnarchic, boolean isDirectObject, String action,
-            boolean actionIsReadOnly, DocumentModel destinationItem,
-            DocumentModel destinationItemWc,
-            boolean destinationItemVersionIsReadOnly, boolean isManaged,
+            String nodeId, String parentNodeId, DocumentModel derivedFrom,
+            boolean isModifiedItem, DocumentModel parentItem,
+            DocumentModel originItem, DocumentModel originItemWc,
+            String predicate, String quantity, boolean isAnarchic,
+            boolean isDirectObject, String action, boolean actionIsReadOnly,
+            DocumentModel destinationItem, DocumentModel destinationItemWc,
+            String defaultDestinationItemSourceVersionUid,
+            DocumentModel destinationItemSourceVersion,
+            boolean destinationItemVersionIsReadOnly,
+            boolean destinationItemSourceVersionIsReadOnly, boolean isManaged,
             boolean isManagedIsReadOnly, boolean isManual, String type,
-            String comment, boolean commentIsReadOnly, boolean isUpdated) {
+            String comment, boolean commentIsReadOnly, boolean isUpdated,
+            Map<String, String> messages) {
 
         super(id, level, isNew, isRemoved, isModified);
         this.rowNumber = rowNumber;
         this.nodeId = nodeId;
         this.parentNodeId = parentNodeId;
+        this.derivedFrom = derivedFrom;
         this.isModifiedItem = isModifiedItem;
         this.parentItem = parentItem;
         this.originItem = originItem;
@@ -108,21 +130,35 @@ public abstract class CMItemsNodeData extends BaseNodeData {
         this.actionIsReadOnly = actionIsReadOnly;
         this.destinationItem = destinationItem;
 
-        // if the destinationItem is the WC, initialize the version list with
-        // the WC
-        if (destinationItem != null && destinationItemWc != null
-                && destinationItem.getId().equals(destinationItemWc.getId())) {
-            // initialize the version list with the WC
-            destinationItemUid = destinationItem.getId();
-            destinationItemVersionList = new HashMap<String, String>();
-            destinationItemVersionList.put(destinationItemUid,
-                    destinationItem.getVersionLabel() + " (WC)");
+        // if the destinationItemWc is not null, initialize the version list with the WC
+        if (destinationItemWc != null) {
+            destinationItemVersionList = new ArrayList<SelectItem>();
+            destinationItemVersionList.add(new SelectItem(
+                    destinationItemWc,
+                    destinationItemWc.getVersionLabel()
+                            + CMConstants.VERSION_LABEL_WC));
         } else {
-            destinationItemUid = null;
             destinationItemVersionList = null;
         }
         this.destinationItemWc = destinationItemWc;
+        this.defaultDestinationItemSourceVersionUid = defaultDestinationItemSourceVersionUid;
+        this.destinationItemSourceVersion = destinationItemSourceVersion;
+
+        // initialize the source version list and add corresponding label
+        if (destinationItemSourceVersion != null) {
+            destinationItemSourceVersionList = new ArrayList<SelectItem>();
+            DocumentModelList destinationItemSourceVersionDocuments = new DocumentModelListImpl();
+            destinationItemSourceVersionDocuments.add(
+                    destinationItemSourceVersion);
+            CMHelper.fillVersionList(destinationItemSourceVersionList,
+                    destinationItemSourceVersionDocuments, messages);
+
+        } else {
+            destinationItemSourceVersionList = null;
+        }
+
         this.destinationItemVersionIsReadOnly = destinationItemVersionIsReadOnly;
+        this.destinationItemSourceVersionIsReadOnly = destinationItemSourceVersionIsReadOnly;
         this.isManaged = isManaged;
         this.isManagedIsReadOnly = isManagedIsReadOnly;
         this.isManual = isManual;
@@ -157,12 +193,12 @@ public abstract class CMItemsNodeData extends BaseNodeData {
         this.parentNodeId = parentNodeId;
     }
 
-    public void setIsModifiedItem(boolean isModifiedItem) {
-        this.isModifiedItem = isModifiedItem;
-    }
-
     public boolean getIsModifiedItem() {
         return isModifiedItem;
+    }
+
+    public void setIsModifiedItem(boolean isModifiedItem) {
+        this.isModifiedItem = isModifiedItem;
     }
 
     public DocumentModel getParentItem() {
@@ -241,14 +277,6 @@ public abstract class CMItemsNodeData extends BaseNodeData {
         return destinationItem;
     }
 
-    public String getDestinationItemUid() {
-        return destinationItemUid;
-    }
-
-    public void setDestinationItemUid(String destinationItemUid) {
-        this.destinationItemUid = destinationItemUid;
-    }
-
     public void setDestinationItem(DocumentModel destinationItem) {
         this.destinationItem = destinationItem;
     }
@@ -261,13 +289,40 @@ public abstract class CMItemsNodeData extends BaseNodeData {
         this.destinationItemWc = destinationItemWc;
     }
 
-    public Map<String, String> getDestinationItemVersionList() {
+    public List<SelectItem> getDestinationItemVersionList() {
         return destinationItemVersionList;
     }
 
     public void setDestinationItemVersionList(
-            Map<String, String> destinationItemVersionList) {
+            List<SelectItem> destinationItemVersionList) {
         this.destinationItemVersionList = destinationItemVersionList;
+    }
+
+    public String getDefaultDestinationItemSourceVersionUid() {
+        return defaultDestinationItemSourceVersionUid;
+    }
+
+    public void setDefaultDestinationItemSourceVersionUid(
+            String defaultDestinationItemSourceVersionUid) {
+        this.defaultDestinationItemSourceVersionUid = defaultDestinationItemSourceVersionUid;
+    }
+
+    public DocumentModel getDestinationItemSourceVersion() {
+        return destinationItemSourceVersion;
+    }
+
+    public void setDestinationItemSourceVersion(
+            DocumentModel destinationItemSourceVersion) {
+        this.destinationItemSourceVersion = destinationItemSourceVersion;
+    }
+
+    public List<SelectItem> getDestinationItemSourceVersionList() {
+        return destinationItemSourceVersionList;
+    }
+
+    public void setDestinationItemSourceVersionList(
+            List<SelectItem> destinationItemSourceVersionList) {
+        this.destinationItemSourceVersionList = destinationItemSourceVersionList;
     }
 
     public boolean getDestinationItemVersionIsReadOnly() {
@@ -277,6 +332,15 @@ public abstract class CMItemsNodeData extends BaseNodeData {
     public void setDestinationItemVersionIsReadOnly(
             boolean destinationItemVersionIsReadOnly) {
         this.destinationItemVersionIsReadOnly = destinationItemVersionIsReadOnly;
+    }
+
+    public boolean getDestinationItemSourceVersionIsReadOnly() {
+        return destinationItemSourceVersionIsReadOnly;
+    }
+
+    public void setDestinationItemSourceVersionIsReadOnly(
+            boolean destinationItemSourceVersionIsReadOnly) {
+        this.destinationItemSourceVersionIsReadOnly = destinationItemSourceVersionIsReadOnly;
     }
 
     public boolean getIsManaged() {
@@ -333,6 +397,23 @@ public abstract class CMItemsNodeData extends BaseNodeData {
 
     public void setIsUpdated(boolean isUpdated) {
         this.isUpdated = isUpdated;
+    }
+
+    public DocumentModel getDerivedFrom() {
+        return derivedFrom;
+    }
+
+    public void setDerivedFrom(DocumentModel derivedFrom) {
+        this.derivedFrom = derivedFrom;
+    }
+
+    public Object getSourceVersionPassedData() {
+        DocumentModel baseDoc = destinationItemWc != null ? EloraDocumentHelper.getBaseVersion(destinationItemWc)
+                : null;
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("originUid", (originItem != null ? originItem.getId() : ""));
+        data.put("baseUid", (baseDoc != null ? baseDoc.getId() : ""));
+        return data;
     }
 
 }

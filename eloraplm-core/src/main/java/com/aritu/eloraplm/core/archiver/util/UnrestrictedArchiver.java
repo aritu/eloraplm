@@ -28,7 +28,6 @@ import org.nuxeo.runtime.transaction.TransactionHelper;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.core.archiver.api.ArchiverDescriptor;
 import com.aritu.eloraplm.core.archiver.api.ArchiverExecuterDescriptor;
-import com.aritu.eloraplm.core.archiver.util.WorkspaceArchiverHelper;
 
 public class UnrestrictedArchiver extends UnrestrictedSessionRunner {
 

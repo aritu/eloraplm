@@ -22,6 +22,7 @@ import org.nuxeo.ecm.platform.audit.api.LogEntry;
 import org.nuxeo.ecm.platform.audit.api.comment.CommentProcessorHelper;
 
 import com.aritu.eloraplm.constants.EloraDocumentEventNames;
+import com.aritu.eloraplm.constants.EloraEventNames;
 
 /**
  *
@@ -70,6 +71,9 @@ public class EloraCommentProcessorHelper extends CommentProcessorHelper {
             } else if (EloraDocumentEventNames.DOCUMENT_ELORA_ROOT_FOLDER_SWITCHED.equals(
                     eventId)) {
                 newComment = "audit.switch_elora_root_folder.origin_doc";
+            } else if (EloraEventNames.ELORA_DOCUMENT_DUPLICATED.equals(
+                    eventId)) {
+                newComment = "audit.elora_document_duplicated";
             }
         }
 

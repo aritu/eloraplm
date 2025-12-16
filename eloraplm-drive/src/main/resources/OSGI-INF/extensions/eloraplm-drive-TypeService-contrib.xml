@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.drive.TypeService.contrib">
+    
+    <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+        <schema name="eloraDesktopBinaries" src="schemas/sch_elora_desktop_binaries.xsd"/>
+    </extension>
+    
+</component>

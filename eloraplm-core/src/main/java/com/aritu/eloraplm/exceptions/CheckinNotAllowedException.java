@@ -39,7 +39,7 @@ public class CheckinNotAllowedException extends Exception {
             DocumentModel errorDoc) {
         super("Could not check in document '" + checkinDoc.getId()
                 + "' because document '" + errorDoc.getId()
-                + "' is check out or has a state that is not supported.");
+                + "' is checked out or has a state that is not supported.");
         this.checkinDoc = checkinDoc;
         this.errorDoc = errorDoc;
 

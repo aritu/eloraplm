@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  >
+
+  <ui:include src="/incl/pf_filter_selectOneMenu.xhtml">
+    <ui:param name="map" value="#{cmDocImpactedItemsTreeBean.docLifeCycleStatesFilterMap}" />
+    <ui:param name="styleClass" value="iconColumnFilter" />
+  </ui:include>
+  
+</ui:composition>

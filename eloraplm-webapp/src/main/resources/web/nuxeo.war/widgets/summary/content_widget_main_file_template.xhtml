@@ -1,0 +1,44 @@
+<ui:fragment
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+    <c:set var="canHaveMainBlob" value="#{!empty currentDocumentAsBlobHolder}" />
+    <c:set var="hasMainBlob" value="#{!empty currentDocumentAsBlobHolder.blob}" />
+
+    <!-- Main blob -->
+    <c:if test="#{hasMainBlob}">
+        <div class="#{fileZoneClass}" context="mainBlob" id="mainBlobDropZone">
+            <table class="smallTable">
+                <tbody>
+                    <tr>
+                        <td class="labelColumn">
+                            <h:outputText value="#{messages['label.summary.download.file']}" />
+                        </td>
+                        <td class="fieldColumn" docRef="#{currentDocument.id}">
+                            <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}" field="#{currentDocumentAsBlobHolder.xpath}"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
+    <c:if test="#{!hasMainBlob and canHaveMainBlob}">
+        <div class="#{fileZoneClass}" context="mainBlob" id="mainBlobDropZone">
+            <table class="smallTable">
+                <tbody>
+                    <tr>
+                        <td class="labelColumn">
+                            <h:outputText value="#{messages['label.summary.download.file']}" />
+                        </td>
+                        <td class="fieldColumn" docRef="#{currentDocument.id}">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
+
+</ui:fragment>

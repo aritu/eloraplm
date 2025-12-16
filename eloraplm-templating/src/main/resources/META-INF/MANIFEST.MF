@@ -7,11 +7,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-Component: OSGI-INF/extensions/TemplatingService.xml,OSGI-INF/ex
- tensions/eloraplm-templating-ActionService-contrib.xml,OSGI-INF/exten
- sions/eloraplm-templating-ContentTemplateService-contrib.xml,OSGI-INF
- /extensions/eloraplm-templating-TemplateProcessorComponent-contrib.xm
- l,OSGI-INF/extensions/eloraplm-templating-TypeService-contrib.xml,OSG
- I-INF/extensions/eloraplm-templating-OperationServiceComponent-contri
- b.xml
-
+Nuxeo-Component: OSGI-INF/extensions/TemplatingService.xml,
+ OSGI-INF/extensions/eloraplm-templating-ActionService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-templating-ContentTemplateService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-templating-TemplateProcessorComponent-contrib.xml,
+ OSGI-INF/extensions/eloraplm-templating-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-templating-OperationServiceComponent-contrib.xml

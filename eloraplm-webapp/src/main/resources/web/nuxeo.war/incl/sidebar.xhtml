@@ -1,0 +1,92 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
+                
+    <h:outputScript>
+        var sidebars = ['column_sidebar_browse','column_sidebar_clipboard','column_sidebar_tasks'];
+        
+        function onSbClicked(sidebarId) {
+            if(PF(sidebarId) !== undefined) {
+                PF(sidebarId).isVisible() ? PF(sidebarId).hide() : PF(sidebarId).show();
+            }
+        }
+        
+        function onSbShown(sidebarId) {
+            sidebars.forEach(function(sbId) {
+                if(sbId !== sidebarId &amp;&amp; PF(sbId) !== undefined) {
+                    PF(sbId).hide();
+                }
+            });
+        }
+        
+    </h:outputScript>
+    
+    <div id="column_sidebar_buttons" class="column">
+        <a onclick="onSbClicked('column_sidebar_browse')">
+            
+            <h:graphicImage value="/icons/sidebar_browse_22.png"
+                styleClass="tipsyShow tipsyGravityW sidebar_button"
+                title="#{messages['eloraplm.sidebar.button.browse']}" />
+            
+        </a>
+        <a onclick="onSbClicked('column_sidebar_clipboard')">
+            
+            <h:graphicImage value="/icons/sidebar_clipboard_22.png"
+                styleClass="tipsyShow tipsyGravityW sidebar_button"
+                title="#{messages['eloraplm.sidebar.button.clipboard']}" />
+            
+        </a>
+        <c:if test="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.workflows.enabled')}">
+            <a onclick="onSbClicked('column_sidebar_tasks')">
+                
+                <h:graphicImage value="/icons/sidebar_tasks_22.png"
+                    styleClass="tipsyShow tipsyGravityW sidebar_button"
+                    title="#{messages['eloraplm.sidebar.button.tasks']}" />
+                
+            </a>
+            <h:panelGroup id="task-ct-bdg">
+                <nxu:set var="taskCount" value="#{userTasksDataView.countTasks()}">
+                    <h:panelGroup styleClass="sidebar_badge" rendered="#{taskCount gt 0}">#{taskCount lt 10 ? taskCount : '+'}</h:panelGroup>
+                </nxu:set>
+            </h:panelGroup>
+        </c:if>
+    </div>
+                
+    <p:sidebar id="column_sidebar_browse" styleClass="column_sidebar" widgetVar="column_sidebar_browse" baseZIndex="7000" visible="false"
+        onShow="onSbShown('column_sidebar_browse')">
+            <c:if test="false">
+                <ui:include src="/incl/import.xhtml" />
+            </c:if>
+            
+            <ui:include src="/incl/multi_tree_explorer.xhtml" />
+            
+            <c:if test="false">
+                <ui:insert name="nosconnection">
+                    <c:if test="#{connectUpdateStatusInfo.bannerPath!=null}">
+                        <ui:include src="#{connectUpdateStatusInfo.bannerPath}" />
+                    </c:if>
+                </ui:insert>
+            </c:if>
+    </p:sidebar>
+    
+    <p:sidebar id="column_sidebar_clipboard" styleClass="column_sidebar" widgetVar="column_sidebar_clipboard" baseZIndex="7000" visible="false"
+        onShow="onSbShown('column_sidebar_clipboard')">
+            <ui:include src="/incl/user_clipboard.xhtml" />
+    </p:sidebar>
+    
+    <c:if test="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.workflows.enabled')}">
+        <p:sidebar id="column_sidebar_tasks" dynamic="false" styleClass="column_sidebar" widgetVar="column_sidebar_tasks" baseZIndex="7000" visible="false"
+            onShow="onSbShown('column_sidebar_tasks')">
+            <ui:include src="/incl/sidebar_tasks.xhtml" />
+        </p:sidebar>
+    </c:if>
+
+</ui:composition>
+ 

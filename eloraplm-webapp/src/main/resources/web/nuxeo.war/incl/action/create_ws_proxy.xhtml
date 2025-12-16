@@ -1,64 +1,145 @@
-<div xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:a4j="http://richfaces.org/a4j"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:nxu="http://nuxeo.org/nxweb/util">
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    template="/incl/action/widgets/primefaces_dialog_base_template.xhtml"
+>
+    <ui:define name="dialog_content">
+        <h:panelGrid
+            columns="2"
+            columnClasses="labelColumn, fieldColumn"
+        >
+            <h:outputLabel
+                for="sourceVersionUid"
+                styleClass="required"
+                value="#{messages['eloraplm.label.version']}"
+            />
 
-    <h3>
-        <h:outputText value="#{messages['eloraplm.title.wsProxy.create']}" />
-    </h3>
+            <h:panelGroup>
+                <h:selectOneListbox
+                    id="sourceVersionUid"
+                    required="true"
+                    styleClass="dataInputText"
+                    size="1"
+                    value="#{wsProxyActions.sourceVersionUid}"
+                >
+                    <nxu:selectItems
+                        value="#{wsProxyActions.documentVersions}"
+                        var="version"
+                        itemValue="#{version.id}"
+                        itemLabel="#{version.label}"
+                    />
+                </h:selectOneListbox>
+                <h:message
+                    for="sourceVersionUid"
+                    class="errorMessage"
+                />
+            </h:panelGroup>
 
-    <h:form id="#{fancyboxFormId}">
+            <h:outputLabel
+                for="targetWorkspaceUid"
+                styleClass="required"
+                value="#{messages['eloraplm.label.destination']}"
+            />
 
-    <div class="content">
-        
-        <h:panelGroup>
-            <h:selectOneListbox id="sourceVersionUid"
-                styleClass="dataInputText" size="1"
-                value="#{wsProxyActions.sourceVersionUid}">
-                <nxu:selectItems value="#{wsProxyActions.documentVersions}"
-                    var="version" itemValue="#{version.id}"
-                    itemLabel="#{version.label}" />
-            </h:selectOneListbox>
-            <h:message for="sourceVersionUid" class="errorMessage" />
-        </h:panelGroup>
-        
-        <h:panelGroup>
-            <a4j:outputPanel>
-                <h:inputHidden id="targetWorkspaceUid"
-                    value="#{wsProxyActions.targetWorkspaceUid}" size="20"
-                    styleClass="dataInputTextNoSize" />
-                
-                <nxl:widgetType name="singleDocumentSuggestion" mode="edit"
-                  ajaxReRender="targetWorkspaceUid"
-                  value="#{wsProxyActions}" field="targetWorkspaceUid"
-                  translated="true"
-                  width="100%"
-                  placeholder="#{messages['eloraplm.label.suggestion.ws.placeholder']}"
-                  pageProviderName="workspace_wc_suggestion"
-                  documentSchemas="dublincore,common,elora_object,template_info"
-                  additionalOperationParameters="eloraPassQueryTermsTwice">
-                </nxl:widgetType>
-          </a4j:outputPanel>
-          <h:message for="targetWorkspaceUid" class="errorMessage" />
-        </h:panelGroup>
-        
-    </div>
+            <h:panelGroup>
+                <a4j:outputPanel>
+                    <h:inputHidden
+                        id="targetWorkspaceUid"
+                        required="true"
+                        value="#{wsProxyActions.targetWorkspaceUid}"
+                        size="20"
+                        styleClass="dataInputTextNoSize"
+                    />
 
-    <div class="buttonsGadget">
-      <h:commandButton value="#{messages['command.create']}" styleClass="button" action="#{wsProxyActions.createWorkspaceProxy}">
-        <f:ajax render="#{ajaxReRender}"
-          execute="@form"
-          onevent="jQuery.fancybox.close" />
-      </h:commandButton>
-      <h:commandButton value="#{messages['command.cancel']}" styleClass="button">
-        <f:ajax
-          execute="@this"
-          onevent="jQuery.fancybox.close" />
-      </h:commandButton>
-    </div>
+                    <nxl:widgetType
+                        name="singleDocumentSuggestion"
+                        mode="edit"
+                        ajaxReRender="targetWorkspaceUid targetFolderPanel targetFolderLabel"
+                        value="#{wsProxyActions}"
+                        field="targetWorkspaceUid"
+                        translated="true"
+                        width="300px"
+                        placeholder="#{messages['eloraplm.label.suggestion.ws.placeholder']}"
+                        pageProviderName="workspace_wc_suggestion"
+                        documentSchemas="dublincore,common,elora_object,template_info"
+                        additionalOperationParameters="eloraPassQueryTermsTwice"
+                    >
+                    </nxl:widgetType>
+                </a4j:outputPanel>
+                <h:message
+                    for="targetWorkspaceUid"
+                    class="errorMessage"
+                />
+            </h:panelGroup>
 
-  </h:form>
+            <h:panelGroup id="targetFolderLabel">
+                <h:outputLabel
+                    rendered="#{wsProxyActions.targetWorkspaceUid != null}"
+                    for="targetFolderUid"
+                    value="#{messages['eloraplm.label.destination.folder']}"
+                />
+            </h:panelGroup>
 
-</div>
+            <h:panelGroup id="targetFolderPanel">
+                <a4j:outputPanel
+                    rendered="#{wsProxyActions.targetWorkspaceUid != null}"
+                >
+                    <h:inputHidden
+                        id="targetFolderUid"
+                        required="false"
+                        value="#{wsProxyActions.targetFolderUid}"
+                        size="20"
+                        styleClass="dataInputTextNoSize"
+                    />
+
+                    <nxl:widgetType
+                        name="singleDocumentSuggestion"
+                        mode="edit"
+                        ajaxReRender="targetFolderUid"
+                        value="#{wsProxyActions}"
+                        field="targetFolderUid"
+                        translated="true"
+                        width="300px"
+                        placeholder="#{messages['eloraplm.label.suggestion.ws.placeholder']}"
+                        pageProviderName="folder_in_workspace_suggestion"
+                        documentSchemas="dublincore,common,elora_object,template_info"
+                        additionalOperationParameters="eloraPassQueryTermsTwice"
+                    >
+                    </nxl:widgetType>
+                </a4j:outputPanel>
+                <h:message
+                    for="targetFolderUid"
+                    class="errorMessage"
+                />
+            </h:panelGroup>
+        </h:panelGrid>
+    </ui:define>
+
+    <ui:define name="dialog_buttons">
+        <p:commandButton
+            value="#{messages['command.create']}"
+            styleClass="button mainAction"
+            action="#{wsProxyActions.createWorkspaceProxy}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccess(xhr, status, args, #{pfDialogId});"
+            process="@form"
+            update="@form"
+        />
+
+        <p:commandButton
+            type="button"
+            value="#{messages['command.cancel']}"
+            immediate="true"
+            process="@none"
+            styleClass="button"
+            onclick="PF('#{pfDialogId}').hide();"
+        />
+    </ui:define>
+
+    <ui:define name="dialog_scripts"> </ui:define>
+</ui:decorate>

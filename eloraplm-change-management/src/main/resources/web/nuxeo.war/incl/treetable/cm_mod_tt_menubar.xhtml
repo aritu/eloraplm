@@ -1,0 +1,216 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    
+    <c:if test="#{layout.mode eq 'edit'}">
+    
+        <h:outputScript library="js" name="primefaces_dialog.js" target="#{pageJsTarget}" />
+    
+        <p:menubar id="ttMenuBar" styleClass="ttMenuBar">
+            
+            <p:submenu label="#{empty value.selectedNode ? messages['label.treetable.selection.noEntriesSelected'] : nxu:translate(messages['label.treetable.selection.selectedEntries'], '1')}"
+                icon="pi pi-fw pi-check-square"
+                styleClass="selectionActions"
+                disabled="#{empty value.selectedNode}">
+                
+                <p:menuitem value="#{messages['eloraplm.command.cm.modifiedItem.edit']}&#8230;"
+                    icon="pi pi-fw pi-pencil"
+                    process="@this"
+                    partialSubmit="true"
+                    update=":glb_pf_dlg_panel"
+                    onstart="onPfDialogActionStart()"
+                    actionListener="#{pfDialogActions.initDialog(
+                            value,
+                            currentDocument,
+                            'eloraplm.command.edit',
+                            '/incl/action/cm_edit_modified_item.xhtml',
+                            true,false,true,null,null,null,null)}"
+                    oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+                     />
+                
+                <p:menuitem value="#{messages['command.lock']}"
+                    icon="pi pi-fw pi-lock"
+                    actionListener="#{value.lock}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="@form"
+                    onstart="PF('#{treeBlockerId}').show()"
+                    oncomplete="PF('#{treeBlockerId}').hide()"/>
+                
+                <p:menuitem value="#{messages['eloraplm.command.checkOut']}"
+                    icon="pi pi-fw pi-arrow-down"
+                    actionListener="#{value.checkOut}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="@form"
+                    onstart="PF('#{treeBlockerId}').show()"
+                    oncomplete="PF('#{treeBlockerId}').hide()"/>
+                    
+                <p:menuitem value="#{messages['eloraplm.command.checkIn']}&#8230;"
+                    icon="pi pi-fw pi-arrow-up"
+                    process="@this"
+                    partialSubmit="true"
+                    update=":glb_pf_dlg_panel"
+                    onstart="onPfDialogActionStart()"
+                    actionListener="#{pfDialogActions.initDialog(
+                            value,
+                            currentDocument,
+                            'eloraplm.title.checkIn',
+                            '/incl/action/cm_checkin_item.xhtml',
+                            true,false,true,null,null,null,null)}"
+                    oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+                     />
+                    
+                <p:menuitem value="#{messages['eloraplm.command.cm.batch.approve']}&#8230;"
+                    icon="pi pi-fw pi-thumbs-up"
+                    process="@this"
+                    partialSubmit="true"
+                    update=":glb_pf_dlg_panel"
+                    onstart="onPfDialogActionStart()"
+                    actionListener="#{pfDialogActions.initDialog(
+                            value,
+                            currentDocument,
+                            'eloraplm.command.cm.batch.approve',
+                            '/incl/action/cm_promote_item.xhtml',
+                            true,false,true,1400,null,null,null)}"
+                    oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+                     />
+                
+                <p:menuitem value="#{messages['command.unlock']}"
+                    icon="pi pi-fw pi-unlock"
+                    actionListener="#{value.unlock}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="@form"
+                    onstart="PF('#{treeBlockerId}').show()"
+                    oncomplete="PF('#{treeBlockerId}').hide()"/>
+            </p:submenu>
+                
+            <p:menuitem value="#{messages['eloraplm.command.cm.modified.add']}&#8230;" 
+                icon="pi pi-fw pi-plus-circle" 
+                process="@this"
+                partialSubmit="true"
+                update=":glb_pf_dlg_panel"
+                onstart="onPfDialogActionStart()"
+                actionListener="#{pfDialogActions.initDialog(
+                        value,
+                        currentDocument,
+                        'eloraplm.title.cm.modified.add',
+                        '/incl/action/cm_add_modified.xhtml',
+                        true,false,true,1000,null,null,null)}"
+                oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+                 />
+            
+            <p:menuitem value="#{messages['eloraplm.command.cm.calculateImpactMatrix']}&#8230;"
+                icon="pi pi-fw pi-sitemap"
+                process="@this"
+                partialSubmit="true"
+                update=":glb_pf_dlg_panel"
+                onstart="onPfDialogActionStart()"
+                actionListener="#{pfDialogActions.initDialog(
+                        value,
+                        currentDocument,
+                        'eloraplm.title.cm.calculateImpactMatrix',
+                        '/incl/action/cm_calculate_impact_matrix.xhtml',
+                        true,false,true,1000,null,null,null)}"
+                oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+                 />
+                
+            <p:menuitem value="#{messages['eloraplm.command.cm.removeIM']}"
+                icon="pi pi-fw pi-trash"
+                actionListener="#{modifiedItemsActions.removeImpactMatrix}"
+                onclick="if (!confirm('#{messages['eloraplm.label.cm.confirmRemoveIM']}')) return false;"
+                process="@this"
+                partialSubmit="true"
+                update="@none"
+                onstart="PF('globalBlocker').show()"
+                oncomplete="PF('globalBlocker').hide()"
+            />
+            
+            <p:divider layout="vertical"/>
+            
+            <p:submenu label="#{messages['label.batchActions']}" icon="pi pi-fw pi-list">
+                
+                <p:menuitem value="#{messages['command.lock']}"
+                    icon="pi pi-fw pi-lock"
+                    actionListener="#{cmModifiedsBatchProcessing.toggleLockAll(true)}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="@form"
+                    onstart="PF('#{treeBlockerId}').show()"
+                    oncomplete="PF('#{treeBlockerId}').hide()"/>
+                                
+                <p:divider/>
+                <p:menuitem value="#{messages['label.itemsAndBasicDocuments']}" style="font-weight:bold; pointer-events:none; color:gray; background:transparent;" />      
+                    
+                <p:menuitem value="#{messages['eloraplm.command.checkOut']}"
+                    icon="pi pi-fw pi-arrow-down"
+                    actionListener="#{cmModifiedsBatchProcessing.checkout}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="nxMainContainer"
+                    onstart="PF('globalBlocker').show()"
+                    oncomplete="PF('globalBlocker').hide()" />
+                    
+                <p:menuitem value="#{messages['eloraplm.command.checkIn']}"
+                    icon="pi pi-fw pi-arrow-up"
+                    actionListener="#{cmModifiedsBatchProcessing.checkin}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="nxMainContainer"
+                    onstart="PF('globalBlocker').show()"
+                    oncomplete="PF('globalBlocker').hide()" />
+                    
+                <p:menuitem value="#{messages['eloraplm.command.cm.batch.undoCheckout']}"
+                    icon="pi pi-fw pi-undo"
+                    actionListener="#{cmModifiedsBatchProcessing.undoCheckout}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="nxMainContainer"
+                    onstart="PF('globalBlocker').show()"
+                    oncomplete="PF('globalBlocker').hide()" />
+                    
+                <p:divider />
+    
+                <p:menuitem value="#{messages['eloraplm.command.cm.batch.approve']}"
+                    icon="pi pi-fw pi-thumbs-up"
+                    actionListener="#{cmModifiedsBatchProcessing.promote}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="nxMainContainer"
+                    onstart="PF('globalBlocker').show()"
+                    oncomplete="PF('globalBlocker').hide()" />
+                    
+                <p:menuitem value="#{messages['command.unlock']}"
+                    icon="pi pi-fw pi-unlock"
+                    actionListener="#{cmModifiedsBatchProcessing.toggleLockAll(false)}"
+                    process="@this"
+                    partialSubmit="true"
+                    update="@form"
+                    onstart="PF('#{treeBlockerId}').show()"
+                    oncomplete="PF('#{treeBlockerId}').hide()"/>
+        
+            </p:submenu>
+                
+            <p:menuitem value="#{messages['command.save']}"
+                icon="pi pi-fw pi-save"
+                containerStyleClass="mainAction"
+                actionListener="#{value.saveTree}"
+                process="@this"
+                partialSubmit="true"
+                update="@form"
+                onstart="PF('#{treeBlockerId}').show()"
+                oncomplete="PF('#{treeBlockerId}').hide()"/>
+            
+        </p:menubar>
+    
+    </c:if>
+</ui:composition>

@@ -14,6 +14,8 @@
 package com.aritu.eloraplm.core.util.restoperations;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author aritu
@@ -39,7 +41,17 @@ public class OverrideMetadata {
     }
 
     public Serializable getValue() {
-        return value;
+        // TODO REMOVE WHEN FIXED - mapeoko datuei mota jartzen zaienean ez da
+        // beharko
+        // TODO IMMn bueltatzen dena UUIDak dira. Zer egin? Oraingoz, ez denez
+        // balio hori erabiltzen, dagoen bezala uzten da.
+        if (value instanceof Collection<?>) {
+            @SuppressWarnings("unchecked")
+            List<String> valueList = (List<String>) value;
+            return String.join("|", valueList);
+        } else {
+            return value;
+        }
     }
 
     public void setValue(Serializable value) {

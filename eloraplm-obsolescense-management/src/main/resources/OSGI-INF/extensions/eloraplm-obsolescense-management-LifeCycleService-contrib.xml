@@ -5,7 +5,8 @@
     
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         <types>
-            <type name="OmProcess">eloraOmLifeCycle</type>
+            <type name="OmProcess"
+                noRecursionForTransitions="backToCreated, toWorking, backToWorking, complete, reject">eloraOmLifeCycle</type>
         </types>
     </extension>
 

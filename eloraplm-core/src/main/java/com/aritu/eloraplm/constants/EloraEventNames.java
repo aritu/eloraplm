@@ -31,4 +31,15 @@ public class EloraEventNames {
 
     public static final String ELORA_BOM_LIST_SUBTAB_CHANGED_EVENT = "EloraBomListSubtabChangedEvent";
 
+    public static final String ELORA_OEMS_CSV_IMPORTED = "EloraOemsCsvImported";
+
+    public static final String ELORA_DOCUMENT_DUPLICATED = "DocumentDuplicated";
+
+    public static final String PRODUCT_CUSTOMER_ADDED = "ProductCustomerAdded";
+
+    public static final String PRODUCT_CUSTOMER_REMOVED = "ProductCustomerRemoved";
+
+    public static final String ITEM_SUPPLIER_ADDED = "ItemSupplierAdded";
+
+    public static final String ITEM_SUPPLIER_REMOVED = "ItemSupplierRemoved";
 }

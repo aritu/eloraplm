@@ -1,7 +1,17 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html">
-    <h:outputText value="#{workflowActions.getTaskStatus(field.id)}" converter="taskStatusConverter" escape="false" />
-    
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+>
+    <h:outputText
+        value="#{workflowActions.getTaskStatus(field.id)}"
+        converter="taskStatusConverter"
+        escape="false"
+    >
+        <f:attribute
+            name="addStyle"
+            value="#{true}"
+        />
+    </h:outputText>
 </ui:composition>

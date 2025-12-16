@@ -13,6 +13,7 @@
  */
 package com.aritu.eloraplm.integration.checkin.restoperations.util;
 
+import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.DocumentRef;
 
 import com.aritu.eloraplm.integration.restoperations.util.CadFileInfoRequestDoc;
@@ -41,6 +42,8 @@ public class DoCheckinRequestDoc extends CadFileInfoRequestDoc {
 
     private ForceMetadataInfo forceMetadata;
 
+    private Properties orfProperties;
+
     public DoCheckinRequestDoc(int dbId, int localId, DocumentRef wcRef,
             DocumentRef parentRealRef, String comment, boolean unlock,
             DocumentRef structureRootRealRef, boolean overwrite) {
@@ -53,6 +56,7 @@ public class DoCheckinRequestDoc extends CadFileInfoRequestDoc {
         this.unlock = unlock;
         this.structureRootRealRef = structureRootRealRef;
         this.overwrite = overwrite;
+        orfProperties = new Properties();
     }
 
     public int getDbId() {
@@ -125,6 +129,14 @@ public class DoCheckinRequestDoc extends CadFileInfoRequestDoc {
 
     public void setForceMetadata(ForceMetadataInfo forceMetadata) {
         this.forceMetadata = forceMetadata;
+    }
+
+    public Properties getOrfProperties() {
+        return orfProperties;
+    }
+
+    public void addOrfProperty(String key, String value) {
+        orfProperties.put(key, value);
     }
 
 }

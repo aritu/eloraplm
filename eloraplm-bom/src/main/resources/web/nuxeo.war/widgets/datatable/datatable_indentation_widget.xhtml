@@ -1,10 +1,17 @@
-<f:subview
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:h="http://java.sun.com/jsf/html"
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
 >
-  <h:outputText value="#{nxu:indentString((field-1), '&#9482;')}" />
-  
-  <h:outputText rendered="#{field > 1}" value="&#9492;" />
-  
-</f:subview>
+    <c:if test="#{widget.mode != 'csv'}">
+        <ui:repeat
+            value="#{eloraWebActions.getNumberListForLoop(field)}"
+            var="i"
+        >
+            <span
+                class="ui-datatable-indent #{field eq i ? 'last' : ''}"
+            ></span>
+        </ui:repeat>
+    </c:if>
+</ui:composition>

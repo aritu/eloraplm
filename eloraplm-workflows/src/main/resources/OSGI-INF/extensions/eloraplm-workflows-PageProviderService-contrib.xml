@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.workflows.PageProviderService.contrib">
+    <require>org.nuxeo.ecm.platform.task.core.pageproviders</require>
+    <require>org.nuxeo.ecm.automation.task.pageprovider.contrib</require>
+    
+    <extension point="providers" target="org.nuxeo.ecm.platform.query.api.PageProviderService">
+        
+        <!-- Overridden to be able to sort the tasks -->
+        <coreQueryPageProvider name="GET_TASKS_FOR_TARGET_DOCUMENTS_AND_ACTORS_OR_DELEGATED_ACTORS">
+            <pattern>
+                SELECT * FROM Document WHERE ecm:mixinType = 'Task' AND
+                ecm:currentLifeCycleState
+                NOT IN ('ended', 'cancelled') AND ecm:isProxy =
+                0 AND (nt:targetDocumentId = ? OR nt:targetDocumentsIds/* IN (?)) AND
+                (nt:actors/* IN ? OR nt:delegatedActors/* IN ?)
+            </pattern>
+            <sort ascending="true" column="nt:name"/>
+            <sort ascending="true" column="dc:created"/>
+            <pageSize>0</pageSize>
+            <maxPageSize>0</maxPageSize>
+        </coreQueryPageProvider>
+        
+         <!-- Override to handle un-handled exceptions -->
+        <genericPageProvider name="user_tasks"
+          class="com.aritu.eloraplm.workflows.task.EloraUserTaskPageProvider">
+          <property name="locale">#{localeSelector.localeString}</property>
+          <pageSize>20</pageSize>
+          <sort ascending="true" column="nt:dueDate"/>
+        </genericPageProvider>
+        
+    </extension>
+    
+</component>

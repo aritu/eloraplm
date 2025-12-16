@@ -59,14 +59,36 @@
       <createTablePolicy>always</createTablePolicy>
     </directory>
     
-    <directory name="elora_cmActionImpacted">
+    <directory name="elora_cmActionImpactedItem">
       <schema>vocabulary</schema>
       <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cm_action_impacted</table>
+      <table>elora_cm_action_impacted_item</table>
       <idField>id</idField>
       <autoincrementIdField>false</autoincrementIdField>
       <readOnly>false</readOnly>
-      <dataFile>directories/elora_cm_action_impacted.csv</dataFile>
+      <dataFile>directories/elora_cm_action_impacted_item.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_cmActionOverwriteImpactedItem">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_action_overwrite_impacted_item</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_action_overwrite_impacted_item.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
+    <directory name="elora_cmActionImpactedCad">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>elora_cm_action_impacted_cad</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/elora_cm_action_impacted_cad.csv</dataFile>
       <createTablePolicy>always</createTablePolicy>
     </directory>
     

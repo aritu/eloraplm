@@ -13,8 +13,11 @@
  */
 package com.aritu.eloraplm.lifecycles.factories.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -34,6 +37,7 @@ import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.EloraExceptionWithStoredMessage;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
+import com.aritu.eloraplm.lifecycles.util.ErrorInfo;
 
 /**
  * @author aritu
@@ -46,7 +50,7 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
 
     private static final String targetState = EloraLifeCycleConstants.PRELIMINARY;
 
-    private List<String> errorList;
+    private List<ErrorInfo> errorList;
 
     private boolean canBeExecuted;
 
@@ -59,11 +63,17 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
 
     @Override
     public void init(DocumentModel doc) {
-        errorList = new ArrayList<String>();
+        errorList = new ArrayList<ErrorInfo>();
         canBeExecuted = true;
 
         List<String> relationsToCheck = new ArrayList<String>();
-        relationsToCheck.addAll(RelationsConfig.cadRelationsList);
+        // All CAD relations except Suppressed
+        List<String> cadRelationsToCheck = new ArrayList<String>(
+                RelationsConfig.cadRelationsList);
+        cadRelationsToCheck.removeAll(
+                RelationsConfig.cadSuppressedRelationsList);
+        relationsToCheck.addAll(cadRelationsToCheck);
+
         relationsToCheck.addAll(RelationsConfig.bomHierarchicalRelationsList);
         relationsToCheck.addAll(RelationsConfig.bomDirectRelationsList);
         relationsToCheck.addAll(RelationsConfig.docRelationsList);
@@ -118,22 +128,22 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
 
         } catch (EloraExceptionWithStoredMessage e) {
             canBeExecuted = false;
-            errorList.add(e.getStoredMessage());
+            errorList.add(new ErrorInfo(e.getStoredMessage()));
         } catch (Exception e) {
             canBeExecuted = false;
-            errorList.add(
-                    "eloraplm.label.error.promoteDemote.unknownException");
+            errorList.add(new ErrorInfo(
+                    "eloraplm.label.error.promoteDemote.unknownException"));
         }
     }
 
     private boolean relatedDocumentsAllowTransition(DocumentModel doc)
-            throws EloraException {
+            throws EloraException, EloraExceptionWithStoredMessage {
         return relatedParentsAllowTransition(doc)
                 && relatedChildrenAllowTransition(doc);
     }
 
     private boolean relatedParentsAllowTransition(DocumentModel doc)
-            throws EloraException {
+            throws EloraException, EloraExceptionWithStoredMessage {
         CoreSession session = doc.getCoreSession();
 
         if (!LifecyclesConfig.allowedByAllStatesTransitionsList.contains(
@@ -144,6 +154,15 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
             for (Statement stmt : stmts) {
                 DocumentModel subject = RelationHelper.getDocumentModel(
                         stmt.getSubject(), session);
+
+                if (subject == null) {
+                    throw new EloraExceptionWithStoredMessage(
+                            "The document to demote (" + transition
+                                    + "), with id |" + doc.getId()
+                                    + "| is related to a parent document that you don't have access to.",
+                            "eloraplm.label.error.promoteDemote.transitionNotAllowedByRelations");
+                }
+
                 if (!LifecyclesConfig.isSupported(
                         subject.getCurrentLifeCycleState(), targetState)) {
                     return false;
@@ -155,7 +174,7 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
     }
 
     private boolean relatedChildrenAllowTransition(DocumentModel doc)
-            throws EloraException {
+            throws EloraException, EloraExceptionWithStoredMessage {
         CoreSession session = doc.getCoreSession();
 
         if (!LifecyclesConfig.allowsAllStatesTransitionsList.contains(
@@ -166,6 +185,15 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
             for (Statement stmt : stmts) {
                 DocumentModel object = RelationHelper.getDocumentModel(
                         stmt.getObject(), session);
+
+                if (object == null) {
+                    throw new EloraExceptionWithStoredMessage(
+                            "The document to demote (" + transition
+                                    + "), with id |" + doc.getId()
+                                    + "| is related to a child document that you don't have access to.",
+                            "eloraplm.label.error.promoteDemote.transitionNotAllowedBySecurity");
+                }
+
                 if (!LifecyclesConfig.isSupported(targetState,
                         object.getCurrentLifeCycleState())) {
                     return false;
@@ -192,7 +220,7 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
     }
 
     @Override
-    public List<String> getErrorList() {
+    public List<ErrorInfo> getErrorList() {
         return errorList;
     }
 
@@ -214,6 +242,8 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
             baseDoc = doc;
         }
 
+        String previousState = baseDoc.getCurrentLifeCycleState();
+
         baseDoc.followTransition(transition);
 
         // Update dc:lastContributor, dc:contributors and dc:modified
@@ -222,8 +252,11 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
         // Nuxeo Event (we cannot fire default event, the document has to be
         // baseDoc)
         String comment = baseDoc.getVersionLabel();
+        Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+        ctxProperties.put("comment", comment);
+        ctxProperties.put("previousState", previousState);
         EloraEventHelper.fireEvent(PdmEventNames.PDM_DEMOTED_EVENT, baseDoc,
-                comment);
+                ctxProperties);
 
         EloraDocumentHelper.disableVersioningDocument(baseDoc);
         baseDoc = session.saveDocument(baseDoc);
@@ -241,6 +274,11 @@ public class BackToPreliminaryForCadOrItemTransitionExecuter
 
     @Override
     public boolean hasToFireDefaultEvent() {
+        return false;
+    }
+
+    @Override
+    public boolean hasInnerForm() {
         return false;
     }
 

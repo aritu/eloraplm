@@ -8,9 +8,11 @@
         <coreQueryPageProvider name="tree_children">
             <property name="maxResults">PAGE_SIZE</property>
             <pattern>
-                SELECT * FROM Document WHERE ecm:parentId = ? AND ecm:isProxy = 0 AND
-                ecm:mixinType = 'Folderish' AND ecm:mixinType != 'HiddenInNavigation'
+                SELECT * FROM Document WHERE ecm:parentId = ? AND ecm:isProxy = 0
+                AND ecm:mixinType = 'Folderish'
+                AND ecm:mixinType != 'HiddenInNavigation'
                 AND ecm:mixinType != 'EloraWorkspace'
+                AND ecm:mixinType != 'DocumentWithContent'
                 AND ecm:isCheckedInVersion = 0 AND ecm:currentLifeCycleState !=
                 'deleted'
             </pattern>

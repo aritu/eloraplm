@@ -350,8 +350,12 @@ public class EloraDefaultCSVImporterDocumentFactory
             if (EloraUnitConversionHelper.isDecimalProperty(property)) {
                 String value = (String) entry.getValue();
                 if (value != null && !value.isEmpty() && !value.equals("0")) {
-                    value = EloraUnitConversionHelper.roundDecimalValue(
-                            property, value);
+                    String measure = EloraUnitConversionHelper.getMeasureForProperty(
+                            property);
+                    if (measure != null) {
+                        value = EloraUnitConversionHelper.roundDecimalValue(
+                                measure, value);
+                    }
                     values.put(property, value);
                 }
             }

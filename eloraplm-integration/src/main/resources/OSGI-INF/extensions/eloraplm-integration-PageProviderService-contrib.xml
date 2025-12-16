@@ -25,7 +25,7 @@
             <pattern escapeParameters="true" quoteParameters="false">
                 SELECT * FROM Document
                 WHERE ecm:mixinType IN ('CadDocument', 'BomDocument')
-                AND ecm:mixinType != 'HiddenInNavigation'
+                AND ecm:mixinType NOT IN ('EloraDraft', 'HiddenInNavigation')
                 AND ecm:isProxy = 0
                 AND ecm:isVersion = 0
                 AND ecm:parentId IS NOT NULL

@@ -28,6 +28,7 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.TransitionNotAllowedException;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
+import com.aritu.eloraplm.lifecycles.util.ErrorInfo;
 import com.aritu.eloraplm.lifecycles.util.LifecycleHelper;
 import com.aritu.eloraplm.pdm.promote.util.PromoteHelper;
 
@@ -53,9 +54,9 @@ public class MakeObsoleteForBasicDocTransitionExecuter
     }
 
     @Override
-    public List<String> getErrorList() {
+    public List<ErrorInfo> getErrorList() {
         // For now we don't use this method
-        return new ArrayList<String>();
+        return new ArrayList<ErrorInfo>();
     }
 
     @Override
@@ -103,6 +104,11 @@ public class MakeObsoleteForBasicDocTransitionExecuter
 
     @Override
     public boolean hasToFireDefaultEvent() {
+        return false;
+    }
+
+    @Override
+    public boolean hasInnerForm() {
         return false;
     }
 

@@ -6,21 +6,23 @@
         point="layouts">
 
         <!-- datatable layouts -->
-        
+
         <layout name="workflow_questions_dt">
             <templates>
                 <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="workflowId">
                     <properties mode="any">
                         <property name="columnHeading">eloraplm.column.dt.workflows.forms.workflow</property>
-<!--                         <property name="filterBy">#{rowData.workflowId}</property> -->
-<!--                         <property name="filterMatchMode">exact</property> -->
-<!--                         <property name="filterTemplate">/widgets/datatable/filter_workflow_questions_workflow.xhtml</property> -->
-                        <property name="isSortable">true</property>
-                        <property name="sortBy">workflowId</property>
-                        <property name="sortOrder">ascending</property>
+                        <!--                         <property name="filterBy">#{rowData.workflowId}</property> -->
+                        <!--                         <property name="filterMatchMode">exact</property> -->
+                        <!--                         <property
+                        name="filterTemplate">/widgets/datatable/filter_workflow_questions_workflow.xhtml</property> -->
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['workflowId']}</property>
+                        <property name="sortOrder">asc</property>
                         <property name="sortPriority">1</property>
                     </properties>
                     <widget>tableWidget_workflow</widget>
@@ -28,12 +30,13 @@
                 <column name="nodeId">
                     <properties mode="any">
                         <property name="columnHeading">eloraplm.column.dt.workflows.forms.node</property>
-<!--                         <property name="filterBy">#{rowData.nodeId}</property> -->
-<!--                         <property name="filterMatchMode">exact</property> -->
-<!--                         <property name="filterTemplate">/widgets/datatable/filter_workflow_questions_node.xhtml</property> -->
-                        <property name="isSortable">true</property>
-                        <property name="sortBy">nodeId</property>
-                        <property name="sortOrder">ascending</property>
+                        <!--                         <property name="filterBy">#{rowData.nodeId}</property> -->
+                        <!--                         <property name="filterMatchMode">exact</property> -->
+                        <!--                         <property
+                        name="filterTemplate">/widgets/datatable/filter_workflow_questions_node.xhtml</property> -->
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['nodeId']}</property>
+                        <property name="sortOrder">asc</property>
                         <property name="sortPriority">2</property>
                     </properties>
                     <widget>tableWidget_node</widget>
@@ -63,9 +66,9 @@
                         <property name="columnHeading">eloraplm.column.dt.workflows.forms.order</property>
                         <property name="columnStyle">max-width: 80px;</property>
                         <property name="columnStyleClass">alignCenter</property>
-                        <property name="isSortable">true</property>
-                        <property name="sortBy">order</property>
-                        <property name="sortOrder">ascending</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['order']}</property>
+                        <property name="sortOrder">asc</property>
                         <property name="sortPriority">3</property>
                     </properties>
                     <widget>tableWidget_order</widget>
@@ -81,20 +84,17 @@
             </columns>
             <properties mode="any">
                 <property name="tableTitle">eloraplm.title.workflows.forms</property>
-                <property name="tableStyleClass">bigFont</property>
                 <property name="tableStyle">table-layout: auto;</property>
                 <property name="rowStyleClass">#{rowData.obsolete ? 'rowObsolete' : ''}</property>
-                <property name="isSortable">true</property>
+                <property name="sortable">true</property>
                 <property name="sortMode">multiple</property>
-<!--                 <property name="useFilters">true</property> -->
-                <property name="isExportable">true</property>
+                <property name="useFilters">false</property>
                 <property name="editRows">true</property>
                 <property name="editTemplate">/incl/action/edit_workflow_question.xhtml</property>
                 <property name="removeRows">true</property>
-                <property name="factory">#{workflowQuestionsData}</property>
             </properties>
-            
-            
+
+
             <widget name="tableWidget_workflow" type="template">
                 <labels>
                     <label mode="any">eloraplm.column.dt.workflows.forms.workflow</label>
@@ -107,7 +107,8 @@
                     <mode value="edit">view</mode>
                 </widgetModes>
                 <properties mode="any">
-                    <property name="template">/widgets/datatable/workflow_questions_workflow_template.xhtml</property>
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_workflow_template.xhtml</property>
                 </properties>
             </widget>
             <widget name="tableWidget_node" type="template">
@@ -123,7 +124,8 @@
                     <mode value="edit">view</mode>
                 </widgetModes>
                 <properties mode="any">
-                    <property name="template">/widgets/datatable/workflow_questions_node_template.xhtml</property>
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_node_template.xhtml</property>
                 </properties>
             </widget>
             <widget name="tableWidget_question" type="template">
@@ -138,7 +140,8 @@
                     <mode value="edit">view</mode>
                 </widgetModes>
                 <properties mode="any">
-                    <property name="template">/widgets/datatable/workflow_questions_label_template.xhtml</property>
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_label_template.xhtml</property>
                 </properties>
             </widget>
             <widget name="tableWidget_type" type="template">
@@ -152,7 +155,8 @@
                     <mode value="edit">view</mode>
                 </widgetModes>
                 <properties mode="any">
-                    <property name="template">/widgets/datatable/workflow_questions_type_template.xhtml</property>
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_type_template.xhtml</property>
                 </properties>
             </widget>
             <widget name="tableWidget_required" type="checkbox">
@@ -188,36 +192,49 @@
                     <mode value="edit">view</mode>
                 </widgetModes>
             </widget>
-            
+
         </layout>
-        
-        
+
+
         <layout name="workflow_answers_dt">
             <templates>
                 <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
             </templates>
             <columns>
-                <column name="nodeId">
-                    <properties mode="any">
-                        <property name="columnHeading">eloraplm.column.dt.workflows.forms.node</property>
-                        <property name="hidden">true</property>
-                    </properties>
-                    <widget>tableWidget_node</widget>
-                </column>
-                <column name="taskId">
+                <!-- Hidden columns for export -->
+                <column name="export_taskName">
                     <properties mode="any">
                         <property name="columnHeading">eloraplm.column.dt.workflows.forms.task</property>
                         <property name="hidden">true</property>
                     </properties>
-                    <widget>tableWidget_task</widget>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>tableWidget_taskName_export</widget>
                 </column>
-                <column name="taskExecuted">
+                <column name="export_taskActor">
                     <properties mode="any">
-                        <property name="columnHeading">eloraplm.column.dt.workflows.forms.taskExecuted</property>
+                        <property name="columnHeading">eloraplm.column.dt.workflows.forms.taskActor</property>
                         <property name="hidden">true</property>
                     </properties>
-                    <widget>tableWidget_taskExecuted</widget>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>tableWidget_taskActor_export</widget>
                 </column>
+                <column name="export_taskExecuted">
+                    <properties mode="any">
+                        <property name="columnHeading">
+                            eloraplm.column.dt.workflows.forms.taskExecuted</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>tableWidget_taskExecuted_export</widget>
+                </column>
+                <!-- // -->
                 <column name="questionId">
                     <properties mode="any">
                         <property name="columnHeading">eloraplm.column.dt.workflows.forms.question</property>
@@ -237,19 +254,46 @@
                     </properties>
                     <widget>tableWidget_order</widget>
                 </column>
+                <!-- Invisible columns - for sorting -->
+                <column name="nodeId">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.column.dt.workflows.forms.node</property>
+                        <property name="visible">false</property>
+                    </properties>
+
+                    <widget>tableWidget_node</widget>
+                </column>
+                <column name="taskId">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.column.dt.workflows.forms.task</property>
+                        <property name="visible">false</property>
+                    </properties>
+                    <widget>tableWidget_task</widget>
+                </column>
+                <column name="taskExecuted">
+                    <properties mode="any">
+                        <property name="columnHeading">
+                            eloraplm.column.dt.workflows.forms.taskExecuted</property>
+                        <property name="visible">false</property>
+                    </properties>
+                    <widget>tableWidget_taskExecuted</widget>
+                </column>
+                <!-- // -->
             </columns>
             <properties mode="any">
                 <property name="tableTitle">eloraplm.title.workflows.forms.answers</property>
-                <property name="tableStyleClass">bigFont</property>
                 <property name="tableStyle">table-layout: auto;</property>
                 <property name="rowGroup">#{rowData.rowGroupId}</property>
-                <property name="rowGroupHeaderTemplate">/widgets/datatable/workflow_answers_row_group_header.xhtml</property>
-                <property name="expandableRowGroups">true</property>
-                <property name="isExportable">true</property>
-                <property name="factory">#{workflowAnswersData}</property>
+                <property name="rowGroupHeaderTemplate">
+                    /widgets/datatable/workflow_answers_row_group_header.xhtml</property>
+                <property name="expandable">true</property>
+                <property name="footerTemplate">#{not empty
+                    workflowAnswersTableBean.selectedInstance and
+                    workflowAnswersTableBean.selectedInstance.currentLifeCycleState ne 'running' ?
+                    '/incl/workflow_answers_footer_template.xhtml' : ''}</property>
             </properties>
-            
-            
+
+
             <widget name="tableWidget_node" type="template">
                 <labels>
                     <label mode="any">eloraplm.column.dt.workflows.forms.node</label>
@@ -260,11 +304,11 @@
                     <field>nodeId</field>
                 </fields>
                 <properties mode="any">
-                    <property name="template">/widgets/datatable/workflow_questions_node_template.xhtml</property>
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_node_template.xhtml</property>
                 </properties>
             </widget>
-            
-            <!-- TODO TaskId -> TaskInfo -> actor -->
+
             <widget name="tableWidget_task" type="text">
                 <labels>
                     <label mode="any">eloraplm.column.dt.workflows.forms.task</label>
@@ -274,7 +318,7 @@
                     <field>taskId</field>
                 </fields>
             </widget>
-            
+
             <widget name="tableWidget_taskExecuted" type="text">
                 <labels>
                     <label mode="any">eloraplm.column.dt.workflows.forms.taskExecuted</label>
@@ -291,7 +335,50 @@
                     <property name="csv_forceType">time</property>
                 </properties>
             </widget>
-            
+
+            <widget name="tableWidget_taskName_export" type="template">
+                <labels>
+                    <label mode="any">eloraplm.column.dt.workflows.forms.task</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>workflowId</field>
+                    <field>nodeId</field>
+                </fields>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_task_name_template.xhtml</property>
+                </properties>
+            </widget>
+
+            <widget name="tableWidget_taskActor_export" type="template">
+                <labels>
+                    <label mode="any">eloraplm.column.dt.workflows.forms.taskActor</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>taskId</field>
+                </fields>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_task_actor_template.xhtml</property>
+                </properties>
+            </widget>
+
+            <widget name="tableWidget_taskExecuted_export" type="template">
+                <labels>
+                    <label mode="any">eloraplm.column.dt.workflows.forms.taskExecuted</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>taskExecuted</field>
+                </fields>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_task_executed_template.xhtml</property>
+                </properties>
+            </widget>
+
             <widget name="tableWidget_question" type="template">
                 <labels>
                     <label mode="any">eloraplm.column.dt.workflows.forms.question</label>
@@ -301,11 +388,12 @@
                     <field>labels</field>
                 </fields>
                 <properties mode="any">
-                    <property name="template">/widgets/datatable/workflow_questions_label_template.xhtml</property>
+                    <property name="template">
+                        /widgets/datatable/workflow_questions_label_template.xhtml</property>
                 </properties>
             </widget>
-            
-            <widget name="tableWidget_value" type="workflow_question">
+
+            <widget name="tableWidget_value" type="workflow_answer">
                 <labels>
                     <label mode="any">eloraplm.column.dt.workflows.forms.answer</label>
                 </labels>
@@ -313,9 +401,10 @@
                     <field>value</field>
                     <field>question</field>
                     <field>questionId</field>
+                    <field>type</field>
                 </fields>
             </widget>
-            
+
             <widget name="tableWidget_order" type="text">
                 <labels>
                     <label mode="any">eloraplm.column.dt.workflows.forms.order</label>
@@ -324,13 +413,12 @@
                     <field>order</field>
                 </fields>
             </widget>
-            
+
         </layout>
-        
+
         <!-- end of datatable layouts -->
-        
-        
-        
+
+
         <layout name="workflow_question">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -340,28 +428,31 @@
                     <widget>workflow</widget>
                     <widget>node</widget>
                 </row>
-                
+
                 <row>
                     <widget>labels</widget>
+                </row>
+
+                <row>
                     <widget>questionId</widget>
                 </row>
-                
+
                 <row>
                     <widget>type</widget>
                 </row>
                 <row>
                     <widget>typeOptions</widget>
                 </row>
-                
+
                 <row>
-                    <widget>required</widget> 
+                    <widget>required</widget>
                     <widget>order</widget>
                 </row>
                 <row>
                     <widget>obsolete</widget>
                 </row>
             </rows>
-           
+
             <widget name="workflow" type="template">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.workflow</label>
@@ -371,9 +462,10 @@
                     <field>workflowId</field>
                 </fields>
                 <properties mode="any">
-                    <property name="template">/widgets/workflow/workflow_question_workflow_template.xhtml</property>
+                    <property name="template">
+                        /widgets/workflow/workflow_question_workflow_template.xhtml</property>
                 </properties>
-                <properties mode="edit">
+                <properties widgetMode="edit">
                     <property name="required">true</property>
                 </properties>
             </widget>
@@ -387,9 +479,10 @@
                     <field>nodeId</field>
                 </fields>
                 <properties mode="any">
-                    <property name="template">/widgets/workflow/workflow_question_node_template.xhtml</property>
+                    <property name="template">
+                        /widgets/workflow/workflow_question_node_template.xhtml</property>
                 </properties>
-                <properties mode="edit">
+                <properties widgetMode="edit">
                     <property name="required">true</property>
                 </properties>
             </widget>
@@ -401,8 +494,9 @@
                 <fields>
                     <field>labels</field>
                 </fields>
-                 <properties mode="any">
+                <properties mode="any">
                     <property name="onDefaultLocaleUpdated">updateQuestionId(event)</property>
+                    <property name="minWidth">612px</property>
                 </properties>
             </widget>
             <widget name="questionId" type="text">
@@ -417,12 +511,12 @@
                     <property name="required">true</property>
                     <property name="styleClass">editableButLikeViewMode</property>
                 </properties>
-                <properties mode="edit">
+                <properties widgetMode="edit">
                     <property name="required">true</property>
                     <property name="styleClass">editableButLikeViewMode</property>
                 </properties>
             </widget>
-            
+
             <widget name="type" type="template">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.type</label>
@@ -432,9 +526,10 @@
                     <field>type</field>
                 </fields>
                 <properties mode="any">
-                    <property name="template">/widgets/workflow/workflow_question_type_template.xhtml</property>
+                    <property name="template">
+                        /widgets/workflow/workflow_question_type_template.xhtml</property>
                 </properties>
-                <properties mode="edit">
+                <properties widgetMode="edit">
                     <property name="required">true</property>
                 </properties>
             </widget>
@@ -447,13 +542,14 @@
                     <field>type</field>
                 </fields>
                 <properties mode="any">
-                    <property name="template">/widgets/workflow/workflow_question_type_options_template.xhtml</property>
+                    <property name="template">
+                        /widgets/workflow/workflow_question_type_options_template.xhtml</property>
                 </properties>
                 <controls mode="any">
                     <control name="handleLabels">true</control>
                 </controls>
             </widget>
-            
+
             <widget name="required" type="checkbox">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.required</label>
@@ -471,6 +567,9 @@
                 <fields>
                     <field>order</field>
                 </fields>
+                <properties mode="any">
+                    <property name="styleClass">shortNumberInput</property>
+                </properties>
             </widget>
             <widget name="obsolete" type="checkbox">
                 <labels>
@@ -481,9 +580,9 @@
                     <field>obsolete</field>
                 </fields>
             </widget>
-            
+
         </layout>
-        
+
         <layout name="question_type_options_text">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -496,8 +595,8 @@
                     <widget>textDefaultValue</widget>
                 </row>
             </rows>
-           
-            <widget name="stringMaxLength" type="text">
+
+            <widget name="stringMaxLength" type="text_with_listener">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.stringMaxLength</label>
                 </labels>
@@ -505,6 +604,10 @@
                 <fields>
                     <field>stringMaxLength</field>
                 </fields>
+                <properties widgetMode="edit">
+                    <property name="templateForListener">
+                        /widgets/workflow/type_options_updater_listener_template.xhtml</property>
+                </properties>
                 <properties mode="any">
                     <property name="style">max-width: 10em</property>
                     <property name="styleClass">dataInputText</property>
@@ -518,9 +621,13 @@
                 <fields>
                     <field>defaultValue</field>
                 </fields>
+                <properties mode="any">
+                    <property name="maxlength">#{not empty layoutValue.stringMaxLength ?
+                        layoutValue.stringMaxLength : -1}</property>
+                </properties>
             </widget>
         </layout>
-        
+
         <layout name="question_type_options_link">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -530,7 +637,7 @@
                     <widget>linkDefaultValue</widget>
                 </row>
             </rows>
-           
+
             <widget name="linkDefaultValue" type="text">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.defaultValue</label>
@@ -541,7 +648,7 @@
                 </fields>
             </widget>
         </layout>
-        
+
         <layout name="question_type_options_number">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -557,32 +664,49 @@
                     <widget>numberDefaultValue</widget>
                 </row>
             </rows>
-            
-            <widget name="numberMaxIntegerPlaces" type="elora_decimal">
+
+            <widget name="numberMaxIntegerPlaces" type="text_with_listener">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.numberMaxIntegerPlaces</label>
                 </labels>
+                <helpLabels>
+                    <label mode="any">
+                        eloraplm.label.workflows.forms.question.numberMaxIntegerPlaces.help</label>
+                </helpLabels>
                 <translated>true</translated>
                 <fields>
                     <field>numberMaxIntegerPlaces</field>
                 </fields>
-                <properties mode="edit">
-                    <property name="templateForListener">/widgets/workflow/type_options_updater_listener_template.xhtml</property>
+                <properties widgetMode="edit">
+                    <property name="templateForListener">
+                        /widgets/workflow/type_options_updater_listener_template.xhtml</property>
+                </properties>
+                <properties mode="any">
+                    <property name="style">max-width: 10em</property>
+                    <property name="styleClass">dataInputText</property>
                 </properties>
             </widget>
-            <widget name="numberMaxDecimalPlaces" type="elora_decimal">
+            <widget name="numberMaxDecimalPlaces" type="text_with_listener">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.numberMaxDecimalPlaces</label>
                 </labels>
+                <helpLabels>
+                    <label mode="any">
+                        eloraplm.label.workflows.forms.question.numberMaxDecimalPlaces.help</label>
+                </helpLabels>
                 <translated>true</translated>
                 <fields>
                     <field>numberMaxDecimalPlaces</field>
                 </fields>
-                <properties mode="edit">
-                    <property name="templateForListener">/widgets/workflow/type_options_updater_listener_template.xhtml</property>
+                <properties widgetMode="edit">
+                    <property name="templateForListener">
+                        /widgets/workflow/type_options_updater_listener_template.xhtml</property>
+                </properties>
+                <properties mode="any">
+                    <property name="style">max-width: 10em</property>
+                    <property name="styleClass">dataInputText</property>
                 </properties>
             </widget>
-            <!-- <widget name="numberDefaultValue" type="elora_decimal">-->
             <widget name="numberDefaultValue" type="elora_decimal">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.defaultValue</label>
@@ -594,11 +718,10 @@
                 <properties mode="any">
                     <property name="maxIntegerPlaces">#{layoutValue.numberMaxIntegerPlaces}</property>
                     <property name="maxDecimalPlaces">#{layoutValue.numberMaxDecimalPlaces}</property>
-                    <property name="converter">decimalValueConverter</property>
                 </properties>
             </widget>
         </layout>
-        
+
         <layout name="question_type_options_date">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -609,7 +732,7 @@
                     <widget>dateDefaultValue</widget>
                 </row>
             </rows>
-            
+
             <widget name="dateDefaultValue" type="template">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.defaultValue</label>
@@ -624,7 +747,7 @@
                 </properties>
             </widget>
         </layout>
-        
+
         <layout name="question_type_options_boolean">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -634,8 +757,8 @@
                     <widget>booleanDefaultValue</widget>
                 </row>
             </rows>
-           
-            <widget name="booleanDefaultValue" type="template">
+
+            <widget name="booleanDefaultValue" type="boolean_yes_no">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.defaultValue</label>
                 </labels>
@@ -643,12 +766,9 @@
                 <fields>
                     <field>defaultValue</field>
                 </fields>
-                <properties mode="any">
-                    <property name="template">/widgets/boolean_yes_no_widget_template.xhtml</property>
-                </properties>
             </widget>
         </layout>
-        
+
         <layout name="question_type_options_list">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml</template>
@@ -661,7 +781,7 @@
                     <widget>listDefaultValue</widget>
                 </row>
             </rows>
-            
+
             <widget name="listChoicesConfig" type="list_choices_config">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.listChoices</label>
@@ -674,7 +794,7 @@
                     <property name="onValuesUpdatedRerenderId">listChoices</property>
                 </properties>
             </widget>
-            
+
             <widget name="listDefaultValue" type="list_choices">
                 <labels>
                     <label mode="any">eloraplm.label.workflows.forms.question.defaultValue</label>
@@ -693,41 +813,49 @@
         point="widgets">
 
         <!-- datatable widgets -->
-        
+
         <widget name="workflow_questions_dt" type="datatable">
             <labels>
                 <label mode="any">eloraplm.label.datatable.workflows.forms</label>
             </labels>
             <properties widgetMode="any">
                 <property name="datatableLayout">workflow_questions_dt</property>
+                <property name="exportable">true</property>
+                <property name="exportFilename">workflow_questions_dt
+                    #{eloraWebActions.formatDateWithPattern(currentDate, 'yyyy-MM-dd
+                    HH-mm')}</property>
             </properties>
         </widget>
-        
-        
+
+
         <widget name="workflow_answers_dt" type="datatable">
             <labels>
                 <label mode="any">eloraplm.label.datatable.workflows.forms.answers</label>
             </labels>
             <properties widgetMode="any">
                 <property name="datatableLayout">workflow_answers_dt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
-        
+
         <!-- end of datatable widgets -->
-        
-        
+
+
         <widget name="workflow_questions" type="template">
-            <labels><label mode="any" /></labels>
+            <labels>
+                <label mode="any" />
+            </labels>
             <fields>
                 <field>['answers']</field>
             </fields>
             <properties mode="any">
-                <property name="template">/widgets/workflow/workflow_questions_form_widget_template.xhtml</property>
+                <property name="template">
+                    /widgets/workflow/workflow_questions_form_widget_template.xhtml</property>
             </properties>
             <controls mode="any">
                 <control name="handleLabels">true</control>
             </controls>
-            
+
             <subWidgets>
                 <widget name="workflow_question" type="workflow_question">
                     <fields>
@@ -736,21 +864,23 @@
                     </fields>
                 </widget>
             </subWidgets>
-            
+
         </widget>
-        
-        <!-- Workflow Question type widgets: editable for workflow forms and view mode for workflow answers display -->
-        
+
+        <!-- Workflow Question type widgets: editable for workflow forms and view mode for workflow
+        answers display -->
+
         <widget name="workflow_question_type_text" type="text">
             <fields>
                 <field>#{field_0}</field>
             </fields>
             <properties mode="edit">
                 <property name="required">#{field1.wfq.required}</property>
-                <property name="maxlength">#{field_1.wfq.stringMaxLength gt 0 ? field_1.wfq.stringMaxLength : '9999' }</property>
+                <property name="maxlength">#{field_1.wfq.stringMaxLength gt 0 ?
+                    field_1.wfq.stringMaxLength : '9999' }</property>
             </properties>
         </widget>
-        
+
         <widget name="workflow_question_type_link" type="external_link">
             <fields>
                 <field>#{field_0}</field>
@@ -759,7 +889,7 @@
                 <property name="required">#{field1.wfq.required}</property>
             </properties>
         </widget>
-        
+
         <widget name="workflow_question_type_number" type="elora_decimal">
             <fields>
                 <field>#{field_0}</field>
@@ -773,7 +903,7 @@
                 <property name="required">#{field1.wfq.required}</property>
             </properties>
         </widget>
-        
+
         <widget name="workflow_question_type_date" type="template">
             <fields>
                 <field>#{field_0}</field>
@@ -786,46 +916,43 @@
                 <property name="withTime">false</property>
             </properties>
         </widget>
-        
-        <widget name="workflow_question_type_boolean" type="template">
+
+        <widget name="workflow_question_type_boolean" type="boolean_yes_no">
             <fields>
                 <field>#{field_0}</field>
             </fields>
-            <properties mode="any">
-                <property name="template">/widgets/boolean_yes_no_widget_template.xhtml</property>
-            </properties>
             <properties mode="edit">
                 <property name="required">#{field1.wfq.required}</property>
             </properties>
-            
+
         </widget>
-        
+
         <widget name="workflow_question_type_list" type="template">
             <fields>
                 <field>#{field_0}</field>
                 <field>#{field_1}</field>
             </fields>
             <properties mode="any">
-                <property name="template">/widgets/workflow/workflow_question_list_widget_template.xhtml</property>
+                <property name="template">
+                    /widgets/workflow/workflow_question_list_widget_template.xhtml</property>
             </properties>
             <properties mode="edit">
                 <property name="required">#{field1.wfq.required}</property>
             </properties>
         </widget>
-        
+
     </extension>
-    
-    
+
+
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
         point="widgettypes">
-        
+
         <widgetType name="workflow_question">
             <configuration>
                 <fields>
                     <defaultConfiguration>
                         <field>answer</field>
                         <field>question</field>
-                        <field>questionId</field>
                     </defaultConfiguration>
                 </fields>
                 <properties>
@@ -834,12 +961,29 @@
                     </defaultValues>
                 </properties>
             </configuration>
-            
+
             <property name="template">
                 /widgets/workflow/workflow_question_widget_type_template.xhtml
             </property>
         </widgetType>
-        
+
+        <widgetType name="workflow_answer">
+            <configuration>
+                <fields>
+                    <defaultConfiguration>
+                        <field>answer</field>
+                        <field>question</field>
+                        <field>questionId</field>
+                        <field>type</field>
+                    </defaultConfiguration>
+                </fields>
+            </configuration>
+
+            <property name="template">
+                /widgets/workflow/workflow_answer_widget_type_template.xhtml
+            </property>
+        </widgetType>
+
     </extension>
 
 </component>  

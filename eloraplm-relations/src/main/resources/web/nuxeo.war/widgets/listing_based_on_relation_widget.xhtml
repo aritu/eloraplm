@@ -1,11 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:h="http://java.sun.com/jsf/html">
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
 
-    <h:graphicImage value="/icons/relation_based_on_16.png"
-        style="position: absolute; margin-left: -6px; margin-top: 5px;"
-        styleClass="tipsyShow"
-        title="#{messages['label.relation.predicate.CadBasedOn']}"
+    <p:graphicImage value="/icons/relation_based_on_16.png"
+        style="position: absolute; margin-left: -6px; margin-top: 9px;"
+        alt="|"
+        title="#{messages['eloraplm.label.badge.basedOn']}"
         rendered="#{field_0}" />
 
 </ui:composition>

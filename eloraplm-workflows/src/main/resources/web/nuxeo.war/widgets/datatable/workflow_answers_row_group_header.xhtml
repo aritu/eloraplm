@@ -3,15 +3,21 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
     xmlns:nxu="http://nuxeo.org/nxweb/util">
     
-    <span style="display: inline-flex;">
+    <span style="display: inline-flex; vertical-align: middle;">
     <nxu:set var="taskDoc" value="#{eloraWebActions.getDocumentFromId(rowData.taskId)}">
-        <h:outputText value="#{messages[workflowFormActions.getNodeTitle(rowData.workflowId, rowData.nodeId)]}" />
-        &#160;
+        
+        <span style="text-transform: uppercase">
+            #{messages[workflowFormActions.getNodeTitle(rowData.workflowId, rowData.nodeId)]}
+        </span>
+        
+        <p:divider layout="vertical" />
+        
         <span style="font-weight: normal;">
-            <nxl:widgetType name="multipleUsersSuggestion" mode="view" value="#{taskDoc.task}" field="actors" />
+            <nxl:widgetType name="multipleUsersSuggestion" mode="view" value="#{taskDoc.task}" field="actors" prefixed="true" />
         </span>
         
         <h:panelGroup rendered="#{not empty taskDoc.task.delegatedActors}">
@@ -19,12 +25,13 @@
             &#160;&#8594;&#160;
             
             <span style="font-weight: normal;">
-                <nxl:widgetType name="multipleUsersSuggestion" mode="view" value="#{taskDoc.task}" field="delegatedActors" />
+                <nxl:widgetType name="multipleUsersSuggestion" mode="view" value="#{taskDoc.task}" field="delegatedActors" prefixed="true" />
             </span>
             
         </h:panelGroup>
         
-        &#160;
+        <p:divider layout="vertical" />
+        
         <h:outputText value="#{rowData.taskExecuted.time}" style="font-weight: normal;">
             <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
         </h:outputText>

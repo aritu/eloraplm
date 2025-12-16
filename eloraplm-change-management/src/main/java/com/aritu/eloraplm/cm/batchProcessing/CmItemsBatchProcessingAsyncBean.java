@@ -58,6 +58,7 @@ import com.aritu.eloraplm.constants.EloraPropertiesConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.constants.RelationEventNames;
+import com.aritu.eloraplm.core.pdm.checkout.api.CheckoutService;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
@@ -68,12 +69,16 @@ import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
 import com.aritu.eloraplm.exceptions.CMMissingOriginRelationException;
 import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
+import com.aritu.eloraplm.exceptions.DocumentAlreadyLockedException;
+import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
+import com.aritu.eloraplm.exceptions.DocumentLockRightsException;
 import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
 import com.aritu.eloraplm.pdm.overwrite.helper.OverwriteVersionHelper;
 import com.aritu.eloraplm.pdm.promote.util.PromoteHelper;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 
 @AutoCreate
 @Name("cmItemsBatchProcessingAsync")
@@ -101,7 +106,8 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
     public void executeActionsAsync(DocumentModel cmProcessDoc, TreeNode root,
             List<String> bomHierarchicalAndDirectRelations,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            String transitionToComeBackToPreviousState) {
+            String transitionToComeBackToPreviousState,
+            CheckoutService checkoutService) {
         String logInitMsg = "[executeActionsAsync] ["
                 + cmProcessDoc.getCoreSession().getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -133,8 +139,8 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             log.trace(logInitMsg + "Start processing impacted items");
             for (TreeNode modifiedItemNode : root.getChildren()) {
                 processExecuteActionsOnItems(cmProcessDoc, modifiedItemNode,
-                        actionTreeDocMap, eloraDocumentRelationManager,
-                        session);
+                        actionTreeDocMap, eloraDocumentRelationManager, session,
+                        checkoutService);
             }
             log.trace(logInitMsg + "Finished processing impacted items");
 
@@ -151,7 +157,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             // Fix relations
             log.trace(logInitMsg
                     + "Start fixing relations to documents missing in tree");
-            fixRelationsToDocumentsMissingInTree(
+            fixRelationsToDocumentsMissingInTree(cmProcessDoc,
                     bomHierarchicalAndDirectRelations, actionTreeDocMap,
                     eloraDocumentRelationManager, session);
             log.trace(logInitMsg
@@ -194,12 +200,18 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
     private void processExecuteActionsOnItems(DocumentModel cmProcessDoc,
             TreeNode node, Map<DocumentModel, List<String>> actionTreeDocMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager) {
+            CoreSession documentManager, CheckoutService checkoutService) {
         String logInitMsg = "[processExecuteActionsOnItems] ["
                 + documentManager.getPrincipal().getName() + "] ";
 
         for (TreeNode childNode : node.getChildren()) {
             ImpactedItemsNodeData nodeData = (ImpactedItemsNodeData) childNode.getData();
+            if (nodeData.getIsModifiedItem()) {
+                processExecuteActionsOnItems(cmProcessDoc, childNode,
+                        actionTreeDocMap, eloraDocumentRelationManager,
+                        documentManager, checkoutService);
+                continue;
+            }
             ImpactedItemsNodeData parentNodeData = null;
             String action = null;
             boolean isDirect = false;
@@ -211,23 +223,64 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 isDirect = true;
                 if (!CmBatchProcessingHelper.isIgnored(parentNodeData)
                         && !CmBatchProcessingHelper.isManaged(parentNodeData)
-                        && parentNodeData.getAction().equals(
-                                CMConstants.ACTION_CHANGE)) {
-                    DocumentModel destinationDoc = parentNodeData.getDestinationItem();
-                    EloraDocumentHelper.checkOutDocument(destinationDoc);
+                        && (parentNodeData.getAction().equals(
+                                CMConstants.ACTION_CHANGE)
+                                || parentNodeData.getAction().equals(
+                                        CMConstants.ACTION_OVERWRITE))) {
 
-                    marcActionDocumentsInTree(destinationDoc, null,
-                            actionTreeDocMap);
+                    DocumentModel destinationDoc = parentNodeData.getDestinationItem();
+                    try {
+                        checkoutService.checkOutFromVersionInCmProcess(
+                                destinationDoc,
+                                parentNodeData.getDestinationItemSourceVersion());
+                        marcActionDocumentsInTree(destinationDoc, null,
+                                actionTreeDocMap);
+                    } catch (EloraException | DocumentAlreadyLockedException
+                            | DocumentInUnlockableStateException
+                            | DocumentLockRightsException e) {
+                        log.error(logInitMsg
+                                + "Exception processing ExecuteAction on documentId =|"
+                                + destinationDoc.getId()
+                                + "|. Exception details: "
+                                + e.getClass().getName() + ". "
+                                + e.getMessage(), e);
+                    }
                 }
             } else {
                 parentNodeData = (ImpactedItemsNodeData) node.getData();
                 action = parentNodeData.getAction();
             }
 
-            if (!CmBatchProcessingHelper.isIgnored(nodeData)) {
-                if (!CmBatchProcessingHelper.isManaged(nodeData)) {
+            if (!CmBatchProcessingHelper.isIgnored(nodeData)
+                    && !CmBatchProcessingHelper.isManaged(nodeData)
+                    && (!isDirect || !CmBatchProcessingHelper.isIgnored(
+                            parentNodeData))) {
 
-                    DocumentModel destinationItem = nodeData.getDestinationItem();
+                DocumentModel destinationItem = nodeData.getDestinationItem();
+
+                if (nodeData.getIsDerived()) {
+                    try {
+                        VersionModel version = new VersionModelImpl();
+                        version.setId(
+                                nodeData.getDestinationItemSourceVersion().getId());
+                        checkoutService.checkOutFromVersion(destinationItem,
+                                version);
+                        // Since Derived items don't have any relations in the
+                        // tree, their relations must not be fixed.
+                        // For that reason, they are not added to
+                        // actionTreeDocMap.
+                    } catch (EloraException | DocumentAlreadyLockedException
+                            | DocumentInUnlockableStateException
+                            | DocumentLockRightsException e) {
+                        log.error(logInitMsg
+                                + "Exception processing ExecuteAction on documentId =|"
+                                + destinationItem.getId()
+                                + "|. Exception details: "
+                                + e.getClass().getName() + ". "
+                                + e.getMessage(), e);
+                    }
+
+                } else {
                     String documentId = destinationItem.getId();
                     String reference = destinationItem.getPropertyValue(
                             EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
@@ -239,7 +292,8 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
 
                         executeAction(cmProcessDoc, nodeData, parentNodeData,
                                 action, isDirect, actionTreeDocMap,
-                                eloraDocumentRelationManager, documentManager);
+                                eloraDocumentRelationManager, documentManager,
+                                checkoutService);
 
                         ResultType success = new ResultType(documentId,
                                 reference, title);
@@ -283,11 +337,10 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                                 cmProcessDoc.getId());
                     }
                 }
-
             }
             processExecuteActionsOnItems(cmProcessDoc, childNode,
                     actionTreeDocMap, eloraDocumentRelationManager,
-                    documentManager);
+                    documentManager, checkoutService);
         }
     }
 
@@ -296,30 +349,33 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             ImpactedItemsNodeData parentNodeData, String action,
             boolean isDirect, Map<DocumentModel, List<String>> actionTreeDocMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager)
-            throws EloraException, CMMissingOriginRelationException {
+            CoreSession documentManager, CheckoutService checkoutService)
+            throws EloraException, CMMissingOriginRelationException,
+            DocumentAlreadyLockedException, DocumentInUnlockableStateException,
+            DocumentLockRightsException {
 
         String cmProcessReference = cmProcessDoc.getPropertyValue(
                 EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
 
         switch (action) {
         case CMConstants.ACTION_CHANGE:
-            log.trace("Execute change action");
+        case CMConstants.ACTION_OVERWRITE:
+            log.trace("Execute change/overwrite action");
             executeChangeAction(cmProcessReference, nodeData, parentNodeData,
                     isDirect, actionTreeDocMap, eloraDocumentRelationManager,
-                    documentManager);
+                    documentManager, checkoutService);
             break;
         case CMConstants.ACTION_REMOVE:
             log.trace("Execute remove action");
             executeRemoveAction(cmProcessReference, nodeData, parentNodeData,
                     actionTreeDocMap, eloraDocumentRelationManager,
-                    documentManager);
+                    documentManager, checkoutService);
             break;
         case CMConstants.ACTION_REPLACE:
             log.trace("Execute replace action");
             executeReplaceAction(cmProcessReference, nodeData, parentNodeData,
                     actionTreeDocMap, eloraDocumentRelationManager,
-                    documentManager);
+                    documentManager, checkoutService);
             break;
         default:
             throw new EloraException("Action not defined in tree");
@@ -331,14 +387,16 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             ImpactedItemsNodeData parentNodeData, boolean isDirectObject,
             Map<DocumentModel, List<String>> actionTreeDocMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager)
-            throws EloraException, CMMissingOriginRelationException {
+            CoreSession documentManager, CheckoutService checkoutService)
+            throws EloraException, CMMissingOriginRelationException,
+            DocumentAlreadyLockedException, DocumentInUnlockableStateException,
+            DocumentLockRightsException {
 
         DocumentModel parentDestDoc = null;
         if (isDirectObject && parentNodeData.getAction().equals(
                 CMConstants.ACTION_IGNORE)) {
             // Si direct object está ignore no tiene destination y sacamos el
-            // origen wc. ¿Si estuviera managed ataríamos con el AV?
+            // origen wc.
             parentDestDoc = parentNodeData.getOriginItemWc();
         } else {
             parentDestDoc = parentNodeData.getDestinationItem();
@@ -349,6 +407,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
         DocumentModel originDoc = nodeData.getOriginItem();
         DocumentModel destinationDoc = nodeData.getDestinationItem();
         destinationDoc.refresh();
+        boolean isFromMbom = nodeData.getIsFromMbom();
 
         if (isDirectObject || !nodeData.getIsAnarchic()) {
             log.trace("About to manage relation for document |"
@@ -360,7 +419,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 predicate = nodeData.getPredicate();
             }
             manageRelations(destinationDoc, originDoc, parentDestDoc,
-                    parentOrigDoc, predicate, false,
+                    parentOrigDoc, isFromMbom, predicate, false,
                     eloraDocumentRelationManager, documentManager);
             log.trace("Relation managed");
         }
@@ -378,7 +437,8 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
         marcActionDocumentsInTree(destinationDoc, parentDestDoc,
                 actionTreeDocMap);
 
-        EloraDocumentHelper.checkOutDocument(destinationDoc);
+        checkoutService.checkOutFromVersionInCmProcess(destinationDoc,
+                nodeData.getDestinationItemSourceVersion());
 
         log.trace("Change action executed in document |"
                 + destinationDoc.getId() + "|");
@@ -399,26 +459,28 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
 
     private void manageRelations(DocumentModel subject,
             DocumentModel originSubject, DocumentModel object,
-            DocumentModel originObject, String predicate, boolean replace,
+            DocumentModel originObject, boolean isFromMbom, String predicate,
+            boolean replace,
             EloraDocumentRelationManager eloraDocumentRelationManager,
             CoreSession documentManager)
             throws EloraException, CMMissingOriginRelationException {
         if (subject.isCheckedOut()) {
             log.trace("Document is checked out");
             manageCheckedOutDocRelations(subject, originSubject, object,
-                    originObject, predicate, replace,
+                    originObject, isFromMbom, predicate, replace,
                     eloraDocumentRelationManager, documentManager);
         } else {
             log.trace("Document is checked in");
             manageCheckedInDocRelations(subject, originSubject, object,
-                    originObject, predicate, replace,
+                    originObject, isFromMbom, predicate, replace,
                     eloraDocumentRelationManager, documentManager);
         }
     }
 
     private void manageCheckedOutDocRelations(DocumentModel subject,
             DocumentModel originSubject, DocumentModel object,
-            DocumentModel originObject, String predicate, boolean replace,
+            DocumentModel originObject, boolean isFromMbom, String predicate,
+            boolean replace,
             EloraDocumentRelationManager eloraDocumentRelationManager,
             CoreSession documentManager)
             throws EloraException, CMMissingOriginRelationException {
@@ -427,14 +489,16 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 EloraRelationConstants.ELORA_GRAPH_NAME, originSubject,
                 new ResourceImpl(predicate), originObject);
 
-        if (origStmt == null) {
+        // If it is mbom we continue executing actions
+        if (origStmt == null && !isFromMbom) {
             throw new CMMissingOriginRelationException(originObject);
         }
 
         log.trace("Getting relations from document to any version of |"
                 + object.getId() + "|");
         // TODO: Mirar si se puede mejorar esta consulta. Aquí vendría bien
-        // tener una consulta de un subject a un versionseriresid de un object!
+        // tener una consulta de un subject a un versionseriesid de un
+        // object!
         // Para ver si existe y hacer switch si es necesario
         DocumentModelList objectDocList = getRelationsFromSubjectToAnyObjectVersion(
                 subject, object, predicate, documentManager);
@@ -457,21 +521,28 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 // relacion se mantienen con lo que habia antes. Quantity,
                 // comment, etc.
 
-                // Aqui entra en replace si le hemos cambiado la relación desde
-                // fuera a otra AV por ejemplo.
-                // Se tiene que hacer el switch de la relación del wc de forma
-                // normal.
+                // Aqui entra en replace si le hemos cambiado la relación
+                // desde fuera a otra AV por ejemplo.
+                // Se tiene que hacer el switch de la relación del wc de
+                // forma normal.
+
+                if (origStmt == null) {
+                    origStmt = EloraRelationHelper.getStatement(
+                            EloraRelationConstants.ELORA_GRAPH_NAME, subject,
+                            new ResourceImpl(predicate), object);
+                }
 
                 Statement stmt = new StatementImpl(
                         RelationHelper.getDocumentResource(subject),
                         new ResourceImpl(predicate),
                         RelationHelper.getDocumentResource(relatedObject));
+
                 switchRelation(subject, stmt.getPredicate().getUri(), object,
                         relatedObject, origStmt, eloraDocumentRelationManager,
                         documentManager);
 
             }
-        } else {
+        } else if (!isFromMbom) {
             if (replace) {
                 // TODO: Este bloque se utiliza igual en
                 // manageCheckedInDoCRelations y se puede sacar una función
@@ -524,22 +595,27 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
 
     private void manageCheckedInDocRelations(DocumentModel subject,
             DocumentModel originSubject, DocumentModel object,
-            DocumentModel originObject, String predicate, boolean replace,
+            DocumentModel originObject, boolean isFromMbom, String predicate,
+            boolean replace,
             EloraDocumentRelationManager eloraDocumentRelationManager,
             CoreSession documentManager)
-            throws CMMissingOriginRelationException {
+            throws CMMissingOriginRelationException, EloraException {
 
         Statement origStmt = EloraRelationHelper.getStatement(
                 EloraRelationConstants.ELORA_GRAPH_NAME, originSubject,
                 new ResourceImpl(predicate), originObject);
 
-        if (origStmt == null) {
+        // If it is mbom we continue executing actions
+        if (origStmt == null && !isFromMbom) {
             throw new CMMissingOriginRelationException(originObject);
         }
 
+        DocumentModel originObjectWc = documentManager.getWorkingCopy(
+                originObject.getRef());
+
         if (object.isCheckedOut()) {
             if (!EloraRelationHelper.existsRelation(subject, object, predicate,
-                    documentManager)) {
+                    documentManager) && !isFromMbom) {
                 if (replace) {
                     // Puede llegar aquí si hacemos check out del object desde
                     // fuera y luego ejecutamos por primera vez la ECO. En ese
@@ -551,9 +627,6 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                                     + "| to destination object |"
                                     + object.getId() + "|");
 
-                    DocumentModel originObjectWc = documentManager.getWorkingCopy(
-                            originObject.getRef());
-
                     if (!EloraRelationHelper.existsRelation(subject,
                             originObjectWc, predicate, documentManager)) {
                         // No existe relación ni al origen ni al nuevo destino.
@@ -564,11 +637,11 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                                 RelationHelper.getDocumentResource(object),
                                 predicate, null, "1");
                     } else {
-                        // No existe relación al destino nuevo pero si existe la
-                        // relación al origen. O estaba checked out antes de
-                        // calcular el impacto o se ha borrado la relación desde
-                        // fuera. Hay que modificar la relación que apunta al
-                        // origen para que apunte al destino.
+                        // No existe relación al destino nuevo pero si
+                        // existe la relación al origen. O estaba checked out
+                        // antes de calcular el impacto o se ha borrado la
+                        // relación desde fuera. Hay que modificar la relación
+                        // que apunta al origen para que apunte al destino.
                         switchRelation(subject, predicate, object,
                                 originObjectWc, origStmt,
                                 eloraDocumentRelationManager, documentManager);
@@ -583,17 +656,59 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             DocumentModel objectWc = documentManager.getWorkingCopy(
                     object.getRef());
 
-            if (!EloraRelationHelper.existsRelation(subject, objectWc,
-                    predicate, documentManager)) {
+            if (EloraRelationHelper.existsRelation(subject, objectWc, predicate,
+                    documentManager)) {
+                if (replace) {
+                    // Update replacer item relation:
+                    // - new quantity is the SUM of replacer and replaced item
+                    // relations quantities
+                    // - new ordering is the MINIMUM between replacer and
+                    // replaced item relations ordering
+                    EloraStatementInfo origStmtInfo = new EloraStatementInfoImpl(
+                            EloraRelationHelper.getStatement(
+                                    EloraRelationConstants.ELORA_GRAPH_NAME,
+                                    subject, new ResourceImpl(predicate),
+                                    originObjectWc));
+                    int originStmtQty = (origStmtInfo.getQuantity() == null) ? 0
+                            : Integer.valueOf(origStmtInfo.getQuantity());
+
+                    Statement destStmt = EloraRelationHelper.getStatement(
+                            EloraRelationConstants.ELORA_GRAPH_NAME, subject,
+                            new ResourceImpl(predicate), objectWc);
+                    EloraStatementInfo destStmtInfo = new EloraStatementInfoImpl(
+                            destStmt);
+                    int destStmtQty = (destStmtInfo.getQuantity() == null) ? 0
+                            : Integer.valueOf(destStmtInfo.getQuantity());
+
+                    int newQuantity = originStmtQty + destStmtQty;
+                    Integer newOrdering = Math.min(origStmtInfo.getOrdering(),
+                            destStmtInfo.getOrdering());
+
+                    eloraDocumentRelationManager.updateQuantityAndOrderingInRelation(
+                            documentManager, subject, predicate, objectWc,
+                            String.valueOf(newQuantity), newOrdering);
+
+                    // Remove replaced item relation
+                    eloraDocumentRelationManager.softDeleteRelation(
+                            documentManager, subject, predicate,
+                            originObjectWc);
+                } else {
+                    if (origStmt == null) {
+                        origStmt = EloraRelationHelper.getStatement(
+                                EloraRelationConstants.ELORA_GRAPH_NAME,
+                                subject, new ResourceImpl(predicate), objectWc);
+                    }
+                    switchRelation(subject, predicate, object, objectWc,
+                            origStmt, eloraDocumentRelationManager,
+                            documentManager);
+                }
+            } else if (!isFromMbom) {
                 if (replace) {
                     log.trace(
                             "No existing relations. Proceed to replace relation from origin object |"
                                     + originObject.getId()
                                     + "| to destination object |"
                                     + object.getId() + "|");
-
-                    DocumentModel originObjectWc = documentManager.getWorkingCopy(
-                            originObject.getRef());
 
                     switchRelation(subject, predicate, object, originObjectWc,
                             origStmt, eloraDocumentRelationManager,
@@ -603,11 +718,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                             subject, RelationHelper.getDocumentResource(object),
                             predicate, null, "1");
                 }
-            } else {
-                switchRelation(subject, predicate, object, objectWc, origStmt,
-                        eloraDocumentRelationManager, documentManager);
             }
-
         }
     }
 
@@ -637,17 +748,18 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             DocumentModel objectDoc, DocumentModel oldObjectDoc,
             Statement oldStmt,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager) {
+            CoreSession documentManager) throws EloraException {
 
         log.trace("Switch relation");
 
         EloraStatementInfo stmtInfo = new EloraStatementInfoImpl(oldStmt);
 
-        eloraDocumentRelationManager.updateRelation(documentManager, subjectDoc,
-                predicateUri, oldObjectDoc, objectDoc, stmtInfo.getQuantity(),
-                stmtInfo.getOrdering(), stmtInfo.getDirectorOrdering(),
-                stmtInfo.getViewerOrdering(),
-                stmtInfo.getInverseViewerOrdering(), stmtInfo.getIsManual());
+        eloraDocumentRelationManager.updateObjectAndAllPropsInRelation(
+                documentManager, subjectDoc, predicateUri, oldObjectDoc,
+                objectDoc, stmtInfo.getQuantity(), stmtInfo.getOrdering(),
+                stmtInfo.getDirectorOrdering(), stmtInfo.getViewerOrdering(),
+                stmtInfo.getInverseViewerOrdering(), stmtInfo.getIsManual(),
+                stmtInfo.getDesignators(), stmtInfo.getIsExcludedFromMapping());
 
         log.trace("Switched relation with subject |" + subjectDoc.getId()
                 + "| Old object: |" + oldObjectDoc.getId() + "| New object: |"
@@ -659,7 +771,9 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             ImpactedItemsNodeData parentNodeData,
             Map<DocumentModel, List<String>> actionTreeDocMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager) {
+            CoreSession documentManager, CheckoutService checkoutService)
+            throws EloraException, DocumentAlreadyLockedException,
+            DocumentInUnlockableStateException, DocumentLockRightsException {
 
         DocumentModel parentItem = nodeData.getParentItem();
         DocumentModel parentItemWc = documentManager.getWorkingCopy(
@@ -693,7 +807,8 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                     destinationDoc, comment);
 
             marcActionDocumentsInTree(destinationDoc, null, actionTreeDocMap);
-            EloraDocumentHelper.checkOutDocument(destinationDoc);
+            checkoutService.checkOutFromVersionInCmProcess(destinationDoc,
+                    nodeData.getDestinationItemSourceVersion());
         }
     }
 
@@ -702,8 +817,10 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             ImpactedItemsNodeData parentNodeData,
             Map<DocumentModel, List<String>> actionTreeDocMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager)
-            throws EloraException, CMMissingOriginRelationException {
+            CoreSession documentManager, CheckoutService checkoutService)
+            throws EloraException, CMMissingOriginRelationException,
+            DocumentAlreadyLockedException, DocumentInUnlockableStateException,
+            DocumentLockRightsException {
 
         DocumentModel parentDestDoc = parentNodeData.getDestinationItem();
         parentDestDoc.refresh();
@@ -723,6 +840,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
         DocumentModel destinationDoc = nodeData.getDestinationItem();
         DocumentModel originDoc = nodeData.getOriginItem();
         destinationDoc.refresh();
+        boolean isFromMbom = nodeData.getIsFromMbom();
 
         // Debugear esto con el direct. Mirar si alguna vez llega aquí por si le
         // molesta el cambio de wc a av que hemos hecho con el parentOrigDoc
@@ -732,7 +850,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                     + destinationDoc.getId() + "|");
 
             manageRelations(destinationDoc, originDoc, parentDestDoc,
-                    parentOrigDoc, nodeData.getPredicate(), true,
+                    parentOrigDoc, isFromMbom, nodeData.getPredicate(), true,
                     eloraDocumentRelationManager, documentManager);
         }
 
@@ -751,13 +869,15 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
 
         marcActionDocumentsInTree(destinationDoc, parentDestDoc,
                 actionTreeDocMap);
-        EloraDocumentHelper.checkOutDocument(destinationDoc);
+        checkoutService.checkOutFromVersionInCmProcess(destinationDoc,
+                nodeData.getDestinationItemSourceVersion());
 
         log.trace("Replace action executed in document |"
                 + destinationDoc.getId() + "|");
     }
 
     private void fixRelationsToDocumentsMissingInTree(
+            DocumentModel cmProcessDoc,
             List<String> bomHierarchicalAndDirectRelations,
             Map<DocumentModel, List<String>> actionTreeDocMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
@@ -766,76 +886,147 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 + documentManager.getPrincipal().getName() + "] ";
         for (Map.Entry<DocumentModel, List<String>> entry : actionTreeDocMap.entrySet()) {
             DocumentModel subject = entry.getKey();
-            List<String> relatedTreeObjectList = entry.getValue();
 
-            log.trace("Get bom hierarchical statements of item |"
-                    + subject.getId() + "|");
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////
-            // By default, relations will be switched to latest released or
-            // latest version.
-            // But, if property
-            // com.aritu.eloraplm.cm.switch.relations.to.astored.when.fixing.relations.in.items.impact.matrix
-            // is set to true,
-            // relations will be switched to the AV version. Relation will be
-            // switched only if the relation is currently pointing to a WC,
-            // otherwise it will not be switched.
-            //////////////////////////////////////////////////////////////////////////////////////////////////
-            boolean switchRelationsToAsStored = Boolean.valueOf(
-                    Framework.getProperty(
-                            EloraPropertiesConstants.PROP_CM_SWITCH_RELATIONS_TO_ASSTORED_WHEN_FIXING_RELATIONS_IN_ITEMS_IMPACT_MATRIX,
-                            Boolean.toString(false)));
-            List<Statement> bomStmts = null;
-            if (!switchRelationsToAsStored) {
-                bomStmts = CmBatchProcessingHelper.getBomHierarchicalStmts(
-                        subject, bomHierarchicalAndDirectRelations);
-            } else {
-                DocumentModel subjectAv = EloraDocumentHelper.getBaseVersion(
-                        subject);
-                bomStmts = CmBatchProcessingHelper.getBomHierarchicalStmts(
-                        subjectAv, bomHierarchicalAndDirectRelations);
-            }
-
-            log.trace("Get bom hierarchical statements of item |"
-                    + subject.getId() + "|");
             try {
-                TransactionHelper.commitOrRollbackTransaction();
-                TransactionHelper.startTransaction();
 
-                for (Statement bomStmt : bomStmts) {
-                    DocumentModel objectBomDoc = RelationHelper.getDocumentModel(
-                            bomStmt.getObject(), documentManager);
-                    if (objectBomDoc == null) {
-                        log.trace(logInitMsg
-                                + "Throw DocumentUnreadableException  since objectBomDoc is null. bomStmt = |"
-                                + bomStmt.toString() + "|");
-                        throw new DocumentUnreadableException(
-                                "Error getting document from statement |"
-                                        + bomStmt.toString() + "|");
+                List<String> relatedTreeObjectList = entry.getValue();
+
+                boolean subjectDocCreatedFromNonCorrelativeVersion = (boolean) subject.getPropertyValue(
+                        EloraMetadataConstants.ELORA_VINF_NON_CORRELATIVE_VERSION);
+
+                if (subjectDocCreatedFromNonCorrelativeVersion) {
+
+                    // If subject document has been created from a non
+                    // correlative version, following actions will be done:
+                    // - Find the subject document source version
+                    // - Restore relations from source version. During this
+                    // restore, documents that are included in
+                    // relatedTreeObjectList list should not be modified.
+
+                    VersionModel sourceVersion = null;
+                    String sourceVersionDocId = "";
+                    if (subject.getPropertyValue(
+                            EloraMetadataConstants.ELORA_VINF_SOURCE_VERSION) != null) {
+                        sourceVersionDocId = (String) subject.getPropertyValue(
+                                EloraMetadataConstants.ELORA_VINF_SOURCE_VERSION);
+                        if (sourceVersionDocId.length() > 0) {
+                            sourceVersion = new VersionModelImpl();
+                            sourceVersion.setId(sourceVersionDocId);
+                        }
                     }
-                    if (!relatedTreeObjectList.contains(objectBomDoc.getId())) {
-                        log.trace("Item |" + objectBomDoc.getId()
-                                + "| not in tree");
+                    if (sourceVersion != null) {
+                        // create a list with the versionSeriesId of the
+                        // documents to be excluded from being restored
+                        List<String> excludedDocsVersionSeriesIds = new ArrayList<>();
+                        for (String relatedTreeObject : relatedTreeObjectList) {
+                            DocumentModel excludedDoc = documentManager.getDocument(
+                                    new IdRef(relatedTreeObject));
+                            excludedDocsVersionSeriesIds.add(
+                                    excludedDoc.getVersionSeriesId());
+                        }
 
-                        if (!switchRelationsToAsStored) {
-                            switchRelationWithLatestReleasedOrLatestVersion(
-                                    subject, bomStmt, objectBomDoc,
-                                    eloraDocumentRelationManager,
-                                    documentManager);
+                        EloraRelationHelper.restoreCMRelationsAfterCheckoutFromVersion(
+                                subject, sourceVersion,
+                                eloraDocumentRelationManager,
+                                excludedDocsVersionSeriesIds, documentManager);
+
+                    } else {
+                        log.trace(logInitMsg
+                                + "Not able to found sourceVersion for subject id = |"
+                                + subject.getId() + "|");
+                        throw new EloraException(
+                                "Not able to found sourceVersion for subject id = |"
+                                        + subject.getId() + "|");
+                    }
+                } else {
+
+                    log.trace("Get bom hierarchical statements of item |"
+                            + subject.getId() + "|");
+
+                    // ----------------------------------------------------------------------------------------------
+                    // By default, relations will be switched to latest released
+                    // or latest version. But, if property
+                    // com.aritu.eloraplm.cm.switch.relations.to.astored.when.fixing.relations.in.items.impact.matrix
+                    // is set to true, relations will be switched to the AV
+                    // version. Relation will be switched only if the relation
+                    // is currently pointing to a otherwise it will not be
+                    // switched.
+                    // ----------------------------------------------------------------------------------------------
+
+                    boolean switchRelationsToAsStored = Boolean.valueOf(
+                            Framework.getProperty(
+                                    EloraPropertiesConstants.PROP_CM_SWITCH_RELATIONS_TO_ASSTORED_WHEN_FIXING_RELATIONS_IN_ITEMS_IMPACT_MATRIX,
+                                    Boolean.toString(false)));
+                    List<Statement> bomStmts = null;
+                    if (!switchRelationsToAsStored) {
+                        bomStmts = CmBatchProcessingHelper.getBomHierarchicalStmts(
+                                subject, bomHierarchicalAndDirectRelations);
+                    } else {
+                        DocumentModel subjectAv = EloraDocumentHelper.getBaseVersion(
+                                subject);
+                        bomStmts = CmBatchProcessingHelper.getBomHierarchicalStmts(
+                                subjectAv, bomHierarchicalAndDirectRelations);
+                    }
+
+                    log.trace("Get bom hierarchical statements of item |"
+                            + subject.getId() + "|");
+
+                    TransactionHelper.commitOrRollbackTransaction();
+                    TransactionHelper.startTransaction();
+
+                    for (Statement bomStmt : bomStmts) {
+                        DocumentModel objectBomDoc = RelationHelper.getDocumentModel(
+                                bomStmt.getObject(), documentManager);
+                        if (objectBomDoc == null) {
+                            log.trace(logInitMsg
+                                    + "Throw DocumentUnreadableException  since objectBomDoc is null. bomStmt = |"
+                                    + bomStmt.toString() + "|");
+                            throw new DocumentUnreadableException(
+                                    "Error getting document from statement |"
+                                            + bomStmt.toString() + "|");
+                        }
+
+                        DocumentModel objectBomDocWc = null;
+                        boolean hasToSwitch = false;
+
+                        if (switchRelationsToAsStored) {
+                            objectBomDocWc = documentManager.getWorkingCopy(
+                                    objectBomDoc.getRef());
+                            hasToSwitch = !relatedTreeObjectList.contains(
+                                    objectBomDoc.getId())
+                                    && !relatedTreeObjectList.contains(
+                                            objectBomDocWc.getId());
+                            log.trace("Item |" + objectBomDoc.getId()
+                                    + "| and Item |" + objectBomDocWc.getId()
+                                    + "| not in tree");
                         } else {
-                            DocumentModel objectBomDocWC = documentManager.getWorkingCopy(
-                                    new IdRef(objectBomDoc.getId()));
-                            // Before switching the relation, check if it exist.
-                            boolean relationExist = EloraRelationHelper.existsRelation(
-                                    subject, objectBomDocWC,
-                                    bomStmt.getPredicate().getUri(),
-                                    documentManager);
-                            if (relationExist) {
-                                switchRelation(subject,
-                                        bomStmt.getPredicate().getUri(),
-                                        objectBomDoc, objectBomDocWC, bomStmt,
+                            hasToSwitch = !relatedTreeObjectList.contains(
+                                    objectBomDoc.getId());
+                            log.trace("Item |" + objectBomDoc.getId()
+                                    + "| not in tree");
+                        }
+
+                        if (hasToSwitch) {
+                            if (!switchRelationsToAsStored) {
+                                switchRelationWithLatestReleasedOrLatestVersion(
+                                        subject, bomStmt, objectBomDoc,
                                         eloraDocumentRelationManager,
                                         documentManager);
+                            } else {
+                                // Before switching the relation, check if it
+                                // exist.
+                                boolean relationExist = EloraRelationHelper.existsRelation(
+                                        subject, objectBomDocWc,
+                                        bomStmt.getPredicate().getUri(),
+                                        documentManager);
+                                if (relationExist) {
+                                    switchRelation(subject,
+                                            bomStmt.getPredicate().getUri(),
+                                            objectBomDoc, objectBomDocWc,
+                                            bomStmt,
+                                            eloraDocumentRelationManager,
+                                            documentManager);
+                                }
                             }
                         }
                     }
@@ -864,16 +1055,21 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             } finally {
                 TransactionHelper.commitOrRollbackTransaction();
                 TransactionHelper.startTransaction();
+
+                // Increase processed counter
+                Events.instance().raiseEvent(
+                        CMBatchProcessingEventNames.INCREASE_PROCESSED_COUNTER,
+                        cmProcessDoc.getId());
             }
         }
     }
 
     @Observer(CMBatchProcessingEventNames.CHECKIN_ITEMS)
-    public void checkinAsync(DocumentModel cmProcessDoc, TreeNode root,
-            List<String> sortedIds, Map<String, String> helperCommentMap,
+    public void checkinAsync(DocumentModel cmProcessDoc, List<String> sortedIds,
+            Map<String, ImpactedItemsNodeData> nodeMap,
             CheckinManager checkinManager,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            String transitionToComeBackToPreviousState) {
+            String transitionToComeBackToPreviousState, boolean keepLock) {
         String logInitMsg = "[checkinAsync] ["
                 + cmProcessDoc.getCoreSession().getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -899,28 +1095,15 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
 
             cmProcessDoc = session.getDocument(new IdRef(cmProcessDoc.getId()));
 
-            // Process checkins
-            boolean overwrite = false;
             List<String> destinationWcUidList = processCheckinItems(logInitMsg,
-                    cmProcessDoc, root, sortedIds, helperCommentMap, overwrite,
-                    checkinManager, eloraDocumentRelationManager, session);
+                    cmProcessDoc, sortedIds, nodeMap, checkinManager,
+                    eloraDocumentRelationManager, keepLock, session);
 
             log.trace(logInitMsg + "|" + successList.size()
                     + "| documents processed successfully");
 
-            // Set as Managed successfully processed items
-            if (destinationWcUidList != null
-                    && destinationWcUidList.size() > 0) {
-                try {
-                    CMHelper.setAsManagedItemsByDestinationWcUidList(session,
-                            cmProcessDoc, itemType, itemClass,
-                            destinationWcUidList);
-                } catch (EloraException e) {
-                    log.error(logInitMsg
-                            + "An error occurred when setting as managed processed impacted items. Error message is: "
-                            + e.getMessage(), e);
-                }
-            }
+            setAsManagedProcessedItems(cmProcessDoc, logInitMsg, session,
+                    destinationWcUidList);
 
         } catch (EloraException e) {
             log.error(
@@ -958,100 +1141,30 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 + errorsList.size() + "|");
     }
 
-    @Observer(CMBatchProcessingEventNames.OVERWRITE_ITEMS)
-    public void overwriteAsync(DocumentModel cmProcessDoc, TreeNode root,
-            List<String> sortedIds, Map<String, String> helperCommentMap,
-            CheckinManager checkinManager,
-            EloraDocumentRelationManager eloraDocumentRelationManager,
-            String transitionToComeBackToPreviousState) {
-        String logInitMsg = "[overwriteAsync] ["
-                + cmProcessDoc.getCoreSession().getPrincipal().getName() + "] ";
-        log.trace(logInitMsg + "--- ENTER --- ");
-
-        successList = new ArrayList<ResultType>();
-        errorsList = new ArrayList<ResultType>();
-        exceptionErrorMsg = "";
-        txStarted = false;
-        loginStack = null;
-
-        CoreSession receivedSession = cmProcessDoc.getCoreSession();
-        CoreSession session = null;
-
-        try {
-            // Open a new session for asynchronous processing. In this way, even
-            // if the user log outs, the process can continue.
-            session = CoreInstance.openCoreSession(
-                    receivedSession.getRepositoryName(),
-                    receivedSession.getPrincipal());
-
-            txStarted = CmBatchProcessingHelper.initBatchProcessExecution(
-                    cmProcessDoc, loginStack, session);
-
-            cmProcessDoc = session.getDocument(new IdRef(cmProcessDoc.getId()));
-
-            // Process checkins
-            boolean overwrite = true;
-            List<String> destinationWcUidList = processCheckinItems(logInitMsg,
-                    cmProcessDoc, root, sortedIds, helperCommentMap, overwrite,
-                    checkinManager, eloraDocumentRelationManager, session);
-
-            // Set as Managed successfully processed items
-            if (destinationWcUidList != null
-                    && destinationWcUidList.size() > 0) {
-                try {
-                    CMHelper.setAsManagedItemsByDestinationWcUidList(session,
-                            cmProcessDoc, itemType, itemClass,
-                            destinationWcUidList);
-                } catch (EloraException e) {
-                    log.error(logInitMsg
-                            + "An error occurred when setting as managed processed impacted items. Error message is: "
-                            + e.getMessage(), e);
-                }
+    private void setAsManagedProcessedItems(DocumentModel cmProcessDoc,
+            String logInitMsg, CoreSession session,
+            List<String> destinationWcUidList) {
+        if (destinationWcUidList != null && destinationWcUidList.size() > 0) {
+            try {
+                CMHelper.setAsManagedItemsByDestinationWcUidList(session,
+                        cmProcessDoc, itemType, itemClass,
+                        destinationWcUidList);
+            } catch (EloraException e) {
+                log.error(logInitMsg
+                        + "An error occurred when setting as managed processed impacted items. Error message is: "
+                        + e.getMessage(), e);
             }
-
-        } catch (EloraException e) {
-            log.error(
-                    logInitMsg + "Exception processing Overwrite: "
-                            + e.getClass().getName() + ". " + e.getMessage(),
-                    e);
-            exceptionErrorMsg = e.getMessage();
-            if (txStarted) {
-                TransactionHelper.setTransactionRollbackOnly();
-            }
-        } catch (Exception e) {
-            log.error(
-                    logInitMsg + "Exception processing Overwrite: "
-                            + e.getClass().getName() + ". " + e.getMessage(),
-                    e);
-            exceptionErrorMsg = (e.getMessage() != null) ? e.getMessage()
-                    : (e.getCause() != null) ? e.getCause().toString()
-                            : e.getClass().getName();
-            if (txStarted) {
-                TransactionHelper.setTransactionRollbackOnly();
-            }
-
-        } finally {
-            CmBatchProcessingHelper.finalizeBatchProcessExecution(cmProcessDoc,
-                    itemType, itemClass, transitionToComeBackToPreviousState,
-                    txStarted, successList, errorsList, exceptionErrorMsg,
-                    loginStack, session);
-
-            // close opened session
-            session.close();
         }
-
-        log.trace(logInitMsg + "--- EXIT --- with successList size = |"
-                + successList.size() + "| and errorsList size = |"
-                + errorsList.size() + "|");
     }
 
     private List<String> processCheckinItems(String logInitMsg,
-            DocumentModel cmProcessDoc, TreeNode root, List<String> sortedIds,
-            Map<String, String> helperCommentMap, boolean overwrite,
+            DocumentModel cmProcessDoc, List<String> sortedIds,
+            Map<String, ImpactedItemsNodeData> nodeMap,
             CheckinManager checkinManager,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager) throws EloraException,
-            CycleDetectedException, DocumentNotCheckedOutException {
+            boolean keepLock, CoreSession documentManager)
+            throws EloraException, CycleDetectedException,
+            DocumentNotCheckedOutException {
 
         log.trace(logInitMsg + "--- ENTER --- ");
 
@@ -1069,13 +1182,16 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 TransactionHelper.commitOrRollbackTransaction();
                 TransactionHelper.startTransaction();
 
+                boolean overwrite = nodeMap.get(docId).getAction().equals(
+                        CMConstants.ACTION_OVERWRITE);
+
                 if (!overwrite) {
                     log.trace(logInitMsg + "Proceeding to checkin document |"
                             + docId + "|");
 
                     doc = checkinManager.checkinDocument(doc,
-                            helperCommentMap.get(docId), null,
-                            cmProcessReference, false);
+                            nodeMap.get(docId).getComment(), null,
+                            cmProcessReference, !keepLock);
 
                 } else {
                     log.trace(logInitMsg + "Proceeding to overwrite document |"
@@ -1092,7 +1208,6 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 ResultType success = new ResultType(docId, reference,
                         doc.getTitle());
                 successList.add(success);
-
             } catch (CheckinNotAllowedException e) {
                 DocumentModel checkinDocument = e.getCheckinDocument();
                 String checkinDocumentId = checkinDocument.getId();
@@ -1232,7 +1347,9 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             List<String> sortedIds, DAG dag,
             Map<String, List<String>> childrenVersionSeriesMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            String transitionToComeBackToPreviousState) {
+            String transitionToComeBackToPreviousState,
+            boolean forcePromotion) {
+
         String logInitMsg = "[promoteAsync] ["
                 + cmProcessDoc.getCoreSession().getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -1262,22 +1379,11 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             List<String> destinationWcUidList = processPromoteItems(
                     cmProcessDoc, root, sortedIds, dag,
                     childrenVersionSeriesMap, eloraDocumentRelationManager,
-                    session);
+                    forcePromotion, session);
             log.trace(logInitMsg + "Finished promoting all docs");
 
-            // Set as Managed successfully processed items
-            if (destinationWcUidList != null
-                    && destinationWcUidList.size() > 0) {
-                try {
-                    CMHelper.setAsManagedItemsByDestinationWcUidList(session,
-                            cmProcessDoc, itemType, itemClass,
-                            destinationWcUidList);
-                } catch (EloraException e) {
-                    log.error(logInitMsg
-                            + "An error occurred when setting as managed processed impacted items. Error message is: "
-                            + e.getMessage(), e);
-                }
-            }
+            setAsManagedProcessedItems(cmProcessDoc, logInitMsg, session,
+                    destinationWcUidList);
         } catch (EloraException e) {
             log.error(
                     logInitMsg + "Exception processing Promote: "
@@ -1315,7 +1421,8 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
             TreeNode root, List<String> sortedIds, DAG dag,
             Map<String, List<String>> childrenVersionSeriesMap,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession documentManager) throws EloraException {
+            boolean forcePromotion, CoreSession documentManager)
+            throws EloraException {
         String logInitMsg = "[processPromoteItems] ["
                 + documentManager.getPrincipal().getName() + "] ";
 
@@ -1351,85 +1458,68 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 log.trace(logInitMsg
                         + "Start checking release or obsolete in major of document |"
                         + docId + "|");
-                // TODO: cambiar este 'check' por un 'is' para que se
-                // entienda
-                // mejor. También convendría moverlo de promotehelper...
-                if (PromoteHelper.checkReleasedInMajor(doc, documentManager)) {
-                    log.trace(logInitMsg
-                            + "Finished checking release or obsolete in major of document |"
-                            + docId + "|");
-                    if (CmBatchProcessingHelper.areBomRelatedDocsReleased(doc,
+
+                DocumentModel wcDoc = documentManager.getWorkingCopy(
+                        doc.getRef());
+                
+                boolean hasAtLeastOneApprovedVersion = false;
+                Long previousApprovedVersions = EloraQueryFactory.countApprovedVersionsOfDocumentQuery(
+                        documentManager, wcDoc.getId(), doc.getType());
+                if (previousApprovedVersions > 0) {
+                    hasAtLeastOneApprovedVersion = true;
+                }
+
+                if (hasAtLeastOneApprovedVersion || forcePromotion) {
+                    
+                    // TODO: cambiar este 'check' por un 'is' para que se
+                    // entienda
+                    // mejor. También convendría moverlo de promotehelper...
+                    if (PromoteHelper.checkReleasedInMajor(doc,
                             documentManager)) {
-                        checkDocumentChildrenStates(doc, dag,
-                                childrenVersionSeriesMap,
-                                bomHierarchicalAndDirectRelations,
-                                documentManager);
+                        log.trace(logInitMsg
+                                + "Finished checking release or obsolete in major of document |"
+                                + docId + "|");
+                        if (CmBatchProcessingHelper.areBomRelatedDocsReleased(
+                                doc, documentManager)) {
+                            checkDocumentChildrenStates(doc, dag,
+                                    childrenVersionSeriesMap,
+                                    bomHierarchicalAndDirectRelations,
+                                    documentManager);
 
-                        if (doc.getAllowedStateTransitions().contains(
-                                EloraLifeCycleConstants.TRANS_APPROVE)) {
+                            if (doc.getAllowedStateTransitions().contains(
+                                    EloraLifeCycleConstants.TRANS_APPROVE)) {
 
-                            doc.followTransition(
-                                    EloraLifeCycleConstants.TRANS_APPROVE);
+                                processPromote(eloraDocumentRelationManager,
+                                        documentManager, logInitMsg,
+                                        destinationWcUidList,
+                                        cmProcessReference, docId, doc, wcDoc,
+                                        reference, title);
 
-                            // Log Nuxeo Event
-                            String comment = doc.getVersionLabel() + " @"
-                                    + cmProcessReference;
-                            EloraEventHelper.fireEvent(
-                                    PdmEventNames.PDM_PROMOTED_EVENT, doc,
-                                    comment);
-
-                            EloraDocumentHelper.disableVersioningDocument(doc);
-                            documentManager.saveDocument(doc);
-
-                            DocumentModel wcDoc = documentManager.getWorkingCopy(
-                                    doc.getRef());
-                            DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(
-                                    wcDoc);
-                            if (baseDoc == null) {
-                                throw new EloraException("Document |"
-                                        + wcDoc.getId()
-                                        + "| has no base version. Probably because it has no AVs.");
-                            }
-                            if (!baseDoc.getId().equals(doc.getId())) {
-                                VersionModel version = new VersionModelImpl();
-                                version.setId(doc.getId());
-                                EloraDocumentHelper.restoreWorkingCopyToVersion(
-                                        wcDoc, version,
-                                        eloraDocumentRelationManager,
-                                        documentManager);
                             } else {
-                                EloraDocumentHelper.restoreToVersion(
-                                        wcDoc.getRef(), doc.getRef(), true,
-                                        true, documentManager);
+                                log.error(logInitMsg
+                                        + "Document state does not support actual transition. docId = |"
+                                        + docId + "|, reference =|" + reference
+                                        + "|, title=|" + title + "|");
+
+                                String message = EloraMessageHelper.getTranslatedMessage(
+                                        documentManager,
+                                        "eloraplm.message.error.cm.batch.itemNotAllowedTransition");
+                                ResultType error = new ResultType(doc.getId(),
+                                        reference, title, message);
+                                errorsList.add(error);
+
+                                TransactionHelper.setTransactionRollbackOnly();
+                                stopProcessing = true;
                             }
-                            documentManager.removeLock(wcDoc.getRef());
-                            // Fire Approved event
-                            EloraEventHelper.fireEvent(
-                                    PdmEventNames.PDM_APPROVED_EVENT, doc);
-
-                            destinationWcUidList.add(wcDoc.getId());
-                            /*
-                             * managedNodeIdList.add(
-                             * helperNodeIdMap.get(docId));
-                             */
-
-                            ResultType success = new ResultType(docId,
-                                    reference, title);
-                            successList.add(success);
-
-                            log.trace(
-                                    logInitMsg + "Finished promoting document |"
-                                            + docId + "|");
-
                         } else {
                             log.error(logInitMsg
-                                    + "Document state does not support actual transition. docId = |"
+                                    + "Document with related cad not released. docId = |"
                                     + docId + "|, reference =|" + reference
                                     + "|, title=|" + title + "|");
 
                             String message = EloraMessageHelper.getTranslatedMessage(
                                     documentManager,
-                                    "eloraplm.message.error.cm.batch.itemNotAllowedTransition");
+                                    "eloraplm.message.error.cm.batch.itemRelatedCadNotReleased");
                             ResultType error = new ResultType(doc.getId(),
                                     reference, title, message);
                             errorsList.add(error);
@@ -1439,13 +1529,13 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                         }
                     } else {
                         log.error(logInitMsg
-                                + "Document with related cad not released. docId = |"
+                                + "Document has another released document in the same major. docId = |"
                                 + docId + "|, reference =|" + reference
                                 + "|, title=|" + title + "|");
 
                         String message = EloraMessageHelper.getTranslatedMessage(
                                 documentManager,
-                                "eloraplm.message.error.cm.batch.itemRelatedCadNotReleased");
+                                "eloraplm.message.error.cm.batch.itemWithReleasedOnMajor");
                         ResultType error = new ResultType(doc.getId(),
                                 reference, title, message);
                         errorsList.add(error);
@@ -1454,21 +1544,13 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                         stopProcessing = true;
                     }
                 } else {
-                    log.error(logInitMsg
-                            + "Document has another released document in the same major. docId = |"
-                            + docId + "|, reference =|" + reference
-                            + "|, title=|" + title + "|");
-
-                    String message = EloraMessageHelper.getTranslatedMessage(
-                            documentManager,
-                            "eloraplm.message.error.cm.batch.itemWithReleasedOnMajor");
-                    ResultType error = new ResultType(doc.getId(), reference,
-                            title, message);
-                    errorsList.add(error);
-
-                    TransactionHelper.setTransactionRollbackOnly();
-                    stopProcessing = true;
+                    log.trace(
+                            "Document is not approved because previous version is not "
+                                    + "approved and action is not forced. docId = |"
+                                    + docId + "|, reference =|" + reference
+                                    + "|, title=|" + title);
                 }
+
             } catch (Exception e) {
 
                 log.error(logInitMsg
@@ -1481,7 +1563,7 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                         documentManager,
                         "eloraplm.message.error.cm.batch.promote");
                 ResultType error = new ResultType(doc.getId(), reference, title,
-                        message);
+                        message + ": " + e.getMessage());
                 errorsList.add(error);
 
                 TransactionHelper.setTransactionRollbackOnly();
@@ -1504,6 +1586,58 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
         log.trace(logInitMsg + "--- EXIT ---");
 
         return destinationWcUidList;
+    }
+
+    private void processPromote(
+            EloraDocumentRelationManager eloraDocumentRelationManager,
+            CoreSession documentManager, String logInitMsg,
+            List<String> destinationWcUidList, String cmProcessReference,
+            String docId, DocumentModel doc, DocumentModel wcDoc,
+            String reference, String title) throws EloraException {
+
+        String previousState = doc.getCurrentLifeCycleState();
+        doc.followTransition(EloraLifeCycleConstants.TRANS_APPROVE);
+
+        // Log Nuxeo Event
+        String comment = doc.getVersionLabel() + " @" + cmProcessReference;
+        Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+        ctxProperties.put("comment", comment);
+        ctxProperties.put("previousState", previousState);
+        EloraEventHelper.fireEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc,
+                ctxProperties);
+
+        EloraDocumentHelper.disableVersioningDocument(doc);
+        documentManager.saveDocument(doc);
+
+        // DocumentModel wcDoc = documentManager.getWorkingCopy(doc.getRef());
+        DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(wcDoc);
+        if (baseDoc == null) {
+            throw new EloraException("Document |" + wcDoc.getId()
+                    + "| has no base version. Probably because it has no AVs.");
+        }
+        if (!baseDoc.getId().equals(doc.getId())) {
+            VersionModel version = new VersionModelImpl();
+            version.setId(doc.getId());
+            EloraDocumentHelper.restoreWorkingCopyToVersion(wcDoc, version,
+                    eloraDocumentRelationManager, documentManager);
+        } else {
+            EloraDocumentHelper.restoreToVersion(wcDoc.getRef(), doc.getRef(),
+                    true, true, documentManager);
+        }
+        documentManager.removeLock(wcDoc.getRef());
+        // Fire Approved event
+        EloraEventHelper.fireEvent(PdmEventNames.PDM_APPROVED_EVENT, doc);
+
+        destinationWcUidList.add(wcDoc.getId());
+        /*
+         * managedNodeIdList.add(
+         * helperNodeIdMap.get(docId));
+         */
+
+        ResultType success = new ResultType(docId, reference, title);
+        successList.add(success);
+
+        log.trace(logInitMsg + "Finished promoting document |" + docId + "|");
     }
 
     private void checkDocumentChildrenStates(DocumentModel doc, DAG dag,
@@ -1554,19 +1688,15 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                             documentManager,
                             "eloraplm.message.error.cm.batch.itemCompositionWithDiffDocVersion",
                             messageParams);
-                    ResultType error = new ResultType(doc.getId(), reference,
-                            title, message);
-                    errorsList.add(error);
-
-                    String exceptionMsg = "Document to be promoted has different document version in composition and tree";
-                    log.error(logInitMsg + exceptionMsg + "DOC reference =|"
+                    log.error(logInitMsg
+                            + "Document to be promoted has different document version in composition and tree. DOC reference =|"
                             + reference + "| title=|" + title
                             + "|  objetctBomDoc reference =|"
                             + objectBomDoc.getPropertyValue(
                                     EloraMetadataConstants.ELORA_ELO_REFERENCE)
                             + "| title=|" + objectBomDoc.getTitle() + "|");
 
-                    throw new EloraException(exceptionMsg);
+                    throw new EloraException(message);
                 }
             } else {
                 log.trace(logInitMsg + "Object |" + objectBomDoc.getId()
@@ -1574,39 +1704,6 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                 if (EloraDocumentHelper.isReleased(objectBomDoc)) {
                     log.trace(logInitMsg + "Object |" + objectBomDoc.getId()
                             + "| is released");
-                    DocumentModel latestReleased = EloraDocumentHelper.getLatestReleasedVersion(
-                            objectBomDoc);
-                    log.trace(logInitMsg + "Latest released of object |"
-                            + objectBomDoc.getId() + "| is |"
-                            + latestReleased.getId() + "|");
-                    if (!latestReleased.getId().equals(objectBomDoc.getId())) {
-
-                        String reference = doc.getPropertyValue(
-                                EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
-                        String title = doc.getTitle();
-
-                        Object[] messageParams = { reference, title,
-                                objectBomDoc.getPropertyValue(
-                                        EloraMetadataConstants.ELORA_ELO_REFERENCE),
-                                objectBomDoc.getTitle() };
-                        String message = EloraMessageHelper.getTranslatedMessage(
-                                documentManager,
-                                "eloraplm.message.error.cm.batch.documentWithNoLastReleasedChil",
-                                messageParams);
-                        ResultType error = new ResultType(doc.getId(),
-                                reference, title, message);
-                        errorsList.add(error);
-
-                        String exceptionMsg = "Document has documents in its composition that are not latest released";
-                        log.error(logInitMsg + exceptionMsg + "DOC reference =|"
-                                + reference + "| title=|" + title
-                                + "|  objetctBomDoc reference =|"
-                                + objectBomDoc.getPropertyValue(
-                                        EloraMetadataConstants.ELORA_ELO_REFERENCE)
-                                + "| title=|" + objectBomDoc.getTitle() + "|");
-
-                        throw new EloraException(exceptionMsg);
-                    }
                 } else {
                     String reference = doc.getPropertyValue(
                             EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
@@ -1620,21 +1717,15 @@ public class CmItemsBatchProcessingAsyncBean implements Serializable {
                             documentManager,
                             "eloraplm.message.error.cm.batch.itemWithNoReleasedChild",
                             messageParams);
-
-                    ResultType error = new ResultType(doc.getId(), reference,
-                            title, message);
-                    errorsList.add(error);
-
-                    String exceptionMsg = "Document has no released documents in its composition";
-                    log.error(logInitMsg + exceptionMsg + "DOC reference =|"
+                    log.error(logInitMsg
+                            + "Document has no released documents in its composition. DOC reference =|"
                             + reference + "| title=|" + title
                             + "|  objetctBomDoc reference =|"
                             + objectBomDoc.getPropertyValue(
                                     EloraMetadataConstants.ELORA_ELO_REFERENCE)
                             + "| title=|" + objectBomDoc.getTitle() + "|");
 
-                    throw new EloraException(exceptionMsg);
-
+                    throw new EloraException(message);
                 }
             }
         }

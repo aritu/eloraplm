@@ -1,0 +1,40 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+    
+    <c:if test="false">
+        <!--
+        Inplementatu/Begiratu gabe:
+        * widget moduak
+         -->
+    </c:if>
+    
+    <h:outputScript library="js" name="primefaces_dialog.js" target="#{pageJsTarget}" />
+
+    <p:commandLink id="#{widget.id}_link"
+        styleClass="#{widgetProperty_styleClass}"
+        process="@this"
+        onstart="onPfDialogActionStart()"
+        actionListener="#{
+            pfDialogActions.initDialog(
+                widgetProperty_dialogTitle,
+                widgetProperty_include,
+                widgetProperty_dialogModal,
+                widgetProperty_dialogResizable,
+                widgetProperty_dialogDraggable,
+                widgetProperty_dialogWidth,
+                widgetProperty_dialogHeight,
+                widgetProperty_dialogMinWidth,
+                widgetProperty_dialogMinHeight
+            )}"
+        oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+        update=":glb_pf_dlg_panel">
+        <ui:include src="/widgets/incl/widget_label_template.xhtml" />
+    </p:commandLink>
+    
+</ui:composition>

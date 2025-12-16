@@ -1,0 +1,158 @@
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="/incl/action/widgets/primefaces_dialog_no_content_form_template.xhtml"
+>
+    <ui:define name="dialog_content">
+        <nxu:set
+            var="imAlreadyExists"
+            value="#{modifiedItemsActions.imAlreadyExists}"
+        >
+            <h:panelGroup rendered="#{imAlreadyExists}">
+                <h1>
+                    #{cmModifiedsTreeBean.imOptions.calculationMethod eq
+                    'automatic' ?
+                    messages['title.cm.matrix.calculatedWithAutomatic'] :
+                    messages['title.cm.matrix.calculatedWithManual'] }
+                </h1>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{imAlreadyExists}">
+                <h:outputText
+                    styleClass="processMessage completeWarning"
+                    value="#{messages['eloraplm.message.warning.cm.recalculateImpactMatrix']}"
+                />
+            </h:panelGroup>
+
+            <h:panelGroup
+                id="calculationMethodPanel"
+                layout="block"
+                style="padding-bottom: 0.6rem"
+            >
+                <h:form id="calculationMethodForm">
+                    <p:divider align="center">
+                        <p:selectOneButton
+                            id="calculationMethod"
+                            value="#{cmModifiedsTreeBean.imOptions.calculationMethod}"
+                            unselectable="false"
+                            layout="lineDirection"
+                            styleClass="fullWidth"
+                            rendered="#{not imAlreadyExists}"
+                        >
+                            <f:selectItem
+                                itemLabel="#{messages['eloraplm.label.cm.automatic.impact.matrix']}"
+                                itemValue="automatic"
+                            />
+                            <f:selectItem
+                                itemLabel="#{messages['eloraplm.label.cm.manual.impact.matrix']}"
+                                itemValue="manual"
+                            />
+                            <p:ajax
+                                update="optionsPanel :glb_pf_dlg_form_buttons"
+                                process="@form"
+                                partialSubmit="true"
+                                onstart="PF('#{pfDialogBlockerId}').show();"
+                                oncomplete="PF('#{pfDialogBlockerId}').hide();PF('#{pfDialogId}').resetPosition();"
+                            />
+                        </p:selectOneButton>
+                    </p:divider>
+                </h:form>
+            </h:panelGroup>
+
+            <h:panelGroup id="optionsPanel">
+                <ui:fragment
+                    rendered="#{cmModifiedsTreeBean.imOptions.calculationMethod eq 'automatic'}"
+                >
+                    <h:form id="automaticMethodForm">
+                        <nxl:layout
+                            name="cm_calculate_impact_matrix"
+                            mode="edit"
+                            value="#{cmModifiedsTreeBean.imOptions}"
+                        />
+                        <p:remoteCommand
+                            name="calculateAutomaticImpactMatrix"
+                            action="#{modifiedItemsActions.calculateImpactMatrix(cmModifiedsTreeBean.imOptions)}"
+                            onstart="handlePfDialogStart(#{pfDialogId});"
+                            oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+                            process="@form"
+                            update="@form"
+                        />
+                    </h:form>
+                </ui:fragment>
+
+                <ui:fragment
+                    id="manualIM"
+                    rendered="#{cmModifiedsTreeBean.imOptions.calculationMethod eq 'manual'}"
+                >
+                    <nxl:widget
+                        name="cm_man_tt"
+                        mode="edit"
+                        value="#{cmManualImpactedItemsTreeBean}"
+                    />
+
+                    <h:outputScript>
+                        PFJQ("body").on("click",'.ui-dialog-mask',function () {
+                        if(PF('addManualItemDialog') !== undefined) {
+                        PF('addManualItemDialog').hide(); } });
+                    </h:outputScript>
+                </ui:fragment>
+            </h:panelGroup>
+
+            <p:dialog
+                id="addManualItemDialog"
+                widgetVar="addManualItemDialog"
+                header="#{messages['eloraplm.title.cm.addImpactedItems']}"
+                appendTo=":glb_pf_dlg_panel"
+                modal="true"
+                dynamic="true"
+                draggable="true"
+                fitViewport="true"
+                closeOnEscape="true"
+                onShow="PF('addManualItemDialog').resetPosition()"
+            >
+                <ui:include
+                    src="/incl/action/cm_add_manual_impact_item.xhtml"
+                />
+            </p:dialog>
+        </nxu:set>
+    </ui:define>
+
+    <ui:define name="dialog_buttons">
+        <p:commandButton
+            rendered="#{cmModifiedsTreeBean.imOptions.calculationMethod eq 'automatic'}"
+            id="calculateAutomaticImpactMatrix"
+            value="#{modifiedItemsActions.imAlreadyExists ? messages['eloraplm.command.cm.recalculateImpactMatrix'] : messages['eloraplm.command.cm.calculateImpactMatrix']}"
+            styleClass="button mainAction"
+            disabled="#{cmModifiedsTreeBean.imOptions.calculationMethod == null}"
+            onstart="calculateAutomaticImpactMatrix();"
+        />
+
+        <p:commandButton
+            rendered="#{cmModifiedsTreeBean.imOptions.calculationMethod eq 'manual'}"
+            id="calculateManualImpactMatrix"
+            value="#{modifiedItemsActions.imAlreadyExists ? messages['eloraplm.command.cm.recalculateImpactMatrix'] : messages['eloraplm.command.cm.calculateImpactMatrix']}"
+            styleClass="button mainAction"
+            action="#{modifiedItemsActions.calculateImpactMatrix(cmModifiedsTreeBean.imOptions)}"
+            disabled="#{cmModifiedsTreeBean.imOptions.calculationMethod == null}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+            process="@form"
+            update="@form"
+        />
+
+        <p:commandButton
+            type="button"
+            value="#{messages['command.cancel']}"
+            immediate="true"
+            process="@none"
+            styleClass="button"
+            onclick="PF('#{pfDialogId}').hide();"
+        />
+    </ui:define>
+</ui:decorate>

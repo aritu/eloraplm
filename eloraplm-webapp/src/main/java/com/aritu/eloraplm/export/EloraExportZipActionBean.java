@@ -50,6 +50,7 @@ import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.constants.EloraEventNames;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraMimeTypeConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -146,7 +147,8 @@ public class EloraExportZipActionBean implements Serializable {
             out.finish();
             out.close();
         }
-        return Blobs.createBlob(file, "application/zip", null, filename);
+        return Blobs.createBlob(file, EloraMimeTypeConstants.APPLICATION_ZIP,
+                null, filename);
     }
 
     private void zip(BlobList blobs, ZipOutputStream out) throws IOException {

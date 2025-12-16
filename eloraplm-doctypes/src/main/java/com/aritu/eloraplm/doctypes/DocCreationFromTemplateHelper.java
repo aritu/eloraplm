@@ -18,9 +18,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
@@ -29,14 +29,13 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.CoreSession.CopyOption;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentModelComparator;
 import org.nuxeo.ecm.core.api.DocumentModelIterator;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
-import org.nuxeo.ecm.core.api.LifeCycleConstants;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
+import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
@@ -61,9 +60,11 @@ import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
+import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.EloraStructureHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.aritu.eloraplm.versioning.VersionLabelService;
 
 /**
@@ -77,45 +78,75 @@ public class DocCreationFromTemplateHelper {
 
     private static final String RESET_CREATOR_PROPERTY = "nuxeo.template.reset-creator-on-creation-from-template";
 
+    /**
+     * @param session
+     * @param templateDocType
+     * @param eloraRootFolderUid indicates in which Elora Root Folder is being
+     *            created the template.
+     * @return
+     */
     public static DocumentModelList getDocumentTemplates(CoreSession session,
-            String templateDocType) {
+            String templateDocType, String eloraRootFolderUid) {
 
         DocumentModelList templates = new DocumentModelListImpl();
 
-        DocumentModelList templateRoots;
-        // String query = "SELECT * FROM Document where ecm:primaryType = '%s'
-        // AND ecm:path STARTSWITH %s";
-        String query = "SELECT * FROM Document where ecm:primaryType = '%s'";
-        templateRoots = session.query(
-                String.format(query, NuxeoDoctypeConstants.DOCUMENT_TEMPLATES));
-        // NXQL.escapeString(navigationContext.getCurrentDomainPath()))); ????
+        DocumentModel eloraRootFolder = session.getDocument(
+                new IdRef(eloraRootFolderUid));
+        DocumentModel domain = EloraStructureHelper.getParent(eloraRootFolder,
+                NuxeoDoctypeConstants.DOMAIN);
+        DocumentModel documentTemplatesFolder = EloraStructureHelper.getDocumentTemplatesFolder(
+                domain);
 
-        if (!templateRoots.isEmpty()) {
+        if (documentTemplatesFolder != null) {
 
-            Map<String, String> order = new HashMap<String, String>();
-            order.put("title", "asc");
-            DocumentModelComparator dmc = new DocumentModelComparator(
-                    "dublincore", order);
+            ArrayList<String> documentTemplatesFolderUids = new ArrayList<String>();
+            documentTemplatesFolderUids.add(documentTemplatesFolder.getId());
 
-            // Iterate over each templateRoot in order to retrieve all templates
-            for (Iterator<DocumentModel> it = templateRoots.iterator(); it.hasNext();) {
-                // Get all document templates ordered by ascending title
-                DocumentModel templateRoot = it.next();
-                DocumentModelList tts = session.getChildren(
-                        templateRoot.getRef(), templateDocType, null, dmc);
-                templates.addAll(tts);
-            }
-
-            // remove delete templates
-            List<DocumentModel> deleted = new ArrayList<DocumentModel>();
-            for (Iterator<DocumentModel> it = templates.iterator(); it.hasNext();) {
-                DocumentModel current = it.next();
-                if (LifeCycleConstants.DELETED_STATE.equals(
-                        current.getCurrentLifeCycleState())) {
-                    deleted.add(current);
+            String documentTemplatesRootFolderQuery = EloraQueryFactory.getDocumentTemplatesRootFolderQuery(
+                    eloraRootFolderUid);
+            DocumentModelList documentTemplatesRootFolders = session.query(
+                    documentTemplatesRootFolderQuery);
+            if (!documentTemplatesRootFolders.isEmpty()) {
+                for (DocumentModel documentTemplatesRootFolder : documentTemplatesRootFolders) {
+                    documentTemplatesFolderUids.add(
+                            documentTemplatesRootFolder.getId());
                 }
             }
-            templates.removeAll(deleted);
+
+            documentTemplatesFolderUids.add(eloraRootFolderUid);
+
+            String documentTemplatesQuery = "";
+            ArrayList<String> vaultFolderUids = new ArrayList<String>();
+
+            Set<String> facets = EloraDocumentTypesHelper.getFacetsByDocumentType(
+                    templateDocType);
+            if (facets.contains(EloraFacetConstants.FACET_BASIC_DOCUMENT)) {
+
+                // Retrieve vaultFolders
+                String vaultFolderQuery = EloraQueryFactory.getOtherDocumentsVaultFoldersInsideAncestorQuery(
+                        eloraRootFolderUid, "dc:title");
+                DocumentModelList vaultFolders = session.query(
+                        vaultFolderQuery);
+                for (DocumentModel vaultFolder : vaultFolders) {
+                    // Check if the user has Write permission in the Vault
+                    // Folder
+                    if (session.hasPermission(vaultFolder.getRef(),
+                            SecurityConstants.WRITE)) {
+                        vaultFolderUids.add(vaultFolder.getId());
+                    }
+                }
+            }
+
+            if (vaultFolderUids.size() > 0) {
+                documentTemplatesQuery = EloraQueryFactory.getDocumentTemplatesQuery(
+                        templateDocType, documentTemplatesFolderUids,
+                        vaultFolderUids);
+            } else {
+                documentTemplatesQuery = EloraQueryFactory.getDocumentTemplatesQuery(
+                        templateDocType, documentTemplatesFolderUids);
+            }
+
+            templates = session.query(documentTemplatesQuery);
         }
         return templates;
     }
@@ -184,13 +215,13 @@ public class DocCreationFromTemplateHelper {
         // proxy
         DocumentModel parentDoc = EloraDocumentHelper.getParentDoc(createdDoc,
                 session);
-        EloraStructureHelper.moveDocToEloraStructureAndCreateProxyIfRequired(
+        DocumentModel returnDoc = EloraStructureHelper.moveDocToEloraStructureAndCreateProxyIfRequired(
                 createdDoc, parentDoc);
 
         copyTemplateRelations(templateDocId, createdDoc,
                 eloraDocumentRelationManager, versionLabelService, session);
 
-        return createdDoc;
+        return returnDoc;
     }
 
     private static void updateTitleWithReferenceIfRequired(CoreSession session,
@@ -213,8 +244,25 @@ public class DocCreationFromTemplateHelper {
             VersionLabelService versionLabelService) throws EloraException {
         // Update properties from user input.
         if (documentWithPropertiesToBeCopied != null) {
+
+            Map<String, List<String>> excludedProperties = new HashMap<String, List<String>>();
+
+            List<String> templList = new ArrayList<String>();
+            templList.add(EloraMetadataConstants.ELORA_TEMPL_IS_TEMPLATE);
+            templList.add(EloraMetadataConstants.ELORA_TEMPL_SOURCE_DOC_UID);
+            excludedProperties.put(EloraSchemaConstants.TEMPLATE_INFO,
+                    templList);
+
+            List<String> dcList = new ArrayList<String>();
+            dcList.add(NuxeoMetadataConstants.NX_DC_CREATED);
+            dcList.add(NuxeoMetadataConstants.NX_DC_CREATOR);
+            dcList.add(NuxeoMetadataConstants.NX_DC_CONTRIBUTORS);
+            dcList.add(NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR);
+            dcList.add(NuxeoMetadataConstants.NX_DC_MODIFIED);
+            excludedProperties.put(NuxeoSchemaConstants.DUBLINCORE, dcList);
+
             EloraDocumentHelper.copyProperties(documentWithPropertiesToBeCopied,
-                    created, true);
+                    created, excludedProperties);
         }
 
         // Update reference with automatic code if required
@@ -382,6 +430,7 @@ public class DocCreationFromTemplateHelper {
                                 + object.getId() + "|.");
             }
         }
+
     }
 
     private static DocumentModel createNewObject(DocumentModel newDoc,
@@ -428,7 +477,7 @@ public class DocCreationFromTemplateHelper {
     }
 
     private static void updateReferenceWithAutomaticCodeIfRequired(
-            CoreSession session, DocumentModel doc) {
+            CoreSession session, DocumentModel doc) throws EloraException {
         String logInitMsg = "[updateReferenceWithAutomaticCodeIfRequired] ["
                 + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -469,6 +518,7 @@ public class DocCreationFromTemplateHelper {
                         log.error(logInitMsg
                                 + "Exception when generating automatic document reference: "
                                 + e.getMessage(), e);
+                        throw e;
                     }
                 }
                 // If reference is required but not filled automatically

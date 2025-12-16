@@ -35,4 +35,10 @@ public interface EloraStatementInfo extends StatementInfo {
 
     Boolean getIsManual();
 
+    String getDesignators();
+
+    Boolean getIsTemplate();
+
+    Boolean getIsExcludedFromMapping();
+
 }

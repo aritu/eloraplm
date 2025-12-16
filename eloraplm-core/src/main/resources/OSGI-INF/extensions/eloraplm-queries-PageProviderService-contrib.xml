@@ -130,26 +130,6 @@
           <pageSize>5</pageSize>
         </coreQueryPageProvider>
         
-        <coreQueryPageProvider name="bom_manufacturer_part_wc_suggestion">
-          <property name="maxResults">PAGE_SIZE</property>
-          <pattern escapeParameters="true" quoteParameters="false">
-            SELECT * FROM BomManufacturerPart
-            WHERE ecm:primaryType = 'BomManufacturerPart'
-            AND ecm:mixinType != 'HiddenInNavigation'
-            AND ecm:isProxy = 0
-            AND ecm:isVersion = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND (elo:reference ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
-            AND (ecm:isProxy = ? OR templ:isTemplate = ? OR templ:isTemplate IS NULL)
-          </pattern>
-          <parameter>#{!eloraDocumentTemplatesActions.isTemplate()}</parameter>
-          <parameter>#{eloraDocumentTemplatesActions.isTemplate()}</parameter>
-          <sort column="elo:orderingPriority" ascending="true" />
-          <sort column="elo:reference" ascending="true" />
-          <sort column="dc:title" ascending="true" />
-          <pageSize>5</pageSize>
-        </coreQueryPageProvider>
-                
         <coreQueryPageProvider name="bom_specification_wc_suggestion">
           <property name="maxResults">PAGE_SIZE</property>
           <pattern escapeParameters="true" quoteParameters="false">
@@ -418,7 +398,8 @@
           <property name="maxResults">PAGE_SIZE</property>
           <pattern escapeParameters="true" quoteParameters="false">
             SELECT * FROM Document
-            WHERE ecm:mixinType NOT IN ('HiddenInNavigation','Folderish','BomDocument')
+            WHERE ecm:mixinType IN ('CadDocument', 'BasicDocument')
+            AND ecm:mixinType != 'HiddenInNavigation'
             AND ecm:isProxy = 0
             AND ecm:isVersion = 0
             AND ecm:currentLifeCycleState != 'deleted'
@@ -515,12 +496,31 @@
           <sort column="dc:title" ascending="true" />
           <pageSize>5</pageSize>
         </coreQueryPageProvider>
+
+        <coreQueryPageProvider name="folder_in_workspace_suggestion">
+          <property name="maxResults">PAGE_SIZE</property>
+          <pattern escapeParameters="true" quoteParameters="false">
+            SELECT * FROM Document
+            WHERE ecm:mixinType = 'Folderish'
+            AND ecm:mixinType != 'HiddenInNavigation'
+            AND ecm:isProxy = 0
+            AND ecm:isVersion = 0
+            AND ecm:currentLifeCycleState != 'deleted'
+            AND (dc:title ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
+            AND ecm:ancestorId = '?'
+          </pattern>
+          <parameter>#{wsProxyActions.getTargetWorkspaceUid()}</parameter>
+          <sort column="elo:orderingPriority" ascending="true" />
+          <sort column="dc:title" ascending="true" />
+          <pageSize>5</pageSize>
+        </coreQueryPageProvider>
         
         <coreQueryPageProvider name="other_document_wc_suggestion">
           <property name="maxResults">PAGE_SIZE</property>
           <pattern escapeParameters="true" quoteParameters="false">
             SELECT * FROM Document
-            WHERE ecm:mixinType NOT IN ('HiddenInNavigation','Folderish','BomDocument', 'CadDocument')
+            WHERE ecm:mixinType IN ('BasicDocument')
+            AND ecm:mixinType NOT IN ('HiddenInNavigation')
             AND ecm:isProxy = 0
             AND ecm:isVersion = 0
             AND ecm:currentLifeCycleState != 'deleted'
@@ -563,10 +563,9 @@
             AND ecm:isProxy = 0
             AND ecm:isVersion = 0
             AND ecm:currentLifeCycleState != 'deleted'
-            AND (elo:reference ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
+            AND ecm:fulltext.dc:title LIKE '?*'
           </pattern>
           <sort column="elo:orderingPriority" ascending="true" />
-          <sort column="elo:reference" ascending="true" />
           <sort column="dc:title" ascending="true" />
           <pageSize>5</pageSize>
         </coreQueryPageProvider>
@@ -579,10 +578,9 @@
             AND ecm:isProxy = 0
             AND ecm:isVersion = 0
             AND ecm:currentLifeCycleState != 'deleted'
-            AND (elo:reference ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
+            AND ecm:fulltext.dc:title LIKE '?*'
           </pattern>
           <sort column="elo:orderingPriority" ascending="true" />
-          <sort column="elo:reference" ascending="true" />
           <sort column="dc:title" ascending="true" />
           <pageSize>5</pageSize>
         </coreQueryPageProvider>
@@ -594,28 +592,9 @@
             WHERE ecm:isProxy = 0
             AND ecm:isVersion = 0
             AND ecm:currentLifeCycleState != 'deleted'
-            AND (elo:reference ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
+            AND ecm:fulltext.dc:title LIKE '?*'
           </pattern>
           <sort column="elo:orderingPriority" ascending="true" />
-          <sort column="elo:reference" ascending="true" />
-          <sort column="dc:title" ascending="true" />
-          <pageSize>5</pageSize>
-        </coreQueryPageProvider>
-        
-        <coreQueryPageProvider name="other_document_proxy_in_content_suggestion">
-          <property name="maxResults">PAGE_SIZE</property>
-          <pattern escapeParameters="true" quoteParameters="false">
-            SELECT * FROM Document
-            WHERE ecm:mixinType NOT IN ('HiddenInNavigation','Folderish','BomDocument', 'CadDocument')
-            AND ecm:isProxy = 1
-            AND ecm:isVersion = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND (elo:reference ILIKE '?**' OR ecm:fulltext.dc:title LIKE '?*')
-            AND ecm:ancestorId = '?'
-          </pattern>
-          <parameter>#{currentDocument.id}</parameter>
-          <sort column="elo:orderingPriority" ascending="true" />
-          <sort column="elo:reference" ascending="true" />
           <sort column="dc:title" ascending="true" />
           <pageSize>5</pageSize>
         </coreQueryPageProvider>

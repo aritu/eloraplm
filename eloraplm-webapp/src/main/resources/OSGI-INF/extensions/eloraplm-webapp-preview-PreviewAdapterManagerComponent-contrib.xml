@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.webapp.preview.PreviewAdapterManagerComponent.contrib">
+    <require>org.nuxeo.ecm.platform.pictures.tiles.preview</require>
+    
+    <!-- Disable tiling preview for images (it does not work), and reenable the basic one -->
+    <extension point="MimeTypePreviewer" target="org.nuxeo.ecm.platform.preview.adapter.PreviewAdapterManagerComponent">
+        <previewer class="com.aritu.eloraplm.webapp.preview.adapter.EloraImagePreviewer">
+            <pattern>image.*</pattern>
+        </previewer>
+    </extension>
+    
+</component>

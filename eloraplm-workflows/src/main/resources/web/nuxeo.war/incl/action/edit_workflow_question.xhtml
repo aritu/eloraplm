@@ -6,27 +6,57 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
     xmlns:nxu="http://nuxeo.org/nxweb/util"
-    xmlns:p="http://primefaces.org/ui">
-
-    <h:form id="editWorkflowQuestionForm">
-        
-        <h:panelGroup styleClass="content" layout="block" style="min-height: 500px">
-            
-            <nxl:layout name="workflow_question" mode="edit" value="#{workflowQuestionsTableBean.editingRow}" />
-            
+    xmlns:p="http://primefaces.org/ui"
+>
+    <h:form id="editForm">
+        <h:panelGroup
+            styleClass="content"
+            layout="block"
+            style="min-height: 500px"
+            rendered="#{not empty tableBean.editingRowIndex}"
+        >
+            <nxl:layout
+                name="workflow_question"
+                mode="edit"
+                value="#{tableBean.editingRow}"
+            />
         </h:panelGroup>
-        
-        <div class="dialogButtons">
-        
-            <p:commandButton type="button" value="#{messages['command.cancel']}"
-            onclick="PF('#{tableWidgetId}_editDialog').hide();"/>
-            
-            <p:commandButton value="#{messages['command.save']}"
-                actionListener="#{workflowQuestionsTableBean.updateRow()}"
-                onsuccess="markRowAsModified(); PF('#{tableWidgetId}_editDialog').hide();" />
-                
-        </div>
-        
+
+        <h:panelGroup
+            styleClass="dialogButtons"
+            layout="block"
+            rendered="#{not empty tableBean.editingRowIndex}"
+        >
+            <p:commandButton
+                value="#{messages['command.save']}"
+                styleClass="button mainAction"
+                actionListener="#{tableBean.updateRow()}"
+                oncomplete="handleDialogSuccess(xhr, status, args)"
+                process="@form"
+                update="@form @form:@parent:dtForm:dt:@row(#{tableBean.editingRowIndex})"
+            />
+
+            <p:commandButton
+                type="button"
+                value="#{messages['command.cancel']}"
+                immediate="true"
+                process="@none"
+                styleClass="button"
+                onclick="PF('#{tableWidgetId}_editDialog').hide();"
+            />
+        </h:panelGroup>
     </h:form>
 
+    <script>
+        function handleDialogSuccess(xhr, status, args) {
+            if(status == "success" &amp;&amp; !args.validationFailed) {
+                markRowAsModified();
+                PF('#{tableWidgetId}_editDialog').hide();
+            }
+        }
+
+        function onEditQuestionTypeChanged() {
+            PF('nxw_workflow_questions_dt_editDialog').resetPosition();
+        }
+    </script>
 </ui:composition>

@@ -1,47 +1,68 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:nxu="http://nuxeo.org/nxweb/util"
-  xmlns:p="http://primefaces.org/ui">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <h:form id="cwForm">
     
-    <div class="contentViewTitle">
+        <nxu:set var="closedRelatedRoutes" value="#{workflowActions.findClosedRelatedRoutes()}">
+            <p:dataTable id="closedWorkflows"
+                var="wf"
+                value="#{closedRelatedRoutes}"
+                selectionMode="single"
+                selection="#{workflowActions.selectedWorkflow}"
+                scrollable="true"
+                scrollHeight="100"
+                tableStyle="table-layout: auto;"
+                rowKey="#{wf.id}"
+                tableStyleClass="datatable"
+                emptyMessage="#{messages['eloraplm.message.info.datatable.noRecordsFound']}">
+                <f:facet name="header">
+                    <span class="tableHeaderTitle">
+                        #{messages['eloraplm.wf.label.finishedProcesses']}
+                        <br />
+                        <h:panelGroup id="tableInfo" class="tableInfo">
+                            <strong>#{closedRelatedRoutes.size}</strong> #{messages['eloraplm.label.datatable.info.size']}
+                        </h:panelGroup>
+                    </span>
+                </f:facet>
+                <p:ajax event="rowSelect" listener="#{workflowActions.onRowSelect}"
+                    update="@form:closed_workflow_result"
+                    onstart="PF('closedWorkflowTasksBlocker').show()"
+                    oncomplete="PF('closedWorkflowTasksBlocker').hide()"
+                 />
+                <p:column headerText="#{messages['eloraplm.wf.label.title']}" style="width: 40%">
+                    <h:outputText value="#{messages[wf.dc.title]}" />
+                </p:column>
+                <p:column headerText="#{messages['eloraplm.wf.label.initiator']}">
+                    <h:outputText value="#{nxu:userFullName(wf.docri.initiator)}" />
+                </p:column>
+                <p:column headerText="#{messages['eloraplm.wf.label.created']}">
+                    <h:outputText value="#{wf.dc.created}">
+                        <f:convertDateTime pattern="#{nxu:basicDateAndTimeFormatter()}" />
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="#{messages['eloraplm.wf.label.state']}">
+                    <h:outputText value="#{messages['eloraplm.wf.state.'.concat(wf.currentLifeCycleState)]}" />
+                </p:column>
+            </p:dataTable>
+        </nxu:set>
     
-        <p:dataTable id="closedWorkflows"
-            var="wf"
-            value="#{workflowActions.findClosedRelatedRoutes()}"
-            selectionMode="single"
-            selection="#{workflowActions.selectedWorkflow}"
-            scrollable="true"
-            scrollHeight="100"
-            rowKey="#{wf.id}"
-            tableStyleClass="datatable">
-            <f:facet name="header">
-                #{messages['eloraplm.wf.label.finishedProcesses']}
-            </f:facet>
-            <p:ajax event="rowSelect" listener="#{workflowActions.onRowSelect}" update="closed_workflow_result" />
-            <p:column headerText="#{messages['eloraplm.wf.label.title']}">
-                <h:outputText value="#{messages[wf.dc.title]}" />
-            </p:column>
-            <p:column headerText="#{messages['eloraplm.wf.label.initiator']}">
-                <h:outputText value="#{wf.docri.initiator}" />
-            </p:column>
-            <p:column headerText="#{messages['eloraplm.wf.label.created']}">
-                <h:outputText value="#{wf.dc.created}">
-                    <f:convertDateTime pattern="#{nxu:basicDateAndTimeFormatter()}" />
-                </h:outputText>
-            </p:column>
-            <p:column headerText="#{messages['eloraplm.wf.label.state']}">
-                <h:outputText value="#{messages['eloraplm.wf.state.'.concat(wf.currentLifeCycleState)]}" />
-            </p:column>
-        </p:dataTable>
         
-    </div>
+        <nxu:set var="currentNonProxyDoc" value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}">
+            <h:panelGroup id="closed_workflow_result">
+                <p:blockUI block="closed_route_steps_nxw_closed_route_tasks" widgetVar="closedWorkflowTasksBlocker" animate="false" styleClass="opaqueBlockUI middleSpinner">
+                    <i class="pi pi-spin pi-spinner"></i>
+                </p:blockUI>
+                <nxl:widget name="closed_route_tasks" mode="view" value="#{currentNonProxyDoc}" />
+            </h:panelGroup>
+        </nxu:set>
         
-    <h:panelGroup id="closed_workflow_result">
-        <nxl:widget name="closed_route_tasks" mode="view" value="#{currentDocument}" />
-    </h:panelGroup>
+    </h:form>
 
 </ui:composition>

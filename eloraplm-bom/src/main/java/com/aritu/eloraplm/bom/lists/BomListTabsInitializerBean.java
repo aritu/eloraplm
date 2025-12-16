@@ -27,8 +27,11 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.contexts.Contexts;
 import org.nuxeo.ecm.platform.actions.Action;
+import org.nuxeo.ecm.platform.actions.ActionFilter;
 import org.nuxeo.ecm.platform.actions.ActionPropertiesDescriptor;
 import org.nuxeo.ecm.platform.actions.ActionService;
+import org.nuxeo.ecm.platform.actions.DefaultActionFilter;
+import org.nuxeo.ecm.platform.actions.FilterRule;
 import org.nuxeo.ecm.platform.actions.ejb.ActionManager;
 import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
@@ -36,6 +39,8 @@ import org.nuxeo.runtime.api.Framework;
 import com.aritu.eloraplm.config.util.BomListsConfigHelper;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
 import com.aritu.eloraplm.config.util.EloraConfigTable;
+import com.aritu.eloraplm.config.util.EloraPropertiesHelper;
+import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -90,12 +95,25 @@ public class BomListTabsInitializerBean implements Serializable {
                     false);
             if (!bomListsTable.isEmpty()) {
                 for (EloraConfigRow row : bomListsTable.getValues()) {
-                    createBomListTabs(actionService, row,
-                            bomCompositionListTabPrefix,
-                            "/incl/tabs/bom_composition_list.xhtml");
-                    createBomListTabs(actionService, row,
-                            bomWhereUsedListTabPrefix,
-                            "/incl/tabs/bom_where_used_list.xhtml");
+                    if (EloraPropertiesHelper.areBomListsExternal()) {
+                        createBomListTabs(actionService, row,
+                                bomCompositionListTabPrefix,
+                                "/incl/tabs/external_bom_composition_list.xhtml",
+                                EloraRelationConstants.DIRECTION_COMPOSITION);
+                        createBomListTabs(actionService, row,
+                                bomWhereUsedListTabPrefix,
+                                "/incl/tabs/external_bom_where_used_list.xhtml",
+                                EloraRelationConstants.DIRECTION_WHERE_USED);
+                    } else {
+                        createBomListTabs(actionService, row,
+                                bomCompositionListTabPrefix,
+                                "/incl/tabs/bom_composition_list.xhtml",
+                                EloraRelationConstants.DIRECTION_COMPOSITION);
+                        createBomListTabs(actionService, row,
+                                bomWhereUsedListTabPrefix,
+                                "/incl/tabs/bom_where_used_list.xhtml",
+                                EloraRelationConstants.DIRECTION_WHERE_USED);
+                    }
                 }
                 log.trace("BOM list tabs created.");
             }
@@ -107,8 +125,10 @@ public class BomListTabsInitializerBean implements Serializable {
     }
 
     private void createBomListTabs(ActionService actionService,
-            EloraConfigRow row, String bomListTabPrefix, String tabLinkUrl) {
-        String tabId = bomListTabPrefix + row.getProperty("id");
+            EloraConfigRow row, String bomListTabPrefix, String tabLinkUrl,
+            String treeDirection) {
+        String bomListId = (String) row.getProperty("id");
+        String tabId = bomListTabPrefix + bomListId;
         int tabOrder = 0;
         long ordering = (long) row.getProperty("ordering");
         // We want the list tabs to load after the EBOM tab
@@ -124,14 +144,58 @@ public class BomListTabsInitializerBean implements Serializable {
             action.setLink(tabLinkUrl);
             action.setEnabled(true);
 
+            ActionFilter[] filters = createFilter(tabId, bomListId,
+                    treeDirection);
+            action.setFilters(filters);
+
+            /*
+            List<String> filterIds = createFilter(tabId, bomListId,
+                    treeDirection, actionService);
+
+            action.setFilterIds(filterIds);
+            */
+
             Map<String, String> properties = new HashMap<String, String>();
-            properties.put("ajaxSupport", "false");
+            properties.put("ajaxSupport", "true");
             ActionPropertiesDescriptor apd = new ActionPropertiesDescriptor();
             apd.setProperties(properties);
             action.setPropertiesDescriptor(apd);
 
             actionService.registerContribution(action, "actions", null);
         }
+    }
 
+    private ActionFilter[] createFilter(String tabId, String bomListId,
+            String treeDirection) {
+        boolean grant = true;
+        String[] permissions = null;
+        String[] facets = null;
+
+        String[] conditions = new String[] {
+                "#{bomList.getIsSubTabVisible(currentDocument.elo.reference, '"
+                        + bomListId + "', '" + treeDirection + "')}" };
+
+        // String[] conditions = new String[] {
+        // "#{currentDocument.isCheckedOut()}" };
+
+        String[] types = null;
+        String[] schemas = null;
+        FilterRule rule = new FilterRule(grant, permissions, facets, conditions,
+                types, schemas);
+        FilterRule[] rules = new FilterRule[] { rule };
+
+        DefaultActionFilter filter = new DefaultActionFilter();
+        filter.setId("showMbomTab_" + tabId);
+        filter.setRules(rules);
+
+        /*
+        actionService.registerContribution(filter, "filters", null);
+        List<String> filterIds = new ArrayList<String>();
+        filterIds.add(filter.getId());
+
+        return filterIds;
+        */
+        ActionFilter[] filters = new ActionFilter[] { filter };
+        return filters;
     }
 }

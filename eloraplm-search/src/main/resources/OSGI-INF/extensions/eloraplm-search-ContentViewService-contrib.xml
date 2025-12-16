@@ -1,1336 +1,1534 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.search.ContentViewService.contrib">
-  <require>org.nuxeo.search.ui.contentviews</require>
+    <require>org.nuxeo.search.ui.contentviews</require>
+    <!-- <require>org.nuxeo.elasticsearch.contentviews.testContrib</require> -->
 
-  <extension target="org.nuxeo.ecm.platform.ui.web.ContentViewService" point="contentViews">
+    <extension target="org.nuxeo.ecm.platform.ui.web.ContentViewService" point="contentViews">
 
-    <contentView name="elora_general_search">
-      <title>label.EloraSearch.general</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraGeneralSearch">
-          <fixedPart>
-            ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot', 'WorkspaceRoot', 'Favorites')
-            AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
-            AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>
-          <predicate parameter="ecm:mixinType" operator="IN">
-            <field schema="elora_search" name="system_mixinType" />
-          </predicate>
-          <predicate parameter="ecm:primaryType" operator="IN">
-            <field schema="elora_search" name="system_primaryType" />
-          </predicate>
-          <predicate parameter="cust:customers" operator="IN">
-            <field schema="elora_search" name="search_customer" />
-          </predicate>
-          <predicate parameter="manu:manufacturers" operator="IN">
-            <field schema="elora_search" name="search_manufacturer" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field schema="default_search" name="dc_created_min"/>
-            <field schema="default_search" name="dc_created_max"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field schema="default_search" name="dc_modified_min"/>
-            <field schema="default_search" name="dc_modified_max"/>
-          </predicate>
-          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
-            <field schema="elora_search" name="checkin_lastCheckedInBy" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
-            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
-            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
-          </predicate>
-          <predicate parameter="review:lastReviewer" operator="IN">
-            <field schema="elora_search" name="review_lastReviewer" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="review:lastReviewed">
-            <field schema="elora_search" name="review_lastReviewed_min"/>
-            <field schema="elora_search" name="review_lastReviewed_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field name="dc_expired_min" schema="elora_search"/>
-            <field name="dc_expired_max" schema="elora_search"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
+        <contentView name="elora_general_search">
+            <title>label.EloraSearch.general</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraGeneralSearch">
+                    <fixedPart>
+                        ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot',
+                        'WorkspaceRoot', 'Favorites')
+                        AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
+                        AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="ecm:mixinType" operator="IN">
+                        <field schema="elora_search" name="system_mixinType" />
+                    </predicate>
+                    <predicate parameter="ecm:primaryType" operator="IN">
+                        <field schema="elora_search" name="system_primaryType" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="cust:customers" operator="IN">
+                        <field schema="elora_search" name="search_customer" />
+                    </predicate>
+                    <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+                        <field schema="elora_search" name="search_supplier" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+                        <field schema="elora_search" name="checkin_lastCheckedInBy" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_min" />
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_max" />
+                    </predicate>
+                    <predicate parameter="review:lastReviewer" operator="IN">
+                        <field schema="elora_search" name="review_lastReviewer" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="review:lastReviewed">
+                        <field schema="elora_search" name="review_lastReviewed_min" />
+                        <field schema="elora_search" name="review_lastReviewed_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field name="dc_expired_min" schema="elora_search" />
+                        <field name="dc_expired_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_general_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_cad_documents_search">
-      <title>label.EloraSearch.cadDocuments</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraCadDocsSearch">
-          <fixedPart>
-            ecm:mixinType = 'CadDocument'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>
-          <predicate parameter="ecm:primaryType" operator="IN">
-            <field schema="elora_search" name="system_primaryType" />
-          </predicate>
-           <predicate parameter="cad:cadType" operator="IN">
-            <field schema="elora_search" name="cad_cadType" />
-          </predicate>
-           <predicate parameter="cad:cadClassification" operator="IN">
-            <field schema="elora_search" name="cad_cadClassification" />
-          </predicate>
-          <predicate parameter="cad:cadMaterial" operator="ILIKE">
-            <field schema="elora_search" name="cad_cadMaterial" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field name="dc_created_min" schema="default_search"/>
-            <field name="dc_created_max" schema="default_search"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field name="dc_modified_min" schema="default_search"/>
-            <field name="dc_modified_max" schema="default_search"/>
-          </predicate>
-          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
-            <field schema="elora_search" name="checkin_lastCheckedInBy" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
-            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
-            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
-          </predicate>
-          <predicate parameter="review:lastReviewer" operator="IN">
-            <field schema="elora_search" name="review_lastReviewer" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="review:lastReviewed">
-            <field schema="elora_search" name="review_lastReviewed_min"/>
-            <field schema="elora_search" name="review_lastReviewed_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field schema="elora_search" name="dc_expired_min"/>
-            <field schema="elora_search" name="dc_expired_max"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_general_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="document_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_cad_documents_search">
+            <title>label.EloraSearch.cadDocuments</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraCadDocsSearch">
+                    <fixedPart>
+                        ecm:mixinType = 'CadDocument'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="ecm:primaryType" operator="IN">
+                        <field schema="elora_search" name="system_primaryType" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="cad:authoringTool" operator="IN">
+                        <field schema="elora_search" name="cad_authoringTool" />
+                    </predicate>
+                    <predicate parameter="cad:authoringToolVersion" operator="=">
+                        <field schema="elora_search" name="cad_authoringToolVersion" />
+                    </predicate>
+                    <predicate parameter="cad:activeConfiguration" operator="ILIKE">
+                        <field schema="elora_search" name="cad_activeConfiguration" />
+                    </predicate>
+                    <predicate parameter="cad:cadType" operator="IN">
+                        <field schema="elora_search" name="cad_cadType" />
+                    </predicate>
+                    <predicate parameter="cad:isWeldment" operator="=">
+                        <field schema="elora_search" name="cad_isWeldment" />
+                    </predicate>
+                    <predicate parameter="cadprt:isSheetMetal" operator="=">
+                        <field schema="elora_search" name="cadprt_isSheetMetal" />
+                    </predicate>
+                    <predicate parameter="cad:cadClassification" operator="IN">
+                        <field schema="elora_search" name="cad_cadClassification" />
+                    </predicate>
+                    <predicate parameter="cad:materials" operator="ILIKE">
+                        <field schema="elora_search" name="cad_materials" />
+                    </predicate>
+                    <predicate parameter="caddrw:sheetFormat" operator="ILIKE">
+                        <field schema="elora_search" name="caddrw_sheetFormat" />
+                    </predicate>
+                    <predicate parameter="caddrw:scale" operator="ILIKE">
+                        <field schema="elora_search" name="caddrw_scale" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="caddrw:numberOfSheets">
+                        <field name="caddrw_numberOfSheets_min" schema="elora_search" />
+                        <field name="caddrw_numberOfSheets_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="caddrw:templateName" operator="ILIKE">
+                        <field schema="elora_search" name="caddrw_templateName" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="cad:mass">
+                        <field name="mass_min" schema="elora_search" />
+                        <field name="mass_max" schema="elora_search" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="cad:volume">
+                        <field name="volume_min" schema="elora_search" />
+                        <field name="volume_max" schema="elora_search" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="cad:surface">
+                        <field name="surface_min" schema="elora_search" />
+                        <field name="surface_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field name="dc_created_min" schema="default_search" />
+                        <field name="dc_created_max" schema="default_search" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field name="dc_modified_min" schema="default_search" />
+                        <field name="dc_modified_max" schema="default_search" />
+                    </predicate>
+                    <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+                        <field schema="elora_search" name="checkin_lastCheckedInBy" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_min" />
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_max" />
+                    </predicate>
+                    <predicate parameter="review:lastReviewer" operator="IN">
+                        <field schema="elora_search" name="review_lastReviewer" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="review:lastReviewed">
+                        <field schema="elora_search" name="review_lastReviewed_min" />
+                        <field schema="elora_search" name="review_lastReviewed_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field schema="elora_search" name="dc_expired_min" />
+                        <field schema="elora_search" name="dc_expired_max" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_cad_documents_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_basic_documents_search">
-      <title>label.EloraSearch.basicDocuments</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraBasicDocsSearch">
-          <fixedPart>
-            ecm:mixinType = 'BasicDocument'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>
-          <predicate parameter="ecm:primaryType" operator="IN">
-            <field schema="elora_search" name="system_primaryType" />
-          </predicate>
-          <predicate parameter="dc:nature" operator="IN">
-            <field schema="default_search" name="dc_nature" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field name="dc_created_min" schema="default_search"/>
-            <field name="dc_created_max" schema="default_search"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field name="dc_modified_min" schema="default_search"/>
-            <field name="dc_modified_max" schema="default_search"/>
-          </predicate>
-          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
-            <field schema="elora_search" name="checkin_lastCheckedInBy" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
-            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
-            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
-          </predicate>
-          <predicate parameter="review:lastReviewer" operator="IN">
-            <field schema="elora_search" name="review_lastReviewer" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="review:lastReviewed">
-            <field schema="elora_search" name="review_lastReviewed_min"/>
-            <field schema="elora_search" name="review_lastReviewed_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field schema="elora_search" name="dc_expired_min"/>
-            <field schema="elora_search" name="dc_expired_max"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_cad_documents_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="cad_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_basic_documents_search">
+            <title>label.EloraSearch.basicDocuments</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraBasicDocsSearch">
+                    <fixedPart>
+                        ecm:mixinType = 'BasicDocument'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="ecm:primaryType" operator="IN">
+                        <field schema="elora_search" name="system_primaryType" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field name="dc_created_min" schema="default_search" />
+                        <field name="dc_created_max" schema="default_search" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field name="dc_modified_min" schema="default_search" />
+                        <field name="dc_modified_max" schema="default_search" />
+                    </predicate>
+                    <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+                        <field schema="elora_search" name="checkin_lastCheckedInBy" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_min" />
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_max" />
+                    </predicate>
+                    <predicate parameter="review:lastReviewer" operator="IN">
+                        <field schema="elora_search" name="review_lastReviewer" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="review:lastReviewed">
+                        <field schema="elora_search" name="review_lastReviewed_min" />
+                        <field schema="elora_search" name="review_lastReviewed_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field schema="elora_search" name="dc_expired_min" />
+                        <field schema="elora_search" name="dc_expired_max" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_basic_documents_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_bom_products_search">
-      <title>label.EloraSearch.bomProducts</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraBomProductsSearch">
-          <fixedPart>
-            ecm:primaryType = 'BomProduct'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>       
-          <predicate parameter="bomitem:bomItemType" operator="IN">
-            <field schema="elora_search" name="bomitem_bomItemType" />
-          </predicate>
-          <predicate parameter="prodclass:productClassification" operator="IN">
-            <field schema="elora_search" name="search_productClassification" />
-          </predicate>
-          <predicate parameter="cust:customers" operator="IN">
-            <field schema="elora_search" name="search_customer" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field schema="default_search" name="dc_created_min"/>
-            <field schema="default_search" name="dc_created_max"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field schema="default_search" name="dc_modified_min"/>
-            <field schema="default_search" name="dc_modified_max"/>
-          </predicate>
-          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
-            <field schema="elora_search" name="checkin_lastCheckedInBy" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
-            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
-            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
-          </predicate>
-          <predicate parameter="review:lastReviewer" operator="IN">
-            <field schema="elora_search" name="review_lastReviewer" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="review:lastReviewed">
-            <field schema="elora_search" name="review_lastReviewed_min"/>
-            <field schema="elora_search" name="review_lastReviewed_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field name="dc_expired_min" schema="elora_search"/>
-            <field name="dc_expired_max" schema="elora_search"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_basic_documents_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="document_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_bom_products_search">
+            <title>label.EloraSearch.bomProducts</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraBomProductsSearch">
+                    <fixedPart>
+                        ecm:primaryType = 'BomProduct'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="bomitem:bomItemType" operator="IN">
+                        <field schema="elora_search" name="bomitem_bomItemType" />
+                    </predicate>
+                    <predicate parameter="prodclass:productClassification" operator="IN">
+                        <field schema="elora_search" name="search_productClassification" />
+                    </predicate>
+                    <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+                        <field schema="elora_search" name="search_supplier" />
+                    </predicate>
+                    <predicate parameter="cust:customers" operator="IN">
+                        <field schema="elora_search" name="search_customer" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="bomprod:mass">
+                        <field name="mass_min" schema="elora_search" />
+                        <field name="mass_max" schema="elora_search" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="bomprod:volume">
+                        <field name="volume_min" schema="elora_search" />
+                        <field name="volume_max" schema="elora_search" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="bomitem:estimatedCost">
+                        <field name="bomitem_estimatedCost_min" schema="elora_search" />
+                        <field name="bomitem_estimatedCost_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="bomitem:costUnit" operator="=">
+                        <field schema="elora_search" name="bomitem_costUnit" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+                        <field schema="elora_search" name="checkin_lastCheckedInBy" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_min" />
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_max" />
+                    </predicate>
+                    <predicate parameter="review:lastReviewer" operator="IN">
+                        <field schema="elora_search" name="review_lastReviewer" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="review:lastReviewed">
+                        <field schema="elora_search" name="review_lastReviewed_min" />
+                        <field schema="elora_search" name="review_lastReviewed_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field name="dc_expired_min" schema="elora_search" />
+                        <field name="dc_expired_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_bom_products_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="product_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_bom_specifications_search">
+            <title>label.EloraSearch.bomSpecifications</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraBomSpecificationsSearch">
+                    <fixedPart>
+                        ecm:primaryType = 'BomSpecification'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="bomitem:bomItemType" operator="IN">
+                        <field schema="elora_search" name="bomitem_bomItemType" />
+                    </predicate>
+                    <predicate parameter="bomspec:specificationClassification" operator="IN">
+                        <field schema="elora_search" name="search_specificationClassification" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+                        <field schema="elora_search" name="checkin_lastCheckedInBy" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_min" />
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_max" />
+                    </predicate>
+                    <predicate parameter="review:lastReviewer" operator="IN">
+                        <field schema="elora_search" name="review_lastReviewer" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="review:lastReviewed">
+                        <field schema="elora_search" name="review_lastReviewed_min" />
+                        <field schema="elora_search" name="review_lastReviewed_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field name="dc_expired_min" schema="elora_search" />
+                        <field name="dc_expired_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_bom_specifications_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="specification_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_bom_packagings_search">
+            <title>label.EloraSearch.bomPackagings</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraBomPackagingsSearch">
+                    <fixedPart>
+                        ecm:primaryType = 'BomPackaging'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="bomitem:bomItemType" operator="IN">
+                        <field schema="elora_search" name="bomitem_bomItemType" />
+                    </predicate>
+                    <predicate parameter="bompack:packagingClassification" operator="IN">
+                        <field schema="elora_search" name="search_packagingClassification" />
+                    </predicate>
+                    <predicate parameter="ptk:partaker" operator="IN">
+                        <field schema="elora_search" name="search_partaker" />
+                    </predicate>
+                    <predicate parameter="cust:customers" operator="IN">
+                        <field schema="elora_search" name="search_customer" />
+                    </predicate>
+                    <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+                        <field schema="elora_search" name="search_supplier" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+                        <field schema="elora_search" name="checkin_lastCheckedInBy" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_min" />
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_max" />
+                    </predicate>
+                    <predicate parameter="review:lastReviewer" operator="IN">
+                        <field schema="elora_search" name="review_lastReviewer" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="review:lastReviewed">
+                        <field schema="elora_search" name="review_lastReviewed_min" />
+                        <field schema="elora_search" name="review_lastReviewed_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field name="dc_expired_min" schema="elora_search" />
+                        <field name="dc_expired_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_bom_packagings_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="packaging_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_bom_tools_search">
+            <title>label.EloraSearch.bomTools</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraBomToolsSearch">
+                    <fixedPart>
+                        ecm:primaryType = 'BomTool'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="bomitem:bomItemType" operator="IN">
+                        <field schema="elora_search" name="bomitem_bomItemType" />
+                    </predicate>
+                    <predicate parameter="bomtool:toolClassification" operator="IN">
+                        <field schema="elora_search" name="search_toolClassification" />
+                    </predicate>
+                    <predicate parameter="ptk:partaker" operator="IN">
+                        <field schema="elora_search" name="search_partaker" />
+                    </predicate>
+                    <predicate parameter="own:owner" operator="IN">
+                        <field schema="elora_search" name="search_owner" />
+                    </predicate>
+                    <predicate parameter="cust:customers" operator="IN">
+                        <field schema="elora_search" name="search_customer" />
+                    </predicate>
+                    <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+                        <field schema="elora_search" name="search_supplier" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+                        <field schema="elora_search" name="checkin_lastCheckedInBy" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_min" />
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_max" />
+                    </predicate>
+                    <predicate parameter="review:lastReviewer" operator="IN">
+                        <field schema="elora_search" name="review_lastReviewer" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="review:lastReviewed">
+                        <field schema="elora_search" name="review_lastReviewed_min" />
+                        <field schema="elora_search" name="review_lastReviewed_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field name="dc_expired_min" schema="elora_search" />
+                        <field name="dc_expired_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_bom_tools_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="tool_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_bom_parts_search">
+            <title>label.EloraSearch.bomParts</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraBomPartsSearch">
+                    <fixedPart statement="SELECT * FROM BomPart">
+                        ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="ecm:primaryType" operator="IN">
+                        <field schema="elora_search" name="system_primaryType" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="bomitem:bomItemType" operator="IN">
+                        <field schema="elora_search" name="bomitem_bomItemType" />
+                    </predicate>
+                    <predicate parameter="partclass:partClassification" operator="IN">
+                        <field schema="elora_search" name="search_partClassification" />
+                    </predicate>
+                    <predicate parameter="bompart:material" operator="ILIKE">
+                        <field schema="elora_search" name="search_partMaterial" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+                        <field schema="elora_search" name="search_supplier" />
+                    </predicate>
+                    <predicate parameter="oem:oems/*/manufacturer" operator="IN">
+                        <field schema="elora_search" name="oem_manufacturer" />
+                    </predicate>
+                    <predicate parameter="oem:oems/*/partNumber" operator="ILIKE">
+                        <field schema="elora_search" name="oem_partNumber" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="bompart:mass">
+                        <field name="mass_min" schema="elora_search" />
+                        <field name="mass_max" schema="elora_search" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="bompart:volume">
+                        <field name="volume_min" schema="elora_search" />
+                        <field name="volume_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="bompart:source" operator="IN">
+                        <field schema="elora_search" name="bompart_source" />
+                    </predicate>
+                    <predicate parameter="bompart:standard" operator="IN">
+                        <field schema="elora_search" name="bompart_standard" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="bomitem:estimatedCost">
+                        <field name="bomitem_estimatedCost_min" schema="elora_search" />
+                        <field name="bomitem_estimatedCost_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="bomitem:costUnit" operator="=">
+                        <field schema="elora_search" name="bomitem_costUnit" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate parameter="checkin:lastCheckedInBy" operator="IN">
+                        <field schema="elora_search" name="checkin_lastCheckedInBy" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_min" />
+                        <field schema="elora_search" name="checkin_lastCheckedInDate_max" />
+                    </predicate>
+                    <predicate parameter="review:lastReviewer" operator="IN">
+                        <field schema="elora_search" name="review_lastReviewer" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="review:lastReviewed">
+                        <field schema="elora_search" name="review_lastReviewed_min" />
+                        <field schema="elora_search" name="review_lastReviewed_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="bompart:effectiveDate">
+                        <field name="bompart_effectiveDate_min" schema="elora_search" />
+                        <field name="bompart_effectiveDate_max" schema="elora_search" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field name="dc_expired_min" schema="elora_search" />
+                        <field name="dc_expired_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_bom_parts_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="part_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_cm_ecos_search">
+            <title>label.EloraSearch.cmEcos</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraCmEcosSearch">
+                    <fixedPart>
+                        ecm:primaryType = 'CmEco'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="cmeco:ecoType" operator="IN">
+                        <field schema="elora_search" name="cmeco_ecoType" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate parameter="plan:priority" operator="IN">
+                        <field schema="elora_search" name="plan_priority" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="plan:realStartDate">
+                        <field schema="elora_search" name="plan_realStartDate_min" />
+                        <field schema="elora_search" name="plan_realStartDate_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="plan:plannedEndDate">
+                        <field schema="elora_search" name="plan_plannedEndDate_min" />
+                        <field schema="elora_search" name="plan_plannedEndDate_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="plan:realEndDate">
+                        <field schema="elora_search" name="plan_realEndDate_min" />
+                        <field schema="elora_search" name="plan_realEndDate_max" />
+                    </predicate>
+                    <predicate parameter="ptk:partaker" operator="IN">
+                        <field schema="elora_search" name="search_partaker" />
+                    </predicate>
+                    <predicate parameter="cust:customers" operator="IN">
+                        <field schema="elora_search" name="search_customer" />
+                    </predicate>
+                    <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+                        <field schema="elora_search" name="search_supplier" />
+                    </predicate>
+                    <predicate parameter="prodclass:productClassification" operator="IN">
+                        <field schema="elora_search" name="search_productClassification" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field name="dc_expired_min" schema="elora_search" />
+                        <field name="dc_expired_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_cm_ecos_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="eco_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_projects_search">
+            <title>label.EloraSearch.projects</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraProjectsSearch">
+                    <fixedPart>
+                        ecm:primaryType = 'Project'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="prj:projectType" operator="IN">
+                        <field schema="elora_search" name="prj_projectType" />
+                    </predicate>
+                    <predicate parameter="plan:priority" operator="IN">
+                        <field schema="elora_search" name="plan_priority" />
+                    </predicate>
+                    <predicate parameter="prodclass:productClassification" operator="IN">
+                        <field schema="elora_search" name="search_productClassification" />
+                    </predicate>
+                    <predicate parameter="elo:externalLink" operator="ILIKE">
+                        <field schema="elora_search" name="elo_externalLink" />
+                    </predicate>
+                    <predicate parameter="ptk:partaker" operator="IN">
+                        <field schema="elora_search" name="search_partaker" />
+                    </predicate>
+                    <predicate parameter="cust:customers" operator="IN">
+                        <field schema="elora_search" name="search_customer" />
+                    </predicate>
+                    <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+                        <field schema="elora_search" name="search_supplier" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="plan:realStartDate">
+                        <field schema="elora_search" name="plan_realStartDate_min" />
+                        <field schema="elora_search" name="plan_realStartDate_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="plan:plannedEndDate">
+                        <field schema="elora_search" name="plan_plannedEndDate_min" />
+                        <field schema="elora_search" name="plan_plannedEndDate_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="plan:realEndDate">
+                        <field schema="elora_search" name="plan_realEndDate_min" />
+                        <field schema="elora_search" name="plan_realEndDate_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="plan:progress">
+                        <field schema="elora_search" name="plan_progress_min" />
+                        <field schema="elora_search" name="plan_progress_max" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field name="dc_expired_min" schema="elora_search" />
+                        <field name="dc_expired_max" schema="elora_search" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:reference" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_projects_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="project_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_qm_documents_search">
+            <title>label.EloraSearch.qmDocuments</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraQmDocsSearch">
+                    <fixedPart>
+                        ecm:mixinType = 'QmProcess'
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="elo:reference" operator="ILIKE">
+                        <field schema="elora_search" name="elo_reference" />
+                    </predicate>
+                    <predicate parameter="dc:title" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_title_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:description" operator="FULLTEXT">
+                        <field schema="elora_search" name="dc_description_fulltext" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="ecm:primaryType" operator="IN">
+                        <field schema="elora_search" name="system_primaryType" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="qm:subject" operator="IN">
+                        <field schema="elora_search" name="qm_subject" />
+                    </predicate>
+                    <predicate parameter="prodclass:productClassification" operator="IN">
+                        <field schema="elora_search" name="search_productClassification" />
+                    </predicate>
+                    <predicate parameter="partclass:partClassification" operator="IN">
+                        <field schema="elora_search" name="search_partClassification" />
+                    </predicate>
+                    <!--  TODO: ITEM SEARCH -->
+                    <predicate parameter="cust:customers" operator="IN">
+                        <field schema="elora_search" name="search_customer" />
+                    </predicate>
+                    <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+                        <field schema="elora_search" name="search_supplier" />
+                    </predicate>
+                    <predicate parameter="resp:responsible" operator="IN">
+                        <field schema="elora_search" name="search_responsible" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field name="dc_created_min" schema="default_search" />
+                        <field name="dc_created_max" schema="default_search" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field name="dc_modified_min" schema="default_search" />
+                        <field name="dc_modified_max" schema="default_search" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field schema="elora_search" name="dc_expired_min" />
+                        <field schema="elora_search" name="dc_expired_max" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_bom_products_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_bom_specifications_search">
-      <title>label.EloraSearch.bomSpecifications</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraBomSpecificationsSearch">
-          <fixedPart>
-            ecm:primaryType = 'BomSpecification'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>       
-          <predicate parameter="bomitem:bomItemType" operator="IN">
-            <field schema="elora_search" name="bomitem_bomItemType" />
-          </predicate>
-          <predicate parameter="bomspec:specificationClassification" operator="IN">
-            <field schema="elora_search" name="search_specificationClassification" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field schema="default_search" name="dc_created_min"/>
-            <field schema="default_search" name="dc_created_max"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field schema="default_search" name="dc_modified_min"/>
-            <field schema="default_search" name="dc_modified_max"/>
-          </predicate>
-          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
-            <field schema="elora_search" name="checkin_lastCheckedInBy" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
-            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
-            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
-          </predicate>
-          <predicate parameter="review:lastReviewer" operator="IN">
-            <field schema="elora_search" name="review_lastReviewer" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="review:lastReviewed">
-            <field schema="elora_search" name="review_lastReviewed_min"/>
-            <field schema="elora_search" name="review_lastReviewed_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field name="dc_expired_min" schema="elora_search"/>
-            <field name="dc_expired_max" schema="elora_search"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
-        <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_bom_specifications_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_bom_packagings_search">
-      <title>label.EloraSearch.bomPackagings</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraBomPackagingsSearch">
-          <fixedPart>
-            ecm:primaryType = 'BomPackaging'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>       
-          <predicate parameter="bomitem:bomItemType" operator="IN">
-            <field schema="elora_search" name="bomitem_bomItemType" />
-          </predicate>
-          <predicate parameter="bompack:packagingClassification" operator="IN">
-            <field schema="elora_search" name="search_packagingClassification" />
-          </predicate>
-          <predicate parameter="cust:customers" operator="IN">
-            <field schema="elora_search" name="search_customer" />
-          </predicate>
-          <predicate parameter="manu:manufacturers" operator="IN">
-            <field schema="elora_search" name="search_manufacturer" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field schema="default_search" name="dc_created_min"/>
-            <field schema="default_search" name="dc_created_max"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field schema="default_search" name="dc_modified_min"/>
-            <field schema="default_search" name="dc_modified_max"/>
-          </predicate>
-          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
-            <field schema="elora_search" name="checkin_lastCheckedInBy" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
-            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
-            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
-          </predicate>
-          <predicate parameter="review:lastReviewer" operator="IN">
-            <field schema="elora_search" name="review_lastReviewer" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="review:lastReviewed">
-            <field schema="elora_search" name="review_lastReviewed_min"/>
-            <field schema="elora_search" name="review_lastReviewed_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field name="dc_expired_min" schema="elora_search"/>
-            <field name="dc_expired_max" schema="elora_search"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
-        <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_bom_packagings_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_bom_tools_search">
-      <title>label.EloraSearch.bomTools</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraBomToolsSearch">
-          <fixedPart>
-            ecm:primaryType = 'BomTool'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>       
-          <predicate parameter="bomitem:bomItemType" operator="IN">
-            <field schema="elora_search" name="bomitem_bomItemType" />
-          </predicate>
-          <predicate parameter="bomtool:toolClassification" operator="IN">
-            <field schema="elora_search" name="search_toolClassification" />
-          </predicate>
-          <predicate parameter="own:owner" operator="IN">
-            <field schema="elora_search" name="search_owner" />
-          </predicate>
-          <predicate parameter="cust:customers" operator="IN">
-            <field schema="elora_search" name="search_customer" />
-          </predicate>
-          <predicate parameter="manu:manufacturers" operator="IN">
-            <field schema="elora_search" name="search_manufacturer" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field schema="default_search" name="dc_created_min"/>
-            <field schema="default_search" name="dc_created_max"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field schema="default_search" name="dc_modified_min"/>
-            <field schema="default_search" name="dc_modified_max"/>
-          </predicate>
-          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
-            <field schema="elora_search" name="checkin_lastCheckedInBy" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
-            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
-            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
-          </predicate>
-          <predicate parameter="review:lastReviewer" operator="IN">
-            <field schema="elora_search" name="review_lastReviewer" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="review:lastReviewed">
-            <field schema="elora_search" name="review_lastReviewed_min"/>
-            <field schema="elora_search" name="review_lastReviewed_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field name="dc_expired_min" schema="elora_search"/>
-            <field name="dc_expired_max" schema="elora_search"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
-        <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_bom_tools_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_bom_parts_search">
-      <title>label.EloraSearch.bomParts</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraBomPartsSearch">
-          <fixedPart statement="SELECT * FROM BomPart">
-            ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>       
-          <predicate parameter="bomitem:bomItemType" operator="IN">
-            <field schema="elora_search" name="bomitem_bomItemType" />
-          </predicate>
-          <predicate parameter="partclass:partClassification" operator="IN">
-            <field schema="elora_search" name="search_partClassification" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field schema="default_search" name="dc_created_min"/>
-            <field schema="default_search" name="dc_created_max"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field schema="default_search" name="dc_modified_min"/>
-            <field schema="default_search" name="dc_modified_max"/>
-          </predicate>
-          <predicate parameter="checkin:lastCheckedInBy" operator="IN">
-            <field schema="elora_search" name="checkin_lastCheckedInBy" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="checkin:lastCheckedInDate">
-            <field schema="elora_search" name="checkin_lastCheckedInDate_min"/>
-            <field schema="elora_search" name="checkin_lastCheckedInDate_max"/>
-          </predicate>
-          <predicate parameter="review:lastReviewer" operator="IN">
-            <field schema="elora_search" name="review_lastReviewer" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="review:lastReviewed">
-            <field schema="elora_search" name="review_lastReviewed_min"/>
-            <field schema="elora_search" name="review_lastReviewed_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field name="dc_expired_min" schema="elora_search"/>
-            <field name="dc_expired_max" schema="elora_search"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
-        <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_bom_parts_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_cm_ecos_search">
-      <title>label.EloraSearch.cmEcos</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraCmEcosSearch">
-          <fixedPart>
-            ecm:primaryType = 'CmEco'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>       
-          <predicate parameter="cmeco:ecoType" operator="IN">
-            <field schema="elora_search" name="cmeco_ecoType" />
-          </predicate>
-          <predicate parameter="prodclass:productClassification" operator="IN">
-            <field schema="elora_search" name="search_productClassification" />
-          </predicate>
-          <predicate parameter="cust:customers" operator="IN">
-            <field schema="elora_search" name="search_customer" />
-          </predicate>
-          <predicate parameter="manu:manufacturers" operator="IN">
-            <field schema="elora_search" name="search_manufacturer" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field schema="default_search" name="dc_created_min"/>
-            <field schema="default_search" name="dc_created_max"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field schema="default_search" name="dc_modified_min"/>
-            <field schema="default_search" name="dc_modified_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field name="dc_expired_min" schema="elora_search"/>
-            <field name="dc_expired_max" schema="elora_search"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
-        <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_cm_ecos_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_projects_search">
-      <title>label.EloraSearch.projects</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraProjectsSearch">
-          <fixedPart>
-            ecm:primaryType = 'Project'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>       
-          <predicate parameter="prj:projectType" operator="IN">
-            <field schema="elora_search" name="prj_projectType" />
-          </predicate>
-          <predicate parameter="prodclass:productClassification" operator="IN">
-            <field schema="elora_search" name="search_productClassification" />
-          </predicate>
-          <predicate parameter="cust:customers" operator="IN">
-            <field schema="elora_search" name="search_customer" />
-          </predicate>
-          <predicate parameter="manu:manufacturers" operator="IN">
-            <field schema="elora_search" name="search_manufacturer" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field schema="default_search" name="dc_created_min"/>
-            <field schema="default_search" name="dc_created_max"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field schema="default_search" name="dc_modified_min"/>
-            <field schema="default_search" name="dc_modified_max"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field name="dc_expired_min" schema="elora_search"/>
-            <field name="dc_expired_max" schema="elora_search"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
-        <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_projects_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="project_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_qm_documents_search">
-      <title>label.EloraSearch.qmDocuments</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraQmDocsSearch">
-          <fixedPart>
-            ecm:mixinType = 'QmProcess'
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-          <predicate parameter="elo:reference" operator="ILIKE">
-            <field schema="elora_search" name="elo_reference" />
-          </predicate>
-          <predicate parameter="dc:title" operator="FULLTEXT">
-            <field schema="elora_search" name="dc_title_fulltext" />
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>
-          <predicate parameter="ecm:primaryType" operator="IN">
-            <field schema="elora_search" name="system_primaryType" />
-          </predicate>
-          <predicate parameter="prodclass:productClassification" operator="IN">
-            <field schema="elora_search" name="search_productClassification" />
-          </predicate>
-          <predicate parameter="partclass:partClassification" operator="IN">
-            <field schema="elora_search" name="search_partClassification" />
-          </predicate>
-          <!--  TODO: ITEM SEARCH -->
-          <predicate parameter="cust:customers" operator="IN">
-            <field schema="elora_search" name="search_customer" />
-          </predicate>
-          <predicate parameter="manu:manufacturers" operator="IN">
-            <field schema="elora_search" name="search_manufacturer" />
-          </predicate>
-          <predicate parameter="resp:responsible" operator="IN">
-            <field schema="elora_search" name="search_responsible" />
-          </predicate>
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field name="dc_created_min" schema="default_search"/>
-            <field name="dc_created_max" schema="default_search"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field name="dc_modified_min" schema="default_search"/>
-            <field name="dc_modified_max" schema="default_search"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field schema="elora_search" name="dc_expired_min"/>
-            <field schema="elora_search" name="dc_expired_max"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
-        <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_qm_documents_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    <contentView name="elora_locked_documents_search">
-      <title>label.EloraSearch.lockedDocuments</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <property name="coreSession">#{documentManager}</property>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <whereClause docType="EloraLockedDocsSearch">
-          <fixedPart>
-            ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot', 'WorkspaceRoot', 'Favorites')
-            AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
-            AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
-            AND ecm:lockOwner IS NOT NULL
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <!-- <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_qm_documents_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="qm_documents_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+        <contentView name="elora_locked_documents_search">
+            <title>label.EloraSearch.lockedDocuments</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="EloraLockedDocsSearch">
+                    <fixedPart>
+                        ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot',
+                        'WorkspaceRoot', 'Favorites')
+                        AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
+                        AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
+                        AND ecm:lockOwner IS NOT NULL
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND (templ:isTemplate = 0 OR templ:isTemplate IS NULL)
+                    </fixedPart>
+                    <!-- <predicate parameter="ecm:fulltext" operator="FULLTEXT">
             <field schema="default_search" name="ecm_fulltext" />
           </predicate>
           <predicate parameter="elo:reference" operator="ILIKE">
@@ -1339,158 +1537,356 @@
           <predicate parameter="dc:title" operator="FULLTEXT">
             <field schema="elora_search" name="dc_title_fulltext" /> 
           </predicate> -->
-          <predicate parameter="ecm:lockOwner" operator="IN">
-            <field schema="elora_search" name="lock_owner" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="ecm:lockCreated">
-            <field schema="elora_search" name="lock_created_min"/>
-            <field schema="elora_search" name="lock_created_max"/>
-          </predicate>
-          <predicate parameter="ecm:currentLifeCycleState" operator="IN">
-            <field schema="elora_search" name="system_currentLifeCycleState" />
-          </predicate>
-          <predicate parameter="ecm:mixinType" operator="IN">
-            <field schema="elora_search" name="system_mixinType" />
-          </predicate>
-          <predicate parameter="ecm:primaryType" operator="IN">
-            <field schema="elora_search" name="system_primaryType" />
-          </predicate>
-          <!-- <predicate parameter="cust:customers" operator="IN">
+                    <predicate parameter="ecm:lockOwner" operator="IN">
+                        <field schema="elora_search" name="lock_owner" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="ecm:lockCreated">
+                        <field schema="elora_search" name="lock_created_min" />
+                        <field schema="elora_search" name="lock_created_max" />
+                    </predicate>
+                    <predicate parameter="ecm:currentLifeCycleState" operator="IN">
+                        <field schema="elora_search" name="system_currentLifeCycleState" />
+                    </predicate>
+                    <predicate parameter="ecm:mixinType" operator="IN">
+                        <field schema="elora_search" name="system_mixinType" />
+                    </predicate>
+                    <predicate parameter="ecm:primaryType" operator="IN">
+                        <field schema="elora_search" name="system_primaryType" />
+                    </predicate>
+                    <!-- <predicate parameter="cust:customers" operator="IN">
             <field schema="elora_search" name="search_customer" />
           </predicate>
-          <predicate parameter="manu:manufacturers" operator="IN">
-            <field schema="elora_search" name="search_manufacturer" />
+          <predicate parameter="supp:suppliers/*/supplier" operator="IN">
+            <field schema="elora_search" name="search_supplier" />
           </predicate>
           <predicate parameter="resp:responsible" operator="IN">
             <field schema="elora_search" name="search_responsible" />
           </predicate>  -->
-          <predicate parameter="dc:creator" operator="IN">
-            <field schema="elora_search" name="dc_creator" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:created">
-            <field name="dc_created_min" schema="default_search"/>
-            <field name="dc_created_max" schema="default_search"/>
-          </predicate>
-          <predicate parameter="dc:lastContributor" operator="IN">
-            <field schema="elora_search" name="dc_lastContributor" />
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:modified">
-            <field name="dc_modified_min" schema="default_search"/>
-            <field name="dc_modified_max" schema="default_search"/>
-          </predicate>
-          <predicate operator="BETWEEN" parameter="dc:expired">
-            <field schema="elora_search" name="dc_expired_min"/>
-            <field schema="elora_search" name="dc_expired_max"/>
-          </predicate>
-          <predicate parameter="ecm:path" operator="STARTSWITH">
-            <field schema="default_search" name="ecm_path" />
-          </predicate>
-          <predicate parameter="ecm:tag" operator="IN">
-            <field schema="default_search" name="ecm_tags" />
-          </predicate>
-        </whereClause>
-        <sort column="elo:orderingPriority" ascending="true" />
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="elora_search" name="dc_creator" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:created">
+                        <field name="dc_created_min" schema="default_search" />
+                        <field name="dc_created_max" schema="default_search" />
+                    </predicate>
+                    <predicate parameter="dc:lastContributor" operator="IN">
+                        <field schema="elora_search" name="dc_lastContributor" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:modified">
+                        <field name="dc_modified_min" schema="default_search" />
+                        <field name="dc_modified_max" schema="default_search" />
+                    </predicate>
+                    <predicate operator="BETWEEN" parameter="dc:expired">
+                        <field schema="elora_search" name="dc_expired_min" />
+                        <field schema="elora_search" name="dc_expired_max" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:orderingPriority" ascending="true" />
         <sort column="elo:reference" ascending="true" />
-        <sort column="dc:title" ascending="true" />
-        <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="elora_locked_documents_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-      </resultLayouts>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <resultLayout>
-        #{searchDocument.cvd.resultLayoutName}
-      </resultLayout>
-      <flags>
-        <flag>SEARCH</flag>
-      </flags>
-    </contentView>
-    
-    
-     <!-- Override simple_search content view in order to change the query -->
-    <contentView name="simple_search">
-      <title>label.search.form.simple</title>
-      <translateTitle>true</translateTitle>
-      <showTitle>false</showTitle>
-      <iconPath>/icons/document_listing_icon.png</iconPath>
-      <emptySentence>label.content.empty.search</emptySentence>
-      <translateEmptySentence>true</translateEmptySentence>
-      <coreQueryPageProvider>
-        <trackUsage>true</trackUsage>
-        <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-        <property name="coreSession">#{documentManager}</property>
-        <whereClause docType="DefaultSearch">
-          <fixedPart>
-            ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot', 'WorkspaceRoot', 'Favorites')
-            AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
-            AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
-            AND ecm:isVersion = 0
-            AND ecm:isProxy = 0
-            AND ecm:currentLifeCycleState != 'deleted'
-            AND ecm:parentId IS NOT NULL
-            AND SORTED_COLUMN IS NOT NULL
-            AND templ:isTemplate != 1
-          </fixedPart>
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="default_search" name="ecm_fulltext" />
-          </predicate>
-        </whereClause>
-         <sort column="elo:orderingPriority" ascending="true" />
+        <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="elora_locked_documents_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>#{currentDocument.repositoryName}_#{currentDocument.id}</cacheKey>
+            <cacheSize>10</cacheSize>
+            <resultLayouts>
+                <layout name="document_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+
+        <!-- Override simple_search content view in order to change the query -->
+        <contentView name="simple_search">
+            <title>label.search.form.simple</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <iconPath>/icons/document_listing_icon.png</iconPath>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+            <coreQueryPageProvider>
+                <trackUsage>true</trackUsage>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <property name="coreSession">#{documentManager}</property>
+                <whereClause docType="DefaultSearch">
+                    <fixedPart>
+                        ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot',
+                        'WorkspaceRoot', 'Favorites')
+                        AND ecm:mixinType NOT IN ('HiddenInNavigation', 'EloraStruct', 'EloraDraft')
+                        AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
+                        AND ecm:isVersion = 0
+                        AND ecm:isProxy = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND ecm:parentId IS NOT NULL
+                        AND SORTED_COLUMN IS NOT NULL
+                        AND templ:isTemplate != 1
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                </whereClause>
+                <!-- <sort column="elo:orderingPriority" ascending="true" />
          <sort column="elo:reference" ascending="true" />
-         <sort column="dc:title" ascending="true" />
-        <!-- sort column="dc:title" ascending="true" / sort by fulltext relevance -->
+         <sort column="dc:title" ascending="true" /> -->
+                <sort column="dc:modified" ascending="false" />
+                <!-- sort column="dc:title" ascending="true" / sort by fulltext relevance -->
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+            <searchLayout name="simple_search_layout" />
+            <waitForExecution>true</waitForExecution>
+            <waitForExecutionSentence>label.search.waitForExecution</waitForExecutionSentence>
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>only_one_cache</cacheKey>
+            <cacheSize>1</cacheSize>
+            <resultLayouts>
+                <layout name="document_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+        </contentView>
+
+        <contentView name="nxql_search">
+
+            <title>label.search.nxql</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+
+            <coreQueryPageProvider>
+                <trackUsage>true</trackUsage>
+        <property name="coreSession">#{documentManager}</property>
+        <property
+                    name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+        <searchDocumentType>
+                DefaultSearch</searchDocumentType>
+        <pattern quoteParameters="false"
+                    escapeParameters="false">?</pattern>
+        <parameter>#{searchUIActions.nxqlQuery}</parameter>
+                sort column="dc:title" ascending="true" / sort by fulltext relevance <sort
+                    column="dc:modified" ascending="false" />
         <pageSize>20</pageSize>
-      </coreQueryPageProvider>
-      <searchLayout name="simple_search_layout" />
-      <waitForExecution>true</waitForExecution>
-      <waitForExecutionSentence>
-        label.search.waitForExecution
-      </waitForExecutionSentence>
-      <showPageSizeSelector>true</showPageSizeSelector>
-      <useGlobalPageSize>true</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>only_one_cache</cacheKey>
-      <cacheSize>1</cacheSize>
-      <resultLayouts>
-        <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
-          showSlideshow="true" showEditRows="true" />
-        <layout name="document_listing_table" title="document_listing"
-          translateTitle="true" iconPath="/icons/document_listing_icon.png"
-          showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
-      </resultLayouts>
-      <resultColumns>
-        #{searchDocument.cvd.selectedLayoutColumns}
-      </resultColumns>
-      <selectionList>CURRENT_SELECTION</selectionList>
-      <actions category="CURRENT_SELECTION_LIST" />
-    </contentView>
-  
-  </extension>
+            </coreQueryPageProvider>
+
+            <waitForExecution>true</waitForExecution>
+
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>true</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>only_one_cache</cacheKey>
+            <cacheSize>1</cacheSize>
+
+            <resultLayouts>
+                <layout name="document_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+
+        </contentView>
+
+        <contentView name="default_search">
+            <title>label.search.default</title>
+            <translateTitle>true</translateTitle>
+            <showTitle>false</showTitle>
+            <emptySentence>label.content.empty.search</emptySentence>
+            <translateEmptySentence>true</translateEmptySentence>
+
+            <coreQueryPageProvider>
+                <property name="coreSession">#{documentManager}</property>
+                <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
+                <whereClause docType="DefaultSearch">
+                    <fixedPart>
+                        ecm:primaryType NOT IN ('Domain', 'SectionRoot', 'TemplateRoot',
+                        'WorkspaceRoot', 'Favorites')
+                        AND ecm:mixinType != 'HiddenInNavigation'
+                        AND NOT (ecm:mixinType = 'Collection' AND ecm:name = 'Locally Edited')
+                        AND ecm:isCheckedInVersion = 0
+                        AND ecm:currentLifeCycleState != 'deleted'
+                        AND SORTED_COLUMN IS NOT NULL
+                    </fixedPart>
+                    <predicate parameter="ecm:fulltext" operator="FULLTEXT">
+                        <field schema="default_search" name="ecm_fulltext" />
+                    </predicate>
+                    <predicate parameter="dc:creator" operator="IN">
+                        <field schema="default_search" name="dc_creator" />
+                    </predicate>
+                    <predicate parameter="dc:created" operator="BETWEEN">
+                        <field schema="default_search" name="dc_created_min" />
+                        <field schema="default_search" name="dc_created_max" />
+                    </predicate>
+                    <predicate parameter="dc:modified" operator="BETWEEN">
+                        <field schema="default_search" name="dc_modified_min" />
+                        <field schema="default_search" name="dc_modified_max" />
+                    </predicate>
+                    <predicate parameter="dc:nature" operator="IN">
+                        <field schema="default_search" name="dc_nature" />
+                    </predicate>
+                    <predicate parameter="dc:subjects" operator="STARTSWITH">
+                        <field schema="default_search" name="dc_subjects" />
+                    </predicate>
+                    <predicate parameter="dc:coverage" operator="STARTSWITH">
+                        <field schema="default_search" name="dc_coverage" />
+                    </predicate>
+                    <predicate parameter="ecm:path" operator="STARTSWITH">
+                        <field schema="default_search" name="ecm_path" />
+                    </predicate>
+                    <predicate parameter="ecm:tag" operator="IN">
+                        <field schema="default_search" name="ecm_tags" />
+                    </predicate>
+                    <predicate parameter="collectionMember:collectionIds"
+                        operator="IN">
+                        <field schema="default_search" name="ecm_collections" />
+                    </predicate>
+                </whereClause>
+                <aggregates>
+                    <aggregate id="dc_nature_agg" type="terms" parameter="dc:nature">
+                        <field schema="default_search" name="dc_nature_agg" />
+                        <properties>
+                            <property name="size">10</property>
+                        </properties>
+                    </aggregate>
+                    <aggregate id="dc_subjects_agg" type="terms" parameter="dc:subjects">
+                        <field schema="default_search" name="dc_subjects_agg" />
+                        <properties>
+                            <property name="size">10</property>
+                        </properties>
+                    </aggregate>
+                    <aggregate id="dc_coverage_agg" type="terms" parameter="dc:coverage">
+                        <field schema="default_search" name="dc_coverage_agg" />
+                        <properties>
+                            <property name="size">10</property>
+                        </properties>
+                    </aggregate>
+                    <aggregate id="dc_creator_agg" type="terms" parameter="dc:creator">
+                        <field schema="default_search" name="dc_creator_agg" />
+                        <properties>
+                            <property name="size">10</property>
+                        </properties>
+                    </aggregate>
+                    <aggregate id="common_size_agg" type="range" parameter="common:size">
+                        <field schema="default_search" name="common_size_agg" />
+                        <ranges>
+                            <range key="tiny" to="102400" />
+                            <range key="small" from="102401" to="1048576" />
+                            <range key="medium" from="1048577" to="10485760" />
+                            <range key="big" from="10485761" to="104857600" />
+                            <range key="huge" from="104857601" />
+                        </ranges>
+                    </aggregate>
+                    <aggregate id="dc_created_agg" type="date_histogram" parameter="dc:created">
+                        <field schema="default_search" name="dc_created_agg" />
+                        <properties>
+                            <property name="interval">year</property>
+                            <property name="format">yyyy</property>
+                            <property name="order">key desc</property>
+                        </properties>
+                    </aggregate>
+                    <aggregate id="dc_modified_agg" type="date_range" parameter="dc:modified">
+                        <field schema="default_search" name="dc_modified_agg" />
+                        <properties>
+                            <property name="format">"dd-MM-yyyy"</property>
+                        </properties>
+                        <dateRanges>
+                            <dateRange key="last24h" fromDate="now-24H" toDate="now" />
+                            <dateRange key="lastWeek" fromDate="now-7d" toDate="now-24H" />
+                            <dateRange key="lastMonth" fromDate="now-1M" toDate="now-7d" />
+                            <dateRange key="lastYear" fromDate="now-1y" toDate="now-1M" />
+                            <dateRange key="priorToLastYear" toDate="now-1y" />
+                        </dateRanges>
+                    </aggregate>
+                </aggregates>
+                <sort column="dc:modified" ascending="false" />
+                <pageSize>20</pageSize>
+            </coreQueryPageProvider>
+
+            <searchLayout name="default_search_layout" />
+
+            <showPageSizeSelector>true</showPageSizeSelector>
+            <useGlobalPageSize>false</useGlobalPageSize>
+            <refresh>
+                <event>documentChanged</event>
+                <event>documentChildrenChanged</event>
+            </refresh>
+            <cacheKey>only_one_cache</cacheKey>
+            <cacheSize>1</cacheSize>
+
+            <resultLayouts>
+                <layout name="document_listing_table" title="document_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon.png"
+                    showCSVExport="true" showSpreadsheet="true" showEditColumns="true" />
+                <layout name="document_listing_thumbnail" title="document_thumbnail_listing"
+                    translateTitle="true" iconPath="/icons/document_listing_icon_2_columns_icon.png"
+                    showSlideshow="true" showEditRows="true" />
+            </resultLayouts>
+
+            <selectionList>CURRENT_SELECTION</selectionList>
+            <actions category="CURRENT_SELECTION_LIST" />
+
+            <resultColumns>
+                #{searchDocument.cvd.selectedLayoutColumns}
+            </resultColumns>
+
+            <resultLayout>
+                #{searchDocument.cvd.resultLayoutName}
+            </resultLayout>
+
+            <flags>
+                <flag>SEARCH</flag>
+            </flags>
+        </contentView>
+
+    </extension>
 
 </component>

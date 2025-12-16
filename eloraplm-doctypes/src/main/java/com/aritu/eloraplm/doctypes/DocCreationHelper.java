@@ -53,13 +53,35 @@ public class DocCreationHelper {
             }
         }
 
-        markAsTemplateIfRequired(session, doc);
+        doc = fixParentIfProxy(session, doc);
 
-        addDocToFavoritesIfRequired(session, doc);
+        doc = markAsTemplateIfRequired(session, doc);
+
+        doc = addDocToFavoritesIfRequired(session, doc);
     }
 
-    private static void addDocToFavoritesIfRequired(CoreSession session,
+    private static DocumentModel fixParentIfProxy(CoreSession session,
             DocumentModel doc) {
+        DocumentModel parentDoc = session.getDocument(doc.getParentRef());
+        if (parentDoc.isProxy()) {
+            parentDoc = session.getSourceDocument(parentDoc.getRef());
+            doc = session.move(doc.getRef(), parentDoc.getRef(), doc.getName());
+        }
+        return doc;
+    }
+
+    private static DocumentModel markAsTemplateIfRequired(CoreSession session,
+            DocumentModel doc) {
+        if (EloraDocumentHelper.isDocumentUnderTemplateRoot(doc, session)
+                && (doc.hasFacet(EloraFacetConstants.FACET_TEMPLATABLE))) {
+            doc.setPropertyValue(EloraMetadataConstants.ELORA_TEMPL_IS_TEMPLATE,
+                    true);
+        }
+        return doc;
+    }
+
+    private static DocumentModel addDocToFavoritesIfRequired(
+            CoreSession session, DocumentModel doc) {
 
         String logInitMsg = "[addDocToFavoritesIfRequired] ["
                 + session.getPrincipal().getName() + "] ";
@@ -93,16 +115,8 @@ public class DocCreationHelper {
                 }
             }
         }
+        return doc;
 
-    }
-
-    private static void markAsTemplateIfRequired(CoreSession session,
-            DocumentModel doc) {
-        if (EloraDocumentHelper.isDocumentUnderTemplateRoot(doc, session)
-                && (doc.hasFacet(EloraFacetConstants.FACET_TEMPLATABLE))) {
-            doc.setPropertyValue(EloraMetadataConstants.ELORA_TEMPL_IS_TEMPLATE,
-                    true);
-        }
     }
 
     // #############################################################

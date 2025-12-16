@@ -83,7 +83,7 @@
       </properties>
     </action>
     
-    <action id="eloraLockedDocumentsSearchContentView" order="60">
+    <action id="eloraLockedDocumentsSearchContentView" order="85">
       <category>SEARCH_CONTENT_VIEWS</category>
       <properties>
         <property name="contentViewName">elora_locked_documents_search</property>
@@ -134,7 +134,12 @@
         <property name="onEnterKeyHandler">nxSuggestHandleEnterKey</property>
       </properties>
     </action>
-
+    
+    <!-- Disable subscriptions tab for all the saved searches -->
+    <action id="TAB_MANAGE_SUBSCRIPTIONS">
+        <filter-id>denyForSavedSearch</filter-id>
+    </action>
+    
   </extension>
 
 </component>

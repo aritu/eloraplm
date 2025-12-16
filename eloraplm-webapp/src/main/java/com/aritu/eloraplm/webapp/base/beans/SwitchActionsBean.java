@@ -328,22 +328,17 @@ public class SwitchActionsBean implements Serializable {
 
         String pageProviderName = "";
 
-        if (!document.hasFacet(EloraFacetConstants.FACET_ELORA_WORKSPACE)
-                && (document.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)
-                        || document.hasFacet(
-                                EloraFacetConstants.FACET_CAD_DOCUMENT)
-                        || document.hasFacet(
-                                EloraFacetConstants.FACET_BASIC_DOCUMENT))) {
+        if (document.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)
+                || document.hasFacet(EloraFacetConstants.FACET_CAD_DOCUMENT)
+                || document.hasFacet(
+                        EloraFacetConstants.FACET_BASIC_DOCUMENT)) {
             if (showJustLibraryRoots) {
                 pageProviderName = EloraPageProvidersConstants.LIBRARY_ROOT_WC_DOC_SUGG;
             } else {
                 pageProviderName = EloraPageProvidersConstants.STRUCTURE_COLLABORATION_LIBRARY_ROOT_WC_DOC_SUGG;
             }
-        } else if (document.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)
-                || document.hasFacet(EloraFacetConstants.FACET_CAD_DOCUMENT)
-                || document.hasFacet(EloraFacetConstants.FACET_BASIC_DOCUMENT)
-                || document.hasFacet(
-                        EloraFacetConstants.FACET_ELORA_WORKSPACE)) {
+        } else if (document.hasFacet(
+                EloraFacetConstants.FACET_ELORA_WORKSPACE)) {
             pageProviderName = EloraPageProvidersConstants.STRUCTURE_COLLABORATION_ROOT_WC_DOC_SUGG;
         }
 

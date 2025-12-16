@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.securitypolicy.contrib">
+
+    <extension point="policies" target="org.nuxeo.ecm.core.security.SecurityService">
+        <policy class="com.aritu.eloraplm.securitypolicy.EloraSecurityPolicy" name="eloraSecurityPolicy" order="10" />
+    </extension>
+
+</component>

@@ -15,37 +15,43 @@ package com.aritu.eloraplm.bom.lists;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.intercept.BypassInterceptors;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.api.pathsegment.PathSegmentService;
-import org.nuxeo.ecm.core.versioning.VersioningService;
+import org.nuxeo.ecm.core.api.security.ACE;
+import org.nuxeo.ecm.core.api.security.ACL;
+import org.nuxeo.ecm.core.api.security.ACP;
+import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.ui.web.api.WebActions;
+import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.bom.lists.service.BomListService;
 import com.aritu.eloraplm.config.util.BomListsConfigHelper;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
 import com.aritu.eloraplm.config.util.EloraConfigTable;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraEventNames;
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
+import com.aritu.eloraplm.core.DocumentContextBoundActions;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.exceptions.EloraException;
 
@@ -54,9 +60,10 @@ import com.aritu.eloraplm.exceptions.EloraException;
  *
  */
 @Name("bomList")
-@Scope(ScopeType.PAGE)
+@Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
-public class BomListBean implements Serializable {
+@AutomaticDocumentBasedInvalidation
+public class BomListBean extends DocumentContextBoundActions {
     private static final long serialVersionUID = 1L;
 
     @In(create = true, required = false)
@@ -77,9 +84,6 @@ public class BomListBean implements Serializable {
     @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
 
-    @In
-    protected BomListComparisonTableBean bomListComparisonTableBean;
-
     private static final Log log = LogFactory.getLog(BomListBean.class);
 
     private EloraConfigTable bomListsTable;
@@ -94,6 +98,8 @@ public class BomListBean implements Serializable {
 
     private boolean isListCreated;
 
+    private boolean reloadBomListData = true;
+
     private DocumentModel currentBomList;
 
     public EloraConfigTable getBomListsTable() {
@@ -105,6 +111,9 @@ public class BomListBean implements Serializable {
     }
 
     public String getId() {
+        if (reloadBomListData) {
+            loadBomListData();
+        }
         return id;
     }
 
@@ -113,6 +122,9 @@ public class BomListBean implements Serializable {
     }
 
     public String getLabel() {
+        if (reloadBomListData) {
+            loadBomListData();
+        }
         return label;
     }
 
@@ -121,6 +133,9 @@ public class BomListBean implements Serializable {
     }
 
     public String getDescription() {
+        if (reloadBomListData) {
+            loadBomListData();
+        }
         return description;
     }
 
@@ -129,6 +144,9 @@ public class BomListBean implements Serializable {
     }
 
     public String getType() {
+        if (reloadBomListData) {
+            loadBomListData();
+        }
         return type;
     }
 
@@ -137,6 +155,9 @@ public class BomListBean implements Serializable {
     }
 
     public boolean getIsListCreated() {
+        if (reloadBomListData) {
+            loadBomListData();
+        }
         return isListCreated;
     }
 
@@ -145,6 +166,9 @@ public class BomListBean implements Serializable {
     }
 
     public DocumentModel getCurrentBomList() {
+        if (reloadBomListData) {
+            loadBomListData();
+        }
         return currentBomList;
     }
 
@@ -152,22 +176,32 @@ public class BomListBean implements Serializable {
         this.currentBomList = currentBomList;
     }
 
-    /*
-    @Observer(WebActions.CURRENT_TAB_CHANGED_EVENT)
+    public boolean getIsSubTabVisible(String docRef, String bomListId,
+            String treeDirection) {
+        BomListService nodeService = Framework.getService(BomListService.class);
+
+        return nodeService.hasBomList(docRef, bomListId, treeDirection);
+    }
+
+    @Observer(value = {
+            WebActions.CURRENT_TAB_CHANGED_EVENT
+                    + "_TAB_BOM_COMPOSITION_sub_tab",
+            WebActions.CURRENT_TAB_CHANGED_EVENT
+                    + "_TAB_BOM_WHERE_USED_sub_tab" })
     @BypassInterceptors
     public void reloadBomListSubtab() {
-        loadBomListData();
+        reloadBomListData = true;
     }
-    */
-    @Create
+
     public void loadBomListData() {
         String logInitMsg = "[loadBomListData] ["
                 + documentManager.getPrincipal().getName() + "] ";
 
-        try {
-            DocumentModel currentDocument = navigationContext.getCurrentDocument();
+        reloadBomListData = false;
 
+        try {
             bomListsTable = BomListsConfigHelper.getBomLists(false);
+
             id = webActions.getCurrentSubTabId().replace(
                     webActions.getCurrentTabId().concat("_"), "");
 
@@ -179,14 +213,21 @@ public class BomListBean implements Serializable {
                 type = (String) configRow.getProperty("type");
 
                 Events.instance().raiseEvent(
-                        EloraEventNames.ELORA_BOM_LIST_SUBTAB_CHANGED_EVENT, id,
-                        currentDocument.getId());
+                        EloraEventNames.ELORA_BOM_LIST_SUBTAB_CHANGED_EVENT,
+                        id);
             }
 
             // Check if the BOM list is created or not (for Composition)
             isListCreated = false;
 
+            DocumentModel currentDocument = getCurrentDocument();
             if (currentDocument != null) {
+
+                if (currentDocument.isProxy()
+                        || currentDocument.isImmutable()) {
+                    currentDocument = documentManager.getWorkingCopy(
+                            currentDocument.getRef());
+                }
 
                 DocumentModelList bomLists = BomListHelper.getBomListForDocument(
                         currentDocument, id, false, documentManager);
@@ -215,40 +256,56 @@ public class BomListBean implements Serializable {
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
 
-        DocumentModel currentDocument = navigationContext.getCurrentDocument();
+        try {
+            DocumentModel currentDocument = getCurrentDocument();
 
-        PathSegmentService pss = Framework.getService(PathSegmentService.class);
-        String nameForPath = "BomList_"
-                + pss.generatePathSegment(currentDocument.getName());
+            if (currentDocument.isProxy() || currentDocument.isImmutable()) {
+                currentDocument = documentManager.getWorkingCopy(
+                        currentDocument.getRef());
+            }
 
-        DocumentModel bomList = documentManager.createDocumentModel(
-                getBomListsFolderPath(), nameForPath,
-                EloraDoctypeConstants.BOM_LIST);
-        bomList.setPropertyValue("bomlst:bomList", id);
-        bomList = documentManager.createDocument(bomList);
+            PathSegmentService pss = Framework.getService(
+                    PathSegmentService.class);
+            String docPathSegment = null;
+            String reference = (String) currentDocument.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE);
+            if (reference != null) {
+                docPathSegment = reference;
+            } else {
+                docPathSegment = currentDocument.getTitle();
+            }
+            String nameForPath = pss.generatePathSegment(
+                    "BomList_" + docPathSegment + "_" + id);
+            DocumentModel bomList = documentManager.createDocumentModel(
+                    getBomListsFolderPath(), nameForPath,
+                    EloraDoctypeConstants.BOM_LIST);
+            bomList.setPropertyValue(NuxeoMetadataConstants.NX_DC_TITLE,
+                    getLabel() + " - " + docPathSegment);
+            bomList.setPropertyValue(
+                    EloraMetadataConstants.ELORA_BOMLIST_BOMLIST, id);
+            bomList = documentManager.createDocument(bomList);
 
-        eloraDocumentRelationManager.addRelation(documentManager,
-                currentDocument, bomList, EloraRelationConstants.BOM_HAS_LIST,
-                false);
+            eloraDocumentRelationManager.addRelation(documentManager,
+                    currentDocument, bomList,
+                    EloraRelationConstants.BOM_HAS_LIST, null, "1");
+            bomList = documentManager.saveDocument(bomList);
 
-        // Check in for the first time, to avoid lists without archived
-        // versions. The first version of the list will be _.1 and it won't have
-        // any related children.
-        bomList.putContextData(VersioningService.CHECKIN_COMMENT,
-                "Automatic first checkin to avoid lists without archived versions.");
-        bomList.putContextData(VersioningService.VERSIONING_OPTION,
-                VersioningOption.MINOR);
-        bomList = documentManager.saveDocument(bomList);
+            documentManager.save();
 
-        documentManager.save();
+            log.trace(logInitMsg + "Created BOM list |" + getLabel()
+                    + "| for document |" + currentDocument.getId() + "|.");
 
-        log.trace(logInitMsg + "Created BOM list |" + getLabel()
-                + "| for document |" + currentDocument.getId() + "|.");
+            isListCreated = true;
+            currentBomList = bomList;
 
-        isListCreated = true;
-        currentBomList = bomList;
+            log.trace(logInitMsg + "--- EXIT --- ");
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
 
-        log.trace(logInitMsg + "--- EXIT --- ");
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("eloraplm.message.error.bom.createList"));
+
+        }
     }
 
     private String getBomListsFolderPath() {
@@ -272,13 +329,10 @@ public class BomListBean implements Serializable {
             bomListsFolder.setPropertyValue(NuxeoMetadataConstants.NX_DC_TITLE,
                     "BOM Lists");
             bomListsFolder = documentManager.createDocument(bomListsFolder);
-            // TODO Hau beharrezkoa da????
-            // ACP acp = documentManager.getACP(bomListsFolder.getRef());
-            // ACL acl = acp.getOrCreateACL(ACL.LOCAL_ACL);
-            // acl.add(new ACE(SecurityConstants.EVERYONE,
-            // SecurityConstants.READ,
-            // true));
-            // session.setACP(bomListsFolder.getRef(), acp, true);
+            ACP acp = documentManager.getACP(bomListsFolder.getRef());
+            ACL acl = acp.getOrCreateACL(ACL.LOCAL_ACL);
+            acl.add(new ACE(SecurityConstants.EVERYONE, "ReadWriteAndRemove", true));
+            documentManager.setACP(bomListsFolder.getRef(), acp, true);
 
         } else {
             if (res.size() > 1) {
@@ -299,6 +353,17 @@ public class BomListBean implements Serializable {
 
         return bomListsFolderPath;
 
+    }
+
+    @Override
+    protected void resetBeanCache(DocumentModel newCurrentDocumentModel) {
+        id = null;
+        label = null;
+        description = null;
+        type = null;
+        isListCreated = false;
+        currentBomList = null;
+        loadBomListData();
     }
 
 }

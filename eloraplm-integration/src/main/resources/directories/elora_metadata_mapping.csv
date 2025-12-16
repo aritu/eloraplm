@@ -7,7 +7,7 @@ id,authoring_tool,cad_doctype,cad_metadata_name,plm_doctype,plm_metadata,plm_met
 6,SolidWorks,SLDPRT,FILENAME,CadPart,elo:reference,real,CadToPlm,0,60
 7,SolidWorks,SLDPRT,Title,CadPart,dc:title,real,CadToPlm,0,70
 8,SolidWorks,SLDPRT,ActiveConfigurationName,CadPart,cad:activeConfiguration,real,CadToPlm,0,80
-9,SolidWorks,SLDPRT,Material,CadPart,cad:cadMaterial,real,CadToPlm,0,90
+9,SolidWorks,SLDPRT,Material,CadPart,cad:materials,real,CadToPlm,0,90
 10,SolidWorks,SLDPRT,AuthoringTool,CadPart,cad:authoringTool,real,CadToPlm,0,100
 11,SolidWorks,SLDPRT,AuthoringToolVersion,CadPart,cad:authoringToolVersion,real,CadToPlm,0,110
 12,SolidWorks,SLDPRT,IntegrationTool,CadPart,cad:integrationTool,real,CadToPlm,0,120
@@ -30,7 +30,7 @@ id,authoring_tool,cad_doctype,cad_metadata_name,plm_doctype,plm_metadata,plm_met
 29,Catia,CATPART,FILENAME,CadPart,elo:reference,real,CadToPlm,0,290
 30,Catia,CATPART,Title,CadPart,dc:title,real,CadToPlm,0,300
 31,Catia,CATPART,ActiveConfigurationName,CadPart,cad:activeConfiguration,real,CadToPlm,0,310
-32,Catia,CATPART,Material,CadPart,cad:cadMaterial,real,CadToPlm,0,320
+32,Catia,CATPART,Material,CadPart,cad:materials,real,CadToPlm,0,320
 33,Catia,CATPART,AuthoringTool,CadPart,cad:authoringTool,real,CadToPlm,0,330
 34,Catia,CATPART,AuthoringToolVersion,CadPart,cad:authoringToolVersion,real,CadToPlm,0,340
 35,Catia,CATPART,IntegrationTool,CadPart,cad:integrationTool,real,CadToPlm,0,350
@@ -53,7 +53,7 @@ id,authoring_tool,cad_doctype,cad_metadata_name,plm_doctype,plm_metadata,plm_met
 52,SolidEdge,PAR,FILENAME,CadPart,elo:reference,real,CadToPlm,0,520
 53,SolidEdge,PAR,Title,CadPart,dc:title,real,CadToPlm,0,530
 54,SolidEdge,PAR,ActiveConfigurationName,CadPart,cad:activeConfiguration,real,CadToPlm,0,540
-55,SolidEdge,PAR,Material,CadPart,cad:cadMaterial,real,CadToPlm,0,550
+55,SolidEdge,PAR,Material,CadPart,cad:materials,real,CadToPlm,0,550
 56,SolidEdge,PAR,AuthoringTool,CadPart,cad:authoringTool,real,CadToPlm,0,560
 57,SolidEdge,PAR,AuthoringToolVersion,CadPart,cad:authoringToolVersion,real,CadToPlm,0,570
 58,SolidEdge,PAR,IntegrationTool,CadPart,cad:integrationTool,real,CadToPlm,0,580
@@ -76,7 +76,7 @@ id,authoring_tool,cad_doctype,cad_metadata_name,plm_doctype,plm_metadata,plm_met
 75,NX,NXPRT,FILENAME,CadPart,elo:reference,real,CadToPlm,0,750
 76,NX,NXPRT,Title,CadPart,dc:title,real,CadToPlm,0,760
 77,NX,NXPRT,ActiveConfigurationName,CadPart,cad:activeConfiguration,real,CadToPlm,0,770
-78,NX,NXPRT,Material,CadPart,cad:cadMaterial,real,CadToPlm,0,780
+78,NX,NXPRT,Material,CadPart,cad:materials,real,CadToPlm,0,780
 79,NX,NXPRT,AuthoringTool,CadPart,cad:authoringTool,real,CadToPlm,0,790
 80,NX,NXPRT,AuthoringToolVersion,CadPart,cad:authoringToolVersion,real,CadToPlm,0,800
 81,NX,NXPRT,IntegrationTool,CadPart,cad:integrationTool,real,CadToPlm,0,810
@@ -99,7 +99,7 @@ id,authoring_tool,cad_doctype,cad_metadata_name,plm_doctype,plm_metadata,plm_met
 98,Creo,PRT,FILENAME,CadPart,elo:reference,real,CadToPlm,0,980
 99,Creo,PRT,Title,CadPart,dc:title,real,CadToPlm,0,990
 100,Creo,PRT,ActiveConfigurationName,CadPart,cad:activeConfiguration,real,CadToPlm,0,1000
-101,Creo,PRT,Material,CadPart,cad:cadMaterial,real,CadToPlm,0,1010
+101,Creo,PRT,Material,CadPart,cad:materials,real,CadToPlm,0,1010
 102,Creo,PRT,AuthoringTool,CadPart,cad:authoringTool,real,CadToPlm,0,1020
 103,Creo,PRT,AuthoringToolVersion,CadPart,cad:authoringToolVersion,real,CadToPlm,0,1030
 104,Creo,PRT,IntegrationTool,CadPart,cad:integrationTool,real,CadToPlm,0,1040

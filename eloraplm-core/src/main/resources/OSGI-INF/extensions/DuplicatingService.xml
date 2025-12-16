@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.core.duplicating.api.DuplicatingService">
+    <documentation>
+        Service to duplicate documents.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.core.duplicating.api.DuplicatingServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.core.duplicating.api.DuplicatingService"/>
+    </service>
+    
+    <extension-point name="types">
+        <documentation>
+            Used to assign duplicator for each document type.
+            <code>
+                <type id="..." duplicator="..." enabled="true/false" />
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.core.duplicating.api.TypeDescriptor" />
+    </extension-point>
+    
+    <extension-point name="duplicators">
+        <documentation>
+            Used to configure duplicators.
+            <code>
+                <duplicator name="..." class="... KENDU??" />
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.core.duplicating.api.DuplicatorDescriptor" />
+    </extension-point>
+
+</component> 

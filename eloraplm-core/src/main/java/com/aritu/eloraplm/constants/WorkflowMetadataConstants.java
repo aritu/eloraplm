@@ -34,6 +34,8 @@ public class WorkflowMetadataConstants {
 
     public static final String WFQ_WORKFLOW_ID = "wfq:workflowId";
 
+    public static final String WFQ_WORKFLOW_INSTANCE_ID = "wfq:workflowInstanceId";
+
     public static final String WFQ_NODE_ID = "wfq:nodeId";
 
     public static final String WFQ_QUESTION_ID = "wfq:questionId";
@@ -70,6 +72,8 @@ public class WorkflowMetadataConstants {
 
     public static final String WFANS_ANSWERS_WORKFLOW_ID = "workflowId";
 
+    public static final String WFANS_ANSWERS_WORKFLOW_INSTANCE_ID = "workflowInstanceId";
+
     public static final String WFANS_ANSWERS_NODE_ID = "nodeId";
 
     public static final String WFANS_ANSWERS_QUESTION_ID = "questionId";
@@ -83,6 +87,26 @@ public class WorkflowMetadataConstants {
     public static final String WFANS_ANSWERS_VALUE = "value";
 
     public static final String WFANS_ANSWERS_ORDER = "order";
+
+    /* Worklow Info */
+
+    public static final String WFINFO_INSTANCES = "wfinfo:instances";
+
+    public static final String WFINFO_INSTANCES_WORKFLOW_ID = "workflowId";
+
+    public static final String WFINFO_INSTANCES_WORKFLOW_INSTANCE_ID = "workflowInstanceId";
+
+    public static final String WFINFO_INSTANCES_END_NODE = "endNode";
+
+    public static final String WFINFO_INSTANCES_END_NODE_LABEL = "endNodeLabel";
+
+    public static final String WFINFO_INSTANCES_END_DATE = "endDate";
+
+    /* Asynchronous subworkflows */
+
+    public static final String SUBWF_PARENT_INSTANCE_ID = "subwf:parentWfInstanceId";
+
+    public static final String SUBWF_INSTANCE_TITLE = "subwf:instanceTitle";
 
     /* Schema prefixes */
 

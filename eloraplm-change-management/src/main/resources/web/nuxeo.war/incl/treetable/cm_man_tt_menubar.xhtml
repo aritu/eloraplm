@@ -1,0 +1,39 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    
+    <c:if test="#{layout.mode eq 'edit'}">
+	    <h:outputScript library="js" name="primefaces_dialog.js" target="#{pageJsTarget}" />
+	
+	    <p:menubar id="ttMenuBar" styleClass="ttMenuBar">
+	    
+	        <p:menuitem value="#{messages['eloraplm.command.cm.modified.add']}&#8230;" 
+	            icon="pi pi-fw pi-plus-circle"
+	            process="@this"
+	            partialSubmit="true"
+	            update="@none"
+	            oncomplete="PF('addManualItemDialog').show(); PF('addManualItemDialog').resetPosition()"
+	        />
+	            
+	        <p:menuitem value="#{messages['command.save']}"
+	            icon="pi pi-fw pi-save"
+	            containerStyleClass="mainAction"
+	            actionListener="#{value.saveTree}"
+	            process="@this"
+	            partialSubmit="true"
+	            update="@form"
+	            onstart="PF('#{treeBlockerId}').show()"
+                oncomplete="PF('#{treeBlockerId}').hide()"/>
+	        
+	    </p:menubar>
+	</c:if>
+    
+</ui:composition>

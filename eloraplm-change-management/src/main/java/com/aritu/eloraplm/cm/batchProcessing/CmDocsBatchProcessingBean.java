@@ -52,12 +52,14 @@ import com.aritu.eloraplm.constants.CMBatchProcessingEventNames;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMEventNames;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.core.pdm.checkout.api.CheckoutService;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.lifecycles.util.LifecycleHelper;
+import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
 import com.aritu.eloraplm.versioning.VersionLabelService;
 
 @Name("cmDocsBatchProcessing")
@@ -93,11 +95,12 @@ public class CmDocsBatchProcessingBean implements Serializable {
 
     private Map<String, List<String>> childrenVersionSeriesMap;
 
-    private Map<String, String> repeatedTreeDocMap;
-
     private DAG dag;
 
+    private boolean forcePromotion;
+
     public CmDocsBatchProcessingBean() {
+        forcePromotion = false;
     }
 
     public void promote() {
@@ -115,13 +118,12 @@ public class CmDocsBatchProcessingBean implements Serializable {
 
                 // First do all required checks SYNCHRONOUSLY
                 TreeNode root = cmDocImpactedItemsTreeBean.getRoot();
-                repeatedTreeDocMap = new HashMap<>();
-
                 List<String> modifiedDocsArchivedDestinationDocIds = checkModifiedDocsAreManagedAndReleased(
                         root);
-
+                Map<String, String> repeatedTreeDocMap = new HashMap<>();
                 List<String> sortedIds = sortTreeDocumentsForPromote(root,
-                        modifiedDocsArchivedDestinationDocIds);
+                        modifiedDocsArchivedDestinationDocIds,
+                        repeatedTreeDocMap);
 
                 if (sortedIds == null || sortedIds.size() == 0) {
                     log.trace(logInitMsg + "Nothing to be promoted.");
@@ -152,9 +154,10 @@ public class CmDocsBatchProcessingBean implements Serializable {
 
                     // Start ASYNCHRONOUS processing
                     lifecycleStateChanged = CmBatchProcessingHelper.prepareAsynchronousProcess(
-                            cmProcessDoc, CMBatchProcessingConstants.PROMOTE,
+                            cmProcessDoc, CMBatchProcessingConstants.APPROVE,
                             CMConstants.ITEM_TYPE_DOC,
-                            CMConstants.ITEM_CLASS_IMPACTED, documentManager);
+                            CMConstants.ITEM_CLASS_IMPACTED, documentManager,
+                            sortedIds.size());
 
                     // calculate what is the transition to come back to the
                     // current state
@@ -172,27 +175,12 @@ public class CmDocsBatchProcessingBean implements Serializable {
                             cmProcessDoc, root, sortedIds, dag,
                             childrenVersionSeriesMap,
                             eloraDocumentRelationManager,
-                            transitionToComeBackToPreviousState);
+                            transitionToComeBackToPreviousState,
+                            forcePromotion);
 
                     log.trace(logInitMsg + "|"
                             + CMBatchProcessingEventNames.PROMOTE_DOCS
                             + "| Asynchronous Event fired.");
-
-                    String processingAction = EloraMessageHelper.getTranslatedMessage(
-                            documentManager,
-                            "eloraplm.message.warning.cm.batch.batchProcessInProgress."
-                                    + CMBatchProcessingConstants.PROMOTE);
-
-                    Events.instance().raiseEvent(
-                            CMBatchProcessingEventNames.IN_PROGRESS,
-                            cmProcessDoc.getId(), CMConstants.ITEM_TYPE_DOC,
-                            CMConstants.ITEM_CLASS_IMPACTED, processingAction,
-                            sortedIds.size());
-
-                    log.trace(logInitMsg + "|"
-                            + CMBatchProcessingEventNames.IN_PROGRESS
-                            + "| event fired.");
-
                 }
 
             } else {
@@ -208,8 +196,10 @@ public class CmDocsBatchProcessingBean implements Serializable {
                     lifecycleStateChanged, transitionToComeBackToPreviousState,
                     documentManager);
 
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.cm.batch.processingPromote"));
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get(
+                            "eloraplm.message.error.cm.batch.processingPromote")
+                            + ": " + e.getMessage());
 
         } catch (Exception e) {
             log.error(
@@ -228,8 +218,123 @@ public class CmDocsBatchProcessingBean implements Serializable {
         log.trace(logInitMsg + "--- EXIT ---");
     }
 
+    public void checkoutBasicDocs() {
+        String logInitMsg = "[checkoutBasicDocs] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        try {
+            // if there is any unsaved change in the tree, don't do anything
+            if (!cmDocImpactedItemsTreeBean.getIsDirty()) {
+                TransactionHelper.commitOrRollbackTransaction();
+                TransactionHelper.startTransaction();
+
+                CheckoutService checkoutService = Framework.getService(
+                        CheckoutService.class);
+
+                TreeNode root = cmDocImpactedItemsTreeBean.getRoot();
+
+                for (TreeNode modifiedItemNode : root.getChildren()) {
+                    CmBatchProcessingHelper.checkoutBasicDocs(modifiedItemNode,
+                            facesMessages, messages, checkoutService);
+                }
+
+                EloraEventHelper.fireEvent(
+                        CMEventNames.CM_DOCS_BATCH_BASIC_DOC_CHECKOUT_EVENT,
+                        navigationContext.getCurrentDocument());
+
+                cmDocImpactedItemsTreeBean.createRoot();
+
+                facesMessages.add(StatusMessage.Severity.INFO, messages.get(
+                        "eloraplm.message.success.cm.batch.checkoutBasicDocs"));
+
+            } else {
+                log.trace(logInitMsg + "Unsaved changes.");
+                facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                        "eloraplm.message.warning.treetable.unsavedChanges"));
+            }
+        } catch (EloraException e) {
+            log.error(logInitMsg + "Exception: " + e.getClass().getName() + ". "
+                    + e.getMessage(), e);
+            TransactionHelper.setTransactionRollbackOnly();
+
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.cm.batch.checkoutBasicDocs"));
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+            TransactionHelper.setTransactionRollbackOnly();
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.cm.batch.checkoutBasicDocs"));
+        } finally {
+            TransactionHelper.commitOrRollbackTransaction();
+            TransactionHelper.startTransaction();
+        }
+        log.trace(logInitMsg + "--- EXIT ---");
+    }
+
+    public void checkinBasicDocs() {
+        String logInitMsg = "[checkinBasicDocs] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        try {
+            // if there is any unsaved change in the tree, don't do anything
+            if (!cmDocImpactedItemsTreeBean.getIsDirty()) {
+                TransactionHelper.commitOrRollbackTransaction();
+                TransactionHelper.startTransaction();
+
+                CheckinManager checkinManager = Framework.getService(
+                        CheckinManager.class);
+
+                TreeNode root = cmDocImpactedItemsTreeBean.getRoot();
+
+                for (TreeNode modifiedItemNode : root.getChildren()) {
+                    CmBatchProcessingHelper.checkinBasicDocs(modifiedItemNode,
+                            checkinManager);
+                }
+
+                EloraEventHelper.fireEvent(
+                        CMEventNames.CM_DOCS_BATCH_BASIC_DOC_CHECKIN_EVENT,
+                        navigationContext.getCurrentDocument());
+
+                cmDocImpactedItemsTreeBean.createRoot();
+
+                facesMessages.add(StatusMessage.Severity.INFO, messages.get(
+                        "eloraplm.message.success.cm.batch.checkinBasicDocs"));
+
+            } else {
+                log.trace(logInitMsg + "Unsaved changes.");
+                facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                        "eloraplm.message.warning.treetable.unsavedChanges"));
+            }
+        } catch (EloraException e) {
+            log.error(logInitMsg + "Exception: " + e.getClass().getName() + ". "
+                    + e.getMessage(), e);
+            TransactionHelper.setTransactionRollbackOnly();
+
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.cm.batch.checkinBasicDocs"));
+        } catch (Exception e) {
+            log.error(
+                    logInitMsg + "Uncontrolled exception: "
+                            + e.getClass().getName() + ". " + e.getMessage(),
+                    e);
+            TransactionHelper.setTransactionRollbackOnly();
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.cm.batch.checkinBasicDocs"));
+        } finally {
+            TransactionHelper.commitOrRollbackTransaction();
+            TransactionHelper.startTransaction();
+        }
+        log.trace(logInitMsg + "--- EXIT ---");
+    }
+
     private List<String> sortTreeDocumentsForPromote(TreeNode root,
-            List<String> modifiedDocsArchivedDestinationDocIds)
+            List<String> modifiedDocsArchivedDestinationDocIds,
+            Map<String, String> repeatedTreeDocMap)
             throws EloraException, CycleDetectedException {
         String logInitMsg = "[sortTreeDocumentsForPromote] ["
                 + documentManager.getPrincipal().getName() + "] ";
@@ -253,7 +358,8 @@ public class CmDocsBatchProcessingBean implements Serializable {
                 modifiedItemArchivedDoc = ((ImpactedItemsNodeData) modifiedDocNode.getData()).getDestinationItem();
             }
 
-            buildPromoteDAG(modifiedDocNode, modifiedItemArchivedDoc);
+            buildPromoteDAG(modifiedDocNode, modifiedItemArchivedDoc,
+                    repeatedTreeDocMap);
         }
         List<String> sortedIds = TopologicalSorter.sort(dag);
 
@@ -299,35 +405,15 @@ public class CmDocsBatchProcessingBean implements Serializable {
         for (TreeNode modifiedDocNode : root.getChildren()) {
             ImpactedItemsNodeData nodeData = (ImpactedItemsNodeData) modifiedDocNode.getData();
 
-            // if the modified document is managed, the destination must be AV,
-            // excepting if the action is ignore, since in this case destination
-            // is empty.
-            // We check it here, to be sure that everything is ok.
-            if (CmBatchProcessingHelper.isRemoved(nodeData)) {
-                // If action is remove, add the originId to filter the
-                // documents that should not be processed
-                DocumentModel modifiedDocOriginDoc = nodeData.getOriginItem();
-                modifiedDocsArchivedDestinationDocIds.add(
-                        modifiedDocOriginDoc.getId());
+            if (nodeData.getType().equals(CMConstants.ITEM_TYPE_DOC)) {
+                checkModifiedAndReleased(modifiedDocsArchivedDestinationDocIds,
+                        nodeData);
             } else {
-                DocumentModel modifiedDocDestinationDoc = nodeData.getDestinationItem();
-                if (!CmBatchProcessingHelper.isManaged(nodeData)
-                        || !modifiedDocDestinationDoc.isVersion()) {
-                    facesMessages.add(StatusMessage.Severity.ERROR,
-                            messages.get(
-                                    "eloraplm.message.error.cm.batch.modifiedDocNotManaged"));
-                    throw new EloraException(
-                            "All modified documents must be managed");
-                } else if (!EloraDocumentHelper.isReleased(
-                        modifiedDocDestinationDoc)) {
-                    facesMessages.add(StatusMessage.Severity.ERROR,
-                            messages.get(
-                                    "eloraplm.message.error.cm.batch.modifiedDocNotReleased"));
-                    throw new EloraException(
-                            "All modified documents must be released");
-                } else {
-                    modifiedDocsArchivedDestinationDocIds.add(
-                            modifiedDocDestinationDoc.getId());
+                for (TreeNode modifiedDerivedNode : modifiedDocNode.getChildren()) {
+                    ImpactedItemsNodeData modifiedDerivedNodeData = (ImpactedItemsNodeData) modifiedDerivedNode.getData();
+                    checkModifiedAndReleased(
+                            modifiedDocsArchivedDestinationDocIds,
+                            modifiedDerivedNodeData);
                 }
             }
             log.trace(logInitMsg + "Modified items are managed and released");
@@ -335,49 +421,106 @@ public class CmDocsBatchProcessingBean implements Serializable {
         return modifiedDocsArchivedDestinationDocIds;
     }
 
+    private void checkModifiedAndReleased(
+            List<String> modifiedDocsArchivedDestinationDocIds,
+            ImpactedItemsNodeData nodeData) throws EloraException {
+        // if the modified document is managed, the destination must be AV,
+        // excepting if the action is remove or ignore, since in these cases
+        // destination is empty.
+        // We check it here, to be sure that everything is ok.
+        if (CmBatchProcessingHelper.isRemoved(nodeData)
+                || CmBatchProcessingHelper.isIgnored(nodeData)) {
+            // If action is remove or ignore, add the originId to filter the
+            // documents that should not be processed
+            DocumentModel modifiedDocOriginDoc = nodeData.getOriginItem();
+            modifiedDocsArchivedDestinationDocIds.add(
+                    modifiedDocOriginDoc.getId());
+        } else {
+            DocumentModel modifiedDocDestinationDoc = nodeData.getDestinationItem();
+            if (!CmBatchProcessingHelper.isManaged(nodeData)
+                    || !modifiedDocDestinationDoc.isVersion()) {
+                log.error("All modified documents must be managed");
+                throw new EloraException(messages.get(
+                        "eloraplm.message.error.cm.batch.modifiedDocNotManaged"));
+            } else if (!EloraDocumentHelper.isReleased(
+                    modifiedDocDestinationDoc)) {
+                log.error("All modified documents must be released");
+                throw new EloraException(messages.get(
+                        "eloraplm.message.error.cm.batch.modifiedDocNotReleased"));
+            } else {
+                modifiedDocsArchivedDestinationDocIds.add(
+                        modifiedDocDestinationDoc.getId());
+            }
+        }
+    }
+
     // TODO: ¿Hay que tener en cuenta si los documentos estan ignored para
     // comprobar si estan repetidos?
-    private void checkRepeatedDocs(DocumentModel doc) throws EloraException {
+    private void checkRepeatedDocs(DocumentModel doc,
+            Map<String, String> repeatedTreeDocMap) throws EloraException {
         String treeDocUid = repeatedTreeDocMap.get(doc.getVersionSeriesId());
         if (treeDocUid != null && !doc.getId().equals(treeDocUid)) {
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.cm.batch.docRepeatedWithDiffVersion"),
+            log.error("Document repeated with different version");
+            Object[] messageParams = {
                     doc.getPropertyValue(
                             EloraMetadataConstants.ELORA_ELO_REFERENCE),
-                    doc.getTitle());
-            throw new EloraException(
-                    "Document repeated with different version");
+                    doc.getTitle() };
+            String errorMsg = EloraMessageHelper.getTranslatedMessage(
+                    documentManager,
+                    "eloraplm.message.error.cm.batch.docRepeatedWithDiffVersion",
+                    messageParams);
+            throw new EloraException(errorMsg);
         } else {
             repeatedTreeDocMap.put(doc.getVersionSeriesId(), doc.getId());
         }
     }
 
-    private void buildPromoteDAG(TreeNode node, DocumentModel structureChildDoc)
+    private void buildPromoteDAG(TreeNode node, DocumentModel structureChildDoc,
+            Map<String, String> repeatedTreeDocMap)
             throws EloraException, CycleDetectedException {
         for (TreeNode childNode : node.getChildren()) {
             ImpactedItemsNodeData nodeData = (ImpactedItemsNodeData) childNode.getData();
-
-            if (!CmBatchProcessingHelper.isIgnored(nodeData)) {
+            if (nodeData.getIsModifiedItem()) {
                 DocumentModel structureParentDoc = CmBatchProcessingHelper.getArchivedDestinationDoc(
                         nodeData);
-                structureParentDoc.refresh();
-                checkRepeatedDocs(structureParentDoc);
-                if (!EloraDocumentHelper.isReleased(structureParentDoc)) {
-                    dag.addVertex(structureParentDoc.getId());
-                    if (nodeData.getIsAnarchic()
-                            || EloraDocumentHelper.isReleased(
-                                    structureChildDoc)) {
-                        dag.addEdge(structureParentDoc.getId(), null);
-                    } else {
-                        dag.addEdge(structureParentDoc.getId(),
-                                structureChildDoc.getId());
-                        CmBatchProcessingHelper.addChildVersionSeriesId(
-                                structureParentDoc.getId(),
-                                structureChildDoc.getVersionSeriesId(),
-                                childrenVersionSeriesMap);
+                buildPromoteDAG(childNode, structureParentDoc,
+                        repeatedTreeDocMap);
+            } else {
+                if (!CmBatchProcessingHelper.isIgnored(nodeData)) {
+                    DocumentModel structureParentDoc = CmBatchProcessingHelper.getArchivedDestinationDoc(
+                            nodeData);
+                    structureParentDoc.refresh();
+                    checkRepeatedDocs(structureParentDoc, repeatedTreeDocMap);
+                    if (!EloraDocumentHelper.isReleased(structureParentDoc)) {
+                        dag.addVertex(structureParentDoc.getId());
+                        if (nodeData.getIsAnarchic()
+                                || EloraDocumentHelper.isReleased(
+                                        structureChildDoc)) {
+                            dag.addEdge(structureParentDoc.getId(), null);
+                        } else {
+                            String structureParentDocId;
+                            String structureChildDocId;
+                            String structureChildDocVersionSeriesId;
+                            if (nodeData.getIsDirectObject()) {
+                                structureParentDocId = structureChildDoc.getId();
+                                structureChildDocId = structureParentDoc.getId();
+                                structureChildDocVersionSeriesId = structureParentDoc.getVersionSeriesId();
+                            } else {
+                                structureParentDocId = structureParentDoc.getId();
+                                structureChildDocId = structureChildDoc.getId();
+                                structureChildDocVersionSeriesId = structureChildDoc.getVersionSeriesId();
+                            }
+                            dag.addEdge(structureParentDocId,
+                                    structureChildDocId);
+                            CmBatchProcessingHelper.addChildVersionSeriesId(
+                                    structureParentDocId,
+                                    structureChildDocVersionSeriesId,
+                                    childrenVersionSeriesMap);
+                        }
                     }
+                    buildPromoteDAG(childNode, structureParentDoc,
+                            repeatedTreeDocMap);
                 }
-                buildPromoteDAG(childNode, structureParentDoc);
             }
         }
     }
@@ -454,6 +597,14 @@ public class CmDocsBatchProcessingBean implements Serializable {
             TransactionHelper.startTransaction();
         }
         log.trace(logInitMsg + "--- EXIT ---");
+    }
+
+    public boolean getForcePromotion() {
+        return forcePromotion;
+    }
+
+    public void setForcePromotion(boolean forcePromotion) {
+        this.forcePromotion = forcePromotion;
     }
 
 }

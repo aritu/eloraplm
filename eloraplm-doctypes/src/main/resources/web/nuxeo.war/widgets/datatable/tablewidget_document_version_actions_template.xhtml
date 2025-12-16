@@ -1,0 +1,75 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:nxh="http://nuxeo.org/nxweb/html"
+>
+  <nxu:set
+    var="actions"
+    value="#{webActions.getUnfiltredActionsList('VERSION_LIST_ITEM')}"
+  >
+    <c:forEach
+      var="sel_action"
+      items="#{actions}"
+    >
+      <span id="#{sel_action.id}">
+        <nxh:commandLink
+          styleClass="listing-icon-button tipsyShow tipsyGravityS"
+          action="#{sel_action.getLink()}"
+          onclick="#{sel_action.confirm}"
+          rendered="#{sel_action.available}"
+          immediate="#{sel_action.immediate}"
+          id="#{sel_action.id}_button"
+          title="#{messages[sel_action.label]}"
+        >
+          <nxu:graphicImage
+            value="#{sel_action.icon}"
+            rendered="#{not empty sel_action.icon}"
+            width="16px"
+            height="16px"            
+          />
+          <f:setPropertyActionListener
+            value="#{rowData.id}"
+            target="#{versionedActions.selectedVersionId}"
+          />
+        </nxh:commandLink>
+      </span>
+    </c:forEach>
+  </nxu:set>
+
+  <nxu:set
+    var="actions"
+    value="#{webActions.getUnfiltredActionsList('BASE_VERSION_LIST_ITEM')}"
+  >
+    <c:forEach
+      var="sel_action"
+      items="#{actions}"
+    >
+      <span id="#{sel_action.id}">
+        <nxh:commandLink
+          styleClass="listing-icon-button tipsyShow tipsyGravityS"
+          action="#{sel_action.getLink()}"
+          onclick="#{sel_action.confirm}"
+          rendered="#{eloraVersionedActions.isBaseVersion(rowData.id) and versionList.getSize() > 1}"
+          immediate="#{sel_action.immediate}"
+          id="#{sel_action.id}_button"
+          title="#{messages[sel_action.label]}"
+        >
+          <nxu:graphicImage
+            value="#{sel_action.icon}"
+            rendered="#{not empty sel_action.icon}"
+            width="16px"
+            height="16px"
+          />
+          <f:setPropertyActionListener
+            value="#{rowData.id}"
+            target="#{versionedActions.selectedVersionId}"
+          />
+        </nxh:commandLink>
+      </span>
+    </c:forEach>
+  </nxu:set>
+</ui:composition>

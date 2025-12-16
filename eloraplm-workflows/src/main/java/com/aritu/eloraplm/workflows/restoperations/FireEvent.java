@@ -13,11 +13,17 @@
  */
 package com.aritu.eloraplm.workflows.restoperations;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
+import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
@@ -37,11 +43,17 @@ public class FireEvent {
     @Context
     private CoreSession session;
 
+    @Context
+    protected OperationContext ctx;
+
     @Param(name = "name")
     protected String name;
 
     @Param(name = "comment", required = false)
     protected String comment;
+
+    @Param(name = "contextProperties", required = false)
+    protected Properties contextProps;
 
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentRef docRef) throws EloraException {
@@ -51,7 +63,14 @@ public class FireEvent {
 
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel doc) throws EloraException {
-        EloraEventHelper.fireEvent(name, doc, comment);
+        Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+        ctxProperties.put("comment", comment);
+        if (contextProps != null && !contextProps.isEmpty()) {
+            for (Map.Entry<String, String> prop : contextProps.entrySet()) {
+                ctxProperties.put(prop.getKey(), prop.getValue());
+            }
+        }
+        EloraEventHelper.fireEvent(name, doc, ctxProperties);
         return doc;
     }
 

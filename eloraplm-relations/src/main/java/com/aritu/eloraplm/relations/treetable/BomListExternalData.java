@@ -13,6 +13,8 @@
  */
 package com.aritu.eloraplm.relations.treetable;
 
+import java.util.List;
+
 /**
  * @author aritu
  *
@@ -26,5 +28,13 @@ public interface BomListExternalData {
     String getName();
 
     void setName(String name);
+
+    List<String> getSuppliers();
+
+    void setSuppliers(List<String> suppliers);
+
+    boolean getExistsInElora();
+
+    void setExistsInElora(boolean existsInElora);
 
 }

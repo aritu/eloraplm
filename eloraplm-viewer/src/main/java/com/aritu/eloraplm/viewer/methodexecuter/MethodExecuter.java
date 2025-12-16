@@ -29,4 +29,6 @@ public interface MethodExecuter {
 
     Serializable getContextData(String key);
 
+    String getType();
+
 }

@@ -140,23 +140,32 @@ public class WorkspaceArchiverActionBean implements Serializable {
 
     public boolean canBeArchived() {
 
-        DocumentModel currentDoc = navigationContext.getCurrentDocument();
-        if (!currentDoc.hasFacet(EloraFacetConstants.FACET_ARCHIVABLE)) {
-            return false;
-        }
+        try {
 
-        DocumentModel parentDoc = documentManager.getDocument(
-                currentDoc.getParentRef());
-        if (!parentDoc.getType().equals(NuxeoDoctypeConstants.WORKSPACE_ROOT)) {
-            return false;
-        }
+            DocumentModel currentDoc = navigationContext.getCurrentDocument();
+            if (!currentDoc.hasFacet(EloraFacetConstants.FACET_ARCHIVABLE)) {
+                return false;
+            }
 
-        if (getWorkspaceArchiverService().isArchiverDefinedForType(
-                currentDoc.getType())) {
-            return true;
-        } else {
-            return false;
+            DocumentModel parentDoc = documentManager.getDocument(
+                    currentDoc.getParentRef());
+            if (!parentDoc.getType().equals(
+                    NuxeoDoctypeConstants.WORKSPACE_ROOT)) {
+                return false;
+            }
+
+            if (getWorkspaceArchiverService().isArchiverDefinedForType(
+                    currentDoc.getType())) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            log.error(
+                    "Uncontrolled exception while checking if the workspace can be archived. Error message: "
+                            + e.getMessage());
         }
+        return false;
     }
 
     public void unarchive() {
@@ -208,24 +217,31 @@ public class WorkspaceArchiverActionBean implements Serializable {
     }
 
     public boolean canBeUnarchived() {
+        try {
+            DocumentModel currentDoc = navigationContext.getCurrentDocument();
+            if (!currentDoc.hasFacet(EloraFacetConstants.FACET_ARCHIVABLE)) {
+                return false;
+            }
 
-        DocumentModel currentDoc = navigationContext.getCurrentDocument();
-        if (!currentDoc.hasFacet(EloraFacetConstants.FACET_ARCHIVABLE)) {
-            return false;
-        }
+            DocumentModel parentDoc = documentManager.getDocument(
+                    currentDoc.getParentRef());
+            if (parentDoc.getType().equals(
+                    NuxeoDoctypeConstants.WORKSPACE_ROOT)) {
+                return false;
+            }
 
-        DocumentModel parentDoc = documentManager.getDocument(
-                currentDoc.getParentRef());
-        if (parentDoc.getType().equals(NuxeoDoctypeConstants.WORKSPACE_ROOT)) {
-            return false;
+            if (getWorkspaceArchiverService().isArchiverDefinedForType(
+                    currentDoc.getType())) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            log.error(
+                    "Uncontrolled exception while checking if the workspace can be unarchived. Error message: "
+                            + e.getMessage());
         }
-
-        if (getWorkspaceArchiverService().isArchiverDefinedForType(
-                currentDoc.getType())) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     private void navigateToWorkspace(DocumentModel workspace) {

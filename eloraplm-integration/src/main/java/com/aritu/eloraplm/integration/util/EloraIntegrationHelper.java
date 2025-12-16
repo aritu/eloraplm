@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -273,6 +274,8 @@ public class EloraIntegrationHelper {
     private static DocumentModel getLatestRelatedItemFromList(
             CoreSession session, List<DocumentModel> docs)
             throws EloraException {
+        // TODO IBAI getLatestRelatedVersion(CoreSession session,
+        // List<DocumentModel> wcDocs) erabili eta testeatu
         List<String> uidList = EloraDocumentHelper.getUidListFromDocList(docs);
         Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(docs);
 
@@ -363,10 +366,21 @@ public class EloraIntegrationHelper {
         EloraDocumentHelper.relateDocumentWithBinaries(doc, cadatts,
                 EloraGeneralConstants.FILE_TYPE_CAD_ATTACHMENT);
 
+        // CAD derived outputs
+        // First we have to cast them to simple EloraFileInfo
+        List<EloraFileInfo> derivedoutputs = requestDoc.getCadDerivedOutputs().stream().map(
+                a -> (EloraFileInfo) a).collect(Collectors.toList());
+        EloraDocumentHelper.relateDocumentWithBinaries(doc, derivedoutputs,
+                EloraGeneralConstants.FILE_TYPE_CAD_DERIVED_OUTPUT);
+
         log.trace(logInitMsg + "CAD binaries related to document |"
                 + doc.getId() + "| ");
 
         return doc;
+    }
+
+    public static Blob createJSONBlob(String json) {
+        return new JSONBlob(json);
     }
 
 }

@@ -17,7 +17,7 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 
-import org.elasticsearch.common.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.google.common.base.CaseFormat;

@@ -1,35 +1,85 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:p="http://primefaces.org/ui"
-  xmlns:h="http://java.sun.com/jsf/html">
-    
-    <h:selectBooleanCheckbox id="showObsoleteStateDocuments" value="#{value.showObsoleteStateDocuments}">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+    <strong>#{messages['eloraplm.label.relations.showLabel']}:</strong>
+    <h:selectBooleanCheckbox
+        id="showObsoleteStateDocuments"
+        value="#{value.showObsoleteStateDocuments}"
+    >
         <p:ajax
             update="@form"
             process="@this"
             partialSubmit="true"
-            listener="#{value.reloadTree}"
-            onstart="PF('treeBlocker_#{treeWidgetId}').show();"
-            onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
+            listener="#{value.reloadTree(component.namingContainer)}"
+            onstart="PF('#{treeBlockerId}').show();"
+            onsuccess="PF('#{treeBlockerId}').hide();"
+        />
     </h:selectBooleanCheckbox>
-    
-    <h:outputLabel for="showObsoleteStateDocuments" value="#{messages['eloraplm.label.relations.showObsoleteStateDocuments']}" />
-    
-    <h:selectBooleanCheckbox id="showDirectDocuments" value="#{value.showDirectDocuments}">
+
+    <h:outputLabel
+        for="showObsoleteStateDocuments"
+        value="#{messages['eloraplm.label.relations.showObsoleteStateDocuments']}"
+    />
+
+    <h:selectBooleanCheckbox
+        id="showDirectDocuments"
+        value="#{value.showDirectDocuments}"
+    >
         <p:ajax
             update="@form"
             process="@this"
             partialSubmit="true"
-            listener="#{value.reloadTree}"
-            onstart="PF('treeBlocker_#{treeWidgetId}').show();"
-            onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
+            listener="#{value.reloadTree(component.namingContainer)}"
+            onstart="PF('#{treeBlockerId}').show();"
+            onsuccess="PF('#{treeBlockerId}').hide();"
+        />
     </h:selectBooleanCheckbox>
-    
-    <h:outputLabel for="showDirectDocuments" value="#{messages['eloraplm.label.relations.showDirectDocuments']}" />
-    
+
+    <h:outputLabel
+        for="showDirectDocuments"
+        value="#{messages['eloraplm.label.relations.showDirectDocuments']}"
+    />
+
     <ui:include src="switch_children_header_widget.xhtml">
-        <ui:param name="pdmBean" value="#{bomCompositionEbomPdm}" />
+        <ui:param
+            name="pdmBean"
+            value="#{bomCompositionEbomPdm}"
+        />
     </ui:include>
-    
+
+    <p:divider
+        layout="vertical"
+        style="display: inline; padding: 0.4rem 0"
+    />
+
+    <h:outputScript
+        library="js"
+        name="primefaces_dialog.js"
+        target="#{pageJsTarget}"
+    />
+    <p:commandButton
+        type="button"
+        icon="pi pi-arrow-right-arrow-left"
+        styleClass="rounded-button ui-button-flat ui-button-secondary"
+        pt:data-tooltip="#{messages['eloraplm.command.treetable.bom.compare']}&#8230;"
+    >
+        <p:ajax
+            immediate="true"
+            listener="#{pfDialogActions.initDialog(
+                            value,
+                            currentDocument,
+                            'eloraplm.title.bom.list.comparison',
+                            '/incl/action/bom_composition_list_comparison.xhtml',
+                            true,false,true,null,null,null,null)}"
+            process="@this"
+            partialSubmit="true"
+            update=":glb_pf_dlg_panel"
+            onstart="onPfDialogActionStart()"
+            oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+        />
+    </p:commandButton>
 </ui:composition>

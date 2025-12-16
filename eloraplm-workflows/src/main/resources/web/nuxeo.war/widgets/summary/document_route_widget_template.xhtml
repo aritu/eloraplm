@@ -1,0 +1,49 @@
+<c:if test="true"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:a4j="http://richfaces.org/a4j">
+
+    <c:if test="#{widget.handlingLabels}">
+        <c:if test="#{!empty widget.label}">
+            <ui:include src="/widgets/incl/widget_label_template.xhtml">
+                <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+            </ui:include>
+        </c:if>
+        <c:if test="#{empty widget.label}">
+            <ui:include src="/widgets/incl/label_template.xhtml">
+                <ui:param name="label" value="label.document.routing.workflow" />
+                <ui:param name="helpLabel" value="#{widget.helpLabel}" />
+                <ui:param name="translated" value="true" />
+                <ui:param name="required" value="#{widget.required}" />
+                <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+            </ui:include>
+        </c:if>
+    </c:if>
+
+    <c:choose>
+        <c:when test="#{workflowActions.hasRelatedWorkflow()}">
+            <c:forEach var="relatedWorkflow" items="#{workflowActions.getRelatedWorkflows()}">
+                <c:if test="#{not relatedWorkflow.document.hasFacet('AsynchronousSubworkflow')}">
+                    <div>
+                        <h:outputText value="#{messages[relatedWorkflow.title]} " />
+                        <h:outputText value="#{messages['label.route.started']} " />
+                        <h:outputText value="#{nxu:userFullName(relatedWorkflow.document.docri.initiator)}" />
+                    </div>
+                    <c:if test="#{routingActions.isRouteGraph(relatedWorkflow)}">
+                        <nxl:layout name="graphViewLayout" mode="view" value="#{relatedWorkflow}"
+                            currentDocumentForRoute="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}"
+                            />
+                    </c:if>
+                </c:if>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            <nxl:widget name="start_route_widget" mode="edit" value="#{workflowActions}" />
+        </c:otherwise>
+    </c:choose>
+
+</c:if>

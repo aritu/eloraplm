@@ -7,18 +7,16 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-integration-OperationSer
- viceComponent-contrib.xml,OSGI-INF/extensions/eloraplm-integration-Pa
- geProviderService-contrib.xml,OSGI-INF/extensions/eloraplm-integratio
- n-LifeCycleService-contrib.xml,OSGI-INF/extensions/eloraplm-integrati
- on-TypeService-contrib.xml,OSGI-INF/extensions/eloraplm-integration-R
- esourcePublisher-contrib.xml,OSGI-INF/extensions/eloraplm-integration
- -DraftServicePublisher-contrib.xml,OSGI-INF/extensions/eloraplm-integ
- ration-config-DirectoryUIManager-contrib.xml,OSGI-INF/extensions/elor
- aplm-integration-config-SQLDirectoryFactory-contrib.xml,OSGI-INF/exte
- nsions/eloraplm-integration-config-TypeService-contrib.xml,OSGI-INF/e
- xtensions/eloraplm-integration-config-WebLayoutManager-contrib.xml,OS
- GI-INF/extensions/eloraplm-integration-LifeCycleconfigService-contrib
- .xml,OSGI-INF/extensions/eloraplm-integration-ContentTemplateService-
- contrib.xml
-
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-integration-OperationServiceComponent-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-PageProviderService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-LifeCycleService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-ResourcePublisher-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-DraftServicePublisher-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-config-DirectoryUIManager-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-config-SQLDirectoryFactory-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-config-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-config-WebLayoutManager-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-ContentTemplateService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-LifecycleConfigService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-integration-RelationManagementService-contrib.xml

@@ -1,9 +1,7 @@
 <component name="com.aritu.eloraplm.csv.importer.ActionService.contrib">
-    <require>org.nuxeo.ecm.csv.actions</require>
-
+  <require>org.nuxeo.ecm.platform.actions</require>
 
   <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
-  
  
     <filter id="eloraCsvImportActionAccess">
       <rule grant="true">
@@ -11,11 +9,15 @@
       </rule>
     </filter>
     
-     <!--  overwrite adminCenterAccess -->
-     <filter id="adminCenterAccess">
+    <filter id="eloraOemsCsvImportActionAccess">
       <rule grant="true">
         <condition>#{currentUser.administrator}</condition>
-        <condition>#{currentUser.isMemberOf('powerusers')}</condition>
+      </rule>
+    </filter>
+    
+     <!--  overwrite adminCenterAccess -->
+     <filter id="adminCenterAccess" append="true">
+      <rule grant="true">
         <condition>#{currentUser.isMemberOf('importers')}</condition>
       </rule>
     </filter>
@@ -23,7 +25,6 @@
   </extension> 
   
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
-
     
     <!-- Elora CSV Import -->
     <action id="AdminEloraCsvImport" link="/incl/admin/admin_elora_csv_import.xhtml" label="eloraplm.label.elora.csv.import"
@@ -32,7 +33,12 @@
       <filter-id>eloraCsvImportActionAccess</filter-id>
     </action>
     
-
+    <!-- Elora OEMs CSV Import -->
+    <action id="AdminEloraOemsCsvImport" link="/incl/admin/admin_elora_oems_csv_import.xhtml" label="eloraplm.label.elora.oems.csv.import"
+      type="admin_rest_document_link" order="220">
+      <category>NUXEO_ADMIN</category>
+      <filter-id>eloraOemsCsvImportActionAccess</filter-id>
+    </action>
 
   </extension>
 </component>

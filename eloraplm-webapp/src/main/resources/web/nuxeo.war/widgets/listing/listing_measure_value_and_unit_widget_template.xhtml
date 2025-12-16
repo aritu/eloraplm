@@ -1,0 +1,43 @@
+<f:subview id="#{widget.id}"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:h="http://java.sun.com/jsf/html">
+
+    <nxu:set var="valueField" value="#{field_0}">
+    <nxu:set var="unitField" value="#{field_1}">
+    <nxu:set var="isEmptyValue" value="#{empty valueField}">
+
+        <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+            <h:panelGroup  rendered="#{!isEmptyValue}">
+                <h:outputText value="#{valueField}">
+                  <f:converter converterId="measureValueConverter"/>
+                  <f:attribute name="baseUnit" value="#{unitField}" />
+                </h:outputText>
+                <span>
+                  <h:outputText value="#{unitField}">
+                    <f:converter converterId="measureUnitConverter"/>
+                  </h:outputText>
+                </span>
+            </h:panelGroup>
+        </c:if>
+
+        <c:if test="#{nxl:isLikePlainMode(widget.mode)}">
+            <h:panelGroup  rendered="#{!isEmptyValue}">
+                <h:outputText value="#{valueField}">
+	                <f:converter converterId="measureValueConverter"/>
+	                <f:attribute name="baseUnit" value="#{unitField}" />
+                </h:outputText>
+                <h:outputText value=" "/>
+                <h:outputText value="#{unitField}">
+                    <f:converter converterId="measureUnitConverter"/>
+                  </h:outputText>
+            </h:panelGroup>
+        </c:if>
+    
+    </nxu:set>
+    </nxu:set>
+    </nxu:set>
+
+</f:subview>

@@ -70,8 +70,8 @@
             <h:message styleClass="errorMessage" for="boolean_checkbox" id="boolean_checkbox_message" />
           </c:if>
           <c:if test="#{widget.mode == 'view' }">
-            <h:outputText rendered="#{field_7}" value="#{messages['label.true']}" />
-            <h:outputText rendered="#{!field_7}" value="#{messages['label.false']}" />
+            <h:outputText rendered="#{field_7 != null and field_7}" value="#{messages['label.true']}" />
+            <h:outputText rendered="#{field_7 != null and !field_7}" value="#{messages['label.false']}" />
           </c:if>
       </ui:fragment>
   

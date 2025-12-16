@@ -36,7 +36,7 @@
                  </h:panelGroup>
               </td>
               <td>
-                <h:outputText value="#{lastBatchProcessResultMsg}"></h:outputText>
+                <h:outputText styleClass="processMessage #{lastBatchProcessErrorResultList != null and !empty lastBatchProcessErrorResultList ? 'completeError' : 'completeSuccess'}" value="#{lastBatchProcessResultMsg} #{messages['eloraplm.message.info.cm.batch.result.checkDetails']} "></h:outputText>
               </td>
               <!-- Success results -->
               <td style="white-space:nowrap">

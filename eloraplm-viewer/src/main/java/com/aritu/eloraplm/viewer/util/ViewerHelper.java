@@ -16,8 +16,6 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
  */
 public class ViewerHelper {
 
-    public static final String PDF_MIMETYPE = "application/pdf";
-
     public static Blob getViewerBlob(DocumentModel doc) {
         if (doc != null && doc.getPropertyValue(
                 EloraMetadataConstants.ELORA_ELOVWR_FILE) != null) {

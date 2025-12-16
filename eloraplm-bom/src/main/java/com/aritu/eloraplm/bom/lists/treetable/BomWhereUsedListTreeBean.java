@@ -15,51 +15,72 @@ package com.aritu.eloraplm.bom.lists.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.intercept.BypassInterceptors;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextInvalidation;
-import org.nuxeo.runtime.api.Framework;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
-import com.aritu.eloraplm.bom.lists.BomListBean;
 import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
-import com.aritu.eloraplm.treetable.CoreTreeBean;
+import com.aritu.eloraplm.treetable.CoreTree;
+import com.aritu.eloraplm.treetable.NodeData;
 
 /**
  * @author aritu
  *
  */
 
-@Name("bomWhereUsedListTreeBean")
+@Name(BomWhereUsedListTreeBean.NAME)
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class BomWhereUsedListTreeBean extends CoreTreeBean
-        implements Serializable {
+public class BomWhereUsedListTreeBean extends CoreTree {
+
+    public static final String NAME = "bomWhereUsedListTreeBean";
 
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(
-            BomWhereUsedListTreeBean.class);
+            ExternalBomWhereUsedListTreeBean.class);
 
-    @In
-    protected transient BomListBean bomList;
+    @In(create = true)
+    protected transient WebActions webActions;
 
     private Map<String, TreeNode> roots;
+
+    private String bomListId;
+
+    private String getBomListId() {
+        if (bomListId == null) {
+            bomListId = webActions.getCurrentSubTabId().replace(
+                    webActions.getCurrentTabId().concat("_"), "");
+        }
+        return bomListId;
+    }
+
+    @Observer(WebActions.CURRENT_TAB_CHANGED_EVENT
+            + "_TAB_BOM_WHERE_USED_sub_tab")
+    @BypassInterceptors
+    public void resetBomListId() {
+        bomListId = null;
+    }
 
     @Override
     public void createRoot() {
@@ -71,13 +92,8 @@ public class BomWhereUsedListTreeBean extends CoreTreeBean
         DocumentModel currentDoc = getCurrentDocument();
         try {
             log.trace(logInitMsg + "Creating tree...");
-
-            BomListNodeService nodeService = Framework.getService(
-                    BomListNodeService.class);
-            nodeService.init(documentManager, 0,
-                    BomListNodeService.TREE_DIRECTION_COMPOSITION,
-                    bomList.getId());
-
+            BomWhereUsedListNodeService nodeService = new BomWhereUsedListNodeService(
+                    documentManager, getBomListId());
             setRoot(nodeService.getRoot(currentDoc));
             setHasUnreadableNodes(false);
             setIsInvalid(false);
@@ -102,34 +118,34 @@ public class BomWhereUsedListTreeBean extends CoreTreeBean
 
     @Override
     public TreeNode getRoot() {
-        String bomListId = bomList.getId();
-        if (roots.isEmpty() || !roots.containsKey(bomListId)) {
+        if (roots.isEmpty() || !roots.containsKey(getBomListId())) {
             createRoot();
         }
-        return roots.get(bomListId);
+        return roots.get(getBomListId());
     }
 
     @Override
     public void setRoot(TreeNode root) {
-        String bomListId = bomList.getId();
         if (roots != null) {
-            roots.put(bomListId, root);
+            roots.put(getBomListId(), root);
+        }
+        firstLevelChildrenCount = root.getChildCount();
+        childrenCount = countChildren(root, 0);
+    }
+
+    @Override
+    public void collapseAll(TreeTable treeTable) {
+        if (roots != null && roots.containsKey(getBomListId())) {
+            collapseOrExpandAll(roots.get(getBomListId()), false);
+            clearFilters(treeTable);
         }
     }
 
     @Override
-    public void collapseAll() {
-        String bomListId = bomList.getId();
-        if (roots != null && roots.containsKey(bomListId)) {
-            collapseOrExpandAll(roots.get(bomListId), false);
-        }
-    }
-
-    @Override
-    public void expandAll() {
-        String bomListId = bomList.getId();
-        if (roots != null && roots.containsKey(bomListId)) {
-            collapseOrExpandAll(roots.get(bomListId), true);
+    public void expandAll(TreeTable treeTable) {
+        if (roots != null && roots.containsKey(getBomListId())) {
+            collapseOrExpandAll(roots.get(getBomListId()), true);
+            clearFilters(treeTable);
         }
     }
 
@@ -149,19 +165,33 @@ public class BomWhereUsedListTreeBean extends CoreTreeBean
 
         doc = super.onContextChange(doc);
 
-        if (!(doc.isCheckedOut() == getCurrentDocument().isCheckedOut())) {
-            setCurrentDocument(doc);
-            resetBeanCache(doc);
-            log.trace(logInitMsg
-                    + "Document invalidated: current and new have different checked out status.");
+        if (doc != null) {
+            if (!(doc.isCheckedOut() == getCurrentDocument().isCheckedOut())) {
+                setCurrentDocument(doc);
+                resetBeanCache(doc);
+                log.trace(logInitMsg
+                        + "Document invalidated: current and new have different checked out status.");
+            }
         }
 
         return doc;
     }
 
     @Override
-    @Factory(value = "bomWhereUsedListRoot", scope = ScopeType.EVENT)
-    public TreeNode getRootFromFactory() {
-        return getRoot();
+    public List<NodeData> getTreeAsList() {
+        List<NodeData> nodeList = new ArrayList<NodeData>();
+        if (!roots.isEmpty() && roots.containsKey(getBomListId())) {
+            nodeList = processNodeAndChildren(nodeList, roots.get(getBomListId()));
+        }
+        return nodeList;
     }
+
+    private List<NodeData> processNodeAndChildren(List<NodeData> nodeList, TreeNode node) {
+        for (TreeNode child : node.getChildren()) {
+            nodeList.add((NodeData) child.getData());
+            nodeList = processNodeAndChildren(nodeList, child);
+        }
+        return nodeList;
+    }
+
 }

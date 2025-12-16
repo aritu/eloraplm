@@ -18,9 +18,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -29,11 +31,13 @@ import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
 import com.aritu.eloraplm.bom.autostructure.util.ItemStructureData;
 import com.aritu.eloraplm.bom.autostructure.util.ItemStructureData.DocItemRelation;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraPropertiesConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.CompositionWithMultipleVersionsException;
@@ -70,6 +74,20 @@ public class BomStructureActionBean implements Serializable {
     @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
 
+    protected boolean isCsvImportCompositionEnabled = false;
+
+    @Create
+    public void initialize() {
+        log.debug("Initializing...");
+
+        isCsvImportCompositionEnabled = Boolean.valueOf(Framework.getProperty(
+                EloraPropertiesConstants.PROP_CSV_IMPORT_COMPOSITION_ENABLED,
+                Boolean.toString(false)));
+
+        log.debug("isCsvImportCompositionEnabled initalized to |"
+                + isCsvImportCompositionEnabled + "|");
+    }
+
     // @Observer(value = { PdmEventNames.PDM_CHECKED_OUT_EVENT }, create = true)
     public void calculateStructure() {
         String logInitMsg = "[calculateStructure] ["
@@ -86,9 +104,8 @@ public class BomStructureActionBean implements Serializable {
                     selectedDocItemRelations, documentManager);
         } catch (CompositionWithMultipleVersionsException e) {
             log.error(logInitMsg + e.getMessage(), e);
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(
-                            "eloraplm.message.createStructure.error.multiple.versions"),
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.createStructure.error.multiple.versions"),
                     e.getDocument().getPropertyValue(
                             EloraMetadataConstants.ELORA_ELO_REFERENCE),
                     e.getDocument().getTitle());
@@ -129,9 +146,8 @@ public class BomStructureActionBean implements Serializable {
             }
         } catch (CompositionWithMultipleVersionsException e) {
             log.error(logInitMsg + e.getMessage(), e);
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(
-                            "eloraplm.message.createStructure.error.multiple.versions"),
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.createStructure.error.multiple.versions"),
                     e.getDocument().getPropertyValue(
                             EloraMetadataConstants.ELORA_ELO_REFERENCE),
                     e.getDocument().getTitle());
@@ -139,7 +155,7 @@ public class BomStructureActionBean implements Serializable {
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get("eloraplm.message.autostructure.error"));
+                    messages.get("eloraplm.message.createStructure.error") + " " + e.getMessage());
             TransactionHelper.setTransactionRollbackOnly();
         } finally {
             TransactionHelper.commitOrRollbackTransaction();
@@ -214,6 +230,10 @@ public class BomStructureActionBean implements Serializable {
         } else {
             return new ArrayList<DocumentModel>();
         }
+    }
+
+    public boolean getIsCsvImportCompositionEnabled() {
+        return isCsvImportCompositionEnabled;
     }
 
 }

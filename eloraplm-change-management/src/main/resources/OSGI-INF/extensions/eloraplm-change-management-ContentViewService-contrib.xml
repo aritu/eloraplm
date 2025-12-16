@@ -15,9 +15,6 @@
         <property name="coreSession">#{documentManager}</property>
         <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
         <whereClause docType="EloraAdvancedSearch">
-          <predicate parameter="ecm:fulltext" operator="FULLTEXT">
-            <field schema="elora_advanced_search" name="fulltext_all" />
-          </predicate>
           <predicate parameter="dc:title" operator="FULLTEXT">
             <field schema="elora_advanced_search" name="title" />
           </predicate>
@@ -31,6 +28,9 @@
           <predicate parameter="ecm:currentLifeCycleState" operator="=">
             <field schema="elora_advanced_search" name="currentLifeCycleState" />
           </predicate>
+          <predicate parameter="dc:lastContributor" operator="=">
+            <field schema="elora_advanced_search" name="lastContributor" />
+          </predicate>
           <fixedPart>
             ecm:uuid IN (?)
           </fixedPart>
@@ -42,7 +42,7 @@
         <pageSize>20</pageSize>
       </coreQueryPageProvider>
 
-      <searchLayout name="elora_document_content_filter" />
+      <searchLayout name="elora_document_filter" />
       <showFilterForm>true</showFilterForm>
 
       <showPageSizeSelector>true</showPageSizeSelector>

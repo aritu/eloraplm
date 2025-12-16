@@ -4,6 +4,7 @@
 package com.aritu.eloraplm.templating.api;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -12,6 +13,7 @@ import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
 import org.nuxeo.template.api.adapters.TemplateBasedDocument;
+import org.nuxeo.template.api.TemplateInput;
 
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.templating.adapters.FakeTemplateBasedDocumentAdapter;
@@ -68,13 +70,25 @@ public class TemplatingServiceImpl extends DefaultComponent
     @Override
     public Blob processTemplate(String id, DocumentModel doc)
             throws EloraException {
+        return processTemplate(id, doc, null);
+    }
+
+    @Override
+    public Blob processTemplate(String id, DocumentModel doc,
+            List<TemplateInput> params) throws EloraException {
         TemplateDescriptor template = getTemplate(id);
         if (template == null) {
             throw new EloraException("Provided template id |" + id
                     + "| is not registered. Could not get template info.");
         }
-        TemplateBasedDocument tmplBasedDoc = new FakeTemplateBasedDocumentAdapter(
-                doc, template.name);
+        TemplateBasedDocument tmplBasedDoc;
+        if (params != null && !params.isEmpty()) {
+            tmplBasedDoc = new FakeTemplateBasedDocumentAdapter(doc,
+                    template.name, params);
+        } else {
+            tmplBasedDoc = new FakeTemplateBasedDocumentAdapter(doc,
+                    template.name);
+        }
         Blob blob = tmplBasedDoc.renderWithTemplate(template.name);
         blob.setMimeType(template.mimetype);
 

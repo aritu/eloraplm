@@ -1,0 +1,60 @@
+<c:if test="true"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:a4j="http://richfaces.org/a4j"
+  xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+  <nxu:set var="tasks" value="#{not empty value ? workflowActions.getAllWorkflowTasks(value.document.id) : ''}">
+    <h:panelGroup rendered="#{!empty tasks}">
+      <c:if test="#{widget.handlingLabels}">
+        <c:if test="#{!empty widget.label}">
+          <ui:include src="/widgets/incl/widget_label_template.xhtml">
+            <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+          </ui:include>
+        </c:if>
+        <c:if test="#{empty widget.label}">
+          <ui:include src="/widgets/incl/label_template.xhtml">
+            <ui:param name="label" value="label.document.routing.open.tasks" />
+            <ui:param name="helpLabel" value="#{widget.helpLabel}" />
+            <ui:param name="translated" value="true" />
+            <ui:param name="required" value="#{widget.required}" />
+            <ui:param name="labelStyleClass" value="summaryTitle #{widgetProperty_headerStyleClass}" />
+          </ui:include>
+        </c:if>
+      </c:if>
+
+      <ui:repeat var="task" value="#{tasks}" varStatus="status">
+        <div class="grayBox">
+          <h:outputText styleClass="boldLabel" value="#{messages[task.name]}" />
+          <ui:repeat var="actor" value="#{task.actors}">
+            <nxl:widgetType name="singleUserSuggestion" value="#{actor}" field="" mode="view" />
+          </ui:repeat>
+          <h:panelGroup rendered="#{not empty task.delegatedActors}">
+              &#160;&#8594;&#160;
+              <ui:repeat var="delegate" value="#{task.delegatedActors}">
+                <nxl:widgetType name="singleUserSuggestion" value="#{delegate}" field="" mode="view" />
+              </ui:repeat>
+          </h:panelGroup>
+          <div class="dueDate warningLabel">
+            <h:outputText value=" #{messages['label.route.task.due.date']} " />
+            <h:outputText value="#{task.dueDate}">
+              <f:convertDateTime
+                pattern="#{nxu:basicDateFormatter()}"
+                timeZone="#{timeZone}" />
+            </h:outputText>
+          </div>
+          <div class="directive quote prewrap">
+            <h:outputText value="#{messages[task.directive]}" />
+          </div>
+        </div>
+      </ui:repeat>
+
+    </h:panelGroup>
+
+  </nxu:set>
+
+</c:if>

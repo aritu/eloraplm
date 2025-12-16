@@ -14,6 +14,8 @@ public class NuxeoDoctypeConstants {
 
     public static final String FOLDER = "Folder";
 
+    public static final String ORDERED_FOLDER = "OrderedFolder";
+
     public static final String DOMAIN = "Domain";
 
     public static final String WORKSPACE_ROOT = "WorkspaceRoot";
@@ -21,9 +23,15 @@ public class NuxeoDoctypeConstants {
     public static final String WORKSPACE = "Workspace";
 
     public static final String TEMPLATE_ROOT = "TemplateRoot";
+    
+    public static final String TEMPLATE_SOURCE = "TemplateSource";
 
     public static final String DOCUMENT_TEMPLATES = "DocumentTemplates";
-
+    
     public static final String ROOT = "Root";
+
+    public static final String DOCUMENT_ROUTE = "DocumentRoute";
+
+    public static final String USER_WORKSPACE_ROOT = "UserWorkspacesRoot";
 
 }

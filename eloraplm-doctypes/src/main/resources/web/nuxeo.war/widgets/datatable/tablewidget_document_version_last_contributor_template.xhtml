@@ -1,0 +1,42 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <h:panelGroup styleClass="user lastContributor">
+            <h:outputLink
+                id="lastContributor"
+                value="#{baseURL}user/#{field_0.dc.lastContributor}"
+            >
+                #{nxu:userFullName(field_0.dc.lastContributor)}
+            </h:outputLink>
+        </h:panelGroup>
+        <h:outputLabel
+            value="#{messages['eloraplm.label.header.at']}"
+            for="modified"
+        />
+        <h:outputText
+            id="modified"
+            value="#{field_0.dc.modified}"
+        >
+            <f:convertDateTime
+                pattern="#{nxu:dateFormatter('short')}"
+                timeZone="#{timeZone}"
+            />
+        </h:outputText>
+    </c:if>
+    <c:if test="#{widget.mode == 'csv'}">
+        <h:outputText
+            value="#{nxu:userFullName(field_0.dc.lastContributor)}, "
+        />
+        <h:outputText value="#{field_0.dc.modified}">
+            <f:convertDateTime
+                pattern="#{nxu:dateFormatter('short')}"
+                timeZone="#{timeZone}"
+            />
+        </h:outputText>
+    </c:if>
+</ui:composition>

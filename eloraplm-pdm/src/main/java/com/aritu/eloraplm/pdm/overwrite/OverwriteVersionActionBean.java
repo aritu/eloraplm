@@ -15,7 +15,6 @@
 package com.aritu.eloraplm.pdm.overwrite;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -37,6 +36,7 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
@@ -45,6 +45,7 @@ import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.overwrite.helper.OverwriteVersionHelper;
+import com.aritu.eloraplm.pdm.util.PdmHelper;
 
 @Name("overwriteVersionAction")
 @Scope(ScopeType.EVENT)
@@ -52,8 +53,8 @@ public class OverwriteVersionActionBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Log log = LogFactory
-            .getLog(OverwriteVersionActionBean.class);
+    private static final Log log = LogFactory.getLog(
+            OverwriteVersionActionBean.class);
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
@@ -73,8 +74,8 @@ public class OverwriteVersionActionBean implements Serializable {
     @In(create = true)
     protected EloraDocumentRelationManager eloraDocumentRelationManager;
 
-    protected DocumentValidationService validator = Framework
-            .getService(DocumentValidationService.class);
+    protected DocumentValidationService validator = Framework.getService(
+            DocumentValidationService.class);
 
     private String justification;
 
@@ -102,8 +103,8 @@ public class OverwriteVersionActionBean implements Serializable {
             log.trace(logInitMsg + "Overwrite document |" + currentDoc.getId()
                     + "|");
             checkCheckout(currentDoc);
-            DocumentModel baseVersionDoc = EloraDocumentHelper
-                    .getBaseVersion(currentDoc);
+            DocumentModel baseVersionDoc = EloraDocumentHelper.getBaseVersion(
+                    currentDoc);
             if (baseVersionDoc == null) {
                 throw new EloraException("Document |" + currentDoc.getId()
                         + "| has no base version. Probably because it has no AVs.");
@@ -122,34 +123,38 @@ public class OverwriteVersionActionBean implements Serializable {
                 currentDoc.removeLock();
             }
 
-            invalidateAndResetTabList(currentTabAction, currentSubTabAction);
+            PdmHelper.invalidateAndResetTabList(webActions, navigationContext,
+                    currentTabAction, currentSubTabAction);
 
             // Seam Event
-            Events.instance()
-                    .raiseEvent(PdmEventNames.PDM_OVERWRITTEN_EVENT,
-                            currentDoc);
+            Events.instance().raiseEvent(PdmEventNames.PDM_OVERWRITTEN_EVENT,
+                    currentDoc);
 
             facesMessages.add(StatusMessage.Severity.INFO,
                     messages.get("eloraplm.message.success.overwriteVersion"));
 
         } catch (CheckinNotAllowedException e) {
             log.error(logInitMsg + e.getMessage(), e);
+            DocumentModel errorDoc = e.getErrorDocument();
             facesMessages.add(StatusMessage.Severity.ERROR,
                     messages.get(
                             "eloraplm.message.error.pdm.checkinNotAllowed"),
-                    e.getErrorDocument()
-                            .getPropertyValue(
-                                    EloraMetadataConstants.ELORA_ELO_REFERENCE),
-                    e.getErrorDocument().getTitle());
+                    (errorDoc.hasSchema(EloraSchemaConstants.ELORA_OBJECT)
+                            ? errorDoc.getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                            : ""),
+                    errorDoc.getTitle());
             TransactionHelper.setTransactionRollbackOnly();
             navigationContext.invalidateCurrentDocument();
         } catch (BomCharacteristicsValidatorException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR, messages
-                    .get("eloraplm.message.error.pdm.characteristicsRequired"),
-                    e.getDocument()
-                            .getPropertyValue(
-                                    EloraMetadataConstants.ELORA_ELO_REFERENCE),
-                    e.getDocument().getTitle());
+            DocumentModel errorDoc = e.getDocument();
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.pdm.characteristicsRequired"),
+                    (errorDoc.hasSchema(EloraSchemaConstants.ELORA_OBJECT)
+                            ? errorDoc.getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE)
+                            : ""),
+                    errorDoc.getTitle());
             TransactionHelper.setTransactionRollbackOnly();
             navigationContext.invalidateCurrentDocument();
         } catch (EloraException e) {
@@ -177,8 +182,8 @@ public class OverwriteVersionActionBean implements Serializable {
         try {
             EloraDocumentHelper.checkThatIsCheckedOutByMe(currentDoc);
         } catch (DocumentNotCheckedOutException e) {
-            facesMessages.add(StatusMessage.Severity.ERROR, messages
-                    .get("eloraplm.message.error.documentNotCheckedOutByMe"));
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.documentNotCheckedOutByMe"));
         }
     }
 
@@ -188,20 +193,6 @@ public class OverwriteVersionActionBean implements Serializable {
                 ? documentManager.getWorkingCopy(currentDoc.getRef())
                 : currentDoc;
         return currentDoc;
-    }
-
-    private void invalidateAndResetTabList(Action currentTabAction,
-            Action currentSubTabAction) {
-        navigationContext.invalidateCurrentDocument();
-        webActions.resetTabList();
-        List<Action> tabActionsList = webActions.getTabsList();
-        if (tabActionsList.contains(currentTabAction)) {
-            webActions.setCurrentTabAction(currentTabAction);
-            List<Action> subTabActionsList = webActions.getSubTabsList();
-            if (subTabActionsList.contains(currentSubTabAction)) {
-                webActions.setCurrentSubTabAction(currentSubTabAction);
-            }
-        }
     }
 
 }

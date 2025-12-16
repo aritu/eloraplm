@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<xs:schema
+    targetNamespace="http://eloraplm.aritu.com/schemas/sch_elora_desktop_binaries"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+
+    <xs:element name="id" type="xs:string"/>
+    <xs:element name="platform" type="xs:string"/>
+    <xs:element name="package" type="xs:string"/>
+    <xs:element name="info" type="xs:string"/>
+    <xs:element name="version" type="xs:string"/>
+    <xs:element name="description" type="xs:string"/>
+    <xs:element name="url" type="xs:string"/>
+    <xs:element name="manualUrl" type="xs:string"/>
+    <xs:element name="default" type="xs:integer" default="0"/>
+    <xs:element name="obsolete" type="xs:integer" default="0"/>
+    <xs:element name="ordering" type="xs:integer" default="10000000"/>
+
+</xs:schema>
+
+

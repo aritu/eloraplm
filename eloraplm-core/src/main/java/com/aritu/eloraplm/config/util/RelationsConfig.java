@@ -13,12 +13,14 @@
  */
 package com.aritu.eloraplm.config.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -69,9 +71,21 @@ public class RelationsConfig {
 
     public static final List<String> bomDirectRelationsList = initBomDirectRelationsList();
 
+    public static final EloraConfigTable itemDirectRelationsConfig = initItemDirectRelationsConfig();
+
+    public static final List<String> itemDirectRelationsList = initItemDirectRelationsList();
+
+    public static final EloraConfigTable docDirectRelationsConfig = initDocDirectRelationsConfig();
+
+    public static final List<String> docDirectRelationsList = initDocDirectRelationsList();
+
     public static final EloraConfigTable bomAnarchicRelationsConfig = initBomAnarchicRelationsConfig();
 
     public static final List<String> bomAnarchicRelationsList = initBomAnarchicRelationsList();
+
+    public static final EloraConfigTable bomListRelationsConfig = initBomListRelationsConfig();
+
+    public static final List<String> bomListRelationsList = initBomListRelationsList();
 
     public static final EloraConfigTable bomRelationsConfig = initBomRelationsConfig();
 
@@ -94,6 +108,63 @@ public class RelationsConfig {
     public static final EloraConfigTable containerRelationsConfig = initContainerRelationsConfig();
 
     public static final List<String> containerRelationsList = initContainerRelationsList();
+
+    // -----------------------
+    // General lists
+    // -----------------------
+
+    public static final EloraConfigTable allRelationsConfig = initAllRelationsConfig();
+
+    public static final List<String> allRelationsList = initAllRelationsList();
+
+    public static final List<String> workingCopyOnlyRelationsList = initWorkingCopyOnlyRelationsList();
+
+    public static final List<String> versionedRelationsList = initVersionedRelationsList();
+
+    private static List<String> initWorkingCopyOnlyRelationsList() {
+        List<String> list = new ArrayList<String>();
+        list.add(EloraRelationConstants.HAS_ELORA_DRAFT_RELATION);
+        list.addAll(bomListRelationsList);
+        return list;
+    }
+
+    private static List<String> initVersionedRelationsList() {
+        List<String> list = new ArrayList<String>(allRelationsList);
+        list.removeAll(workingCopyOnlyRelationsList);
+        return list;
+    }
+
+    // ----------------------------------------------
+    // ALL relations variables initialization methods
+    // ----------------------------------------------
+    private static EloraConfigTable initAllRelationsConfig() {
+        String logInitMsg = "[initAllRelationsConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = RelationsConfigHelper.getAllRelationsConfig(false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initAllRelationsList() {
+        String logInitMsg = "[initAllRelationsList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = Collections.unmodifiableList(
+                allRelationsConfig.extractConfigTablePropertyValuesAsList(
+                        "id"));
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
+    }
 
     // ----------------------------------------------
     // CAD relations variables initialization methods
@@ -339,6 +410,66 @@ public class RelationsConfig {
         return configList;
     }
 
+    private static EloraConfigTable initItemDirectRelationsConfig() {
+        String logInitMsg = "[initItemDirectRelationsConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = RelationsConfigHelper.getItemDirectRelationsConfig(
+                    false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initItemDirectRelationsList() {
+        String logInitMsg = "[initItemDirectRelationsList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = Collections.unmodifiableList(
+                itemDirectRelationsConfig.extractConfigTablePropertyValuesAsList(
+                        "id"));
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
+    }
+
+    private static EloraConfigTable initDocDirectRelationsConfig() {
+        String logInitMsg = "[initDocDirectRelationsConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = RelationsConfigHelper.getDocDirectRelationsConfig(
+                    false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initDocDirectRelationsList() {
+        String logInitMsg = "[initDocDirectRelationsList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = Collections.unmodifiableList(
+                docDirectRelationsConfig.extractConfigTablePropertyValuesAsList(
+                        "id"));
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
+    }
+
     private static EloraConfigTable initBomAnarchicRelationsConfig() {
         String logInitMsg = "[initBomAnarchicRelationsConfig] ";
 
@@ -363,6 +494,36 @@ public class RelationsConfig {
 
         List<String> configList = Collections.unmodifiableList(
                 bomAnarchicRelationsConfig.extractConfigTablePropertyValuesAsList(
+                        "id"));
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
+    }
+
+    private static EloraConfigTable initBomListRelationsConfig() {
+        String logInitMsg = "[initBomListRelationsConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = RelationsConfigHelper.getBomListRelationsConfig(
+                    false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initBomListRelationsList() {
+        String logInitMsg = "[initBomListRelationsList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = Collections.unmodifiableList(
+                bomListRelationsConfig.extractConfigTablePropertyValuesAsList(
                         "id"));
 
         log.trace("********************************* EXIT FROM " + logInitMsg);

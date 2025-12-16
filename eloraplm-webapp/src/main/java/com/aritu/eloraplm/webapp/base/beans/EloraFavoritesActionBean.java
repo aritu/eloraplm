@@ -86,7 +86,7 @@ public class EloraFavoritesActionBean {
                 return favoritesManager.isFavorite(document, session);
             } catch (Exception e) {
                 log.error(logInitMsg
-                        + "Error checkinf if document can be removed from favorites.",
+                        + "Error checking if document can be removed from favorites.",
                         e);
             }
         }

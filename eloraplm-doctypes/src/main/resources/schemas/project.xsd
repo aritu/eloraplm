@@ -68,8 +68,6 @@
         </xs:simpleType>
     </xs:element>
     
-    <xs:element name="externalLink" type="xs:string"/>
-    
     <xs:element name="projectPhaseList" type="nxs:projectPhaseListType"/>
     
 </xs:schema>

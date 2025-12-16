@@ -13,7 +13,10 @@
  */
 package com.aritu.eloraplm.pdm.promote.executer.impl;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -58,6 +61,8 @@ public abstract class PromoteExecuterService implements PromoteExecuterManager {
             EloraDocumentRelationManager eloraDocumentRelationManager,
             CoreSession session) throws EloraException {
 
+        String previousState = doc.getCurrentLifeCycleState();
+
         doc.followTransition(promoteTransition);
 
         // Update dc:lastContributor, dc:contributors and dc:modified
@@ -65,8 +70,11 @@ public abstract class PromoteExecuterService implements PromoteExecuterManager {
 
         // Nuxeo Event
         String comment = doc.getVersionLabel();
+        Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+        ctxProperties.put("comment", comment);
+        ctxProperties.put("previousState", previousState);
         EloraEventHelper.fireEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc,
-                comment);
+                ctxProperties);
 
         EloraDocumentHelper.disableVersioningDocument(doc);
         doc = session.saveDocument(doc);

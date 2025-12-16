@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.cm.ChangeManagementService.contrib">
+  
+  <implementation class="com.aritu.eloraplm.cm.service.ChangeManagementServiceImpl"/>
+  <service>
+    <provide interface="com.aritu.eloraplm.cm.service.ChangeManagementService"/>
+  </service>
+
+</component>

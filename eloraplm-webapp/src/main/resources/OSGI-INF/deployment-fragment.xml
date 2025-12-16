@@ -71,8 +71,8 @@
             <redirect />
         </navigation-case>
         <navigation-case>
-            <from-outcome>manufacturer_virtual_navigation</from-outcome>
-            <to-view-id>/navigation/manufacturer_virtual_navigation.xhtml</to-view-id>
+            <from-outcome>supplier_virtual_navigation</from-outcome>
+            <to-view-id>/navigation/supplier_virtual_navigation.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>
@@ -111,9 +111,24 @@
             <redirect />
         </navigation-case>
         <navigation-case>
-          <from-outcome>create_doc_from_template</from-outcome>
-          <to-view-id>/create_doc_from_template.xhtml</to-view-id>
-          <redirect />
+            <from-outcome>create_doc_from_template</from-outcome>
+            <to-view-id>/create_doc_from_template.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>duplicate_document</from-outcome>
+            <to-view-id>/duplicate_document.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>export_tt</from-outcome>
+            <to-view-id>/incl/export/export_treetable_template.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>export_dt</from-outcome>
+            <to-view-id>/incl/export/export_datatable_template.xhtml</to-view-id>
+            <redirect />
         </navigation-case>
     </extension>
     
@@ -121,8 +136,8 @@
         <page view-id="/navigation/customer_virtual_navigation.xhtml">
             breadcrumb=label.virtualnavigation.customer
         </page>
-        <page view-id="/navigation/manufacturer_virtual_navigation.xhtml">
-            breadcrumb=label.virtualnavigation.manufacturer
+        <page view-id="/navigation/supplier_virtual_navigation.xhtml">
+            breadcrumb=label.virtualnavigation.supplier
         </page>
         <page view-id="/navigation/bomProductClass_virtual_navigation.xhtml">
             breadcrumb=label.virtualnavigation.bomProductClass

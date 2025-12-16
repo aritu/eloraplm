@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.core.metadatamapping.api.MetadataMappingService">
+    <documentation>
+        Service for mapping metadata from a document to another.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.core.metadatamapping.api.MetadataMappingServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.core.metadatamapping.api.MetadataMappingService"/>
+    </service>
+    
+
+</component> 

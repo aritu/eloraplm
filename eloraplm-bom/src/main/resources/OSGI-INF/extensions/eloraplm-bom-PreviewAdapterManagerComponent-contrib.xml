@@ -16,10 +16,6 @@
             <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
         </previewAdapter>
         <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
-            <typeName>BomManufacturerPart</typeName>
-            <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
-        </previewAdapter>
-        <previewAdapter enabled="true" name="eloraViewerPreviewAdapter">
             <typeName>BomTool</typeName>
             <class>com.aritu.eloraplm.thumbnails.EloraViewerPreviewAdapterFactory</class>
         </previewAdapter>

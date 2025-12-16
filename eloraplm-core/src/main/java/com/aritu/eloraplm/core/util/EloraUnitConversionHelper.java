@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import com.aritu.eloraplm.config.util.EloraConfig;
 import com.aritu.eloraplm.config.util.EloraConfigRow;
 import com.aritu.eloraplm.constants.EloraConfigConstants;
+import com.aritu.eloraplm.constants.EloraMeasureConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
@@ -209,17 +210,17 @@ public class EloraUnitConversionHelper {
     }
 
     /**
-     * Rounds given property value in function of the configuration defined in
+     * Rounds given measure value in function of the configuration defined in
      * elora_unit_conversion_mapping vocabulary.
      *
-     * @param property
+     * @param measure
      * @param kmsValue
      * @return
      */
-    public static String roundDecimalValue(String property, String kmsValue) {
+    public static String roundDecimalValue(String measure, String kmsValue) {
 
         String value = kmsValue;
-        String baseUnit = getBaseUnit(property);
+        String baseUnit = getBaseUnit(measure);
         if (baseUnit != null) {
 
             try {
@@ -236,22 +237,44 @@ public class EloraUnitConversionHelper {
         return value;
     }
 
-    private static String getBaseUnit(String property) {
+    public static String getBaseUnit(String measure) {
         String baseUnit = null;
-        switch (property) {
-        case EloraMetadataConstants.ELORA_CAD_MASS:
+        switch (measure) {
+        case EloraMeasureConstants.MASS:
             baseUnit = "kg";
             break;
-        case EloraMetadataConstants.ELORA_CAD_SURFACE:
+        case EloraMeasureConstants.SURFACE:
             baseUnit = "m2";
             break;
-        case EloraMetadataConstants.ELORA_CAD_VOLUME:
+        case EloraMeasureConstants.VOLUME:
             baseUnit = "m3";
+            break;
+        case EloraMeasureConstants.DENSITY:
+            baseUnit = "kg/m3";
             break;
         default:
             // No baseUnit. Value won't be rounded.
         }
 
         return baseUnit;
+    }
+
+    public static String getMeasureForProperty(String property) {
+
+        String measure = null;
+        switch (property) {
+        case EloraMetadataConstants.ELORA_CAD_MASS:
+            measure = EloraMeasureConstants.MASS;
+            break;
+        case EloraMetadataConstants.ELORA_CAD_SURFACE:
+            measure = EloraMeasureConstants.SURFACE;
+            break;
+        case EloraMetadataConstants.ELORA_CAD_VOLUME:
+            measure = EloraMeasureConstants.VOLUME;
+            break;
+        default:
+            // No measure
+        }
+        return measure;
     }
 }

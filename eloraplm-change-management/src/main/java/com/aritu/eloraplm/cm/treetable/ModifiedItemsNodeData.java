@@ -13,6 +13,8 @@
  */
 package com.aritu.eloraplm.cm.treetable;
 
+import java.util.Map;
+
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
@@ -24,8 +26,6 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
 
     private static final long serialVersionUID = 1L;
 
-    protected DocumentModel derivedFrom;
-
     protected boolean isDerivedFromImpactMatrix;
 
     protected boolean isImpactable;
@@ -35,8 +35,9 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
     public ModifiedItemsNodeData(String id, int level) {
 
         this(id, level, null, null, null, null, false, null, null, null, null,
-                null, false, false, null, false, null, null, false, false,
-                false, false, null, null, false, false, false, false);
+                null, false, false, null, false, null, null, null, null, false,
+                false, false, false, false, null, null, false, false, false,
+                false, null);
     }
 
     public ModifiedItemsNodeData(String id, int level, Long rowNumber,
@@ -46,18 +47,24 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
             String predicate, String quantity, boolean isAnarchic,
             boolean isDirectObject, String action, boolean actionIsReadOnly,
             DocumentModel destinationItem, DocumentModel destinationItemWc,
-            boolean destinationItemVersionIsReadOnly, boolean isManaged,
+            String defaultDestinationItemSourceVersionUid,
+            DocumentModel destinationItemSourceVersion,
+            boolean destinationItemVersionIsReadOnly,
+            boolean destinationItemSourceVersionIsReadOnly, boolean isManaged,
             boolean isManagedIsReadOnly, boolean isManual, String type,
             String comment, boolean commentIsReadOnly, boolean isUpdated,
-            boolean isImpactable, boolean includeInImpactMatrix) {
+            boolean isImpactable, boolean includeInImpactMatrix,
+            Map<String, String> messages) {
 
         this(id, level, false, false, false, rowNumber, nodeId, parentNodeId,
                 derivedFrom, isDerivedFromImpactMatrix, parentItem, originItem,
                 originItemWc, predicate, quantity, isAnarchic, isDirectObject,
                 action, actionIsReadOnly, destinationItem, destinationItemWc,
-                destinationItemVersionIsReadOnly, isManaged,
+                defaultDestinationItemSourceVersionUid,
+                destinationItemSourceVersion, destinationItemVersionIsReadOnly,
+                destinationItemSourceVersionIsReadOnly, isManaged,
                 isManagedIsReadOnly, isManual, type, comment, commentIsReadOnly,
-                isUpdated, isImpactable, includeInImpactMatrix);
+                isUpdated, isImpactable, includeInImpactMatrix, messages);
     }
 
     public ModifiedItemsNodeData(String id, int level, boolean isNew,
@@ -68,22 +75,27 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
             String predicate, String quantity, boolean isAnarchic,
             boolean isDirectObject, String action, boolean actionIsReadOnly,
             DocumentModel destinationItem, DocumentModel destinationItemWc,
-            boolean destinationItemVersionIsReadOnly, boolean isManaged,
+            String defaultDestinationItemSourceVersionUid,
+            DocumentModel destinationItemSourceVersion,
+            boolean destinationItemVersionIsReadOnly,
+            boolean destinationItemSourceVersionIsReadOnly, boolean isManaged,
             boolean isManagedIsReadOnly, boolean isManual, String type,
             String comment, boolean commentIsReadOnly, boolean isUpdated,
-            boolean isImpactable, boolean includeInImpactMatrix) {
+            boolean isImpactable, boolean includeInImpactMatrix,
+            Map<String, String> messages) {
 
         // In case of modified items, the attributes isModifiedItem is always
         // true.
         super(id, level, isNew, isRemoved, isModified, rowNumber, nodeId,
-                parentNodeId, true, parentItem, originItem, originItemWc,
-                predicate, quantity, isAnarchic, isDirectObject, action,
-                actionIsReadOnly, destinationItem, destinationItemWc,
-                destinationItemVersionIsReadOnly, isManaged,
+                parentNodeId, derivedFrom, true, parentItem, originItem,
+                originItemWc, predicate, quantity, isAnarchic, isDirectObject,
+                action, actionIsReadOnly, destinationItem, destinationItemWc,
+                defaultDestinationItemSourceVersionUid,
+                destinationItemSourceVersion, destinationItemVersionIsReadOnly,
+                destinationItemSourceVersionIsReadOnly, isManaged,
                 isManagedIsReadOnly, isManual, type, comment, commentIsReadOnly,
-                isUpdated);
+                isUpdated, messages);
 
-        this.derivedFrom = derivedFrom;
         this.isDerivedFromImpactMatrix = isDerivedFromImpactMatrix;
         this.isImpactable = isImpactable;
         this.includeInImpactMatrix = includeInImpactMatrix;
@@ -93,14 +105,6 @@ public class ModifiedItemsNodeData extends CMItemsNodeData {
 
     public boolean getIsImpactable() {
         return isImpactable;
-    }
-
-    public DocumentModel getDerivedFrom() {
-        return derivedFrom;
-    }
-
-    public void setDerivedFrom(DocumentModel derivedFrom) {
-        this.derivedFrom = derivedFrom;
     }
 
     public boolean getIsDerivedFromImpactMatrix() {

@@ -29,6 +29,7 @@
         <operation class="com.aritu.eloraplm.integration.restoperations.CheckSessionStatus" replace="true" />
         <operation class="com.aritu.eloraplm.integration.restoperations.SyncVocabulary" replace="true" />
         <operation class="com.aritu.eloraplm.integration.restoperations.UpdateCadDocuments" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.restoperations.EloraGetChildren" replace="true" />
         
         <!-- Importer -->
         <operation class="com.aritu.eloraplm.integration.importer.restoperations.CreateProxies" replace="true" />
@@ -36,9 +37,15 @@
         <!-- Admin -->
         <operation class="com.aritu.eloraplm.integration.admin.restoperations.MakeItemsObsolete" replace="true" />
         <operation class="com.aritu.eloraplm.integration.admin.restoperations.CleanOrphanBinaries" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.admin.restoperations.MigrateCadMaterials" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.admin.restoperations.MigrateRelatedManufacturersToSuppliers" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.admin.restoperations.ChangeStateAndArchiveEloraWorkspaces" replace="true" />
         
         <!-- EloraPlm -->
+        <operation class="com.aritu.eloraplm.integration.restoperations.GetSingleDocument" replace="true" />
         <operation class="com.aritu.eloraplm.integration.restoperations.ArchiveWorkspace" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.restoperations.FireEventToDocuments" replace="true" />
+        <operation class="com.aritu.eloraplm.integration.restoperations.CreateRelation" replace="true" />
         
         <!-- Nuxeo overrides -->
         <operation class="com.aritu.eloraplm.integration.restoperations.EloraFileManagerImport" replace="true" />
@@ -50,11 +57,8 @@
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="chains" >
         
         <chain id="Elora.Plm.ArchiveWorkspaceAndNavigateTo">
-            <operation id="Context.FetchDocument"/>
-            <operation id="Context.RestoreDocumentInputFromScript">
-                <param name="script" type="string">This[0]</param>
-            </operation>
-            
+            <operation id="Context.FetchDocument" />
+            <operation id="Elora.Plm.GetSingleDocument" />
             <operation id="Elora.Plm.ArchiveWorkspace" />
             <operation id="Seam.NavigateTo" />
         </chain>

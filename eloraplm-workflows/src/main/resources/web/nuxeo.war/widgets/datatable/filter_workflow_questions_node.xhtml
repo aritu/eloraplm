@@ -6,7 +6,7 @@
     xmlns:nxu="http://nuxeo.org/nxweb/util"
     xmlns:p="http://primefaces.org/ui">
     
-    <h:selectOneMenu id="filterNode" value="#{value.nodeId}">
+    <h:selectOneMenu id="filterNode">
         <f:selectItem itemValue="#{null}" itemLabel=" " />
         <nxu:selectItems value="#{workflowFormActions.getNodesMap(value.workflowId)}"
             var="wf" itemValue="#{wf.key}" itemLabel="#{messages[wf.value]}" />

@@ -6,15 +6,17 @@
     <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
         <schema name="eloraRelationsConfig" src="schemas/sch_elora_relations_config.xsd"/>
         <schema name="relation_extended" prefix="relext" src="schemas/relation_extended.xsd"/>
+        <schema name="common_relation" prefix="commrel" src="schemas/common_relation.xsd"/>
     </extension>
     
     <!-- Override -->
-	  <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService">
-	    <doctype name="Relation"> <!-- no extends -->
-	      <schema name="relation"/>
-	      <schema name="dublincore"/>
-	      <schema name="relation_extended"/>
-	    </doctype>
-	  </extension>
+    <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService">
+        <doctype name="Relation"> <!-- no extends -->
+            <schema name="relation"/>
+            <schema name="dublincore"/>
+            <schema name="relation_extended"/>
+            <schema name="common_relation"/>
+        </doctype>
+    </extension>
     
 </component>

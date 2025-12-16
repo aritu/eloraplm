@@ -1,21 +1,35 @@
 <?xml version="1.0"?>
 <component name="com.aritu.eloraplm.relations.RelationService.contrib">
-
-  <extension point="graphtypes" target="org.nuxeo.ecm.platform.relations.services.RelationService">
-    <graphtype class="com.aritu.eloraplm.core.relations.EloraCoreGraphFactory" name="eloraCore"/>
-  </extension>
-  
-  <extension point="graphs" target="org.nuxeo.ecm.platform.relations.services.RelationService">
-    <graph name="EloraRelations" type="eloraCore">
-      <option name="doctype">DefaultRelation</option>
-      <namespaces>
-        <namespace name="rdf">
-          http://www.w3.org/1999/02/22-rdf-syntax-ns#
-        </namespace>
-        <namespace name="dcterms">http://purl.org/dc/terms/</namespace>
-        <namespace name="nuxeo">http://www.nuxeo.org/document/uid/</namespace>
-      </namespaces>
-    </graph>
-  </extension>
-  
+    
+    <extension point="graphtypes" target="org.nuxeo.ecm.platform.relations.services.RelationService">
+        <!-- Legacy factory for EloraCoreGraph -->
+        <graphtype class="com.aritu.eloraplm.core.relations.EloraCoreGraphFactory" name="eloraCore"/>
+        <!-- /// -->
+        
+        <graphtype class="com.aritu.eloraplm.core.relations.RelationGraphFactory" name="eloraGraph"/>
+        
+    </extension>
+    
+    <extension point="graphs" target="org.nuxeo.ecm.platform.relations.services.RelationService">
+        <!-- Legacy relations with EloraCoreGraph -->
+        <graph name="EloraRelations" type="eloraCore">
+            <option name="doctype">DefaultRelation</option>
+            <namespaces>
+                <namespace name="rdf">http://www.w3.org/1999/02/22-rdf-syntax-ns#</namespace>
+                <namespace name="dcterms">http://purl.org/dc/terms/</namespace>
+                <namespace name="nuxeo">http://www.nuxeo.org/document/uid/</namespace>
+            </namespaces>
+        </graph>
+        <!-- /// -->
+        
+        <graph name="CoreRelationGraph" type="eloraGraph">
+            <option name="doctype">Relation</option>
+            <namespaces>
+                <namespace name="rdf">http://www.w3.org/1999/02/22-rdf-syntax-ns#</namespace>
+                <namespace name="dcterms">http://purl.org/dc/terms/</namespace>
+                <namespace name="nuxeo">http://www.nuxeo.org/document/uid/</namespace>
+            </namespaces>
+        </graph>
+    </extension>
+    
 </component>

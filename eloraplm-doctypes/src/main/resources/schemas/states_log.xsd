@@ -13,12 +13,7 @@
 
     <xs:complexType name="stateLogType">
         <xs:sequence>
-            <xs:element name="user">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string"
-                        ref:resolver="userManagerResolver" ref:type="user" />
-                </xs:simpleType>
-            </xs:element>
+            <xs:element name="user" />
             <xs:element name="date" type="xs:date" />
             <xs:element name="state_from" type="xs:string" />
             <xs:element name="state_to" type="xs:string" />

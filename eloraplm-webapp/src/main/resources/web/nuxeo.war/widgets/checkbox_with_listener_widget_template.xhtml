@@ -3,32 +3,54 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:c="http://java.sun.com/jstl/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
-
-    <h:panelGroup rendered="#{value.level == '1' or not widget.properties.showOnlyOnFirstLevel}">
-        
-        <!-- EDIT MODE -->
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+>
+    <h:panelGroup
+        rendered="#{empty widget.properties.visible or eloraWebActions.evaluateBoolean(widget.properties.visible)}"
+    >
+        <ui:remove>
+            <!-- EDIT MODE -->
+        </ui:remove>
         <c:if test="#{widget.mode == 'edit'}">
-        
-            <h:selectBooleanCheckbox id="value_field" value="#{field}">        
+            <h:selectBooleanCheckbox
+                id="value_field"
+                value="#{field}"
+            >
                 <c:if test="#{widget.properties.required}">
                     <f:validateRequired />
                 </c:if>
-                
+
                 <c:if test="#{not empty widget.properties.templateForListener}">
-                    <ui:include src="#{widget.properties.templateForListener}" />
+                    <ui:include
+                        src="#{widget.properties.templateForListener}"
+                    />
                 </c:if>
             </h:selectBooleanCheckbox>
-                
-            <h:message for="value_field" styleClass="errorMessage" />
-            
+
+            <h:message
+                for="value_field"
+                styleClass="errorMessage"
+            />
         </c:if>
-        
-        <!-- VIEW MODE -->
+
+        <ui:remove>
+            <!-- VIEW MODE -->
+        </ui:remove>
         <c:if test="#{widget.mode == 'view'}">
-            <h:selectBooleanCheckbox id="value_field" value="#{field}" disabled="true" />  
+            <h:selectBooleanCheckbox
+                id="value_field"
+                value="#{field}"
+                disabled="true"
+            />
         </c:if>
-        
+
+        <ui:remove>
+            <!-- CSV MODE -->
+        </ui:remove>
+        <c:if test="#{widget.mode == 'csv'}">
+            <h:outputText
+                value="#{field ? messages['label.yes'] : messages['label.no']}"
+            />
+        </c:if>
     </h:panelGroup>
-    
 </f:subview>

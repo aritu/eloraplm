@@ -192,7 +192,8 @@ public class MakeObsoleteHelper {
         relatedDocuments.addAll(RelationHelper.getSubjectDocuments(
                 new ResourceImpl(EloraRelationConstants.CAD_DRAWING_OF), doc));
         relatedDocuments.addAll(RelationHelper.getSubjectDocuments(
-                new ResourceImpl(EloraRelationConstants.CAD_HAS_SUPPRESSED),
+                new ResourceImpl(
+                        EloraRelationConstants.CAD_HAS_EXCLUDED_FROM_COMPOSITION),
                 doc));
         relatedDocuments.addAll(RelationHelper.getSubjectDocuments(
                 new ResourceImpl(EloraRelationConstants.CAD_IN_CONTEXT_WITH),

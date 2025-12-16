@@ -7,6 +7,7 @@
     <action id="regenerateThumbsAction" order="10" label="eloraplm.command.thumbnail.regenerate" link="#{thumbActions.regenerateThumbnail}" icon="/icons/action_regenerate_thumbnail_16.png">
         <category>DOCUMENT_UPPER_ACTION</category>
         <!-- TODO Filtrau -->
+        <!-- TODO DocumentWithContent kendu? -->
         <filter id="filter@regenerateThumbsAction">
             <rule grant="false">
                 <facet>Folderish</facet>

@@ -46,7 +46,7 @@ id,authoring_tool,cad_doctype,cad_metadata_type,cad_metadata_name,description,ob
 45,Catia,CATDTB,FIX,AuthoringToolVersion,AuthoringToolVersion,0,450
 46,Catia,CATDTB,FIX,IntegrationTool,Integration Tool,0,460
 47,SolidEdge,DFT,FIX,FILENAME,Reference,0,470
-48,SolidEdge,DFT,FIX,Title,Title,0,480
+48,SolidEdge,DFT,SUM,Title,Title,0,480
 49,SolidEdge,DFT,FIX,AuthoringTool,Authoring Tool,0,490
 50,SolidEdge,DFT,FIX,AuthoringToolVersion,Authoring Tool Version,0,500
 51,SolidEdge,DFT,FIX,IntegrationTool,Integration Tool,0,510

@@ -1,68 +1,68 @@
-<div xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:c="http://java.sun.com/jstl/core"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:nxu="http://nuxeo.org/nxweb/util"
-  xmlns:rich="http://richfaces.org/rich"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxthemes="http://nuxeo.org/nxthemes">
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    template="/incl/action/widgets/primefaces_dialog_just_content_template.xhtml">
 
-  <h3><h:outputText value="#{messages['title.availableDocumentTypes']}" /></h3>
+    <ui:define name="dialog_content">
+        <c:if test="#{empty typesMap.entrySet}">
+              <p class="popUpDescription">
+                <h:outputText value="#{messages['label.availableDocumentTypes.noTypeAvailable']}" />
+              </p>
+            </c:if>
 
-  <div class="content">
+            <c:if test="#{not empty typesMap.entrySet}">
 
-    <c:if test="#{empty typesMap.entrySet}">
-      <p class="popUpDescription">
-        <h:outputText value="#{messages['label.availableDocumentTypes.noTypeAvailable']}" />
-      </p>
-    </c:if>
+              <h:form>
 
-    <c:if test="#{not empty typesMap.entrySet}">
+                <p class="popUpDescription">
+                  <h:outputText value="#{messages['help.chooseDocumentType']}" />
+                </p>
 
-      <h:form id="#{fancyboxFormId}">
+                <table cellspacing="2">
+                  <tr>
+                    <c:forEach var="typesList" items="#{typesMap.entrySet}">
+                        <c:if test="#{typesList.key ne 'Hidden'}">
+                          <td style="vertical-align : top;width : 300px;">
+                            <div>
+                              <h4 class="documentTypes">
+                                <h:outputText value="#{messages[typesList.key]}" />
+                              </h4>
+                              <table>
+                                <tr>
+                                  <c:forEach items="#{typesList.value}" var="typeColumn">
+                                    <td valign="top">
+                                      <c:forEach items="#{typeColumn}" var="type">
+                                        <c:if test ="#{type.id ne 'OtherDocVaultFolder' or (type.id eq 'OtherDocVaultFolder' and currentUser.isMemberOf('vaultFolderManagers'))}" >
+                                            <div class="documentType">
+                                            <h:commandLink action="#{documentActions.createDocument(type.id)}"
+                                                id="#{type.id}" immediate="true">
+                                                <h:graphicImage height="32" width="32" value="#{type.bigIcon}"
+                                                rendered="#{!empty type.bigIcon}" />
+                                                <h:outputText value="#{messages[type.label]}" />
+                                            </h:commandLink>
+                                            <div style="clear: both;"></div>
+                                            </div>
+                                        </c:if>
+                                      </c:forEach>
+                                    </td>
+                                  </c:forEach>
+                                </tr>
+                              </table>
+                            </div>
+                          </td>
+                        </c:if>
+                    </c:forEach>
+                  </tr>
+                </table>
+              </h:form>
 
-        <p class="popUpDescription">
-          <h:outputText value="#{messages['help.chooseDocumentType']}" />
-        </p>
+            </c:if>
+    </ui:define>
 
-        <table cellspacing="2">
-          <tr>
-            <c:forEach var="typesList" items="#{typesMap.entrySet}">
-                <c:if test="#{typesList.key ne 'Hidden'}">
-                  <td style="vertical-align : top;width : 300px;">
-                    <div>
-                      <h4 class="documentTypes">
-                        <h:outputText value="#{messages[typesList.key]}" />
-                      </h4>
-                      <table>
-                        <tr>
-                          <c:forEach items="#{typesList.value}" var="typeColumn">
-                            <td valign="top">
-                              <c:forEach items="#{typeColumn}" var="type">
-                                <div class="documentType">
-                                  <h:commandLink action="#{documentActions.createDocument(type.id)}"
-                                    id="#{type.id}" immediate="true">
-                                    <h:graphicImage height="32" width="32" value="#{type.bigIcon}"
-                                      rendered="#{!empty type.bigIcon}" />
-                                    <h:outputText value="#{messages[type.label]}" />
-                                  </h:commandLink>
-                                  <div style="clear: both;"></div>
-                                </div>
-                              </c:forEach>
-                            </td>
-                          </c:forEach>
-                        </tr>
-                      </table>
-                    </div>
-                  </td>
-                </c:if>
-            </c:forEach>
-          </tr>
-        </table>
-      </h:form>
-
-    </c:if>
-
-  </div>
-
-</div>
+</ui:decorate>

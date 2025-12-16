@@ -2,11 +2,9 @@
   xmlns:f="http://java.sun.com/jsf/core"
   xmlns:ui="http://java.sun.com/jsf/facelets"
   xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:nxh="http://nuxeo.org/nxweb/html"
   xmlns:nxu="http://nuxeo.org/nxweb/util"
   xmlns:nxd="http://nuxeo.org/nxweb/document"
-  xmlns:nxdir="http://nuxeo.org/nxdirectory"
-  xmlns:g="http://nuxeo.org/geide">
+  xmlns:c="http://java.sun.com/jstl/core">
 
   <table>
     <tr>
@@ -45,15 +43,19 @@
         </h:outputLink>
         <h:outputText rendered="#{node.literal}" value="#{node.title}" />
       </td>
+      <c:if test="#{widgetProperty_showVersion}">
       <td>
         <ui:fragment rendered="#{node.QNameResource and node.documentVisible}">
           <nxl:widget id="headerVersion" name="version_and_visualized_type" value="#{node.documentModel}" mode="view" />
         </ui:fragment>
       </td>
+      </c:if>
+      <c:if test="#{widgetProperty_showState}">
       <td>
         <h:outputText rendered="#{node.QNameResource and node.documentVisible}" value="#{messages[node.documentModel.currentLifeCycleState]}"
             styleClass="lifeCycleStateLabel filled" style="background-color: #{lifecycleActions.getLifeCycleStateColor(node.documentModel.currentLifeCycleState)}"/>
       </td>
+      </c:if>
     </tr>
   </table>
 

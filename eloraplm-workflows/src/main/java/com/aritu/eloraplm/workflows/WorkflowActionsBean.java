@@ -18,20 +18,24 @@ import static org.jboss.seam.ScopeType.CONVERSATION;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.NuxeoGroup;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
@@ -40,23 +44,27 @@ import org.nuxeo.ecm.core.event.EventProducer;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.platform.routing.api.DocumentRoute;
 import org.nuxeo.ecm.platform.routing.api.DocumentRouteElement;
-import org.nuxeo.ecm.platform.routing.api.DocumentRoutingConstants;
 import org.nuxeo.ecm.platform.routing.api.DocumentRouteElement.ElementLifeCycleState;
+import org.nuxeo.ecm.platform.routing.api.DocumentRoutingConstants;
+import org.nuxeo.ecm.platform.routing.api.DocumentRoutingService;
 import org.nuxeo.ecm.platform.routing.api.exception.DocumentRouteException;
+import org.nuxeo.ecm.platform.routing.core.api.DocumentRoutingEngineService;
 import org.nuxeo.ecm.platform.routing.core.audit.RoutingAuditHelper;
 import org.nuxeo.ecm.platform.routing.core.impl.GraphNode;
 import org.nuxeo.ecm.platform.routing.core.impl.GraphRoute;
 import org.nuxeo.ecm.platform.task.Task;
 import org.nuxeo.ecm.platform.task.TaskEventNames;
 import org.nuxeo.ecm.platform.task.TaskService;
+import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
+import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.nuxeo.ecm.platform.usermanager.UserManager;
-import org.nuxeo.ecm.platform.routing.api.DocumentRoutingService;
+import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
 import org.primefaces.event.SelectEvent;
 
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
-import com.aritu.eloraplm.core.EloraDocContextBoundActionBean;
+import com.aritu.eloraplm.core.DocumentContextBoundActions;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.aritu.eloraplm.queries.util.EloraQueryHelper;
 
@@ -67,8 +75,7 @@ import com.aritu.eloraplm.queries.util.EloraQueryHelper;
 @Name("workflowActions")
 @Scope(CONVERSATION)
 @AutomaticDocumentBasedInvalidation
-public class WorkflowActionsBean extends EloraDocContextBoundActionBean
-        implements Serializable {
+public class WorkflowActionsBean extends DocumentContextBoundActions {
 
     private static final long serialVersionUID = 1L;
 
@@ -77,11 +84,23 @@ public class WorkflowActionsBean extends EloraDocContextBoundActionBean
     @In(create = true, required = false)
     protected transient CoreSession documentManager;
 
+    @In(required = true, create = true)
+    protected NavigationContext navigationContext;
+
     @In(create = true, required = false)
     protected transient FacesMessages facesMessages;
 
     @In(create = true)
     protected Map<String, String> messages;
+
+    @In(create = true)
+    protected List<DocumentModel> relatedWorkflows;
+
+    @In(create = true)
+    protected RelatedWorkflowActionsBean relatedWorkflowActions;
+
+    @In(create = true)
+    protected WebActions webActions;
 
     private String storedDocId;
 
@@ -90,6 +109,10 @@ public class WorkflowActionsBean extends EloraDocContextBoundActionBean
     private DocumentModel selectedWorkflow;
 
     private boolean isTasksPaneExpanded;
+
+    protected String docWithAttachedRouteId;
+
+    protected String relatedRouteModelDocumentId;
 
     public DocumentModel getSelectedWorkflow() {
         if (selectedWorkflow == null) {
@@ -112,6 +135,15 @@ public class WorkflowActionsBean extends EloraDocContextBoundActionBean
 
     public void toggleIsTasksPaneExpanded() {
         isTasksPaneExpanded = !isTasksPaneExpanded;
+    }
+
+    public String getRelatedRouteModelDocumentId() {
+        return relatedRouteModelDocumentId;
+    }
+
+    public void setRelatedRouteModelDocumentId(
+            String relatedRouteModelDocumentId) {
+        this.relatedRouteModelDocumentId = relatedRouteModelDocumentId;
     }
 
     public String getTaskStatus(String taskDocId) {
@@ -141,13 +173,28 @@ public class WorkflowActionsBean extends EloraDocContextBoundActionBean
         return status;
     }
 
-    public List<DocumentModel> findClosedRelatedRoutes() {
-        DocumentModel currentDoc = getCurrentDocument();
-        String currentDocId = currentDoc.getId();
-        if (currentDoc.isProxy()) {
-            currentDocId = currentDoc.getSourceId();
+    // TODO WF IBAI instantziaren IDa pasata egin
+    // public List<Task> getCurrentWorkflowAllTasks() {
+    // TaskService taskService = Framework.getLocalService(TaskService.class);
+    // DocumentRoute currentWorkflow = getRelatedWorkflow();
+    // if (currentWorkflow != null) {
+    // return taskService.getAllTaskInstances(
+    // currentWorkflow.getDocument().getId(), documentManager);
+    // }
+    // return null;
+    // }
+
+    public List<Task> getAllWorkflowTasks(String wfInstanceId) {
+        TaskService taskService = Framework.getLocalService(TaskService.class);
+        if (wfInstanceId != null) {
+            return taskService.getAllTaskInstances(wfInstanceId,
+                    documentManager);
         }
-        return findClosedRelatedRoutes(currentDocId);
+        return null;
+    }
+
+    public List<DocumentModel> findClosedRelatedRoutes() {
+        return findClosedRelatedRoutes(getCurrentNonProxyDocId());
     }
 
     public List<DocumentModel> findClosedRelatedRoutes(String documentId) {
@@ -175,23 +222,64 @@ public class WorkflowActionsBean extends EloraDocContextBoundActionBean
     }
 
     public boolean hasClosedRelatedRoutes() {
-        DocumentModel currentDoc = getCurrentDocument();
-        String currentDocId = currentDoc.getId();
-        if (currentDoc.isProxy()) {
-            currentDocId = currentDoc.getSourceId();
-        }
-        return hasClosedRelatedRoutes(currentDocId);
+        return hasClosedRelatedRoutes(getCurrentNonProxyDocId());
     }
 
     public boolean hasClosedRelatedRoutes(String documentId) {
         return !findClosedRelatedRoutes(documentId).isEmpty();
     }
 
+    public boolean hasRelatedWorkflow() {
+        queryForRelatedWorkflows();
+        return !relatedWorkflows.isEmpty();
+    }
+
+    public DocumentRoute getRelatedWorkflow() {
+        // try to see if actually the current document is a route
+        DocumentModel currentNonProxyDocument = getCurrentNonProxyDocument();
+
+        if (currentNonProxyDocument.hasFacet(
+                DocumentRoutingConstants.DOCUMENT_ROUTE_DOCUMENT_FACET)) {
+            docWithAttachedRouteId = null;
+            return currentNonProxyDocument.getAdapter(DocumentRoute.class);
+        }
+        // try to see if the current document is a routeElement
+        DocumentRouteElement relatedRouteElement = currentNonProxyDocument.getAdapter(
+                DocumentRouteElement.class);
+        if (relatedRouteElement != null) {
+            docWithAttachedRouteId = null;
+            return relatedRouteElement.getDocumentRoute(documentManager);
+        }
+        // else we must be in a document attached to a route
+        List<DocumentRoute> routes = getRelatedWorkflows();
+        if (routes.isEmpty()) {
+            return null;
+        }
+        docWithAttachedRouteId = currentNonProxyDocument.getId();
+        return routes.get(0);
+    }
+
+    public List<DocumentRoute> getRelatedWorkflows() {
+        queryForRelatedWorkflows();
+        List<DocumentRoute> workflows = new ArrayList<DocumentRoute>(
+                relatedWorkflows.size());
+        for (DocumentModel doc : relatedWorkflows) {
+            workflows.add(doc.getAdapter(DocumentRoute.class));
+        }
+        return workflows;
+    }
+
+    protected void queryForRelatedWorkflows() {
+        if (relatedWorkflows == null) {
+            relatedWorkflows = relatedWorkflowActions.findRelatedWorkflows();
+        }
+    }
+
     public DocumentRoutingService getDocumentRoutingService() {
         return Framework.getService(DocumentRoutingService.class);
     }
 
-    public void onRowSelect(SelectEvent event) {
+    public void onRowSelect(SelectEvent<DocumentModel> event) {
         selectedWorkflow = (DocumentModel) event.getObject();
     }
 
@@ -392,9 +480,141 @@ public class WorkflowActionsBean extends EloraDocContextBoundActionBean
         }
     }
 
+    public String getCurrentWorkflowInitiator() {
+        DocumentRoute currentRoute = getRelatedWorkflow();
+        if (currentRoute != null) {
+            return (String) currentRoute.getDocument().getPropertyValue(
+                    DocumentRoutingConstants.INITIATOR);
+        }
+        return "";
+    }
+
+    public String startWorkflow() {
+        DocumentModel currentNonProxyDoc = getCurrentNonProxyDocument();
+        DocumentRoute currentRoute = currentNonProxyDoc.getAdapter(
+                DocumentRoute.class);
+        if (currentRoute == null) {
+            log.warn("Current document is not a workflow model");
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("label.document.routing.no.workflow"));
+            return null;
+        }
+        getDocumentRoutingService().createNewInstance(
+                currentNonProxyDoc.getName(),
+                currentRoute.getAttachedDocuments(), documentManager, true);
+        Events.instance().raiseEvent(EventNames.DOCUMENT_CHILDREN_CHANGED,
+                currentNonProxyDoc);
+        Events.instance().raiseEvent(TaskEventNames.WORKFLOW_NEW_STARTED);
+        webActions.resetTabList();
+        return null;
+    }
+
+    public String startWorkflowRelatedToCurrentDocument() {
+        DocumentRoute route = getRelatedWorkflow();
+        // check relatedRoutedoc id
+        if (!StringUtils.isEmpty(relatedRouteModelDocumentId)) {
+            DocumentModel model = documentManager.getDocument(
+                    new IdRef(relatedRouteModelDocumentId));
+            route = model.getAdapter(DocumentRoute.class);
+        }
+        if (route == null) {
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "feedback.casemanagement.document.route.no.valid.route"));
+            return null;
+        }
+
+        List<String> documentIds = new ArrayList<String>();
+        documentIds.add(getCurrentNonProxyDocId());
+        route.setAttachedDocuments(documentIds);
+        getDocumentRoutingService().createNewInstance(
+                route.getDocument().getName(), documentIds, documentManager,
+                true);
+        Events.instance().raiseEvent(TaskEventNames.WORKFLOW_NEW_STARTED);
+        webActions.resetTabList();
+        return null;
+    }
+
+    public String cancelWorkflow(String workflowId) {
+        if (workflowId == null) {
+            log.error("Workflow ID is null");
+            return null;
+        }
+
+        try {
+            DocumentModel wfDoc = documentManager.getDocument(
+                    new IdRef(workflowId));
+
+            DocumentRoute route = wfDoc.getAdapter(DocumentRoute.class);
+
+            Framework.getLocalService(
+                    DocumentRoutingEngineService.class).cancel(route,
+                            documentManager);
+            // force computing of tabs
+            webActions.resetTabList();
+            Events.instance().raiseEvent(TaskEventNames.WORKFLOW_CANCELED);
+            Contexts.removeFromAllContexts("relatedWorkflows");
+            documentManager.save();
+            return navigationContext.navigateToDocument(
+                    navigationContext.getCurrentDocument());
+
+        } catch (DocumentNotFoundException e) {
+            log.error("Workflow does not exists");
+            return null;
+        }
+    }
+
+    public List<DocumentModel> getFilteredRouteModels() {
+        DocumentRoutingService documentRoutingService = Framework.getLocalService(
+                DocumentRoutingService.class);
+        List<DocumentModel> routeModels = documentRoutingService.searchRouteModels(
+                documentManager, "");
+        for (Iterator<DocumentModel> it = routeModels.iterator(); it.hasNext();) {
+            DocumentModel route = it.next();
+            Object graphRouteObj = route.getAdapter(GraphRoute.class);
+            if (graphRouteObj instanceof GraphRoute) {
+                String filter = ((GraphRoute) graphRouteObj).getAvailabilityFilter();
+                if (!StringUtils.isBlank(filter)) {
+                    if (!webActions.checkFilter(filter)) {
+                        it.remove();
+                    }
+                }
+            } else {
+                // old workflow document => ignore
+                it.remove();
+            }
+        }
+        return routeModels;
+    }
+
+    private String getCurrentNonProxyDocId() {
+        return getNonProxyDocId(getCurrentDocument());
+    }
+
+    private String getNonProxyDocId(DocumentModel doc) {
+        if (doc.isProxy()) {
+            return doc.getSourceId();
+        } else {
+            return doc.getId();
+        }
+    }
+
+    private DocumentModel getCurrentNonProxyDocument() {
+        return getNonProxyDocument(getCurrentDocument());
+    }
+
+    private DocumentModel getNonProxyDocument(DocumentModel doc) {
+        if (doc.isProxy()) {
+            return documentManager.getSourceDocument(doc.getRef());
+        } else {
+            return doc;
+        }
+    }
+
     @Override
     protected void resetBeanCache(DocumentModel newCurrentDocumentModel) {
         isTasksPaneExpanded = false;
+        docWithAttachedRouteId = null;
+        relatedRouteModelDocumentId = null;
     }
 
 }

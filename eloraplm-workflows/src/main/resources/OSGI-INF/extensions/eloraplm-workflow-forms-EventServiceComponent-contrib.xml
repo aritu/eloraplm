@@ -14,8 +14,8 @@
             <event>afterWorkflowTaskCreated</event>
         </listener>
         
-        <listener name="nodeTaskQuestionsWriter" async="false" postCommit="false" 
-                  class="com.aritu.eloraplm.workflows.forms.listener.NodeTaskQuestionsWriterListener" priority="10">
+        <listener name="nodeTaskAnswersWriter" async="false" postCommit="false" 
+                  class="com.aritu.eloraplm.workflows.forms.listener.NodeTaskAnswersWriterListener" priority="10">
             <event>workflowTaskCompleted</event>
         </listener>
         

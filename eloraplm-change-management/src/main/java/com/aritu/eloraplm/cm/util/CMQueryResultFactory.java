@@ -24,6 +24,8 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.IterableQueryResult;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.query.sql.NXQL;
+
+import com.aritu.eloraplm.constants.CMMetadataConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -38,25 +40,25 @@ public class CMQueryResultFactory {
             CMQueryResultFactory.class);
 
     public static List<String> getDistinctDerivedModifiedItemsByOriginList(
-            CoreSession session, String cmProcessUid, String itemType,
+            CoreSession session, String cmProcessUid,
             List<String> originItemUids) throws EloraException {
 
         String logInitMsg = "[getDistinctDerivedModifiedItemsByOriginList] ["
                 + session.getPrincipal().getName() + "] ";
 
-        log.trace(logInitMsg + "--- ENTER --- itemType = |" + itemType + "|");
+        log.trace(logInitMsg + "--- ENTER ---");
 
         List<String> derivedModifiedItems = new ArrayList<String>();
 
         IterableQueryResult it = null;
         try {
             String query = CMQueryFactory.getDistinctDerivedModifiedItemsByOriginListQuery(
-                    cmProcessUid, itemType, originItemUids);
+                    cmProcessUid, originItemUids);
             it = session.queryAndFetch(query, NXQL.NXQL);
 
             if (it.size() > 0) {
 
-                String pfx = CMHelper.getModifiedItemListMetadaName(itemType);
+                String pfx = CMMetadataConstants.MODIFIED_ITEM_LIST;
 
                 for (Map<String, Serializable> map : it) {
                     String originItemUid = (String) map.get(
@@ -99,18 +101,14 @@ public class CMQueryResultFactory {
         IterableQueryResult it = null;
         try {
             String query = CMQueryFactory.getDistinctImpacteItemsActionsByOriginListQuery(
-                    cmProcessUid, itemType, originItemUids);
+                    cmProcessUid, originItemUids);
             it = session.queryAndFetch(query, NXQL.NXQL);
 
             if (it.size() > 0) {
-
-                String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
-
+                String pfx = CMMetadataConstants.IMPACTED_ITEM_LIST;
                 for (Map<String, Serializable> map : it) {
                     String action = (String) map.get(pfx + "/*1/action");
-
                     distinctActions.add(action);
-
                 }
             }
         } catch (NuxeoException e) {
@@ -149,13 +147,10 @@ public class CMQueryResultFactory {
             it = session.queryAndFetch(query, NXQL.NXQL);
 
             if (it.size() > 0) {
-
-                String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
-
+                String pfx = CMMetadataConstants.IMPACTED_ITEM_LIST;
                 for (Map<String, Serializable> map : it) {
                     String originItemUid = (String) map.get(
                             pfx + "/*1/originItem");
-
                     distinctImpactedItemsOrigins.add(originItemUid);
                 }
             }

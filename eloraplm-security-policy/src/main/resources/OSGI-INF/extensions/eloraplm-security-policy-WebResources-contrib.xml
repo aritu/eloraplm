@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.security.policy.WebResources.contrib">
+    <require>org.nuxeo.theme.nuxeo.webapp</require>
+
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+        <resource name="security.policy.style.css" type="css">
+            <uri>/css/security-policy-style.css</uri>
+        </resource>
+    </extension>
+    
+    <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
+        <bundle name="nuxeo_sassCss">
+            <resources append="true">
+                <resource>security.policy.style.css</resource>
+            </resources>
+        </bundle>
+    </extension>
+    
+</component>

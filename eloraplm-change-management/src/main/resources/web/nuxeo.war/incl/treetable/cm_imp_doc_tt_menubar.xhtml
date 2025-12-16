@@ -1,0 +1,107 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    
+    <c:if test="#{layout.mode eq 'edit'}">
+	    <h:outputScript library="js" name="primefaces_dialog.js" target="#{pageJsTarget}" />
+	
+	    <p:menubar id="ttMenuBar" styleClass="ttMenuBar">
+	        
+	        <p:submenu label="#{empty value.selectedNodes ? messages['label.treetable.selection.noEntriesSelected'] : nxu:translate(messages['label.treetable.selection.selectedEntries'], fn:length(value.selectedNodes)) }"
+	            icon="pi pi-fw pi-check-square"
+	            styleClass="selectionActions"
+	            disabled="#{empty value.selectedNodes}">
+	            
+	            <p:menuitem value="#{messages['eloraplm.command.cm.modifiedItem.edit']}&#8230;"
+	                icon="pi pi-fw pi-pencil"
+	                process="@this"
+	                partialSubmit="true"
+	                update=":glb_pf_dlg_panel"
+	                onstart="onPfDialogActionStart()"
+	                actionListener="#{pfDialogActions.initDialog(
+	                        value,
+	                        currentDocument,
+	                        'eloraplm.command.edit',
+	                        '/incl/action/cm_edit_doc_impacted_items.xhtml',
+	                        true,false,true,null,null,null,null)}"
+	                oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+	                 />
+	        </p:submenu>
+	                
+	        <p:submenu label="#{messages['label.batchActions']}" icon="pi pi-fw pi-list">
+	        
+	            <p:menuitem value="#{messages['command.lock']}"
+	                icon="pi pi-fw pi-lock"
+	                actionListener="#{cmDocsBatchProcessing.toggleLockAll(true)}"
+	                process="@this"
+	                partialSubmit="true"
+	                update="@none"
+                    onstart="PF('#{treeBlockerId}').show()"
+                    oncomplete="PF('#{treeWidgetId}').filter()"/>
+	        
+    	        <p:divider/>
+                <p:menuitem value="#{messages['label.basicDocuments']}" style="font-weight:bold; pointer-events:none; color:gray; background:transparent;" />
+	            
+	            <p:menuitem value="#{messages['eloraplm.command.checkOut']}"
+	                icon="pi pi-fw pi-arrow-down"
+	                actionListener="#{cmDocsBatchProcessing.checkoutBasicDocs}"
+	                process="@this"
+	                partialSubmit="true"
+	                update="nxMainContainer"
+	                onstart="PF('globalBlocker').show()"
+	                oncomplete="PF('globalBlocker').hide()" />
+	                
+	            <p:menuitem value="#{messages['eloraplm.command.checkIn']}"
+	                icon="pi pi-fw pi-arrow-up"
+	                actionListener="#{cmDocsBatchProcessing.checkinBasicDocs}"
+	                process="@this"
+	                partialSubmit="true"
+	                update="nxMainContainer"
+	                onstart="PF('globalBlocker').show()"
+	                oncomplete="PF('globalBlocker').hide()" />
+	            
+	            <p:divider/>
+	            
+	            <p:menuitem value="#{messages['eloraplm.command.cm.batch.approve']}&#8230;"
+	                icon="pi pi-fw pi-thumbs-up"
+	                process="@this"
+	                partialSubmit="true"
+	                update=":glb_pf_dlg_panel"
+	                onstart="onPfDialogActionStart()"
+	                actionListener="#{pfDialogActions.initDialog(
+	                        value,
+	                        currentDocument,
+	                        'eloraplm.command.cm.batch.approve',
+	                        '/incl/action/cm_execute_promote_impacted_docs.xhtml',
+	                        true,false,true,null,null,null,null)}"
+	                oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+	                 />
+	                
+	            <p:menuitem value="#{messages['command.unlock']}"
+	                icon="pi pi-fw pi-unlock"
+	                actionListener="#{cmDocsBatchProcessing.toggleLockAll(false)}"
+	                process="@this"
+	                partialSubmit="true"
+	                update="@none"
+                    onstart="PF('#{treeBlockerId}').show()"
+                    oncomplete="PF('#{treeWidgetId}').filter()"/>
+	    
+	        </p:submenu>        
+                
+            <p:menuitem value="#{messages['command.save']}"
+                icon="pi pi-fw pi-save"
+                containerStyleClass="mainAction"
+                actionListener="#{value.saveTree}"
+                ajax="false" />
+	        
+	    </p:menubar>
+    </c:if>
+</ui:composition>

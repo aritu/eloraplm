@@ -1,33 +1,57 @@
-<f:subview id="#{widget.id}"
+<f:subview
+    id="#{widget.id}"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:nxu="http://nuxeo.org/nxweb/util"
     xmlns:nxd="http://nuxeo.org/nxweb/document"
+    xmlns:c="http://java.sun.com/jstl/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core">
+    xmlns:f="http://java.sun.com/jsf/core"
+>
+    <nxu:set
+        var="owner"
+        value="#{not empty field.lockInfo ? nxu:userFullName(field.lockInfo.owner) : ''}"
+    >
+        <nxu:set
+            var="createdTime"
+            value="#{not empty field.lockInfo ? field.lockInfo.created.time : ''}"
+        >
+            <c:if test="#{widget.mode != 'csv'}">
+                <nxu:set
+                    var="hasWritePermission"
+                    value="#{nxd:hasPermission(field, 'Write')}"
+                >
+                    <h:graphicImage
+                        value="#{not empty field.lockInfo and field.lockInfo.owner ne currentUser ?
+                '/icons/badge_locked_other_16.png'
+                : '/icons/badge_locked_16.png'}"
+                        style="vertical-align: middle"
+                        rendered="#{field != null and field.locked}"
+                    >
+                        <f:attribute
+                            name="title"
+                            value="#{messages['label.summary.by']} #{owner}, #{messages['label.summary.the']} #{createdTime}"
+                        />
+                        <f:attribute
+                            name="styleClass"
+                            value="tipsyShow"
+                        />
+                    </h:graphicImage>
 
-    <nxu:set var="hasWritePermission" value="#{nxd:hasPermission(field, 'Write')}">
-        
-        <h:graphicImage value="#{not empty field.lockInfo and field.lockInfo.owner ne currentUser ?
-                '/icons/locked_by_other_16.gif'
-                : '/icons/locked_by_me_16.gif'}"
-            style="vertical-align: middle;"
-            rendered="#{field != null and field.locked}">
-            
-            <nxu:set var="owner" value="#{not empty field.lockInfo ? nxu:userFullName(field.lockInfo.owner) : ''}">
-            <nxu:set var="createdTime" value="#{not empty field.lockInfo ? field.lockInfo.created.time : ''}">
-                <f:attribute name="title" value="#{messages['label.summary.by']} #{owner}, #{messages['label.summary.the']} #{createdTime}" />
-                <f:attribute name="styleClass" value="tipsyShow" />
-            </nxu:set>
-            </nxu:set>
-            
-        </h:graphicImage>
-        
-        <h:graphicImage value="/icons/badge_read_only_16.png"
-            style="vertical-align: middle;" rendered="#{field != null and not field.locked and not hasWritePermission}"
-            styleClass="tipsyShow"
-            title="#{messages['label.readOnly']}"
-        />
-        
+                    <h:graphicImage
+                        value="/icons/badge_read_only_16.png"
+                        style="vertical-align: middle"
+                        rendered="#{field != null and not field.locked and not hasWritePermission}"
+                        styleClass="tipsyShow"
+                        title="#{messages['label.readOnly']}"
+                    />
+                </nxu:set>
+            </c:if>
+            <c:if test="#{widget.mode == 'csv'}">
+                <h:outputText
+                    value="#{messages['label.summary.by']} #{owner}, #{messages['label.summary.the']} #{createdTime}"
+                    rendered="#{not empty field.lockInfo}"
+                />
+            </c:if>
+        </nxu:set>
     </nxu:set>
-
 </f:subview>

@@ -5,6 +5,8 @@
   <require>org.nuxeo.ecm.webapp.seam.debug.action</require>
   <require>org.nuxeo.ecm.collections.actions</require>
   <require>org.nuxeo.ecm.favorites.actions</require>
+  <require>org.nuxeo.ecm.platform.audit.web</require>
+  <require>org.nuxeo.ecm.diff.actions</require>
   
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
       <filter id="can_write">
@@ -51,7 +53,7 @@
     
     <!-- default actions on upper buttons -->
     
-    <action id="checkinAction" order="10" label="eloraplm.command.checkIn" type="fancybox" icon="/icons/action_check_in_16.png">
+    <action id="checkinAction" order="10" label="eloraplm.command.checkIn" type="pfdialog" icon="/icons/action_check_in_16.png">
       <category>DOCUMENT_UPPER_ACTION</category>
       <filter-id>versionable</filter-id>
       <filter-id>isEditable</filter-id>
@@ -60,6 +62,8 @@
         <property name="include">/incl/action/checkin_document.xhtml</property>
         <property name="ajaxSupport">true</property>
         <property name="visibleByDefault">true</property>
+        <property name="dialogTitle">eloraplm.title.checkIn</property>
+        <property name="dialogResizable">false</property>
       </properties>
     </action>
     
@@ -71,6 +75,26 @@
       <properties>
         <property name="visibleByDefault">true</property>
       </properties>
+    </action>
+    
+    <action id="checkOutFromVersion" link="#{eloraVersionedPdmActions.checkOutFromVersion}"
+        label="eloraplm.command.checkOutFromVersion" order="30" icon="/icons/row_check_out_from_16.png">
+        <category>VERSION_LIST_ITEM</category>
+        <filter-id>versionable</filter-id>
+        <filter-id>isNotCheckedOut</filter-id>
+        <filter-id>can_write</filter-id>
+    </action>
+    
+    <!-- override in order to add icon -->
+    <action id="VIEW_VERSION" link="#{versionedActions.viewArchivedVersion}"
+      label="command.viewArchivedVersion" order="10" icon="/icons/row_view_16.png">
+      <category>VERSION_LIST_ITEM</category>
+    </action>
+
+    <!-- override in order to add icon -->
+    <action id="CURRENT_VERSION_DIFF" link="#{diffActions.prepareCurrentVersionDiff}"
+      label="command.versions.diffCurrent" order="100" icon="/icons/row_diff_16.png">
+      <category>VERSION_LIST_ITEM</category>
     </action>
 
     <action id="undoCheckoutAction" order="0" label="eloraplm.command.undoCheckout" link="#{pdmAction.undoCheckout(currentDocument)}" icon="/icons/action_undo_checkout_16.png">

@@ -13,6 +13,8 @@
  */
 package com.aritu.eloraplm.templating.automation;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -24,6 +26,8 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.runtime.api.Framework;
+import org.nuxeo.template.api.TemplateInput;
+
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.templating.api.TemplatingService;
@@ -42,6 +46,9 @@ public class RenderWithTemplate {
 
     @Param(name = "templateId", required = true)
     protected String templateId;
+
+    @Param(name = "params", required = false)
+    protected List<TemplateInput> params;
 
     @Context
     private CoreSession session;
@@ -64,7 +71,7 @@ public class RenderWithTemplate {
 
             TemplatingService ts = Framework.getService(
                     TemplatingService.class);
-            blob = ts.processTemplate(templateId, doc);
+            blob = ts.processTemplate(templateId, doc, params);
 
             log.trace(logInitMsg + "Blob created with template |" + templateId
                     + "|.");

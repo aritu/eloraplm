@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.securitypolicy.EventServiceComponent">
+    <extension point="listener" target="org.nuxeo.ecm.core.event.EventServiceComponent">
+        
+        <listener name="documentDefaultSecurityLevelListener" async="false" postCommit="false"
+                class="com.aritu.eloraplm.securitypolicy.listener.DocumentDefaultSecurityLevelListener" priority="200">
+            <event>documentCreated</event>
+        </listener>
+        
+    </extension>
+</component>

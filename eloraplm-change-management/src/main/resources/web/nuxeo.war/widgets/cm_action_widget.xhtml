@@ -1,43 +1,64 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxu="http://nuxeo.org/nxweb/util"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:c="http://java.sun.com/jstl/core">
-  
- 
-<nxu:set var="actionDirectoryName" value="#{field_1 ? 'elora_cmActionModified' : 'elora_cmActionImpacted'}">
-  
-  <ui:fragment rendered="#{field_2 or widget.mode == 'view'}">
-    <nxl:widgetType name="selectOneDirectory" mode="view" 
-      value="#{field_0}" 
-      directoryName="#{actionDirectoryName}" 
-      localize="true" 
-      displayIdAndLabel="false" 
-      style="min-width: 10em;"
-      notDisplayDefaultOption="true"/>
-  </ui:fragment>
-  
-  <ui:fragment rendered="#{not field_2 and widget.mode == 'edit'}">
-    <nxl:widgetType name="selectOneDirectory" mode="edit" 
-      value="#{field_0}" 
-      directoryName="#{actionDirectoryName}" 
-      localize="true" 
-      displayIdAndLabel="false" 
-      ordering="ordering" 
-      style="min-width: 10em;"
-      notDisplayDefaultOption="true">
-      
-      <ui:include src="cm_widget_ajax_content_template.xhtml">
-        <ui:param name="triggeredField" value="action" />
-        <ui:param name="updateChildren" value="#{true}" />
-      </ui:include>
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+>
+    <nxu:set
+        var="actionDirectoryName"
+        value="#{field_1 ? 'elora_cmActionModified' : (field_2  == 'DOC' ? 'elora_cmActionImpactedCad' : 'elora_cmActionImpactedItem')}"
+    >
+        <ui:fragment
+            rendered="#{(field_3 and widget.mode == 'edit') or widget.mode == 'view'}"
+        >
+            <nxl:widgetType
+                name="selectOneDirectory"
+                mode="view"
+                value="#{field_0}"
+                directoryName="#{actionDirectoryName}"
+                localize="true"
+                displayIdAndLabel="false"
+                style="min-width: 6em"
+                notDisplayDefaultOption="true"
+            />
+        </ui:fragment>
 
-    </nxl:widgetType>
-  </ui:fragment>
-  
-</nxu:set>
+        <ui:fragment rendered="#{not field_3 and widget.mode == 'edit'}">
+            <nxl:widgetType
+                name="selectOneDirectory"
+                mode="edit"
+                value="#{field_0}"
+                directoryName="#{actionDirectoryName}"
+                localize="true"
+                displayIdAndLabel="false"
+                ordering="ordering"
+                style="min-width: 6em"
+                notDisplayDefaultOption="true"
+            >
+                <ui:include src="cm_widget_ajax_content_template.xhtml">
+                    <ui:param
+                        name="triggeredField"
+                        value="action"
+                    />
+                    <ui:param
+                        name="updateChildren"
+                        value="#{true}"
+                    />
+                </ui:include>
+            </nxl:widgetType>
+        </ui:fragment>
 
+        <ui:fragment rendered="#{widget.mode == 'csv'}">
+            <nxu:set
+                var="actionDoc"
+                value="#{nxdir:directoryEntry(actionDirectoryName, field_0)}"
+            >
+                <h:outputText value="#{actionDoc.vocabulary.label}" />
+            </nxu:set>
+        </ui:fragment>
+    </nxu:set>
 </ui:composition>

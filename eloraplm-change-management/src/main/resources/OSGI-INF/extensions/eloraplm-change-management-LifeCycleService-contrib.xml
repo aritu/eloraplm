@@ -5,263 +5,267 @@
     
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         <types>
-          <type name="CmPr">eloraCmPrLifeCycle</type>
-          <type name="CmEcr">eloraCmEcrLifeCycle</type>
-          <type name="CmEco">eloraCmEcoLifeCycle</type>
-          
-          <type name="FolderArchivedChangeManagement">default</type>
+            <type name="CmPr"
+                noRecursionForTransitions="review, validate, complete, manage, reject">eloraCmPrLifeCycle</type>
+            <type name="CmEcr"
+                noRecursionForTransitions="review, evaluate, complete, reject">eloraCmEcrLifeCycle</type>
+            <type name="CmEco"
+                noRecursionForTransitions="technical review, manufacturing review, purchaser review,
+                commercial review, economical review, complete, reject, startAsyncProcess, backToCreated">eloraCmEcoLifeCycle</type>
+            
+            <type name="FolderArchivedChangeManagement">default</type>
         </types>
     </extension>
 
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="lifecycle">
 
         <lifecycle defaultInitial="created" name="eloraCmPrLifeCycle">
-          <transitions>
-            <transition destinationState="reviewed" name="review">
-              <description>Create the content</description>
-            </transition>
-            <transition destinationState="validated" name="validate">
-              <description>Validate the content</description>
-            </transition>
-            <transition destinationState="completed" name="complete">
-              <description>Complete the content</description>
-            </transition>
-            <transition destinationState="outmanaged" name="manage">
-              <description>Manage the content out of Elora</description>
-            </transition>
-            <transition destinationState="rejected" name="reject">
-              <description>Reject the content</description>
-            </transition>
-            <transition destinationState="deleted" name="delete">
-              <description>Move document to trash (temporary delete)</description>
-            </transition>
-            <transition destinationState="created" name="undelete">
-              <description>Recover the document from trash</description>
-            </transition>
-          </transitions>
-
-          <states>
-            <state description="Default state" initial="true" name="created">
-              <transitions>
-                <transition>review</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="PR has been reviewed" name="reviewed">
-              <transitions>
-                <transition>validate</transition>
-                <transition>reject</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="PR is validated" name="validated">
-              <transitions>
-                <transition>complete</transition>
-                <transition>manage</transition>
-                <transition>reject</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="PR is completed" name="completed">
-              <transitions>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="PR is managed out of Elora" name="outmanaged">
-              <transitions>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="PR is rejected" name="rejected">
-              <transitions>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="PR is deleted" name="deleted">
-              <transitions>
-                <transition>undelete</transition>
-              </transitions>
-            </state>
-          </states>
+            <transitions>
+                <transition name="review" destinationState="reviewed">
+                    <description>Create the content</description>
+                </transition>
+                <transition name="validate" destinationState="validated">
+                    <description>Validate the content</description>
+                </transition>
+                <transition name="complete" destinationState="completed">
+                    <description>Complete the content</description>
+                </transition>
+                <transition name="manage" destinationState="outmanaged">
+                    <description>Manage the content out of Elora</description>
+                </transition>
+                <transition name="reject" destinationState="rejected">
+                    <description>Reject the content</description>
+                </transition>
+                <transition name="delete" destinationState="deleted">
+                    <description>Move document to trash (temporary delete)</description>
+                </transition>
+                <transition name="undelete" destinationState="created">
+                    <description>Recover the document from trash</description>
+                </transition>
+            </transitions>
+            
+            <states>
+                <state name="created" description="Default state" initial="true">
+                    <transitions>
+                        <transition>review</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="reviewed" description="PR has been reviewed">
+                    <transitions>
+                        <transition>validate</transition>
+                        <transition>reject</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="validated" description="PR is validated">
+                    <transitions>
+                        <transition>complete</transition>
+                        <transition>manage</transition>
+                        <transition>reject</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="completed" description="PR is completed">
+                    <transitions>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="outmanaged" description="PR is managed out of Elora">
+                    <transitions>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="rejected" description="PR is rejected">
+                    <transitions>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="deleted" description="PR is deleted">
+                    <transitions>
+                        <transition>undelete</transition>
+                    </transitions>
+                </state>
+            </states>
         </lifecycle>
 
         <lifecycle defaultInitial="created" name="eloraCmEcrLifeCycle">
-          <transitions>
-            <transition destinationState="reviewed" name="review">
-              <description>Create the content</description>
-            </transition>
-            <transition destinationState="evaluated" name="evaluate">
-              <description>Evaluate the content</description>
-            </transition>
-            <transition destinationState="completed" name="complete">
-              <description>Complete the content</description>
-            </transition>
-            <transition destinationState="rejected" name="reject">
-              <description>Reject the content</description>
-            </transition>
-            <transition destinationState="deleted" name="delete">
-              <description>Move document to trash (temporary delete)</description>
-            </transition>
-            <transition destinationState="created" name="undelete">
-              <description>Recover the document from trash</description>
-            </transition>
-          </transitions>
+            <transitions>
+                <transition name="review" destinationState="reviewed">
+                    <description>Create the content</description>
+                </transition>
+                <transition name="evaluate" destinationState="evaluated">
+                    <description>Evaluate the content</description>
+                </transition>
+                <transition name="complete" destinationState="completed">
+                    <description>Complete the content</description>
+                </transition>
+                <transition name="reject" destinationState="rejected">
+                    <description>Reject the content</description>
+                </transition>
+                <transition name="delete" destinationState="deleted">
+                    <description>Move document to trash (temporary delete)</description>
+                </transition>
+                <transition name="undelete" destinationState="created">
+                    <description>Recover the document from trash</description>
+                </transition>
+            </transitions>
 
-          <states>
-            <state description="Default state" initial="true" name="created">
-              <transitions>
-                <transition>review</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECR has been reviewed" name="reviewed">
-              <transitions>
-                <transition>evaluate</transition>
-                <transition>reject</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECR is evaluated" name="evaluated">
-              <transitions>
-                <transition>complete</transition>
-                <transition>reject</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECR is completed" name="completed">
-              <transitions>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECR is rejected" name="rejected">
-              <transitions>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECR is deleted" name="deleted">
-              <transitions>
-                <transition>undelete</transition>
-              </transitions>
-            </state>
-          </states>
+            <states>
+                <state name="created" description="Default state" initial="true">
+                    <transitions>
+                        <transition>review</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="reviewed" description="ECR has been reviewed">
+                    <transitions>
+                        <transition>evaluate</transition>
+                        <transition>reject</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="evaluated" description="ECR is evaluated">
+                    <transitions>
+                        <transition>complete</transition>
+                        <transition>reject</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="completed" description="ECR is completed">
+                    <transitions>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="rejected" description="ECR is rejected">
+                    <transitions>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="deleted" description="ECR is deleted">
+                    <transitions>
+                        <transition>undelete</transition>
+                    </transitions>
+                </state>
+            </states>
         </lifecycle>
 
 
         <lifecycle defaultInitial="created" name="eloraCmEcoLifeCycle">
-          <transitions>
-            <transition destinationState="technical reviewed" name="technical review">
-              <description>Review the content</description>
-            </transition>
-            <transition destinationState="manufacturing reviewed" name="manufacturing review">
-              <description>Manufacturing review</description>
-            </transition>
-            <transition destinationState="purchasing reviewed" name="purchaser review">
-              <description>Purchasing review</description>
-            </transition>
-            <transition destinationState="commercial reviewed" name="commercial review">
-              <description>Commercial review</description>
-            </transition>
-            <transition destinationState="economical reviewed" name="economical review">
-              <description>Economical validation</description>
-            </transition>
-            <transition destinationState="completed" name="complete">
-              <description>Complete the content</description>
-            </transition>
-            <transition destinationState="rejected" name="reject">
-              <description>Reject the content</description>
-            </transition>
-            <transition destinationState="deleted" name="delete">
-              <description>Move document to trash (temporary delete)</description>
-            </transition>
-            <transition destinationState="created" name="undelete">
-              <description>Recover the document from trash</description>
-            </transition>
-            <transition name="startAsyncProcess" destinationState="asyncProcessing">
-              <description>An asynchronous process is running</description>
-            </transition>
-            <transition name="backToCreated" destinationState="created">
-              <description>Back to created state</description>
-            </transition>
-          </transitions>
+            <transitions>
+                <transition name="technical review" destinationState="technical reviewed">
+                    <description>Review the content</description>
+                </transition>
+                <transition name="manufacturing review" destinationState="manufacturing reviewed">
+                    <description>Manufacturing review</description>
+                </transition>
+                <transition name="purchaser review" destinationState="purchasing reviewed">
+                    <description>Purchasing review</description>
+                </transition>
+                <transition name="commercial review" destinationState="commercial reviewed">
+                    <description>Commercial review</description>
+                </transition>
+                <transition name="economical review" destinationState="economical reviewed">
+                    <description>Economical validation</description>
+                </transition>
+                <transition name="complete" destinationState="completed">
+                    <description>Complete the content</description>
+                </transition>
+                <transition name="reject" destinationState="rejected">
+                    <description>Reject the content</description>
+                </transition>
+                <transition name="startAsyncProcess" destinationState="asyncProcessing">
+                    <description>An asynchronous process is running</description>
+                </transition>
+                <transition name="backToCreated" destinationState="created">
+                  <description>Back to created state</description>
+                </transition>
+                <transition name="delete" destinationState="deleted">
+                    <description>Move document to trash (temporary delete)</description>
+                </transition>
+                <transition name="undelete" destinationState="created">
+                    <description>Recover the document from trash</description>
+                </transition>
+            </transitions>
 
-          <states>
-            <state description="Default state" initial="true" name="created">
-              <transitions>
-                <transition>technical review</transition>
-                <transition>manufacturing review</transition>
-                <transition>startAsyncProcess</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECO has technical review" name="technical reviewed">
-              <transitions>
-                <transition>complete</transition>
-                <transition>reject</transition>
-                <transition>startAsyncProcess</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECO has manufacturing review" name="manufacturing reviewed">
-              <transitions>
-                <transition>purchaser review</transition>
-                <transition>reject</transition>
-                <transition>startAsyncProcess</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECO has purchaser review" name="purchasing reviewed">
-              <transitions>
-                <transition>commercial review</transition>
-                <transition>reject</transition>
-                <transition>startAsyncProcess</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECO has commercial review" name="commercial reviewed">
-              <transitions>
-                <transition>complete</transition>
-                <transition>reject</transition>
-                <transition>startAsyncProcess</transition>
-                <transition>delete</transition>
-                <transition>economical review</transition>
-              </transitions>
-            </state>
-            <state description="ECO has economical review" name="economical reviewed">
-              <transitions>
-                <transition>complete</transition>
-                <transition>reject</transition>
-                <transition>startAsyncProcess</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state name="asyncProcessing" description="There is an asynchronous process running">
-              <transitions>
-                <transition>backToCreated</transition>
-                <transition>technical review</transition>
-                <transition>manufacturing review</transition>
-                <transition>purchaser review</transition>
-                <transition>commercial review</transition>
-                <transition>economical review</transition>
-              </transitions>
-            </state>
-            <state description="ECO is completed" name="completed">
-              <transitions>
-                <transition>backToCreated</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECO is rejected" name="rejected">
-              <transitions>
-                <transition>backToCreated</transition>
-                <transition>delete</transition>
-              </transitions>
-            </state>
-            <state description="ECO is deleted" name="deleted">
-              <transitions>
-                <transition>undelete</transition>
-              </transitions>
-            </state>
-          </states>
+            <states>
+                <state name="created" description="Default state" initial="true">
+                    <transitions>
+                        <transition>technical review</transition>
+                        <transition>manufacturing review</transition>
+                        <transition>startAsyncProcess</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="technical reviewed" description="ECO has technical review">
+                    <transitions>
+                        <transition>complete</transition>
+                        <transition>reject</transition>
+                        <transition>startAsyncProcess</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="manufacturing reviewed" description="ECO has manufacturing review">
+                    <transitions>
+                        <transition>purchaser review</transition>
+                        <transition>reject</transition>
+                        <transition>startAsyncProcess</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="purchasing reviewed" description="ECO has purchaser review">
+                    <transitions>
+                        <transition>commercial review</transition>
+                        <transition>reject</transition>
+                        <transition>startAsyncProcess</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="commercial reviewed" description="ECO has commercial review">
+                    <transitions>
+                        <transition>complete</transition>
+                        <transition>reject</transition>
+                        <transition>startAsyncProcess</transition>
+                        <transition>delete</transition>
+                        <transition>economical review</transition>
+                    </transitions>
+                </state>
+                <state name="economical reviewed" description="ECO has economical review">
+                    <transitions>
+                        <transition>complete</transition>
+                        <transition>reject</transition>
+                        <transition>startAsyncProcess</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="asyncProcessing" description="There is an asynchronous process running">
+                    <transitions>
+                        <transition>backToCreated</transition>
+                        <transition>technical review</transition>
+                        <transition>manufacturing review</transition>
+                        <transition>purchaser review</transition>
+                        <transition>commercial review</transition>
+                        <transition>economical review</transition>
+                    </transitions>
+                </state>
+                <state name="completed" description="ECO is completed">
+                    <transitions>
+                        <transition>backToCreated</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="rejected" description="ECO is rejected">
+                    <transitions>
+                        <transition>backToCreated</transition>
+                        <transition>delete</transition>
+                    </transitions>
+                </state>
+                <state name="deleted" description="ECO is deleted">
+                    <transitions>
+                        <transition>undelete</transition>
+                    </transitions>
+                </state>
+            </states>
         </lifecycle>
         
       </extension>

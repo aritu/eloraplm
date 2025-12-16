@@ -30,6 +30,7 @@ import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.datatable.EditableTableService;
 import com.aritu.eloraplm.datatable.RowData;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -40,7 +41,8 @@ import com.aritu.eloraplm.exceptions.EloraException;
 public class ItemCustomersTableServiceImpl implements EditableTableService {
 
     @Override
-    public List<RowData> getData(Object parentObject) throws EloraException {
+    public List<RowData> getData(Object parentObject)
+            throws EloraException, DocumentUnreadableException {
         List<RowData> data = new ArrayList<RowData>();
         DocumentModel doc = (DocumentModel) parentObject;
         CoreSession session = doc.getCoreSession();
@@ -59,6 +61,11 @@ public class ItemCustomersTableServiceImpl implements EditableTableService {
                 if (customerProductDocId != null) {
                     customerProductDoc = session.getDocument(
                             new IdRef(customerProductDocId));
+                    if (customerProductDoc == null) {
+                        throw new DocumentUnreadableException(
+                                "Error getting customer product |"
+                                        + customerProductDocId + "|");
+                    }
                 }
                 data.add(createRowData(d, customerProductDoc, false, false,
                         false));

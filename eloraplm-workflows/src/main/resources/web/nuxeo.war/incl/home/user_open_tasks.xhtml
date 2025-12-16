@@ -1,0 +1,33 @@
+<div
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxd="http://nuxeo.org/nxweb/document"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxh="http://nuxeo.org/nxweb/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <h:panelGroup id="user_open_tasks_panel">
+        <p:remoteCommand
+            name="setDefaultFilterValues"
+            action="#{userOpenTasksActions.setDefaultFilterValues(contentViewActions.getCurrentContentView())}"
+            process="@this"
+            update="user_open_tasks_panel"
+        />
+
+        <nxl:layout
+            value="#{currentDocument}"
+            mode="view"
+            name="userOpenTasksLayout"
+        />
+    </h:panelGroup>
+
+    <script type="text/javascript">
+        // Call to remote command to set default filter values and refresh content view
+        setDefaultFilterValues();
+    </script>
+</div>

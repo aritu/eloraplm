@@ -1,0 +1,311 @@
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    template="/incl/action/widgets/primefaces_dialog_base_template.xhtml"
+>
+    <ui:define name="dialog_content">
+        <!--  title -->
+        <h:panelGroup>
+            <h:outputLabel value="#{messages['eloraplm.label.cm.process']}:" />
+            <strong
+                ><h:outputText
+                    value="#{currentDocument.elo.reference} - #{currentDocument.title}"
+            /></strong>
+        </h:panelGroup>
+
+        <c:choose>
+            <c:when test="#{cmModifiedsTreeBean.selectedNode == null}">
+                <br /><br />
+                <p class="errorMessage">
+                    <h:outputText
+                        value="#{messages['eloraplm.message.error.cm.editModifiedItem.emptyItemSelection']}"
+                    />
+                </p>
+            </c:when>
+            <c:otherwise>
+                <br /><br />
+                <p class="infoMessage">
+                    <h:outputText
+                        value="#{messages['eloraplm.message.info.cm.editModifiedItem.actionChanged']}"
+                    />
+                </p>
+
+                <!--  content -->
+                <h:panelGroup>
+                    <a4j:outputPanel>
+                        <table class="cmItemTable">
+                            <!-- ################### origin item ################### -->
+                            <tr>
+                                <td class="labelColumn">
+                                    <strong
+                                        ><h:outputLabel
+                                            value="#{messages['eloraplm.label.cm.origin']}:"
+                                    /></strong>
+                                </td>
+                                <td class="fieldColumn">
+                                    <ui:fragment>
+                                        <nxl:widget
+                                            name="cm_edit_origin_item"
+                                            mode="view"
+                                            value="#{cmModifiedsTreeBean}"
+                                        />
+                                        <h:outputText
+                                            value="&#160;&#160;&#160;"
+                                        />
+                                        <nxl:widget
+                                            name="cm_edit_origin_item_version"
+                                            mode="view"
+                                            value="#{cmModifiedsTreeBean}"
+                                        />
+                                        <h:outputText
+                                            value="&#160;&#160;&#160;"
+                                        />
+                                        <nxl:widget
+                                            name="cm_edit_origin_item_state"
+                                            mode="view"
+                                            value="#{cmModifiedsTreeBean}"
+                                        />
+                                    </ui:fragment>
+                                </td>
+                            </tr>
+                            <!-- ################### action selection ################### -->
+                            <tr>
+                                <td class="labelColumn">
+                                    <strong
+                                        ><h:outputLabel
+                                            value="#{messages['eloraplm.label.cm.action']}:"
+                                    /></strong>
+                                </td>
+                                <td class="fieldColumn">
+                                    <h:panelGroup id="actionPanel">
+                                        <nxl:widgetType
+                                            name="selectOneDirectory"
+                                            mode="edit"
+                                            value="#{cmModifiedsTreeBean.editAction}"
+                                            directoryName="elora_cmActionModified"
+                                            localize="true"
+                                            displayIdAndLabel="false"
+                                            ordering="ordering"
+                                            style="min-width: 10em"
+                                            notDisplayDefaultOption="true"
+                                            required="true"
+                                        >
+                                            <p:ajax
+                                                event="change"
+                                                process="@this"
+                                                partialSubmit="true"
+                                                update="@form"
+                                            />
+                                        </nxl:widgetType>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup id="actionMsgPanel">
+                                        <ui:fragment
+                                            rendered="#{cmModifiedsTreeBean.editActionMsg != null}"
+                                        >
+                                            <h:outputText
+                                                value="#{cmModifiedsTreeBean.editActionMsg}"
+                                                class="errorMessage"
+                                            />
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                            <!--   ########### destination item ########### -->
+                            <tr>
+                                <td class="labelColumn">
+                                    <h:panelGroup
+                                        id="destinationItemPanelLabel"
+                                    >
+                                        <ui:fragment
+                                            rendered="#{cmModifiedsTreeBean.editAction != null and cmModifiedsTreeBean.editActionMsg == null}"
+                                        >
+                                            <strong
+                                                ><h:outputLabel
+                                                    value="#{messages['eloraplm.label.cm.destination']}:"
+                                            /></strong>
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                                <td class="fieldColumn">
+                                    <h:panelGroup id="destinationItemPanel">
+                                        <!-- if action == replace, display destination item selection and destination item version selection -->
+                                        <ui:fragment
+                                            rendered="#{cmModifiedsTreeBean.editAction eq 'id_replace' and cmModifiedsTreeBean.editAction != null and cmModifiedsTreeBean.editActionMsg == null}"
+                                        >
+                                            <nxu:set
+                                                var="pageProviderName"
+                                                value="#{cmModifiedsTreeBean.getPageProviderNameForEditModifiedItemReplaceDestinationItem()}"
+                                            >
+                                                <nxl:widgetType
+                                                    name="singleDocumentSuggestion"
+                                                    mode="edit"
+                                                    ajaxReRender="@form"
+                                                    value="#{cmModifiedsTreeBean}"
+                                                    field="editDestinationItemWcUid"
+                                                    translated="true"
+                                                    width="100%"
+                                                    placeholder="eloraplm.placeholder.suggestion.cm.destinationItem"
+                                                    pageProviderName="#{pageProviderName}"
+                                                    documentSchemas="dublincore,common,elora_object,template_info"
+                                                    required="true"
+                                                    additionalOperationParameters="eloraPassQueryTermsTwice"
+                                                >
+                                                </nxl:widgetType>
+                                                <h:message
+                                                    for="editDestinationItemWcUid"
+                                                    class="errorMessage"
+                                                />
+                                            </nxu:set>
+                                        </ui:fragment>
+                                        <!-- if action != replace, display destination item in read mode -->
+                                        <ui:fragment
+                                            rendered="#{not (cmModifiedsTreeBean.editAction eq 'id_replace') and cmModifiedsTreeBean.editAction != null and cmModifiedsTreeBean.editActionMsg == null}"
+                                        >
+                                            <nxl:widget
+                                                name="cm_edit_destination_item"
+                                                mode="view"
+                                                value="#{cmModifiedsTreeBean}"
+                                            />
+                                            <h:outputText
+                                                value="&#160;&#160;&#160;"
+                                            />
+                                            <nxl:widget
+                                                name="cm_edit_destination_item_version"
+                                                mode="view"
+                                                value="#{cmModifiedsTreeBean}"
+                                            />
+                                            <h:outputText
+                                                value="&#160;&#160;&#160;"
+                                            />
+                                            <nxl:widget
+                                                name="cm_edit_destination_item_state"
+                                                mode="view"
+                                                value="#{cmModifiedsTreeBean}"
+                                            />
+                                        </ui:fragment>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup id="destinationItemMsgPanel">
+                                        <ui:fragment
+                                            rendered="#{cmModifiedsTreeBean.editDestinationItemMsg != null}"
+                                        >
+                                            <h:outputText
+                                                value="#{cmModifiedsTreeBean.editDestinationItemMsg}"
+                                                class="errorMessage"
+                                            />
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                            <!--   ########### includeInImpactMatrix ########### -->
+                            <tr>
+                                <td class="labelColumn">
+                                    <h:panelGroup
+                                        id="includeInImpactMatrixPanelLabel"
+                                    >
+                                        <ui:fragment
+                                            rendered="#{(cmModifiedsTreeBean.editAction != null and not (cmModifiedsTreeBean.editAction eq 'id_replace') and cmModifiedsTreeBean.editActionMsg == null) or 
+	                        (cmModifiedsTreeBean.editDestinationItemWcUid != null and cmModifiedsTreeBean.editActionMsg == null and cmModifiedsTreeBean.editDestinationItemMsg == null)}"
+                                        >
+                                            <strong
+                                                ><h:outputLabel
+                                                    value="#{messages['eloraplm.label.cm.includeInImpactMatrix']}:"
+                                            /></strong>
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                                <td class="fieldColumn">
+                                    <h:panelGroup
+                                        id="includeInImpactMatrixPanel"
+                                    >
+                                        <ui:fragment
+                                            rendered="#{(cmModifiedsTreeBean.editAction != null and not (cmModifiedsTreeBean.editAction eq 'id_replace') and cmModifiedsTreeBean.editActionMsg == null) or 
+	                        (cmModifiedsTreeBean.editDestinationItemWcUid != null and cmModifiedsTreeBean.editActionMsg == null and cmModifiedsTreeBean.editDestinationItemMsg == null)}"
+                                        >
+                                            <ui:fragment
+                                                rendered="#{not cmModifiedsTreeBean.editIsImpactable}"
+                                            >
+                                                <h:outputText
+                                                    value="#{cmModifiedsTreeBean.editIncludeInImpactMatrix ? messages['label.yes'] : messages['label.no']}"
+                                                />
+                                            </ui:fragment>
+                                            <ui:fragment
+                                                rendered="#{cmModifiedsTreeBean.editIsImpactable}"
+                                            >
+                                                <nxl:widgetType
+                                                    mode="edit"
+                                                    name="checkbox"
+                                                    value="#{cmModifiedsTreeBean.editIncludeInImpactMatrix}"
+                                                />
+                                            </ui:fragment>
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                            <!--   ########### comment ########### -->
+                            <tr>
+                                <td class="labelColumn">
+                                    <h:panelGroup id="commentPanelLabel">
+                                        <ui:fragment
+                                            rendered="#{(cmModifiedsTreeBean.editAction != null and not (cmModifiedsTreeBean.editAction eq 'id_replace') and cmModifiedsTreeBean.editActionMsg == null) or 
+	                        (cmModifiedsTreeBean.editDestinationItemWcUid != null and cmModifiedsTreeBean.editActionMsg == null and cmModifiedsTreeBean.editDestinationItemMsg == null)}"
+                                        >
+                                            <strong
+                                                ><h:outputLabel
+                                                    value="#{messages['eloraplm.label.cm.comment']}:"
+                                            /></strong>
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                                <td class="fieldColumn">
+                                    <h:panelGroup id="commentPanel">
+                                        <ui:fragment
+                                            rendered="#{(cmModifiedsTreeBean.editAction != null and not (cmModifiedsTreeBean.editAction eq 'id_replace') and cmModifiedsTreeBean.editActionMsg == null) or 
+	                        (cmModifiedsTreeBean.editDestinationItemWcUid != null and cmModifiedsTreeBean.editActionMsg == null and cmModifiedsTreeBean.editDestinationItemMsg == null)}"
+                                        >
+                                            <nxl:widgetType
+                                                name="textarea"
+                                                mode="edit"
+                                                value="#{cmModifiedsTreeBean.editComment}"
+                                            />
+                                        </ui:fragment>
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                        </table>
+                    </a4j:outputPanel>
+                </h:panelGroup>
+            </c:otherwise>
+        </c:choose>
+    </ui:define>
+
+    <ui:define name="dialog_buttons">
+        <p:commandButton
+            value="#{messages['command.edit']}"
+            styleClass="button mainAction"
+            action="#{cmModifiedsTreeBean.editModifiedItem}"
+            disabled="#{not cmModifiedsTreeBean.editIsValid}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+            process="@form"
+            update="@form"
+        />
+
+        <p:commandButton
+            type="button"
+            value="#{messages['command.cancel']}"
+            immediate="true"
+            process="@none"
+            styleClass="button"
+            onclick="PF('#{pfDialogId}').hide();"
+        />
+    </ui:define>
+</ui:decorate>

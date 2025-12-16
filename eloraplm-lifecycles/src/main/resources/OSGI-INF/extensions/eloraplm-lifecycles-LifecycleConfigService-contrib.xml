@@ -16,7 +16,7 @@
                 <state>approved</state>
             </supportedStates>
         </state>
-        <state name="obsolete" status="obsolete" lockable="false" color="#AA8833" order="50" finalState="true">
+        <state name="obsolete" status="obsolete" lockable="true" color="#AA8833" order="50" finalState="true">
             <supportedStates>
                 <state>preliminary</state>
                 <state>approved</state>

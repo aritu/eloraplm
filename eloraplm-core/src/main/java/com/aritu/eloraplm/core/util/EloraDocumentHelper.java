@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -62,6 +63,7 @@ import org.nuxeo.ecm.platform.actions.ActionContext;
 import org.nuxeo.ecm.platform.actions.ejb.ActionManager;
 import org.nuxeo.ecm.platform.actions.jsf.JSFActionContext;
 import org.nuxeo.ecm.platform.actions.seam.SeamActionContext;
+import org.nuxeo.ecm.platform.audit.service.NXAuditEventsService;
 import org.nuxeo.ecm.platform.dublincore.listener.DublinCoreListener;
 import org.nuxeo.ecm.platform.ec.notification.NotificationConstants;
 import org.nuxeo.ecm.platform.mimetype.MimetypeNotFoundException;
@@ -79,13 +81,15 @@ import org.nuxeo.ecm.webengine.jaxrs.context.RequestCleanupHandler;
 import org.nuxeo.ecm.webengine.jaxrs.context.RequestContext;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
-import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraPropertiesConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
+import com.aritu.eloraplm.constants.NuxeoSchemaConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.constants.QueriesConstants;
 import com.aritu.eloraplm.constants.VersionStatusConstants;
@@ -97,6 +101,7 @@ import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
 import com.aritu.eloraplm.exceptions.DocumentLockRightsException;
 import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.exceptions.SameReferenceAlreadyExistsForTypeException;
 import com.aritu.eloraplm.exceptions.UnlockCheckedOutDocumentException;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.aritu.eloraplm.queries.util.EloraQueryHelper;
@@ -377,7 +382,7 @@ public class EloraDocumentHelper {
             RelationManager relationManager, CoreSession session, Node node) {
         if (node.isQNameResource()) {
             QNameResource resource = (QNameResource) node;
-            Map<String, Object> context = Collections.<String, Object> singletonMap(
+            Map<String, Object> context = Collections.<String, Object>singletonMap(
                     ResourceAdapter.CORE_SESSION_CONTEXT_KEY, session);
             Object o = relationManager.getResourceRepresentation(
                     resource.getNamespace(), resource, context);
@@ -443,42 +448,55 @@ public class EloraDocumentHelper {
 
             // Add Blob to document
             switch (fileType) {
-            case EloraGeneralConstants.FILE_TYPE_CONTENT:
-                if (fileName != null) {
-                    blob.setFilename(fileName);
-                }
-                DocumentHelper.addBlob(
-                        doc.getProperty(NuxeoMetadataConstants.NX_FILE_CONTENT),
-                        blob);
-                break;
-            case EloraGeneralConstants.FILE_TYPE_CAD_ATTACHMENT:
-                if (fileName != null) {
-                    blob.setFilename(fileName);
-                }
+                case EloraGeneralConstants.FILE_TYPE_CONTENT:
+                    if (fileName != null) {
+                        blob.setFilename(fileName);
+                    }
+                    DocumentHelper.addBlob(
+                            doc.getProperty(NuxeoMetadataConstants.NX_FILE_CONTENT),
+                            blob);
+                    break;
+                case EloraGeneralConstants.FILE_TYPE_CAD_ATTACHMENT:
+                    if (fileName != null) {
+                        blob.setFilename(fileName);
+                    }
 
-                // Add attachment type
-                CadAttachmentInfo caddatt = (CadAttachmentInfo) fileInfo;
-                String attType = caddatt.getType();
+                    // Add attachment type
+                    CadAttachmentInfo caddatt = (CadAttachmentInfo) fileInfo;
+                    String attType = caddatt.getType();
 
-                addCadAttachment(doc.getProperty(
-                        EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS), blob,
-                        attType);
-                break;
-            case EloraGeneralConstants.FILE_TYPE_VIEWER:
-                if (fileName != null) {
-                    blob.setFilename(fileName);
-                }
+                    addCadAttachment(doc.getProperty(
+                            EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS), blob,
+                            attType);
+                    break;
+                case EloraGeneralConstants.FILE_TYPE_VIEWER:
+                    if (fileName != null) {
+                        blob.setFilename(fileName);
+                    }
 
-                // We add it to the viewer base file and the viewer file
-                DocumentHelper.addBlob(
-                        doc.getProperty(
-                                EloraMetadataConstants.ELORA_ELOVWR_BASEFILE),
-                        blob);
-                DocumentHelper.addBlob(
-                        doc.getProperty(
-                                EloraMetadataConstants.ELORA_ELOVWR_FILE),
-                        blob);
-                break;
+                    // We add it to the viewer base file and the viewer file
+                    DocumentHelper.addBlob(
+                            doc.getProperty(
+                                    EloraMetadataConstants.ELORA_ELOVWR_BASEFILE),
+                            blob);
+                    DocumentHelper.addBlob(
+                            doc.getProperty(
+                                    EloraMetadataConstants.ELORA_ELOVWR_FILE),
+                            blob);
+                    break;
+                case EloraGeneralConstants.FILE_TYPE_CAD_DERIVED_OUTPUT:
+                    if (fileName != null) {
+                        blob.setFilename(fileName);
+                    }
+
+                    // Add derived output type
+                    CadDerivedOutputInfo derivedoutputs = (CadDerivedOutputInfo) fileInfo;
+                    String outputType = derivedoutputs.getType();
+
+                    addCadDerivedOutput(doc.getProperty(
+                            EloraMetadataConstants.ELORA_CAD_DERIVED_OUTPUTS), blob,
+                            outputType);
+                    break;
             }
         } catch (EloraException e) {
             throw e;
@@ -496,6 +514,16 @@ public class EloraDocumentHelper {
         map.put("file", (Serializable) blob);
         map.put("filename", blob.getFilename());
         map.put("type", attType);
+
+        p.addValue(map);
+    }
+
+    public static void addCadDerivedOutput(Property p, Blob blob,
+            String outputType) throws PropertyException {
+        HashMap<String, Serializable> map = new HashMap<String, Serializable>();
+        map.put("file", (Serializable) blob);
+        // map.put("filename", blob.getFilename());
+        map.put("type", outputType);
 
         p.addValue(map);
     }
@@ -569,7 +597,8 @@ public class EloraDocumentHelper {
             doc.putContextData(
                     NotificationConstants.DISABLE_NOTIFICATION_SERVICE,
                     Boolean.TRUE);
-            doc.putContextData("disableAuditLogger", Boolean.TRUE);
+            doc.putContextData(NXAuditEventsService.DISABLE_AUDIT_LOGGER,
+                    Boolean.TRUE);
             if (doc.isVersion()) {
                 doc.putContextData(CoreSession.ALLOW_VERSION_WRITE,
                         Boolean.TRUE);
@@ -578,17 +607,55 @@ public class EloraDocumentHelper {
                         Boolean.TRUE);
             }
         } catch (Exception e) {
-            // TODO: handle exception
             throw new EloraException(e.getMessage());
         }
     }
 
-    public static DocumentModel getWcDocumentByReference(CoreSession session,
-            String reference) throws EloraException {
+    /**
+     * For all documents (checked out / WC / AV):
+     *
+     * Do not version document
+     *
+     * Do not update dublincore data
+     *
+     * Do not register events
+     *
+     * Do not notify modification
+     *
+     * Allow updating AVs
+     *
+     * @param doc
+     * @throws EloraException
+     */
+    public static void silentSave(DocumentModel doc) throws EloraException {
+        try {
 
-        String query = EloraQueryFactory.getWcDocsByReference(reference);
+            if (!doc.isCheckedOut()) {
+                doc.putContextData(VersioningService.VERSIONING_OPTION,
+                        VersioningOption.NONE);
+                doc.putContextData(VersioningService.DISABLE_AUTO_CHECKOUT,
+                        Boolean.TRUE);
 
-        return EloraQueryHelper.executeGetFirstQuery(query, session);
+                if (doc.isVersion()) {
+                    doc.putContextData(CoreSession.ALLOW_VERSION_WRITE,
+                            Boolean.TRUE);
+                    doc.putContextData(
+                            VersionLabelService.OPT_DISABLE_VERSION_LABEL_TRANSLATION,
+                            Boolean.TRUE);
+                }
+            }
+
+            doc.putContextData(DublinCoreListener.DISABLE_DUBLINCORE_LISTENER,
+                    Boolean.TRUE);
+            doc.putContextData(
+                    NotificationConstants.DISABLE_NOTIFICATION_SERVICE,
+                    Boolean.TRUE);
+            doc.putContextData(NXAuditEventsService.DISABLE_AUDIT_LOGGER,
+                    Boolean.TRUE);
+
+        } catch (Exception e) {
+            throw new EloraException(e.getMessage());
+        }
     }
 
     /**
@@ -686,16 +753,16 @@ public class EloraDocumentHelper {
 
         String nextIncrement = calculateNextVersionIncrement(vls, realDoc);
         switch (nextIncrement) {
-        case "major":
-            major++;
-            minor = (long) 0;
-            break;
-        case "minor":
-            minor++;
-            break;
-        default:
-            throw new EloraException(
-                    "Unsupported increment option when calculating the next version label.");
+            case "major":
+                major++;
+                minor = (long) 0;
+                break;
+            case "minor":
+                minor++;
+                break;
+            default:
+                throw new EloraException(
+                        "Unsupported increment option when calculating the next version label.");
         }
 
         nextVersionLabel = vls.translateMajor(major) + vls.getVersionSeparator()
@@ -731,47 +798,6 @@ public class EloraDocumentHelper {
         }
 
         return nextIncrement;
-    }
-
-    /**
-     * Function to set a document as checked out.
-     *
-     * @param session
-     * @param doc
-     * @return
-     */
-    public static DocumentModel checkOutDocument(DocumentModel doc) {
-
-        // TODO EloraVersioningService-en followTransitionByOption protected
-        // denez, ezin zaio deitu checkout egiteko funtzioetatik, eta gainera
-        // Document erabiltzen duenez, ezin da funtzio batera atera.
-        //
-        // Modu ona izango zen dokumentua Dirty jarri ahal izatea, eta gero
-        // saveDocument egitea checked out jartzeko, doc.checkOut() jarri ordez,
-        // baina oraingoz ez dugu lortu.
-
-        doc.refresh();
-        if (!doc.isCheckedOut()) {
-            doc.checkOut();
-
-            // TODO Hau aldatzen bada,
-            // EloraVersioningService.followTransitionByOption be aldatu behar
-            // da.
-
-            // We have to emulate the saveDocument, the document has to follow a
-            // transition in some states
-            String lifecycleState = doc.getCurrentLifeCycleState();
-            boolean isReleasedState = isReleasedState(lifecycleState);
-            if (isReleasedState && doc.getAllowedStateTransitions().contains(
-                    EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY)) {
-                doc.followTransition(
-                        EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY);
-            }
-
-        }
-
-        doc.refresh();
-        return doc;
     }
 
     /**
@@ -812,8 +838,10 @@ public class EloraDocumentHelper {
                 true, session);
 
         session.save();
+
         EloraRelationHelper.restoreRelations(restoredDocument, version,
                 eloraDocumentRelationManager, session);
+
         return restoredDocument;
     }
 
@@ -893,6 +921,19 @@ public class EloraDocumentHelper {
      * @param docM
      * @return true if it is a CAD document
      */
+    public static boolean isBasicDocument(DocumentModel docM) {
+
+        boolean isBasicDoc = false;
+
+        isBasicDoc = docM.hasFacet(EloraFacetConstants.FACET_BASIC_DOCUMENT);
+
+        return isBasicDoc;
+    }
+
+    /**
+     * @param docM
+     * @return true if it is a CAD document
+     */
     public static boolean isCadDocument(DocumentModel docM) {
 
         boolean isCadDoc = false;
@@ -944,9 +985,9 @@ public class EloraDocumentHelper {
                 wcDoc.getType(), versionVersionableId, majorVersion, true,
                 QueriesConstants.SORT_ORDER_DESC);
 
-        DocumentModelList releasedDocs = session.query(query);
+        DocumentModelList majorVersionDocs = session.query(query);
 
-        return releasedDocs;
+        return majorVersionDocs;
     }
 
     public static DocumentModelList getReleasedAndLatestVersions(
@@ -1034,9 +1075,21 @@ public class EloraDocumentHelper {
         return versions;
     }
 
-    public static boolean isReleased(DocumentModel doc) throws EloraException {
+    public static boolean isReleased(DocumentModel doc) {
         if (LifecyclesConfig.releasedStatesList.contains(
                 doc.getCurrentLifeCycleState())) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isBaseVersion(DocumentModel doc) {
+        CoreSession session = doc.getCoreSession();
+
+        DocumentRef avRef = doc.getRef();
+        DocumentModel wcDoc = session.getWorkingCopy(avRef);
+        DocumentModel baseDoc = EloraDocumentHelper.getBaseVersion(wcDoc);
+        if (baseDoc != null && baseDoc.getId().equals(avRef.toString())) {
             return true;
         }
         return false;
@@ -1178,6 +1231,7 @@ public class EloraDocumentHelper {
         ignoredSchemas.add(NuxeoMetadataConstants.NX_SCHEMA_UID);
         ignoredSchemas.add(EloraSchemaConstants.STATES_LOG);
         ignoredSchemas.add(EloraSchemaConstants.VERSION_LABEL);
+        ignoredSchemas.add(EloraSchemaConstants.VERSION_INFO);
 
         for (String schema : to.getSchemas()) {
             if (from.hasSchema(schema) && !ignoredSchemas.contains(schema)) {
@@ -1239,6 +1293,24 @@ public class EloraDocumentHelper {
                 to.setProperties(schema, schemaProps);
             }
         }
+    }
+
+    public static Map<String, List<DocumentModel>> getDocMapByWc(
+            List<DocumentModel> docs) {
+        Map<String, List<DocumentModel>> docMapByWc = new HashMap<String, List<DocumentModel>>();
+
+        for (DocumentModel doc : docs) {
+            String wcUid = doc.getVersionSeriesId();
+            if (docMapByWc.containsKey(wcUid)) {
+                docMapByWc.get(wcUid).add(doc);
+            } else {
+                List<DocumentModel> wcDocs = new ArrayList<DocumentModel>();
+                wcDocs.add(doc);
+                docMapByWc.put(wcUid, wcDocs);
+            }
+        }
+
+        return docMapByWc;
     }
 
     public static List<String> getUidListFromDocList(List<DocumentModel> docs) {
@@ -1474,8 +1546,13 @@ public class EloraDocumentHelper {
     }
 
     public static boolean isTemplate(String docId, CoreSession session) {
-        DocumentModel doc = session.getDocument(new IdRef(docId));
-        return isTemplate(doc);
+        DocumentRef docRef = new IdRef(docId);
+        if (session.exists(docRef)) {
+            DocumentModel doc = session.getDocument(docRef);
+            return isTemplate(doc);
+        } else {
+            return false;
+        }
     }
 
     public static boolean isTemplatable(DocumentModel doc) {
@@ -1506,6 +1583,13 @@ public class EloraDocumentHelper {
 
     public static boolean isReleasedState(String lifeCycleState) {
         if (LifecyclesConfig.releasedStatesList.contains(lifeCycleState)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isObsoleteState(String lifeCycleState) {
+        if (LifecyclesConfig.obsoleteStatesList.contains(lifeCycleState)) {
             return true;
         }
         return false;
@@ -1578,6 +1662,17 @@ public class EloraDocumentHelper {
         return false;
     }
 
+    public static boolean hasMainFile(DocumentModel doc) {
+        if (doc.hasSchema(NuxeoSchemaConstants.MAIN_BLOB_SCHEMA)) {
+            Serializable blobPropertyValue = doc.getPropertyValue(
+                    NuxeoMetadataConstants.NX_FILE_CONTENT);
+            if (blobPropertyValue != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Validates if the specified document reference is valid. If it is not
      * valid, an EloraException is thrown with the failure reason as message.
@@ -1598,14 +1693,108 @@ public class EloraDocumentHelper {
         // Check that there is not already another document with the
         // same reference and type excluding the specified docUid (excludedUid)
         long docsWithSameReferenceAndType = 0;
-        docsWithSameReferenceAndType = EloraQueryFactory.unrestrictedCountWcDocsByTypeAndReferenceAndCreatorExcludingUid(
-                session, docType, reference, null, excludedUid);
+        docsWithSameReferenceAndType = EloraQueryFactory
+                .unrestrictedCountWcDocsByTypeAndReferenceAndCreatorExcludingUid(
+                        session, docType, reference, null, excludedUid);
         if (docsWithSameReferenceAndType > 0) {
             String errorMsg = "Validation failed: The reference |" + reference
                     + "| has already been used by another document of the same type.";
             log.error(logInitMsg + errorMsg);
-            throw new EloraException(errorMsg);
+            throw new SameReferenceAlreadyExistsForTypeException(reference,
+                    docType);
         }
+    }
+
+    public static DocumentModel getPriorizedWcDocByTypeAndReference(
+            CoreSession session, String reference) {
+
+        String logInitMsg = "[getPriorizedWcDocByTypeAndReference] ";
+
+        // TODO: En vez de hacer una consulta por tipo, se podría hacer una
+        // única consulta ordenando por la lista de tipos y seleccionar el
+        // primero?
+
+        List<String> sortedTypeList = Arrays.asList(
+                EloraDoctypeConstants.BOM_PRODUCT,
+                EloraDoctypeConstants.BOM_PART,
+                EloraDoctypeConstants.BOM_PACKAGING,
+                EloraDoctypeConstants.BOM_TOOL);
+
+        DocumentModel doc = null;
+        DocumentModelList docModelList;
+        String query;
+
+        try {
+            for (String type : sortedTypeList) {
+                query = EloraQueryFactory.getWcDocsByTypeAndReferenceQuery(type,
+                        reference);
+                docModelList = session.query(query);
+                if (docModelList != null && docModelList.size() > 0) {
+                    doc = getLatestReleasedVersionOrLatestVersion(
+                            docModelList.get(0));
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            String exceptionErrorMsg = (e.getMessage() != null) ? e.getMessage()
+                    : (e.getCause() != null) ? e.getCause().toString()
+                            : e.getClass().getName();
+            String errorMsg = "Unable to get document. Reference = |"
+                    + reference + "|. errorMsg = |" + exceptionErrorMsg + "|";
+            log.info(logInitMsg + errorMsg);
+        }
+
+        return doc;
+    }
+
+    public static DocumentModel getPreviousVersionDocument(
+            DocumentModel destinationItem, DocumentModel destinationItemWc,
+            CoreSession session) {
+
+        DocumentModel previousDocVersion = null;
+        List<DocumentModel> documentModelVersionList = session.getVersions(
+                destinationItemWc.getRef());
+
+        if (documentModelVersionList != null
+                && documentModelVersionList.size() > 0) {
+            int versionIndex = 0;
+            for (DocumentModel docVersion : documentModelVersionList) {
+                if (destinationItem.getId().equals(docVersion.getId())) {
+                    versionIndex = documentModelVersionList.indexOf(docVersion);
+                    break;
+                }
+            }
+
+            if (versionIndex != 0) {
+                previousDocVersion = documentModelVersionList.get(
+                        versionIndex - 1);
+            } else {
+                previousDocVersion = destinationItem;
+            }
+        }
+        return previousDocVersion;
+    }
+
+    /*
+     * Shows version label, external version between braquets (if enabled + exists),
+     * and (WC) if not an AV
+     */
+    public static String getVersionWithExternalIfExists(DocumentModel doc) {
+        String versionLabel = doc.getVersionLabel();
+        if (Boolean.valueOf(Framework.getProperty(
+                EloraPropertiesConstants.PROP_SHOW_EXTERNAL_VERSION_LABELS,
+                Boolean.toString(false)))
+                && doc.hasSchema(EloraSchemaConstants.BOM_ITEM)) {
+            String externalVersion = (String) doc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_BOMITEM_EXTERNAL_VERSION);
+            if (externalVersion != null) {
+                versionLabel += " [" + externalVersion + "]";
+            }
+        }
+        if (!doc.isImmutable()) {
+            versionLabel += " (WC)";
+        }
+        return versionLabel;
     }
 
 }

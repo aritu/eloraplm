@@ -68,17 +68,10 @@ public class CMActionsBean implements Serializable {
             DocumentModel currentDocument = navigationContext.getCurrentDocument();
 
             if (currentDocument.getPropertyValue(
-                    CMMetadataConstants.BOM_MODIFIED_ITEM_LIST) != null) {
+                    CMMetadataConstants.MODIFIED_ITEM_LIST) != null) {
                 modifiedItemsList.addAll(
                         (ArrayList<HashMap<String, Object>>) currentDocument.getPropertyValue(
-                                CMMetadataConstants.BOM_MODIFIED_ITEM_LIST));
-            }
-
-            if (currentDocument.getPropertyValue(
-                    CMMetadataConstants.DOC_MODIFIED_ITEM_LIST) != null) {
-                modifiedItemsList.addAll(
-                        (ArrayList<HashMap<String, Object>>) currentDocument.getPropertyValue(
-                                CMMetadataConstants.DOC_MODIFIED_ITEM_LIST));
+                                CMMetadataConstants.MODIFIED_ITEM_LIST));
             }
 
             for (HashMap<String, Object> modifiedItem : modifiedItemsList) {

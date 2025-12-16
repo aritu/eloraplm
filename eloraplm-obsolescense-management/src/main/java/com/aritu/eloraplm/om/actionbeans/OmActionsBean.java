@@ -15,7 +15,6 @@ package com.aritu.eloraplm.om.actionbeans;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,7 @@ import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalid
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.OmEventNames;
 import com.aritu.eloraplm.constants.OmMetadataConstants;
-import com.aritu.eloraplm.core.EloraDocContextBoundActionBean;
+import com.aritu.eloraplm.core.DocumentContextBoundActions;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.EloraUtil;
@@ -55,8 +54,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class OmActionsBean extends EloraDocContextBoundActionBean
-        implements Serializable {
+public class OmActionsBean extends DocumentContextBoundActions {
 
     private static final long serialVersionUID = 1L;
 

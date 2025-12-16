@@ -16,6 +16,17 @@
             <dataFile>directories/locale_elora.csv</dataFile>
             <createTablePolicy>always</createTablePolicy>
         </directory>
+        
+        <directory name="event_category">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>event_category</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <dataFile>directories/event_category.csv</dataFile>
+            <createTablePolicy>always</createTablePolicy>
+        </directory>
+        
     </extension>
 
 </component> 

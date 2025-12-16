@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.qm.TypeConfigService.contrib">
+    
+    <extension point="types" target="com.aritu.eloraplm.core.types.api.TypeConfigService">
+        
+        <type id="ProductionProcessValidation" color="#7f2aff" />
+        <type id="ProductValidation" color="#668000" />
+        <type id="ProductVerification" color="#aa8800" />
+        <type id="ProductionPartApprovalProcess" color="#aa4400" />
+        
+    </extension>
+
+
+</component>
+

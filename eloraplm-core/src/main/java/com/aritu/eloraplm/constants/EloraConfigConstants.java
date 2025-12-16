@@ -25,13 +25,15 @@ public class EloraConfigConstants {
 
     public static final String VOC_CAD_METADATA_MAPPING = "elora_cad_metadata_mapping";
 
-    public static final String VOC_CHECKOUT_CONFIG = "elora_checkout_config";
+    public static final String VOC_CAD_DERIVED_OUTPUTS_CONFIG = "elora_cad_derived_outputs_config";
 
-    public static final String VOC_DEFAULT_CONFIG = "elora_default_config";
+    public static final String VOC_CHECKOUT_CONFIG = "elora_checkout_config";
 
     public static final String VOC_DOCTYPE_MAPPING = "elora_doctype_mapping";
 
     public static final String VOC_GENERAL_CONFIG = "elora_general_config";
+
+    public static final String VOC_MCAD_PLUGIN_CONFIG = "elora_mcad_plugin_config";
 
     public static final String VOC_METADATA_MAPPING = "elora_metadata_mapping";
 
@@ -41,13 +43,23 @@ public class EloraConfigConstants {
 
     public static final String VOC_UNIT_CONVERSION_MAPPING = "elora_unit_conversion_mapping";
 
-    public static final String VOC_ERP_MANUFACTURER = "elora_erpManufacturers";
-
     public static final String VOC_ERP_CUSTOMER = "elora_erpCustomers";
+
+    public static final String VOC_ERP_SUPPLIER = "elora_erpSuppliers";
 
     public static final String VOC_INTEGRATION_VERSION_CONTROL = "elora_integration_version_control";
 
     public static final String VOC_VOCABULARIES_TIMESTAMPS = "elora_vocabularies_timestamps";
+
+    public static final String VOC_DOCUMENT_METADATA_MAPPING = "elora_document_metadata_mapping";
+
+    public static final String VOC_ELORAS_BOMS_LIFECYCLE = "eloras_boms_lifeCycle";
+
+    public static final String VOC_ELORAS_CAD_DOCUMENTS_LIFECYCLE = "eloras_cadDocuments_lifeCycle";
+
+    public static final String VOC_ELORAS_BASIC_DOCUMENTS_LIFECYCLE = "eloras_basicDocuments_lifeCycle";
+
+    public static final String VOC_ELORA_UNITS_OF_MEASURE = "elora_units_of_measure";
 
     /*
      * Keys
@@ -75,6 +87,12 @@ public class EloraConfigConstants {
 
     public static final String PROP_ORDERING = "ordering";
 
+    public static final String PROP_LABEL_EN = "label_en";
+
+    public static final String PROP_LABEL_ES = "label_es";
+
+    public static final String PROP_LABEL_EU = "label_eu";
+
     public static final String PROP_CAD_METADATA_MAPPING_AUTHORING_TOOL = "authoring_tool";
 
     public static final String PROP_CAD_METADATA_MAPPING_CAD_DOCTYPE = "cad_doctype";
@@ -84,6 +102,12 @@ public class EloraConfigConstants {
     public static final String PROP_CAD_METADATA_MAPPING_CAD_METADATA_NAME = "cad_metadata_name";
 
     public static final String PROP_CAD_METADATA_MAPPING_DESCRIPTION = "description";
+
+    public static final String PROP_CAD_DERIVED_OUTPUTS_CONFIG_AUTHORING_TOOL = "authoring_tool";
+
+    public static final String PROP_CAD_DERIVED_OUTPUTS_CONFIG_CAD_DOCTYPE = "cad_doctype";
+
+    public static final String PROP_CAD_DERIVED_OUTPUTS_CONFIG_OUTPUT_TYPE = "output_type";
 
     public static final String PROP_DOCTYPE_MAPPING_AUTHORING_TOOL = "authoring_tool";
 
@@ -135,6 +159,26 @@ public class EloraConfigConstants {
 
     public static final String PROP_INTEGRATION_VERSION_CONTROL_MIN_ALLOWED_VERSION = "min_allowed_version";
 
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_ORG_DOC_TYPE = "orgDocType";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_ORG_METADATA = "orgMetadata";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_DST_DOC_TYPE = "dstDocType";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_DST_PROCESS = "dstProcess";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_DST_METADATA = "dstMetadata";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_DST_CONSOLIDATION_MODE = "dstConsolidationMode";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_DST_METADATA_OVERWRITE = "dstMetadataOverwrite";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_DST_EXEC_METHOD_NAME = "dstExecMethodName";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_REL_PREDICATE = "relPredicate";
+
+    public static final String PROD_DOCUMENT_METADATA_MAPPING_REL_ORG_ROLE = "relOrgRole";
+
     /*
      * Values
      */
@@ -162,11 +206,17 @@ public class EloraConfigConstants {
 
     public static final String VAL_RELATIONS_CONFIG_SUBTYPE_DIRECT = "Direct";
 
+    public static final String VAL_RELATIONS_CONFIG_SUBTYPE_ITEM_DIRECT = "ItemDirect";
+
+    public static final String VAL_RELATIONS_CONFIG_SUBTYPE_CAD_DIRECT = "CadDirect";
+
     public static final String VAL_RELATIONS_CONFIG_SUBTYPE_BASIC = "Basic";
 
     public static final String VAL_RELATIONS_CONFIG_SUBTYPE_CAD = "Cad";
 
     public static final String VAL_RELATIONS_CONFIG_SUBTYPE_ANARCHIC = "Anarchic";
+
+    public static final String VAL_RELATIONS_CONFIG_SUBTYPE_BOMLIST = "BomList";
 
     public static final String VAL_RELATIONS_CONFIG_SUBTYPE_SPECIAL = "Special";
 
@@ -177,5 +227,21 @@ public class EloraConfigConstants {
     public static final String VAL_RELATION_PROPAGATION_OBSOLETE = "obsolete";
 
     public static final String VAL_RELATION_PROPAGATION_DESCENDING = "0";
+
+    public static final String VAL_DOCUMENT_METADATA_MAPPING_DST_PROCESS_SET_METADATA_VALUE = "setMetadataValue";
+
+    public static final String VAL_DOCUMENT_METADATA_MAPPING_DST_PROCESS_EXEC_METHOD = "execMethod";
+
+    public static final String VAL_DOCUMENT_METADATA_MAPPING_DST_CONSOLIDATION_MODE_SUM = "sum";
+
+    public static final String VAL_DOCUMENT_METADATA_MAPPING_DST_METADATA_OVERWRITE_N = "N";
+
+    public static final String VAL_DOCUMENT_METADATA_MAPPING_DST_METADATA_OVERWRITE_Y = "Y";
+
+    public static final String VAL_DOCUMENT_METADATA_MAPPING_DST_METADATA_OVERWRITE_Y_ONE = "Y_ONE";
+
+    public static final String VAL_DOCUMENT_METADATA_MAPPING_REL_ORG_ROLE_SUBJECT = "subject";
+
+    public static final String VAL_DOCUMENT_METADATA_MAPPING_REL_ORG_ROLE_OBJECT = "object";
 
 }

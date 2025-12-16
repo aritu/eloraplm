@@ -48,6 +48,8 @@ public abstract class CMItem {
 
     protected String destinationItemWc;
 
+    protected String destinationItemSourceVersion;
+
     protected boolean isManaged;
 
     protected boolean isManual;
@@ -57,6 +59,8 @@ public abstract class CMItem {
     protected String comment;
 
     protected boolean isUpdated;
+
+    protected String derivedFrom;
 
     /**
      * @param rowNumber
@@ -77,13 +81,15 @@ public abstract class CMItem {
      * @param type
      * @param comment
      * @param isUpdated
+     * @param derivedFrom
      */
     public CMItem(Long rowNumber, String nodeId, String parentNodeId,
             String parentItem, String originItem, String originItemWc,
             String predicate, String quantity, boolean isAnarchic,
             boolean isDirectObject, String action, String destinationItem,
-            String destinationItemWc, boolean isManaged, boolean isManual,
-            String type, String comment, boolean isUpdated) {
+            String destinationItemWc, String destinationItemSourceVersion,
+            boolean isManaged, boolean isManual, String type, String comment,
+            boolean isUpdated, String derivedFrom) {
         super();
         this.nodeId = nodeId;
         this.parentNodeId = parentNodeId;
@@ -97,12 +103,14 @@ public abstract class CMItem {
         this.action = action;
         this.destinationItem = destinationItem;
         this.destinationItemWc = destinationItemWc;
+        this.destinationItemSourceVersion = destinationItemSourceVersion;
         this.isManaged = isManaged;
         this.isManual = isManual;
         this.type = type;
         this.comment = comment;
         this.isUpdated = isUpdated;
         this.rowNumber = rowNumber;
+        this.derivedFrom = derivedFrom;
     }
 
     public Long getRowNumber() {
@@ -209,6 +217,15 @@ public abstract class CMItem {
         this.destinationItemWc = destinationItemWc;
     }
 
+    public String getDestinationItemSourceVersion() {
+        return destinationItemSourceVersion;
+    }
+
+    public void setDestinationItemSourceVersion(
+            String destinationItemSourceVersion) {
+        this.destinationItemSourceVersion = destinationItemSourceVersion;
+    }
+
     public boolean isManaged() {
         return isManaged;
     }
@@ -247,6 +264,14 @@ public abstract class CMItem {
 
     public void setUpdated(boolean isUpdated) {
         this.isUpdated = isUpdated;
+    }
+
+    public String getDerivedFrom() {
+        return derivedFrom;
+    }
+
+    public void setDerivedFrom(String derivedFrom) {
+        this.derivedFrom = derivedFrom;
     }
 
 }

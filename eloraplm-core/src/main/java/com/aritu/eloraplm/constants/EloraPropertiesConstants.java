@@ -31,10 +31,26 @@ public class EloraPropertiesConstants {
 
     public static final String PROP_CREATE_DOCUMENT_FROM_TEMPLATE_RENAME_MAIN_FILE = "com.aritu.eloraplm.create.document.from.template.rename.main.file";
 
-    public static final String PROP_CM_ADD_MODIFIED_ITEMS_DERIVED_FROM_IMPACTED_DOCS_ENABLED = "com.aritu.eloraplm.cm.add.modified.items.derived.from.impacted.docs.enabled";
-
     public static final String PROP_ADD_NEW_WORKSPACE_TO_FAVORITES_BY_DEFAULT = "com.aritu.eloraplm.add.new.workspace.to.favorites.by.default";
 
     public static final String PROP_CM_SWITCH_RELATIONS_TO_ASSTORED_WHEN_FIXING_RELATIONS_IN_ITEMS_IMPACT_MATRIX = "com.aritu.eloraplm.cm.switch.relations.to.astored.when.fixing.relations.in.items.impact.matrix";
+
+    public static final String PROP_CM_CHANGE_DESTINATION_SOURCE_VERSION_ENABLED = "com.aritu.eloraplm.cm.change.destination.source.version.enabled";
+
+    public static final String PROP_CM_DEFAULT_DESTINATION_SOURCE_VERSION = "com.aritu.eloraplm.cm.default.destination.source.version";
+
+    public static final String PROP_CSV_IMPORT_COMPOSITION_ENABLED = "com.aritu.eloraplm.csv.import.composition.enabled";
+
+    public static final String PROP_ELECTRONIC_ENABLED = "com.aritu.eloraplm.electronic.enabled";
+
+    public static final String PROP_SHOW_EXTERNAL_VERSION_LABELS = "com.aritu.eloraplm.versionlabel.showexternal";
+
+    public static final String PROP_COMPANY_NAME = "com.aritu.eloraplm.company.name";
+
+    public static final String PROP_COMPANY_LOGO = "com.aritu.eloraplm.company.logo";
+
+    public static final String PROP_BOM_GENERATION_EXCLUDE_BASEDON = "com.aritu.eloraplm.bom.generation.exclude.basedon";
+
+    public static final String PROP_EXTERNAL_BOM_LISTS = "com.aritu.eloraplm.bom.lists.external";
 
 }

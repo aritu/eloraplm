@@ -2,1126 +2,1640 @@
 
 <component name="com.aritu.eloraplm.change.management.WebLayoutManager.contrib">
 
-  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
-    
-    <layout name="cm_modified">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml
-        </template>
-      </templates>
-      <rows>
-        <row>
-          <widget>ModifiedItemList</widget>
-        </row>
-      </rows>
-    </layout>
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
 
-    <layout name="cm_pr">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml
-        </template>
-      </templates>
-      <rows>
-        <row>
-          <widget>PrReportedBy</widget>
-        </row>
-        <row>
-          <widget>PrInterlocutor</widget>
-        </row>
-        <row>
-          <widget>PrReason</widget>
-        </row>
-      </rows>
-    </layout>
-
-    <layout name="cm_ecr">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml
-        </template>
-      </templates>
-      <rows>
-        <row>
-          <widget>EcrRequestedBy</widget>
-          </row>
-        <row>
-          <widget>EcrReason</widget>
-        </row>
-         <row>
-          <widget>EcrType</widget>
-        </row>
-        <row>
-          <widget>EcrCause</widget>
-        </row>
-        <row>
-          <widget>EcrProposedSolution</widget>
-        </row>
-        <row>
-          <widget>EcrEconomicalComiteList</widget>
-        </row>
-        <row>
-          <widget>EcrNonRecurringCost</widget>
-        </row>
-        <row>
-          <widget>EcrRecurringCost</widget>
-        </row>
-        <row>
-          <widget>EcrStockCost</widget>
-        </row>
-        <row>
-          <widget>EcrProposedEcoType</widget>
-        </row>
-      </rows>
-    </layout>
-
-    <layout name="cm_eco">
-      <templates>
-        <template mode="any">/layouts/layout_default_template.xhtml
-        </template>
-      </templates>
-      <rows>
-        <row>
-          <widget>EcoEcoType</widget>
-        </row>
-      </rows>
-    </layout>
-    
-    <layout name="elora_cm_doctype_actions_impact">
-          <templates>
-            <template mode="any">
-              /directory/directory_layout_template.xhtml
-            </template>
-          </templates>
-          <rows>
-            <row>
-              <widget>elora_cm_doctype_actions_impact_id</widget>
-            </row>
-            <row>
-              <widget>elora_cm_doctype_actions_impact_doctype</widget>
-            </row>
-            <row>
-              <widget>elora_cm_doctype_actions_impact_action</widget>
-            </row>
-            <row>
-              <widget>elora_cm_doctype_actions_impact_impactable</widget>
-            </row>
-            <row>
-              <widget>elora_cm_doctype_actions_impact_default</widget>
-            </row>
-            <row>
-              <widget>elora_cm_doctype_actions_impact_obsolete</widget>
-            </row>
-            <row>
-              <widget>elora_cm_doctype_actions_impact_ordering</widget>
-            </row>
-          </rows>
+        <layout name="cm_modified">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>ModifiedItemList</widget>
+                </row>
+            </rows>
         </layout>
-    
-    <!-- treetable layouts - Modified Items, Impacted Items  -->
-    <layout name="cm_mod_tt">
-      <templates>
-        <template mode="any">/layouts/layout_treetable_template.xhtml
-        </template>
-      </templates>
-      <columns>
-        <column name="origin_item">
-          <properties mode="any">
-            <property name="columnStyleClass">ellipsisWhenOverflow</property>
-            <property name="columnHeading">label.treetable.column.cm.originItem</property>
-          </properties>
-          <widget>cm_origin_item</widget>
-        </column>
-        <column name="origin_item_version">
-          <properties mode="any">
-            <property name="columnStyle">width: 7em;</property>
-          </properties>
-          <widget>cm_origin_item_version</widget>
-        </column>
-        <column name="origin_item_lock_icon">
-          <properties mode="any">
-            <property name="columnStyle">width: 3em;</property>
-            <property name="columnStyleClass">alignCenter</property>
-          </properties>
-          <widget>cm_origin_item_lock_icon</widget>
-        </column>
-        <column name="origin_item_state">
-          <properties mode="any">
-            <property name="columnStyle">width: 3.5em;</property>
-          </properties>
-          <widget>cm_origin_item_state</widget>
-        </column>
-        <column name="action">
-          <properties mode="any">
-            <property name="columnStyle">width: 6em;</property>
-            <property name="columnHeading">label.treetable.column.cm.action</property>
-          </properties>
-          <widget>cm_action</widget>
-        </column>
-        <column name="destination_item">
-          <properties mode="any">
-            <property name="columnStyleClass">ellipsisWhenOverflow</property>
-            <property name="columnHeading">label.treetable.column.cm.destinationItem</property>
-          </properties>
-          <widget>cm_destination_item</widget>
-        </column>
-        <column name="destination_item_version">
-          <properties mode="any">
-            <property name="columnStyle">width: 14em;</property>
-          </properties>
-          <widget>cm_destination_item_version_list</widget>
-        </column>
-        <column name="destination_item_lock_icon">
-          <properties mode="any">
-            <property name="columnStyle">width: 3em;</property>
-            <property name="columnStyleClass">alignCenter</property>
-          </properties>
-          <widget>cm_destination_item_lock_icon</widget>
-        </column>
-        <column name="destination_item_state">
-          <properties mode="any">
-            <property name="columnStyle">width: 3.5em;</property>
-          </properties>
-          <widget>cm_destination_item_state</widget>
-        </column>
-        <column name="includeInImpactMatrix">
-          <properties mode="any">
-            <property name="columnStyle">width: 40px;</property>
-            <property name="columnHeading">label.treetable.column.cm.includeInImpactMatrix</property>
-            <property name="columnTooltip">label.treetable.column.cm.includeInImpactMatrix.tooltip</property>
-          </properties>
-          <widget>cm_include_in_impact_matrix</widget>
-        </column>
-        <column name="is_managed">
-          <properties mode="any">
-            <property name="columnStyle">width: 40px;</property>
-            <property name="columnStyleClass">alignCenter</property>
-            <property name="columnHeading">label.treetable.column.cm.isManaged</property>
-            <property name="columnTooltip">label.treetable.column.cm.isManaged.tooltip</property>
-          </properties>
-          <widget>cm_is_managed</widget>
-        </column>
-        <column name="is_manual_or_derived_from">
-          <properties mode="any">
-            <property name="columnStyle">width: 40px;</property>
-            <property name="columnStyleClass">alignCenter</property>
-          </properties>
-          <widget>is_manual_or_derived_from</widget>
-        </column>
-        <column name="options">
-          <properties mode="any">
-            <property name="columnStyle">width: 40px;</property>
-            <property name="columnStyleClass">alignCenter</property>
-          </properties>
-          <widget>cm_options</widget>
-        </column>
-      </columns>
-      <properties mode="any">
-        <property name="tableTitle">#{webActions.currentTabId eq 'TAB_CM_BOM_MODIFIED_ITEMS_TREETABLE' ? 'title.treetable.cm.bomModifiedItems' : 'title.treetable.cm.docModifiedItems'}</property>
-        <property name="tableStyleClass">ui-treetable-smallFont</property>
-        <property name="factory">#{webActions.currentTabId eq 'TAB_CM_BOM_MODIFIED_ITEMS_TREETABLE' ? bomModifiedItemsRoot : docModifiedItemsRoot}</property>
-      </properties>
-      <properties mode="edit">
-        <property name="selectionMode">single</property>
-      </properties>
-    </layout>
-    
-    <layout name="cm_imp_tt">
-      <templates>
-        <template mode="any">/layouts/layout_treetable_template.xhtml
-        </template>
-      </templates>
-      <columns>
-        <column name="origin_item">
-          <properties mode="any">
-<!--             <property name="columnStyleClass">ellipsisWhenOverflow</property> -->
-            <property name="columnHeading">label.treetable.column.cm.originItem</property>
-          </properties>
-          <widget>cm_origin_item</widget>
-        </column>
-        <column name="origin_item_version">
-          <properties mode="any">
-            <property name="columnStyle">width: 7em;</property>
-          </properties>
-          <widget>cm_origin_item_version</widget>
-        </column>
-        <column name="origin_item_lock_icon">
-          <properties mode="any">
-            <property name="columnStyle">width: 3em;</property>
-            <property name="columnStyleClass">alignCenter</property>
-          </properties>
-          <widget>cm_origin_item_lock_icon</widget>
-        </column>
-        <column name="origin_item_state">
-          <properties mode="any">
-            <property name="columnStyle">width: 3.5em;</property>
-          </properties>
-          <widget>cm_origin_item_state</widget>
-        </column>
-        <column name="origin_wc_item_type">
-          <properties mode="any">
-            <property name="columnStyle">width: 8em;</property>
-            <property name="columnHeading">#{webActions.currentTabId eq 'TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE' ? '' : 'label.treetable.column.cm.originWcCadType'}</property>
-          </properties> 
-          <widget>cm_origin_wc_item_type</widget>
-        </column>
-        <column name="action">
-          <properties mode="any">
-            <property name="columnStyle">width: 11em;</property>
-            <property name="columnHeading">label.treetable.column.cm.action</property>
-          </properties>
-          <widget>cm_action</widget>
-        </column>
-        <column name="destination_item">
-          <properties mode="any">
-            <property name="columnStyleClass">ellipsisWhenOverflow</property>
-            <property name="columnHeading">label.treetable.column.cm.destinationItem</property>
-          </properties>
-          <widget>cm_destination_item</widget>
-        </column>
-        <column name="destination_item_version">
-          <properties mode="any">
-            <property name="columnStyle">width: 14em;</property>
-          </properties>
-          <widget>cm_destination_item_version_list</widget>
-        </column>
-        <column name="destination_item_lock_icon">
-          <properties mode="any">
-            <property name="columnStyle">width: 3em;</property>
-            <property name="columnStyleClass">alignCenter</property>
-          </properties>
-          <widget>cm_destination_item_lock_icon</widget>
-        </column>
-        <column name="destination_item_state">
-          <properties mode="any">
-            <property name="columnStyle">width: 3.5em;</property>
-          </properties>
-          <widget>cm_destination_item_state</widget>
-        </column>
-        <column name="is_managed">
-          <properties mode="any">
-            <property name="columnStyle">width: 80px;</property>
-            <property name="columnStyleClass">alignCenter</property>
-            <property name="columnHeading">label.treetable.column.cm.isManaged</property>
-            <property name="columnTooltip">label.treetable.column.cm.isManaged.tooltip</property>
-          </properties>
-          <widget>cm_is_managed</widget>
-        </column>
-        <column name="comment">
-          <properties mode="any">
-            <property name="columnStyle">width: 20em;</property>
-            <property name="columnHeading">label.treetable.column.cm.comment</property>
-          </properties>
-          <widget>cm_comment</widget>
-        </column>
-      </columns>
-      <properties mode="any">
-        <property name="tableTitle">#{webActions.currentTabId eq 'TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE' ? 'title.treetable.cm.bomImpactedItems' : 'title.treetable.cm.docImpactedItems'}</property>
-        <property name="tableStyleClass">ui-treetable-smallFont</property>
-        <property name="factory">#{webActions.currentTabId eq 'TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE' ? bomImpactedItemsRoot : docImpactedItemsRoot}</property>
-      </properties>
-      <properties mode="edit">
-        <property name="selectionMode">multiple</property>
-      </properties>
-    </layout>
-    <!-- End of treetable layouts - Modified Items, DOC Impacted Items, BOM Impacted Items  -->
 
-  </extension>
+        <layout name="cm_pr">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>PrReportedBy</widget>
+                </row>
+                <row>
+                    <widget>PrInterlocutor</widget>
+                </row>
+                <row>
+                    <widget>PrReason</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <layout name="cm_ecr">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>EcrRequestedBy</widget>
+                </row>
+                <row>
+                    <widget>EcrReason</widget>
+                </row>
+                <row>
+                    <widget>EcrType</widget>
+                </row>
+                <row>
+                    <widget>EcrCause</widget>
+                </row>
+                <row>
+                    <widget>EcrProposedSolution</widget>
+                </row>
+                <row>
+                    <widget>EcrEconomicalComiteList</widget>
+                </row>
+                <row>
+                    <widget>EcrNonRecurringCost</widget>
+                </row>
+                <row>
+                    <widget>EcrRecurringCost</widget>
+                </row>
+                <row>
+                    <widget>EcrStockCost</widget>
+                </row>
+                <row>
+                    <widget>EcrProposedEcoType</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <layout name="cm_eco">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>EcoEcoType</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <layout name="elora_cm_doctype_actions_impact">
+            <templates>
+                <template mode="any">
+                    /directory/directory_layout_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>elora_cm_doctype_actions_impact_id</widget>
+                </row>
+                <row>
+                    <widget>elora_cm_doctype_actions_impact_doctype</widget>
+                </row>
+                <row>
+                    <widget>elora_cm_doctype_actions_impact_action</widget>
+                </row>
+                <row>
+                    <widget>elora_cm_doctype_actions_impact_impactable</widget>
+                </row>
+                <row>
+                    <widget>elora_cm_doctype_actions_impact_default</widget>
+                </row>
+                <row>
+                    <widget>elora_cm_doctype_actions_impact_obsolete</widget>
+                </row>
+                <row>
+                    <widget>elora_cm_doctype_actions_impact_ordering</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <layout name="cm_calculate_impact_matrix">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>lockImpactedItemsAndDocs</widget>
+                </row>
+                <row>
+                    <widget>overwriteImpactedItems</widget>
+                    <widget>overwriteOptions</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <!-- treetable layouts - Modified Items, Impacted Items  -->
+        <layout name="cm_mod_tt">
+            <templates>
+                <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="origin_item">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">label.treetable.column.cm.originItem</property>
+                        <property name="filterBy">#{nodeData.originItem.elo.reference}
+                            #{nodeData.originItem.title}</property>
+                        <property name="filterMatchMode">contains</property>
+                    </properties>
+                    <widget>cm_origin_item</widget>
+                </column>
+                <column name="origin_item_version">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 3em;</property>
+                    </properties>
+                    <widget>cm_origin_item_version</widget>
+                </column>
+                <column name="origin_item_lock_icon">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
+                    </properties>
+                    <widget>cm_origin_item_lock_icon</widget>
+                </column>
+                <column name="origin_item_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2em;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>cm_origin_item_state</widget>
+                </column>
+                <column name="action">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 6em;</property>
+                        <property name="columnHeading">label.treetable.column.cm.action</property>
+                    </properties>
+                    <widget>cm_action</widget>
+                </column>
+                <column name="destination_item_source_version">
+                    <properties mode="any">
+                        <property name="hidden">#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.cm.change.destination.source.version.enabled',
+                            false) ? 'false' : 'true'}</property>
+                        <property name="columnStyle">width: 8em;</property>
+                        <property name="columnHeading">
+                            label.treetable.column.cm.destinationItemSourceVersion</property>
+                        <property name="columnTooltip">
+                            label.treetable.column.cm.destinationItemSourceVersion.tooltip</property>
+                    </properties>
+                    <widget>cm_destination_item_source_version_list</widget>
+                </column>
+                <column name="destination_item">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">label.treetable.column.cm.destinationItem</property>
+                    </properties>
+                    <widget>cm_destination_item</widget>
+                </column>
+                <column name="destination_item_version">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 8.5em;</property>
+                    </properties>
+                    <widget>cm_destination_item_version_list</widget>
+                </column>
+                <column name="destination_item_lock_icon">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
+                    </properties>
+                    <widget>cm_destination_item_lock_icon</widget>
+                </column>
+                <column name="destination_item_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2em;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>cm_destination_item_state</widget>
+                </column>
+                <column name="includeInImpactMatrix">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2em;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnHeading">
+                            label.treetable.column.cm.includeInImpactMatrix</property>
+                        <property name="columnTooltip">
+                            label.treetable.column.cm.includeInImpactMatrix.tooltip</property>
+                    </properties>
+                    <widget>cm_include_in_impact_matrix</widget>
+                </column>
+                <column name="is_managed">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 3em;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnHeading">label.treetable.column.cm.isManaged</property>
+                        <property name="columnTooltip">label.treetable.column.cm.isManaged.tooltip</property>
+                        <property name="filterBy">#{nodeData.isManaged}</property>
+                        <property name="filterMatchMode">exact</property>
+                        <property name="filterTemplate">/incl/pf_filter_tristate_boolean.xhtml</property>
+                    </properties>
+                    <widget>cm_is_managed</widget>
+                </column>
+                <column name="is_manual_or_derived_from">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_is_manual_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.isManual</property>
+                    </properties>
+                    <widget>is_manual_or_derived_from</widget>
+                </column>
+                <column name="options">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                    </properties>
+                    <widget>cm_options</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="tableTitle">title.treetable.cm.modifiedItems</property>
+                <property name="tableStyleClass">ui-treetable-smallFont</property>
+                <property name="menubar">/incl/treetable/cm_mod_tt_menubar.xhtml</property>
+                <property name="useFilters">false</property>
+                <property name="showFiltersByDefault">true</property>
+            </properties>
+            <properties mode="edit">
+                <property name="selectionMode">single</property>
+            </properties>
+        </layout>
+
+        <layout name="cm_bom_imp_tt">
+            <templates>
+                <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="origin_item">
+                    <properties mode="any">
+                        <property name="columnHeading">label.treetable.column.cm.originItem</property>
+                        <property name="filterBy">#{nodeData.originItem.elo.reference}
+                            #{nodeData.originItem.title}</property>
+                        <property name="filterMatchMode">contains</property>
+                        <property name="filterPlaceholder">Filter by title or reference</property>
+                    </properties>
+                    <widget>treewidget_cm_impact_icon_reference_title</widget>
+                </column>
+                <column name="origin_item_version">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 3em;</property>
+                    </properties>
+                    <widget>cm_origin_item_version</widget>
+                </column>
+                <column name="is_derived_from">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_derived_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.isDerivedFrom</property>
+                    </properties>
+                    <widget>is_derived_from</widget>
+                </column>
+                <column name="is_from_mbom">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_mbom_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.isFromMbom</property>
+                    </properties>
+                    <widget>is_from_mbom</widget>
+                </column>
+                <column name="is_characterized">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_has_characteristics_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.isCharacterized</property>
+                    </properties>
+                    <widget>is_characterized</widget>
+                </column>
+                <column name="origin_item_lock_icon">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
+                    </properties>
+                    <widget>cm_origin_item_lock_icon</widget>
+                </column>
+                <column name="origin_item_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2em;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>cm_origin_item_state</widget>
+                </column>
+                <column name="action">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 6em;</property>
+                        <property name="columnHeading">label.treetable.column.cm.action</property>
+                    </properties>
+                    <widget>cm_action</widget>
+                </column>
+                <column name="destination_item_source_version">
+                    <properties mode="any">
+                        <property name="hidden">#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.cm.change.destination.source.version.enabled',
+                            false) ? 'false' : 'true'}</property>
+                        <property name="columnStyle">width: 8em;</property>
+                        <property name="columnHeading">
+                            label.treetable.column.cm.destinationItemSourceVersion</property>
+                        <property name="columnTooltip">
+                            label.treetable.column.cm.destinationItemSourceVersion.tooltip</property>
+                    </properties>
+                    <widget>cm_destination_item_source_version_list</widget>
+                </column>
+                <column name="destination_item">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">label.treetable.column.cm.destinationItem</property>
+                    </properties>
+                    <widget>cm_destination_item</widget>
+                </column>
+                <column name="destination_item_version">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 8.5em;</property>
+                    </properties>
+                    <widget>cm_destination_item_version_list</widget>
+                </column>
+                <column name="destination_item_lock_icon">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
+                    </properties>
+                    <widget>cm_destination_item_lock_icon</widget>
+                </column>
+                <column name="destination_item_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2.7rem;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnHeading">label.treetable.column.cm.state</property>
+                        <property name="columnTooltip">label.treetable.column.cm.state.tooltip</property>
+                        <property name="filterBy">#{nodeData.destinationItem.currentLifeCycleState}</property>
+                        <property name="filterMatchMode">exact</property>
+                        <property name="filterTemplate">
+                            /incl/treetable/cm_item_lifeCycle_states.xhtml</property>
+                    </properties>
+                    <widget>cm_destination_item_state</widget>
+                </column>
+                <column name="is_managed">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2.7rem;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnHeading">label.treetable.column.cm.isManaged</property>
+                        <property name="columnTooltip">label.treetable.column.cm.isManaged.tooltip</property>
+                        <property name="filterBy">#{nodeData.isManaged}</property>
+                        <property name="filterMatchMode">exact</property>
+                        <property name="filterTemplate">
+                            /incl/treetable/cm_managed_yes_no_values.xhtml</property>
+                    </properties>
+                    <widget>cm_is_managed</widget>
+                </column>
+                <column name="comment">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 10em;</property>
+                        <property name="columnHeading">label.treetable.column.cm.comment</property>
+                    </properties>
+                    <widget>cm_comment</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="headerFiltersTemplate">
+                    /incl/treetable/cm_impacted_items_header_warnings.xhtml</property>
+                <property name="tableTitle">title.treetable.cm.bomImpactedItems</property>
+                <property name="tableStyleClass">ui-treetable-smallFont</property>
+                <property name="menubar">/incl/treetable/cm_imp_item_tt_menubar.xhtml</property>
+                <property name="useFilters">true</property>
+                <property name="showFiltersByDefault">true</property>
+            </properties>
+            <properties mode="edit">
+                <property name="selectionMode">multiple</property>
+            </properties>
+        </layout>
+
+        <layout name="cm_doc_imp_tt">
+            <templates>
+                <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="origin_item">
+                    <properties mode="any">
+                        <property name="columnHeading">label.treetable.column.cm.originItem</property>
+                        <property name="filterBy">#{nodeData.originItem.elo.reference}
+                            #{nodeData.originItem.title}</property>
+                        <property name="filterMatchMode">contains</property>
+                    </properties>
+                    <widget>treewidget_cm_impact_icon_reference_title</widget>
+                </column>
+                <column name="origin_item_version">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 3em;</property>
+                    </properties>
+                    <widget>cm_origin_item_version</widget>
+                </column>
+                <column name="origin_item_lock_icon">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
+                    </properties>
+                    <widget>cm_origin_item_lock_icon</widget>
+                </column>
+                <column name="origin_item_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2em;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>cm_origin_item_state</widget>
+                </column>
+                <column name="origin_wc_item_type">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 8em;</property>
+                        <property name="columnHeading">label.treetable.column.cm.originWcCadType</property>
+                    </properties>
+                    <widget>cm_origin_wc_item_type</widget>
+                </column>
+                <column name="action">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 6em;</property>
+                        <property name="columnHeading">label.treetable.column.cm.action</property>
+                    </properties>
+                    <widget>cm_action</widget>
+                </column>
+                <column name="destination_item">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">label.treetable.column.cm.destinationItem</property>
+                    </properties>
+                    <widget>cm_destination_item</widget>
+                </column>
+                <column name="destination_item_version">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 8.5em;</property>
+                    </properties>
+                    <widget>cm_destination_item_version_list</widget>
+                </column>
+                <column name="destination_item_lock_icon">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                        <property name="columnIcon">/icons/title_lock_16.png</property>
+                        <property name="columnTooltip">eloraplm.column.lock</property>
+                    </properties>
+                    <widget>cm_destination_item_lock_icon</widget>
+                </column>
+                <column name="destination_item_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2.7rem;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnHeading">label.treetable.column.cm.state</property>
+                        <property name="columnTooltip">label.treetable.column.cm.state.tooltip</property>
+                        <property name="filterBy">#{nodeData.destinationItem.currentLifeCycleState}</property>
+                        <property name="filterMatchMode">exact</property>
+                        <property name="filterTemplate">
+                            /incl/treetable/cm_doc_lifeCycle_states.xhtml</property>
+                    </properties>
+                    <widget>cm_destination_item_state</widget>
+                </column>
+                <column name="is_managed">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2.7rem;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                        <property name="columnHeading">label.treetable.column.cm.isManaged</property>
+                        <property name="columnTooltip">label.treetable.column.cm.isManaged.tooltip</property>
+                        <property name="filterBy">#{nodeData.isManaged}</property>
+                        <property name="filterMatchMode">exact</property>
+                        <property name="filterTemplate">
+                            /incl/treetable/cm_managed_yes_no_values.xhtml</property>
+                    </properties>
+                    <widget>cm_is_managed</widget>
+                </column>
+                <column name="comment">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 10em;</property>
+                        <property name="columnHeading">label.treetable.column.cm.comment</property>
+                    </properties>
+                    <widget>cm_comment</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="headerFiltersTemplate">
+                    /incl/treetable/cm_impacted_items_header_warnings.xhtml</property>
+                <property name="tableTitle">title.treetable.cm.docImpactedItems</property>
+                <property name="tableStyleClass">ui-treetable-smallFont</property>
+                <property name="menubar">/incl/treetable/cm_imp_doc_tt_menubar.xhtml</property>
+                <property name="useFilters">true</property>
+                <property name="showFiltersByDefault">true</property>
+            </properties>
+            <properties mode="edit">
+                <property name="selectionMode">multiple</property>
+            </properties>
+        </layout>
+
+        <layout name="cm_man_tt">
+            <templates>
+                <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="origin_item">
+                    <properties mode="any">
+                        <property name="columnStyleClass">ellipsisWhenOverflow</property>
+                        <property name="columnHeading">label.treetable.column.cm.originItem</property>
+                    </properties>
+                    <widget>cm_origin_item</widget>
+                </column>
+                <column name="origin_item_version">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 3em;</property>
+                    </properties>
+                    <widget>cm_origin_item_version</widget>
+                </column>
+                <column name="origin_item_lock_icon">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                    </properties>
+                    <widget>cm_origin_item_lock_icon</widget>
+                </column>
+                <column name="origin_item_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 2em;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>cm_origin_item_state</widget>
+                </column>
+                <column name="action">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 7em;</property>
+                        <property name="columnHeading">label.treetable.column.cm.action</property>
+                    </properties>
+                    <widget>cm_manual_action</widget>
+                </column>
+                <column name="options">
+                    <properties mode="any">
+                        <property name="columnStyleClass">iconColumn</property>
+                    </properties>
+                    <widget>cm_manual_options</widget>
+                </column>
+            </columns>
+            <properties mode="any">
+                <property name="tableTitle">#{'title.treetable.cm.manualImpactedItems'}</property>
+                <property name="tableStyleClass">ui-treetable-smallFont</property>
+                <property name="alternativeButtonsWidget">manualImpactedItemsTreetableButtons</property>
+                <property name="menubar">/incl/treetable/cm_man_tt_menubar.xhtml</property>
+            </properties>
+        </layout>
+
+        <!-- End of treetable layouts - Modified Items, DOC Impacted Items, BOM Impacted Items  -->
+
+    </extension>
 
 
-  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgettypes">
-  
-    <widgetType name="cm_summary_modified_items_list">
-      <handler-class>
-        org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
-      </handler-class>
-      <property name="template">
-        /widgets/summary/cm_summary_modified_items_list_widget_template.xhtml
-      </property>
-    </widgetType>
-    
-  </extension>
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgettypes">
+
+        <widgetType name="cm_summary_modified_items_list">
+            <handler-class>
+                org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+            </handler-class>
+            <property name="template">
+                /widgets/summary/cm_summary_modified_items_list_widget_template.xhtml
+            </property>
+        </widgetType>
+
+    </extension>
 
 
-  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
 
-    <widget name="PrReportedBy" type="complex">
-      <labels>
-        <label mode="any">label.widget.CM.PrReportedBy</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmpr:reportedBy</field>
-      </fields>
-      <subWidgets>
-        <widget name="ReportedByName" type="text">
-          <labels>
-            <label mode="any">label.widget.CM.ReportedByName</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>name</field>
-          </fields>
+        <widget name="treewidget_cm_impact_icon_reference_title" type="template">
+            <labels>
+                <label mode="any">label.content.header.title</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field></field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="template">
+                    /widgets/treetable/treewidget_cm_impact_icon_reference_title_widget.xhtml</property>
+            </properties>
         </widget>
-        <widget name="ReportedByEmail" type="text">
-          <labels>
-            <label mode="any">label.widget.CM.ReportedByEmail</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>email</field>
-          </fields>
+
+        <widget name="manualImpactedItemsTreetableButtons"
+            type="documentActionsWithForms">
+            <properties widgetMode="view">
+                <property name="category">MANUAL_IMPACTED_ITEMS_TREETABLE_BUTTON</property>
+                <property name="overallDisplay">horizontal_block</property>
+            </properties>
+            <controls mode="any">
+                <control name="requireSurroundingForm">false</control>
+                <control name="gridStyleClass">gridStyle12</control>
+            </controls>
         </widget>
-        <widget name="ReportedByTelephone" type="text">
-          <labels>
-            <label mode="any">label.widget.CM.ReportedByTelephone</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>telephone</field>
-          </fields>
-        </widget>        
-      </subWidgets>
-    </widget>
 
-    <widget name="PrInterlocutor" type="singleUserSuggestion">
-      <labels>
-        <label mode="any">label.widget.CM.PrInterlocutor</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmpr:interlocutor</field>
-      </fields>
-      <properties mode="any">
-        <property name="userSuggestionSearchType">USER_TYPE</property>
-        <property name="minChars">1</property>
-      </properties>
-      <controls mode="any">
-        <!-- enable ajax submit on change/click/select on demo application -->
-        <control name="supportInsideInputWidgetEffects">true</control>
-      </controls>
-    </widget>
-
-    <widget name="PrReason" type="textarea">
-      <labels>
-        <label mode="any">label.widget.CM.PrReason</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmpr:reason</field>
-      </fields>
-    </widget>
-
-
-    <widget name="EcrRequestedBy" type="singleUserSuggestion">
-      <labels>
-        <label mode="any">label.widget.CM.EcrRequestedBy</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:requestedBy</field>
-      </fields>
-      <properties mode="any">
-        <property name="userSuggestionSearchType">USER_TYPE</property>
-        <property name="minChars">1</property>
-      </properties>
-      <controls mode="any">
-        <!-- enable ajax submit on change/click/select on demo application -->
-        <control name="supportInsideInputWidgetEffects">true</control>
-      </controls>
-    </widget>
-
-    <widget name="EcrReason" type="textarea">
-      <labels>
-        <label mode="any">label.widget.CM.EcrReason</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:reason</field>
-      </fields>
-    </widget>
-
-    <widget name="EcrType" type="suggestOneDirectory">
-      <labels>
-        <label mode="any">label.widget.CM.EcrType</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:ecrType</field>
-      </fields>
-      <properties widgetMode="any">
-        <property name="directoryName">elora_cmEcrType</property>
-        <property name="required">false</property>
-      </properties>
-    </widget>
-
-    <widget name="EcrCause" type="textarea">
-      <labels>
-        <label mode="any">label.widget.CM.EcrCause</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:cause</field>
-      </fields>
-    </widget>
-
-    <widget name="EcrProposedSolution" type="textarea">
-      <labels>
-        <label mode="any">label.widget.CM.EcrProposedSolution</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:proposedSolution</field>
-      </fields>
-    </widget>
-
-    <widget name="EcrEconomicalComiteList" type="list">
-      <labels>
-        <label mode="any">label.widget.CM.EcrEconomicalComiteList</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:economicalComiteList</field>
-      </fields>
-      <properties widgetMode="any">
-          <property name="display">table</property>
-      </properties>
-      <subWidgets>
-        <widget name="EcrComiteUser" type="singleUserSuggestion">
-          <labels>
-            <label mode="any">label.widget.CM.EcrComiteUser</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>comiteUser</field>
-          </fields>
-          <properties mode="any">
-            <property name="userSuggestionSearchType">USER_TYPE</property>
-            <property name="minChars">1</property>
-          </properties>
-          <controls mode="any">
-            <!-- enable ajax submit on change/click/select on demo application -->
-            <control name="supportInsideInputWidgetEffects">true</control>
-          </controls>
+        <widget name="PrReportedBy" type="complex">
+            <labels>
+                <label mode="any">label.widget.CM.PrReportedBy</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmpr:reportedBy</field>
+            </fields>
+            <subWidgets>
+                <widget name="ReportedByName" type="text">
+                    <labels>
+                        <label mode="any">label.widget.CM.ReportedByName</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>name</field>
+                    </fields>
+                </widget>
+                <widget name="ReportedByEmail" type="text">
+                    <labels>
+                        <label mode="any">label.widget.CM.ReportedByEmail</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>email</field>
+                    </fields>
+                </widget>
+                <widget name="ReportedByTelephone" type="text">
+                    <labels>
+                        <label mode="any">label.widget.CM.ReportedByTelephone</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>telephone</field>
+                    </fields>
+                </widget>
+            </subWidgets>
         </widget>
-      </subWidgets>
-    </widget>
 
-    <widget name="EcrNonRecurringCost" type="complex">
-      <labels>
-        <label mode="any">label.widget.CM.EcrNonRecurringCost</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:nonRecurringCost</field>
-      </fields>
-      <subWidgets>
-        <widget name="EcrCost" type="text">
-          <labels>
-            <label mode="any">label.widget.CM.EcrCost</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>cost</field>
-          </fields>
+        <widget name="PrInterlocutor" type="singleUserSuggestion">
+            <labels>
+                <label mode="any">label.widget.CM.PrInterlocutor</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmpr:interlocutor</field>
+            </fields>
+            <properties mode="any">
+                <property name="userSuggestionSearchType">USER_TYPE</property>
+                <property name="minChars">1</property>
+            </properties>
+            <controls mode="any">
+                <!-- enable ajax submit on change/click/select on demo application -->
+                <control name="supportInsideInputWidgetEffects">true</control>
+            </controls>
         </widget>
-        <widget name="EcrComment" type="textarea">
-          <labels>
-            <label mode="any">label.widget.CM.EcrComment</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>comment</field>
-          </fields>
+
+        <widget name="PrReason" type="textarea">
+            <labels>
+                <label mode="any">label.widget.CM.PrReason</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmpr:reason</field>
+            </fields>
         </widget>
-      </subWidgets>
-    </widget>
 
-    <widget name="EcrRecurringCost" type="complex">
-      <labels>
-        <label mode="any">label.widget.CM.EcrRecurringCost</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:recurringCost</field>
-      </fields>
-      <subWidgets>
-        <widget name="EcrCost" type="text">
-          <labels>
-            <label mode="any">label.widget.CM.EcrCost</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>cost</field>
-          </fields>
+
+        <widget name="EcrRequestedBy" type="singleUserSuggestion">
+            <labels>
+                <label mode="any">label.widget.CM.EcrRequestedBy</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:requestedBy</field>
+            </fields>
+            <properties mode="any">
+                <property name="userSuggestionSearchType">USER_TYPE</property>
+                <property name="minChars">1</property>
+            </properties>
+            <controls mode="any">
+                <!-- enable ajax submit on change/click/select on demo application -->
+                <control name="supportInsideInputWidgetEffects">true</control>
+            </controls>
         </widget>
-        <widget name="EcrComment" type="textarea">
-          <labels>
-            <label mode="any">label.widget.CM.EcrComment</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>comment</field>
-          </fields>
+
+        <widget name="EcrReason" type="textarea">
+            <labels>
+                <label mode="any">label.widget.CM.EcrReason</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:reason</field>
+            </fields>
         </widget>
-      </subWidgets>
-    </widget>
 
-    <widget name="EcrStockCost" type="complex">
-      <labels>
-        <label mode="any">label.widget.CM.EcrStockCost</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:stockCost</field>
-      </fields>
-      <subWidgets>
-        <widget name="EcrCost" type="text">
-          <labels>
-            <label mode="any">label.widget.CM.EcrCost</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>cost</field>
-          </fields>
+        <widget name="EcrType" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.CM.EcrType</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:ecrType</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_cmEcrType</property>
+                <property name="required">false</property>
+            </properties>
         </widget>
-        <widget name="EcrComment" type="textarea">
-          <labels>
-            <label mode="any">label.widget.CM.EcrComment</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>comment</field>
-          </fields>
+
+        <widget name="EcrCause" type="textarea">
+            <labels>
+                <label mode="any">label.widget.CM.EcrCause</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:cause</field>
+            </fields>
         </widget>
-      </subWidgets>
-    </widget>
 
-    <widget name="EcrProposedEcoType" type="suggestOneDirectory">
-      <labels>
-        <label mode="any">label.widget.CM.EcrProposedEcoType</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmecr:proposedEcoType</field>
-      </fields>
-      <properties widgetMode="any">
-        <property name="directoryName">elora_cmEcoType</property>
-        <property name="required">false</property>
-      </properties>
-    </widget>
+        <widget name="EcrProposedSolution" type="textarea">
+            <labels>
+                <label mode="any">label.widget.CM.EcrProposedSolution</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:proposedSolution</field>
+            </fields>
+        </widget>
 
-    <widget name="EcoEcoType" type="suggestOneDirectory">
-      <labels>
-        <label mode="any">label.widget.CM.EcoEcoType</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>cmeco:ecoType</field>
-      </fields>
-      <properties widgetMode="any">
-        <property name="directoryName">elora_cmEcoType</property>
-        <property name="required">false</property>
-      </properties>
-    </widget>
+        <widget name="EcrEconomicalComiteList" type="list">
+            <labels>
+                <label mode="any">label.widget.CM.EcrEconomicalComiteList</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:economicalComiteList</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="display">table</property>
+            </properties>
+            <subWidgets>
+                <widget name="EcrComiteUser" type="singleUserSuggestion">
+                    <labels>
+                        <label mode="any">label.widget.CM.EcrComiteUser</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>comiteUser</field>
+                    </fields>
+                    <properties mode="any">
+                        <property name="userSuggestionSearchType">USER_TYPE</property>
+                        <property name="minChars">1</property>
+                    </properties>
+                    <controls mode="any">
+                        <!-- enable ajax submit on change/click/select on demo application -->
+                        <control name="supportInsideInputWidgetEffects">true</control>
+                    </controls>
+                </widget>
+            </subWidgets>
+        </widget>
 
-    <!-- elora_cm_doctype_actions_impact widgets -->
-        
-    <widget name="elora_cm_doctype_actions_impact_id" type="text">
-      <labels>
-        <label mode="any">eloraplm.label.vocabulary.id</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>eloraCmDoctypeActionsImpact:id</field>
-      </fields>
-      <properties widgetMode="edit">
-        <property name="required">true</property>
-      </properties>
-    </widget>
-    
-    <widget name="elora_cm_doctype_actions_impact_doctype" type="text">
-      <labels>
-        <label mode="any">eloraplm.label.vocabulary.cmDoctypeActionsImpact.doctype</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>eloraCmDoctypeActionsImpact:doctype</field>
-      </fields>
-      <properties widgetMode="edit">
-        <property name="required">true</property>
-      </properties>
-    </widget>
-    
-    <widget name="elora_cm_doctype_actions_impact_action" type="text">
-      <labels>
-        <label mode="any">eloraplm.label.vocabulary.cmDoctypeActionsImpact.action</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>eloraCmDoctypeActionsImpact:action</field>
-      </fields>
-      <properties widgetMode="edit">
-        <property name="required">true</property>
-      </properties>
-    </widget>
-    
-    <widget name="elora_cm_doctype_actions_impact_impactable" type="template">
-      <labels>
-        <label mode="any">eloraplm.label.vocabulary.cmDoctypeActionsImpact.impactable</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>eloraCmDoctypeActionsImpact:impactable</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">
-          /widgets/integer_yes_no_widget_template.xhtml
-        </property>
-      </properties>
-    </widget>
-    
-    <widget name="elora_cm_doctype_actions_impact_default" type="template">
-      <labels>
-        <label mode="any">eloraplm.label.vocabulary.cmDoctypeActionsImpact.default</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>eloraCmDoctypeActionsImpact:default</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">
-          /widgets/integer_yes_no_widget_template.xhtml
-        </property>
-      </properties>
-    </widget>
+        <widget name="EcrNonRecurringCost" type="complex">
+            <labels>
+                <label mode="any">label.widget.CM.EcrNonRecurringCost</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:nonRecurringCost</field>
+            </fields>
+            <subWidgets>
+                <widget name="EcrCost" type="text">
+                    <labels>
+                        <label mode="any">label.widget.CM.EcrCost</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>cost</field>
+                    </fields>
+                </widget>
+                <widget name="EcrComment" type="textarea">
+                    <labels>
+                        <label mode="any">label.widget.CM.EcrComment</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>comment</field>
+                    </fields>
+                </widget>
+            </subWidgets>
+        </widget>
 
-    <widget name="elora_cm_doctype_actions_impact_obsolete" type="template">
-      <labels>
-        <label mode="any">eloraplm.label.vocabulary.obsolete</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>eloraCmDoctypeActionsImpact:obsolete</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">
-          /widgets/integer_yes_no_widget_template.xhtml
-        </property>
-      </properties>
-    </widget>
+        <widget name="EcrRecurringCost" type="complex">
+            <labels>
+                <label mode="any">label.widget.CM.EcrRecurringCost</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:recurringCost</field>
+            </fields>
+            <subWidgets>
+                <widget name="EcrCost" type="text">
+                    <labels>
+                        <label mode="any">label.widget.CM.EcrCost</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>cost</field>
+                    </fields>
+                </widget>
+                <widget name="EcrComment" type="textarea">
+                    <labels>
+                        <label mode="any">label.widget.CM.EcrComment</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>comment</field>
+                    </fields>
+                </widget>
+            </subWidgets>
+        </widget>
 
-    <widget name="elora_cm_doctype_actions_impact_ordering" type="int">
-      <labels>
-        <label mode="any">eloraplm.label.vocabulary.ordering</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>eloraCmDoctypeActionsImpact:ordering</field>
-      </fields>
-      <properties widgetMode="edit">
-        <property name="size">10</property>
-      </properties>
-    </widget>
-    
-    <!-- Relation creation buttons -->
-    
-    <widget name="cmProcessRelationButton" type="documentActions">
-      <properties widgetMode="view">
-        <property name="category">CM_PROCESS_RELATION_BUTTON</property>
-        <property name="overallDisplay">horizontal_block</property>
-      </properties>
-      <controls mode="any">
-        <control name="requireSurroundingForm">false</control>
-        <control name="gridStyleClass">gridStyle12</control>
-      </controls>
-    </widget>
-    
-    <!-- End of Relation creation buttons -->
-    
-    
-    <!-- Widget for displaying ModifiedItemList in the Summary tab -->
-    <widget name="ModifiedItemList" type="cm_summary_modified_items_list">
-     <labels>
-        <label mode="any">label.widget.CM.ModifiedItemList</label>
-      </labels>
-      <translated>true</translated>
-    </widget>
-    
-    
-    <widget name="itemIconReferenceTitle" type="listing_icon_reference_title">
-      <fields>
-        <field></field>
-        <field>ref</field>
-      </fields>
-      <properties mode="any">
-        <property name="isInRelationListing">false</property>
-      </properties>
-    </widget>
-    
-    <widget name="itemState" type="text">
-      <fields>
-        <field>currentLifeCycleState</field>
-      </fields>
-      <properties mode="any">
-        <property name="localize">true</property>
-        <property name="styleClass">lifeCycleStateLabel hollow</property>
-        <property name="style">
-          border-color: #{lifecycleActions.getLifeCycleStateColor(value.currentLifeCycleState)};
-          color: #{lifecycleActions.getLifeCycleStateColor(value.currentLifeCycleState)};
-        </property>
-      </properties>
-    </widget>
-    
-    
-    
-    <!-- treetable widgets - DOC/BOM Modified Items, DOC/BOM Impacted Items  -->
-    <widget name="cm_doc_mod_tt" type="treetable">
-        <labels>
-            <label mode="any"></label>
-        </labels>
-        <fields>
-            <field>data</field>
-        </fields>
-        <widgetModes>
-            <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}
-            </mode>
-        </widgetModes>
-        <properties widgetMode="any">
-            <property name="treetableLayout">cm_mod_tt</property>
-        </properties>
-    </widget>
-    
-    <widget name="cm_bom_mod_tt" type="treetable">
-        <labels>
-            <label mode="any"></label>
-        </labels>
-        <fields>
-            <field>data</field>
-        </fields>
-        <widgetModes>
-            <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}
-            </mode>
-        </widgetModes>
-        <properties widgetMode="any">
-            <property name="treetableLayout">cm_mod_tt</property>
-        </properties>
-    </widget>
-    
-    <widget name="cm_doc_imp_tt" type="treetable">
-        <labels>
-            <label mode="any"></label>
-        </labels>
-        <fields>
-            <field>data</field>
-        </fields>
-        <widgetModes>
-            <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}
-            </mode>
-        </widgetModes>
-        <properties widgetMode="any">
-            <property name="treetableLayout">cm_imp_tt</property>
-        </properties>
-    </widget>
-    
-    <widget name="cm_bom_imp_tt" type="treetable">
-        <labels>
-            <label mode="any"></label>
-        </labels>
-        <fields>
-            <field>data</field>
-        </fields>
-        <widgetModes>
-            <mode value="any">#{eloraWebActions.isEditable() ? 'edit' : 'view'}
-            </mode>
-        </widgetModes>
-        <properties widgetMode="any">
-            <property name="treetableLayout">cm_imp_tt</property>
-        </properties>
-    </widget>
-    <!-- End of treetable widgets - Modified Items, DOC Impacted Items, BOM Impacted Items  -->
-    
-    
-    <widget name="cm_origin_item" type="listing_icon_reference_title">
-      <labels>
-            <label mode="any"></label>
-        </labels>
-      <fields>
-        <field>originItem</field>
-        <field>originItem.ref</field>
-      </fields>
-      <widgetModes>
-        <mode value="any">view</mode>
-      </widgetModes>
-      <properties mode="any">
-        <property name="isInRelationListing">false</property>
-      </properties>
-    </widget>
-    
-    
-    <widget name="cm_origin_item_version" type="listing_version_and_visualized_type">
-          <labels>
-            <label mode="any"></label>
-        </labels>
-        <fields>
-            <field>originItem</field>
-        </fields>
-        <widgetModes>
-            <mode value="any">view</mode>
-        </widgetModes>
-    </widget>
-    
-    <widget name="cm_edit_origin_item" type="listing_icon_reference_title">
-      <labels>
-            <label mode="any"></label>
-        </labels>
-      <fields>
-        <field>editOriginItem</field>
-        <field>editOriginItem.ref</field>
-      </fields>
-      <properties mode="any">
-        <property name="isInRelationListing">false</property>
-      </properties>
-    </widget>
-    
-    
-    <widget name="cm_edit_origin_item_version" type="listing_version_and_visualized_type">
-          <labels>
-            <label mode="any"></label>
-        </labels>
-        <fields>
-            <field>editOriginItem</field>
-        </fields>
-    </widget>
-    
-    <widget name="cm_edit_origin_item_state" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>editOriginItem.currentLifeCycleState</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_item_state_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_origin_item_lock_icon" type="treewidget_lock_icon">
-      <labels>
-        <label mode="any"/>
-      </labels>
-      <fields>
-        <field>originItemWc</field>
-      </fields>
-    </widget>
-    
-    <widget name="cm_origin_item_state" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>originItem.currentLifeCycleState</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_item_state_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_origin_wc_item_type" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>originItemWc</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_item_type_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_action" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>action</field>
-        <field>isModifiedItem</field>
-        <field>actionIsReadOnly</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_action_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_destination_item" type="listing_icon_reference_title">
-        <labels>
-            <label mode="any"></label>
-        </labels>
-      <translated>true</translated>
-      <fields>
-        <field>destinationItem</field>
-        <field>destinationItem.ref</field>
-      </fields>
-      <widgetModes>
-        <mode value="any">view</mode>
-      </widgetModes>
-      <properties mode="any">
-        <property name="isInRelationListing">false</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_destination_item_version" type="listing_version_and_visualized_type">
-         <labels>
-            <label mode="any"></label>
-        </labels>
-        <fields>
-            <field>destinationItem</field>
-        </fields>
-    </widget>
-    
-    <widget name="cm_destination_item_version_list" type="template">
-         <labels>
-            <label mode="any"></label>
-        </labels>
-        <translated>true</translated>
-        <fields>
-          <field>destinationItem</field>
-          <field>destinationItemUid</field>
-          <field>destinationItemVersionList</field>
-          <field>destinationItemVersionIsReadOnly</field>
-        </fields>
-        <properties mode="any">
-          <property name="template">/widgets/cm_destination_item_version_list.xhtml</property>
-        </properties>
-    </widget>
-    
-    <widget name="cm_edit_destination_item" type="listing_icon_reference_title">
-        <labels>
-            <label mode="any"></label>
-        </labels>
-      <translated>true</translated>
-      <fields>
-        <field>editDestinationItem</field>
-        <field>editDestinationItem.ref</field>
-      </fields>
-      <properties mode="any">
-        <property name="isInRelationListing">false</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_edit_destination_item_version" type="listing_version_and_visualized_type">
-         <labels>
-            <label mode="any"></label>
-        </labels>
-        <fields>
-            <field>editDestinationItem</field>
-        </fields>
-    </widget>
-    
-    <widget name="cm_edit_destination_item_state" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>editDestinationItem.currentLifeCycleState</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_item_state_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_destination_item_lock_icon" type="treewidget_lock_icon">
-      <labels>
-        <label mode="any"/>
-      </labels>
-      <fields>
-        <field>destinationItemWc</field>
-      </fields>
-    </widget>
-    
-    <widget name="cm_destination_item_state" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>destinationItem.currentLifeCycleState</field>
-      </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_item_state_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_is_managed" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-          <field>isManaged</field>
-          <field>isManagedIsReadOnly</field>
-        </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_is_managed_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_include_in_impact_matrix" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-          <field>isImpactable</field>
-          <field>includeInImpactMatrix</field>
-        </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_include_in_impact_matrix_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_comment" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-          <field>comment</field>
-          <field>commentIsReadOnly</field>
-        </fields>
-      <properties mode="any">
-        <property name="template">/widgets/cm_comment_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="cm_options" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <properties mode="any">
-        <property name="template">/widgets/cm_options_widget.xhtml</property>
-      </properties>
-    </widget>
-    
-    <widget name="is_manual_or_derived_from" type="template">
-        <labels>
-            <label mode="any"></label>
-        </labels>
-      <translated>true</translated>
-      <fields>
-        <field>isManual</field>
-        <field>derivedFrom</field>
-        <field>isDerivedFromImpactMatrix</field>
-      </fields>
-      <properties mode="any">
-            <property name="template">/widgets/cm_is_manual_or_derived_from.xhtml</property>
-          </properties>
-    </widget>
-    <!-- end of treetable widgets -->
-    
-  </extension>
+        <widget name="EcrStockCost" type="complex">
+            <labels>
+                <label mode="any">label.widget.CM.EcrStockCost</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:stockCost</field>
+            </fields>
+            <subWidgets>
+                <widget name="EcrCost" type="text">
+                    <labels>
+                        <label mode="any">label.widget.CM.EcrCost</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>cost</field>
+                    </fields>
+                </widget>
+                <widget name="EcrComment" type="textarea">
+                    <labels>
+                        <label mode="any">label.widget.CM.EcrComment</label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>comment</field>
+                    </fields>
+                </widget>
+            </subWidgets>
+        </widget>
+
+        <widget name="EcrProposedEcoType" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.CM.EcrProposedEcoType</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmecr:proposedEcoType</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_cmEcoType</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+
+        <widget name="EcoEcoType" type="suggestOneDirectory">
+            <labels>
+                <label mode="any">label.widget.CM.EcoEcoType</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cmeco:ecoType</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_cmEcoType</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+
+        <widget name="lockImpactedItemsAndDocs" type="checkbox">
+            <labels>
+                <label mode="any">command.lock</label>
+            </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.cm.help.lockImpacteds</label>
+            </helpLabels>
+            <translated>true</translated>
+            <fields>
+                <field>lockImpacted</field>
+            </fields>
+        </widget>
+
+        <widget name="overwriteImpactedItems" type="checkbox">
+            <labels>
+                <label mode="any">eloraplm.command.overwrite.version</label>
+            </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.cm.help.overwriteImpacteds</label>
+            </helpLabels>
+            <translated>true</translated>
+            <fields>
+                <field>overwriteImpacted</field>
+            </fields>
+        </widget>
+
+        <widget name="overwriteOptions" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <helpLabels>
+                <label mode="any"></label>
+            </helpLabels>
+            <translated>true</translated>
+            <fields>
+                <field>overwriteOption</field>
+                <field>overwriteImpacted</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_overwrite_options_widget.xhtml</property>
+            </properties>
+        </widget>
+
+
+        <widget name="listing_ecoType" type="selectOneDirectory">
+            <labels>
+                <label mode="any">label.widget.CM.EcoEcoType</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.cmeco.ecoType</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_cmEcoType</property>
+                <property name="required">false</property>
+            </properties>
+        </widget>
+
+        <!-- elora_cm_doctype_actions_impact widgets -->
+
+        <widget name="elora_cm_doctype_actions_impact_id" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.id</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCmDoctypeActionsImpact:id</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+
+        <widget name="elora_cm_doctype_actions_impact_doctype" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.cmDoctypeActionsImpact.doctype</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCmDoctypeActionsImpact:doctype</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+
+        <widget name="elora_cm_doctype_actions_impact_action" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.cmDoctypeActionsImpact.action</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCmDoctypeActionsImpact:action</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+
+        <widget name="elora_cm_doctype_actions_impact_impactable" type="integer_yes_no">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.cmDoctypeActionsImpact.impactable</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCmDoctypeActionsImpact:impactable</field>
+            </fields>
+        </widget>
+
+        <widget name="elora_cm_doctype_actions_impact_default" type="integer_yes_no">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.cmDoctypeActionsImpact.default</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCmDoctypeActionsImpact:default</field>
+            </fields>
+        </widget>
+
+        <widget name="elora_cm_doctype_actions_impact_obsolete" type="integer_yes_no">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCmDoctypeActionsImpact:obsolete</field>
+            </fields>
+        </widget>
+
+        <widget name="elora_cm_doctype_actions_impact_ordering" type="int">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.ordering</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCmDoctypeActionsImpact:ordering</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="size">10</property>
+            </properties>
+        </widget>
+
+        <!-- Relation creation buttons -->
+
+        <!--     <widget name="cmProcessRelationButton" type="documentActions"> -->
+        <!--       <properties widgetMode="view"> -->
+        <!--         <property name="category">CM_PROCESS_RELATION_BUTTON</property> -->
+        <!--         <property name="overallDisplay">horizontal_block</property> -->
+        <!--       </properties> -->
+        <!--       <controls mode="any"> -->
+        <!--         <control name="requireSurroundingForm">false</control> -->
+        <!--         <control name="gridStyleClass">gridStyle12</control> -->
+        <!--       </controls> -->
+        <!--     </widget> -->
+
+        <!-- End of Relation creation buttons -->
+
+
+        <!-- Widget for displaying ModifiedItemList in the Summary tab -->
+        <widget name="ModifiedItemList" type="container">
+            <labels>
+                <label mode="any">label.widget.CM.ModifiedItemList</label>
+            </labels>
+            <translated>true</translated>
+            <handlingLabels>true</handlingLabels>
+            <properties mode="any">
+                <property name="hideSubLabels">true</property>
+            </properties>
+            <subWidgets>
+                <widget name="ModifiedItemList_content" type="cm_summary_modified_items_list">
+                    <translated>true</translated>
+                </widget>
+            </subWidgets>
+        </widget>
+
+
+        <widget name="itemIconReferenceTitle" type="listing_icon_reference_title">
+            <fields>
+                <field></field>
+                <field>ref</field>
+            </fields>
+            <properties mode="any">
+                <property name="isInRelationListing">false</property>
+            </properties>
+        </widget>
+
+        <widget name="itemState" type="text">
+            <fields>
+                <field>currentLifeCycleState</field>
+            </fields>
+            <properties mode="any">
+                <property name="localize">true</property>
+                <property name="styleClass">lifeCycleStateLabel hollow</property>
+                <property name="style">
+                    border-color:
+                    #{lifecycleActions.getLifeCycleStateColor(value.currentLifeCycleState)};
+                    color: #{lifecycleActions.getLifeCycleStateColor(value.currentLifeCycleState)};
+                </property>
+            </properties>
+        </widget>
+
+        <widget name="manualImpactModifiedItem" type="primefaces_select">
+            <labels>
+                <label mode="any">eloraplm.label.cm.modified</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>modifiedItem</field>
+                <field>modifiedItemList</field>
+            </fields>
+            <properties mode="edit">
+                <property name="required">true</property>
+                <property name="style">width: 40em;</property>
+                <property name="filter">true</property>
+                <property name="filterMatchMode">contains</property>
+                <property name="appendTo">@form</property>
+                <property name="converter">documentModelConverter</property>
+                <property name="selectTemplate">/incl/document_model_select_template.xhtml</property>
+                <property name="templateForListener">/incl/simple_form_update_listener.xhtml</property>
+            </properties>
+        </widget>
+
+
+        <!-- treetable widgets - DOC/BOM Modified Items, DOC/BOM Impacted Items  -->
+
+        <widget name="cm_mod_tt" type="treetable">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <widgetModes>
+                <mode value="edit">#{eloraWebActions.isEditable() ? 'edit' : 'view'}
+                </mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cm_mod_tt</property>
+                <property name="exportable">true</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_doc_imp_tt" type="treetable">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <widgetModes>
+                <mode value="edit">#{eloraWebActions.isEditable() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cm_doc_imp_tt</property>
+                <property name="exportable">true</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_bom_imp_tt" type="treetable">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <widgetModes>
+                <mode value="edit">#{eloraWebActions.isEditable() ? 'edit' : 'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cm_bom_imp_tt</property>
+                <property name="exportable">true</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_man_tt" type="treetable">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <widgetModes>
+                <mode value="edit">#{eloraWebActions.isEditable() ? 'edit' : 'view'}
+                </mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cm_man_tt</property>
+                <property name="exportable">false</property>
+            </properties>
+        </widget>
+        <!-- End of treetable widgets - Modified Items, DOC Impacted Items, BOM Impacted Items  -->
+
+
+        <widget name="cm_origin_item" type="listing_icon_reference_title">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>originItem</field>
+                <field>originItem.ref</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="isInRelationListing">false</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_imp_origin_item" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>originItem</field>
+                <field>originItem.ref</field>
+            </fields>
+            <properties mode="any">
+                <property name="hideExternalLink">true</property>
+                <property name="template">
+                    /widgets/treetable/origin_impact_icon_reference_title_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_origin_item_version" type="listing_version_and_visualized_type">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>originItem</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+        </widget>
+
+        <widget name="cm_edit_origin_item" type="listing_icon_reference_title">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>editOriginItem</field>
+                <field>editOriginItem.ref</field>
+            </fields>
+            <properties mode="any">
+                <property name="isInRelationListing">false</property>
+            </properties>
+        </widget>
+
+
+        <widget name="cm_edit_origin_item_version" type="listing_version_and_visualized_type">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>editOriginItem</field>
+            </fields>
+        </widget>
+
+        <widget name="cm_edit_origin_item_state" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>editOriginItem.currentLifeCycleState</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_item_state_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_origin_item_lock_icon" type="treewidget_lock_icon">
+            <labels>
+                <label mode="any" />
+            </labels>
+            <fields>
+                <field>originItemWc</field>
+            </fields>
+        </widget>
+
+        <widget name="cm_origin_item_state" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>originItem.currentLifeCycleState</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_item_state_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_origin_wc_item_type" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>originItemWc</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_item_type_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_action" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>action</field>
+                <field>isModifiedItem</field>
+                <field>type</field>
+                <field>actionIsReadOnly</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_action_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_manual_action" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>action</field>
+                <field>isModifiedItem</field>
+                <field>type</field>
+                <field>actionIsReadOnly</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_manual_action_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_destination_item_source_version_list" type="document_version_selector">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>destinationItemSourceVersion</field>
+                <field>destinationItemSourceVersionList</field>
+            </fields>
+            <properties mode="any">
+                <property name="isEditable">#{not nodeData.destinationItemSourceVersionIsReadOnly}</property>
+                <property name="templateForListener">
+                    /incl/cm_destination_item_source_version_select_listener_template.xhtml</property>
+                <property name="templateForButton">
+                    /incl/cm_destination_item_source_version_select_button_template.xhtml</property>
+                <property name="templateForAdditionalInfo">
+                    /incl/cm_destination_item_source_version_select_additional_info_template.xhtml</property>
+                <property name="selectTemplate">
+                    /incl/cm_destination_item_source_version_select_template.xhtml</property>
+                <property name="passedData">#{nodeData.getSourceVersionPassedData()}</property>
+                <property name="style">width: 5em;</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_destination_item" type="listing_icon_reference_title">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>destinationItem</field>
+                <field>destinationItem.ref</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <properties mode="any">
+                <property name="isInRelationListing">false</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_destination_item_version" type="listing_version_and_visualized_type">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>destinationItem</field>
+            </fields>
+        </widget>
+
+        <widget name="cm_destination_item_version_list" type="document_version_selector">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>destinationItem</field>
+                <field>destinationItemVersionList</field>
+            </fields>
+            <properties mode="any">
+                <property name="isEditable">#{not nodeData.destinationItemVersionIsReadOnly}</property>
+                <property name="templateForListener">
+                    /incl/cm_destination_version_select_listener_template.xhtml</property>
+                <property name="templateForButton">
+                    /incl/cm_destination_version_select_button_template.xhtml</property>
+                <property name="style">width: 7em;</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_edit_destination_item" type="listing_icon_reference_title">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>editDestinationItem</field>
+                <field>editDestinationItem.ref</field>
+            </fields>
+            <properties mode="any">
+                <property name="isInRelationListing">false</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_edit_destination_item_version" type="listing_version_and_visualized_type">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <fields>
+                <field>editDestinationItem</field>
+            </fields>
+        </widget>
+
+        <widget name="cm_edit_destination_item_state" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>editDestinationItem.currentLifeCycleState</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_item_state_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_destination_item_lock_icon" type="treewidget_lock_icon">
+            <labels>
+                <label mode="any" />
+            </labels>
+            <fields>
+                <field>destinationItemWc</field>
+            </fields>
+        </widget>
+
+        <widget name="cm_destination_item_state" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>destinationItem.currentLifeCycleState</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_item_state_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_is_managed" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>isManaged</field>
+                <field>isManagedIsReadOnly</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_is_managed_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_include_in_impact_matrix" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>isImpactable</field>
+                <field>includeInImpactMatrix</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_include_in_impact_matrix_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_comment" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>comment</field>
+                <field>commentIsReadOnly</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_comment_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_options" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <properties mode="any">
+                <property name="template">/widgets/cm_options_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_manual_options" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <properties mode="any">
+                <property name="template">/widgets/cm_manual_options_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="is_manual_or_derived_from" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>isManual</field>
+                <field>derivedFrom</field>
+                <field>isDerivedFromImpactMatrix</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_is_manual_or_derived_from.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="is_derived_from" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>derivedFrom</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_is_derived_from.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="is_from_mbom" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>isFromMbom</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_is_from_mbom.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="is_characterized" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>isCharacterized</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_is_characterized.xhtml</property>
+            </properties>
+        </widget>
+        <!-- end of treetable widgets -->
+
+        <widget name="cm_calculation_method" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>impopt:calculationMethod</field>
+            </fields>
+            <properties mode="any">
+                <property name="template">/widgets/cm_calculation_method.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="cm_add_manual_impact_item_version_selector" type="document_version_selector">
+            <labels>
+                <label mode="any">eloraplm.label.version</label>
+            </labels>
+            <fields>
+                <field>impactedItem</field>
+                <field>impactItemVersionList</field>
+            </fields>
+            <properties mode="any">
+                <property name="required">true</property>
+                <property name="style">width: 7em;</property>
+                <property name="templateForAdditionalInfo">
+                    /incl/cm_add_manual_impact_additional_info_template.xhtml</property>
+            </properties>
+
+        </widget>
+
+        <widget name="cm_add_modified_version_selector" type="document_version_selector">
+            <labels>
+                <label mode="any">eloraplm.label.version</label>
+            </labels>
+            <fields>
+                <field>originItem</field>
+                <field>originItemVersionList</field>
+            </fields>
+            <properties mode="any">
+                <property name="required">true</property>
+                <property name="style">width: 7em;</property>
+                <property name="templateForAdditionalInfo">
+                    /incl/cm_add_modified_additional_info_template.xhtml</property>
+            </properties>
+
+        </widget>
+
+    </extension>
 </component>

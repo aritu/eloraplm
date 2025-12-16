@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.om.TypeConfigService.contrib">
+    
+    <extension point="types" target="com.aritu.eloraplm.core.types.api.TypeConfigService">
+        
+        <type id="OmProcess" color="#9a6d00" />
+        
+    </extension>
+
+
+</component>
+

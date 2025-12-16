@@ -74,4 +74,16 @@ public final class NuxeoMetadataConstants {
 
     public static final String NX_SCHEMA_UID = "uid";
 
+    public static final String NX_THUMB_THUMBNAIL = "thumb:thumbnail";
+
+    public static final String NX_COMMENT_AUTHOR = "comment:author";
+
+    public static final String NX_COMMENT_TEXT = "comment:text";
+
+    public static final String NX_COMMENT_CREATION_DATE = "comment:creationDate";
+
+    public static final String NX_GROUP_GROUP_NAME = "group:groupname";
+
+    public static final String NX_GROUP_GROUP_LABEL = "group:grouplabel";
+
 }

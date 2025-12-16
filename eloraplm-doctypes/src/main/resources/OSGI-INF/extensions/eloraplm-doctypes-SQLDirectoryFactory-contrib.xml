@@ -1,149 +1,165 @@
 <?xml version="1.0"?>
 
-<component name="com.aritu.eloraplm.doctypes.SQLDirectoryFactory.contrib">
+<component
+    name="com.aritu.eloraplm.doctypes.SQLDirectoryFactory.contrib">
 
-  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+    <extension
+        target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory"
+        point="directories">
 
-    <directory name="elora_cadType">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cad_type</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_cad_type.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
-    </directory>
+        <directory name="elora_cadType">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_cad_type</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_cad_type.csv</dataFile>
+            <createTablePolicy>always</createTablePolicy>
+        </directory>
 
-    <directory name="elora_cadClassLevel1">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cad_class_l1</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_cad_class_level1.csv</dataFile>
-      <createTablePolicy>on_missing_columns</createTablePolicy>
-    </directory>
+        <directory name="elora_cadClassLevel1">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_cad_class_l1</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_cad_class_level1.csv</dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
 
-    <directory name="elora_cadClassLevel2">
-      <schema>xvocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cad_class_l2</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_cad_class_level2.csv</dataFile>
-      <createTablePolicy>on_missing_columns</createTablePolicy>
-      <parentDirectory>elora_cadClassLevel1</parentDirectory>
-      <init-dependencies>
-        <dependency>elora_cadClassLevel1</dependency>
-      </init-dependencies>   
-    </directory>
+        <directory name="elora_cadClassLevel2">
+            <schema>xvocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_cad_class_l2</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_cad_class_level2.csv</dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+            <parentDirectory>elora_cadClassLevel1</parentDirectory>
+            <init-dependencies>
+                <dependency>elora_cadClassLevel1</dependency>
+            </init-dependencies>
+        </directory>
 
-    <directory name="elora_cadClassLevel3">
-      <schema>xvocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cad_class_l3</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_cad_class_level3.csv</dataFile>
-      <createTablePolicy>on_missing_columns</createTablePolicy>
-      <parentDirectory>elora_cadClassLevel2</parentDirectory>
-      <init-dependencies>
-        <dependency>elora_cadClassLevel2</dependency>
-      </init-dependencies>   
-    </directory>
+        <directory name="elora_cadClassLevel3">
+            <schema>xvocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_cad_class_l3</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_cad_class_level3.csv</dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+            <parentDirectory>elora_cadClassLevel2</parentDirectory>
+            <init-dependencies>
+                <dependency>elora_cadClassLevel2</dependency>
+            </init-dependencies>
+        </directory>
 
-    <directory name="elora_cadClassHierarchical">
-      <schema>xvocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cad_class_hier</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_cad_class_hierarchical.csv</dataFile>
-      <createTablePolicy>on_missing_columns</createTablePolicy>
-    </directory>
-    
-    <directory name="elora_erpCustomers">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_erp_customer</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_erp_customer.csv</dataFile>
-      <createTablePolicy>on_missing_columns</createTablePolicy>
-    </directory>
+        <directory name="elora_cadClassHierarchical">
+            <schema>xvocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_cad_class_hier</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_cad_class_hierarchical.csv
+            </dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
 
-    <directory name="elora_erpManufacturers">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_erp_manufacturer</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_erp_manufacturer.csv</dataFile>
-      <createTablePolicy>on_missing_columns</createTablePolicy>
-    </directory>
+        <directory name="elora_erpCustomers">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_erp_customer</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_erp_customer.csv</dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
+        
+        <directory name="elora_erpSuppliers">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_erp_supplier</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_erp_supplier.csv</dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
 
-    <directory name="elora_partaker">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_partaker</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_partaker.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
-    </directory>
+        <directory name="elora_erpOems">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_erp_oems</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_erp_oem.csv</dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
 
-    <directory name="elora_priority">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_priority</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_priority.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
-    </directory>
+        <directory name="elora_partaker">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_partaker</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_partaker.csv</dataFile>
+            <createTablePolicy>always</createTablePolicy>
+        </directory>
 
-    <directory name="elora_projectType">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_project_type</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_project_type.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
-    </directory>
-    
-    <directory name="elora_projectResult">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_project_result</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_project_result.csv</dataFile>
-      <createTablePolicy>on_missing_columns</createTablePolicy>
-    </directory>
-    
-    <directory name="elora_cad_attachment_type">
-      <schema>vocabulary</schema>
-      <dataSource>java:/nxsqldirectory</dataSource>
-      <table>elora_cad_attachment_type</table>
-      <idField>id</idField>
-      <autoincrementIdField>false</autoincrementIdField>
-      <readOnly>false</readOnly>
-      <dataFile>directories/elora_cad_attachment_type.csv</dataFile>
-      <createTablePolicy>always</createTablePolicy>
-    </directory>
+        <directory name="elora_priority">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_priority</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_priority.csv</dataFile>
+            <createTablePolicy>always</createTablePolicy>
+        </directory>
 
-  </extension>
-  
+        <directory name="elora_projectType">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_project_type</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_project_type.csv</dataFile>
+            <createTablePolicy>always</createTablePolicy>
+        </directory>
+
+        <directory name="elora_projectResult">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_project_result</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_project_result.csv</dataFile>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+        </directory>
+
+        <directory name="elora_cad_attachment_type">
+            <schema>vocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <table>elora_cad_attachment_type</table>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <readOnly>false</readOnly>
+            <dataFile>directories/elora_cad_attachment_type.csv
+            </dataFile>
+            <createTablePolicy>always</createTablePolicy>
+        </directory>
+
+    </extension>
+
 </component>

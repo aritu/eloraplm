@@ -5,12 +5,13 @@ CmPr,CmPr,0
 CmEcr,CmEcr,0
 CmEco,CmEco,0
 BomPart,BomPart,0
+Software,Software,0
+ElectronicComponent,ElectronicComponent,0
 BomPackaging,BomPackaging,0
 BomProduct,BomProduct,0
 BomSpecification,BomSpecification,0
 BomTool,BomTool,0
 BomCustomerProduct,BomCustomerProduct,0
-BomManufacturerPart,BomManufacturerPart,0
 CadAssembly,CadAssembly,0
 CadPart,CadPart,0
 CadDrawing,CadDrawing,0
@@ -24,5 +25,4 @@ ProductValidation,ProductValidation,0
 ProductVerification,ProductVerification,0
 ProductionProcessValidation,ProductionProcessValidation,0
 ProductionPartApprovalProcess,ProductionPartApprovalProcess,0
-Software,Software,0
-ElectronicComponent,ElectronicComponent,0
+OmProcess,OmProcess,0

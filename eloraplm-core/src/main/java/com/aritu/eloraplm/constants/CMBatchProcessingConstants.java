@@ -30,7 +30,7 @@ public class CMBatchProcessingConstants {
 
     public static final String OVERWRITE = "overwrite";
 
-    public static final String PROMOTE = "promote";
+    public static final String APPROVE = "approve";
 
     public static final String UNDO_CHECKOUT = "undoCheckout";
 

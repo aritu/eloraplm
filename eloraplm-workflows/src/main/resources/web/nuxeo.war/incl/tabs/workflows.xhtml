@@ -1,0 +1,102 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    
+    <nxu:set var="workflowTabs" value="#{workflowAnswersTableBean.workflowTabs}">
+        
+        <c:if test="#{empty workflowTabs}">
+            <h:outputText value="#{messages['eloraplm.message.info.noActiveOrAnsweredWorkflows']}" styleClass="processMessage completeInfo" />
+        </c:if>
+        
+        <c:if test="#{not empty workflowTabs}">
+            
+            <!-- Workflow tabs -->
+            <p:tabView id="workflowTabs" var="wftab" value="#{workflowAnswersTableBean.workflowTabs}"
+                activeIndex="#{workflowAnswersTableBean.selectedWorkflowTabIndex}"
+                scrollable="true" dynamic="false"
+                styleClass="borderless ui-sub-tabs">
+                    
+                    <p:ajax event="tabChange" listener="#{workflowAnswersTableBean.onWorkflowTabChange}"
+                        update="workflow_dt_container workflow_tab_content"
+                        onstart="PF('workflow_dt_container_blocker').show()"
+                        oncomplete="PF('workflow_dt_container_blocker').hide()" />
+                    
+                    <nxu:set var="isActiveWorkflow" value="#{workflowAnswersTableBean.isActiveWorkflow(wftab)}">
+                        
+                        <p:tab title="#{messages[workflowFormActions.getWorkflowTitle(wftab)]}#{isActiveWorkflow ? ' ☀': ''}"
+                            titleStyleClass="#{isActiveWorkflow ? 'activeWorkflow' : ''}" >
+                            
+                            <h:panelGroup id="workflow_tab_content">
+                                
+                                <p:blockUI block="instanceTabs" widgetVar="instanceTabsBlocker" trigger="workflowTabs" animate="false" styleClass="opaqueBlockUI middleSpinner">
+                                    <i class="pi pi-spin pi-spinner"></i>
+                                </p:blockUI>
+                                
+                                <nxu:set var="showInstancesTabs" value="#{true}">
+                                    
+                                    <!-- Instance tabs -->
+                                    <p:tabView id="instanceTabs" var="itab" value="#{workflowAnswersTableBean.getInstanceTabs(wftab)}"
+                                        activeIndex="#{workflowAnswersTableBean.selectedInstanceTabIndex}"
+                                        scrollable="true" dynamic="false"
+                                        styleClass="borderless ui-sub-sub-tabs">
+                                            
+                                        <p:ajax event="tabChange" listener="#{workflowAnswersTableBean.onInstanceTabChange}" update="workflow_dt_container"
+                                            onstart="PF('workflow_dt_container_blocker').show()"
+                                            oncomplete="PF('workflow_dt_container_blocker').hide()" />
+                                        
+                                        <nxu:set var="isActiveInstance" value="#{workflowAnswersTableBean.isActiveInstance(wftab, itab)}">
+                                            
+                                            <p:tab title="#{workflowAnswersTableBean.getInstanceName(itab)}#{isActiveInstance ? ' ☀': ''}"
+                                                titleStyleClass="#{isActiveInstance ? 'activeInstance': ''}#{showInstancesTabs ? '' : ' hidden'}">
+                                                
+                                                <h:panelGroup id="instance_tab_content" rendered="#{isActiveWorkflow and isActiveInstance}">
+                                                    
+                                                    <h:panelGroup styleClass="widgetLabel summaryTitle">#{messages['eloraplm.title.workflows.active']}</h:panelGroup>
+                                                    
+                                                    <nxu:set var="selectedWorkflow" value="#{not empty itab ? relatedWorkflowActions.getRelatedWorkflowById(itab) : ''}">
+                                                        
+                                                        <nxl:layout name="workflow_info_layout" mode="view"
+                                                            value="#{selectedWorkflow}"
+                                                            currentDocumentForRoute="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}"
+                                                            rendered="#{not empty selectedWorkflow}" />
+                                                        
+                                                    </nxu:set>
+                                                    
+                                                </h:panelGroup>
+                                                
+                                                
+                                            </p:tab>
+                                            
+                                        </nxu:set>
+                                        
+                                    </p:tabView>
+                                    
+                                </nxu:set>
+                                
+                            </h:panelGroup>
+                            
+                        </p:tab>
+                        
+                    </nxu:set>
+                    
+            </p:tabView>
+
+            <h:panelGroup id="workflow_dt_container" layout="block">
+                <p:blockUI block="workflow_dt_container" widgetVar="workflow_dt_container_blocker" animate="false" styleClass="opaqueBlockUI middleSpinner">
+                    <i class="pi pi-spin pi-spinner"></i>
+                </p:blockUI>
+                <h:panelGroup styleClass="widgetLabel summaryTitle">#{messages['eloraplm.title.workflows.forms.answers']}</h:panelGroup>
+                <nxl:widget name="workflow_answers_dt" mode="view" value="#{workflowAnswersTableBean}" />
+            </h:panelGroup>
+        </c:if>
+        
+    </nxu:set>
+    
+</ui:composition>

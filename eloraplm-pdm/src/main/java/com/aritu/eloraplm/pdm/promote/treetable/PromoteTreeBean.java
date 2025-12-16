@@ -2,7 +2,6 @@ package com.aritu.eloraplm.pdm.promote.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import javax.faces.event.AjaxBehaviorEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
@@ -41,13 +39,16 @@ import com.aritu.eloraplm.pdm.promote.executer.PromoteExecuterFactory;
 import com.aritu.eloraplm.pdm.promote.executer.PromoteExecuterManager;
 import com.aritu.eloraplm.pdm.promote.executer.impl.PromoteExecuterFactoryImpl;
 import com.aritu.eloraplm.pdm.promote.util.PromoteHelper;
-import com.aritu.eloraplm.treetable.CoreTreeBean;
+import com.aritu.eloraplm.treetable.CoreTree;
 
-@Name("promoteTreeBean")
+@Name(PromoteTreeBean.NAME)
 @Scope(ScopeType.PAGE)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class PromoteTreeBean extends CoreTreeBean implements Serializable {
+public class PromoteTreeBean extends CoreTree {
+
+    public static final String NAME = "promoteTreeBean";
+
     private static final long serialVersionUID = 1L;
 
     @In(create = true)
@@ -384,12 +385,6 @@ public class PromoteTreeBean extends CoreTreeBean implements Serializable {
         }
 
         return allOK;
-    }
-
-    @Override
-    @Factory(value = "promoteRoot", scope = ScopeType.EVENT)
-    public TreeNode getRootFromFactory() {
-        return getRoot();
     }
 
 }

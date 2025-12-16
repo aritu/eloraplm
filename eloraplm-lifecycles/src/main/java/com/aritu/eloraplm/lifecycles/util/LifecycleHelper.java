@@ -13,8 +13,12 @@
  */
 package com.aritu.eloraplm.lifecycles.util;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.NXCore;
@@ -111,9 +115,14 @@ public class LifecycleHelper {
 
         CoreSession session = doc.getCoreSession();
 
+        String previousState = doc.getCurrentLifeCycleState();
+
         doc.followTransition(transition);
 
-        EloraEventHelper.fireEvent(eventName, doc, eventComment);
+        Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+        ctxProperties.put("comment", eventComment);
+        ctxProperties.put("previousState", previousState);
+        EloraEventHelper.fireEvent(eventName, doc, ctxProperties);
 
         EloraDocumentHelper.disableVersioningDocument(doc);
         doc = session.saveDocument(doc);

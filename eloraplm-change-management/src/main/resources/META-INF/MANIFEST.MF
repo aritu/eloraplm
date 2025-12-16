@@ -7,20 +7,20 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-change-management-TypeSe
- rvice-contrib.xml,OSGI-INF/extensions/eloraplm-change-management-WebL
- ayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-change-manageme
- nt-ActionService-contrib.xml,OSGI-INF/extensions/eloraplm-change-mana
- gement-LifeCycleService-contrib.xml,OSGI-INF/extensions/eloraplm-chan
- ge-management-SQLDirectoryFactory-contrib.xml,OSGI-INF/extensions/elo
- raplm-change-management-DirectoryUIManager-contrib.xml,OSGI-INF/exten
- sions/eloraplm-change-management-WebResources-contrib.xml,OSGI-INF/ex
- tensions/eloraplm-change-management-ContentViewService-contrib.xml,OS
- GI-INF/extensions/eloraplm-change-management-VersionRemoveCheckerServ
- ice-contrib.xml,OSGI-INF/extensions/eloraplm-cm-batch-processing-Acti
- onService-contrib.xml,OSGI-INF/extensions/eloraplm-cm-batch-processin
- g-TypeService-contrib.xml,OSGI-INF/extensions/eloraplm-change-managem
- ent-ContentTemplateService-contrib.xml,OSGI-INF/extensions/eloraplm-c
- m-LifecycleConfigService-contrib.xml,OSGI-INF/extensions/eloraplm-cha
- nge-management-WorkspaceArchiverService-contrib.xml
-
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-change-management-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-WebLayoutManager-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-ActionService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-LifeCycleService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-SQLDirectoryFactory-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-DirectoryUIManager-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-WebResources-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-ContentViewService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-cm-batch-processing-ActionService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-cm-batch-processing-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-ContentTemplateService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-cm-LifecycleConfigService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-WorkspaceArchiverService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-RelationManagementService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-VersionRemoveCheckerService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-cm-ChangeManagementService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-change-management-NotificationService-contrib.xml

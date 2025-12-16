@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.securitypolicy.UserManagerWithSecurityLevel">
+
+  <require>org.nuxeo.ecm.platform.usermanager.UserManagerImpl</require>
+
+  <extension target="org.nuxeo.ecm.platform.usermanager.UserService" point="userManager">
+
+    <userManager class="com.aritu.eloraplm.securitypolicy.UserManagerWithSecurityLevel">
+      <users>
+        <listingMode>search_only</listingMode>
+      </users>
+    </userManager>
+
+  </extension>
+
+</component>

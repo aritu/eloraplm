@@ -24,11 +24,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * Helper class to compute a unique id for an import task.
- *
- * @since 5.7.3
- */
 public class EloraCSVImportId {
 
     private static final Log log = LogFactory.getLog(EloraCSVImportId.class);
@@ -38,11 +33,13 @@ public class EloraCSVImportId {
     }
 
     public static String create(String repositoryName, String path,
-            File csvFile, File relationsCsvFile, File proxiesCsvFile) {
+            File csvFile, File relationsCsvFile, File proxiesCsvFile,
+            File commentsCsvFile) {
 
         File computeDigestFile = (csvFile != null) ? csvFile
                 : ((relationsCsvFile != null) ? relationsCsvFile
-                        : proxiesCsvFile);
+                        : (proxiesCsvFile != null ? commentsCsvFile
+                                : commentsCsvFile));
 
         return create(repositoryName, path, computeDigest(computeDigestFile));
     }

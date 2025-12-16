@@ -52,7 +52,7 @@ import com.aritu.eloraplm.queries.EloraQueryFactory;
  *
  */
 public class FakeTemplateBasedDocumentAdapter extends AbstractTemplateDocument
-        implements Serializable, TemplateBasedDocument {
+        implements TemplateBasedDocument {
 
     private static final long serialVersionUID = 1L;
 
@@ -90,6 +90,15 @@ public class FakeTemplateBasedDocumentAdapter extends AbstractTemplateDocument
         map.put(TEMPLATE_USE_BLOB_KEY, false);
         TemplateBinding binding = new TemplateBinding(map);
         bindings.add(binding);
+    }
+
+    public FakeTemplateBasedDocumentAdapter(DocumentModel doc,
+            String templateName, List<TemplateInput> params) {
+
+        this(doc, templateName);
+
+        bindings.get(templateName).setData(params);
+
     }
 
     @Override
@@ -293,7 +302,8 @@ public class FakeTemplateBasedDocumentAdapter extends AbstractTemplateDocument
 
     public boolean isBidirectional() {
         /*
-         * TemplateProcessor processor = getTemplateProcessor(); if (processor != null) { return processor instanceof
+         * TemplateProcessor processor = getTemplateProcessor(); if (processor != null)
+         * { return processor instanceof
          * BidirectionalTemplateProcessor; }
          */
         return false;

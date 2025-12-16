@@ -7,6 +7,9 @@
         <resource name="eloraplm.style.css" type="css">
             <uri>/css/eloraplm-style.css</uri>
         </resource>
+        <resource name="eloraplm.primefaces.css" type="css">
+            <uri>/css/eloraplm-primefaces.css</uri>
+        </resource>
     </extension>
     
     <extension target="org.nuxeo.ecm.platform.WebResources"
@@ -14,6 +17,7 @@
         <bundle name="nuxeo_sassCss">
             <resources append="true">
                 <resource>eloraplm.style.css</resource>
+                <resource>eloraplm.primefaces.css</resource>
             </resources>
         </bundle>
     </extension>

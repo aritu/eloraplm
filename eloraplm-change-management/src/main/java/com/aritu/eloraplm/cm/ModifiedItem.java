@@ -21,8 +21,6 @@ package com.aritu.eloraplm.cm;
  */
 public class ModifiedItem extends CMItem {
 
-    protected String derivedFrom;
-
     protected boolean isDerivedFromImpactMatrix;
 
     protected boolean includeInImpactMatrix;
@@ -32,24 +30,16 @@ public class ModifiedItem extends CMItem {
             String parentItem, String originItem, String originItemWc,
             String predicate, String quantity, boolean isAnarchic,
             boolean isDirectObject, String action, String destinationItem,
-            String destinationItemWc, boolean isManaged, boolean isManual,
-            String type, String comment, boolean isUpdated,
-            boolean includeInImpactMatrix) {
+            String destinationItemWc, String destinationItemSourceVersion,
+            boolean isManaged, boolean isManual, String type, String comment,
+            boolean isUpdated, boolean includeInImpactMatrix) {
         super(rowNumber, nodeId, parentNodeId, parentItem, originItem,
                 originItemWc, predicate, quantity, isAnarchic, isDirectObject,
-                action, destinationItem, destinationItemWc, isManaged, isManual,
-                type, comment, isUpdated);
-        this.derivedFrom = derivedFrom;
+                action, destinationItem, destinationItemWc,
+                destinationItemSourceVersion, isManaged, isManual, type,
+                comment, isUpdated, derivedFrom);
         this.isDerivedFromImpactMatrix = isDerivedFromImpactMatrix;
         this.includeInImpactMatrix = includeInImpactMatrix;
-    }
-
-    public String getDerivedFrom() {
-        return derivedFrom;
-    }
-
-    public void setDerivedFrom(String derivedFrom) {
-        this.derivedFrom = derivedFrom;
     }
 
     public boolean getIsDerivedFromImpactMatrix() {

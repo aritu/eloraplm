@@ -4,10 +4,16 @@
 
     <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
         
-        <!-- It has to be executed after nodeTaskQuestionsWriter -->
+        <!-- It has to be executed after nodeTaskAnswersWriter -->
         <listener name="workflowReportCreator" async="false" postCommit="false" 
                   class="com.aritu.eloraplm.workflows.listener.WorkflowReportCreatorListener" priority="200">
             <event>workflowTaskCompleted</event>
+            <event>WorkflowReportCreationForced</event>
+        </listener>
+        
+        <listener name="workflowEndActions" async="false" postCommit="false" 
+                  class="com.aritu.eloraplm.workflows.listener.WorkflowEndActionsListener" priority="200">
+            <event>afterWorkflowFinish</event>
         </listener>
         
     </extension>

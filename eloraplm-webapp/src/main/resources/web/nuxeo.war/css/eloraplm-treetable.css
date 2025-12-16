@@ -2,368 +2,347 @@
  * Treetable style modifications for EloraPlm
  */
 
-div[id$="treetablePanel"]
-{
+div[id$="treetablePanel"] {
     padding-bottom: 5px;
 }
 
-.ui-treetable .ui-treetable-toggler
-{
-    margin: 4px 2px 0 0;
-}
-
-.ui-treetable-toggler.ui-icon.ui-icon-triangle-1-s
-{
-    background-image: url(/nuxeo/icons/collapse.png);
-    background-position: center center;
-}
-.ui-treetable-toggler.ui-icon.ui-icon-triangle-1-e
-{
-    background-image: url(/nuxeo/icons/expand.png);
-    background-position: center center;
-}
-
-.ui-treetable table
-{
+.ui-treetable table {
     width: auto;
 }
 
-.ui-treetable table.treetable
-{
+.ui-treetable table.treetable {
     width: 100%;
+    height: fit-content;
+}
+
+.nx-page .ui-treetable thead th .ui-sortable-column-icon {
+    margin: 0 0 0 0.1rem;
+}
+
+.nx-page .ui-treetable thead th .ui-sortable-column-badge {
+    font-size: 0.65rem;
+    min-width: unset;
+    width: 0.8rem;
+    height: 0.8rem;
+    position: relative;
+    margin-left: -0.3rem;
+    top: 4px;
+}
+
+.ui-treetable table.treetable tbody tr {
+    height: 100%;
 }
 
 .ui-treetable table.treetable,
 .ui-treetable table.treetable tbody,
-.ui-treetable table.treetable tbody tr
-{
+.ui-treetable table.treetable tbody tr {
     border: 1px solid #e6e9ef;
 }
 
-.ui-treetable table.treetable tbody td
-{
-    border-width: 1px 0;
-    border-color: #e6e9ef;
-    border-style: solid;
+.ui-treetable table.treetable tbody td {
+    border: none;
+    outline: none;
     white-space: normal;
+    height: 100%;
 }
 
-.nx-page .ui-treetable button
-{
+.nx-page .ui-treetable button {
     height: auto;
     padding: 0;
 }
 
-.ui-treetable
-{
+.ui-treetable {
     font-size: 0.9em;
 }
 
-.ui-treetable-smallFont
-{
+.ui-treetable-smallFont tbody {
     font-size: 0.8em;
 }
 
-.ttButtonsPanel
+.ui-treetable .ui-column-filter.ui-inputfield.ui-inputtext {
+    background: #fff;
+    box-shadow: none;
+}
+
+.ui-treetable .ui-column-title .titleIcon {
+    vertical-align: middle;
+}
+
+.ui-treetable .ui-column-customfilter .ui-chkbox {
+    margin-right: 0;
+}
+
+.ui-treetable .filterInfo .filteredInfo {
+    padding: 0.2em 0.5em;
+    color: #0288d1;
+    background: transparent;
+    border: 1px solid #0288d1;
+    border-radius: 5em;
+    font-weight: normal;
+}
+
+.ui-treetable thead th {
+    vertical-align: top;
+}
+
+/*.ui-treetable .ui-column-filter
 {
+    display: none;
+}*/
+
+.ttButtonsPanel {
     margin: 10px 0;
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
-    
+
     position: sticky;
     bottom: 20px;
     padding: 10px;
     border: 1px solid #e6e9ef;
-    box-shadow: -10px 0 10px #fff, 10px 0 10px #fff, 0 10px 5px #fff, 0 -10px 5px #fff;
-    background: linear-gradient(to right, rgba(248,249,251,0.9) 0%, rgba(248,249,251,0.5) 40%, rgba(248,249,251,0.9) 70%)
+    box-shadow: -10px 0 10px #fff, 10px 0 10px #fff, 0 10px 5px #fff,
+        0 -10px 5px #fff;
+    background: linear-gradient(
+        to right,
+        rgba(248, 249, 251, 0.9) 0%,
+        rgba(248, 249, 251, 0.5) 40%,
+        rgba(248, 249, 251, 0.9) 70%
+    );
+    backdrop-filter: blur(4px);
+}
+
+.ttButtonsPanel:empty {
+    display: none;
 }
 
 .ttButtonsLeftPanel,
-.ttButtonsRightPanel
-{
+.ttButtonsRightPanel {
     display: flex;
     flex-direction: row-reverse;
     padding: 0 10px;
 }
 
-.ttButtonsPanel .widgetPanel.actionsWidgetPanel
-{
+.ttButtonsPanel .widgetPanel.actionsWidgetPanel {
     padding: 0;
     margin-left: 4px;
 }
-}
 
-.nx-page .ttButtonsPanel a.button:hover
-{
+.nx-page .ttButtonsPanel a.button:hover {
     color: #053832;
     border-color: #2c874e;
     box-shadow: 0 0 3px #8cd600;
 }
 
 .ttButtons,
-.ttInverseButtons
-{
+.ttInverseButtons {
     text-align: right;
 }
 
-.nx-page .ttButtonsPanel a.button
-{
+.nx-page .ttButtonsPanel a.button {
     margin: 0;
     border-radius: 0;
     box-shadow: 0 1px 1px #ddd;
 }
 
-.nx-page .ttButtonsPanel a.button.mainAction
-{
+.nx-page .ttButtonsPanel a.button.mainAction {
     text-transform: uppercase;
     background-color: #1c5531;
     border-color: #053832;
     color: #fff;
 }
 
-.nx-page .ttButtonsPanel a.button.mainAction:hover
-{
+.nx-page .ttButtonsPanel a.button.mainAction:hover {
     background-color: #053832;
     color: #fff;
 }
 
-.nx-page .ttSelectionButtons a.button
-{
+.nx-page .ttSelectionButtons a.button {
     margin-right: 0.3em;
     background-color: #f7faff;
     border-color: #5cf;
 }
 
 .nx-page .ttButtons a.button,
-.nx-page .ttInverseButtons a.button
-{
+.nx-page .ttInverseButtons a.button {
     margin-left: 0.3em;
 }
 
-.ttSelectionButtonsPanel
-{
+.ttSelectionButtonsPanel {
     margin-left: 10px;
     display: inline-block;
     vertical-align: middle;
 }
 
-img.selectionActionsIndicator
-{
+img.selectionActionsIndicator {
     vertical-align: middle;
 }
 
 .ui-treetable .ui-treetable-header {
     overflow: hidden;
+    border-radius: 4px 4px 0 0;
 }
 
-.ui-treetable .ui-treetable-header .treeHeaderTitle
-{
-    display: inline-block;
+.ui-treetable .ui-treetable-header .treeHeaderTitle {
     float: left;
     text-align: left;
     padding-top: 0.1em;
-    font-size: 1.15em;
+    font-size: 1.05em;
     color: #000;
 }
 
-.ui-treetable .ui-treetable-header .treeHeaderTitle img
-{
+.ui-treetable .ui-treetable-header .treeHeaderTitle img {
     vertical-align: middle;
 }
 
-.ui-treetable .treeInfo
-{
+.ui-treetable .treeInfo {
     color: #555;
     font-weight: normal;
-    font-size: .9em;
+    font-size: 0.9em;
 }
 
-.ui-treetable .ui-treetable-header .treeHeaderButtons
-{
-    display: inline-block;
+.ui-treetable .ui-treetable-header .treeHeaderButtons {
     float: right;
     text-align: right;
-    padding-top: 0.6em;
 }
 
-.ui-treetable .ui-treetable-header .treeHeaderButtons > *
-{
+.ui-treetable .ui-treetable-header .treeHeaderButtons > * {
     vertical-align: middle;
 }
 
-.ui-treetable span.ui-treetable-indent
-{
-    border-left: 1px dotted #ccc;
-    border-bottom: 1px dotted #ccc;
-    box-shadow: -15px 1px 0 #fff;
-    width: 10px;
-    height: 14px;
-    margin: 0 0 2px 6px;
+.ui-treetable tr.ui-treetable-empty-message td {
+    text-align: center;
+    font-style: italic;
+    color: #888;
 }
 
-.ui-treetable tr.rowIsNew span.ui-treetable-indent
-{
-    box-shadow: -15px 1px 0 #faffcb;
-}
-
-.ui-treetable tr.rowIsRemoved span.ui-treetable-indent
-{
-    box-shadow: -15px 1px 0 #fff0ee;
-}
-
-.ui-treetable tr.rowIsModified span.ui-treetable-indent
-{
-    box-shadow: -15px 1px 0 #fcf8bc;
-}
-
-.ui-treetable tr.rowIsNew span.ui-treetable-indent:first-child,
-.ui-treetable tr.rowIsRemoved span.ui-treetable-indent:first-child,
-.ui-treetable tr.rowIsModified span.ui-treetable-indent:first-child,
-.ui-treetable span.ui-treetable-indent:first-child
-{
-    box-shadow: unset;
-}
-
-
-.headerFilters
-{
-    margin-right: 2em;
+.headerFilters {
     font-weight: normal;
+    display: inline-block;
 }
 
-.headerFilters input[type=checkbox]
-{
+.headerFilters input[type="checkbox"] {
     vertical-align: middle;
     margin-left: 1em;
     position: relative;
     top: -3px;
 }
 
-
 /* Table row styles */
-.ui-treetable tr.rowIsNormal > td
-{
+.ui-treetable tr.rowIsNormal > td {
     background-color: transparent;
 }
 
-.ui-treetable tr.rowIsNew > td
-{
-    background-color: #faffcb;
+.ui-treetable tr.rowIsNew > td {
+    background-color: #f0ffdb;
 }
 
-.ui-treetable tr.rowIsNew > td:first-child
-{
-    box-shadow: inset 4px 0 0 #aabb55;
-}
-
-.ui-treetable tr.rowIsNew > td:last-child
-{
+.ui-treetable tr.rowIsNew > td:last-child {
     background-color: transparent;
-    background-image: linear-gradient(to left, transparent, #faffcb);
+    background-image: linear-gradient(to left, transparent, #f0ffdb);
 }
 
-.ui-treetable tr.rowIsRemoved > td
-{
-    background-color: #fff0ee; 
+.ui-treetable tr.rowIsRemoved > td {
+    background-color: #fff0ee;
 }
 
-.ui-treetable tr.rowIsRemoved > td:first-child
-{
-    box-shadow: inset 4px 0 0 #cc5555;
-}
-
-.ui-treetable tr.rowIsRemoved > td:last-child
-{
+.ui-treetable tr.rowIsRemoved > td:last-child {
     background-color: transparent;
     background-image: linear-gradient(to left, transparent, #fff0ee);
 }
 
-.ui-treetable tr.rowIsModified > td
-{
-    background-color: #fcf8bc; 
+.ui-treetable tr.rowIsModified > td {
+    background-color: #fcf8bc;
 }
 
-.ui-treetable tr.rowIsModified > td:first-child
-{
-    box-shadow: inset 4px 0 0 #ffc04d; 
-}
-
-.ui-treetable tr.rowIsModified > td:last-child
-{
+.ui-treetable tr.rowIsModified > td:last-child {
     background-color: transparent;
     background-image: linear-gradient(to left, transparent, #fcf8bc);
 }
 /* --- */
 
-
 .ui-treetable tr.ui-state-hover,
 .ui-treetable .ui-widget-content tr.ui-state-hover,
-.ui-treetable .ui-widget-header tr.ui-state-hover
-{
+.ui-treetable .ui-widget-header tr.ui-state-hover {
     background-color: #eee;
     box-shadow: none;
 }
 
-.ui-treetable .ui-treetable-data tr.ui-state-highlight,
-.ui-treetable .ui-treetable-data tr.ui-state-hover
-{
-    cursor: unset;
+.ui-treetable .ui-treetable-data .treetableColumn:first-child {
+    display: flex;
+    border: none;
 }
 
-.ui-treetable .ui-treetable-data tr.ui-state-highlight td:last-child,
-.ui-treetable .ui-treetable-data tr.ui-state-hover td:last-child
-{
-    cursor: pointer;
+.ui-treetable .ui-treetable-data .treetableColumn:first-child > *:last-child {
+    align-self: center;
+}
+
+.ui-treetable
+    .ui-treetable-data
+    .treetableColumn:first-child
+    > .ui-treetable-toggler {
+    align-self: initial;
+}
+
+/*.tree-icon-reference-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    align-self: center;
+}*/
+
+.ui-treetable .ui-treetable-data tr.ui-state-highlight,
+.ui-treetable .ui-treetable-data tr.ui-state-hover {
+    cursor: unset;
 }
 
 .ui-treetable tr.ui-state-highlight,
 .ui-treetable .ui-widget-content tr.ui-state-highlight,
-.ui-treetable .ui-widget-header tr.ui-state-highlight
-{
+.ui-treetable .ui-widget-header tr.ui-state-highlight {
     color: initial;
     background: unset;
     text-shadow: unset;
     border-color: #5cf;
+    border-width: 2px 1px;
 }
 
 .ui-treetable tr.ui-state-highlight.rowIsNew,
 .ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsNew,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsNew
-{
-    border-color: #aabb55;
+.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsNew {
+    border-color: #77dd55;
 }
-
 
 .ui-treetable tr.ui-state-highlight.rowIsRemoved,
 .ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsRemoved,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsRemoved
-{
+.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsRemoved {
     border-color: #cc5555;
 }
 
-
 .ui-treetable tr.ui-state-highlight.rowIsModified,
 .ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsModified,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsModified
-{
+.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsModified {
     border-color: #ffc04d;
 }
 
-.ui-treetable td.selection-checkbox
-{
+.ui-treetable td.selection-checkbox {
     color: #5cf;
-    font-size: 15px;
-    vertical-align: middle;
+    font-size: 1.2rem;
+    text-align: center;
 }
 
+.ui-treetable td.selection-checkbox span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
 
 .ui-treetable tr.ui-state-highlight > td:last-child,
 .ui-treetable .ui-widget-content tr.ui-state-highlight > td:last-child,
-.ui-treetable .ui-widget-header tr.ui-state-highlight > td:last-child
-{
+.ui-treetable .ui-widget-header tr.ui-state-highlight > td:last-child {
     background-image: url(/nuxeo/icons/badge_selected_row_12.png);
-    background-position: 12px center;
+    background-position: center center;
     background-repeat: no-repeat;
     background-color: #5cf;
     color: transparent;
@@ -371,110 +350,131 @@ img.selectionActionsIndicator
 
 .ui-treetable tr.ui-state-highlight.rowIsNew > td:last-child,
 .ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsNew > td:last-child,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsNew > td:last-child
-{
-    background-color: #ab5;
+.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsNew > td:last-child {
+    background-color: #77dd55;
 }
 
 .ui-treetable tr.ui-state-highlight.rowIsRemoved > td:last-child,
-.ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsRemoved > td:last-child,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsRemoved > td:last-child
-{
+.ui-treetable
+    .ui-widget-content
+    tr.ui-state-highlight.rowIsRemoved
+    > td:last-child,
+.ui-treetable
+    .ui-widget-header
+    tr.ui-state-highlight.rowIsRemoved
+    > td:last-child {
     background-color: #c55;
 }
 
-
 .ui-treetable tr.ui-state-highlight.rowIsModified > td:last-child,
-.ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsModified > td:last-child,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsModified > td:last-child
-{
+.ui-treetable
+    .ui-widget-content
+    tr.ui-state-highlight.rowIsModified
+    > td:last-child,
+.ui-treetable
+    .ui-widget-header
+    tr.ui-state-highlight.rowIsModified
+    > td:last-child {
     background-color: #ffc04d;
 }
 
-
 .ui-treetable tr.ui-state-highlight > td,
 .ui-treetable .ui-widget-content tr.ui-state-highlight > td,
-.ui-treetable .ui-widget-header tr.ui-state-highlight > td
-{
+.ui-treetable .ui-widget-header tr.ui-state-highlight > td {
     border-color: #5cf;
     border-width: 2px 0;
 }
 
 .ui-treetable tr.ui-state-highlight > td:first-child,
 .ui-treetable .ui-widget-content tr.ui-state-highlight > td:first-child,
-.ui-treetable .ui-widget-header tr.ui-state-highlight > td:first-child
-{
-    border-left-width: 2px;
+.ui-treetable .ui-widget-header tr.ui-state-highlight > td:first-child {
+    box-shadow: inset 4px 0 0 #5cf;
 }
 
+.ui-treetable tr.rowIsNew > td:first-child,
 .ui-treetable tr.ui-state-highlight.rowIsNew > td:first-child,
-.ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsNew > td:first-child,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsNew > td:first-child,
+.ui-treetable
+    .ui-widget-content
+    tr.ui-state-highlight.rowIsNew
+    > td:first-child,
+.ui-treetable
+    .ui-widget-header
+    tr.ui-state-highlight.rowIsNew
+    > td:first-child {
+    box-shadow: inset 4px 0 0 #77dd55;
+}
+
+.ui-treetable tr.rowIsRemoved > td:first-child,
 .ui-treetable tr.ui-state-highlight.rowIsRemoved > td:first-child,
-.ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsRemoved > td:first-child,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsRemoved > td:first-child,
+.ui-treetable
+    .ui-widget-content
+    tr.ui-state-highlight.rowIsRemoved
+    > td:first-child,
+.ui-treetable
+    .ui-widget-header
+    tr.ui-state-highlight.rowIsRemoved
+    > td:first-child {
+    box-shadow: inset 4px 0 0 #c55;
+}
+
+.ui-treetable tr.rowIsModified > td:first-child,
 .ui-treetable tr.ui-state-highlight.rowIsModified > td:first-child,
-.ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsModified > td:first-child,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsModified > td:first-child
-{
-    border-left-width: 0;
+.ui-treetable
+    .ui-widget-content
+    tr.ui-state-highlight.rowIsModified
+    > td:first-child,
+.ui-treetable
+    .ui-widget-header
+    tr.ui-state-highlight.rowIsModified
+    > td:first-child {
+    box-shadow: inset 4px 0 0 #ffc04d;
 }
 
 .ui-treetable tr.ui-state-highlight.rowIsNew > td,
 .ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsNew > td,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsNew > td
-{
-    border-color: #aabb55;
+.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsNew > td {
+    border-color: #77dd55;
 }
 .ui-treetable tr.ui-state-highlight.rowIsRemoved > td,
 .ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsRemoved > td,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsRemoved > td
-{
+.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsRemoved > td {
     border-color: #cc5555;
 }
 .ui-treetable tr.ui-state-highlight.rowIsModified > td,
 .ui-treetable .ui-widget-content tr.ui-state-highlight.rowIsModified > td,
-.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsModified > td
-{
+.ui-treetable .ui-widget-header tr.ui-state-highlight.rowIsModified > td {
     border-color: #ffc04d;
 }
 
-
-.ui-treetable .ui-widget-header.ui-treetable-header
-{
+.ui-treetable .ui-widget-header.ui-treetable-header {
     background-image: none;
     background-color: #f8f9fb;
     border: 1px solid #e6e9ef;
     border-bottom: none;
 }
 
-.ui-treetable .ui-state-default
-{
+.ui-treetable .ui-state-default {
     background-image: none;
     background-color: #f8f9fb;
     border: 1px solid #e6e9ef;
     color: #000;
 }
 
-.ui-treetable thead th
-{
+.ui-treetable thead th {
     text-align: left;
 }
 
-
-td.treetableColumn.alignCenter
-{
+th.treetableColumn.alignCenter,
+td.treetableColumn.alignCenter {
     text-align: center;
 }
 
-td.treetableColumn.alignRight
-{
+th.treetableColumn.alignRight,
+td.treetableColumn.alignRight {
     text-align: right;
 }
 
-
-.ui-paginator
-{
+.ui-paginator {
     background: #f8f9fb;
     border-color: #e6e9ef;
     border-radius: 0;
@@ -485,13 +485,56 @@ td.treetableColumn.alignRight
 .ui-paginator-next:hover,
 .ui-paginator-last:hover,
 .ui-paginator-prev:hover,
-.ui-paginator-first:hover
-{
+.ui-paginator-first:hover {
     border-color: #888;
     box-shadow: 0 0 1px #888;
 }
 
-.nx-page table.treetable tbody tr:hover
-{
+.nx-page table.treetable tbody tr:hover {
     background-color: #f8f9fb;
+}
+
+.nx-page .ui-treetable .select2-container.select2-container-disabled {
+    line-height: normal;
+    margin: 0;
+}
+
+.nx-page
+    .ui-treetable
+    .select2-container.select2-container-disabled
+    .select2-choice
+    > .select2-chosen {
+    padding: 0.5em 1.7em 0.5em 1em;
+}
+
+/* Indent berriak */
+
+.nx-page .ui-treetable-data td:first-child .ui-treetable-indent {
+    width: 20px;
+    height: 16px;
+    border-left: 1px dotted #ccc;
+    float: none;
+    display: inline-block;
+    position: relative;
+    left: 14px;
+}
+
+.nx-page
+    .ui-treetable-data
+    td:first-child
+    .ui-treetable-indent:nth-last-child(3) {
+    border-bottom: 1px dotted #ccc;
+    width: 14px;
+}
+
+.nx-page .ui-treetable-data td:first-child .ui-treetable-toggler {
+    font-size: 0.8rem;
+    width: 1.4rem;
+    position: relative;
+    left: 8px;
+}
+
+.iconColumnFilter {
+    width: 2.7rem;
+    min-width: unset !important;
 }

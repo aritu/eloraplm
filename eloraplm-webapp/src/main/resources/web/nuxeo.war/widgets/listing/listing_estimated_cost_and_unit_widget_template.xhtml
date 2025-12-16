@@ -1,0 +1,16 @@
+<f:subview
+    id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+>
+    <h:panelGroup rendered="#{not empty field_0}">
+        <h:outputText value="#{field_0}">
+            <f:converter converterId="decimalValueConverter" />
+        </h:outputText>
+        <h:outputText
+            value="#{nxdir:getLabelFromId('elora_currency', field_1)}"
+        />
+    </h:panelGroup>
+</f:subview>

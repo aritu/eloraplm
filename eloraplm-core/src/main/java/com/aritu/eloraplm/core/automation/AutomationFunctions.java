@@ -19,6 +19,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.nuxeo.ecm.automation.core.scripting.CoreFunctions;
+import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 
 /**
  *
@@ -82,6 +87,67 @@ public class AutomationFunctions extends CoreFunctions {
 
     public Object[] listToArray(List<Object> list) {
         return list.toArray(new Object[list.size()]);
+    }
+
+    public String listToMvelArray(List<String> list) {
+        String value = "[";
+        if (list != null && list.size() > 0) {
+            value += "\"" + String.join("\",\"", list) + "\"";
+        }
+        value += "]";
+        return value;
+    }
+
+    public String concatenateList(List<String> list) {
+        String separator = ", ";
+        return concatenateList(list, separator);
+    }
+
+    public String concatenateList(List<String> list, String separator) {
+        if (list == null) {
+            return null;
+        } else {
+            return String.join(separator, list);
+        }
+    }
+
+    public DocumentModelList getDocumentListFromUids(CoreSession session,
+            List<String> uids) {
+        if (session == null) {
+            throw new IllegalArgumentException(
+                    "First parameter must not be null");
+        }
+
+        DocumentModelList dml = new DocumentModelListImpl();
+        if (uids != null) {
+            for (String uid : uids) {
+                DocumentModel doc = session.getDocument(new IdRef(uid));
+                if (doc != null) {
+                    dml.add(doc);
+                }
+            }
+        }
+        return dml;
+    }
+
+    public DocumentModel getDocumentFromId(CoreSession session, String docUid) {
+        if (session == null) {
+            throw new IllegalArgumentException(
+                    "First parameter must not be null");
+        }
+        if (docUid == null) {
+            throw new IllegalArgumentException(
+                    "Second parameter must not be null");
+        }
+        return session.getDocument(new IdRef(docUid));
+    }
+
+    public int sizeOf(List<Object> list) {
+        if (list == null) {
+            throw new IllegalArgumentException(
+                    "First parameter must not be null");
+        }
+        return list.size();
     }
 
 }

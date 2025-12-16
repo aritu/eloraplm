@@ -14,6 +14,7 @@
             
             <param type="string" name="title" />
             <param type="string" name="templateId" />
+            <param type="object" name="params" />
             
             <operation id="Context.FetchDocument"/>
             <operation id="Context.RestoreDocumentInputFromScript">
@@ -39,6 +40,7 @@
             </operation>
             <operation id="Elora.Plm.RenderWithTemplate">
                 <param type="string" name="templateId">expr:ChainParameters['templateId']</param>
+                <param type="object" name="params">expr:ChainParameters['params']</param>
             </operation>
             <operation id="Blob.ToPDF" />
             
@@ -48,6 +50,14 @@
                 <param type="string" name="xpath">file:content</param>
             </operation>
             <!-- RETURNS created document with PDF as main file -->
+            
+            <operation id="Context.RestoreDocumentInput">
+                <param name="name" type="string">createdDoc</param>
+            </operation>
+            <operation id="Document.CheckIn">
+                <param name="version" type="string">minor</param>
+            </operation>
+            <operation id="Document.Unlock" />
             
         </chain>
         

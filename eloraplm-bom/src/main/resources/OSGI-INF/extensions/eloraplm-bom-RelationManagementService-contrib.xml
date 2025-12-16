@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.bom.RelationManagementService.contrib">
+    
+    <extension point="allowedRelations" target="com.aritu.eloraplm.core.relations.api.RelationManagementService">
+        
+        <!-- ************** -->
+        <!-- Item relations -->
+        <!-- ************** -->
+        
+        <!-- BomComposedOf -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomComposedOf">
+            <source>
+                <type>BomPart</type>
+            </source>
+            <target>
+                <type>BomPart</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomComposedOf">
+            <source>
+                <type>BomProduct</type>
+            </source>
+            <target>
+                <type>BomProduct</type>
+                <type>BomPart</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomComposedOf">
+            <source>
+                <type>BomTool</type>
+            </source>
+            <target>
+                <type>BomTool</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomComposedOf">
+            <source>
+                <type>BomPackaging</type>
+            </source>
+            <target>
+                <type>BomPackaging</type>
+            </target>
+        </relation>
+        
+        <!-- BomHasSpecification -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomHasSpecification">
+            <source>
+                <facet>DesignItem</facet>
+            </source>
+            <target>
+                <type>BomSpecification</type>
+            </target>
+        </relation>
+        
+        <!-- BomCustomerHasProduct -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomCustomerHasProduct">
+            <source>
+                <type>BomCustomerProduct</type>
+            </source>
+            <target>
+                <type>BomProduct</type>
+            </target>
+        </relation>
+        
+        
+        <!-- ************************************** -->
+        <!-- Item to CAD / Basic document relations -->
+        <!-- ************************************** -->
+        
+        <!-- BomHasCadDocument -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomHasCadDocument">
+            <source>
+                <facet>BomDocument</facet>
+            </source>
+            <target>
+                <facet>CadDocument</facet>
+            </target>
+        </relation>
+        
+        <!-- BomHasDocument -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomHasDocument">
+            <source>
+                <facet>BomDocument</facet>
+            </source>
+            <target>
+                <facet>BasicDocument</facet>
+            </target>
+        </relation>
+        
+        
+        <!-- *********************** -->
+        <!-- Anarchic item relations -->
+        <!-- *********************** -->
+        
+        <!-- BomHasBom -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomHasBom">
+            <source>
+                <type>BomTool</type>
+            </source>
+            <target>
+                <type>BomProduct</type>
+                <type>BomPart</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomHasBom">
+            <source>
+                <type>BomPackaging</type>
+            </source>
+            <target>
+                <type>BomProduct</type>
+                <type>BomPart</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomHasBom">
+            <source>
+                <type>BomSpecification</type>
+            </source>
+            <target>
+                <facet>DesignItem</facet>
+            </target>
+        </relation>
+        
+        
+        <!-- ************************************** -->
+        <!-- BOM Lists relations -->
+        <!-- ************************************** -->
+        
+        <!-- BomHasList -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomHasList">
+            <source>
+                <facet>BomDocument</facet>
+            </source>
+            <target>
+                <type>BomList</type>
+            </target>
+        </relation>
+        
+        <!-- BomListHasEntry -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomListHasEntry">
+            <source>
+                <type>BomList</type>
+            </source>
+            <target>
+                <facet>BomDocument</facet>
+            </target>
+        </relation>
+        
+    </extension>
+    
+</component>

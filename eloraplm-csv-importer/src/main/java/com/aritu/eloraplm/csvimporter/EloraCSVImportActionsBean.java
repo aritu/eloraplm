@@ -37,10 +37,6 @@ import org.nuxeo.runtime.api.Framework;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 
-/**
- * @author <a href="mailto:troger@nuxeo.com">Thomas Roger</a>
- * @since 5.7
- */
 @Scope(ScopeType.CONVERSATION)
 @Name("eloraCsvImportActions")
 @Install(precedence = Install.FRAMEWORK)
@@ -71,6 +67,11 @@ public class EloraCSVImportActionsBean implements Serializable {
     protected File proxiesCsvFile;
 
     protected String proxiesCsvFileName;
+
+    // comments CSV file
+    protected File commentsCsvFile;
+
+    protected String commentsCsvFileName;
 
     protected boolean notifyUserByEmail = true;
 
@@ -116,11 +117,23 @@ public class EloraCSVImportActionsBean implements Serializable {
         proxiesCsvFileName = FilenameUtils.getName(item.getName());
     }
 
+    // This listener uploads the file containing documents comments descriptions
+    public void commentsUploadListener(FileUploadEvent event) throws Exception {
+        UploadedFile item = event.getUploadedFile();
+        // FIXME: check if this needs to be tracked for deletion
+        commentsCsvFile = File.createTempFile("FileManageActionsFile", null);
+        InputStream in = event.getUploadedFile().getInputStream();
+        org.nuxeo.common.utils.FileUtils.copyToFile(in, commentsCsvFile);
+        commentsCsvFileName = FilenameUtils.getName(item.getName());
+    }
+
     public void importCSVFile() {
         String logInitMsg = "[importCSVFile] ";
 
+        log.debug(logInitMsg + "Importing Elora CSV file.");
+
         if (csvFile != null || relationsCsvFile != null
-                || proxiesCsvFile != null) {
+                || proxiesCsvFile != null || commentsCsvFile != null) {
             EloraCSVImporterOptions options = new EloraCSVImporterOptions.Builder().sendEmail(
                     notifyUserByEmail).build();
             EloraCSVImporter csvImporter = Framework.getLocalService(
@@ -129,10 +142,10 @@ public class EloraCSVImportActionsBean implements Serializable {
                     navigationContext.getCurrentDocument().getPathAsString(),
                     csvFile, csvFileName, relationsCsvFile,
                     relationsCsvFileName, proxiesCsvFile, proxiesCsvFileName,
-                    options);
+                    commentsCsvFile, commentsCsvFileName, options);
         } else {
             log.info(logInitMsg
-                    + "Nothing to do. csvfile, relationsCsvFile and proxiesCsvFile are null.");
+                    + "Nothing to do. csvfile, relationsCsvFile, proxiesCsvFile and commentsCsvFile are null.");
         }
     }
 
@@ -209,6 +222,26 @@ public class EloraCSVImportActionsBean implements Serializable {
                 EloraCSVImportLog.Status.ERROR);
     }
 
+    public List<EloraCSVImportLog> getCommentsLastLogs(int maxLogs) {
+        if (csvImportId == null) {
+            return Collections.emptyList();
+        }
+        EloraCSVImporter csvImporter = Framework.getLocalService(
+                EloraCSVImporter.class);
+        return csvImporter.getCommentsLastImportLogs(csvImportId, maxLogs);
+    }
+
+    public List<EloraCSVImportLog> getCommentsSkippedAndErrorLogs() {
+        if (csvImportId == null) {
+            return Collections.emptyList();
+        }
+        EloraCSVImporter csvImporter = Framework.getLocalService(
+                EloraCSVImporter.class);
+        return csvImporter.getCommentsImportLogs(csvImportId,
+                EloraCSVImportLog.Status.SKIPPED,
+                EloraCSVImportLog.Status.ERROR);
+    }
+
     public EloraCSVImportResult getImportResult() {
         if (csvImportId == null) {
             return null;
@@ -236,6 +269,15 @@ public class EloraCSVImportActionsBean implements Serializable {
         return csvImporter.getProxiesImportResult(csvImportId);
     }
 
+    public EloraCSVImportResult getCommentsImportResult() {
+        if (csvImportId == null) {
+            return null;
+        }
+        EloraCSVImporter csvImporter = Framework.getLocalService(
+                EloraCSVImporter.class);
+        return csvImporter.getCommentsImportResult(csvImportId);
+    }
+
     public DocumentModel getImportResultDoc() {
         if (csvImportId == null) {
             return null;
@@ -253,6 +295,8 @@ public class EloraCSVImportActionsBean implements Serializable {
         relationsCsvFileName = null;
         proxiesCsvFile = null;
         proxiesCsvFileName = null;
+        commentsCsvFile = null;
+        commentsCsvFileName = null;
         csvImportId = null;
         notifyUserByEmail = true;
     }

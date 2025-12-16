@@ -1,48 +1,22 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
-xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cad_document" 
-targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cad_document"
-xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
-
-  <xs:element name="cadType" default="design">
-    <xs:simpleType>
-      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cadType" />
-    </xs:simpleType>
-  </xs:element>
-
-  <xs:element name="authoringTool" type="xs:string" nillable="false" nxsv:nillable="false" />
-  <xs:element name="authoringToolVersion" type="xs:string" nillable="false" nxsv:nillable="false" />
-  <xs:element name="activeConfiguration" type="xs:string" />
-  <xs:element name="cadClassification" >
-    <xs:simpleType>
-      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cadClassHierarchical" />
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="cadMaterial" type="xs:string" />
-  <xs:element name="mass">
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/cad_document" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/cad_document"
+    xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+    
+    <xs:include schemaLocation="core-types.xsd" />
+    
+    <!-- Standard cad:materials list of strings without restrictions -->
+    <xs:include schemaLocation="cad_document_materials.xsd" />
+    
+    <!-- Base cad_document schema -->
+    <xs:include schemaLocation="cad_document_base.xsd" />
+    
+    <!-- Custom element to set default value -->
+    <xs:element name="cadType" default="design">
         <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
-            </xs:restriction>
+            <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_cadType" />
         </xs:simpleType>
-  </xs:element>
-  <xs:element name="massUnit" type="xs:string" default="kg"/>
-  <xs:element name="volume">
-        <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
-            </xs:restriction>
-        </xs:simpleType>
-  </xs:element>
-  <xs:element name="volumeUnit" type="xs:string" default="m3"/>
-  <xs:element name="surface">
-        <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
-            </xs:restriction>
-        </xs:simpleType>
-  </xs:element>
-  <xs:element name="surfaceUnit" type="xs:string" default="m2"/>
-  <xs:element name="integrationTool" type="xs:string" />
+    </xs:element>
 
 </xs:schema>

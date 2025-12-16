@@ -1,0 +1,27 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <!-- EDIT MODE -->
+    <c:if test="#{widget.mode == 'edit'}">
+        <ui:repeat var="item" value="#{field}">
+            <span class="pill">#{item}</span>
+        </ui:repeat>
+        <!--  TODO MAKE EDITABLE WITH SELECT2 -->
+    </c:if>
+    
+    <!-- VIEW MODE -->
+    <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
+        <ui:repeat var="item" value="#{field}">
+            <span class="pill">#{item}</span>
+        </ui:repeat>
+    </c:if>
+    
+    <!-- PLAIN MODE -->
+    <c:if test="#{nxl:isLikePlainMode(widget.mode)}">#{field}</c:if>
+
+</ui:composition>

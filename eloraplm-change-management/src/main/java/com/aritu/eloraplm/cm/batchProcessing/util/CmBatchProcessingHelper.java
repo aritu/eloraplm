@@ -27,6 +27,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.LifeCycleException;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.core.api.VersionModel;
@@ -48,16 +49,20 @@ import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
+import com.aritu.eloraplm.core.pdm.checkout.api.CheckoutService;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
+import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
+import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.DocumentAlreadyLockedException;
 import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
 import com.aritu.eloraplm.exceptions.DocumentLockRightsException;
 import com.aritu.eloraplm.exceptions.DocumentNotCheckedOutException;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
 
 /**
  * Helper class for Change Management Batch Processing.
@@ -79,17 +84,17 @@ public class CmBatchProcessingHelper {
         log.trace(logInitMsg + "--- ENTER --- ");
 
         for (TreeNode childNode : node.getChildren()) {
-
-            toggleLockDoc(childNode, lock, facesMessages, messages, session);
-
+            CMItemsNodeData nodeData = (CMItemsNodeData) childNode.getData();
+            if (!nodeData.getIsModifiedItem()) {
+                toggleLockDoc(nodeData, lock, facesMessages, messages, session);
+            }
             toggleLockProcessableDocs(childNode, lock, facesMessages, messages,
                     session);
         }
-
         log.trace(logInitMsg + "--- EXIT --- ");
     }
 
-    public static void toggleLockDoc(TreeNode node, boolean lock,
+    public static void toggleLockDoc(CMItemsNodeData nodeData, boolean lock,
             FacesMessages facesMessages, Map<String, String> messages,
             CoreSession session) throws EloraException {
 
@@ -97,8 +102,9 @@ public class CmBatchProcessingHelper {
                 + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
 
-        CMItemsNodeData nodeData = (CMItemsNodeData) node.getData();
-        if (!isIgnored(nodeData) && !isRemoved(nodeData)) {
+        if (!lock || (!isIgnored(nodeData) && !isRemoved(nodeData)
+                && ((!isManaged(nodeData) || !isDestinationReleased(nodeData))
+                        || !lock))) {
             if (lock) {
                 try {
                     lockDestinationDocument(nodeData, session);
@@ -147,6 +153,10 @@ public class CmBatchProcessingHelper {
         return nodeData.getDestinationItem().isCheckedOut();
     }
 
+    public static boolean isDestinationReleased(CMItemsNodeData nodeData) {
+        return EloraDocumentHelper.isReleased(nodeData.getDestinationItemWc());
+    }
+
     private static void lockDestinationDocument(CMItemsNodeData nodeData,
             CoreSession session)
             throws EloraException, DocumentAlreadyLockedException,
@@ -157,19 +167,22 @@ public class CmBatchProcessingHelper {
 
     private static void unlockDestinationDocument(CMItemsNodeData nodeData,
             CoreSession session) {
-        DocumentModel destinationItem = nodeData.getDestinationItem();
-        unlockDocument(destinationItem, session);
+        DocumentModel docToLock = nodeData.getDestinationItem();
+        if (docToLock == null) {
+            docToLock = nodeData.getOriginItem();
+        }
+        unlockDocument(docToLock, session);
 
     }
 
-    private static void unlockDocument(DocumentModel destinationItem,
+    private static void unlockDocument(DocumentModel doc,
             CoreSession session) {
-        DocumentModel destinationWcDoc = session.getWorkingCopy(
-                destinationItem.getRef());
-        if (!destinationWcDoc.isCheckedOut()
-                && EloraDocumentHelper.isLockedByUserOrAdmin(destinationWcDoc,
+        DocumentModel wcDoc = session.getWorkingCopy(
+                doc.getRef());
+        if (!wcDoc.isCheckedOut()
+                && EloraDocumentHelper.isLockedByUserOrAdmin(wcDoc,
                         session)) {
-            destinationWcDoc.removeLock();
+            wcDoc.removeLock();
         }
     }
 
@@ -287,6 +300,90 @@ public class CmBatchProcessingHelper {
         }
     }
 
+    public static void checkoutBasicDocs(TreeNode node,
+            FacesMessages facesMessages, Map<String, String> messages,
+            CheckoutService checkoutService)
+            throws EloraException, DocumentAlreadyLockedException,
+            DocumentInUnlockableStateException, DocumentLockRightsException {
+        for (TreeNode childNode : node.getChildren()) {
+            CMItemsNodeData nodeData = (CMItemsNodeData) childNode.getData();
+            if (nodeData.getIsModifiedItem()) {
+                checkoutBasicDocs(childNode, facesMessages, messages,
+                        checkoutService);
+            } else {
+                checkoutBasicDocument(facesMessages, messages, childNode,
+                        nodeData, checkoutService);
+            }
+        }
+    }
+
+    private static void checkoutBasicDocument(FacesMessages facesMessages,
+            Map<String, String> messages, TreeNode childNode,
+            CMItemsNodeData nodeData, CheckoutService checkoutService)
+            throws EloraException, DocumentAlreadyLockedException,
+            DocumentInUnlockableStateException, DocumentLockRightsException {
+
+        if (!isIgnored(nodeData) && !isRemoved(nodeData)
+                && EloraDocumentHelper.isBasicDocument(
+                        nodeData.getOriginItem())) {
+
+            DocumentModel destDoc = nodeData.getDestinationItemWc();
+            try {
+                EloraDocumentHelper.lockDocument(destDoc);
+            } catch (DocumentAlreadyLockedException e) {
+                facesMessages.add(StatusMessage.Severity.WARN,
+                        messages.get("eloraplm.message.error.locked"),
+                        destDoc.getPropertyValue(
+                                EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                        destDoc.getTitle());
+                return;
+            } catch (DocumentLockRightsException e) {
+                facesMessages.add(StatusMessage.Severity.WARN,
+                        messages.get("eloraplm.message.error.lock.rights"),
+                        destDoc.getPropertyValue(
+                                EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                        destDoc.getTitle());
+                return;
+            } catch (DocumentInUnlockableStateException | EloraException e) {
+                facesMessages.add(StatusMessage.Severity.WARN,
+                        messages.get("eloraplm.message.error.cm.batch.lockDoc"),
+                        destDoc.getPropertyValue(
+                                EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                        destDoc.getTitle());
+                return;
+            }
+
+            checkoutService.checkOutFromVersionInCmProcess(
+                    nodeData.getDestinationItemWc(),
+                    nodeData.getDestinationItemSourceVersion());
+        }
+        checkoutBasicDocs(childNode, facesMessages, messages, checkoutService);
+    }
+
+    public static void checkinBasicDocs(TreeNode node,
+            CheckinManager checkinManager) throws EloraException,
+            CheckinNotAllowedException, DocumentNotCheckedOutException,
+            BomCharacteristicsValidatorException {
+
+        for (TreeNode childNode : node.getChildren()) {
+            CMItemsNodeData nodeData = (CMItemsNodeData) childNode.getData();
+            if (nodeData.getIsModified()) {
+                checkinBasicDocs(childNode, checkinManager);
+            } else {
+                if (!isIgnored(nodeData) && !isRemoved(nodeData)
+                        && EloraDocumentHelper.isBasicDocument(
+                                nodeData.getOriginItem())) {
+
+                    checkinManager.checkinDocument(
+                            nodeData.getDestinationItem(),
+                            nodeData.getComment(), false);
+
+                }
+                checkinBasicDocs(childNode, checkinManager);
+            }
+        }
+    }
+
     public static List<Statement> getBomHierarchicalStmts(DocumentModel doc,
             List<String> bomHierarchicalAndDirectRelations) {
         List<Resource> predicates = new ArrayList<>();
@@ -312,8 +409,12 @@ public class CmBatchProcessingHelper {
 
         for (DocumentModel checkedOutDoc : checkedOutDocs) {
             String checkedOutDocId = checkedOutDoc.getId();
-            String checkedOutDocReference = checkedOutDoc.getPropertyValue(
-                    EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
+            String checkedOutDocReference = null;
+            if (checkedOutDoc.getPropertyValue(
+                    EloraMetadataConstants.ELORA_ELO_REFERENCE) != null) {
+                checkedOutDocReference = checkedOutDoc.getPropertyValue(
+                        EloraMetadataConstants.ELORA_ELO_REFERENCE).toString();
+            }
 
             try {
                 TransactionHelper.commitOrRollbackTransaction();
@@ -442,7 +543,7 @@ public class CmBatchProcessingHelper {
     // --------------------------------------------------------
     public static boolean prepareAsynchronousProcess(DocumentModel cmProcessDoc,
             String batchProcessName, String itemType, String itemClass,
-            CoreSession documentManager) throws EloraException {
+            CoreSession documentManager, int totalCount) throws EloraException {
 
         boolean lifecycleStateChanged = false;
 
@@ -546,11 +647,33 @@ public class CmBatchProcessingHelper {
 
             documentManager.saveDocument(cmProcessDoc);
 
+            // Raise IN PROGRESS event
+            String processingAction = EloraMessageHelper.getTranslatedMessage(
+                    documentManager,
+                    "eloraplm.message.warning.cm.batch.batchProcessInProgress."
+                            + batchProcessName);
+            Events.instance().raiseEvent(
+                    CMBatchProcessingEventNames.IN_PROGRESS,
+                    cmProcessDoc.getId(), itemType, itemClass, processingAction,
+                    totalCount);
+
+            log.trace(logInitMsg + "|" + CMBatchProcessingEventNames.IN_PROGRESS
+                    + "| event fired.");
+
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
 
             lifecycleStateChanged = true;
 
+        } catch (LifeCycleException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            Object[] messageParams = { EloraMessageHelper.getTranslatedMessage(
+                    documentManager, cmProcessDoc.getCurrentLifeCycleState()) };
+            String errorMsg = EloraMessageHelper.getTranslatedMessage(
+                    documentManager,
+                    "eloraplm.message.error.cm.batch.wrongLifecycleState",
+                    messageParams);
+            throw new EloraException(errorMsg, e);
         } catch (NuxeoException e) {
             log.error(logInitMsg + e.getMessage(), e);
             throw new EloraException(

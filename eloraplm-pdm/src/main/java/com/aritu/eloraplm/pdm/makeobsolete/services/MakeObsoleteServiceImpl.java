@@ -13,6 +13,7 @@
  */
 package com.aritu.eloraplm.pdm.makeobsolete.services;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -442,6 +443,8 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
                 + "|");
         try {
 
+            String previousState = doc.getCurrentLifeCycleState();
+
             // follow transition to become obsolete
             doc.followTransition(EloraLifeCycleConstants.TRANS_OBSOLETE);
 
@@ -453,8 +456,11 @@ public class MakeObsoleteServiceImpl implements MakeObsoleteService {
             if (processReference != null) {
                 comment += " @" + processReference;
             }
+            Map<String, Serializable> ctxProperties = new HashMap<String, Serializable>();
+            ctxProperties.put("comment", comment);
+            ctxProperties.put("previousState", previousState);
             EloraEventHelper.fireEvent(PdmEventNames.PDM_PROMOTED_EVENT, doc,
-                    comment);
+                    ctxProperties);
 
             EloraDocumentHelper.disableVersioningDocument(doc);
             doc = session.saveDocument(doc);

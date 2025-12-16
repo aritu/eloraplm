@@ -21,6 +21,8 @@ public interface CodeCreationService {
 
     public static final String CODE_CREATION_TYPE_MODE_MANUAL = "manual";
 
+    public static final boolean CODE_CREATION_TYPE_EDITABLE_FALSE = false;
+
     public static final String CODE_CREATION_TYPE_MODE_MANUAL_REQUIRED = "manualRequired";
 
     public static final String CODE_CREATION_TYPE_MODE_AUTO = "auto";
@@ -34,5 +36,7 @@ public interface CodeCreationService {
             CODE_CREATION_TYPE_MODE_AUTO_IF_EMPTY };
 
     public String getModeForType(String type);
+
+    public boolean getEditableForType(String type);
 
 }

@@ -30,6 +30,7 @@ import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.util.EloraDecimalHelper;
 import com.aritu.eloraplm.exceptions.CompositionWithMultipleVersionsException;
+import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
  * // TODO: write class general comment
@@ -46,7 +47,7 @@ public class ItemStructureUpdater {
             List<DocItemRelation> selectedDocItemRelations,
             EloraDocumentRelationManager eloraDocumentRelationManager,
             CoreSession session)
-            throws CompositionWithMultipleVersionsException {
+            throws CompositionWithMultipleVersionsException, EloraException {
 
         addSelectedNewItems(itemStructureData, selectedDocItemRelations);
 
@@ -75,7 +76,7 @@ public class ItemStructureUpdater {
     private static void addDirectorsNewItems(
             ItemStructureData itemStructureData,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession session) {
+            CoreSession session) throws EloraException {
 
         Set<String> currentItemList = itemStructureData.getCurrentItemList();
         Set<String> newItemList = itemStructureData.getDirectorItemList();
@@ -94,11 +95,16 @@ public class ItemStructureUpdater {
     private static void addNewItem(String itemId,
             ItemStructureData itemStructureData,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession session) {
+            CoreSession session) throws EloraException {
         RelationData relData = itemStructureData.getDirectorItemDataMap().get(
                 itemId);
         DocumentModel newItem = relData.getObjItem();
         DocumentModel rootItem = itemStructureData.getRootItem();
+
+        if (newItem.getVersionSeriesId().equals(rootItem.getVersionSeriesId())) {
+            throw new EloraException("Trying to add the same item below root item |" + rootItem.getTitle()
+                    + "|. Check the related documents that you set with a director ordering to avoid these loops.");
+        }
 
         eloraDocumentRelationManager.addRelation(session, rootItem, newItem,
                 EloraRelationConstants.BOM_COMPOSED_OF, "",
@@ -146,7 +152,7 @@ public class ItemStructureUpdater {
 
     private static void updateCommonItems(ItemStructureData itemStructureData,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession session) {
+            CoreSession session) throws EloraException {
 
         Set<String> currentItemList = itemStructureData.getCurrentItemList();
         Set<String> newItemList = itemStructureData.getDirectorItemList();
@@ -162,7 +168,7 @@ public class ItemStructureUpdater {
     private static void updateItemProperties(String itemId,
             ItemStructureData itemStructureData,
             EloraDocumentRelationManager eloraDocumentRelationManager,
-            CoreSession session) {
+            CoreSession session) throws EloraException {
         RelationData newRelationData = itemStructureData.getDirectorItemDataMap().get(
                 itemId);
         RelationData curRelationData = itemStructureData.getCurrentItemDataMap().get(
@@ -171,13 +177,13 @@ public class ItemStructureUpdater {
         Boolean isManual = curRelationData.getIsManual();
         if ((isManual == null || !isManual) && relationPropertiesHaveChanged(
                 newRelationData, curRelationData)) {
-            eloraDocumentRelationManager.updateRelation(session,
-                    itemStructureData.getRootItem(),
+            eloraDocumentRelationManager.updateObjectAndBasicPropsInRelation(
+                    session, itemStructureData.getRootItem(),
                     EloraRelationConstants.BOM_COMPOSED_OF,
                     curRelationData.getObjItem(), newRelationData.getObjItem(),
                     EloraDecimalHelper.fromDecimalToStandard(
                             newRelationData.getQuantity()),
-                    newRelationData.getOrdering(), null, null, null, null);
+                    newRelationData.getOrdering());
 
             itemStructureData.setIsStructureUpdated(true);
             log.trace("Relation updated to item |"

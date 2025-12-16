@@ -1,11 +1,14 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:nxdir="http://nuxeo.org/nxdirectory"
-  xmlns:nxu="http://nuxeo.org/nxweb/util"
-  >
-  
-    <nxu:set var="classification" value="#{
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+>
+    <nxu:set
+        var="classification"
+        value="#{
         field_0.getType() eq 'BomPart'
             or field_0.getType() eq 'Software'
             or field_0.getType() eq 'ElectronicComponent' ? field_0.partclass.partClassification :
@@ -13,9 +16,12 @@
         ( field_0.getType() eq 'BomPackaging' ? field_0.bompack.packagingClassification :
         ( field_0.getType() eq 'BomSpecification' ? field_0.bomspec.specificationClassification :
         ( field_0.getType() eq 'BomProduct' or field_0.hasFacet('EloraWorkspace') ? field_0.prodclass.productClassification : '' ))))
-    }">
-    
-    <nxu:set var="directoryNameList" value="#{
+    }"
+    >
+        <c:if test="#{widget.mode != 'csv'}">
+            <nxu:set
+                var="directoryNameList"
+                value="#{
         field_0.getType() eq 'BomPart'
             or field_0.getType() eq 'Software'
             or field_0.getType() eq 'ElectronicComponent' ? 'elora_bomPartClassLevel1,elora_bomPartClassLevel2,elora_bomPartClassLevel3' :
@@ -23,14 +29,22 @@
         ( field_0.getType() eq 'BomPackaging' ? 'elora_bomPackagingClassLevel1,elora_bomPackagingClassLevel2,elora_bomPackagingClassLevel3' :
         ( field_0.getType() eq 'BomSpecification' ? 'elora_bomSpecificationClassLevel1,elora_bomSpecificationClassLevel2,elora_bomSpecificationClassLevel3' :
         ( field_0.getType() eq 'BomProduct' ? 'elora_bomProductClassLevel1,elora_bomProductClassLevel2,elora_bomProductClassLevel3' : '' ))))
-    }">
+    }"
+            >
+                <nxdir:chainSelectOutput
+                    directoryNameList="#{directoryNameList}"
+                    value="#{classification}"
+                    localize="true"
+                    display="label"
+                    keySeparator="/"
+                    entrySeparator=""
+                    handleMultipleValues="false"
+                />
+            </nxu:set>
+        </c:if>
 
-        <nxdir:chainSelectOutput directoryNameList="#{directoryNameList}"
-            value="#{classification}" localize="true" display="label"
-            keySeparator="/" entrySeparator="" handleMultipleValues="false" />
-
+        <c:if test="#{widget.mode == 'csv'}">
+            <h:outputText value="#{classification}" />
+        </c:if>
     </nxu:set>
-
-    </nxu:set>
-
 </ui:composition>

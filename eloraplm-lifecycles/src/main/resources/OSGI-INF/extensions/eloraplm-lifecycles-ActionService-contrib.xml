@@ -53,7 +53,7 @@
         point="actions">
         
         <action id="demote" order="20"
-            label="eloraplm.command.demote" type="fancybox"
+            label="eloraplm.command.demote" type="pfdialog"
             icon="/icons/action_demote_16.png">
             <category>DOCUMENT_UPPER_ACTION</category>
             <filter-id>canDemote</filter-id>
@@ -62,11 +62,12 @@
                 <property name="ajaxSupport">true</property>
                 <property name="styleClass">button</property>
                 <property name="visibleByDefault">true</property>
+                <property name="dialogTitle">eloraplm.title.lifecycles.demote</property>
             </properties>
         </action>
         
         <action id="promote" order="25"
-            label="eloraplm.command.promote" type="fancybox"
+            label="eloraplm.command.promote" type="pfdialog"
             icon="/icons/action_promote_16.png">
             <category>DOCUMENT_UPPER_ACTION</category>
             <filter-id>canPromote</filter-id>
@@ -75,6 +76,7 @@
                 <property name="ajaxSupport">true</property>
                 <property name="styleClass">button</property>
                 <property name="visibleByDefault">true</property>
+                <property name="dialogTitle">eloraplm.title.lifecycles.promote</property>
             </properties>
         </action>
         

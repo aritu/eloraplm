@@ -3,31 +3,6 @@
 <component name="com.aritu.eloraplm.config.WebLayoutManager.contrib">
 
     <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
-    
-        <layout name="elora_default_config">
-          <templates>
-            <template mode="any">
-              /directory/directory_layout_template.xhtml
-            </template>
-          </templates>
-          <rows>
-            <row>
-              <widget>elora_default_config_id</widget>
-            </row>
-            <row>
-              <widget>elora_default_config_value</widget>
-            </row>
-            <row>
-              <widget>elora_default_config_enforce</widget>
-            </row>
-            <row>
-              <widget>elora_default_config_obsolete</widget>
-            </row>
-            <row>
-              <widget>elora_default_config_order</widget>
-            </row>
-          </rows>
-        </layout>
         
         <layout name="elora_relation_propagation">
           <templates>
@@ -119,81 +94,156 @@
           </rows>
         </layout>
         
+        <layout name="elora_cad_derived_outputs_config">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_cad_derived_outputs_config_id</widget>
+            </row>
+            <row>
+              <widget>elora_cad_derived_outputs_config_authoring_tool</widget>
+            </row>
+            <row>
+              <widget>elora_cad_derived_outputs_config_cad_doctype</widget>
+            </row>
+            <row>
+              <widget>elora_cad_derived_outputs_config_output_type</widget>
+            </row>
+            <row>
+              <widget>elora_cad_derived_outputs_config_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_cad_derived_outputs_config_ordering</widget>
+            </row>
+          </rows>
+          
+          <widget name="elora_cad_derived_outputs_config_id" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.id</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCadDerivedOutputsConfig:id</field>
+            </fields>
+          </widget>
+          
+          <widget name="elora_cad_derived_outputs_config_authoring_tool" type="selectOneDirectory">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.eloraCadDerivedOutputsConfig.authoringTool</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCadDerivedOutputsConfig:authoring_tool</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_authoring_tools</property>
+            </properties>
+          </widget>
+          
+          <widget name="elora_cad_derived_outputs_config_cad_doctype" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.eloraCadDerivedOutputsConfig.cadDoctype</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCadDerivedOutputsConfig:cad_doctype</field>
+            </fields>
+          </widget>
+          
+          <widget name="elora_cad_derived_outputs_config_output_type" type="selectOneDirectory">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.eloraCadDerivedOutputsConfig.outputType</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCadDerivedOutputsConfig:output_type</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="directoryName">elora_cad_derived_output_type</property>
+            </properties>
+          </widget>
+          
+          <widget name="elora_cad_derived_outputs_config_obsolete" type="integer_yes_no">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCadDerivedOutputsConfig:obsolete</field>
+            </fields>
+          </widget>
+          
+          <widget name="elora_cad_derived_outputs_config_ordering" type="int">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.ordering</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraCadDerivedOutputsConfig:ordering</field>
+            </fields>
+            <properties widgetMode="edit">
+              <property name="size">10</property>
+            </properties>
+          </widget>
+          
+        </layout>
+        
+         <layout name="elora_document_metadata_mapping">
+          <templates>
+            <template mode="any">
+              /directory/directory_layout_template.xhtml
+            </template>
+          </templates>
+          <rows>
+            <row>
+              <widget>elora_document_metadata_mapping_id</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_org_doc_type</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_org_metadata</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_dst_doc_type</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_dst_process</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_dst_metadata</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_dst_consolidation_mode</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_dst_metadata_overwrite</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_dst_exec_method_name</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_rel_predicate</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_rel_org_role</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_obsolete</widget>
+            </row>
+            <row>
+              <widget>elora_document_metadata_mapping_ordering</widget>
+            </row>
+          </rows>
+        </layout>
+        
     </extension>
     
     <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
-        
-        <!-- elora_default_config widgets -->
-        
-        <widget name="elora_default_config_id" type="text">
-          <labels>
-            <label mode="any">eloraplm.label.vocabulary.id</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>eloraDefaultConfig:id</field>
-          </fields>
-          <properties widgetMode="edit">
-            <property name="required">true</property>
-          </properties>
-        </widget>
-        
-        <widget name="elora_default_config_value" type="text">
-          <labels>
-            <label mode="any">label.widget.defaultConfig.entry.value</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>eloraDefaultConfig:value</field>
-          </fields>
-          <properties widgetMode="edit">
-            <property name="required">true</property>
-          </properties>
-        </widget>
-        
-        <widget name="elora_default_config_enforce" type="template">
-          <labels>
-            <label mode="any">label.widget.defaultConfig.entry.enforce</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>eloraDefaultConfig:enforce</field>
-          </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
-        </widget>
-    
-        <widget name="elora_default_config_obsolete" type="template">
-          <labels>
-            <label mode="any">eloraplm.label.vocabulary.obsolete</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>eloraDefaultConfig:obsolete</field>
-          </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
-        </widget>
-    
-        <widget name="elora_default_config_order" type="int">
-          <labels>
-            <label mode="any">eloraplm.label.vocabulary.ordering</label>
-          </labels>
-          <translated>true</translated>
-          <fields>
-            <field>eloraDefaultConfig:ordering</field>
-          </fields>
-          <properties widgetMode="edit">
-            <property name="size">10</property>
-          </properties>
-        </widget>
-        
         
         <!-- elora_relation_propagation widgets -->
         
@@ -237,7 +287,7 @@
           </properties>
         </widget>
         
-        <widget name="elora_relation_propagation_direction" type="template">
+        <widget name="elora_relation_propagation_direction" type="integer_asc_desc">
           <labels>
             <label mode="any">label.widget.relationPropagation.entry.direction</label>
           </labels>
@@ -245,14 +295,9 @@
           <fields>
             <field>eloraRelationPropagation:direction</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_asc_desc_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
         
-        <widget name="elora_relation_propagation_propagate" type="template">
+        <widget name="elora_relation_propagation_propagate" type="integer_yes_no">
           <labels>
             <label mode="any">label.widget.relationPropagation.entry.propagate</label>
           </labels>
@@ -260,14 +305,9 @@
           <fields>
             <field>eloraRelationPropagation:propagate</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
         
-        <widget name="elora_relation_propagation_enforce" type="template">
+        <widget name="elora_relation_propagation_enforce" type="integer_yes_no">
           <labels>
             <label mode="any">label.widget.relationPropagation.entry.enforce</label>
           </labels>
@@ -275,14 +315,9 @@
           <fields>
             <field>eloraRelationPropagation:enforce</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
         
-        <widget name="elora_relation_propagation_obsolete" type="template">
+        <widget name="elora_relation_propagation_obsolete" type="integer_yes_no">
           <labels>
             <label mode="any">eloraplm.label.vocabulary.obsolete</label>
           </labels>
@@ -290,11 +325,6 @@
           <fields>
             <field>eloraRelationPropagation:obsolete</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
         
         <widget name="elora_relation_propagation_order" type="int">
@@ -362,7 +392,7 @@
           </properties>
         </widget>
         
-        <widget name="elora_unit_conversion_mapping_display" type="template">
+        <widget name="elora_unit_conversion_mapping_display" type="integer_yes_no">
           <labels>
             <label mode="any">label.widget.unitConversionMapping.entry.display</label>
           </labels>
@@ -370,12 +400,7 @@
           <fields>
             <field>eloraUnitConversionMapping:display</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
-           <properties widgetMode="edit">
+          <properties widgetMode="edit">
             <property name="required">true</property>
           </properties>
         </widget>
@@ -393,7 +418,7 @@
           </properties>
         </widget>
         
-        <widget name="elora_unit_conversion_mapping_obsolete" type="template">
+        <widget name="elora_unit_conversion_mapping_obsolete" type="integer_yes_no">
           <labels>
             <label mode="any">eloraplm.label.vocabulary.obsolete</label>
           </labels>
@@ -401,11 +426,6 @@
           <fields>
             <field>eloraUnitConversionMapping:obsolete</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
         
         <widget name="elora_unit_conversion_mapping_order" type="int">
@@ -447,7 +467,7 @@
           </properties>
         </widget>
         
-        <widget name="elora_checkout_config_obsolete" type="template">
+        <widget name="elora_checkout_config_obsolete" type="integer_yes_no">
           <labels>
             <label mode="any">eloraplm.label.vocabulary.obsolete</label>
           </labels>
@@ -455,11 +475,6 @@
           <fields>
             <field>eloraCheckoutConfig:obsolete</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
     
         <widget name="elora_checkout_config_ordering" type="int">
@@ -474,6 +489,169 @@
             <property name="size">10</property>
           </properties>
         </widget>
+        
+        <!-- elora_document_metadata_mapping vocabulary widgets -->
+        <widget name="elora_document_metadata_mapping_id" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.id</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:id</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+        
+        <!-- TODO LEIRE: dokumentu mota desberdinen select bat -->
+        <widget name="elora_document_metadata_mapping_org_doc_type" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.orgDocType</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:orgDocType</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+        
+        <!-- TODO LEIRE: aukeratutako dokumentuaren metadatu zerrenda??? -->
+        <widget name="elora_document_metadata_mapping_org_metadata" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.orgMetadata</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:orgMetadata</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+        
+        <!-- TODO LEIRE: dokumentu mota desberdinen select bat -->
+        <widget name="elora_document_metadata_mapping_dst_doc_type" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.dstDocType</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:dstDocType</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+        
+        <!-- TODO LEIRE: select bat: [setMetadataValue, execMethod] -->
+        <widget name="elora_document_metadata_mapping_dst_process" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.dstProcess</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:dstProcess</field>
+            </fields>
+        </widget>
+        
+        <!-- TODO LEIRE: aukeratutako dokumentuaren metadatu zerrenda??? -->
+        <widget name="elora_document_metadata_mapping_dst_metadata" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.dstMetadata</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:dstMetadata</field>
+            </fields>
+        </widget>
+        
+        <!-- TODO LEIRE: select bat: [sum] edo hutsik -->
+        <widget name="elora_document_metadata_mapping_dst_consolidation_mode" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.dstConsolidationMode</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:dstConsolidationMode</field>
+            </fields>
+        </widget>
+        
+        <!-- TODO LEIRE: select bat: [N, Y, Y_ONE] edo hutsik -->
+        <widget name="elora_document_metadata_mapping_dst_metadata_overwrite" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.dstMetadataOverwrite</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:dstMetadataOverwrite</field>
+            </fields>
+        </widget>
+        
+        <!-- TODO LEIRE: select bat: [updateMaterialRelations] edo hutsik -->
+        <widget name="elora_document_metadata_mapping_dst_exec_method_name" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.dstExecMethodName</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:dstExecMethodName</field>
+            </fields>
+        </widget>
+        
+        <!-- TODO LEIRE: select bat: erlazio desberdinen lista atera  -->
+        <widget name="elora_document_metadata_mapping_rel_predicate" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.relPredicate</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:relPredicate</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+        
+        <!-- TODO LEIRE: select bat: [subject, object]  -->
+        <widget name="elora_document_metadata_mapping_rel_org_role" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.docMetMap.relOrgRole</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:relOrgRole</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+            </properties>
+        </widget>
+        
+        <widget name="elora_document_metadata_mapping_obsolete" type="integer_yes_no">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.obsolete</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:obsolete</field>
+            </fields>
+        </widget>
+        
+        <widget name="elora_document_metadata_mapping_ordering" type="int">
+            <labels>
+                <label mode="any">eloraplm.label.vocabulary.ordering</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>eloraDocumentMetadataMapping:ordering</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="size">10</property>
+            </properties>
+        </widget>
+        <!-- end of elora_document_metadata_mapping vocabulary widgets -->
         
     </extension>
     

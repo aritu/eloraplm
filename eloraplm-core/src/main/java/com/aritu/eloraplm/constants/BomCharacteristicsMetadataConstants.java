@@ -14,7 +14,7 @@
 package com.aritu.eloraplm.constants;
 
 /**
- * // TODO: write class general comment
+ * Constants related to BOM Characteristics.
  *
  * @author aritu
  *
@@ -60,5 +60,8 @@ public class BomCharacteristicsMetadataConstants {
 
     // BOM Characteristic Metadata constants
     public static final String BOM_CHARAC_LIST = "bomchar:bomCharacteristicList";
+
+    // Linked Characteristic Metadata constants
+    public static final String LINKED_CHARAC_LIST = "linkchar:linkedCharacteristicList";
 
 }

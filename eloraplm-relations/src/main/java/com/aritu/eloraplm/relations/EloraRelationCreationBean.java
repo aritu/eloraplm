@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.Name;
+
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 
 /**
@@ -43,26 +44,26 @@ public class EloraRelationCreationBean {
 
         log.trace(logInitMsg + "Entering doc validation...");
         Map<String, Object> attributes = component.getAttributes();
-        final String objectDocumentUidInputId = (String) attributes.get(
-                "objectDocumentUidInputId");
+        final String objectDocumentWcUidInputId = (String) attributes.get(
+                "objectDocumentWcUidInputId");
 
-        log.trace(logInitMsg + "Value: |" + objectDocumentUidInputId + "|");
+        log.trace(logInitMsg + "Value: |" + objectDocumentWcUidInputId + "|");
 
-        if (StringUtils.isBlank(objectDocumentUidInputId)) {
+        if (StringUtils.isBlank(objectDocumentWcUidInputId)) {
             log.error("Cannot validate relation creation: input id not found");
             return;
         }
 
         FacesMessage message;
-        final UIInput objectDocumentUidInput = (UIInput) component.findComponent(
-                objectDocumentUidInputId);
-        if (objectDocumentUidInput == null) {
+        final UIInput objectDocumentWcUidInput = (UIInput) component.findComponent(
+                objectDocumentWcUidInputId);
+        if (objectDocumentWcUidInput == null) {
             String msg = EloraMessageHelper.getTranslatedMessage(context,
                     "error.relation.required.object.document");
             message = new FacesMessage(msg);
         }
 
-        String objectValue = ((String) objectDocumentUidInput.getLocalValue());
+        String objectValue = ((String) objectDocumentWcUidInput.getLocalValue());
         log.trace(logInitMsg + "Local value: |" + objectValue + "|");
 
         if (objectValue != null) {

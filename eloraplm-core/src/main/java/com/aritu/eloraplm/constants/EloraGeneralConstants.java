@@ -48,9 +48,15 @@ public class EloraGeneralConstants {
 
     public static final String CONTEXT_SKIP_LOCK = "CONTEXT_SKIP_LOCK";
 
+    public static final String CONTEXT_SKIP_ARCHIVER_CONDITION = "CONTEXT_SKIP_ARCHIVER_CONDITION";
+
     public static final String CONTEXT_ERROR_KEY = "CONTEXT_ERROR_KEY";
 
     public static final String CONTEXT_KEY_ACTION = "ACTION";
+
+    public static final String CONTEXT_KEY_PREDICATE = "PREDICATE";
+
+    public static final String CONTEXT_KEY_STMT_OBJECT_DOC = "STMT_OBJECT_DOC";
 
     // File types
     public static final String FILE_TYPE_CONTENT = "content";
@@ -58,6 +64,8 @@ public class EloraGeneralConstants {
     public static final String FILE_TYPE_CAD_ATTACHMENT = "cadAttachment";
 
     public static final String FILE_TYPE_VIEWER = "viewer";
+
+    public static final String FILE_TYPE_CAD_DERIVED_OUTPUT = "cadDerivedOutput";
 
     // Response status
     public static final String RESPONSE_STATUS_ERROR = "ERROR";

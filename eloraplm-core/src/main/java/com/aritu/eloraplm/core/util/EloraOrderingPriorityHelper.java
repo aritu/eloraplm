@@ -21,6 +21,7 @@ import com.aritu.eloraplm.constants.CMDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.constants.OrderingPriorityConstants;
+import com.aritu.eloraplm.constants.QMDoctypeConstants;
 
 /**
  * Helper class related to Elora Ordering Priority.
@@ -42,6 +43,7 @@ public class EloraOrderingPriorityHelper {
 
         Integer orderingPriority = null;
 
+        // Items
         if (docType.equals(EloraDoctypeConstants.BOM_PRODUCT)) {
             orderingPriority = OrderingPriorityConstants.BOM_PRODUCT;
         } else if (EloraDocumentTypesHelper.getDocumentType(
@@ -56,10 +58,9 @@ public class EloraOrderingPriorityHelper {
             orderingPriority = OrderingPriorityConstants.BOM_SPECIFICATION;
         } else if (docType.equals(EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT)) {
             orderingPriority = OrderingPriorityConstants.BOM_CUSTOMER_PRODUCT;
-        } else if (docType.equals(
-                EloraDoctypeConstants.BOM_MANUFACTURER_PART)) {
-            orderingPriority = OrderingPriorityConstants.BOM_MANUFACTURER_PART;
-        } else if (docType.equals(EloraDoctypeConstants.CAD_DRAWING)) {
+        }
+        // CAD documents
+        else if (docType.equals(EloraDoctypeConstants.CAD_DRAWING)) {
             orderingPriority = OrderingPriorityConstants.CAD_DRAWING;
         } else if (docType.equals(EloraDoctypeConstants.CAD_ASSEMBLY)) {
             orderingPriority = OrderingPriorityConstants.CAD_ASSEMBLY;
@@ -67,7 +68,9 @@ public class EloraOrderingPriorityHelper {
             orderingPriority = OrderingPriorityConstants.CAD_PART;
         } else if (docType.equals(EloraDoctypeConstants.CAD_DESIGN_TABLE)) {
             orderingPriority = OrderingPriorityConstants.CAD_DESIGN_TABLE;
-        } else if (docType.equals(NuxeoDoctypeConstants.FILE)) {
+        }
+        // Other documents
+        else if (docType.equals(NuxeoDoctypeConstants.FILE)) {
             orderingPriority = OrderingPriorityConstants.FILE;
         } else if (docType.equals(NuxeoDoctypeConstants.NOTE)) {
             orderingPriority = OrderingPriorityConstants.NOTE;
@@ -77,13 +80,29 @@ public class EloraOrderingPriorityHelper {
             orderingPriority = OrderingPriorityConstants.VIDEO;
         } else if (docType.equals(NuxeoDoctypeConstants.AUDIO)) {
             orderingPriority = OrderingPriorityConstants.AUDIO;
-        } else if (docType.equals(CMDoctypeConstants.CM_ECO)) {
+        }
+        // Workspaces
+        else if (docType.equals(CMDoctypeConstants.CM_ECO)) {
             orderingPriority = OrderingPriorityConstants.CM_ECO;
         } else if (docType.equals(CMDoctypeConstants.CM_ECR)) {
             orderingPriority = OrderingPriorityConstants.CM_ECR;
         } else if (docType.equals(CMDoctypeConstants.CM_PR)) {
             orderingPriority = OrderingPriorityConstants.CM_PR;
-        } else {
+        } else if (docType.equals(QMDoctypeConstants.VAL)) {
+            orderingPriority = OrderingPriorityConstants.QM_VAL;
+        } else if (docType.equals(QMDoctypeConstants.VER)) {
+            orderingPriority = OrderingPriorityConstants.QM_VER;
+        } else if (docType.equals(QMDoctypeConstants.PPV)) {
+            orderingPriority = OrderingPriorityConstants.QM_PPV;
+        } else if (docType.equals(QMDoctypeConstants.PAP)) {
+            orderingPriority = OrderingPriorityConstants.QM_PAP;
+        } else if (docType.equals(EloraDoctypeConstants.PROJECT)) {
+            orderingPriority = OrderingPriorityConstants.PROJECT;
+        } else if (docType.equals(NuxeoDoctypeConstants.WORKSPACE)) {
+            orderingPriority = OrderingPriorityConstants.WORKSPACE;
+        }
+        // Default
+        else {
             orderingPriority = OrderingPriorityConstants.DEFAULT;
         }
 

@@ -1,0 +1,8 @@
+id,label,obsolete,ordering
+insertDefaultCommentOnDocumentCreation,1,0,0
+insertDefaultCommentOnDocumentCheckIn,1,0,1
+showMaxComponents,0,0,2
+defaultEnableEvents,1,0,3
+defaultGetItemInfo,1,0,4
+defaultEcoManageUnloaded,0,0,5
+defaultEcoSearchForDrawingsInMassiveCheckin,1,0,6

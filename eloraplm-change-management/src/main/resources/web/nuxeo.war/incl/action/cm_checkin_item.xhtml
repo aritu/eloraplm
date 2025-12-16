@@ -1,0 +1,26 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    >
+    
+    <c:choose>
+        <c:when test="#{cmModifiedsTreeBean.selectedNode == null}">
+            <ui:decorate template="/incl/action/widgets/primefaces_dialog_just_content_template.xhtml">
+                <ui:define name="dialog_content">
+                    <br/>
+                    <p class="processMessage completeError"><h:outputText value="#{messages['eloraplm.message.error.cm.emptyItemSelection']}" /></p>
+                </ui:define>
+            </ui:decorate>
+        </c:when>
+        <c:otherwise>
+            <ui:include src="/incl/action/check_in.xhtml">
+                <ui:param name="actionBean" value="#{cmModifiedsTreeBean}" />
+                <ui:param name="document" value="#{cmModifiedsTreeBean.selectedNode.data.destinationItem}" />
+                <ui:param name="checkinComment" value="#{cmModifiedsTreeBean.selectedNode.data.comment}" />
+            </ui:include>
+        </c:otherwise>
+    </c:choose>
+    
+</ui:composition>

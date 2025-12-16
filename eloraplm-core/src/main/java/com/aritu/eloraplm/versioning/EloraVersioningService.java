@@ -59,16 +59,17 @@ public class EloraVersioningService extends StandardVersioningService {
         // izateko, eta aldaketa hau zan editatzerakuen Save (no increment)
         // aukeratzerakuen checkout egiten zalako. Baina suposatzen da kasu hori
         // ez dala errepikatzen. (Inportazioan???)
-        // TODO Hau aldatzen bada, EloraDocumentHelper.checkOut be aldatu behar
+        // TODO Hau aldatzen bada,
+        // CheckoutServiceImpl.followTransitionAfterCheckout be aldatu behar
         // da.
+
         String lifecycleState = doc.getLifeCycleState();
-        boolean isReleasedState = EloraDocumentHelper.isReleasedState(
-                lifecycleState);
-        // Originally, obsolete is also added
-        // if (EloraLifeCycleConstants.APPROVED.equals(lifecycleState) ||
-        // EloraLifeCycleConstants.OBSOLETE.equals(lifecycleState)) {
-        if (isReleasedState && doc.getAllowedStateTransitions().contains(
-                EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY)) {
+        boolean isReleasedOrObsoleteState = EloraDocumentHelper.isReleasedState(
+                lifecycleState)
+                || EloraDocumentHelper.isObsoleteState(lifecycleState);
+        if (isReleasedOrObsoleteState
+                && doc.getAllowedStateTransitions().contains(
+                        EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY)) {
             doc.followTransition(
                     EloraLifeCycleConstants.TRANS_BACK_TO_PRELIMINARY);
             if (session != null) {

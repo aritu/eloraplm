@@ -33,6 +33,8 @@ public class EloraRelationConstants {
 
     public static final String CAD_HAS_SUPPRESSED = "http://eloraplm.aritu.com/relations/CadHasSuppressed";
 
+    public static final String CAD_HAS_EXCLUDED_FROM_COMPOSITION = "http://eloraplm.aritu.com/relations/CadHasExcludedFromComposition";
+
     public static final String CAD_HAS_DOCUMENT = "http://eloraplm.aritu.com/relations/CadHasDocument";
 
     // public static final String CAD_HAS_VIRTUAL_COMPONENT =
@@ -55,14 +57,17 @@ public class EloraRelationConstants {
 
     public static final String BOM_LIST_HAS_ENTRY = "http://eloraplm.aritu.com/relations/BomListHasEntry";
 
-    public static final String BOM_MANUFACTURER_HAS_PART = "http://eloraplm.aritu.com/relations/BomManufacturerHasPart";
-
     public static final String BOM_CUSTOMER_HAS_PRODUCT = "http://eloraplm.aritu.com/relations/BomCustomerHasProduct";
 
     public static final String CM_PROCESS_IS_MANAGED_IN = "http://eloraplm.aritu.com/relations/CmProcessIsManagedIn";
 
     // Container relations
     public static final String CONTAINER_HAS_CONTAINER = "http://eloraplm.aritu.com/relations/ContainerHasContainer";
+
+    // Relation predicate resources
+    // TODO OSATU
+    public static final Resource RES_BOM_COMPOSED_OF = new ResourceImpl(
+            BOM_COMPOSED_OF);
 
     // Drafts
     // TODO Hasieran gehitu http://eloraplm.aritu.com/relations/ ????
@@ -87,8 +92,21 @@ public class EloraRelationConstants {
     public static final Resource IS_MANUAL = new ResourceImpl(
             ELORA_METADATA_NAMESPACE + "IsManual");
 
+    public static final Resource DESIGNATORS = new ResourceImpl(
+            ELORA_METADATA_NAMESPACE + "Designators");
+
     public static final Resource IS_TEMPLATE = new ResourceImpl(
             ELORA_METADATA_NAMESPACE + "IsTemplate");
+
+    // Fake metadata for updated subject / predicate / object
+    public static final Resource RES_SUBJECT = new ResourceImpl(
+            ELORA_METADATA_NAMESPACE + "Subject");
+
+    public static final Resource RES_PREDICATE = new ResourceImpl(
+            ELORA_METADATA_NAMESPACE + "Predicate");
+
+    public static final Resource RES_OBJECT = new ResourceImpl(
+            ELORA_METADATA_NAMESPACE + "Object");
 
     // Constants for soft delete
     public static final String SOFT_DELETED_RELATION_SOURCE = "SoftDeleted";
@@ -96,4 +114,10 @@ public class EloraRelationConstants {
     public static final String SOFT_DELETED_RELATION_PREDICATE = "SoftDeleted";
 
     public static final String SOFT_DELETED_RELATION_TARGET = "SoftDeleted";
+
+    // Document structure directions
+    public static final String DIRECTION_COMPOSITION = "Composition";
+
+    public static final String DIRECTION_WHERE_USED = "WhereUsed";
+
 }

@@ -1,61 +1,92 @@
 <f:subview
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:c="http://java.sun.com/jstl/core">
-  
-  <c:set var="valueField" value="#{field_0}" />
-  <c:set var="unitField" value="#{field_1}" />
-  <c:set var="isEmptyValue" value="#{empty valueField}" />  
-   
-  
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+>
+    <c:set
+        var="valueField"
+        value="#{field_0}"
+    />
+    <c:set
+        var="unitField"
+        value="#{field_1}"
+    />
+    <c:set
+        var="isEmptyValue"
+        value="#{empty valueField}"
+    />
 
-  <!-- EDIT MODE -->
-  <c:if test="#{widget.mode == 'edit'}">
+    <c:if test="#{widget.mode == 'edit'}">
+        <h:inputText
+            id="value_field"
+            value="#{valueField}"
+            size="50"
+            maxlength="50"
+            style="
+                #{empty widget.properties.style ? 'width:200px;' : widget.properties.style}text-align: right;
+            "
+        >
+            <f:converter converterId="measureValueConverter" />
+            <f:attribute
+                name="baseUnit"
+                value="#{unitField}"
+            />
+            <f:validator validatorId="measureValueValidator" />
 
-        <h:inputText id="value_field" value="#{valueField}"  size="50" maxlength="50" style="width:200px;text-align:right;">
-          <f:converter converterId="measureValueConverter"/>
-          <f:attribute name="baseUnit" value="#{unitField}" />
-          <f:validator validatorId="measureValueValidator" />
+            <c:if test="#{not empty widget.properties.validator}">
+                <f:validator validatorId="#{widget.properties.validator}" />
+            </c:if>
 
-          <c:if test="#{not empty widget.properties.validator}">
-              <f:validator validatorId="#{widget.properties.validator}" />
-          </c:if>
-          
-          <c:if test="#{widget.properties.required}">
-              <f:validateRequired />
-          </c:if>
-          
+            <c:if test="#{widget.properties.required}">
+                <f:validateRequired />
+            </c:if>
         </h:inputText>
-        
+
         <span>
-          <h:outputText value="#{unitField}">
-            <f:converter converterId="measureUnitConverter"/>
-          </h:outputText>
+            <h:outputText value="#{unitField}">
+                <f:converter converterId="measureUnitConverter" />
+            </h:outputText>
         </span>
-        
-        <h:message for="value_field" styleClass="errorMessage" />
-    
-  </c:if>
-  
-  <!-- VIEW MODE -->
-  <c:if test="#{widget.mode == 'view'}">
-    <c:choose>
-      <c:when test="#{isEmptyValue}">
-          <h:outputText value=" "/>
-      </c:when>
-      <c:otherwise>
+
+        <h:message
+            for="value_field"
+            styleClass="errorMessage"
+        />
+    </c:if>
+
+    <c:if test="#{widget.mode == 'view'}">
+        <ui:fragment rendered="#{isEmptyValue}">
+            <h:outputText value=" " />
+        </ui:fragment>
+
+        <ui:fragment rendered="#{!isEmptyValue}">
+            <h:outputText value="#{valueField}">
+                <f:converter converterId="measureValueConverter" />
+                <f:attribute
+                    name="baseUnit"
+                    value="#{unitField}"
+                />
+            </h:outputText>
+            <span>
+                <h:outputText value="#{unitField}">
+                    <f:converter converterId="measureUnitConverter" />
+                </h:outputText>
+            </span>
+        </ui:fragment>
+    </c:if>
+
+    <c:if test="#{widget.mode == 'csv'}">
         <h:outputText value="#{valueField}">
-          <f:converter converterId="measureValueConverter"/>
-          <f:attribute name="baseUnit" value="#{unitField}" />
+            <f:converter converterId="measureValueConverter" />
+            <f:attribute
+                name="baseUnit"
+                value="#{unitField}"
+            />
         </h:outputText>
-        <span>
-          <h:outputText value="#{unitField}">
-            <f:converter converterId="measureUnitConverter"/>
-          </h:outputText>
-        </span>
-      </c:otherwise>
-    </c:choose>
-  </c:if>
-  
+        <h:outputText value="#{unitField}">
+            <f:converter converterId="measureUnitConverter" />
+        </h:outputText>
+    </c:if>
 </f:subview>

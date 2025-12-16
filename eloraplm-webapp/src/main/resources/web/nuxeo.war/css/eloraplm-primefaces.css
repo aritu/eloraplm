@@ -1,0 +1,772 @@
+/* Fix font size of components */
+
+.nx-page .ui-widget {
+    font-size: 0.8rem;
+}
+
+.nx-page .ui-tooltip {
+    font-size: 1.2rem;
+}
+
+/* --- */
+
+/* Fix padding of components */
+
+.nx-page body .ui-panelgrid .ui-panelgrid-cell {
+    padding: 0.6rem 0.4rem;
+}
+
+.nx-page body .ui-datatable .ui-datatable-header,
+.nx-page body .ui-treetable .ui-treetable-header {
+    padding: 0.5rem 0rem 0.2rem 1rem;
+}
+
+.nx-page body .ui-datatable thead th,
+.nx-page body .ui-treetable thead th {
+    padding: 0.6rem 0.4rem;
+}
+
+.nx-page body .ui-datatable thead th:first-child,
+.nx-page body .ui-treetable thead th:first-child {
+    padding-left: 1rem;
+}
+
+/* Fix scrollable clone headers */
+.nx-page body .ui-datatable thead.ui-datatable-scrollable-theadclone th,
+.nx-page body .ui-treetable thead.ui-treetable-scrollable-theadclone th {
+    padding: 0 1rem;
+}
+
+.nx-page body .ui-datatable .ui-datatable-data > tr > td {
+    padding: 0.4rem;
+    vertical-align: middle;
+}
+
+.nx-page body .ui-treetable .ui-treetable-data > tr > td {
+    padding: 0.2rem;
+    vertical-align: middle;
+}
+
+.nx-page body .ui-treetable .ui-treetable-data > tr > td:first-child {
+    padding-left: 0;
+}
+
+.nx-page body .ui-datatable .ui-datatable-data > tr > td:first-child {
+    padding-left: 1rem;
+}
+
+/* --- */
+
+/* Metadata Header */
+.nx-page body #eloraMetadataHeading .ui-panelgrid .ui-panelgrid-cell {
+    padding: 0.2em 0.4em 0;
+    vertical-align: middle;
+}
+/* --- */
+
+/* Checkbox */
+.nx-page body .ui-chkbox .ui-chkbox-box {
+    width: 1rem;
+    height: 1rem;
+}
+.nx-page body .ui-chkbox.ui-chkbox-all .ui-chkbox-box {
+    vertical-align: middle;
+}
+.nx-page body .ui-chkbox .ui-chkbox-box .ui-chkbox-icon {
+    margin-left: -0.4rem;
+    margin-top: -0.6rem;
+    font-size: 0.7rem;
+}
+/* --- */
+
+/* Block UI */
+
+.nx-page .ui-blockui.opaqueBlockUI {
+    background: #fff;
+    opacity: 1;
+}
+
+.nx-page .ui-blockui.translucidBlockUI {
+    background: #fff;
+    opacity: 0.6;
+}
+
+.nx-page .ui-blockui.globalBlockUI {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #fffa;
+    opacity: 1;
+    z-index: 40000 !important;
+}
+
+.nx-page .ui-blockui.topSpinner + .ui-blockui-content {
+    position: absolute;
+    padding: 0;
+    top: 20px !important;
+    color: #053832;
+    font-size: 1.2rem;
+    box-shadow: none;
+}
+
+.nx-page .ui-blockui.middleSpinner + .ui-blockui-content {
+    position: absolute;
+    padding: 0;
+    top: calc(50% - 0.6rem) !important;
+    color: #053832;
+    font-size: 1.2rem;
+    box-shadow: none;
+}
+
+.nx-page .ui-blockui.globalBlockUI + .ui-blockui-content {
+    background: none;
+    box-shadow: none;
+    border: 0;
+    z-index: 40001 !important;
+    position: fixed;
+    top: calc(50vh - 100px) !important;
+}
+
+.ui-blockui.globalBlockUI + .ui-blockui-content img {
+    border: 2px solid #8cd600;
+    border-radius: 40px;
+    padding: 30px;
+    background-color: #fffd;
+    box-shadow: 0 0 12px #fff;
+}
+
+/* --- */
+
+/* Dialog */
+
+.nx-page .ui-dialog .ui-dialog-titlebar {
+    padding: 0.4em 1em;
+    background: #f3f6f9;
+    border-bottom: 1px solid #e6e9ef;
+    color: #053832;
+    font-size: 1.2em;
+}
+
+.nx-page .ui-dialog .ui-dialog-titlebar .ui-dialog-title {
+    font-size: 1.05rem;
+    margin-top: 0.3em;
+    display: inline-block;
+}
+
+/* --- */
+
+/* Color fixes - TODO Change theme */
+
+/* Sort accent */
+.nx-page .ui-datatable thead th.ui-state-active,
+.nx-page .ui-treetable thead th.ui-state-active {
+    text-transform: uppercase;
+}
+
+.nx-page .ui-datatable thead th.ui-state-active,
+.nx-page .ui-datatable thead th.ui-state-active.ui-state-hover,
+.nx-page .ui-treetable thead th.ui-state-active,
+.nx-page .ui-treetable thead th.ui-state-active.ui-state-hover {
+    color: #000;
+}
+
+.nx-page .ui-datatable thead th .ui-sortable-column-badge,
+.nx-page .ui-treetable thead th .ui-sortable-column-badge {
+    background-color: #000;
+}
+
+/* Buttons, highlights */
+.nx-page body .ui-button.ui-state-focus {
+    box-shadow: 0 0 0 0.2em #a5d8d2;
+}
+
+/* --- */
+
+/* SelectOneButton */
+.nx-page .ui-selectonebutton.fullWidth {
+    display: flex;
+}
+
+.nx-page .ui-selectonebutton.fullWidth > .ui-button {
+    flex-grow: 1;
+}
+
+.nx-page body .ui-selectbooleanbutton.ui-state-active,
+.nx-page body .ui-selectonebutton > .ui-button.ui-state-active,
+.nx-page body .ui-selectmanybutton > .ui-button.ui-state-active,
+.nx-page
+    body
+    .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover,
+.nx-page
+    body
+    .ui-selectonebutton
+    > .ui-button.ui-state-active:not(.ui-state-disabled):hover,
+.nx-page
+    body
+    .ui-selectmanybutton
+    > .ui-button.ui-state-active:not(.ui-state-disabled):hover {
+    background: #fff;
+    border-color: #356862;
+    color: #053832;
+    font-weight: bold;
+}
+
+.nx-page body .ui-selectonebutton > .ui-button:not(:last-child),
+.nx-page body .ui-selectmanybutton > .ui-button:not(:last-child) {
+    border-right-width: 1px;
+}
+
+/* --- */
+
+/* Pagination */
+.nx-page
+    body
+    .ui-paginator
+    .ui-paginator-pages
+    .ui-paginator-page.ui-state-active {
+    background: #e3f2f2;
+}
+
+.nx-page body .ui-dataview .ui-paginator.ui-paginator-bottom {
+    border: 0;
+}
+
+/* --- */
+
+/* DT/TT Header Buttons */
+.nx-page .ui-datatable-header button[disabled],
+.nx-page .ui-treetable-header button[disabled] {
+    display: initial;
+}
+
+/*
+.nx-page .ui-datatable-header .ui-button.ui-button-flat,
+.nx-page .ui-treetable-header .ui-button.ui-button-flat
+{
+    top: 0.2rem;
+}
+*/
+
+/* --- */
+
+/* DT/TT Filters */
+/* Hide filters by default */
+.nx-page .ui-datatable .hiddenFilters .ui-column-filter,
+.nx-page .ui-treetable .hiddenFilters .ui-column-filter,
+.nx-page .ui-datatable .hiddenFilters .ui-column-customfilter,
+.nx-page .ui-treetable .hiddenFilters .ui-column-customfilter {
+    display: none;
+}
+
+.nx-page .ui-datatable .filterInfo,
+.nx-page .ui-treetable .filterInfo {
+    margin-left: 1rem;
+}
+
+/* --- */
+
+/* DT/TT MenuBar */
+.nx-page .ui-menu.ui-menubar.dtMenuBar,
+.nx-page .ui-menu.ui-menubar.ttMenuBar {
+    position: sticky;
+    bottom: 20px;
+    margin-top: 10px;
+    background: linear-gradient(
+        to right,
+        rgba(248, 249, 251, 0.9) 0%,
+        rgba(248, 249, 251, 0.5) 40%,
+        rgba(248, 249, 251, 0.9) 70%
+    );
+    backdrop-filter: blur(4px);
+    box-shadow: -10px 0 10px #fff, 10px 0 10px #fff, 0 10px 5px #fff,
+        0 -10px 5px #fff;
+}
+
+.nx-page .dtMenuBar ul,
+.nx-page .ttMenuBar ul {
+    display: flex;
+    justify-content: space-between;
+}
+
+.nx-page .ui-menu .ui-menu-parent .ui-menu-child {
+    width: 15em;
+}
+
+.nx-page body .ui-menu.dtMenuBar .ui-menu-list .ui-menuitem.selectionActions,
+.nx-page body .ui-menu.ttMenuBar .ui-menu-list .ui-menuitem.selectionActions {
+    margin-right: auto;
+}
+
+.nx-page
+    body
+    .ui-menu.dtMenuBar
+    .ui-menu-list
+    .ui-menuitem.selectionActions
+    .ui-submenu-link
+    .ui-menuitem-icon,
+.nx-page
+    body
+    .ui-menu.ttMenuBar
+    .ui-menu-list
+    .ui-menuitem.selectionActions
+    .ui-submenu-link
+    .ui-menuitem-icon {
+    color: #0af;
+}
+
+.nx-page
+    body
+    .ui-menu.dtMenuBar
+    .ui-menu-list
+    .ui-menuitem.selectionActions
+    .ui-submenu-link.ui-state-disabled
+    .ui-menuitem-icon,
+.nx-page
+    body
+    .ui-menu.ttMenuBar
+    .ui-menu-list
+    .ui-menuitem.selectionActions
+    .ui-submenu-link.ui-state-disabled
+    .ui-menuitem-icon {
+    color: #495057;
+}
+
+.nx-page body .ui-menu.dtMenuBar .ui-menu-list .ui-menuitem.mainAction,
+.nx-page body .ui-menu.ttMenuBar .ui-menu-list .ui-menuitem.mainAction {
+    padding-left: 1em;
+}
+
+.nx-page
+    body
+    .ui-menu.dtMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link,
+.nx-page
+    body
+    .ui-menu.ttMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link {
+    background-color: #b5e8e2;
+}
+
+.nx-page
+    body
+    .ui-menu.dtMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link:hover,
+.nx-page
+    body
+    .ui-menu.ttMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link:hover {
+    box-shadow: 0 0 3px #053832dd;
+}
+
+.nx-page
+    body
+    .ui-menu.dtMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link
+    .ui-menuitem-icon,
+.nx-page
+    body
+    .ui-menu.dtMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link
+    .ui-menuitem-text,
+.nx-page
+    body
+    .ui-menu.ttMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link
+    .ui-menuitem-icon,
+.nx-page
+    body
+    .ui-menu.ttMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link
+    .ui-menuitem-text {
+    color: #053832;
+    font-weight: bold;
+}
+
+.nx-page
+    body
+    .ui-menu.dtMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link
+    .ui-menuitem-text,
+.nx-page
+    body
+    .ui-menu.ttMenuBar
+    .ui-menu-list
+    .ui-menuitem.mainAction
+    .ui-menuitem-link
+    .ui-menuitem-text {
+    text-transform: uppercase;
+}
+
+/* --- */
+
+/* DT/TT Expanded Row */
+.ui-expanded-row-content {
+    font-size: 0.9em;
+}
+
+.nx-page body .ui-datatable .ui-datatable-data > tr .ui-row-toggler {
+    width: 1rem;
+    font-size: 0.8rem;
+}
+/* --- */
+
+/* Header Row style */
+.nx-page .ui-datatable .ui-rowgroup-header,
+.nx-page .ui-treetable .ui-rowgroup-header {
+    background-color: #f8f9fb;
+}
+
+.nx-page body .ui-datatable .ui-datatable-data tr.ui-rowgroup-header td,
+.nx-page body .ui-treetable .ui-treetable-data tr.ui-rowgroup-header td {
+    padding: 0.4rem 0.4rem 0.2rem;
+}
+
+.nx-page body .ui-datatable .ui-rowgroup-header .ui-divider.ui-divider-vertical,
+.nx-page
+    body
+    .ui-treetable
+    .ui-rowgroup-header
+    .ui-divider.ui-divider-vertical {
+    padding: 0;
+    margin: 0 0.8rem;
+    visibility: hidden;
+}
+
+.nx-page body .ui-datatable .ui-rowgroup-header span.user,
+.nx-page body .ui-treetable .ui-rowgroup-header span.user {
+    background-color: #eee;
+}
+
+/* --- */
+
+/* Tree */
+
+.nx-page
+    body
+    .ui-tree
+    .ui-tree-container
+    .ui-treenode
+    .ui-treenode-content
+    .ui-treenode-leaf-icon {
+    width: 1rem;
+    flex-shrink: 0;
+}
+
+.nx-page
+    body
+    .ui-tree
+    .ui-tree-container
+    .ui-treenode
+    .ui-treenode-content
+    .ui-tree-toggler {
+    width: 1rem;
+    font-size: 0.8rem;
+}
+/* --- */
+
+/* SelectOneMenu */
+
+.nx-page body .ui-selectonemenu-panel {
+    max-width: 40%;
+}
+
+.nx-page
+    body
+    .ui-selectonemenu-panel
+    .ui-selectonemenu-filter-container
+    .ui-selectonemenu-filter.ui-inputfield {
+    padding: 0.3rem 0.3rem 0.3rem 2rem;
+    margin-bottom: 0;
+}
+
+.nx-page
+    body
+    .ui-selectonemenu-panel
+    .ui-selectonemenu-filter-container
+    .ui-icon {
+    font-size: 1rem;
+    margin-top: -0.6rem;
+}
+
+.nx-page
+    body
+    .ui-selectonemenu-panel
+    .ui-selectonemenu-items.ui-selectonemenu-table
+    tr,
+.nx-page
+    body
+    .ui-selectonemenu-panel
+    .ui-selectonemenu-items.ui-selectonemenu-table
+    td {
+    border: 0;
+}
+
+.nx-page .ui-selectonemenu-panel .ui-selectonemenu-footer {
+    color: #888;
+    font-style: italic;
+}
+
+.nx-page body .ui-selectonemenu .ui-selectonemenu-label {
+    min-height: 2.2em; /*calc(1.6rem + 3px);*/
+    padding: 0.5em;
+    font-size: 0.9em;
+    padding-right: 0.8rem;
+    width: calc(100% - 1.3rem);
+}
+.nx-page .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
+    font-size: 0.7rem;
+}
+
+.nx-page body .ui-selectonemenu .ui-selectonemenu-trigger {
+    width: 1.3rem;
+}
+
+.nx-page
+    body
+    .ui-selectonemenu-panel
+    .ui-selectonemenu-items
+    .ui-selectonemenu-item.ui-state-highlight {
+    background-color: #e3f2f2;
+}
+
+.nx-page
+    body
+    .ui-selectonemenu-panel
+    .ui-selectonemenu-items
+    .ui-selectonemenu-item.ui-selectonemenu-row
+    > td {
+    padding: 0.4rem;
+}
+/* --- */
+
+/* SelectCheckboxMenu */
+
+.nx-page .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header {
+    padding: 0.5rem;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-header
+    .ui-chkbox
+    .ui-chkbox-box {
+    margin: 0;
+    vertical-align: middle;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-header
+    .ui-selectcheckboxmenu-filter-container {
+    margin: 0 0.5rem 0 0;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-header
+    .ui-selectcheckboxmenu-filter-container
+    .ui-icon {
+    font-size: 1rem;
+    margin-top: -0.6rem;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-header
+    .ui-selectcheckboxmenu-filter-container
+    .ui-inputfield {
+    padding: 0.3rem 0.3rem 0.3rem 2rem;
+    margin-bottom: 0;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-header
+    .ui-selectcheckboxmenu-close
+    .ui-icon::before {
+    font-size: 0.8rem;
+}
+
+.nx-page .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-item .ui-chkbox {
+    padding-top: 0.2rem;
+    padding-left: 0.1rem;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-item
+    .ui-chkbox
+    .ui-chkbox-box
+    .ui-chkbox-icon {
+    margin-top: -0.4rem;
+}
+
+.nx-page .ui-selectcheckboxmenu-panel {
+    max-width: 40%;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-items.ui-selectcheckboxmenu-table
+    tr,
+.nx-page
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-items.ui-selectcheckboxmenu-table
+    td {
+    border: 0;
+}
+
+.nx-page .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-footer {
+    color: #888;
+    font-style: italic;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu
+    .ui-selectcheckboxmenu-multiple-container.ui-inputfield {
+    min-height: 2.2em; /*calc(1.6rem + 3px);*/
+    font-size: 0.9em;
+    width: calc(100% - 1.3rem);
+    padding: 0.2rem 0.5rem;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu.fixedHeight
+    .ui-selectcheckboxmenu-multiple-container.ui-inputfield {
+    max-height: 2.2em;
+}
+
+.nx-page
+    .ui-selectcheckboxmenu
+    .ui-selectcheckboxmenu-multiple-container
+    .ui-selectcheckboxmenu-token {
+    margin: 0 0.5rem 0.1rem 0;
+    background: #e3f2f2;
+}
+
+.nx-page .ui-selectcheckboxmenu .ui-selectcheckboxmenu-token-icon {
+    margin-right: 0.1rem;
+    font-size: 0.7rem;
+}
+
+.nx-page .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-icon {
+    font-size: 0.7rem;
+}
+
+.nx-page body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger {
+    width: 1.3rem;
+}
+
+.nx-page
+    body
+    .ui-selectcheckboxmenu-panel
+    .ui-selectcheckboxmenu-items
+    .ui-selectcheckboxmenu-item {
+    padding: 0.4rem;
+}
+/* --- */
+
+/* Version select */
+
+.nx-page .ui-selectonemenu.versionSelect.checkedOutSelected {
+    border: 1px solid #b323ef;
+}
+.nx-page
+    .ui-selectonemenu.versionSelect.checkedOutSelected
+    .ui-selectonemenu-label {
+    color: #b323ef;
+}
+
+.nx-page .version-row .versionSelectPost {
+    display: flex;
+    align-items: center;
+}
+
+.nx-page .ui-selectonemenu.versionSelect {
+    vertical-align: middle;
+    font-size: 1.1em;
+}
+
+.nx-page
+    .ui-selectonemenu-panel.versionSelectPanel
+    .ui-selectonemenu-item
+    .vers_sel_panel_version {
+    font-weight: 500;
+    vertical-align: middle;
+}
+
+.nx-page
+    .ui-selectonemenu-panel.versionSelectPanel
+    .ui-selectonemenu-item
+    .vers_sel_panel_externalversion {
+    font-size: 0.85em;
+    vertical-align: middle;
+}
+
+.nx-page
+    .ui-selectonemenu-panel.versionSelectPanel
+    .ui-selectonemenu-item
+    .vers_sel_panel_comment {
+    width: 20em;
+    max-width: 20em;
+    font-style: italic;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nx-page
+    .ui-selectonemenu-panel.versionSelectPanel
+    .ui-selectonemenu-item
+    .vers_sel_panel_state {
+    text-align: center;
+    vertical-align: middle;
+    width: 6em;
+    max-width: 6em;
+}
+
+/*
+.nx-page
+    button.ui-button.ui-state-default.rounded-button.ui-button-icon-only.listing-icon-button {
+    margin: 0.2rem 0.5rem;
+    width: 1.8rem;
+    height: 1.8rem;
+}*/
+
+/* --- */
+
+/* Beste batzuk */
+.nx-page body .ui-treetable thead th.iconColumn {
+    text-align: center;
+}
+
+.iconColumn .ui-column-customfilter,
+.iconColumn .ui-column-customfilter {
+    display: flex;
+    justify-content: center;
+}
+
+.nx-page body .ui-tabs .ui-tabs-nav li.ui-tabs-header.ui-tabs-outline {
+    box-shadow: none;
+}
+
+/* --- */

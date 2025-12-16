@@ -1,0 +1,193 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+>
+    <h:form>
+        <h:panelGroup
+            styleClass="content"
+            layout="block"
+        >
+            <div
+                id="addManualItemDialog_error_msg"
+                style="display: none"
+                class="processMessage completeError"
+            >
+                #{messages['eloraplm.label.error']}
+            </div>
+
+            <h:panelGroup>
+                <table class="cmManItemTable">
+                    <tr>
+                        <td class="labelColumn">
+                            <strong
+                                ><h:outputLabel
+                                    styleClass="required"
+                                    value="#{messages['eloraplm.label.cm.modified']}:"
+                            /></strong>
+                        </td>
+                        <td class="fieldColumn">
+                            <nxl:widget
+                                name="manualImpactModifiedItem"
+                                mode="edit"
+                                value="#{cmManualImpactedItemsTreeBean}"
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelColumn">
+                            <strong
+                                ><h:outputLabel
+                                    styleClass="required"
+                                    value="#{messages['eloraplm.label.cm.action']}:"
+                            /></strong>
+                        </td>
+                        <td class="fieldColumn">
+                            <h:panelGroup id="manActionPanel">
+                                <nxl:widgetType
+                                    id="selManImpactedItemAction"
+                                    name="selectOneDirectory"
+                                    mode="edit"
+                                    value="#{cmManualImpactedItemsTreeBean.impactItemAction}"
+                                    directoryName="#{cmManualImpactedItemsTreeBean.modifiedItem.hasFacet('BomDocument') ? 'elora_cmActionImpactedItem' : 'elora_cmActionImpactedCad'}"
+                                    localize="true"
+                                    displayIdAndLabel="false"
+                                    ordering="ordering"
+                                    style="min-width: 10em"
+                                    notDisplayDefaultOption="true"
+                                    required="true"
+                                >
+                                    <f:selectItem
+                                        itemValue="#{null}"
+                                        itemLabel=""
+                                    />
+                                </nxl:widgetType>
+                            </h:panelGroup>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelColumn">
+                            <strong
+                                ><h:outputLabel
+                                    styleClass="required"
+                                    value="#{messages['eloraplm.label.cm.impacted']}:"
+                            /></strong>
+                        </td>
+                        <td class="fieldColumn">
+                            <h:panelGroup id="manImpactedWcPanel">
+                                <nxl:widgetType
+                                    name="singleDocumentSuggestion"
+                                    mode="edit"
+                                    value="#{cmManualImpactedItemsTreeBean}"
+                                    field="impactedItemWcUid"
+                                    ajaxReRender="manImpactedRealUidPanel"
+                                    translated="true"
+                                    width="100%"
+                                    placeholder="eloraplm.placeholder.suggestion.cm.impactItem"
+                                    pageProviderName="cad_bom_non_obsolete_wc_suggestion"
+                                    documentSchemas="dublincore,common,elora_object,template_info"
+                                    required="true"
+                                    additionalOperationParameters="eloraPassQueryTermsTwice"
+                                >
+                                </nxl:widgetType>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="manImpactedRealUidPanel">
+                                <ui:fragment
+                                    rendered="#{cmManualImpactedItemsTreeBean.impactedItemWcUid != null}"
+                                >
+                                    <c:choose>
+                                        <c:when
+                                            test="${cmManualImpactedItemsTreeBean.impactItemVersionList != null and cmManualImpactedItemsTreeBean.impactItemVersionList.size() > 0}"
+                                        >
+                                            <nxl:widget
+                                                name="cm_add_manual_impact_item_version_selector"
+                                                mode="edit"
+                                                value="#{cmManualImpactedItemsTreeBean}"
+                                            />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <h:outputText
+                                                value="#{messages['eloraplm.message.cm.addModifiedItem.emptyOriginItemVersionList']}"
+                                                class="errorMessage"
+                                            />
+                                        </c:otherwise>
+                                    </c:choose>
+                                </ui:fragment>
+                            </h:panelGroup>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelColumn">
+                            <strong
+                                ><h:outputLabel
+                                    value="#{messages['command.lock']}:"
+                            /></strong>
+                        </td>
+                        <td class="fieldColumn">
+                            <h:panelGroup id="manLock">
+                                <p:selectBooleanCheckbox
+                                    id="chkLockManImpacted"
+                                    value="#{cmManualImpactedItemsTreeBean.lockManualImpacted}"
+                                />
+                            </h:panelGroup>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelColumn">
+                            <strong
+                                ><h:outputLabel
+                                    value="#{messages['eloraplm.label.cm.modifiableAttribute.comment']}:"
+                            /></strong>
+                        </td>
+                        <td class="fieldColumn">
+                            <h:panelGroup id="manCommentPanel">
+                                <nxl:widgetType
+                                    name="textarea"
+                                    mode="edit"
+                                    value="#{cmManualImpactedItemsTreeBean.comment}"
+                                >
+                                </nxl:widgetType>
+                            </h:panelGroup>
+                        </td>
+                    </tr>
+                </table>
+            </h:panelGroup>
+        </h:panelGroup>
+
+        <h:panelGroup
+            layout="block"
+            styleClass="dialogButtons"
+        >
+            <p:commandButton
+                value="#{messages['command.add']}"
+                styleClass="button mainAction"
+                action="#{cmManualImpactedItemsTreeBean.addManualImpactedItem}"
+                process="@form"
+                update="@form nxw_cm_man_tt:ttForm"
+                oncomplete="handlePfSubdialogSuccess(xhr, status, args, 'addManualItemDialog');"
+            />
+
+            <p:commandButton
+                type="button"
+                value="#{messages['command.cancel']}"
+                immediate="true"
+                process="@none"
+                styleClass="button"
+                onclick="PF('addManualItemDialog').hide();"
+            />
+        </h:panelGroup>
+    </h:form>
+
+    <h:outputScript>
+        function handlePfSubdialogSuccess(xhr, status, args, dialogId) {
+        if(status == "success" &amp;&amp; !args.validationFailed) {
+        PF(dialogId).hide(); } else { if(!args.validationFailed) { PFJQ('#' +
+        dialogId + '_error_msg').show(); } } }
+    </h:outputScript>
+</ui:composition>

@@ -3,6 +3,8 @@
 <component name="com.aritu.eloraplm.doctypes.LifeCycleService.contrib">
     <require>org.nuxeo.ecm.core.LifecycleCoreExtensions</require>
     <require>org.nuxeo.ecm.platform.picture.LifeCycleManagerExtensions</require>
+    <require>org.nuxeo.nuxeo.ecm.platform.video.lifecycle</require>
+    <require>org.nuxeo.nuxeo.ecm.platform.audio.lifecycle</require>
 
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         <types>
@@ -27,6 +29,7 @@
             <type name="FolderCadAssembly">default</type>
             <type name="FolderCadDrawing">default</type>
             <type name="FolderOtherDoc">default</type>
+            <type name="OtherDocVaultFolder">default</type>
             <type name="StructEbom">default</type>
             
             <type name="DocumentTemplates">default</type>
@@ -40,8 +43,10 @@
             <type name="Picture">eloraDefaultLifeCycle</type>
             <type name="Video">eloraDefaultLifeCycle</type>
             
-            <type name="Workspace">eloraWsLifeCycle</type>
-            <type name="Project">eloraWsLifeCycle</type>
+            <type name="Workspace"
+                noRecursionForTransitions="complete, reject, backToWorking">eloraWsLifeCycle</type>
+            <type name="Project"
+                noRecursionForTransitions="complete, reject, backToWorking">eloraWsLifeCycle</type>
           
         </types>
     </extension>

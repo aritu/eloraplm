@@ -22,14 +22,13 @@ import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 
 import com.aritu.eloraplm.datatable.BaseRowData;
-import com.aritu.eloraplm.datatable.RowData;
 
 /**
  *
  * @author aritu
  *
  */
-public class OmRowData extends BaseRowData implements RowData {
+public class OmRowData extends BaseRowData {
 
     private static final long serialVersionUID = 1L;
 

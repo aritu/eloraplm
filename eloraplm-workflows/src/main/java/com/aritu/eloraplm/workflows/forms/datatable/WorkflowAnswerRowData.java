@@ -35,6 +35,8 @@ public class WorkflowAnswerRowData extends BaseRowData {
 
     private String workflowId;
 
+    private String wfInstanceId;
+
     private String nodeId;
 
     private String questionId;
@@ -49,16 +51,20 @@ public class WorkflowAnswerRowData extends BaseRowData {
 
     private DocumentModel question;
 
-    private String value;
+    private String type;
+    
+    private Object value;
 
     private int order;
 
-    public WorkflowAnswerRowData(String rowId, String workflowId, String nodeId,
-            String questionId, String taskId, GregorianCalendar taskExecuted,
-            DocumentModel question, String value, int order) {
+    public WorkflowAnswerRowData(String rowId, String wfInstanceId,
+            String workflowId, String nodeId, String questionId, String taskId,
+            GregorianCalendar taskExecuted, DocumentModel question,
+            String type, Object value, int order) {
 
         super(rowId);
 
+        this.wfInstanceId = wfInstanceId;
         this.workflowId = workflowId;
         this.nodeId = nodeId;
         this.questionId = questionId;
@@ -66,8 +72,17 @@ public class WorkflowAnswerRowData extends BaseRowData {
         this.taskExecuted = taskExecuted;
         rowGroupId = taskExecuted.getTimeInMillis() + "__" + taskId;
         setQuestion(question);
+        this.type = type;
         this.value = value;
         this.order = order;
+    }
+
+    public String getWfInstanceId() {
+        return wfInstanceId;
+    }
+
+    public void setWfInstanceId(String wfInstanceId) {
+        this.wfInstanceId = wfInstanceId;
     }
 
     public String getWorkflowId() {
@@ -137,11 +152,19 @@ public class WorkflowAnswerRowData extends BaseRowData {
         this.labels = labels;
     }
 
-    public String getValue() {
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 

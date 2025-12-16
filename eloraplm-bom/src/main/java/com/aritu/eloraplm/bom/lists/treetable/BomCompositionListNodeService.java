@@ -14,20 +14,20 @@
 package com.aritu.eloraplm.bom.lists.treetable;
 
 import org.nuxeo.ecm.core.api.CoreSession;
-import com.aritu.eloraplm.bom.lists.treetable.BomListNodeService;
-import com.aritu.eloraplm.treetable.NodeManager;
+
+import com.aritu.eloraplm.constants.EloraRelationConstants;
 
 /**
  * @author aritu
  *
  */
-public class BomCompositionListNodeService extends BomListNodeService implements
-        NodeManager {
+public class BomCompositionListNodeService extends BomListNodeService {
 
-    public BomCompositionListNodeService(CoreSession session, String bomListId) {
+    public BomCompositionListNodeService(CoreSession session,
+            String bomListId) {
         super(session);
 
-        treeDirection = TREE_DIRECTION_COMPOSITION;
+        treeDirection = EloraRelationConstants.DIRECTION_COMPOSITION;
         nodeId = 0;
         this.bomListId = bomListId;
     }

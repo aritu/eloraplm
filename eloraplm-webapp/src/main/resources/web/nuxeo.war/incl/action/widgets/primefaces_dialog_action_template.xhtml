@@ -1,0 +1,58 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    rendered="#{widgetProperty_enabled or widgetProperty_disableFiltered}">
+    
+    <c:if test="false">
+        <!--
+        Inplementatu/Begiratu gabe (Beharrezkoak? begiratu fancybox mota):
+        * useButton
+        * ajaxReRender
+        * selectedValue
+        * targetComponentId
+        * actionClicked
+        * selectionActions.setStaticValue
+        * f:subview?
+        * fancybox_properties_include
+         -->
+    </c:if>
+    
+    <h:outputScript library="js" name="primefaces_dialog.js" target="#{pageJsTarget}" />
+    
+    <c:if test="#{widget.mode != 'after_view' and widget.mode != 'tab_content'}">
+        
+        <p:commandLink id="#{widget.id}_link"
+            styleClass="#{widgetProperty_actionStyleClass} #{widgetProperty_styleClass}"
+            disabled="#{!widgetProperty_available}"
+            accesskey="#{widgetProperty_accessKey}"
+            process="@this"
+            partialSubmit="true"
+            onstart="onPfDialogActionStart()"
+            actionListener="#{
+                pfDialogActions.initDialog(
+                    fieldOrValue,
+                    actionContextDocument,
+                    widgetProperty_dialogTitle,
+                    widgetProperty_include,
+                    widgetProperty_dialogModal,
+                    widgetProperty_dialogResizable,
+                    widgetProperty_dialogDraggable,
+                    widgetProperty_dialogWidth,
+                    widgetProperty_dialogHeight,
+                    widgetProperty_dialogMinWidth,
+                    widgetProperty_dialogMinHeight
+                )}"
+            oncomplete="onPfDialogActionComplete(#{pfDialogActions.modal})"
+            update=":glb_pf_dlg_panel">
+            <ui:include src="/incl/action/widgets/action_icon_label_template.xhtml" />
+            <ui:insert name="inside_action" />
+        </p:commandLink>
+        
+    </c:if>
+    
+</ui:composition>

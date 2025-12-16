@@ -4,20 +4,10 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:p="http://primefaces.org/ui">
     
-    <c:if test="#{webActions.currentTabId eq 'TAB_CM_DOC_MODIFIED_ITEMS_TREETABLE'}">
+    <c:if test="#{webActions.currentTabId eq 'TAB_CM_MODIFIED_ITEMS_TREETABLE'}">
         <p:ajax
             event="change"
-            listener="#{cmDocModifiedItemsTreeBean.refreshNode(component.namingContainer, node, triggeredField, updateChildren)}"
-            process="@this"
-            partialSubmit="true"
-            onstart="preparePartialAjaxUpdate(cfg.source)"
-            onsuccess="markTreeNodeAsModified(#{updateChildren})" />
-    </c:if>
-    
-    <c:if test="#{webActions.currentTabId eq 'TAB_CM_BOM_MODIFIED_ITEMS_TREETABLE'}">
-        <p:ajax
-            event="change"
-            listener="#{cmBomModifiedItemsTreeBean.refreshNode(component.namingContainer, node, triggeredField, updateChildren)}"
+            listener="#{cmModifiedsTreeBean.refreshNode(component.namingContainer, node, triggeredField, updateChildren)}"
             process="@this"
             partialSubmit="true"
             onstart="preparePartialAjaxUpdate(cfg.source)"

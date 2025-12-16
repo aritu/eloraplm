@@ -16,9 +16,9 @@
     <directory name="elora_priority" layout="vocabulary" sortField="ordering" />
 
     <directory layout="vocabulary" sortField="ordering" name="elora_erpCustomers" />
-    <directory layout="vocabulary" sortField="ordering" name="elora_erpManufacturers" />
+    <directory layout="vocabulary" sortField="ordering" name="elora_erpSuppliers" />
+    <directory layout="vocabulary" sortField="ordering" name="elora_erpOems" />
 
-<!--     <directory layout="vocabulary" sortField="ordering" name="elora_erpSuppliers" /> -->
 
     <directory layout="vocabulary" sortField="ordering" name="elora_partaker" />
     <directory layout="vocabulary" sortField="ordering" name="elora_projectType" />

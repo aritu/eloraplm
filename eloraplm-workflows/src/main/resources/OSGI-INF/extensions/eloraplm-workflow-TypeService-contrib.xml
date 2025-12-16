@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.workflows.TypeService.contrib">
+    <require>org.nuxeo.ecm.platform.types</require>
+    <require>org.nuxeo.ecm.platform.routing.dashboard.layouts</require>
+    
+    <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
+    
+        <schema name="elora_user_open_tasks_cv" prefix="elotaskscv"
+      src="schemas/elora_user_open_tasks_cv.xsd" />
+        
+    </extension>
+    
+    <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService" >
+        
+        <doctype append="true" name="user_open_tasks_cv">
+            <schema name="elora_user_open_tasks_cv" />
+        </doctype>
+        
+    </extension>
+    
+    
+    
+</component>

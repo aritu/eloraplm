@@ -7,6 +7,11 @@ xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/">
       <xs:element name="rowNumber" type="xs:integer"/>
       <xs:element name="nodeId" type="xs:string"/>
       <xs:element name="parentNodeId" type="xs:string"/>
+      <xs:element name="derivedFrom">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
       <xs:element name="modifiedItem">
         <xs:simpleType>
           <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
@@ -42,11 +47,21 @@ xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/">
           <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
         </xs:simpleType>
       </xs:element>
+      <xs:element name="destinationItemSourceVersion">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
       <xs:element name="isManaged" type="xs:boolean" default="false"/>
       <xs:element name="isManual" type="xs:boolean" default="false"/>
       <xs:element name="type" type="xs:string"/>
       <xs:element name="comment" type="xs:string"/>
       <xs:element name="isUpdated" type="xs:boolean" default="false"/>
+      <xs:element name="isDerived" type="xs:boolean" default="false"/>
+      <xs:element name="refNodeId" type="xs:string"/>
+      <xs:element name="isFromMbom" type="xs:boolean" default="false"/>
+      <xs:element name="externalReference" type="xs:string"/>
+      <xs:element name="externalName" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
   

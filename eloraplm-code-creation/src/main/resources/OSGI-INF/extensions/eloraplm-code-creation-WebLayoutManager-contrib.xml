@@ -169,7 +169,7 @@
               </properties>
             </widget>
             
-            <widget name="elora_code_types_obsolete" type="template">
+            <widget name="elora_code_types_obsolete" type="integer_yes_no">
               <labels>
                 <label mode="any">eloraplm.label.vocabulary.obsolete</label>
               </labels>
@@ -177,11 +177,6 @@
               <fields>
                 <field>eloraCodeTypes:obsolete</field>
               </fields>
-              <properties mode="any">
-                <property name="template">
-                  /widgets/integer_yes_no_widget_template.xhtml
-                </property>
-              </properties>
             </widget>
             
             <widget name="elora_code_types_ordering" type="int">
@@ -293,7 +288,7 @@
               </properties>
             </widget>
             
-            <widget name="elora_code_masks_obsolete" type="template">
+            <widget name="elora_code_masks_obsolete" type="integer_yes_no">
               <labels>
                 <label mode="any">eloraplm.label.vocabulary.obsolete</label>
               </labels>
@@ -301,11 +296,6 @@
               <fields>
                 <field>eloraCodeMasks:obsolete</field>
               </fields>
-              <properties mode="any">
-                <property name="template">
-                  /widgets/integer_yes_no_widget_template.xhtml
-                </property>
-              </properties>
             </widget>
             
             <widget name="elora_code_masks_ordering" type="int">
@@ -404,7 +394,7 @@
               </properties>
             </widget>
             
-             <widget name="elora_code_conditions_obsolete" type="template">
+             <widget name="elora_code_conditions_obsolete" type="integer_yes_no">
               <labels>
                 <label mode="any">eloraplm.label.vocabulary.obsolete</label>
               </labels>
@@ -412,11 +402,6 @@
               <fields>
                 <field>eloraCodeConditions:obsolete</field>
               </fields>
-              <properties mode="any">
-                <property name="template">
-                  /widgets/integer_yes_no_widget_template.xhtml
-                </property>
-              </properties>
             </widget>
             
             <widget name="elora_code_conditions_ordering" type="int">

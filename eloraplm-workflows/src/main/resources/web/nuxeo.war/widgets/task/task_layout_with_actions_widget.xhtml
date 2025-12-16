@@ -18,15 +18,15 @@
         <div>
           <div id="#{idPrefix}_box">
             <nxu:set var="isRoutingTask"
-              value="#{routingTaskActions.isRoutingTask(task)}">
+              value="#{eloraRoutingTaskActions.isRoutingTask(task)}">
               <c:if test="#{isRoutingTask}">
               <nxu:set var="hasMultipleActors"
                   value="#{workflowActions.hasTaskMultipleActors(task.actors)}"
                   cache="true">
                 <nxl:layout
-                  name="#{routingTaskActions.getTaskLayout(task)}"
+                  name="#{eloraRoutingTaskActions.getTaskLayout(task)}"
                   mode="#{hasMultipleActors ? 'view' : 'edit'}"
-                  value="#{routingTaskActions.getFormVariables(task)}" />
+                  value="#{eloraRoutingTaskActions.getFormVariables(task)}" />
                 <p class="buttonsGadget">
                   <script>
                    function setClickButton(buttonId) {
@@ -36,7 +36,7 @@
                   
                   
                       <nxu:set var="actions"
-                        value="#{routingTaskActions.getTaskButtons(task)}"
+                        value="#{eloraRoutingTaskActions.getTaskButtons(task)}"
                         cache="true">
                         <input type="hidden" name="button" value="" />
                         <c:forEach var="btn_action" items="#{actions}">
@@ -46,12 +46,14 @@
                                 : 'true'}">
                               <span id="#{sel_action.id}">
                                 <h:commandButton
-                                    action="#{routingTaskActions.endTask(task)}"
+                                    action="#{eloraRoutingTaskActions.endTask(task)}"
                                     value="#{messages[btn_action.label]}"
                                     styleClass="button smallButton"
                                     onclick="setClickButton('#{btn_action.id}');return #{onclick_return}"
                                     immediate="#{fn:endsWith(btn_action.id, '_x')}"
-                                    disabled="#{hasMultipleActors}" />
+                                    disabled="#{hasMultipleActors}">
+                                    <f:param name="#{btn_action.id}" value="true" />
+                                </h:commandButton>
                               </span>
                           </nxu:set>
                         </c:forEach>

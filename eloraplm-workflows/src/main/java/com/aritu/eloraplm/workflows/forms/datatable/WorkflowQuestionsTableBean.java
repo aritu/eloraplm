@@ -16,26 +16,21 @@ package com.aritu.eloraplm.workflows.forms.datatable;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.international.StatusMessage;
-import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.runtime.api.Framework;
-import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
-import com.aritu.eloraplm.datatable.EditableAdminTableBean;
+import com.aritu.eloraplm.datatable.EditableAdminTable;
 import com.aritu.eloraplm.datatable.RowData;
 import com.aritu.eloraplm.webapp.util.ListChoice;
 import com.aritu.eloraplm.webapp.util.LocalizedLabel;
@@ -47,11 +42,12 @@ import com.aritu.eloraplm.workflows.forms.api.WorkflowFormsService;
  * @author aritu
  *
  */
-@Name("workflowQuestionsTableBean")
+@Name(WorkflowQuestionsTableBean.NAME)
 @Scope(CONVERSATION)
 @Install(precedence = APPLICATION)
-public class WorkflowQuestionsTableBean extends EditableAdminTableBean
-        implements Serializable {
+public class WorkflowQuestionsTableBean extends EditableAdminTable {
+
+    public static final String NAME = "workflowQuestionsTableBean";
 
     private static final long serialVersionUID = 1L;
 
@@ -221,15 +217,14 @@ public class WorkflowQuestionsTableBean extends EditableAdminTableBean
             log.trace(logInitMsg + "Table created.");
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty data attribute and set isInvalid attribute to true
+            setData(new ArrayList<RowData>());
+            setIsInvalid(true);
+            setHasUnreadableRows(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.datatable.createData"));
         }
-    }
-
-    @Override
-    @Factory(value = "workflowQuestionsData", scope = ScopeType.EVENT)
-    public List<RowData> getDataFromFactory() {
-        return getData();
     }
 
     @Override
@@ -251,10 +246,11 @@ public class WorkflowQuestionsTableBean extends EditableAdminTableBean
                     false, false);
 
             getData().add(row);
-            if (getDataTable().isFilteringEnabled()) {
-                PrimeFaces.current().executeScript(
-                        "PF('" + getDataTable().getWidgetVar() + "').filter()");
-            }
+            // TODO HONEKIN ZER?
+            // if (getDataTable().isFilteringEnabled()) {
+            // PrimeFaces.current().executeScript(
+            // "PF('" + getDataTable().getWidgetVar() + "').filter()");
+            // }
 
             log.trace(logInitMsg + "Row |" + rowId + "| added.");
 
@@ -287,7 +283,7 @@ public class WorkflowQuestionsTableBean extends EditableAdminTableBean
                     WorkflowQuestionRowData row = (WorkflowQuestionRowData) r;
 
                     if (row.getIsNew()) {
-                        DocumentModel question = wfs.createQuestion(
+                        wfs.createQuestion(
                                 documentManager, row.getWorkflowId(),
                                 row.getNodeId(), row.getQuestionId(), true,
                                 null, null, row.getType(),
@@ -299,7 +295,7 @@ public class WorkflowQuestionsTableBean extends EditableAdminTableBean
                                 row.getObsolete());
 
                     } else if (row.getIsModified()) {
-                        DocumentModel question = wfs.updateQuestion(
+                        wfs.updateQuestion(
                                 documentManager, new IdRef(row.getId()),
                                 row.getWorkflowId(), row.getNodeId(),
                                 row.getQuestionId(), row.getType(),
@@ -326,14 +322,18 @@ public class WorkflowQuestionsTableBean extends EditableAdminTableBean
                 facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                         "eloraplm.message.error.workflows.forms.save"));
             }
+        } else {
+            log.trace(logInitMsg + "Nothing to save.");
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.datatable.nothingToSave"));
         }
     }
 
     @Override
-    protected void clearFilters() {
+    public void clearFilters(DataTable dataTable) {
         workflowId = null;
         nodeId = null;
-        super.clearFilters();
+        super.clearFilters(dataTable);
     }
 
     @Override
@@ -350,10 +350,11 @@ public class WorkflowQuestionsTableBean extends EditableAdminTableBean
     }
 
     public String getWorkflowFilter() {
-        Map<String, Object> filters = getDataTable().getFilters();
-        if (!filters.isEmpty()) {
-            return (String) filters.values().toArray()[0];
-        }
+        // TODO HAu zer?
+        // Map<String, Object> filters = getDataTable().getFilters();
+        // if (!filters.isEmpty()) {
+        // return (String) filters.values().toArray()[0];
+        // }
         return null;
     }
 

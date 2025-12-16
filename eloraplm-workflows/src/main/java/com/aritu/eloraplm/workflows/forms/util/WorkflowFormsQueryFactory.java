@@ -71,22 +71,22 @@ public class WorkflowFormsQueryFactory {
         return query;
     }
 
-    public static String getDistinctAnsweredWorkflowIdsForDoc(String docId)
-            throws EloraException {
+    public static String getDistinctAnsweredWorkflowInstancesForDoc(
+            String docId) throws EloraException {
 
         String pfx = WorkflowMetadataConstants.WFANS_ANSWERS + "/*1/";
 
-        String query = String.format(
-                "SELECT DISTINCT " + pfx
-                        + WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID
-                        + " FROM Document WHERE " + NXQL.ECM_UUID + " = '%s'",
-                docId);
+        String query = String.format("SELECT DISTINCT " + pfx
+                + WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID + ", "
+                + pfx
+                + WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_INSTANCE_ID
+                + " FROM Document WHERE " + NXQL.ECM_UUID + " = '%s'", docId);
 
         return query;
     }
 
     public static String getDistinctAnsweredTaskIdsForDoc(String docId,
-            String wfId) throws EloraException {
+            String wfId, String wfInstanceId) throws EloraException {
 
         String pfx = WorkflowMetadataConstants.WFANS_ANSWERS + "/*1/";
 
@@ -95,9 +95,11 @@ public class WorkflowFormsQueryFactory {
                 + WorkflowMetadataConstants.WFANS_ANSWERS_TASK_EXECUTED
                 + " FROM Document WHERE " + NXQL.ECM_UUID + " = '%s'" + " AND "
                 + pfx + WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID
+                + " = '%s' AND " + pfx
+                + WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_INSTANCE_ID
                 + " = '%s' ORDER BY " + pfx
                 + WorkflowMetadataConstants.WFANS_ANSWERS_TASK_EXECUTED, docId,
-                wfId);
+                wfId, wfInstanceId);
 
         return query;
     }
@@ -119,16 +121,19 @@ public class WorkflowFormsQueryFactory {
 
     // DOC QUESTIONS
 
-    public static String getNodeQuestionsForDoc(String wfId, String nodeId,
-            String docId) throws EloraException {
+    public static String getNodeQuestionsForDoc(String wfId,
+            String wfInstanceId, String nodeId, String docId)
+            throws EloraException {
 
         String query = String.format("SELECT * FROM "
                 + WorkflowDoctypeConstants.WF_FORMS_QUESTION + " WHERE "
                 + WorkflowMetadataConstants.WFQ_IS_MODEL + " = 0 AND "
                 + WorkflowMetadataConstants.WFQ_WORKFLOW_ID + " = '%s' AND "
-                + WorkflowMetadataConstants.WFQ_NODE_ID + " = '%s' AND "
-                + WorkflowMetadataConstants.WFQ_PARENT_DOC + " = '%s' "
-                + "ORDER BY " + WorkflowMetadataConstants.WFQ_ORDER, wfId,
+                + WorkflowMetadataConstants.WFQ_WORKFLOW_INSTANCE_ID
+                + " = '%s' AND " + WorkflowMetadataConstants.WFQ_NODE_ID
+                + " = '%s' AND " + WorkflowMetadataConstants.WFQ_PARENT_DOC
+                + " = '%s' " + "ORDER BY "
+                + WorkflowMetadataConstants.WFQ_ORDER, wfId, wfInstanceId,
                 nodeId, docId);
 
         return query;

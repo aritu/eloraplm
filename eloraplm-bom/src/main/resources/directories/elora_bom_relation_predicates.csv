@@ -6,5 +6,4 @@ http://eloraplm.aritu.com/relations/BomHasCadDocument,label.relation.predicate.B
 http://eloraplm.aritu.com/relations/BomHasDocument,label.relation.predicate.BomHasDocument,0
 http://eloraplm.aritu.com/relations/BomHasList,label.relation.predicate.BomHasList,0
 http://eloraplm.aritu.com/relations/BomListHasEntry,label.relation.predicate.BomListHasEntry,0
-http://eloraplm.aritu.com/relations/BomManufacturerHasPart,label.relation.predicate.BomManufacturerHasPart,0
 http://eloraplm.aritu.com/relations/BomCustomerHasProduct,label.relation.predicate.BomCustomerHasProduct,0

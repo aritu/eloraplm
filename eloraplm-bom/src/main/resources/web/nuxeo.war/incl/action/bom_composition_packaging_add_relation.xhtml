@@ -1,19 +1,55 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  >
-
-  <ui:include src="add_relation_template.xhtml">
-    <ui:param name="treeBean" value="#{bomCompositionEbomTreeBean}" />
-    <ui:param name="placeholder" value="eloraplm.placeholder.suggestion.relation.searchByReferenceOrTitle" />
-    <ui:param name="pageProviderName" value="bom_packaging_wc_suggestion" />
-    <ui:param name="isEditablePredicate" value="false" />
-    <ui:param name="isEditableOrdering" value="true" />
-    <ui:param name="orderingLabel" value="eloraplm.label.bom.partNumber" />
-    <ui:param name="isEditableQuantity" value="true" />
-    <ui:param name="isEditableIsManual" value="true" />
-    <ui:param name="isAnarchic" value="false" />
-    <ui:param name="subjectDocument" value="#{currentDocument}" />
-  </ui:include>
-
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+>
+    <ui:include src="add_relation_template.xhtml">
+        <ui:param
+            name="treeBean"
+            value="#{bomCompositionEbomTreeBean}"
+        />
+        <ui:param
+            name="treeTableClientId"
+            value=":nxw_bom_comp_tt:ttForm"
+        />
+        <ui:param
+            name="placeholder"
+            value="eloraplm.placeholder.suggestion.relation.searchByReferenceOrTitle"
+        />
+        <ui:param
+            name="pageProviderName"
+            value="bom_packaging_wc_suggestion"
+        />
+        <ui:param
+            name="isEditablePredicate"
+            value="false"
+        />
+        <ui:param
+            name="isEditableVersion"
+            value="true"
+        />
+        <ui:param
+            name="isEditableOrdering"
+            value="true"
+        />
+        <ui:param
+            name="orderingLabel"
+            value="eloraplm.label.bom.partNumber"
+        />
+        <ui:param
+            name="isEditableQuantity"
+            value="true"
+        />
+        <ui:param
+            name="isEditableIsManual"
+            value="true"
+        />
+        <ui:param
+            name="isEditableIsExcludedFromMapping"
+            value="true"
+        />
+        <ui:param
+            name="isAnarchic"
+            value="false"
+        />
+    </ui:include>
 </ui:composition>

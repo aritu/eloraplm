@@ -1,51 +1,85 @@
 package com.aritu.eloraplm.cm.treetable;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
-import javax.faces.event.ActionEvent;
-import org.jboss.seam.international.StatusMessage;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Install;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
+import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.intercept.BypassInterceptors;
+import org.jboss.seam.core.Events;
+import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.VersionModel;
+import org.nuxeo.ecm.core.api.impl.VersionModelImpl;
+import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
+import org.nuxeo.runtime.api.Framework;
 import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import com.aritu.eloraplm.cm.service.ChangeManagementService;
 import com.aritu.eloraplm.cm.util.CMHelper;
+import com.aritu.eloraplm.cm.util.IMOptions;
 import com.aritu.eloraplm.constants.CMConstants;
+import com.aritu.eloraplm.constants.CMEventNames;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraPageProvidersConstants;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
+import com.aritu.eloraplm.core.util.EloraEventHelper;
+import com.aritu.eloraplm.exceptions.DocumentAlreadyLockedException;
+import com.aritu.eloraplm.exceptions.DocumentInUnlockableStateException;
+import com.aritu.eloraplm.exceptions.DocumentLockRightsException;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.treetable.CoreTreeBean;
+import com.aritu.eloraplm.exceptions.UnlockCheckedOutDocumentException;
+import com.aritu.eloraplm.pdm.promote.treetable.PromoteTreeBean;
+import com.aritu.eloraplm.pdm.webapp.beans.PdmActionBean;
+import com.aritu.eloraplm.treetable.CoreTree;
+import com.aritu.eloraplm.webapp.base.beans.EloraWebActionsBean;
 import com.aritu.eloraplm.webapp.util.EloraAjax;
 
-public abstract class ModifiedItemsTreeBean extends CoreTreeBean
-        implements Serializable {
+@Name(ModifiedItemsTreeBean.NAME)
+@Scope(ScopeType.CONVERSATION)
+@Install(precedence = APPLICATION)
+@AutomaticDocumentBasedInvalidation
+public class ModifiedItemsTreeBean extends CoreTree {
+
+    public static final String NAME = "cmModifiedsTreeBean";
+
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(
             ModifiedItemsTreeBean.class);
 
-    private String itemType;
+    private boolean reloadModifiedItems = false;
 
     private ModifiedItemsNodeService nodeService;
+
+    private boolean modifiedsIMManaged;
+
+    // private boolean IMAlreadyExists;
+
+    protected IMOptions imOptions;
 
     // ---- Properties for managing "Add Modified Item" window ----
     // -- Modified Item Origin
     private String originItemWcUid;
 
-    private String originItemRealUid;
-
-    private Map<String, String> originItemVersionList;
+    private List<SelectItem> originItemVersionList;
 
     private DocumentModel originItem;
 
@@ -58,10 +92,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
     // -- Modified Item Destination
     private String destinationItemWcUid;
-
-    private String destinationItemRealUid;
-
-    /*private Map<String, String> destinationItemVersionList;*/
 
     private DocumentModel destinationItem;
 
@@ -92,8 +122,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     // -- Modified Item Origin
     private String editOriginItemWcUid;
 
-    private String editOriginItemRealUid;
-
     private DocumentModel editOriginItem;
 
     private DocumentModel editOriginItemWc;
@@ -105,10 +133,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
     // -- Modified Item Destination
     private String editDestinationItemWcUid;
-
-    private String editDestinationItemRealUid;
-
-    /*private Map<String, String> editDestinationItemVersionList;*/
 
     private DocumentModel editDestinationItem;
 
@@ -132,21 +156,18 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
     private boolean editIsValid;
 
-    // ------------------------------------------------------------
+    @In(create = true)
+    protected transient PdmActionBean pdmAction;
 
-    public ModifiedItemsTreeBean(String itemType) {
-        this.itemType = itemType;
+    @In(create = true)
+    protected transient PromoteTreeBean promoteTreeBean;
 
+    @In(create = true)
+    protected EloraWebActionsBean eloraWebActions;
+
+    public ModifiedItemsTreeBean() {
         resetAddModifiedItemFormValues();
-
         resetEditModifiedItemFormValues(true);
-    }
-
-    /**
-     * @return the itemType
-     */
-    public String getItemType() {
-        return itemType;
     }
 
     public void reloadTree(TreeNode selectedNode) {
@@ -166,7 +187,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         try {
             DocumentModel currentDoc = getCurrentDocument();
             nodeService = new ModifiedItemsNodeService(documentManager,
-                    itemType, selectedNode, messages);
+                    selectedNode, messages);
             setRoot(nodeService.getRoot(currentDoc));
             setIsDirty(false);
             setHasUnreadableNodes(false);
@@ -195,10 +216,35 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
 
+        // verify if something has changed in the tree
+        if (getIsDirty()) {
+            saveCurrentTree();
+            reloadModifiedItems = true;
+            Events.instance().raiseEvent(CMEventNames.CM_MODIFIED_ITEMS_SAVED);
+            // Nuxeo event
+            EloraEventHelper.fireEvent(CMEventNames.CM_MODIFIED_ITEMS_SAVED,
+                    navigationContext.getCurrentDocument());
+        } else {
+            log.trace(logInitMsg + "Nothing to save.");
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.nothingToSave"));
+        }
+
+        log.trace(logInitMsg + "--- EXIT ---");
+    }
+
+    private void saveCurrentTree() {
+        String logInitMsg = "[saveTree] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
         try {
             DocumentModel currentDoc = navigationContext.getCurrentDocument();
 
-            nodeService.saveTree(currentDoc, getRoot());
+            ChangeManagementService cmService = Framework.getService(
+                    ChangeManagementService.class);
+
+            nodeService.saveTree(currentDoc, getRoot(), cmService);
 
             facesMessages.add(StatusMessage.Severity.INFO, messages.get(
                     "eloraplm.message.success.treetable.saveRoot"));
@@ -207,28 +253,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR,
                     messages.get("eloraplm.message.error.treetable.saveRoot"));
-        }
-        log.trace(logInitMsg + "--- EXIT ---");
-    }
-
-    public void calculateImpactMatrix() {
-        String logInitMsg = "[calculateImpactMatrix] ["
-                + documentManager.getPrincipal().getName() + "] ";
-        log.trace(logInitMsg + "--- ENTER --- ");
-
-        try {
-            DocumentModel currentDoc = navigationContext.getCurrentDocument();
-
-            CMHelper.calculateImpactMatrix(documentManager, currentDoc,
-                    itemType);
-
-            facesMessages.add(StatusMessage.Severity.INFO, messages.get(
-                    "eloraplm.message.success.treetable.calculateImpactMatrix"));
-
-        } catch (Exception e) {
-            log.error(logInitMsg + e.getMessage(), e);
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.treetable.calculateImpactMatrix"));
         }
         log.trace(logInitMsg + "--- EXIT ---");
     }
@@ -245,11 +269,12 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         // log.trace(logInitMsg + "--- ENTER --- ");
 
         try {
-
             nodeService.refreshNode(node, triggeredField);
 
             if (!triggeredField.equals(
-                    CMConstants.TRIGGER_ACTION_LOAD_DESTINATION_VERSIONS)) {
+                    CMConstants.TRIGGER_ACTION_LOAD_DESTINATION_VERSIONS)
+                    && !triggeredField.equals(
+                            CMConstants.TRIGGER_ACTION_LOAD_DESTINATION_SOURCE_VERSIONS)) {
                 setIsDirty(true);
             }
 
@@ -308,7 +333,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
             getRoot().getChildren().remove(node);
         } else {
             nodeData.setIsRemoved(isRemoved);
-            node.getChildren().clear();
         }
 
         log.trace(logInitMsg + "--- EXIT ---");
@@ -345,7 +369,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         log.trace(logInitMsg + "--- ENTER --- ");
 
         String validationResultMessage = nodeService.validateModificationOriginValue(
-                getRoot(), originItemRealUid);
+                getRoot(), originItem.getId());
 
         log.trace(logInitMsg + "--- EXIT with validationResultMessage = |"
                 + validationResultMessage + "| ---");
@@ -386,7 +410,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
         String validationResultMessage = null;
 
-        // The origin of a replace action cannot be the destination of a replace
+        // The origin of a remove action cannot be the destination of a replace
         // action.
         if (action.equals(CMConstants.ACTION_REMOVE)) {
             validationResultMessage = nodeService.validateRemoveOriginValue(
@@ -399,17 +423,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         return validationResultMessage;
     }
 
-    public void cancelAddModifiedItemActionListener(ActionEvent event) {
-        String logInitMsg = "[cancelAddModifiedItemActionListener] ";
-        log.trace(logInitMsg + "--- ENTER ---");
-
-        resetAddModifiedItemFormValues();
-
-        resetAddModifiedItemFormInputValues(event.getComponent(), true);
-
-        log.trace(logInitMsg + "--- EXIT ---");
-    }
-
     public void editModifiedItem() {
         String logInitMsg = "[editModifiedItem] ["
                 + documentManager.getPrincipal().getName() + "] ";
@@ -419,48 +432,56 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
             ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) getSelectedNode().getData();
 
-            /*// if editAction or editDestinationItem changes, it means that
-            // impacted items should be recalculated.
-            if (selectedNodeData.getAction() != editAction
-                    || selectedNodeData.getDestinationItem() != editDestinationItem) {
-                selectedNodeData.setActionChanged(true);
-            }*/
+            /*
+             * // if editAction or editDestinationItem changes, it means that
+             * // impacted items should be recalculated.
+             * if (selectedNodeData.getAction() != editAction
+             * || selectedNodeData.getDestinationItem() != editDestinationItem) {
+             * selectedNodeData.setActionChanged(true);
+             * }
+             */
 
             selectedNodeData.setAction(editAction);
             selectedNodeData.setDestinationItem(editDestinationItem);
             selectedNodeData.setDestinationItemWc(editDestinationItemWc);
-            /*selectedNodeData.setDestinationItemVersionList(
-                    editDestinationItemVersionList);*/
             selectedNodeData.setIsManaged(editIsManaged);
 
-            ////////////// todo... hau kanpora atera ??????????????????
+            List<SelectItem> editDestinationItemVersionList;
 
-            Map<String, String> editDestinationItemVersionList = new HashMap<String, String>();
-            // if the destinationItem is the WC, initialize the version list
-            // with
-            // the WC
-            if (editDestinationItem != null && editDestinationItemWc != null
-                    && editDestinationItem.getId().equals(
-                            editDestinationItemWc.getId())) {
-                // initialize the version list with the WC
-
-                editDestinationItemVersionList.put(editDestinationItem.getId(),
-                        editDestinationItem.getVersionLabel() + " (WC)");
+            // if the destinationItemWc is not null, initialize the version list with the WC
+            if (editDestinationItemWc != null) {
+                editDestinationItemVersionList = new ArrayList<SelectItem>();
+                editDestinationItemVersionList.add(
+                        new SelectItem(editDestinationItemWc,
+                                editDestinationItemWc.getVersionLabel()
+                                        + CMConstants.VERSION_LABEL_WC));
             } else {
                 editDestinationItemVersionList = null;
             }
             selectedNodeData.setDestinationItemVersionList(
                     editDestinationItemVersionList);
 
-            /////////////////////////////
+            DocumentModel defaultDestinationItemSourceVersion = CMHelper.calculateDefaultDestinationItemSourceVersion(
+                    editDestinationItemWc, editOriginItem, editAction);
+            selectedNodeData.setDestinationItemSourceVersion(
+                    defaultDestinationItemSourceVersion);
+
+            CMTreeBeanHelper.loadDestinationSourceVersions(selectedNodeData,
+                    documentManager, messages);
 
             // Calculate if editable fields are editable or not in
             // function of the item values
-            boolean destinationItemVersionIsReadOnly = CMTreeBeanHelper.calculateDestinationItemVersionListIsReadOnlyValue(
-                    editAction, editIsManaged);
-
+            boolean destinationItemVersionIsReadOnly = CMTreeBeanHelper
+                    .calculateDestinationItemVersionListIsReadOnlyValue(
+                            editAction, editIsManaged);
             selectedNodeData.setDestinationItemVersionIsReadOnly(
                     destinationItemVersionIsReadOnly);
+
+            boolean destinationItemSourceVersionIsReadOnly = CMTreeBeanHelper
+                    .calculateDestinationItemSourceVersionIsReadOnlyValue(
+                            editDestinationItem, editIsManaged);
+            selectedNodeData.setDestinationItemSourceVersionIsReadOnly(
+                    destinationItemSourceVersionIsReadOnly);
 
             boolean isManagedIsReadOnly = CMTreeBeanHelper.calculateIsManagedIsReadOnlyValue(
                     editAction, editDestinationItem);
@@ -483,8 +504,102 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         log.trace(logInitMsg + "--- EXIT ---");
     }
 
-    private String validateEditModificationDestinationValue() {
+    public void checkIn(DocumentModel doc) {
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
+                if (isCheckinAllowed(selectedNodeData)) {
 
+                    String checkinComment = selectedNodeData.getComment();
+                    pdmAction.setCheckinComment(checkinComment);
+                    pdmAction.checkIn(doc);
+
+                    // Set as managed
+                    if (!selectedNodeData.getIsManaged()) {
+                        try {
+                            CMHelper.setAsManagedModifiedItemByNodeId(
+                                    documentManager,
+                                    navigationContext.getCurrentDocument(),
+                                    selectedNodeData.getNodeId());
+                        } catch (EloraException e) {
+                            facesMessages.add(StatusMessage.Severity.ERROR,
+                                    messages.get(
+                                            "eloraplm.message.error.cm.failToSetAsManagedModifiedItem"));
+                        }
+                    }
+                    reloadTree(selectedNode);
+                }
+            } else {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.cm.emptyItemSelection"));
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
+        }
+    }
+
+    public void checkOut() {
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
+                if (isNodeStateAllowed(selectedNodeData)) {
+                    DocumentModel selectedDoc = selectedNodeData.getDestinationItem();
+                    if (selectedNodeData.getDestinationItemSourceVersion() != null) {
+                        VersionModel versionFrom = new VersionModelImpl();
+                        versionFrom.setId(
+                                selectedNodeData.getDestinationItemSourceVersion().getId());
+                        pdmAction.checkOutFromVersion(selectedDoc, versionFrom);
+
+                    } else {
+                        pdmAction.checkOutFromVersion(selectedDoc, null);
+                    }
+                    reloadTree(selectedNode);
+                }
+            } else {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.cm.emptyItemSelection"));
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
+        }
+    }
+
+    public void runPromote() {
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+                promoteTreeBean.runPromoteAction();
+
+                // Set as managed
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
+                if (!selectedNodeData.getIsManaged()) {
+                    try {
+                        CMHelper.setAsManagedModifiedItemByNodeId(
+                                documentManager,
+                                navigationContext.getCurrentDocument(),
+                                selectedNodeData.getNodeId());
+                    } catch (EloraException e) {
+                        facesMessages.add(StatusMessage.Severity.ERROR,
+                                messages.get(
+                                        "eloraplm.message.error.cm.failToSetAsManagedModifiedItem"));
+                    }
+                }
+                reloadTree(selectedNode);
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
+        }
+    }
+
+    private String validateEditModificationDestinationValue() {
         String logInitMsg = "[validateEditModificationDestinationValue] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
@@ -509,14 +624,13 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     }
 
     private String validateEditModificationActionValue() {
-
         String logInitMsg = "[validateEditModificationActionValue] ["
                 + documentManager.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
 
         String validationResultMessage = null;
 
-        // The origin of a replace action cannot be the destination of a replace
+        // The origin of a remove action cannot be the destination of a replace
         // action.
         if (editAction.equals(CMConstants.ACTION_REMOVE)) {
             validationResultMessage = nodeService.validateRemoveOriginValue(
@@ -529,15 +643,109 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         return validationResultMessage;
     }
 
-    public void cancelEditModifiedItemActionListener(ActionEvent event) {
-        String logInitMsg = "[cancelEditModifiedItemActionListener] ";
-        log.trace(logInitMsg + "--- ENTER ---");
+    public void lock() {
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
+                DocumentModel selectedDoc = (selectedNodeData.getDestinationItem() != null
+                        ? selectedNodeData.getDestinationItem()
+                        : selectedNodeData.getOriginItem());
+                try {
+                    EloraDocumentHelper.lockDocument(selectedDoc);
+                    reloadTree(selectedNode);
+                    facesMessages.add(StatusMessage.Severity.INFO,
+                            messages.get("eloraplm.message.success.lock"));
+                } catch (DocumentAlreadyLockedException e) {
+                    facesMessages.add(StatusMessage.Severity.WARN,
+                            messages.get("eloraplm.message.error.locked"),
+                            e.getDocument().getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                            e.getDocument().getTitle());
+                } catch (DocumentInUnlockableStateException e) {
+                    facesMessages.add(StatusMessage.Severity.WARN,
+                            messages.get("eloraplm.message.error.not.lockable"),
+                            e.getDocument().getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                            e.getDocument().getTitle());
+                } catch (DocumentLockRightsException e) {
+                    facesMessages.add(StatusMessage.Severity.WARN,
+                            messages.get("eloraplm.message.error.lock.rights"),
+                            e.getDocument().getPropertyValue(
+                                    EloraMetadataConstants.ELORA_ELO_REFERENCE),
+                            e.getDocument().getTitle());
+                } catch (EloraException e) {
+                    facesMessages.add(StatusMessage.Severity.WARN,
+                            messages.get("eloraplm.message.error.cm.lock"));
+                }
+            } else {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.cm.emptyItemSelection"));
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
+        }
+    }
 
-        // resetEditModifiedItemFormValues(true);
+    public void unlock() {
+        // if there is any unsaved change in the tree, don't do anything
+        if (!getIsDirty()) {
+            TreeNode selectedNode = getSelectedNode();
+            if (selectedNode != null) {
+                ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) selectedNode.getData();
+                DocumentModel selectedDoc = (selectedNodeData.getDestinationItem() != null
+                        ? selectedNodeData.getDestinationItem()
+                        : selectedNodeData.getOriginItem());
+                try {
+                    EloraDocumentHelper.unlockDocument(selectedDoc);
+                    reloadTree(selectedNode);
+                    facesMessages.add(StatusMessage.Severity.INFO,
+                            messages.get("eloraplm.message.success.unlock"));
+                } catch (DocumentLockRightsException e) {
+                    facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                            "eloraplm.message.error.unlock.permissions"));
+                } catch (UnlockCheckedOutDocumentException e) {
+                    facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                            "eloraplm.message.error.unlock.checkedOut"));
+                }
+            } else {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.cm.emptyItemSelection"));
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.WARN, messages.get(
+                    "eloraplm.message.warning.treetable.unsavedChanges"));
+        }
+    }
 
-        resetEditModifiedItemFormInputValues(event.getComponent(), true); // ?????????????
+    protected boolean isCheckinAllowed(ModifiedItemsNodeData selectedNodeData) {
+        if (selectedNodeData.getDestinationItem().isCheckedOut()) {
+            return isNodeStateAllowed(selectedNodeData);
+        } else {
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("eloraplm.message.error.cm.isNotCheckedOut"));
+        }
+        return false;
+    }
 
-        log.trace(logInitMsg + "--- EXIT ---");
+    protected boolean isNodeStateAllowed(
+            ModifiedItemsNodeData selectedNodeData) {
+        if (!selectedNodeData.getIsManaged()) {
+            if (!selectedNodeData.getAction().equals(CMConstants.ACTION_IGNORE)
+                    && !selectedNodeData.getAction().equals(
+                            CMConstants.ACTION_REMOVE)) {
+                return true;
+            } else {
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.cm.incorrectAction"));
+            }
+        } else {
+            facesMessages.add(StatusMessage.Severity.ERROR,
+                    messages.get("eloraplm.message.error.cm.isManaged"));
+        }
+        return false;
     }
 
     @Override
@@ -561,58 +769,54 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
     private String getPageProviderNameForReplaceDestinationItem(
             String originItemType, String originItemDocType) {
-
         String pageProviderName = "";
 
         switch (originItemType) {
-        case CMConstants.ITEM_TYPE_DOC:
-            switch (originItemDocType) {
-            case (EloraDoctypeConstants.CAD_ASSEMBLY):
-                pageProviderName = EloraPageProvidersConstants.CAD_ASSEMBLY_OR_CAD_PART_WC_DOC_SUGG;
+            case CMConstants.ITEM_TYPE_DOC:
+                switch (originItemDocType) {
+                    case (EloraDoctypeConstants.CAD_ASSEMBLY):
+                        pageProviderName = EloraPageProvidersConstants.CAD_ASSEMBLY_OR_CAD_PART_WC_DOC_SUGG;
+                        break;
+                    case (EloraDoctypeConstants.CAD_PART):
+                        pageProviderName = EloraPageProvidersConstants.CAD_ASSEMBLY_OR_CAD_PART_WC_DOC_SUGG;
+                        break;
+                    case (EloraDoctypeConstants.CAD_DRAWING):
+                        pageProviderName = EloraPageProvidersConstants.CAD_DRAWING_WC_DOC_SUGG;
+                        break;
+                    case (EloraDoctypeConstants.CAD_DESIGN_TABLE):
+                        pageProviderName = EloraPageProvidersConstants.CAD_DESIGN_TABLE_WC_DOC_SUGG;
+                        break;
+                    default:
+                        pageProviderName = EloraPageProvidersConstants.CAD_OTHER_WC_DOC_SUGG;
+                }
                 break;
-            case (EloraDoctypeConstants.CAD_PART):
-                pageProviderName = EloraPageProvidersConstants.CAD_ASSEMBLY_OR_CAD_PART_WC_DOC_SUGG;
-                break;
-            case (EloraDoctypeConstants.CAD_DRAWING):
-                pageProviderName = EloraPageProvidersConstants.CAD_DRAWING_WC_DOC_SUGG;
-                break;
-            case (EloraDoctypeConstants.CAD_DESIGN_TABLE):
-                pageProviderName = EloraPageProvidersConstants.CAD_DESIGN_TABLE_WC_DOC_SUGG;
+            case CMConstants.ITEM_TYPE_BOM:
+                if (EloraDocumentTypesHelper.getDocumentType(
+                        EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
+                                EloraDocumentTypesHelper.getDocumentType(
+                                        originItemDocType))) {
+                    pageProviderName = EloraPageProvidersConstants.BOM_PART_WC_DOC_SUGG;
+                } else if (originItemDocType.equals(
+                        (EloraDoctypeConstants.BOM_TOOL))) {
+                    pageProviderName = EloraPageProvidersConstants.BOM_TOOL_WC_DOC_SUGG;
+                } else if (originItemDocType.equals(
+                        (EloraDoctypeConstants.BOM_PACKAGING))) {
+                    pageProviderName = EloraPageProvidersConstants.BOM_PACKAGING_WC_DOC_SUGG;
+                } else if (originItemDocType.equals(
+                        (EloraDoctypeConstants.BOM_SPECIFICATION))) {
+                    pageProviderName = EloraPageProvidersConstants.BOM_SPECIFICATION_WC_DOC_SUGG;
+                } else if (originItemDocType.equals(
+                        (EloraDoctypeConstants.BOM_PRODUCT))) {
+                    pageProviderName = EloraPageProvidersConstants.BOM_PRODUCT_WC_DOC_SUGG;
+                } else if (originItemDocType.equals(
+                        (EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT))) {
+                    pageProviderName = EloraPageProvidersConstants.BOM_CUSTOMER_PRODUCT_WC_DOC_SUGG;
+                } else {
+                    pageProviderName = EloraPageProvidersConstants.BOM_WC_DOC_SUGG;
+                }
                 break;
             default:
-                pageProviderName = EloraPageProvidersConstants.CAD_OTHER_WC_DOC_SUGG;
-            }
-            break;
-        case CMConstants.ITEM_TYPE_BOM:
-            if (EloraDocumentTypesHelper.getDocumentType(
-                    EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
-                            EloraDocumentTypesHelper.getDocumentType(
-                                    originItemDocType))) {
-                pageProviderName = EloraPageProvidersConstants.BOM_PART_WC_DOC_SUGG;
-            } else if (originItemDocType.equals(
-                    (EloraDoctypeConstants.BOM_MANUFACTURER_PART))) {
-                pageProviderName = EloraPageProvidersConstants.BOM_MANUFACTURER_PART_WC_DOC_SUGG;
-            } else if (originItemDocType.equals(
-                    (EloraDoctypeConstants.BOM_TOOL))) {
-                pageProviderName = EloraPageProvidersConstants.BOM_TOOL_WC_DOC_SUGG;
-            } else if (originItemDocType.equals(
-                    (EloraDoctypeConstants.BOM_PACKAGING))) {
-                pageProviderName = EloraPageProvidersConstants.BOM_PACKAGING_WC_DOC_SUGG;
-            } else if (originItemDocType.equals(
-                    (EloraDoctypeConstants.BOM_SPECIFICATION))) {
-                pageProviderName = EloraPageProvidersConstants.BOM_SPECIFICATION_WC_DOC_SUGG;
-            } else if (originItemDocType.equals(
-                    (EloraDoctypeConstants.BOM_PRODUCT))) {
-                pageProviderName = EloraPageProvidersConstants.BOM_PRODUCT_WC_DOC_SUGG;
-            } else if (originItemDocType.equals(
-                    (EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT))) {
-                pageProviderName = EloraPageProvidersConstants.BOM_CUSTOMER_PRODUCT_WC_DOC_SUGG;
-            } else {
-                pageProviderName = EloraPageProvidersConstants.BOM_WC_DOC_SUGG;
-            }
-            break;
-        default:
-            pageProviderName = EloraPageProvidersConstants.CAD_BOM_WC_DOC_SUGG;
+                pageProviderName = EloraPageProvidersConstants.CAD_BOM_WC_DOC_SUGG;
         }
 
         return pageProviderName;
@@ -628,26 +832,17 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     }
 
     private void setSelectedNodeAttributes(TreeNode node) {
-
         ModifiedItemsNodeData selectedNodeData = (ModifiedItemsNodeData) node.getData();
 
         setEditOriginItemWcUid(selectedNodeData.getOriginItemWc().getId());
-
-        setEditOriginItemRealUid(selectedNodeData.getOriginItem().getId());
 
         setEditOriginItemWc(selectedNodeData.getOriginItemWc());
 
         setEditOriginItem(selectedNodeData.getOriginItem());
 
-        setEditAction(selectedNodeData.getAction());
-
         setEditDestinationItem(selectedNodeData.getDestinationItem());
-        if (selectedNodeData.getDestinationItem() != null) {
-            setEditDestinationItemRealUid(
-                    selectedNodeData.getDestinationItem().getId());
-        } else {
-            setEditDestinationItemRealUid(null);
-        }
+
+        setEditAction(selectedNodeData.getAction());
 
         setEditDestinationItemWc(selectedNodeData.getDestinationItemWc());
         if (selectedNodeData.getDestinationItemWc() != null) {
@@ -692,29 +887,29 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                 // versions
                 boolean onlyReleasedVersion = false;
                 /*
-                // if the origin is a BOM or CAD, retrieve only RELEASED
-                // versions of the document, otherwise all the versions
-                
-                if (getOriginItemWc().hasFacet(
-                        EloraFacetConstants.FACET_CAD_DOCUMENT)
-                        || getOriginItemWc().hasFacet(
-                                EloraFacetConstants.FACET_BOM_DOCUMENT)) {
-                    onlyReleasedVersion = true;
-                }*/
+                 * // if the origin is a BOM or CAD, retrieve only RELEASED
+                 * // versions of the document, otherwise all the versions
+                 * 
+                 * if (getOriginItemWc().hasFacet(
+                 * EloraFacetConstants.FACET_CAD_DOCUMENT)
+                 * || getOriginItemWc().hasFacet(
+                 * EloraFacetConstants.FACET_BOM_DOCUMENT)) {
+                 * onlyReleasedVersion = true;
+                 * }
+                 */
                 // *******************************************************
 
                 // Calculate the version list for the selected origin item
                 // and the default selected value
-                Map<String, String> versionList = CMHelper.calculateOriginVersionList(
+                List<SelectItem> versionList = CMHelper.calculateOriginVersionList(
                         documentManager, originItemWcUid, onlyReleasedVersion,
                         messages);
                 setOriginItemVersionList(versionList);
 
-                // By default, select the last element of the list
+                // By default, select the first element of the list
                 if (versionList != null && versionList.size() > 0) {
-                    setOriginItemRealUid(
-                            CMHelper.getLastElementValueFromVersionList(
-                                    versionList));
+                    DocumentModel originItem = CMHelper.getFirstDocumentFromVersionList(versionList);
+                    setOriginItem(originItem);
                 }
             }
         } catch (EloraException e) {
@@ -724,57 +919,12 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         }
     }
 
-    public String getOriginItemRealUid() {
-        return originItemRealUid;
-    }
-
-    public void setOriginItemRealUid(String originItemRealUid) {
-        String logInitMsg = "[setOriginItemRealUid] ["
-                + documentManager.getPrincipal().getName() + "] ";
-        try {
-            this.originItemRealUid = originItemRealUid;
-
-            if (originItemRealUid != null) {
-
-                String validationResultMessage = validateModificationOriginValue();
-
-                if (validationResultMessage != null
-                        && validationResultMessage.length() > 0) {
-                    setOriginItemMsg(messages.get(validationResultMessage));
-                    setOriginItem(null);
-                    setDestinationItemWcUid(null);
-                    setDestinationItemRealUid(null);
-                    setIsManaged(false);
-                    setComment(null);
-                    setIsValid(false);
-
-                } else {
-                    setOriginItemMsg(null);
-                    // retrieve the originItem from its id
-                    setOriginItem(documentManager.getDocument(
-                            new IdRef(originItemRealUid)));
-                    // initialize action to default value
-                    setAction(null);
-                }
-
-            } else {
-                setOriginItemMsg(null);
-                setOriginItem(null);
-            }
-
-        } catch (Exception e) {
-            log.error(logInitMsg + e.getMessage(), e);
-            facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get("eloraplm.message.error.cm.setOriginItem"));
-        }
-    }
-
-    public Map<String, String> getOriginItemVersionList() {
+    public List<SelectItem> getOriginItemVersionList() {
         return originItemVersionList;
     }
 
     public void setOriginItemVersionList(
-            Map<String, String> originItemVersionList) {
+            List<SelectItem> originItemVersionList) {
         this.originItemVersionList = originItemVersionList;
     }
 
@@ -783,8 +933,41 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     }
 
     public void setOriginItem(DocumentModel originItem) {
+        String logInitMsg = "[setOriginItem] ["
+                + documentManager.getPrincipal().getName() + "] ";
         this.originItem = originItem;
         if (originItem != null) {
+            try {
+
+                if (originItem.getId() != null) {
+
+                    String validationResultMessage = validateModificationOriginValue();
+
+                    if (validationResultMessage != null
+                            && validationResultMessage.length() > 0) {
+                        setOriginItemMsg(messages.get(validationResultMessage));
+                        setDestinationItemWcUid(null);
+                        setDestinationItem(null);
+                        setIsManaged(false);
+                        setComment(null);
+                        setIsValid(false);
+
+                    } else {
+                        setOriginItemMsg(null);
+                        // initialize action to default value
+                        setAction(null);
+                    }
+
+                } else {
+                    setOriginItemMsg(null);
+                }
+
+            } catch (Exception e) {
+                log.error(logInitMsg + e.getMessage(), e);
+                facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                        "eloraplm.message.error.cm.setOriginItem"));
+            }
+
             setOriginItemType(CMHelper.getItemType(originItem));
         }
     }
@@ -824,7 +1007,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                     && validationResultMessage.length() > 0) {
                 setActionMsg(messages.get(validationResultMessage));
                 setDestinationItemWcUid(null);
-                setDestinationItemRealUid(null);
+                setDestinationItem(null);
                 setIsManaged(false);
                 setComment(null);
                 setIsValid(false);
@@ -853,18 +1036,18 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                     clearReplaceDestinationSelectionElements();
 
                 } else if (action.equals(CMConstants.ACTION_REPLACE)) {
+                    setDestinationItem(null);
                     setDestinationItemWcUid(null);
-                    setDestinationItemRealUid(null);
                     setIsManaged(false);
                     setIsValid(false);
                 }
 
                 setIsImpactable(CMHelper.getIsImpactable(originItem.getType(),
-                        action, destinationItemRealUid));
+                        action, destinationItem));
                 setIncludeInImpactMatrix(
                         CMHelper.getIncludeInImpactMatrixDefaultValue(
                                 originItem.getType(), action,
-                                destinationItemRealUid));
+                                destinationItem));
             }
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
@@ -876,9 +1059,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     // TODO::: begiratu ea hau beharrezkoa dan...
     private void clearReplaceDestinationSelectionElements() {
         destinationItemWcUid = null;
-        destinationItemRealUid = null;
         destinationItemMsg = null;
-        /*   destinationItemVersionList = new HashMap<String, String>();*/
 
         // TODO::: hemen gethitu comment eta includeInImpactMatrix !!!
     }
@@ -905,40 +1086,29 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                 } else {
                     setDestinationItemMsg(null);
 
-                    setDestinationItemWc(documentManager.getDocument(
-                            new IdRef(destinationItemWcUid)));
+                    DocumentModel destinationItemWcDoc = documentManager.getDocument(
+                            new IdRef(destinationItemWcUid));
+                    setDestinationItemWc(destinationItemWcDoc);
 
-                    setDestinationItemRealUid(destinationItemWcUid);
+                    if (action.equals(CMConstants.ACTION_REPLACE)) {
+                        setDestinationItem(EloraDocumentHelper.getBaseVersion(
+                                destinationItemWc));
+                        setIsManaged(true);
+                    } else {
+                        setDestinationItem(destinationItemWcDoc);
+                    }
 
                     setIsImpactable(
                             CMHelper.getIsImpactable(originItem.getType(),
-                                    action, destinationItemWcUid));
+                                    action, destinationItem));
                     setIncludeInImpactMatrix(
                             CMHelper.getIncludeInImpactMatrixDefaultValue(
                                     originItem.getType(), action,
-                                    destinationItemWcUid));
+                                    destinationItem));
 
                     setIsValid(true);
-
-                    // TODO::????? EZ, destination itemak ez du orain
-                    // bertsiorik...
-                    /*// Calculate the version list for the selected destination
-                    // item
-                    Map<String, String> versionList = CMHelper.calculateModifiableItemVersionList(
-                            documentManager, destinationItemWcUid);
-                    setDestinationItemVersionList(versionList);
-
-                    // By default, select the last element of the list
-                    if (versionList != null && versionList.size() > 0) {
-                        setDestinationItemRealUid(
-                                CMHelper.getLastElementValueFromVersionList(
-                                        versionList));
-                    }*/
                 }
-
-            } /*else {
-                setDestinationItemVersionList(new HashMap<String, String>());
-              }*/
+            }
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -946,64 +1116,24 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         }
     }
 
-    public String getDestinationItemRealUid() {
-        return destinationItemRealUid;
-    }
-
-    public void setDestinationItemRealUid(String destinationItemRealUid) {
-        String logInitMsg = "[setDestinationItemRealUid] ["
-                + documentManager.getPrincipal().getName() + "] ";
-        try {
-            this.destinationItemRealUid = destinationItemRealUid;
-
-            if (destinationItemRealUid != null) {
-                // retrieve the destinationItem from its id
-                setDestinationItem(documentManager.getDocument(
-                        new IdRef(destinationItemRealUid)));
-
-                /*if (destinationItem.isVersion()) {
-                    setIsManaged(true);
-                } else {
-                    setIsManaged(false);
-                }
-
-                setComment(CMTreeBeanHelper.calculateModifiedItemComment(action,
-                        getCurrentDocument(), originItem, destinationItem));
-
-                setIsImpactable(CMHelper.getIsImpactable(originItem.getType(),
-                        action, destinationItemRealUid));
-                setIncludeInImpactMatrix(
-                        CMHelper.getIncludeInImpactMatrixDefaultValue(
-                                originItem.getType(), action,
-                                destinationItemRealUid));*/
-
-            } else {
-                destinationItem = null;
-                setIsManaged(false);
-            }
-
-        } catch (Exception e) {
-            log.error(logInitMsg + e.getMessage(), e);
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.cm.setDestinationItem"));
-        }
-    }
-
-    /*public Map<String, String> getDestinationItemVersionList() {
-        return destinationItemVersionList;
-    }
-
-    public void setDestinationItemVersionList(
-            Map<String, String> destinationItemVersionList) {
-        this.destinationItemVersionList = destinationItemVersionList;
-    }*/
-
     public DocumentModel getDestinationItem() {
         return destinationItem;
     }
 
     public void setDestinationItem(DocumentModel destinationItem) {
-        this.destinationItem = destinationItem;
+        String logInitMsg = "[setDestinationItem] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        try {
+            this.destinationItem = destinationItem;
+
+            if (destinationItem == null) {
+                setIsManaged(false);
+            }
+        } catch (Exception e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.cm.setDestinationItem"));
+        }
     }
 
     public DocumentModel getDestinationItemWc() {
@@ -1082,9 +1212,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
         originItemWcUid = null;
 
-        originItemRealUid = null;
-
-        originItemVersionList = new HashMap<String, String>();
+        originItemVersionList = new ArrayList<SelectItem>();
 
         originItem = null;
 
@@ -1095,10 +1223,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         action = null;
 
         destinationItemWcUid = null;
-
-        destinationItemRealUid = null;
-
-        /*destinationItemVersionList = new HashMap<String, String>();*/
 
         destinationItem = null;
 
@@ -1121,76 +1245,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         isValid = false;
     }
 
-    private void resetAddModifiedItemFormInputValues(UIComponent component,
-            boolean includeOriginItem) {
-
-        if (includeOriginItem) {
-            // reset originItem component
-            UIInput originSuggestInputComponent = (UIInput) component.findComponent(
-                    "nxw_singleDocumentSuggestion_select2");
-            if (originSuggestInputComponent != null) {
-                EditableValueHolder originSuggestInput = originSuggestInputComponent;
-                if (originSuggestInput != null) {
-                    originSuggestInput.resetValue();
-                    // originSuggestInput.setValue(null);
-                }
-            }
-
-            // reset originItemRealUid component
-            UIInput originItemRealUidInputComponent = (UIInput) component.findComponent(
-                    "originItemRealUid");
-            if (originItemRealUidInputComponent != null) {
-                EditableValueHolder originItemRealUidInput = originItemRealUidInputComponent;
-                if (originItemRealUidInput != null) {
-                    originItemRealUidInput.resetValue();
-                }
-            }
-        }
-
-        // reset action component
-        UIInput actionInputComponent = (UIInput) component.findComponent(
-                "nxw_selectOneDirectory_2");
-        if (actionInputComponent != null) {
-            EditableValueHolder actionInput = actionInputComponent;
-            if (actionInput != null) {
-                actionInput.resetValue();
-            }
-        }
-
-        // reset destinationItemSuggestInputComponent
-        UIInput destinationItemSuggestInputComponent = (UIInput) component.findComponent(
-                "nxw_singleDocumentSuggestion_1_select2");
-        if (destinationItemSuggestInputComponent != null) {
-            EditableValueHolder destinationItemSuggestInput = destinationItemSuggestInputComponent;
-            if (destinationItemSuggestInput != null) {
-                destinationItemSuggestInput.resetValue();
-            }
-        }
-
-        // reset destinationItemRealUid component
-        UIInput destinationItemRealUidInputComponent = (UIInput) component.findComponent(
-                "destinationItemRealUid");
-        if (destinationItemRealUidInputComponent != null) {
-            EditableValueHolder destinationItemRealUidInput = destinationItemRealUidInputComponent;
-            if (destinationItemRealUidInput != null) {
-                destinationItemRealUidInput.resetValue();
-            }
-        }
-
-        // reset isManaged component
-        UIInput isManagedInputComponent = (UIInput) component.findComponent(
-                "nxw_checkbox_1");
-        if (isManagedInputComponent != null) {
-            EditableValueHolder isManagedInput = isManagedInputComponent;
-            if (isManagedInput != null) {
-                isManagedInput.resetValue();
-            }
-        }
-
-        // TODO:: FALTA DIRA reset Comment eta includeInImpactMatrix
-        // !!!!!!!!!!!!
-    }
-
     // ---------------------------------------------------------
     // ---- Methods for managing "Edit Modified Item" window ----
     public String getEditOriginItemWcUid() {
@@ -1199,14 +1253,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
     public void setEditOriginItemWcUid(String editOriginItemWcUid) {
         this.editOriginItemWcUid = editOriginItemWcUid;
-    }
-
-    public String getEditOriginItemRealUid() {
-        return editOriginItemRealUid;
-    }
-
-    public void setEditOriginItemRealUid(String editOriginItemRealUid) {
-        this.editOriginItemRealUid = editOriginItemRealUid;
     }
 
     public DocumentModel getEditOriginItem() {
@@ -1255,7 +1301,7 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                     && validationResultMessage.length() > 0) {
                 setEditActionMsg(messages.get(validationResultMessage));
                 setEditDestinationItemWcUid(null);
-                setEditDestinationItemRealUid(null);
+                setEditDestinationItem(null);
                 setEditIsManaged(false);
                 setEditComment(null);
                 setEditIsValid(false);
@@ -1268,8 +1314,8 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
                 if (editAction.equals(CMConstants.ACTION_REMOVE)
                         || editAction.equals(CMConstants.ACTION_IGNORE)) {
-                    setEditDestinationItemRealUid(null);
-                    setEditDestinationItemWcUid(null);
+                    setEditDestinationItemWc(null);
+                    setEditDestinationItem(null);
                     setEditIsManaged(true);
                     setEditIsValid(true);
 
@@ -1278,8 +1324,8 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                     clearReplaceEditDestinationSelectionElements();
 
                 } else if (editAction.equals(CMConstants.ACTION_CHANGE)) {
-                    setEditDestinationItemRealUid(editOriginItemWcUid);
-                    setEditDestinationItemWcUid(editOriginItemWcUid);
+                    setEditDestinationItemWc(editOriginItemWc);
+                    setEditDestinationItem(editOriginItemWc);
                     setEditIsManaged(false);
                     setEditIsValid(true);
                     // Clear the properties for managing "Replace destination
@@ -1288,18 +1334,19 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
 
                 } else if (editAction.equals(CMConstants.ACTION_REPLACE)) {
                     setEditDestinationItemWcUid(null);
-                    setEditDestinationItemRealUid(null);
+                    setEditDestinationItemWc(null);
+                    setEditDestinationItem(null);
                     setEditIsManaged(false);
                     setEditIsValid(false);
                 }
 
                 setEditIsImpactable(
                         CMHelper.getIsImpactable(editOriginItem.getType(),
-                                editAction, editDestinationItemRealUid));
+                                editAction, editDestinationItem));
                 setEditIncludeInImpactMatrix(
                         CMHelper.getIncludeInImpactMatrixDefaultValue(
                                 editOriginItem.getType(), editAction,
-                                editDestinationItemRealUid));
+                                editDestinationItem));
             }
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
@@ -1311,7 +1358,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
     // TODO:: ??? ezabatu
     private void clearReplaceEditDestinationSelectionElements() {
         editDestinationItemWcUid = null;
-        editDestinationItemRealUid = null;
         editDestinationItemMsg = null;
     }
 
@@ -1337,84 +1383,35 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
                 } else {
                     setEditDestinationItemMsg(null);
 
-                    setEditDestinationItemWc(documentManager.getDocument(
-                            new IdRef(editDestinationItemWcUid)));
+                    DocumentModel editDestinationItemWcDoc = documentManager.getDocument(
+                            new IdRef(editDestinationItemWcUid));
+                    setEditDestinationItemWc(editDestinationItemWcDoc);
 
-                    setEditDestinationItemRealUid(editDestinationItemWcUid);
+                    if (editAction.equals(CMConstants.ACTION_REPLACE)) {
+                        setEditDestinationItem(EloraDocumentHelper.getBaseVersion(
+                                editDestinationItemWcDoc));
+                        setEditIsManaged(true);
+                    } else {
+                        setEditDestinationItem(editDestinationItemWcDoc);
+                    }
 
                     setEditIsImpactable(
                             CMHelper.getIsImpactable(editOriginItem.getType(),
-                                    editAction, editDestinationItemRealUid));
+                                    editAction, editDestinationItem));
                     setEditIncludeInImpactMatrix(
                             CMHelper.getIncludeInImpactMatrixDefaultValue(
                                     editOriginItem.getType(), editAction,
-                                    editDestinationItemRealUid));
+                                    editDestinationItem));
 
                     setEditIsValid(true);
                 }
             }
-
         } catch (EloraException e) {
             log.error(logInitMsg + e.getMessage(), e);
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.cm.setDestinationItem"));
         }
     }
-
-    public String getEditDestinationItemRealUid() {
-        return editDestinationItemRealUid;
-    }
-
-    public void setEditDestinationItemRealUid(
-            String editDestinationItemRealUid) {
-        String logInitMsg = "[setEditDestinationItemRealUid] ["
-                + documentManager.getPrincipal().getName() + "] ";
-        try {
-            this.editDestinationItemRealUid = editDestinationItemRealUid;
-
-            if (editDestinationItemRealUid != null) {
-                // retrieve the destinationItem from its id
-                setEditDestinationItem(documentManager.getDocument(
-                        new IdRef(editDestinationItemRealUid)));
-
-                /*if (editDestinationItem.isVersion()) {
-                    setEditIsManaged(true); // TODO:: ?????????????????????????
-                } else {
-                    setEditIsManaged(false);
-                }
-                
-                setEditComment(CMTreeBeanHelper.calculateModifiedItemComment(
-                        editAction, getCurrentDocument(), editOriginItem,
-                        editDestinationItem));
-                
-                setEditIsImpactable(
-                        CMHelper.getIsImpactable(editOriginItem.getType(),
-                                editAction, editDestinationItemRealUid));
-                setEditIncludeInImpactMatrix(
-                        CMHelper.getIncludeInImpactMatrixDefaultValue(
-                                editOriginItem.getType(), editAction,
-                                editDestinationItemRealUid));*/
-
-            } else {
-                editDestinationItem = null;
-                setEditIsManaged(false); // TODO:: ?????????????????????????
-            }
-
-        } catch (Exception e) {
-            log.error(logInitMsg + e.getMessage(), e);
-            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
-                    "eloraplm.message.error.cm.setDestinationItem"));
-        }
-    }
-
-    /* public Map<String, String> getEditDestinationItemVersionList() {
-        return editDestinationItemVersionList;
-    }
-    
-    public void setEditDestinationItemVersionList(
-            Map<String, String> editDestinationItemVersionList) {
-        this.editDestinationItemVersionList = editDestinationItemVersionList;
-    }*/
 
     public DocumentModel getEditDestinationItem() {
         return editDestinationItem;
@@ -1489,12 +1486,32 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         this.editIsValid = editIsValid;
     }
 
-    private void resetEditModifiedItemFormValues(boolean includeOriginItem) {
+    public boolean getModifiedsIMManaged() {
+        modifiedsIMManaged = CMHelper.checkModifiedsWithIMAreManaged(
+                navigationContext.getCurrentDocument());
+        return modifiedsIMManaged;
+    }
+
+    public void setModifiedsIMManaged(Boolean modifiedsIMManaged) {
+        this.modifiedsIMManaged = modifiedsIMManaged;
+    }
+
+    public void setImOptions(IMOptions imOptions) {
+        this.imOptions = imOptions;
+    }
+
+    public IMOptions getImOptions() {
+        if (imOptions == null) {
+            imOptions = CMHelper.loadIMOptions(
+                    navigationContext.getCurrentDocument());
+        }
+        return imOptions;
+    }
+
+    public void resetEditModifiedItemFormValues(boolean includeOriginItem) {
 
         if (includeOriginItem) {
             editOriginItemWcUid = null;
-
-            editOriginItemRealUid = null;
 
             editOriginItem = null;
 
@@ -1506,10 +1523,6 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         editAction = null;
 
         editDestinationItemWcUid = null;
-
-        editDestinationItemRealUid = null;
-
-        /*editDestinationItemVersionList = new HashMap<String, String>();*/
 
         editDestinationItem = null;
 
@@ -1530,76 +1543,21 @@ public abstract class ModifiedItemsTreeBean extends CoreTreeBean
         editIsValid = false;
     }
 
-    // TODO::: hau agian ez da beharrezkoa????????
-    private void resetEditModifiedItemFormInputValues(UIComponent component,
-            boolean includeOriginItem) {
-
-        if (includeOriginItem) {
-            // reset originItem component
-            UIInput originSuggestInputComponent = (UIInput) component.findComponent(
-                    "nxw_singleDocumentSuggestion_select2");
-            if (originSuggestInputComponent != null) {
-                EditableValueHolder originSuggestInput = originSuggestInputComponent;
-                if (originSuggestInput != null) {
-                    originSuggestInput.resetValue();
-                    // originSuggestInput.setValue(null);
-                }
-            }
-
-            // reset editOriginItemRealUid component
-            UIInput originItemRealUidInputComponent = (UIInput) component.findComponent(
-                    "editOriginItemRealUid");
-            if (originItemRealUidInputComponent != null) {
-                EditableValueHolder originItemRealUidInput = originItemRealUidInputComponent;
-                if (originItemRealUidInput != null) {
-                    originItemRealUidInput.resetValue();
-                }
-            }
+    @Override
+    public TreeNode getRoot() {
+        if (reloadModifiedItems) {
+            createRoot();
+            reloadModifiedItems = false;
         }
-
-        // reset action component
-        UIInput actionInputComponent = (UIInput) component.findComponent(
-                "nxw_selectOneDirectory_2");
-        if (actionInputComponent != null) {
-            EditableValueHolder actionInput = actionInputComponent;
-            if (actionInput != null) {
-                actionInput.resetValue();
-            }
-        }
-
-        // reset destinationItemSuggestInputComponent
-        UIInput destinationItemSuggestInputComponent = (UIInput) component.findComponent(
-                "nxw_singleDocumentSuggestion_1_select2");
-        if (destinationItemSuggestInputComponent != null) {
-            EditableValueHolder destinationItemSuggestInput = destinationItemSuggestInputComponent;
-            if (destinationItemSuggestInput != null) {
-                destinationItemSuggestInput.resetValue();
-            }
-        }
-
-        // reset editDestinationItemRealUid component
-        UIInput destinationItemRealUidInputComponent = (UIInput) component.findComponent(
-                "editDestinationItemRealUid");
-        if (destinationItemRealUidInputComponent != null) {
-            EditableValueHolder destinationItemRealUidInput = destinationItemRealUidInputComponent;
-            if (destinationItemRealUidInput != null) {
-                destinationItemRealUidInput.resetValue();
-            }
-        }
-
-        // reset isManaged component
-        UIInput isManagedInputComponent = (UIInput) component.findComponent(
-                "nxw_checkbox_1");
-        if (isManagedInputComponent != null) {
-            EditableValueHolder isManagedInput = isManagedInputComponent;
-            if (isManagedInput != null) {
-                isManagedInput.resetValue();
-            }
-        }
-
-        // TODO:: FALTA DIRA reset Comment eta
-        // includeInImpactMatrix!!!!!!!!!!!!!!!!!!
+        return super.getRoot();
     }
 
-    // ---------------------------------------------------------
+    @Observer(value = { CMEventNames.CM_MODIFIED_ITEMS_SAVED,
+            CMEventNames.CM_MODIFIED_ITEMS_DERIVED_FROM_IMPACTED_DOCS_ADDED,
+            CMEventNames.CM_REFRESH_MODIFIED_ITEMS })
+    @BypassInterceptors
+    public void markTreeToBeReloaded() {
+        reloadModifiedItems = true;
+    }
+
 }

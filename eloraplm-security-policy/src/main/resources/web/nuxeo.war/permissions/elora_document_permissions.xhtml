@@ -1,0 +1,64 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"    
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core"
+  >
+
+    <c:if test="#{currentDocument.hasFacet('HasSecurityInfo')}">
+        <h:form>
+		    <div class="bubbleBox style-scope document-permissions">
+		      <div class="bubbleHeader style-scope document-permissions">
+		        <h3 class="style-scope document-permissions">#{messages['label.SecurityPolicy.security.setup']}</h3>
+		      </div>
+		      
+		      <div style="display: flex; justify-content: space-between; align-items: center;">
+		              
+		        
+		          <div>
+		              <h:outputLabel class="widgetLabel" for="securityPolicyLevel" value="#{messages['label.SecurityPolicy.securityLevel']}:" />
+		              <span style="font-weight:600">
+		                <c:if test="#{not currentDocument.isImmutable() and (currentUser.isAdministrator() or currentUser.isMemberOf('securityLevelEditors') or currentUser.isMemberOf('powerusers'))}">
+		                  <h:selectOneListbox size="1" id="securityPolicyLevel" value="#{securityPolicyBean.levelId}">
+		                    <nxu:selectItems value="#{securityPolicyBean.getSecurityLevels()}" var="level" itemValue="#{level.key}" itemLabel="#{level.key} - #{messages[level.value]}" />
+		                  </h:selectOneListbox>
+		                </c:if>
+		                
+		                <c:if test="#{currentDocument.isImmutable() or (not currentUser.isAdministrator() and not currentUser.isMemberOf('securityLevelEditors') and not currentUser.isMemberOf('powerusers'))}">		                
+		                  <h:outputText value="#{currentDocument.sec.securityLevel} - #{messages[securityPolicyBean.getLevelLabel(currentDocument.sec.securityLevel)]}" />                
+		                </c:if>
+		              </span>
+		          </div>
+		          
+		          <div>
+		            <h:outputLabel for="securityPolicyBy" value="#{messages['label.SecurityPolicy.securitySetBy']}:" />            
+		            <span class="user">
+		              <h:outputLink id="securityPolicyBy" value="#{baseURL}user/#{currentDocument.sec.securitySetBy}">
+		                #{nxu:userFullName(currentDocument.sec.securitySetBy)}
+		              </h:outputLink>
+		            </span>
+		          </div>
+		              
+		          <div>
+		            <h:outputLabel for="securityPolicyAt" value="#{messages['label.SecurityPolicy.securitySetDate']}:" />
+		            <span style="font-weight:600">
+		              <h:outputText id="securityPolicyAt" value="#{currentDocument.sec.securitySetDate}">
+		                  <f:convertDateTime pattern="#{nxu:basicDateAndTimeFormatter()}" timeZone="#{timeZone}" />
+		              </h:outputText>  
+		            </span>
+		          </div>
+		             
+		          <c:if test="#{not currentDocument.isImmutable() and (currentUser.isAdministrator() or currentUser.isMemberOf('securityLevelEditors') or currentUser.isMemberOf('powerusers'))}">
+		            <h:commandButton value="#{messages['command.save']}" styleClass="button" action="#{securityPolicyBean.save()}"></h:commandButton>
+		          </c:if>		        
+		          
+		      </div>
+	       </div>
+	   </h:form>
+    </c:if>
+
+  <ui:include src="document_permissions.xhtml"></ui:include>
+  
+</ui:composition>

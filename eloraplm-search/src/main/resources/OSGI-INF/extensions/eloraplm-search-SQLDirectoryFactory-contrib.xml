@@ -95,6 +95,17 @@
       <createTablePolicy>always</createTablePolicy>
     </directory>
     
+    <directory name="eloras_bomParts_docType">
+      <schema>vocabulary</schema>
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <table>eloras_bomparts_doctype</table>
+      <idField>id</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <readOnly>false</readOnly>
+      <dataFile>directories/eloras_bomparts_doctype.csv</dataFile>
+      <createTablePolicy>always</createTablePolicy>
+    </directory>
+    
     <!--  CM search related vocabularies -->
     <directory name="eloras_ecos_lifeCycle">
       <schema>vocabulary</schema>

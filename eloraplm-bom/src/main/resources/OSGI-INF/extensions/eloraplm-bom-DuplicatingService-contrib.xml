@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.bom.DuplicatingService">
+    
+    <extension point="types" target="com.aritu.eloraplm.core.duplicating.api.DuplicatingService">
+        <type id="BomProduct" duplicator="itemDuplicator" />
+        <type id="BomPart" duplicator="itemDuplicator" />
+        <type id="Software" duplicator="itemDuplicator" />
+        <type id="ElectronicComponent" duplicator="itemDuplicator" />
+        <type id="BomPackaging" duplicator="itemDuplicator" />
+        <type id="BomTool" duplicator="itemDuplicator" />
+        <type id="BomSpecification" duplicator="itemDuplicator" />
+    </extension>
+    
+    <extension point="duplicators" target="com.aritu.eloraplm.core.duplicating.api.DuplicatingService">
+        <duplicator id="itemDuplicator" />
+    </extension>
+    
+</component> 

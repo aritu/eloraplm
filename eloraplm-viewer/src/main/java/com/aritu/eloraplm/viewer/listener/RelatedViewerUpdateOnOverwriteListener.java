@@ -27,13 +27,14 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.IdRef;
-import org.nuxeo.ecm.core.api.SystemPrincipal;
 import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventBundle;
 import org.nuxeo.ecm.core.event.EventContext;
 import org.nuxeo.ecm.core.event.PostCommitEventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+import org.nuxeo.runtime.transaction.TransactionHelper;
+
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
@@ -70,10 +71,6 @@ public class RelatedViewerUpdateOnOverwriteListener
             if (isEventHandled(event)) {
                 DocumentEventContext docEventContext = (DocumentEventContext) eventContext;
                 DocumentModel doc = docEventContext.getSourceDocument();
-
-                if (docEventContext.getPrincipal() instanceof SystemPrincipal) {
-                    return;
-                }
 
                 if (doc.isImmutable()) {
                     // For now, we only listen when it's overwritten from the WC
@@ -154,45 +151,60 @@ public class RelatedViewerUpdateOnOverwriteListener
             if (relations != null && !relations.isEmpty()) {
                 Map<String, DocumentModel> affectedWcs = new HashMap<String, DocumentModel>();
 
-                for (DocumentModel relation : relations) {
-                    Serializable inv = relation.getPropertyValue(
-                            EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING);
-                    String docId;
-                    if (inv == null || ((long) inv) == 0L) {
-                        Serializable subj = relation.getPropertyValue(
-                                NuxeoMetadataConstants.NX_RELATION_SOURCE);
-                        docId = (String) subj;
-                    } else {
-                        Serializable obj = relation.getPropertyValue(
-                                NuxeoMetadataConstants.NX_RELATION_TARGET);
-                        docId = (String) obj;
-                    }
+                try {
+                    TransactionHelper.commitOrRollbackTransaction();
+                    TransactionHelper.startTransaction();
 
-                    DocumentModel relatedDoc = session.getDocument(
-                            new IdRef(docId));
+                    for (DocumentModel relation : relations) {
+                        Serializable inv = relation.getPropertyValue(
+                                EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING);
+                        String docId;
+                        if (inv == null || ((long) inv) == 0L) {
+                            Serializable subj = relation.getPropertyValue(
+                                    NuxeoMetadataConstants.NX_RELATION_SOURCE);
+                            docId = (String) subj;
+                        } else {
+                            Serializable obj = relation.getPropertyValue(
+                                    NuxeoMetadataConstants.NX_RELATION_TARGET);
+                            docId = (String) obj;
+                        }
 
-                    // If the related doc is a WC, the base AV will also have a
-                    // relation to the document. We have to update the viewer
-                    // file of the AV, and then just restore the WC at the end.
-                    if (relatedDoc.isImmutable()) {
-                        DocumentModel affectedWc = session.getWorkingCopy(
-                                relatedDoc.getRef());
-                        // We also exclude the docs that are checked out, or we
-                        // will end up with corrupted relations
-                        if (!affectedWc.isCheckedOut()) {
-                            log.info(logInitMsg + "Updating viewer file for |"
-                                    + relatedDoc.getId() + "|...");
-                            updateViewerFile(session, relatedDoc, baseVersion);
-                            String affectedWcId = affectedWc.getId();
-                            if (!affectedWcs.containsKey(affectedWcId)) {
-                                affectedWcs.put(affectedWcId, affectedWc);
+                        DocumentModel relatedDoc = session.getDocument(
+                                new IdRef(docId));
+
+                        // If the related doc is a WC, the base AV will also have a
+                        // relation to the document. We have to update the viewer
+                        // file of the AV, and then just restore the WC at the end.
+                        if (relatedDoc.isImmutable()) {
+                            DocumentModel affectedWc = session.getWorkingCopy(
+                                    relatedDoc.getRef());
+                            // We also exclude the docs that are checked out, or we
+                            // will end up with corrupted relations
+                            if (!affectedWc.isCheckedOut()) {
+                                log.info(logInitMsg + "Updating viewer file for |"
+                                        + relatedDoc.getId() + "|...");
+                                updateViewerFile(session, relatedDoc, baseVersion);
+                                String affectedWcId = affectedWc.getId();
+                                if (!affectedWcs.containsKey(affectedWcId)) {
+                                    affectedWcs.put(affectedWcId, affectedWc);
+                                }
                             }
                         }
                     }
-                }
 
-                log.trace(logInitMsg + "Restoring working copies...");
-                restoreAffectedWcs(session, affectedWcs);
+                    log.trace(logInitMsg + "Restoring working copies...");
+                    restoreAffectedWcs(session, affectedWcs);
+
+                } catch (Exception e) {
+                    log.error(
+                            logInitMsg + "Uncontrolled exception: "
+                                    + e.getClass().getName() + ". " + e.getMessage(),
+                            e);
+                    TransactionHelper.setTransactionRollbackOnly();
+                } finally {
+                    TransactionHelper.commitOrRollbackTransaction();
+                    TransactionHelper.startTransaction();
+                }
             }
         }
 
@@ -236,6 +248,9 @@ public class RelatedViewerUpdateOnOverwriteListener
             }
 
             affectedDoc = session.saveDocument(affectedDoc);
+
+            TransactionHelper.commitOrRollbackTransaction();
+            TransactionHelper.startTransaction();
 
             // We call again processRelatedDocs with the affectedDoc to update
             // all the levels. Only if not processed, to cut loops.

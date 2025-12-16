@@ -16,13 +16,11 @@ package com.aritu.eloraplm.om.actionbeans;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
@@ -35,7 +33,7 @@ import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextInvalidation;
 
 import com.aritu.eloraplm.constants.OmEventNames;
 import com.aritu.eloraplm.constants.OmMetadataConstants;
-import com.aritu.eloraplm.datatable.DocBasedTableBean;
+import com.aritu.eloraplm.datatable.DocBasedTable;
 import com.aritu.eloraplm.datatable.RowData;
 import com.aritu.eloraplm.om.util.OmHelper;
 
@@ -45,12 +43,13 @@ import com.aritu.eloraplm.om.util.OmHelper;
  *
  */
 
-@Name("omProcessedTableBean")
+@Name(OmProcessedTableBean.NAME)
 @Scope(CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class OmProcessedTableBean extends DocBasedTableBean
-        implements Serializable {
+public class OmProcessedTableBean extends DocBasedTable {
+
+    public static final String NAME = "omProcessedTableBean";
 
     private static final long serialVersionUID = 1L;
 
@@ -78,6 +77,11 @@ public class OmProcessedTableBean extends DocBasedTableBean
 
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty data attribute and set isInvalid attribute to true
+            setData(new ArrayList<RowData>());
+            setIsInvalid(true);
+            setHasUnreadableRows(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.datatable.createData"));
         }
@@ -86,12 +90,6 @@ public class OmProcessedTableBean extends DocBasedTableBean
     @Override
     public List<RowData> getData() {
         return super.getData();
-    }
-
-    @Override
-    @Factory(value = "omProcessedRows", scope = ScopeType.EVENT)
-    public List<RowData> getDataFromFactory() {
-        return getData();
     }
 
     @Observer(value = { OmEventNames.OM_PROCESSED_LIST_UPDATED })

@@ -19,13 +19,16 @@
                 <h:outputText styleClass="processMessage completeError" value="#{messages['eloraplm.message.error.any2PdfConverterNotAvailable']}" />
             </h:panelGroup>
             
-            <h:form id="document_header_layout_form" class="titleBlock">
-                <nxl:documentLayout documentMode="header" mode="view"
-                    value="#{currentDocument}" defaultLayout="elora_document_header"
-                    includeAnyMode="false" />
-            </h:form>
+            <div id="documentHeader">
+                <h:form id="document_header_layout_form" class="titleBlock">
+                    <nxl:documentLayout documentMode="header" mode="view"
+                        value="#{currentDocument}" defaultLayout="elora_document_header"
+                        includeAnyMode="false" />
+                </h:form>
+                
+                <ui:include src="/incl/document_actions_upperbuttons.xhtml"/>
+            </div>
             
-            <ui:include src="/incl/document_actions_upperbuttons.xhtml"/>
             <ui:include src="/incl/message_banner.xhtml"/>
             
             <nxl:widget name="documentHeaderActions" mode="view" value="#{currentDocument}" />

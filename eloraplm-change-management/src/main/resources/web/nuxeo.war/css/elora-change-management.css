@@ -4,27 +4,21 @@
 }
 
 #fancybox-content .cmItemTable .labelColumn {
-  width: 12em;
-  white-space:nowrap;
+    width: 12em;
+    white-space: nowrap;
 }
 
 .summaryCmItemsTable {
     font-size: 0.9em;
 }
 
-.cmBatchProcessInfoTable 
-{
+.cmBatchProcessInfoTable {
     font-size: 0.9em;
     width: 100%;
-    border-collapse: separate;
-    /*border-spacing: 2px;
-    border: 1px solid #e6e9ef;*/
     margin-bottom: 20px;
-    
 }
 
-/*.cmBatchProcessInfoTable td,*/
- .cmBatchProcessInfoTable th {
+.cmBatchProcessInfoTable th {
     border: 1px solid #e6e9ef;
     padding: 0px;
     text-align: center;
@@ -34,4 +28,5 @@
     border: 1px solid #e6e9ef;
     padding: 0px;
     text-align: center;
+    vertical-align: middle;
 }

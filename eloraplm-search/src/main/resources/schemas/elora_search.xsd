@@ -1,65 +1,168 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
- xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
- xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/elora_search" 
- targetNamespace="http://www.nuxeo.org/ecm/project/schemas/elora_search"
- xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/elora_search" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/elora_search"
+    xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
 
+    <xs:include schemaLocation="base.xsd" />
 
-<xs:include schemaLocation="base.xsd" />
+    <xs:element name="elo_reference" type="xs:string" />
+    <xs:element name="dc_title" type="xs:string" />
+    <xs:element name="dc_title_fulltext" type="xs:string" />
+    <xs:element name="dc_description_fulltext" type="xs:string" />
+    
+    <xs:element name="dc_expired_min" type="xs:date" />
+    <xs:element name="dc_expired_max" type="xs:date" />
+    
+    <xs:element name="bomitem_bomItemType" type="nxs:stringList"/>  
+    <xs:element name="system_primaryType" type="nxs:stringList"/>
+    <xs:element name="system_currentLifeCycleState" type="nxs:stringList"/>
+    <xs:element name="search_customer" type="nxs:stringList"/>
+    <xs:element name="search_supplier" type="nxs:stringList"/>
+    <xs:element name="search_partaker" type="nxs:stringList"/>
+    <xs:element name="dc_lastContributor" type="nxs:stringList"/>
+    <xs:element name="dc_creator" type="nxs:stringList"/>
+    <xs:element name="system_mixinType" type="nxs:stringList"/>
+    <xs:element name="search_partClassification" type="nxs:stringList"/>
+    <xs:element name="search_partMaterials" type="nxs:stringList"/>
+    <xs:element name="search_partMaterial" type="xs:string" />
+    <xs:element name="qm_subject" type="nxs:stringList"/>
+    <xs:element name="search_productClassification" type="nxs:stringList"/>
+    <xs:element name="search_specificationClassification" type="nxs:stringList"/>
+    <xs:element name="search_packagingClassification" type="nxs:stringList"/>
+    <xs:element name="search_toolClassification" type="nxs:stringList"/>
+    <xs:element name="search_responsible" type="nxs:stringList"/>
+    <xs:element name="search_owner" type="nxs:stringList"/>
+    <xs:element name="cad_cadType" type="nxs:stringList"/>
+    <xs:element name="cad_cadClassification" type="nxs:stringList"/>
+    <xs:element name="cad_materials" type="xs:string" />
+    <xs:element name="cad_authoringTool" type="nxs:stringList" />
+    <xs:element name="cad_authoringToolVersion" type="xs:string" />
+    <xs:element name="cad_isWeldment" type="xs:boolean" />
+    <xs:element name="cad_activeConfiguration" type="xs:string" />
+    <xs:element name="cadprt_isSheetMetal" type="xs:boolean" />
+    <xs:element name="caddrw_sheetFormat" type="xs:string" />
+    <xs:element name="caddrw_scale" type="xs:string" />
+    <xs:element name="caddrw_numberOfSheets_min">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="caddrw_numberOfSheets_max">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="caddrw_templateName" type="xs:string" />
+    <xs:element name="cmeco_ecoType" type="nxs:stringList"/>
+    <xs:element name="prj_projectType" type="nxs:stringList"/>
+    <xs:element name="elo_externalLink" type="xs:string" />
+    
+    <xs:element name="plan_priority" type="nxs:stringList"/>
+    <xs:element name="plan_realStartDate_min" type="xs:date" />
+    <xs:element name="plan_realStartDate_max" type="xs:date" />
+    <xs:element name="plan_plannedEndDate_min" type="xs:date" />
+    <xs:element name="plan_plannedEndDate_max" type="xs:date" />
+    <xs:element name="plan_realEndDate_min" type="xs:date" />
+    <xs:element name="plan_realEndDate_max" type="xs:date" />
+    <xs:element name="plan_progress_min" type="xs:integer" default="0" />
+    <xs:element name="plan_progress_max" type="xs:integer" default="100" />
+    
+    <xs:element name="checkin_lastCheckedInBy" type="nxs:stringList"/>
+    <xs:element name="checkin_lastCheckedInDate_min" type="xs:date" />
+    <xs:element name="checkin_lastCheckedInDate_max" type="xs:date" />
+    <xs:element name="review_lastReviewer" type="nxs:stringList"/>
+    <xs:element name="review_lastReviewed_min" type="xs:date" />
+    <xs:element name="review_lastReviewed_max" type="xs:date" />
+    
+    <xs:element name="lock_owner" type="nxs:stringList"/>
+    <xs:element name="lock_created_min" type="xs:date" />
+    <xs:element name="lock_created_max" type="xs:date" />
+    
+    <xs:element name="oem_manufacturer" type="nxs:stringList"/>
+    <xs:element name="oem_partNumber" type="xs:string"/>
 
-<!--   <xs:simpleType name="stringList">  -->
-<!--     <xs:list itemType="xs:string"/>  -->
-<!--   </xs:simpleType>   -->
-  
-  <xs:element name="elo_reference" type="xs:string" />
-  <xs:element name="dc_title" type="xs:string" />
-  <xs:element name="dc_title_fulltext" type="xs:string" />
-  
-  <xs:element name="dc_expired_min" type="xs:date" />
-  <xs:element name="dc_expired_max" type="xs:date" />
-  
-  <xs:element name="bomitem_bomItemType" type="nxs:stringList"/>  
-  <xs:element name="system_primaryType" type="nxs:stringList"/>
-  <xs:element name="system_currentLifeCycleState" type="nxs:stringList"/>
-  <xs:element name="search_customer" type="nxs:stringList"/>
-  <xs:element name="search_manufacturer" type="nxs:stringList"/>
-  <xs:element name="dc_lastContributor" type="nxs:stringList"/>
-  <xs:element name="dc_creator" type="nxs:stringList"/>
-  <xs:element name="system_mixinType" type="nxs:stringList"/>
-  <xs:element name="search_partClassification" type="nxs:stringList"/>
-  <xs:element name="search_productClassification" type="nxs:stringList"/>
-  <xs:element name="search_specificationClassification" type="nxs:stringList"/>
-  <xs:element name="search_packagingClassification" type="nxs:stringList"/>
-  <xs:element name="search_toolClassification" type="nxs:stringList"/>
-  <xs:element name="search_responsible" type="nxs:stringList"/>
-  <xs:element name="search_owner" type="nxs:stringList"/>
-  <xs:element name="cad_cadType" type="nxs:stringList"/>
-  <xs:element name="cad_cadClassification" type="nxs:stringList"/>
-  <xs:element name="cad_cadMaterial" type="xs:string" />
-  <xs:element name="cmeco_ecoType" type="nxs:stringList"/>
-  <xs:element name="prj_projectType" type="nxs:stringList"/>
-  
-  <xs:element name="checkin_lastCheckedInBy" type="nxs:stringList"/>
-  <xs:element name="checkin_lastCheckedInDate_min" type="xs:date" />
-  <xs:element name="checkin_lastCheckedInDate_max" type="xs:date" />
-  <xs:element name="review_lastReviewer" type="nxs:stringList"/>
-  <xs:element name="review_lastReviewed_min" type="xs:date" />
-  <xs:element name="review_lastReviewed_max" type="xs:date" />
-  
-  <xs:element name="lock_owner" type="nxs:stringList"/>
-  <xs:element name="lock_created_min" type="xs:date" />
-  <xs:element name="lock_created_max" type="xs:date" />
-  
-  
-  <!-- aggregates field-->
-  <xs:element name="system_primaryType_agg" type="nxs:stringList"/>
-  <xs:element name="system_currentLifeCycleState_agg" type="nxs:stringList"/>
-  <xs:element name="search_customer_agg" type="nxs:stringList"/>
-  <xs:element name="search_manufacturer_agg" type="nxs:stringList"/>
-  <xs:element name="dc_lastContributor_agg" type="nxs:stringList"/>
-  <xs:element name="system_mixinType_agg" type="nxs:stringList"/>
-  
+    <xs:element name="mass_min">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="mass_max">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="massUnit" type="xs:string" default="kg"/>
+    <xs:element name="volume_min">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="volume_max">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="volumeUnit" type="xs:string" default="m3"/>
+    <xs:element name="surface_min">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="surface_max">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="surfaceUnit" type="xs:string" default="m2"/>
+
+    <xs:element name="bompart_source" type="nxs:stringList" />
+    <xs:element name="bompart_standard" type="nxs:stringList" />
+    <xs:element name="bompart_effectiveDate_min" type="xs:date" />
+    <xs:element name="bompart_effectiveDate_max" type="xs:date" />
+    <xs:element name="bomitem_estimatedCost_min">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+                </xs:restriction>
+            </xs:simpleType>
+    </xs:element>
+    <xs:element name="bomitem_estimatedCost_max">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="^(-?(\d+)((\.\d*)?))$" />
+                </xs:restriction>
+            </xs:simpleType>
+    </xs:element>
+    <xs:element name="bomitem_costUnit" type="xs:string"/>
+    <xs:element name="bomitem_externalVersion" type="xs:string"/>
+    <xs:element name="soft_checksum" type="xs:string"/>
+    
+    <!-- aggregates field-->
+    <xs:element name="system_primaryType_agg" type="nxs:stringList"/>
+    <xs:element name="system_currentLifeCycleState_agg" type="nxs:stringList"/>
+    <xs:element name="search_customer_agg" type="nxs:stringList"/>
+    <xs:element name="search_supplier_agg" type="nxs:stringList"/>
+    <xs:element name="search_partaker_agg" type="nxs:stringList"/>
+    <xs:element name="dc_lastContributor_agg" type="nxs:stringList"/>
+    <xs:element name="system_mixinType_agg" type="nxs:stringList"/>
 
 </xs:schema>

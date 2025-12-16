@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.integration.RelationManagementService.contrib">
+    
+    <extension point="allowedRelations" target="com.aritu.eloraplm.core.relations.api.RelationManagementService">
+        
+        <!-- ******************* -->
+        <!-- CAD draft relations -->
+        <!-- ******************* -->
+        
+        <!-- HasEloraDraft -->
+        
+        <relation predicateUri="HasEloraDraft">
+            <source>
+                <type excludeInherited="true">CadAssembly</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadAssemblyDraft</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="HasEloraDraft">
+            <source>
+                <type excludeInherited="true">CadPart</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadPartDraft</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="HasEloraDraft">
+            <source>
+                <type excludeInherited="true">CadDrawing</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadDrawingDraft</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="HasEloraDraft">
+            <source>
+                <type excludeInherited="true">CadDesignTable</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadDesignTableDraft</type>
+            </target>
+        </relation>
+        
+    </extension>
+    
+</component>

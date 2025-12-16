@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.bom.lists.RelationManagementService.contrib">
+    
+    <extension point="allowedRelations" target="com.aritu.eloraplm.core.relations.api.RelationManagementService">
+        
+        <!-- ****************** -->
+        <!-- BOM List relations -->
+        <!-- ****************** -->
+        
+        <!--BomHasList -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomHasList">
+            <source>
+                <facet>BomDocument</facet>
+            </source>
+            <target>
+                <type>BomList</type>
+            </target>
+        </relation>
+        
+        
+        <!-- BomListHasEntry -->
+        <relation predicateUri="http://eloraplm.aritu.com/relations/BomListHasEntry">
+            <source>
+                <type>BomList</type>
+            </source>
+            <target>
+                <facet>BomDocument</facet>
+                <type>Note</type>
+            </target>
+        </relation>
+        
+        
+    </extension>
+    
+</component>

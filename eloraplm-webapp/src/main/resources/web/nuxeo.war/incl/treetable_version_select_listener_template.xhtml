@@ -1,0 +1,16 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:p="http://primefaces.org/ui"
+    >
+    
+    <p:ajax
+        event="change"
+        listener="#{layoutValue.refreshNode(component.namingContainer, node)}"
+        process="@this"
+        partialSubmit="true"
+        onstart="preparePartialAjaxUpdate(cfg.source)"
+        onsuccess="markTreeNodeAsModified()" />
+    
+</ui:composition>

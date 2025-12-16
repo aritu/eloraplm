@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.seam.contexts.Context;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.Messages;
@@ -85,12 +86,6 @@ public class ViewerFileCreationListener implements EventListener {
                     }
                 }
 
-                /* RelatedViewerUpdateOnOverwriteListener fires the event in unrestricted mode, so the principal is system
-                if (docEventContext.getPrincipal() instanceof SystemPrincipal) {
-                    return;
-                }
-                */
-
                 if (doc.hasSchema(EloraSchemaConstants.ELORA_VIEWER)) {
 
                     try {
@@ -129,18 +124,24 @@ public class ViewerFileCreationListener implements EventListener {
 
                     } catch (OverwriteOriginalViewerException e) {
                         log.error(logInitMsg + e.getMessage(), e);
-                        FacesMessages facesMessages = (FacesMessages) Contexts.getConversationContext().get(
-                                FacesMessages.class);
-                        facesMessages.add(StatusMessage.Severity.WARN,
-                                Messages.instance().get(
-                                        "eloraplm.message.error.viewer.overwriteOriginalViewerException"));
+                        Context ctxt = Contexts.getConversationContext();
+                        if (ctxt != null) {
+                            FacesMessages facesMessages = (FacesMessages) ctxt.get(
+                                    FacesMessages.class);
+                            facesMessages.add(StatusMessage.Severity.WARN,
+                                    Messages.instance().get(
+                                            "eloraplm.message.error.viewer.overwriteOriginalViewerException"));
+                        }
                     } catch (Exception e) {
                         log.error(logInitMsg + e.getMessage(), e);
-                        FacesMessages facesMessages = (FacesMessages) Contexts.getConversationContext().get(
-                                FacesMessages.class);
-                        facesMessages.add(StatusMessage.Severity.ERROR,
-                                Messages.instance().get(
-                                        "eloraplm.message.error.viewer.createViewer"));
+                        Context ctxt = Contexts.getConversationContext();
+                        if (ctxt != null) {
+                            FacesMessages facesMessages = (FacesMessages) ctxt.get(
+                                    FacesMessages.class);
+                            facesMessages.add(StatusMessage.Severity.ERROR,
+                                    Messages.instance().get(
+                                            "eloraplm.message.error.viewer.createViewer"));
+                        }
                     }
                 }
 

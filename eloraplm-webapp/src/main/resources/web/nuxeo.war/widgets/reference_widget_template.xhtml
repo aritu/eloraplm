@@ -9,6 +9,7 @@
 
     <nxu:set var="targetDoc" value="#{layout.mode == 'create' ? changeableDocument : currentDocument}">
     <nxu:set var="mode" value="#{codeCreationActions.getModeForType(targetDoc.type)}">
+    <nxu:set var="editable" value="#{codeCreationActions.getEditableForType(targetDoc.type)}">    
     <nxu:set var="isUnderTemplateRoot" value="#{eloraDocumentTemplatesActions.isCurrentDocumentUnderTemplateRoot()}">
     <nxu:set var="required" value="#{not isUnderTemplateRoot and
         (mode == 'manualRequired' or 
@@ -31,7 +32,7 @@
                 
                 <c:if test="#{not isUnderTemplateRoot}">
                     
-                    <c:if test="#{widget.mode == 'edit'}">
+                    <c:if test="#{widget.mode == 'edit' and (layout.mode == 'create' or (layout.mode == 'edit' and editable))}">
                         
                         <c:if test="#{mode == 'auto' and layout.mode == 'create'}">
                             <h:outputText value="#{messages['eloraplm.label.reference.auto']}" />
@@ -67,7 +68,7 @@
                         
                     </c:if>
             
-                    <c:if test="#{widget.mode == 'view'}">
+                    <c:if test="#{widget.mode == 'view' or not editable}">
                         #{field}
                     </c:if>
                     
@@ -76,6 +77,7 @@
             
         </h:panelGrid>
     
+    </nxu:set>
     </nxu:set>
     </nxu:set>
     </nxu:set>

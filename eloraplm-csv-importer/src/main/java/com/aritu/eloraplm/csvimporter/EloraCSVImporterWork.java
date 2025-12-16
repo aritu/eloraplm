@@ -70,6 +70,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -92,8 +93,16 @@ import org.nuxeo.ecm.core.schema.types.primitives.IntegerType;
 import org.nuxeo.ecm.core.schema.types.primitives.LongType;
 import org.nuxeo.ecm.core.schema.types.primitives.StringType;
 import org.nuxeo.ecm.core.work.AbstractWork;
+import org.nuxeo.ecm.platform.comment.api.CommentManager;
+import org.nuxeo.ecm.platform.comment.workflow.utils.CommentsConstants;
+import org.nuxeo.ecm.platform.comment.workflow.utils.FollowTransitionUnrestricted;
 import org.nuxeo.ecm.platform.ec.notification.service.NotificationService;
 import org.nuxeo.ecm.platform.ec.notification.service.NotificationServiceHelper;
+import org.nuxeo.ecm.platform.relations.api.Node;
+import org.nuxeo.ecm.platform.relations.api.RelationManager;
+import org.nuxeo.ecm.platform.relations.api.Resource;
+import org.nuxeo.ecm.platform.relations.api.impl.LiteralImpl;
+import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.types.TypeManager;
 import org.nuxeo.ecm.platform.ui.web.rest.api.URLPolicyService;
 import org.nuxeo.ecm.platform.url.DocumentViewImpl;
@@ -102,25 +111,20 @@ import org.nuxeo.ecm.platform.usermanager.UserManager;
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
+import com.aritu.eloraplm.constants.EloraMimeTypeConstants;
+import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 import com.aritu.eloraplm.constants.NuxeoFacetConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
-import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
-import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
+import com.aritu.eloraplm.core.relations.RelationGraph;
+import com.aritu.eloraplm.core.relations.api.RelationManagementService;
+import com.aritu.eloraplm.core.relations.util.CommonRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.pdm.checkin.api.CheckinManager;
 import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.aritu.eloraplm.queries.util.EloraQueryHelper;
 
-/**
- * Work task to import form a CSV file. Because the file is read from the local
- * filesystem, this must be executed in a local queue. Since NXP-15252 the CSV
- * reader manages "records", not "lines".
- *
- * @since 5.7
- */
 public class EloraCSVImporterWork extends AbstractWork {
 
     // TODO:: konstante haek konstanteen klase batera atera kanpora???
@@ -141,6 +145,8 @@ public class EloraCSVImporterWork extends AbstractWork {
 
     public static final String LABEL_CSV_IMPORTER_DOCUMENT_UPDATED = "label.csv.importer.documentUpdated";
 
+    // TODO LEIRE: label hau aldatu eta {0} gehitu bukaeran exzeptioaren mezua
+    // agertzeko
     public static final String LABEL_CSV_IMPORTER_UNABLE_TO_CREATE = "label.csv.importer.unableToCreate";
 
     public static final String LABEL_CSV_IMPORTER_PARENT_DOES_NOT_EXIST = "label.csv.importer.parentDoesNotExist";
@@ -149,6 +155,8 @@ public class EloraCSVImporterWork extends AbstractWork {
 
     public static final String LABEL_CSV_IMPORTER_NOT_ALLOWED_SUB_TYPE = "label.csv.importer.notAllowedSubType";
 
+    // TODO LEIRE: badirudi itzulpen hau Nuxeok ez duela egin. Gure bat
+    // erabili????
     public static final String LABEL_CSV_IMPORTER_UNABLE_TO_SAVE = "label.csv.importer.unableToSave";
 
     public static final String LABEL_CSV_IMPORTER_ERROR_IMPORTING_LINE = "label.csv.importer.errorImportingLine";
@@ -161,7 +169,7 @@ public class EloraCSVImporterWork extends AbstractWork {
 
     public static final String LABEL_CSV_IMPORTER_MISSING_PARENT_PATH_VALUE = "label.csv.importer.missingParentPathValue";
 
-    public static final String LABEL_CSV_IMPORTER_MISSING_DO_CHECKIN_VALUE = "eloraplm.label.csv.importer.missingDoCheckinValue";
+    public static final String LABEL_CSV_IMPORTER_MISSING_COLUMN_VALUE = "eloraplm.label.csv.importer.missingColumnValue";
 
     public static final String LABEL_CSV_IMPORTER_WRONG_DO_CHECKIN_VALUE = "eloraplm.label.csv.importer.wrongDoCheckinValue";
 
@@ -171,23 +179,25 @@ public class EloraCSVImporterWork extends AbstractWork {
 
     public static final String LABEL_CSV_IMPORTER_EMPTY_PROPERTIES = "eloraplm.label.csv.importer.emptyProperties";
 
-    // public static final String LABEL_CSV_IMPORTER_MISSING_NAME_TYPE_COLUMN =
-    // "label.csv.importer.missingNameOrTypeColumn";
-
-    public static final String LABEL_CSV_IMPORTER_MISSING_NAME_TYPE_PARENT_PATH_OR_DO_CHECKIN_COLUMN = "eloraplm.label.csv.importer.missingNameTypeParentPathOrDoCheckinColumn";
+    public static final String LABEL_CSV_IMPORTER_MISSING_DOCUMENTS_COLUMNS = "eloraplm.label.csv.importer.missingDocumentsColumns";
 
     // ---------------------------------------------------------
     // Relations...
     public static final String LABEL_CSV_IMPORTER_SOURCE_DOC_CANNOT_BE_IDENTIFIED = "eloraplm.label.csv.importer.sourceDocumentCannotBeIdentified";
 
-    public static final String LABEL_CSV_IMPORTER_MISSING_RELATION_PREDICATE_VALUE = "eloraplm.label.csv.importer.missingRelationPredicateValue";
-
     public static final String LABEL_CSV_IMPORTER_TARGET_DOC_CANNOT_BE_IDENTIFIED = "eloraplm.label.csv.importer.targetDocumentCannotBeIdentified";
 
-    public static final String LABEL_CSV_IMPORTER_WRONG_IS_MANUAL_VALUE = "eloraplm.label.csv.importer.wrongIsManualValue";
+    // TODO LEIRE: itzulpen hauek kendu, ez bait dira erabiliko
+    // public static final String LABEL_CSV_IMPORTER_WRONG_IS_MANUAL_VALUE =
+    // "eloraplm.label.csv.importer.wrongIsManualValue";
+    //
+    // public static final String
+    // LABEL_CSV_IMPORTER_WRONG_IS_EXCLUDED_FROM_MAPPING_VALUE =
+    // "eloraplm.label.csv.importer.wrongIsExcludedFromMappingValue";
 
     public static final String LABEL_CSV_IMPORTER_MISSING_RELATIONS_COLUMNS = "eloraplm.label.csv.importer.missingRelationsColumns";
 
+    //
     public static final String LABEL_CSV_IMPORTER_UNABLE_TO_CREATE_RELATION = "eloraplm.label.csv.importer.unableToCreateRelation";
 
     public static final String LABEL_CSV_IMPORTER_RELATION_CREATED = "eloraplm.label.csv.importer.relationCreated";
@@ -203,6 +213,20 @@ public class EloraCSVImporterWork extends AbstractWork {
     public static final String LABEL_CSV_IMPORTER_UNABLE_TO_CREATE_PROXY = "eloraplm.label.csv.importer.unableToCreateProxy";
 
     public static final String LABEL_CSV_IMPORTER_PROXY_CREATED = "eloraplm.label.csv.importer.proxyCreated";
+
+    // ---------------------------------------------------------
+    // COMMENTS...
+    public static final String LABEL_CSV_IMPORTER_MISSING_COMMENTS_COLUMNS = "eloraplm.label.csv.importer.missingCommentsColumns";
+
+    public static final String LABEL_CSV_IMPORT_COMMENT_DOC_CANNOT_BE_IDENTIFIED = "eloraplm.label.csv.commentImporter.documentCannotBeIdentified";
+
+    public static String LABEL_CSV_IMPORT_COMMENT_ATTRIBUTES_EMPTY = "eloraplm.label.csv.commentImporter.commentAttributesEmpty";
+
+    public static String LABEL_CSV_IMPORT_COMMENT_INVALID_CREATION_DATE = "eloraplm.label.csv.commentImporter.invalidCreationDate";
+
+    public static final String LABEL_CSV_IMPORTER_UNABLE_TO_CREATE_COMMENT = "eloraplm.label.csv.importer.unableToCreateComment";
+
+    public static final String LABEL_CSV_IMPORTER_COMMENT_CREATED = "eloraplm.label.csv.importer.commentCreated";
 
     // ---------------------------------------------------------
 
@@ -260,6 +284,10 @@ public class EloraCSVImporterWork extends AbstractWork {
 
     protected String proxiesCsvFileName;
 
+    protected File commentsCsvFile;
+
+    protected String commentsCsvFileName;
+
     protected EloraCSVImporterOptions options;
 
     protected transient DateFormat dateformat;
@@ -272,6 +300,8 @@ public class EloraCSVImporterWork extends AbstractWork {
 
     protected List<EloraCSVImportLog> proxiesImportLogs = new ArrayList<>();
 
+    protected List<EloraCSVImportLog> commentsImportLogs = new ArrayList<>();
+
     protected DocumentModel resultDoc;
 
     public EloraCSVImporterWork(String id) {
@@ -282,10 +312,11 @@ public class EloraCSVImporterWork extends AbstractWork {
             String username, File csvFile, String csvFileName,
             File relationsCsvFile, String relationsCsvFileName,
             File proxiesCsvFile, String proxiesCsvFileName,
+            File commentsCsvFile, String commentsCsvFileName,
             EloraCSVImporterOptions options) {
 
         super(EloraCSVImportId.create(repositoryName, parentPath, csvFile,
-                relationsCsvFile, proxiesCsvFile));
+                relationsCsvFile, proxiesCsvFile, commentsCsvFile));
         setDocument(repositoryName, null);
         setOriginatingUsername(username);
         this.parentPath = parentPath;
@@ -296,6 +327,8 @@ public class EloraCSVImporterWork extends AbstractWork {
         this.relationsCsvFileName = relationsCsvFileName;
         this.proxiesCsvFile = proxiesCsvFile;
         this.proxiesCsvFileName = proxiesCsvFileName;
+        this.commentsCsvFile = commentsCsvFile;
+        this.commentsCsvFileName = commentsCsvFileName;
         this.options = options;
         startDate = new Date();
     }
@@ -322,6 +355,10 @@ public class EloraCSVImporterWork extends AbstractWork {
         return new ArrayList<>(proxiesImportLogs);
     }
 
+    public List<EloraCSVImportLog> getCommentsImportLogs() {
+        return new ArrayList<>(commentsImportLogs);
+    }
+
     public DocumentModel getResultDoc() {
         return resultDoc;
     }
@@ -338,6 +375,7 @@ public class EloraCSVImporterWork extends AbstractWork {
             Reader inDocuments = null;
             Reader inRelations = null;
             Reader inProxies = null;
+            Reader inComments = null;
             if (csvFile != null) {
                 inDocuments = newReader(csvFile);
             }
@@ -346,6 +384,9 @@ public class EloraCSVImporterWork extends AbstractWork {
             }
             if (proxiesCsvFile != null) {
                 inProxies = newReader(proxiesCsvFile);
+            }
+            if (commentsCsvFile != null) {
+                inComments = newReader(commentsCsvFile);
             }
 
             // First import documents
@@ -408,6 +449,26 @@ public class EloraCSVImporterWork extends AbstractWork {
                 appendOutputFileToResultDocument(resultDoc, outputFile);
             }
 
+            // Then, if defined, import comments
+            if (commentsCsvFile != null) {
+                // Reader commentsIn = newReader(commentsCsvFile);
+                CSVParser commentsParser = CSVFormat.DEFAULT.withEscape(
+                        options.getEscapeCharacter()).withHeader().parse(
+                                inComments);
+                File outputFile = createOutputFile(commentsCsvFileName);
+                FileWriter outputFileWriter = new FileWriter(outputFile);
+                CSVPrinter csvFilePrinter = createCsvFilePrinter(
+                        outputFileWriter, commentsParser.getHeaderMap());
+
+                doImportComments(commentsParser, csvFilePrinter);
+
+                outputFileWriter.flush();
+                outputFileWriter.close();
+                csvFilePrinter.close();
+
+                appendOutputFileToResultDocument(resultDoc, outputFile);
+            }
+
         } catch (IOException | EloraException e) {
             logError(importLogs, 0, "Error while doing the import: %s",
                     LABEL_CSV_IMPORTER_ERROR_DURING_IMPORT, e.getMessage());
@@ -439,20 +500,32 @@ public class EloraCSVImporterWork extends AbstractWork {
             logError(importLogs, 0, errorMsg, LABEL_CSV_IMPORTER_EMPTY_FILE);
             return;
         }
-        if (!header.containsKey(EloraCSVImportConstants.CSV_NAME_COL)
-                || !header.containsKey(EloraCSVImportConstants.CSV_TYPE_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_PARENT_PATH_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_DO_CHECKIN_COL)) {
 
-            String errorMsg = "Missing 'name', 'type', 'parentPath' or 'doCheckin' column";
+        String[] mandatoryColumns = {
+                EloraCSVImportConstants.CSV_IMPORT_DOC_NAME_COL,
+                EloraCSVImportConstants.CSV_IMPORT_DOC_TYPE_COL,
+                EloraCSVImportConstants.CSV_IMPORT_DOC_PARENT_PATH_COL,
+                EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL };
+        String missingColumns = "";
+
+        for (String mandatoryColumn : mandatoryColumns) {
+            if (!header.containsKey(mandatoryColumn)) {
+                if (!missingColumns.isEmpty()) {
+                    missingColumns += ", ";
+                }
+                missingColumns += mandatoryColumn;
+            }
+        }
+        if (!missingColumns.isEmpty()) {
+            String errorMsg = "Missing " + missingColumns + " columns.";
             log.error(errorMsg);
             csvFilePrinter.print(errorMsg);
             logError(importLogs, 0, errorMsg,
-                    LABEL_CSV_IMPORTER_MISSING_NAME_TYPE_PARENT_PATH_OR_DO_CHECKIN_COLUMN);
+                    LABEL_CSV_IMPORTER_MISSING_DOCUMENTS_COLUMNS,
+                    missingColumns);
             return;
         }
+
         try {
             int batchSize = options.getBatchSize();
             long docsCreatedCount = 0;
@@ -488,29 +561,31 @@ public class EloraCSVImporterWork extends AbstractWork {
                                 EloraCSVImportConstants.CSV_RESULT_ERROR_VAL,
                                 resultMsg);
                     }
-                    /*} catch (EloraException e) {
-                    // try next line
-                    // Throwable unwrappedException = unwrapException(e);
-                    logError(importLogs, parser.getRecordNumber(),
-                            "Error while importing line: %s",
-                            LABEL_CSV_IMPORTER_ERROR_IMPORTING_LINE,
-                            e.getMessage());
-                    log.error(e.getMessage(), e);
-                    writeResultRecord(csvFilePrinter, record,
-                            EloraCSVImportConstants.CSV_RESULT_ERROR_VAL,
-                            e.getMessage());
-                    } catch (NuxeoException e) {
-                    // try next line
-                    Throwable ue = unwrapException(e);
-                    logError(importLogs, parser.getRecordNumber(),
-                            "Error while importing line: %s",
-                            LABEL_CSV_IMPORTER_ERROR_IMPORTING_LINE,
-                            ue.getMessage());
-                    log.error(ue.getMessage(), ue);
-                    writeResultRecord(csvFilePrinter, record,
-                            EloraCSVImportConstants.CSV_RESULT_ERROR_VAL,
-                            ue.getMessage());
-                    }*/
+                    /*
+                     * } catch (EloraException e) {
+                     * // try next line
+                     * // Throwable unwrappedException = unwrapException(e);
+                     * logError(importLogs, parser.getRecordNumber(),
+                     * "Error while importing line: %s",
+                     * LABEL_CSV_IMPORTER_ERROR_IMPORTING_LINE,
+                     * e.getMessage());
+                     * log.error(e.getMessage(), e);
+                     * writeResultRecord(csvFilePrinter, record,
+                     * EloraCSVImportConstants.CSV_RESULT_ERROR_VAL,
+                     * e.getMessage());
+                     * } catch (NuxeoException e) {
+                     * // try next line
+                     * Throwable ue = unwrapException(e);
+                     * logError(importLogs, parser.getRecordNumber(),
+                     * "Error while importing line: %s",
+                     * LABEL_CSV_IMPORTER_ERROR_IMPORTING_LINE,
+                     * ue.getMessage());
+                     * log.error(ue.getMessage(), ue);
+                     * writeResultRecord(csvFilePrinter, record,
+                     * EloraCSVImportConstants.CSV_RESULT_ERROR_VAL,
+                     * ue.getMessage());
+                     * }
+                     */
                 } catch (Exception e) {
                     // try next line
                     // Throwable unwrappedException = unwrapException(e);
@@ -555,22 +630,24 @@ public class EloraCSVImporterWork extends AbstractWork {
             throws EloraException {
         String resultMsg = null;
 
-        final String name = record.get(EloraCSVImportConstants.CSV_NAME_COL);
-        final String type = record.get(EloraCSVImportConstants.CSV_TYPE_COL);
+        final String name = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_DOC_NAME_COL);
+        final String type = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_DOC_TYPE_COL);
         final String parentPath = record.get(
-                EloraCSVImportConstants.CSV_PARENT_PATH_COL);
+                EloraCSVImportConstants.CSV_IMPORT_DOC_PARENT_PATH_COL);
         boolean doCheckin = false;
         String doCheckinStr = record.get(
-                EloraCSVImportConstants.CSV_DO_CHECKIN_COL);
+                EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL);
 
         String checkinComment = "";
         if (header.containsKey(
-                EloraCSVImportConstants.CSV_CHECHIN_COMMENT_COL)) {
+                EloraCSVImportConstants.CSV_IMPORT_DOC_CHECHIN_COMMENT_COL)) {
             checkinComment = record.get(
-                    EloraCSVImportConstants.CSV_CHECHIN_COMMENT_COL);
+                    EloraCSVImportConstants.CSV_IMPORT_DOC_CHECHIN_COMMENT_COL);
         }
         if (StringUtils.isBlank(checkinComment)) {
-            checkinComment = EloraCSVImportConstants.CHECKIN_DEFAULT_COMMENT;
+            checkinComment = EloraCSVImportConstants.CSV_IMPORT_DOC_CHECKIN_DEFAULT_COMMENT;
         }
         String reference = "";
         if (header.containsKey(EloraMetadataConstants.ELORA_ELO_REFERENCE)) {
@@ -579,16 +656,16 @@ public class EloraCSVImporterWork extends AbstractWork {
 
         if (StringUtils.isBlank(name)) {
             resultMsg = "Missing 'name' value";
-            log.error("record.isSet="
-                    + record.isSet(EloraCSVImportConstants.CSV_NAME_COL));
+            log.error("record.isSet=" + record.isSet(
+                    EloraCSVImportConstants.CSV_IMPORT_DOC_NAME_COL));
             logError(importLogs, record.getRecordNumber(), resultMsg,
                     LABEL_CSV_IMPORTER_MISSING_NAME_VALUE);
             return resultMsg;
         }
         if (StringUtils.isBlank(type)) {
             resultMsg = "Missing 'type' value";
-            log.error("record.isSet="
-                    + record.isSet(EloraCSVImportConstants.CSV_TYPE_COL));
+            log.error("record.isSet=" + record.isSet(
+                    EloraCSVImportConstants.CSV_IMPORT_DOC_TYPE_COL));
             logError(importLogs, record.getRecordNumber(), resultMsg,
                     LABEL_CSV_IMPORTER_MISSING_TYPE_VALUE);
             return resultMsg;
@@ -596,7 +673,7 @@ public class EloraCSVImporterWork extends AbstractWork {
         if (StringUtils.isBlank(parentPath)) {
             resultMsg = "Missing 'parentPath' value";
             log.error("record.isSet=" + record.isSet(
-                    EloraCSVImportConstants.CSV_PARENT_PATH_COL));
+                    EloraCSVImportConstants.CSV_IMPORT_DOC_PARENT_PATH_COL));
             logError(importLogs, record.getRecordNumber(), resultMsg,
                     LABEL_CSV_IMPORTER_MISSING_PARENT_PATH_VALUE);
             return resultMsg;
@@ -605,7 +682,7 @@ public class EloraCSVImporterWork extends AbstractWork {
         DocumentType docType = Framework.getLocalService(
                 SchemaManager.class).getDocumentType(type);
         if (docType == null) {
-            resultMsg = "The type |" + type + "does not exist";
+            resultMsg = "The type |" + type + "| does not exist";
             logError(importLogs, record.getRecordNumber(),
                     "The type '%s' does not exist",
                     LABEL_CSV_IMPORTER_NOT_EXISTING_TYPE, type);
@@ -613,11 +690,14 @@ public class EloraCSVImporterWork extends AbstractWork {
         }
 
         if (StringUtils.isBlank(doCheckinStr)) {
-            resultMsg = "Missing 'doCheckin' value";
-            log.error("record.isSet="
-                    + record.isSet(EloraCSVImportConstants.CSV_DO_CHECKIN_COL));
+            resultMsg = "Missing "
+                    + EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL
+                    + " value";
+            log.error("record.isSet=" + record.isSet(
+                    EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL));
             logError(importLogs, record.getRecordNumber(), resultMsg,
-                    LABEL_CSV_IMPORTER_MISSING_DO_CHECKIN_VALUE);
+                    LABEL_CSV_IMPORTER_MISSING_COLUMN_VALUE,
+                    EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL);
             return resultMsg;
         } else {
             if (doCheckinStr.equalsIgnoreCase("true")
@@ -639,7 +719,9 @@ public class EloraCSVImporterWork extends AbstractWork {
                                     lifecycleState)
                                     || LifecyclesConfig.obsoleteAndDeletedStatesList.contains(
                                             lifecycleState)) {
-                                resultMsg = "Incompatible lifecycle state. If 'doCheckin' is false, lifecycle state cannot be |"
+                                resultMsg = "Incompatible lifecycle state. If "
+                                        + EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL
+                                        + " is false, lifecycle state cannot be |"
                                         + lifecycleState + "|";
                                 logError(importLogs, record.getRecordNumber(),
                                         resultMsg,
@@ -651,11 +733,13 @@ public class EloraCSVImporterWork extends AbstractWork {
                 }
             } else {
                 resultMsg = "Not allowed value for "
-                        + EloraCSVImportConstants.CSV_DO_CHECKIN_COL
+                        + EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL
                         + " column. Value =  |" + doCheckinStr + "|";
                 log.error(resultMsg);
                 logError(importLogs, record.getRecordNumber(),
-                        "Value '%s' is not allowed for doCheckin column.",
+                        "Value '%s' is not allowed for "
+                                + EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL
+                                + " column.",
                         LABEL_CSV_IMPORTER_WRONG_DO_CHECKIN_VALUE,
                         doCheckinStr);
                 return resultMsg;
@@ -663,6 +747,7 @@ public class EloraCSVImporterWork extends AbstractWork {
         }
 
         if (!StringUtils.isBlank(reference)) {
+            reference = reference.toUpperCase();
             // Check that there is not already another document with the
             // same reference and type
             String query = EloraQueryFactory.getCountWcDocsByTypeAndReferenceQuery(
@@ -689,8 +774,8 @@ public class EloraCSVImporterWork extends AbstractWork {
             logError(importLogs, record.getRecordNumber(), resultMsg,
                     LABEL_CSV_IMPORTER_EMPTY_PROPERTIES);
             return resultMsg;
-
         }
+
         return createOrUpdateDocument(record.getRecordNumber(), name, type,
                 parentPath, doCheckin, checkinComment, values);
     }
@@ -705,13 +790,15 @@ public class EloraCSVImporterWork extends AbstractWork {
             String lineValue = record.get(headerValue);
             lineValue = lineValue.trim();
             String fieldName = headerValue;
-            if (!EloraCSVImportConstants.CSV_NAME_COL.equals(headerValue)
-                    && !EloraCSVImportConstants.CSV_TYPE_COL.equals(headerValue)
-                    && !EloraCSVImportConstants.CSV_PARENT_PATH_COL.equals(
+            if (!EloraCSVImportConstants.CSV_IMPORT_DOC_NAME_COL.equals(
+                    headerValue)
+                    && !EloraCSVImportConstants.CSV_IMPORT_DOC_TYPE_COL.equals(
                             headerValue)
-                    && !EloraCSVImportConstants.CSV_DO_CHECKIN_COL.equals(
+                    && !EloraCSVImportConstants.CSV_IMPORT_DOC_PARENT_PATH_COL.equals(
                             headerValue)
-                    && !EloraCSVImportConstants.CSV_CHECHIN_COMMENT_COL.equals(
+                    && !EloraCSVImportConstants.CSV_IMPORT_DOC_DO_CHECKIN_COL.equals(
+                            headerValue)
+                    && !EloraCSVImportConstants.CSV_IMPORT_DOC_CHECHIN_COMMENT_COL.equals(
                             headerValue)) {
                 if (AUTHORIZED_HEADERS.contains(headerValue)
                         && !StringUtils.isBlank(lineValue)) {
@@ -728,6 +815,15 @@ public class EloraCSVImporterWork extends AbstractWork {
                         if (convertedValue == null) {
                             return null;
                         }
+
+                        // elo:reference metadata must be converted to UPPERCASE
+                        if (fieldName.equals(EloraMetadataConstants.ELORA_ELO_REFERENCE) && convertedValue != null) {
+                            if (convertedValue instanceof String) {
+                                convertedValue = (String) convertedValue.toString();
+                                convertedValue = ((String) convertedValue).toUpperCase();
+                            }
+                        }
+
                         values.put(headerValue, convertedValue);
                     }
                 }
@@ -785,7 +881,13 @@ public class EloraCSVImporterWork extends AbstractWork {
                                 // Changes to apply fix
                                 // https://jira.nuxeo.com/browse/NXP-22746
                                 // in NX 7.10
-                                if (fieldName.equals("files")) {
+
+                                String[] fileListProperties = { "files",
+                                        "attachments", "derivedOutputs" };
+                                boolean isFileList = Arrays.stream(
+                                        fileListProperties).anyMatch(
+                                                fieldName::equals);
+                                if (isFileList) {
                                     fieldValue = (Serializable) decodeListForFiles(
                                             (ListType) fieldType, stringValue);
                                 } else {
@@ -860,7 +962,7 @@ public class EloraCSVImporterWork extends AbstractWork {
 
         Path targetPath = new Path(parentPath).append(name);
 
-        // TODO LEIRE: For the instance, update is disabled (Elora choice ????)
+        // For the instance, update is disabled in Elora document importation
         DocumentRef docRef = new PathRef(targetPath.toString());
         if (options.getCSVImporterDocumentFactory().exists(session, parentPath,
                 name, type, properties)) {
@@ -1006,10 +1108,10 @@ public class EloraCSVImporterWork extends AbstractWork {
                     relationsSkippedAndErrorImportLogs);
 
             // Proxys logs
-            List<EloraCSVImportLog> proxiesRelationsLogs = csvImporter.getProxiesImportLogs(
+            List<EloraCSVImportLog> proxiesLogs = csvImporter.getProxiesImportLogs(
                     getId());
             EloraCSVImportResult proxiesImportResult = EloraCSVImportResult.fromImportLogs(
-                    proxiesRelationsLogs);
+                    proxiesLogs);
             List<EloraCSVImportLog> proxiesSkippedAndErrorImportLogs = csvImporter.getProxiesImportLogs(
                     getId(), EloraCSVImportLog.Status.SKIPPED,
                     EloraCSVImportLog.Status.ERROR);
@@ -1017,16 +1119,30 @@ public class EloraCSVImporterWork extends AbstractWork {
             ctx.put("proxiesSkippedAndErrorImportLogs",
                     proxiesSkippedAndErrorImportLogs);
 
+            // Comments logs
+            List<EloraCSVImportLog> commentsLogs = csvImporter.getCommentsImportLogs(
+                    getId());
+            EloraCSVImportResult commentsImportResult = EloraCSVImportResult.fromImportLogs(
+                    commentsLogs);
+            List<EloraCSVImportLog> commentsSkippedAndErrorImportLogs = csvImporter.getCommentsImportLogs(
+                    getId(), EloraCSVImportLog.Status.SKIPPED,
+                    EloraCSVImportLog.Status.ERROR);
+            ctx.put("commentsImportResult", commentsImportResult);
+            ctx.put("commentsSkippedAndErrorImportLogs",
+                    commentsSkippedAndErrorImportLogs);
+
             // Result document
             String resultDocumentUrl = getDocumentUrl(resultDocument);
 
-            /*try {
-                String docUrl = DocumentModelFunctions.documentUrl(
-                        resultDocument);
-                log.info("************ docUrl = |" + docUrl + "|");
-            } catch (Exception e) {
-                log.error("Exception ************", e);
-            }*/
+            /*
+             * try {
+             * String docUrl = DocumentModelFunctions.documentUrl(
+             * resultDocument);
+             * log.info("************ docUrl = |" + docUrl + "|");
+             * } catch (Exception e) {
+             * log.error("Exception ************", e);
+             * }
+             */
 
             ctx.put("resultDocument", resultDocument);
             ctx.put("resultDocumentUrl", resultDocumentUrl);
@@ -1042,8 +1158,10 @@ public class EloraCSVImporterWork extends AbstractWork {
             Expression from = Scripting.newExpression("Env[\"mail.from\"]");
 
             // TODO: ez dot lortu aldagai hau entornotik hartzerik
-            /*Expression emailSubjectPrefix = Scripting.newExpression(
-                    "Env[\"nuxeo.notification.eMailSubjectPrefix\"]");*/
+            /*
+             * Expression emailSubjectPrefix = Scripting.newExpression(
+             * "Env[\"nuxeo.notification.eMailSubjectPrefix\"]");
+             */
             String subject = IMPORT_RESULT_EMAIL_SUBJECT_PREFIX + " "
                     + IMPORT_RESULT_EMAIL_SUBJECT;
 
@@ -1071,26 +1189,28 @@ public class EloraCSVImporterWork extends AbstractWork {
 
             documentUrl = MailTemplateHelper.getDocumentUrl(doc, null);
             /*
-            
-            NotificationService notificationService = NotificationServiceHelper.getNotificationService();
-            URLPolicyService urlPolicyService = Framework.getLocalService(
-                    URLPolicyService.class);
-            documentUrl = urlPolicyService.getUrlFromDocumentView(
-                    new DocumentViewImpl(document),
-                    notificationService.getServerUrlPrefix());
-            log.info("************ documentUrl = |" + documentUrl + "|");*/
+             * 
+             * NotificationService notificationService =
+             * NotificationServiceHelper.getNotificationService();
+             * URLPolicyService urlPolicyService = Framework.getLocalService(
+             * URLPolicyService.class);
+             * documentUrl = urlPolicyService.getUrlFromDocumentView(
+             * new DocumentViewImpl(document),
+             * notificationService.getServerUrlPrefix());
+             * log.info("************ documentUrl = |" + documentUrl + "|");
+             */
 
             /*
-            // String url = viewCodecManager.getUrlFromDocumentView(new
-            // DocumentViewImpl(doc), true, "http://localhost/nuxeo/");
-            DocumentViewCodecManager documentViewCodecManager = Framework.getService(
-                    DocumentViewCodecManager.class);
-            String url = documentViewCodecManager.getUrlFromDocumentView(
-                    new DocumentViewImpl(doc), true, BaseURL.getBaseURL());
-
-            String docUrl = DocumentModelFunctions.documentUrl(doc);
-            log.info("************ docUrl = |" + docUrl + "|");
-            */
+             * // String url = viewCodecManager.getUrlFromDocumentView(new
+             * // DocumentViewImpl(doc), true, "http://localhost/nuxeo/");
+             * DocumentViewCodecManager documentViewCodecManager = Framework.getService(
+             * DocumentViewCodecManager.class);
+             * String url = documentViewCodecManager.getUrlFromDocumentView(
+             * new DocumentViewImpl(doc), true, BaseURL.getBaseURL());
+             * 
+             * String docUrl = DocumentModelFunctions.documentUrl(doc);
+             * log.info("************ docUrl = |" + docUrl + "|");
+             */
 
         } catch (Exception e) {
             // nothing to do
@@ -1167,37 +1287,36 @@ public class EloraCSVImporterWork extends AbstractWork {
                     LABEL_CSV_IMPORTER_EMPTY_FILE);
             return;
         }
-        if (!header.containsKey(EloraCSVImportConstants.CSV_SOURCE_NAME_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_SOURCE_PARENT_PATH_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_SOURCE_DOC_UID_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_RELATION_PREDICATE_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_TARGET_NAME_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_TARGET_PARENT_PATH_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_TARGET_DOC_UID_COL)
-                || !header.containsKey(EloraCSVImportConstants.CSV_QUANTITY_COL)
-                || !header.containsKey(EloraCSVImportConstants.CSV_ORDERING_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_DIRECTOR_ORDERING_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_VIEWER_ORDERING_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_INVERSE_VIEWER_ORDERING_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_IS_MANUAL_COL)) {
-            // TODO LEIRE: errorea aldatu
-            String errorMsg = "Missing relations columns";
+
+        String[] mandatoryColumns = {
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_NAME_COL,
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_PARENT_PATH_COL,
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_DOC_UID_COL,
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_RELATION_PREDICATE_COL,
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_NAME_COL,
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_PARENT_PATH_COL,
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_DOC_UID_COL,
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_GRAPH_NAME_COL };
+        String missingColumns = "";
+
+        for (String mandatoryColumn : mandatoryColumns) {
+            if (!header.containsKey(mandatoryColumn)) {
+                if (!missingColumns.isEmpty()) {
+                    missingColumns += ", ";
+                }
+                missingColumns += mandatoryColumn;
+            }
+        }
+        if (!missingColumns.isEmpty()) {
+            String errorMsg = "Missing " + missingColumns + " columns.";
             log.error(errorMsg);
             csvFilePrinter.print(errorMsg);
             logError(relationsImportLogs, 0, errorMsg,
-                    LABEL_CSV_IMPORTER_MISSING_RELATIONS_COLUMNS);
+                    LABEL_CSV_IMPORTER_MISSING_RELATIONS_COLUMNS,
+                    missingColumns);
             return;
         }
+
         try {
             int batchSize = options.getBatchSize();
             long relationsCreatedCount = 0;
@@ -1291,35 +1410,21 @@ public class EloraCSVImporterWork extends AbstractWork {
         String resultMsg = null;
 
         final String sourceName = record.get(
-                EloraCSVImportConstants.CSV_SOURCE_NAME_COL);
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_NAME_COL);
         final String sourceParentPath = record.get(
-                EloraCSVImportConstants.CSV_SOURCE_PARENT_PATH_COL);
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_PARENT_PATH_COL);
         final String sourceDocUid = record.get(
-                EloraCSVImportConstants.CSV_SOURCE_DOC_UID_COL);
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_DOC_UID_COL);
         final String predicate = record.get(
-                EloraCSVImportConstants.CSV_RELATION_PREDICATE_COL);
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_RELATION_PREDICATE_COL);
         final String targetName = record.get(
-                EloraCSVImportConstants.CSV_TARGET_NAME_COL);
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_NAME_COL);
         final String targetParentPath = record.get(
-                EloraCSVImportConstants.CSV_TARGET_PARENT_PATH_COL);
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_PARENT_PATH_COL);
         final String targetDocUid = record.get(
-                EloraCSVImportConstants.CSV_TARGET_DOC_UID_COL);
-        String quantity = record.get(EloraCSVImportConstants.CSV_QUANTITY_COL);
-        Integer ordering = null;
-        final String orderingStr = record.get(
-                EloraCSVImportConstants.CSV_ORDERING_COL);
-        Integer directorOrdering = null;
-        final String directorOrderingStr = record.get(
-                EloraCSVImportConstants.CSV_DIRECTOR_ORDERING_COL);
-        Integer viewerOrdering = null;
-        final String viewerOrderingStr = record.get(
-                EloraCSVImportConstants.CSV_VIEWER_ORDERING_COL);
-        Integer inverseViewerOrdering = null;
-        final String inverseViewerOrderingStr = record.get(
-                EloraCSVImportConstants.CSV_INVERSE_VIEWER_ORDERING_COL);
-        Boolean isManual = false;
-        final String isManualStr = record.get(
-                EloraCSVImportConstants.CSV_IS_MANUAL_COL);
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_DOC_UID_COL);
+        final String graphName = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_GRAPH_NAME_COL);
 
         if ((StringUtils.isBlank(sourceName)
                 || StringUtils.isBlank(sourceParentPath))
@@ -1333,11 +1438,14 @@ public class EloraCSVImporterWork extends AbstractWork {
             return resultMsg;
         }
         if (StringUtils.isBlank(predicate)) {
-            resultMsg = "Missing 'predicate' value";
+            resultMsg = "Missing "
+                    + EloraCSVImportConstants.CSV_IMPORT_RELATION_RELATION_PREDICATE_COL
+                    + " value";
             log.error("record.isSet=" + record.isSet(
-                    EloraCSVImportConstants.CSV_RELATION_PREDICATE_COL));
+                    EloraCSVImportConstants.CSV_IMPORT_RELATION_RELATION_PREDICATE_COL));
             logError(relationsImportLogs, record.getRecordNumber(), resultMsg,
-                    LABEL_CSV_IMPORTER_MISSING_RELATION_PREDICATE_VALUE);
+                    LABEL_CSV_IMPORTER_MISSING_COLUMN_VALUE,
+                    EloraCSVImportConstants.CSV_IMPORT_RELATION_RELATION_PREDICATE_COL);
             return resultMsg;
         }
         if ((StringUtils.isBlank(targetName)
@@ -1351,128 +1459,182 @@ public class EloraCSVImporterWork extends AbstractWork {
                     LABEL_CSV_IMPORTER_TARGET_DOC_CANNOT_BE_IDENTIFIED);
             return resultMsg;
         }
-        if (StringUtils.isBlank(quantity)) {
-            quantity = "1";
-        }
-        if (!StringUtils.isBlank(orderingStr)) {
-            ordering = Integer.valueOf(orderingStr);
-        }
-        if (!StringUtils.isBlank(directorOrderingStr)) {
-            directorOrdering = Integer.valueOf(directorOrderingStr);
-        }
-        if (!StringUtils.isBlank(viewerOrderingStr)) {
-            viewerOrdering = Integer.valueOf(viewerOrderingStr);
-        }
-        if (!StringUtils.isBlank(inverseViewerOrderingStr)) {
-            inverseViewerOrdering = Integer.valueOf(inverseViewerOrderingStr);
+        if (StringUtils.isBlank(graphName)) {
+            resultMsg = "Missing "
+                    + EloraCSVImportConstants.CSV_IMPORT_RELATION_GRAPH_NAME_COL
+                    + " value";
+            log.error("record.isSet=" + record.isSet(
+                    EloraCSVImportConstants.CSV_IMPORT_RELATION_GRAPH_NAME_COL));
+            logError(relationsImportLogs, record.getRecordNumber(), resultMsg,
+                    LABEL_CSV_IMPORTER_MISSING_COLUMN_VALUE,
+                    EloraCSVImportConstants.CSV_IMPORT_RELATION_GRAPH_NAME_COL);
+            return resultMsg;
         }
 
-        if (!StringUtils.isBlank(isManualStr)) {
-            if (isManualStr.equalsIgnoreCase("true")
-                    || isManualStr.equalsIgnoreCase("false")) {
-                isManual = Boolean.valueOf(isManualStr);
-
-            } else {
-                resultMsg = "Not allowed value for "
-                        + EloraCSVImportConstants.CSV_IS_MANUAL_COL
-                        + " column. Value =  |" + isManualStr + "|";
-                log.error(resultMsg);
-                logError(relationsImportLogs, record.getRecordNumber(),
-                        "Value '%s' is not allowed for isManual column.",
-                        LABEL_CSV_IMPORTER_WRONG_IS_MANUAL_VALUE, isManualStr);
-                return resultMsg;
+        boolean targetAlwaysWC = false;
+        if (header.containsKey(
+                EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_ALWAYS_WC_COL)) {
+            String targetAlwaysWCStr = record.get(
+                    EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_ALWAYS_WC_COL);
+            if (!StringUtils.isBlank(targetAlwaysWCStr)
+                    && targetAlwaysWCStr.equalsIgnoreCase("true")) {
+                targetAlwaysWC = true;
             }
         }
 
+        Map<Resource, Node> properties = computeRelationPropertiesMap(record,
+                header, graphName);
+
         return createRelation(record.getRecordNumber(), sourceName,
                 sourceParentPath, sourceDocUid, predicate, targetName,
-                targetParentPath, targetDocUid, quantity, ordering,
-                directorOrdering, viewerOrdering, inverseViewerOrdering,
-                isManual);
+                targetParentPath, targetDocUid, graphName, properties,
+                targetAlwaysWC);
+
+    }
+
+    protected Map<Resource, Node> computeRelationPropertiesMap(CSVRecord record,
+            Map<String, Integer> header, String graphName)
+            throws EloraException {
+
+        String logInitMsg = "[computeRelationPropertiesMap] ["
+                + session.getPrincipal().getName() + "] ";
+
+        Map<Resource, Node> properties = new HashMap<Resource, Node>();
+
+        for (String headerValue : header.keySet()) {
+
+            String lineValue = record.get(headerValue);
+            lineValue = lineValue.trim();
+
+            if (lineValue != null && lineValue.length() > 0) {
+
+                if (!EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_NAME_COL.equals(
+                        headerValue)
+                        && !EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_PARENT_PATH_COL.equals(
+                                headerValue)
+                        && !EloraCSVImportConstants.CSV_IMPORT_RELATION_SOURCE_DOC_UID_COL.equals(
+                                headerValue)
+                        && !EloraCSVImportConstants.CSV_IMPORT_RELATION_RELATION_PREDICATE_COL.equals(
+                                headerValue)
+                        && !EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_NAME_COL.equals(
+                                headerValue)
+                        && !EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_PARENT_PATH_COL.equals(
+                                headerValue)
+                        && !EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_DOC_UID_COL.equals(
+                                headerValue)
+                        && !EloraCSVImportConstants.CSV_IMPORT_RELATION_GRAPH_NAME_COL.equals(
+                                headerValue)
+                        && !EloraCSVImportConstants.CSV_IMPORT_RELATION_TARGET_ALWAYS_WC_COL.equals(
+                                headerValue)) {
+
+                    // Check that specified relation property is defined in
+                    // specified Relation
+                    RelationGraph graph = (RelationGraph) Framework.getService(
+                            RelationManager.class).getGraphByName(graphName);
+
+                    String relationDocTypeName = graph.getDocType();
+                    DocumentType relationDocType = Framework.getLocalService(
+                            SchemaManager.class).getDocumentType(
+                                    relationDocTypeName);
+                    if (relationDocType == null) {
+                        String errorMsg = "The type |" + relationDocTypeName
+                                + "| does not exist";
+                        throw new EloraException(errorMsg);
+                    }
+
+                    log.trace(logInitMsg + "relationDocType |"
+                            + relationDocTypeName + "| has Field  |"
+                            + headerValue + "| = |"
+                            + relationDocType.hasField(headerValue) + "|");
+
+                    if (!graph.getMetadataResourceMap().isEmpty()) {
+                        properties.put(
+                                graph.getMetadataResourceMap().get(headerValue),
+                                new LiteralImpl(String.valueOf(lineValue)));
+                    } else {
+                        String resourceName = headerValue;
+                        if (headerValue.contains(":")) {
+                            resourceName = resourceName.split(":")[1];
+                        }
+                        resourceName = resourceName.substring(0,
+                                1).toUpperCase() + resourceName.substring(1);
+                        properties.put(new ResourceImpl(
+                                EloraRelationConstants.ELORA_METADATA_NAMESPACE
+                                        + resourceName),
+                                new LiteralImpl(String.valueOf(lineValue)));
+                    }
+                }
+            }
+        }
+        return properties;
     }
 
     protected String createRelation(long lineNumber, String sourceName,
             String sourceParentPath, String sourceDocUid, String predicate,
             String targetName, String targetParentPath, String targetDocUid,
-            String quantity, Integer ordering, Integer directorOrdering,
-            Integer viewerOrdering, Integer inverseViewerOrdering,
-            Boolean isManual) {
+            String graphName, Map<Resource, Node> properties,
+            boolean targetAlwaysWC) {
 
         String resultMsg = null;
 
         try {
-
-            // Retrieve source document
-            // TODO LEIRE:: sourceDocWc ez dauka zertan WC-a izan beharrik.
-            // Begiratu hau.
+            // Retrieve source document. It must be a WC document.
             DocumentModel sourceDocWc = getDocument(sourceName,
                     sourceParentPath, sourceDocUid);
-            DocumentModel sourceDocAv = EloraDocumentHelper.getLatestVersion(
-                    sourceDocWc);
-            if (sourceDocAv == null) {
-                throw new EloraException(
-                        "Source document |" + sourceDocWc.getId()
-                                + "| has no latest version or is unreadable.");
+            if (sourceDocWc.isImmutable()) {
+                throw new EloraException("Source document |"
+                        + sourceDocWc.getId() + "| must be a WC.");
             }
 
-            // Retrieve target document
-            DocumentModel targetDocWc = getDocument(targetName,
-                    targetParentPath, targetDocUid);
-            DocumentModel targetDocAv = EloraDocumentHelper.getLatestVersion(
-                    targetDocWc);
-            if (targetDocAv == null) {
-                throw new EloraException(
-                        "Target document |" + targetDocWc.getId()
-                                + "| has no latest version or is unreadable.");
+            // Retrieve target document.It must be a WC document if
+            // targetAlwaysWC is true.
+            DocumentModel targetDoc = getDocument(targetName, targetParentPath,
+                    targetDocUid);
+            if (targetAlwaysWC && targetDoc.isImmutable()) {
+                throw new EloraException("Target document |"
+                        + sourceDocWc.getId() + "| must be a WC.");
             }
 
-            // Check if relation already exists between source and target WCs
-            if (EloraRelationHelper.existsRelation(sourceDocWc, targetDocWc,
-                    predicate, session)) {
-                String errorMsg = "Relation already exists. sourceDocWc = |"
-                        + sourceDocWc.getId() + "|, predicate = |" + predicate
-                        + "|, targetDocWc = |" + targetDocWc.getId() + "|";
-                log.error(errorMsg);
-                throw new EloraException(errorMsg);
+            DocumentModel sourceDocAv = null;
+            DocumentModel targetDocAv = null;
+
+            List<Map<String, DocumentModel>> relations = calculateRelationsToBeCreated(
+                    sourceDocWc, sourceDocAv, targetDoc, targetDocAv,
+                    targetAlwaysWC);
+
+            RelationGraph graph = (RelationGraph) Framework.getService(
+                    RelationManager.class).getGraphByName(graphName);
+
+            // First check if all relations can be created
+            for (Map<String, DocumentModel> relation : relations) {
+                String errorMsg = checkIfRelationCanBeCreated(graph,
+                        relation.get(
+                                EloraCSVImportConstants.CSV_IMPORT_RELATION_SUBJECT),
+                        relation.get(
+                                EloraCSVImportConstants.CSV_IMPORT_RELATION_OBJECT),
+                        predicate);
+                if (!errorMsg.isEmpty()) {
+                    log.error(errorMsg);
+                    throw new EloraException(errorMsg);
+                }
             }
 
-            // Check if relation already exists between source and target AVs
-            if (EloraRelationHelper.existsRelation(sourceDocAv, targetDocAv,
-                    predicate, session)) {
-                String errorMsg = "Relation already exists. sourceDocAv = |"
-                        + sourceDocAv.getId() + "|, predicate = |" + predicate
-                        + "|, targetDocAv = |" + targetDocAv.getId() + "|";
-                log.error(errorMsg);
-                throw new EloraException(errorMsg);
+            // Then, create the relations
+            RelationManagementService rms = Framework.getService(
+                    RelationManagementService.class);
+
+            String comment = "Created from importation.";
+            for (Map<String, DocumentModel> relation : relations) {
+                rms.addRelation(session, graph, relation.get(
+                        EloraCSVImportConstants.CSV_IMPORT_RELATION_SUBJECT),
+                        predicate,
+                        relation.get(
+                                EloraCSVImportConstants.CSV_IMPORT_RELATION_OBJECT),
+                        false, false, comment, properties);
             }
-
-            // Check relation is allowed
-            CheckinManager checkinManager = Framework.getService(
-                    CheckinManager.class);
-            checkinManager.checkThatRelationIsAllowed(sourceDocWc, predicate,
-                    targetDocWc, quantity);
-            checkinManager.checkThatRelationIsAllowed(sourceDocAv, predicate,
-                    targetDocAv, quantity);
-
-            // Add relation between WCs
-            EloraDocumentRelationManager eloraDocumentRelationManager = Framework.getService(
-                    EloraDocumentRelationManager.class);
-            eloraDocumentRelationManager.addRelation(session, sourceDocWc,
-                    targetDocWc, predicate, null, quantity, ordering,
-                    directorOrdering, viewerOrdering, inverseViewerOrdering,
-                    isManual);
-
-            // Add relation between versions
-            eloraDocumentRelationManager.addRelation(session, sourceDocAv,
-                    targetDocAv, predicate, null, quantity, ordering,
-                    directorOrdering, viewerOrdering, inverseViewerOrdering,
-                    isManual);
-
             relationsImportLogs.add(new EloraCSVImportLog(lineNumber,
                     EloraCSVImportLog.Status.SUCCESS, "Relation created",
                     LABEL_CSV_IMPORTER_RELATION_CREATED));
-
-            return resultMsg;
 
         } catch (RuntimeException | EloraException e) {
             Throwable unwrappedException = unwrapException(e);
@@ -1484,6 +1646,73 @@ public class EloraCSVImporterWork extends AbstractWork {
             log.error(unwrappedException, unwrappedException);
         }
         return resultMsg;
+    }
+
+    protected List<Map<String, DocumentModel>> calculateRelationsToBeCreated(
+            DocumentModel sourceDocWc, DocumentModel sourceDocAv,
+            DocumentModel targetDoc, DocumentModel targetDocAv,
+            boolean targetAlwaysWC) throws EloraException {
+
+        // Calculate which relations will be created
+        List<Map<String, DocumentModel>> relations = new ArrayList<Map<String, DocumentModel>>();
+        Map<String, DocumentModel> firstRelation = new HashMap<String, DocumentModel>();
+        firstRelation.put(EloraCSVImportConstants.CSV_IMPORT_RELATION_SUBJECT,
+                sourceDocWc);
+        firstRelation.put(EloraCSVImportConstants.CSV_IMPORT_RELATION_OBJECT,
+                targetDoc);
+        relations.add(firstRelation);
+
+        if (!sourceDocWc.isCheckedOut()) {
+            sourceDocAv = EloraDocumentHelper.getLatestVersion(sourceDocWc);
+            if (sourceDocAv == null) {
+                throw new EloraException(
+                        "Source document |" + sourceDocWc.getId()
+                                + "| has no latest version or is unreadable.");
+            }
+            if (targetAlwaysWC) {
+                Map<String, DocumentModel> secondRelation = new HashMap<String, DocumentModel>();
+                secondRelation.put(
+                        EloraCSVImportConstants.CSV_IMPORT_RELATION_SUBJECT,
+                        sourceDocAv);
+                secondRelation.put(
+                        EloraCSVImportConstants.CSV_IMPORT_RELATION_OBJECT,
+                        targetDoc);
+                relations.add(secondRelation);
+
+            } else {
+                targetDocAv = EloraDocumentHelper.getLatestVersion(targetDoc);
+                if (targetDocAv == null) {
+                    throw new EloraException("Target document |"
+                            + targetDoc.getId()
+                            + "| has no latest version or is unreadable.");
+                }
+                Map<String, DocumentModel> secondRelation = new HashMap<String, DocumentModel>();
+                secondRelation.put(
+                        EloraCSVImportConstants.CSV_IMPORT_RELATION_SUBJECT,
+                        sourceDocAv);
+                secondRelation.put(
+                        EloraCSVImportConstants.CSV_IMPORT_RELATION_OBJECT,
+                        targetDocAv);
+                relations.add(secondRelation);
+            }
+        }
+
+        return relations;
+    }
+
+    protected String checkIfRelationCanBeCreated(RelationGraph graph,
+            DocumentModel sourceDoc, DocumentModel targetDoc,
+            String predicate) {
+
+        String errorMsg = "";
+        if (CommonRelationHelper.existsRelation(graph, sourceDoc, targetDoc,
+                predicate, session)) {
+            errorMsg = "Relation already exists. sourceDoc = |"
+                    + sourceDoc.getId() + "|, predicate = |" + predicate
+                    + "|, targetDoc = |" + targetDoc.getId() + "|";
+        }
+
+        return errorMsg;
     }
 
     protected DocumentModel getDocument(String docName, String docParentPath,
@@ -1499,11 +1728,15 @@ public class EloraCSVImporterWork extends AbstractWork {
         } else if (!StringUtils.isBlank(docUid)) {
             docRef = (new IdRef(docUid));
         } else {
-            // TODO LEIRE: launch excpetion
             throw new EloraException("document not specified");
         }
         if (docRef != null) {
-            document = session.getDocument(docRef);
+            try {
+                document = session.getDocument(docRef);
+            } catch (DocumentNotFoundException e) {
+                throw new EloraException(
+                        "Document not found: " + e.getMessage());
+            }
         }
 
         return document;
@@ -1522,24 +1755,30 @@ public class EloraCSVImporterWork extends AbstractWork {
                     LABEL_CSV_IMPORTER_EMPTY_FILE);
             return;
         }
-        if (!header.containsKey(
-                EloraCSVImportConstants.CSV_IMPORT_PROXY_DOC_NAME_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_IMPORT_PROXY_DOC_PARENT_PATH_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_IMPORT_PROXY_DOC_UID_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_IMPORT_PROXY_FOLDER_NAME_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_IMPORT_PROXY_FOLDER_PARENT_PATH_COL)
-                || !header.containsKey(
-                        EloraCSVImportConstants.CSV_IMPORT_PROXY_FOLDER_UID_COL)) {
-            // TODO LEIRE: errorea aldatu
-            String errorMsg = "Missing proxies columns";
+
+        String[] mandatoryColumns = {
+                EloraCSVImportConstants.CSV_IMPORT_PROXY_DOC_NAME_COL,
+                EloraCSVImportConstants.CSV_IMPORT_PROXY_DOC_PARENT_PATH_COL,
+                EloraCSVImportConstants.CSV_IMPORT_PROXY_DOC_UID_COL,
+                EloraCSVImportConstants.CSV_IMPORT_PROXY_FOLDER_NAME_COL,
+                EloraCSVImportConstants.CSV_IMPORT_PROXY_FOLDER_PARENT_PATH_COL,
+                EloraCSVImportConstants.CSV_IMPORT_PROXY_FOLDER_UID_COL };
+        String missingColumns = "";
+
+        for (String mandatoryColumn : mandatoryColumns) {
+            if (!header.containsKey(mandatoryColumn)) {
+                if (!missingColumns.isEmpty()) {
+                    missingColumns += ", ";
+                }
+                missingColumns += mandatoryColumn;
+            }
+        }
+        if (!missingColumns.isEmpty()) {
+            String errorMsg = "Missing " + missingColumns + " columns.";
             log.error(errorMsg);
             csvFilePrinter.print(errorMsg);
             logError(proxiesImportLogs, 0, errorMsg,
-                    LABEL_CSV_IMPORTER_MISSING_PROXIES_COLUMNS);
+                    LABEL_CSV_IMPORTER_MISSING_PROXIES_COLUMNS, missingColumns);
             return;
         }
 
@@ -1710,6 +1949,244 @@ public class EloraCSVImporterWork extends AbstractWork {
         return resultMsg;
     }
 
+    protected void doImportComments(CSVParser commentsParser,
+            CSVPrinter csvFilePrinter) throws IOException {
+        log.info(String.format("Importing Comments CSV file: %s",
+                commentsCsvFileName));
+        Map<String, Integer> header = commentsParser.getHeaderMap();
+        if (header == null) {
+            String errorMsg = "No header line or empty file.";
+            log.error(errorMsg);
+            csvFilePrinter.print(errorMsg);
+            logError(commentsImportLogs, 0, errorMsg,
+                    LABEL_CSV_IMPORTER_EMPTY_FILE);
+            return;
+        }
+
+        String[] mandatoryColumns = {
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_DOC_NAME_COL,
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_DOC_PARENT_PATH_COL,
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_DOC_UID_COL,
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_AUTHOR_COL,
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_TEXT_COL,
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_CREATION_DATE_COL };
+        String missingColumns = "";
+
+        for (String mandatoryColumn : mandatoryColumns) {
+            if (!header.containsKey(mandatoryColumn)) {
+                if (!missingColumns.isEmpty()) {
+                    missingColumns += ", ";
+                }
+                missingColumns += mandatoryColumn;
+            }
+        }
+        if (!missingColumns.isEmpty()) {
+            String errorMsg = "Missing " + missingColumns + " columns.";
+            log.error(errorMsg);
+            csvFilePrinter.print(errorMsg);
+            logError(commentsImportLogs, 0, errorMsg,
+                    LABEL_CSV_IMPORTER_MISSING_COMMENTS_COLUMNS,
+                    missingColumns);
+            return;
+        }
+
+        try {
+            int batchSize = options.getBatchSize();
+            long commentsCreatedCount = 0;
+            for (CSVRecord record : commentsParser) {
+                if (record.size() == 0) {
+                    // empty record
+                    String errorMsg = "Error at line |"
+                            + record.getRecordNumber() + "|: Empty record";
+                    log.error(errorMsg);
+                    csvFilePrinter.print(errorMsg);
+                    commentsImportLogs.add(new EloraCSVImportLog(
+                            record.getRecordNumber(),
+                            EloraCSVImportLog.Status.SKIPPED, "Empty record",
+                            LABEL_CSV_IMPORTER_EMPTY_LINE));
+                    continue;
+                }
+                try {
+                    String resultMsg = importComment(record, header);
+                    if (StringUtils.isBlank(resultMsg)) {
+                        commentsCreatedCount++;
+                        if (commentsCreatedCount % batchSize == 0) {
+                            commitOrRollbackTransaction();
+                            startTransaction();
+                        }
+                        String infoMsg = "Record at line |"
+                                + record.getRecordNumber()
+                                + "| successfully imported.";
+                        log.info(infoMsg);
+                        writeResultRecord(csvFilePrinter, record,
+                                EloraCSVImportConstants.CSV_RESULT_OK_VAL, "");
+                    } else {
+                        writeResultRecord(csvFilePrinter, record,
+                                EloraCSVImportConstants.CSV_RESULT_ERROR_VAL,
+                                resultMsg);
+                    }
+                } catch (EloraException e) {
+                    // try next line
+                    // Throwable unwrappedException = unwrapException(e);
+                    logError(commentsImportLogs,
+                            commentsParser.getRecordNumber(),
+                            "Error while importing line: %s",
+                            LABEL_CSV_IMPORTER_ERROR_IMPORTING_LINE,
+                            e.getMessage());
+                    log.error(e.getMessage(), e);
+                    writeResultRecord(csvFilePrinter, record,
+                            EloraCSVImportConstants.CSV_RESULT_ERROR_VAL,
+                            e.getMessage());
+                } catch (NuxeoException e) {
+                    // try next line
+                    Throwable ue = unwrapException(e);
+                    logError(commentsImportLogs,
+                            commentsParser.getRecordNumber(),
+                            "Error while importing line: %s",
+                            LABEL_CSV_IMPORTER_ERROR_IMPORTING_LINE,
+                            ue.getMessage());
+                    log.error(ue.getMessage(), ue);
+                    writeResultRecord(csvFilePrinter, record,
+                            EloraCSVImportConstants.CSV_RESULT_ERROR_VAL,
+                            ue.getMessage());
+                }
+            }
+
+            try {
+                session.save();
+            } catch (NuxeoException e) {
+                Throwable ue = unwrapException(e);
+                logError(commentsImportLogs, commentsParser.getRecordNumber(),
+                        "Unable to save: %s", LABEL_CSV_IMPORTER_UNABLE_TO_SAVE,
+                        ue.getMessage());
+                String errorMsg = "Unable to save. Error message: |"
+                        + ue.getMessage() + "|";
+                log.error(errorMsg, ue);
+                csvFilePrinter.print(errorMsg);
+            }
+        } finally {
+            commitOrRollbackTransaction();
+            startTransaction();
+        }
+        log.info(String.format("Done importing CSV file: %s",
+                commentsCsvFileName));
+    }
+
+    /**
+     * Import a line from the Comments CSV file.
+     *
+     * @return {@code true} if a document has been created or updated,
+     *         {@code false} otherwise.
+     * @throws EloraException
+     */
+    protected String importComment(CSVRecord record,
+            Map<String, Integer> header) throws EloraException {
+        String resultMsg = null;
+
+        final String docName = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_DOC_NAME_COL);
+        final String docParentPath = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_DOC_PARENT_PATH_COL);
+        final String docUid = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_DOC_UID_COL);
+        final String commentAuthor = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_AUTHOR_COL);
+        final String commentText = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_TEXT_COL);
+        final String commentCreationDateStr = record.get(
+                EloraCSVImportConstants.CSV_IMPORT_COMMENT_CREATION_DATE_COL);
+
+        if ((StringUtils.isBlank(docName) || StringUtils.isBlank(docParentPath))
+                && StringUtils.isBlank(docUid)) {
+            resultMsg = "Document cannot be identified. Document name and parent path or document uid should be defined. docName = |"
+                    + docName + "|, docParentPath = |" + docParentPath
+                    + "|, docUid = |" + docUid + "|";
+            log.error(resultMsg);
+            logError(commentsImportLogs, record.getRecordNumber(),
+                    "Document cannot be identified. Document name and parent path or document uid should be defined",
+                    LABEL_CSV_IMPORT_COMMENT_DOC_CANNOT_BE_IDENTIFIED);
+            return resultMsg;
+        }
+
+        if (StringUtils.isBlank(commentAuthor)
+                || StringUtils.isBlank(commentText)) {
+            resultMsg = "Comment author and text cannot be null or empty. commentAuthor = |"
+                    + commentAuthor + "|, commentText = |" + commentText + "|";
+            log.error(resultMsg);
+            logError(commentsImportLogs, record.getRecordNumber(),
+                    "Comment attributes cannot be null or empty.",
+                    LABEL_CSV_IMPORT_COMMENT_ATTRIBUTES_EMPTY);
+            return resultMsg;
+        }
+
+        Date commentCreationDate = Calendar.getInstance().getTime();
+        if (!StringUtils.isBlank(commentCreationDateStr)) {
+            try {
+                commentCreationDate = getDateFormat().parse(
+                        commentCreationDateStr);
+            } catch (ParseException e) {
+                resultMsg = "Comment creation date is not a valid date. commentCreationDate = |"
+                        + commentCreationDateStr + "|";
+                log.error(resultMsg);
+                logError(commentsImportLogs, record.getRecordNumber(),
+                        "Comment creation date is not a valid date.",
+                        LABEL_CSV_IMPORT_COMMENT_INVALID_CREATION_DATE);
+                return resultMsg;
+            }
+        }
+
+        return createComment(record.getRecordNumber(), docName, docParentPath,
+                docUid, commentAuthor, commentText, commentCreationDate);
+    }
+
+    protected String createComment(long lineNumber, String docName,
+            String docParentPath, String docUid, String commentAuthor,
+            String commentText, Date commentCreationDate) {
+        String resultMsg = null;
+
+        try {
+
+            // Retrieve document
+            DocumentModel doc = getDocument(docName, docParentPath, docUid);
+
+            DocumentModel myComment = session.createDocumentModel(
+                    CommentsConstants.COMMENT_DOC_TYPE);
+
+            myComment.setProperty("comment", "author", commentAuthor);
+            myComment.setProperty("comment", "text", commentText);
+            myComment.setProperty("comment", "creationDate",
+                    commentCreationDate);
+
+            CommentManager commentManager = Framework.getService(
+                    CommentManager.class);
+            DocumentModel newComment = commentManager.createComment(doc,
+                    myComment);
+
+            // automatically validate the comments
+            if (CommentsConstants.COMMENT_LIFECYCLE.equals(
+                    newComment.getLifeCyclePolicy())) {
+                new FollowTransitionUnrestricted(session, newComment.getRef(),
+                        CommentsConstants.TRANSITION_TO_PUBLISHED_STATE).runUnrestricted();
+            }
+
+            commentsImportLogs.add(new EloraCSVImportLog(lineNumber,
+                    EloraCSVImportLog.Status.SUCCESS, "Comment created",
+                    LABEL_CSV_IMPORTER_COMMENT_CREATED));
+
+            return resultMsg;
+
+        } catch (RuntimeException | EloraException e) {
+            Throwable unwrappedException = unwrapException(e);
+            resultMsg = e.toString();
+            logError(commentsImportLogs, lineNumber,
+                    "Unable to create comment: %s",
+                    LABEL_CSV_IMPORTER_UNABLE_TO_CREATE_COMMENT,
+                    unwrappedException.getMessage());
+            log.error(unwrappedException, unwrappedException);
+        }
+        return resultMsg;
+    }
+
     protected DocumentModel createResultDocument()
             throws IOException, EloraException {
 
@@ -1736,8 +2213,7 @@ public class EloraCSVImporterWork extends AbstractWork {
         // documents file
         if (csvFile != null) {
             Blob docBlob = Blobs.createBlob(csvFile);
-            // TODO LEIRE: hau konstante batetik hartu????
-            docBlob.setMimeType("text/csv");
+            docBlob.setMimeType(EloraMimeTypeConstants.TEXT_CSV);
             Framework.trackFile(csvFile, docBlob);
             docBlob.setFilename(csvFileName);
             DocumentHelper.addBlob(importResultDocModel.getProperty(
@@ -1747,8 +2223,7 @@ public class EloraCSVImporterWork extends AbstractWork {
         // relations file
         if (relationsCsvFile != null) {
             Blob relationsBlob = Blobs.createBlob(relationsCsvFile);
-            // TODO LEIRE: hau konstante batetik hartu????
-            relationsBlob.setMimeType("text/csv");
+            relationsBlob.setMimeType(EloraMimeTypeConstants.TEXT_CSV);
             Framework.trackFile(relationsCsvFile, relationsBlob);
             relationsBlob.setFilename(relationsCsvFileName);
             DocumentHelper.addBlob(
@@ -1760,14 +2235,25 @@ public class EloraCSVImporterWork extends AbstractWork {
         // proxies file
         if (proxiesCsvFile != null) {
             Blob proxiesBlob = Blobs.createBlob(proxiesCsvFile);
-            // TODO LEIRE: hau konstante batetik hartu????
-            proxiesBlob.setMimeType("text/csv");
+            proxiesBlob.setMimeType(EloraMimeTypeConstants.TEXT_CSV);
             Framework.trackFile(proxiesCsvFile, proxiesBlob);
             proxiesBlob.setFilename(proxiesCsvFileName);
             DocumentHelper.addBlob(
                     importResultDocModel.getProperty(
                             NuxeoMetadataConstants.NX_FILES_FILES),
                     proxiesBlob);
+        }
+
+        // comments file
+        if (commentsCsvFile != null) {
+            Blob commentsBlob = Blobs.createBlob(commentsCsvFile);
+            commentsBlob.setMimeType(EloraMimeTypeConstants.TEXT_CSV);
+            Framework.trackFile(commentsCsvFile, commentsBlob);
+            commentsBlob.setFilename(commentsCsvFileName);
+            DocumentHelper.addBlob(
+                    importResultDocModel.getProperty(
+                            NuxeoMetadataConstants.NX_FILES_FILES),
+                    commentsBlob);
         }
 
         // Create the document
@@ -1797,7 +2283,7 @@ public class EloraCSVImporterWork extends AbstractWork {
                 throw new EloraException(errorMsg);
 
             } else if (res.size() > 1) {
-                String errorMsg = "More han one "
+                String errorMsg = "More than one "
                         + EloraCSVImportConstants.IMPORT_RESULTS_FOLDER_DOCUMENT_TYPE
                         + " found:";
                 for (DocumentModel model : res) {
@@ -1839,8 +2325,7 @@ public class EloraCSVImporterWork extends AbstractWork {
 
         if (outputFile != null) {
             Blob resultBlob = Blobs.createBlob(outputFile);
-            // TODO LEIRE: hau konstante batetik hartu????
-            resultBlob.setMimeType("text/csv");
+            resultBlob.setMimeType(EloraMimeTypeConstants.TEXT_CSV);
             Framework.trackFile(outputFile, resultBlob);
             resultBlob.setFilename(outputFile.getName());
             DocumentHelper.addBlob(resultDocument.getProperty(
@@ -1923,7 +2408,8 @@ public class EloraCSVImporterWork extends AbstractWork {
         csvFilePrinter.flush();
     }
 
-    /* Changes to apply fix https://jira.nuxeo.com/browse/NXP-22746 in NX 7.10
+    /*
+     * Changes to apply fix https://jira.nuxeo.com/browse/NXP-22746 in NX 7.10
      * =======================================================================
      */
 
@@ -2019,11 +2505,11 @@ public class EloraCSVImporterWork extends AbstractWork {
     }
 
     /*
-    * METHODS TO FIX A BUG FROM NUXEO THAT IGNORES THE NAME OF ATTACHED FILES
-    * These methods have been copied from ComplexTypeJSONDecoder and
-    * JSONStringBlobDecoder.
-    *
-    * */
+     * METHODS TO FIX A BUG FROM NUXEO THAT IGNORES THE NAME OF ATTACHED FILES
+     * These methods have been copied from ComplexTypeJSONDecoder and
+     * JSONStringBlobDecoder.
+     *
+     */
 
     /* ComplexTypeJSONDecoder */
     private List<Object> decodeListForFiles(ListType lt, String json)
@@ -2119,7 +2605,7 @@ public class EloraCSVImporterWork extends AbstractWork {
             encoding = jsonObject.get("encoding").getTextValue();
         }
 
-        String mimetype = "text/plain";
+        String mimetype = EloraMimeTypeConstants.TEXT_PLAIN;
         if (jsonObject.has("mime-type")) {
             mimetype = jsonObject.get("mime-type").getTextValue();
         }

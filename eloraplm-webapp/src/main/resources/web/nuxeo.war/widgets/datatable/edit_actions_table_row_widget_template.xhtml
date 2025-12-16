@@ -3,72 +3,82 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui"
-    xmlns:c="http://java.sun.com/jstl/core">
-    
-    <h:panelGroup layout="block" class="ui-row-editor" id="#{widget.id}">
-        
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+>
+    <h:panelGroup
+        layout="block"
+        styleClass="ui-row-editor"
+        id="#{widget.id}"
+    >
         <!-- INLINE EDIT -->
         <c:if test="#{layout.properties.inlineEdit}">
-            <a href="#"
-                class="ui-row-editor-pencil tipsyShow tipsyGravityN"
-                title="#{messages['eloraplm.command.edit']}">
+            <a
+                href="#"
+                class="listing-icon-button ui-row-editor-pencil"
+                title="#{messages['eloraplm.command.edit']}"
+            >
                 <h:graphicImage value="/icons/row_edit_16.png" />
             </a>
-            <a href="#"
-                class="ui-row-editor-check tipsyShow tipsyGravityN"
-                title="#{messages['eloraplm.command.save']}">
+            <a
+                href="#"
+                class="listing-icon-button ui-row-editor-check"
+                title="#{messages['eloraplm.command.save']}"
+            >
                 <h:graphicImage value="/icons/row_save_edit_16.png" />
             </a>
-            <a href="#"
-                class="ui-row-editor-close tipsyShow tipsyGravityN"
-                title="#{messages['eloraplm.command.undo']}">
+            <a
+                href="#"
+                class="listing-icon-button ui-row-editor-close"
+                title="#{messages['eloraplm.command.undo']}"
+            >
                 <h:graphicImage value="/icons/row_undo_edit_16.png" />
             </a>
         </c:if>
-        
+
         <!-- EDIT ROWS -->
         <p:commandLink
-            title="#{messages['eloraplm.command.edit']}"
-            styleClass="tipsyShow tipsyGravityN"
+            pt:data-tooltip="#{messages['eloraplm.command.edit']}"
+            styleClass="listing-icon-button"
             action="#{tableBean.setEditingRow(rowData)}"
-            update=":nxw_workflow_questions_dt:editWorkflowQuestionForm"
+            update=":#{widget.id}:editForm"
             onstart="prepareTablePartialAjaxUpdate(cfg.source)"
             oncomplete="PF('#{tableWidgetId}_editDialog').show(); PF('#{tableWidgetId}_editDialog').resetPosition()"
-            rendered="#{layout.properties.editRows and not layout.properties.inlineEdit and not rowData.isRemoved}">
-            
+            rendered="#{eloraWebActions.evaluateBoolean(layout.properties.editRows)
+                and not layout.properties.inlineEdit and not rowData.isRemoved}"
+        >
             <h:graphicImage value="/icons/row_edit_16.png" />
-            
         </p:commandLink>
-        
+
         <!-- REMOVE ROWS -->
         <p:commandLink
-            title="#{messages['eloraplm.command.remove']}"
-            styleClass="tipsyShow tipsyGravityN"
-            rendered="#{layout.properties.removeRows and not rowData.isRemoved}"
-            actionListener="#{tableBean.markRowAsRemoved(component.namingContainer, rowData, rowIndex)}"
+            pt:data-tooltip="#{messages['eloraplm.command.remove']}"
+            styleClass="listing-icon-button row-action-remove"
+            rendered="#{eloraWebActions.evaluateBoolean(layout.properties.removeRows)
+                and (empty layout.properties.removeRowsFilter or eloraWebActions.evaluateBoolean(layout.properties.removeRowsFilter))
+                and not rowData.isRemoved}"
+            actionListener="#{tableBean.markRowAsRemoved(rowData, rowIndex)}"
             process="@this"
+            update="@form:dt:@row(#{rowIndex})"
             partialSubmit="true"
             onstart="prepareTablePartialAjaxUpdate(cfg.source)"
-            onsuccess="markRowAsRemoved()">
-            
+            onsuccess="markRowAsRemoved()"
+        >
             <h:graphicImage value="/icons/row_delete_16.png" />
-            
         </p:commandLink>
-        
+
         <p:commandLink
-            title="#{messages['eloraplm.command.undoRemove']}"
-            styleClass="tipsyShow tipsyGravityN"
-            rendered="#{layout.properties.removeRows and rowData.isRemoved}"
-            actionListener="#{tableBean.unmarkRowAsRemoved(component.namingContainer, rowData, rowIndex)}"
+            pt:data-tooltip="#{messages['eloraplm.command.undoRemove']}"
+            styleClass="listing-icon-button"
+            rendered="#{eloraWebActions.evaluateBoolean(layout.properties.removeRows) and rowData.isRemoved}"
+            actionListener="#{tableBean.unmarkRowAsRemoved(rowData, rowIndex)}"
             process="@this"
+            update="@form:dt:@row(#{rowIndex})"
             partialSubmit="true"
             onstart="prepareTablePartialAjaxUpdate(cfg.source)"
-            onsuccess="unmarkRowAsRemoved()">
-            
+            onsuccess="unmarkRowAsRemoved()"
+        >
             <h:graphicImage value="/icons/row_undo_delete_16.png" />
-            
         </p:commandLink>
-        
     </h:panelGroup>
-    
 </ui:composition>

@@ -45,7 +45,7 @@ import org.nuxeo.ecm.webapp.action.DeleteActions;
 import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicMastersHelper;
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicMastersQueryFactory;
-import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
+import com.aritu.eloraplm.bom.util.BomHelper;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
 import com.aritu.eloraplm.constants.BomCharacteristicsMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
@@ -219,7 +219,7 @@ public class BomCharacteristicMastersBean implements Serializable {
                 throw new EloraException(errorMsg);
 
             } else if (res.size() > 1) {
-                String errorMsg = "More han one "
+                String errorMsg = "More than one "
                         + BomCharacteristicsConstants.BOM_CHARAC_MASTER_FOLDER_DOCUMENT_TYPE
                         + " found:";
                 for (DocumentModel model : res) {
@@ -382,8 +382,7 @@ public class BomCharacteristicMastersBean implements Serializable {
         String bomType = BomCharacteristicMastersHelper.getBomTypeForBomCharacteristicMasterDocType(
                 bomCharacteristicMasterDocType);
 
-        return BomCharacteristicsHelper.getBomClassificationLabel(bomType,
-                classification);
+        return BomHelper.getBomClassificationLabel(bomType, classification);
     }
 
     // ---------------------------------------

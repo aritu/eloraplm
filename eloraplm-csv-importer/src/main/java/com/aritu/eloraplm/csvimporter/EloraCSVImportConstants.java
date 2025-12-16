@@ -14,53 +14,43 @@
 
 package com.aritu.eloraplm.csvimporter;
 
-/**
- * @author <a href="mailto:troger@nuxeo.com">Thomas Roger</a>
- * @since 5.7
- */
 public class EloraCSVImportConstants {
 
     // Import Documents CSV column names
-    // TODO LEIRE: konstante hauei izena aldatu: CSV_IMPORT_DOC_XXXX
-    public static String CSV_NAME_COL = "name";
+    public static String CSV_IMPORT_DOC_NAME_COL = "name";
 
-    public static String CSV_TYPE_COL = "type";
+    public static String CSV_IMPORT_DOC_TYPE_COL = "type";
 
-    public static String CSV_PARENT_PATH_COL = "parentPath";
+    public static String CSV_IMPORT_DOC_PARENT_PATH_COL = "parentPath";
 
-    public static String CSV_DO_CHECKIN_COL = "doCheckin";
+    public static String CSV_IMPORT_DOC_DO_CHECKIN_COL = "doCheckin";
 
-    public static String CSV_CHECHIN_COMMENT_COL = "checkinComment";
+    public static String CSV_IMPORT_DOC_CHECHIN_COMMENT_COL = "checkinComment";
 
-    public static String CHECKIN_DEFAULT_COMMENT = "Imported document";
+    public static String CSV_IMPORT_DOC_CHECKIN_DEFAULT_COMMENT = "Imported document";
 
     // Import Relations CSV column names
-    // TODO LEIRE: konstante hauei izena aldatu: CSV_IMPORT_RELATION_XXXX
-    public static String CSV_SOURCE_NAME_COL = "sourceName";
+    public static String CSV_IMPORT_RELATION_SOURCE_NAME_COL = "sourceName";
 
-    public static String CSV_SOURCE_PARENT_PATH_COL = "sourceParentPath";
+    public static String CSV_IMPORT_RELATION_SOURCE_PARENT_PATH_COL = "sourceParentPath";
 
-    public static String CSV_SOURCE_DOC_UID_COL = "sourceDocUid";
+    public static String CSV_IMPORT_RELATION_SOURCE_DOC_UID_COL = "sourceDocUid";
 
-    public static String CSV_RELATION_PREDICATE_COL = "relation:predicate";
+    public static String CSV_IMPORT_RELATION_RELATION_PREDICATE_COL = "predicate";
 
-    public static String CSV_TARGET_NAME_COL = "targetName";
+    public static String CSV_IMPORT_RELATION_TARGET_NAME_COL = "targetName";
 
-    public static String CSV_TARGET_PARENT_PATH_COL = "targetParentPath";
+    public static String CSV_IMPORT_RELATION_TARGET_PARENT_PATH_COL = "targetParentPath";
 
-    public static String CSV_TARGET_DOC_UID_COL = "targetDocUid";
+    public static String CSV_IMPORT_RELATION_TARGET_DOC_UID_COL = "targetDocUid";
 
-    public static String CSV_QUANTITY_COL = "quantity";
+    public static String CSV_IMPORT_RELATION_GRAPH_NAME_COL = "graphName";
 
-    public static String CSV_ORDERING_COL = "ordering";
+    public static String CSV_IMPORT_RELATION_TARGET_ALWAYS_WC_COL = "targetAlwaysWc";
 
-    public static String CSV_DIRECTOR_ORDERING_COL = "directorOrdering";
+    public static String CSV_IMPORT_RELATION_OBJECT = "object";
 
-    public static String CSV_VIEWER_ORDERING_COL = "viewerOrdering";
-
-    public static String CSV_INVERSE_VIEWER_ORDERING_COL = "inverseViewerOrdering";
-
-    public static String CSV_IS_MANUAL_COL = "isManual";
+    public static String CSV_IMPORT_RELATION_SUBJECT = "subject";
 
     // Import Proxies CSV column names
     public static String CSV_IMPORT_PROXY_DOC_NAME_COL = "docName";
@@ -74,6 +64,20 @@ public class EloraCSVImportConstants {
     public static String CSV_IMPORT_PROXY_FOLDER_PARENT_PATH_COL = "folderParentPath";
 
     public static String CSV_IMPORT_PROXY_FOLDER_UID_COL = "folderUid";
+
+    // Import Comments CSV column names
+
+    public static String CSV_IMPORT_COMMENT_DOC_NAME_COL = "docName";
+
+    public static String CSV_IMPORT_COMMENT_DOC_PARENT_PATH_COL = "docParentPath";
+
+    public static String CSV_IMPORT_COMMENT_DOC_UID_COL = "docUid";
+
+    public static String CSV_IMPORT_COMMENT_AUTHOR_COL = "commentAuthor";
+
+    public static String CSV_IMPORT_COMMENT_TEXT_COL = "commentText";
+
+    public static String CSV_IMPORT_COMMENT_CREATION_DATE_COL = "commentCreationDate";
 
     // Result additional constants
     public static String CSV_RESULT_COL = "result";

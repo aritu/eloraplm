@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.doctypes.WebLayoutManager.contrib">
+    <require>com.aritu.eloraplm.webapp.base.WebLayoutManager.contrib</require>
 
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
         point="layouts">
@@ -13,6 +14,9 @@
             <rows>
                 <row>
                     <widget>reference</widget>
+                </row>
+                <row>
+                    <widget>vaultFolder</widget>
                 </row>
             </rows>
         </layout>
@@ -61,7 +65,14 @@
                     <widget>cadClassification</widget>
                 </row>
                 <row>
-                    <widget>cadMaterial</widget>
+                    <widget>cad_materials</widget>
+                </row>
+                <row>
+                    <widget>cad_material_notes</widget>
+                </row>
+                <row>
+                    <widget>is_sheet_metal</widget>
+                    <widget>is_weldment_part</widget>
                 </row>
                 <row>
                     <widget>mass</widget>
@@ -85,7 +96,12 @@
                     <widget>activeConfiguration</widget>
                 </row>
                 <row>
-                    <widget>cadMaterial</widget>
+                    <widget>cad_materials</widget>
+                    <widget>cad_material_notes</widget>
+                </row>
+                <row>
+                    <widget>is_sheet_metal</widget>
+                    <widget>is_weldment_part</widget>
                 </row>
                 <row>
                     <widget>mass</widget>
@@ -115,6 +131,9 @@
                     <widget>cadClassification</widget>
                 </row>
                 <row>
+                    <widget>is_weldment_assembly</widget>
+                </row>
+                <row>
                     <widget>mass</widget>
                 </row>
                 <row>
@@ -134,6 +153,9 @@
             <rows>
                 <row>
                     <widget>activeConfiguration</widget>
+                </row>
+                <row>
+                    <widget>is_weldment_assembly</widget>
                 </row>
                 <row>
                     <widget>mass</widget>
@@ -169,7 +191,7 @@
                 </row>
             </rows>
         </layout>
-        
+
         <layout name="summary_cad_drawing">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
@@ -186,7 +208,7 @@
                 </row>
             </rows>
         </layout>
-        
+
 
         <layout name="cad_design_table">
             <templates>
@@ -208,8 +230,8 @@
                 </row>
             </rows>
         </layout>
-        
-        
+
+
         <layout name="summary_cad_design_table">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
@@ -224,7 +246,6 @@
                 </row>
             </rows>
         </layout>
-        
 
         <layout name="owner">
             <templates>
@@ -251,7 +272,7 @@
                     <widget>customers</widget>
                 </column>
                 <column>
-                    <widget>manufacturers</widget>
+                    <widget>suppliers</widget>
                 </column>
             </columns>
         </layout>
@@ -263,7 +284,7 @@
             </templates>
             <rows>
                 <row>
-                   <widget>priority</widget>
+                    <widget>priority</widget>
                 </row>
                 <row>
                     <widget>realStartDate</widget>
@@ -272,7 +293,7 @@
                 </row>
             </rows>
         </layout>
-        
+
         <layout name="planning_dates">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
@@ -290,7 +311,7 @@
                 </row>
             </rows>
         </layout>
-        
+
         <layout name="project_type">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
@@ -302,29 +323,7 @@
                 </row>
             </rows>
         </layout>
-        
-        <layout name="project_external_link">
-            <templates>
-                <template mode="any">/layouts/layout_default_template.xhtml
-                </template>
-            </templates>
-            <rows>
-                <row>
-                    <widget>projectExternalLink</widget>
-                </row>
-            </rows>
-            
-            <widget name="projectExternalLink" type="text">
-                <labels>
-                    <label mode="any">eloraplm.label.prj.externalLink</label>
-                </labels>
-                <translated>true</translated>
-                <fields>
-                    <field>prj:externalLink</field>
-                </fields>
-            </widget>
-        </layout>
-        
+
         <layout name="project_edit">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
@@ -348,7 +347,29 @@
                 </row>
             </rows>
         </layout>
-        
+
+        <layout name="external_link">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>externalLink</widget>
+                </row>
+            </rows>
+
+            <widget name="externalLink" type="text">
+                <labels>
+                    <label mode="any">eloraplm.label.externalLink</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>elo:externalLink</field>
+                </fields>
+            </widget>
+        </layout>
+
         <layout name="rights">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
@@ -360,7 +381,7 @@
                 </row>
             </rows>
         </layout>
-        
+
         <layout name="expired">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
@@ -372,7 +393,7 @@
                 </row>
             </rows>
         </layout>
-        
+
         <layout name="subjects">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
@@ -409,7 +430,7 @@
             </rows>
         </layout>
 
-        <layout name="summaryProjectPhases" >
+        <layout name="summaryProjectPhases">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
                 </template>
@@ -445,14 +466,55 @@
             </rows>
         </layout>
 
-        <layout name="related_manufacturer">
+        <layout name="related_customer_required">
             <templates>
                 <template mode="any">/layouts/layout_default_template.xhtml
                 </template>
             </templates>
             <rows>
                 <row>
-                    <widget>manufacturers</widget>
+                    <widget>customers_required</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <layout name="related_supplier">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>suppliers</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <layout name="related_supplier_required">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>suppliers_required</widget>
+                </row>
+            </rows>
+        </layout>
+
+        <layout name="document_templates_root">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>title</widget>
+                </row>
+                <row>
+                    <widget>description</widget>
+                </row>
+                <row>
+                    <widget>source_root</widget>
                 </row>
             </rows>
         </layout>
@@ -594,17 +656,32 @@
                 </properties>
             </widget>
         </layout>
-        
+
         <!-- End of Cad Classification Vocabularies -->
-        
-        
+
+
         <!-- datatable layouts -->
-        
-        <layout name="project_phases_dt">
+
+        <!-- Project phases - short for performance -->
+        <layout name="phs_dt">
             <templates>
                 <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
             </templates>
             <columns>
+                <column name="id">
+                    <properties mode="any">
+                        <!-- TODO zergatik ez zuzenean hidden??? -->
+                        <property name="columnStyleClass">hidden</property>
+                        <property name="sortable">true</property>
+                        <property name="sortBy">#{rowData['id']}</property>
+                        <property name="sortOrder">asc</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
+                    </properties>
+                    <widget>tableWidget_id</widget>
+                </column>
                 <column name="type">
                     <properties mode="any">
                         <property name="columnHeading"></property>
@@ -644,14 +721,16 @@
                 </column>
                 <column name="realStartDate">
                     <properties mode="any">
-                        <property name="columnHeading">eloraplm.column.dt.project.phase.realStartDate</property>
+                        <property name="columnHeading">
+                            eloraplm.column.dt.project.phase.realStartDate</property>
                         <property name="columnStyle">max-width: 10em;</property>
                     </properties>
                     <widget>tableWidget_realStartDate</widget>
                 </column>
                 <column name="plannedEndDate">
                     <properties mode="any">
-                        <property name="columnHeading">eloraplm.column.dt.project.phase.plannedEndDate</property>
+                        <property name="columnHeading">
+                            eloraplm.column.dt.project.phase.plannedEndDate</property>
                         <property name="columnStyle">max-width: 10em;</property>
                     </properties>
                     <widget>tableWidget_plannedEndDate</widget>
@@ -694,6 +773,9 @@
                         <property name="columnStyle">max-width: 40px;</property>
                         <property name="columnStyleClass">alignCenter</property>
                     </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
+                    </properties>
                     <widget>tableWidget_sort_rows</widget>
                 </column>
             </columns>
@@ -702,16 +784,28 @@
                 <property name="tableTitle">eloraplm.title.project.phases</property>
                 <property name="tableStyleClass">bigFont</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="rowStyleClass">row#{rowData.type}#{rowData.obsolete ? 'obsolete' : ''}</property>
-                <property name="isSortable">true</property>
-                <property name="sortBy">id</property>
-                <property name="sortOrder">ascending</property>
-                <property name="isExportable">true</property>
+                <property name="rowStyleClass">row#{rowData.type}#{rowData.obsolete ? 'obsolete' :
+                    ''}</property>
+                <property name="sortable">true</property>
+                <property name="sortMode">single</property>
+            </properties>
+            <properties mode="edit">
                 <property name="inlineEdit">true</property>
                 <property name="removeRows">true</property>
-                <property name="factory">#{projectPhasesData}</property>
             </properties>
-            
+
+            <widget name="tableWidget_id" type="text">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <fields>
+                    <field>id</field>
+                </fields>
+                <widgetModes>
+                    <mode value="edit">view</mode>
+                </widgetModes>
+            </widget>
+
             <widget name="tableWidget_type" type="template">
                 <labels>
                     <label mode="any">eloraplm.label.project.phase.type</label>
@@ -723,10 +817,11 @@
                     <mode value="edit">view</mode>
                 </widgetModes>
                 <properties mode="any">
-                    <property name="template">/widgets/datatable/tablewidget_project_phase_type_template.xhtml</property>
+                    <property name="template">
+                        /widgets/datatable/tablewidget_project_phase_type_template.xhtml</property>
                 </properties>
             </widget>
-            
+
             <widget name="tableWidget_title" type="inline_edit_widget">
                 <labels>
                     <label mode="any">eloraplm.label.project.phase.title</label>
@@ -736,13 +831,24 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="text">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
-                        <properties mode="any"><property name="facet">output</property></properties>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
                     </widget>
                     <widget name="edit" type="text">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">input</property>
                             <property name="required">true</property>
@@ -750,7 +856,7 @@
                     </widget>
                 </subWidgets>
             </widget>
-            
+
             <widget name="tableWidget_description" type="inline_edit_widget">
                 <labels>
                     <label mode="any">eloraplm.label.project.phase.description</label>
@@ -760,24 +866,35 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="template">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
-                            <property name="template">/widgets/datatable/tablewidget_project_phase_description_template.xhtml</property>
+                            <property name="template">
+                                /widgets/datatable/tablewidget_project_phase_description_template.xhtml</property>
                         </properties>
                     </widget>
                     <widget name="edit" type="template">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">input</property>
-                            <property name="template">/widgets/datatable/tablewidget_project_phase_description_template.xhtml</property>
+                            <property name="template">
+                                /widgets/datatable/tablewidget_project_phase_description_template.xhtml</property>
                         </properties>
                     </widget>
                 </subWidgets>
             </widget>
-            
+
             <widget name="tableWidget_deliverables" type="inline_edit_widget">
                 <labels>
                     <label mode="any">eloraplm.label.project.phase.deliverables</label>
@@ -787,24 +904,35 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="template">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
-                            <property name="template">/widgets/datatable/tablewidget_project_phase_deliverables_template.xhtml</property>
+                            <property name="template">
+                                /widgets/datatable/tablewidget_project_phase_deliverables_template.xhtml</property>
                         </properties>
                     </widget>
                     <widget name="edit" type="template">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">input</property>
-                            <property name="template">/widgets/datatable/tablewidget_project_phase_deliverables_template.xhtml</property>
+                            <property name="template">
+                                /widgets/datatable/tablewidget_project_phase_deliverables_template.xhtml</property>
                         </properties>
                     </widget>
                 </subWidgets>
             </widget>
-            
+
             <widget name="tableWidget_manager" type="inline_edit_widget">
                 <labels>
                     <label mode="any">eloraplm.label.project.phase.manager</label>
@@ -814,13 +942,24 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="singleUserSuggestion">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
-                        <properties mode="any"><property name="facet">output</property></properties>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
                     </widget>
                     <widget name="edit" type="singleUserSuggestion">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">input</property>
                             <property name="userSuggestionSearchType">USER_TYPE</property>
@@ -840,38 +979,56 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="text">
-                        <fields><field>#{field_0}</field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
+                        <fields>
+                            <field>#{field_0}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
                             <property name="pattern">#{nxu:basicDateFormatter()}</property>
                         </properties>
                     </widget>
                     <widget name="propagateDateOutput" type="template">
-                        <fields><field>#{field_0}</field><field>#{field_1}</field></fields>
+                        <fields>
+                            <field>#{field_0}</field>
+                            <field>#{field_1}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">edit</mode>
+                            <mode value="any">hidden</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
-                            <property name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property>
+                            <property name="template">
+                                /widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property>
                             <property name="fieldToPropagate">realStartDate</property>
                         </properties>
                     </widget>
                     <widget name="edit" type="text">
-                        <fields><field>#{field_0}</field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
+                        <fields>
+                            <field>#{field_0}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">input</property>
                             <property name="styleClass">dataInputText</property>
                             <property name="format">#{nxu:basicDateFormatter()}</property>
                         </properties>
                     </widget>
-<!--                     <widget name="propagateDateInput" type="template"> -->
-<!--                         <fields><field>#{field_0}</field><field>#{field_1}</field></fields> -->
-<!--                         <properties mode="any"> -->
-<!--                             <property name="facet">input</property> -->
-<!--                             <property name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property> -->
-<!--                             <property name="fieldToPropagate">realStartDate</property> -->
-<!--                         </properties> -->
-<!--                     </widget> -->
+                    <!--                     <widget name="propagateDateInput" type="template"> -->
+                    <!--                         <fields><field>#{field_0}</field><field>#{field_1}</field></fields> -->
+                    <!--                         <properties mode="any"> -->
+                    <!--                             <property name="facet">input</property> -->
+                    <!--                             <property
+                    name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property> -->
+                    <!--                             <property name="fieldToPropagate">realStartDate</property> -->
+                    <!--                         </properties> -->
+                    <!--                     </widget> -->
                 </subWidgets>
             </widget>
             <widget name="tableWidget_plannedEndDate" type="inline_edit_widget">
@@ -884,38 +1041,56 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="text">
-                        <fields><field>#{field_0}</field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
+                        <fields>
+                            <field>#{field_0}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
                             <property name="pattern">#{nxu:basicDateFormatter()}</property>
                         </properties>
                     </widget>
                     <widget name="propagateDateOutput" type="template">
-                        <fields><field>#{field_0}</field><field>#{field_1}</field></fields>
+                        <fields>
+                            <field>#{field_0}</field>
+                            <field>#{field_1}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">edit</mode>
+                            <mode value="any">hidden</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
-                            <property name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property>
+                            <property name="template">
+                                /widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property>
                             <property name="fieldToPropagate">plannedEndDate</property>
                         </properties>
                     </widget>
                     <widget name="edit" type="text">
-                        <fields><field>#{field_0}</field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
+                        <fields>
+                            <field>#{field_0}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">input</property>
                             <property name="styleClass">dataInputText</property>
                             <property name="format">#{nxu:basicDateFormatter()}</property>
                         </properties>
                     </widget>
-<!--                     <widget name="propagateDateInput" type="template"> -->
-<!--                         <fields><field>#{field_0}</field><field>#{field_1}</field></fields> -->
-<!--                         <properties mode="any"> -->
-<!--                             <property name="facet">input</property> -->
-<!--                             <property name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property> -->
-<!--                             <property name="fieldToPropagate">plannedEndDate</property> -->
-<!--                         </properties> -->
-<!--                     </widget> -->
+                    <!--                     <widget name="propagateDateInput" type="template"> -->
+                    <!--                         <fields><field>#{field_0}</field><field>#{field_1}</field></fields> -->
+                    <!--                         <properties mode="any"> -->
+                    <!--                             <property name="facet">input</property> -->
+                    <!--                             <property
+                    name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property> -->
+                    <!--                             <property name="fieldToPropagate">plannedEndDate</property> -->
+                    <!--                         </properties> -->
+                    <!--                     </widget> -->
                 </subWidgets>
             </widget>
             <widget name="tableWidget_realEndDate" type="inline_edit_widget">
@@ -928,38 +1103,56 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="text">
-                        <fields><field>#{field_0}</field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
+                        <fields>
+                            <field>#{field_0}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
                             <property name="pattern">#{nxu:basicDateFormatter()}</property>
                         </properties>
                     </widget>
                     <widget name="propagateDateOutput" type="template">
-                        <fields><field>#{field_0}</field><field>#{field_1}</field></fields>
+                        <fields>
+                            <field>#{field_0}</field>
+                            <field>#{field_1}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">edit</mode>
+                            <mode value="any">hidden</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
-                            <property name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property>
+                            <property name="template">
+                                /widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property>
                             <property name="fieldToPropagate">realEndDate</property>
                         </properties>
                     </widget>
                     <widget name="edit" type="text">
-                        <fields><field>#{field_0}</field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
+                        <fields>
+                            <field>#{field_0}</field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">input</property>
                             <property name="styleClass">dataInputText</property>
                             <property name="format">#{nxu:basicDateFormatter()}</property>
                         </properties>
                     </widget>
-<!--                     <widget name="propagateDateInput" type="template"> -->
-<!--                         <fields><field>#{field_0}</field><field>#{field_1}</field></fields> -->
-<!--                         <properties mode="any"> -->
-<!--                             <property name="facet">input</property> -->
-<!--                             <property name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property> -->
-<!--                             <property name="fieldToPropagate">realEndDate</property> -->
-<!--                         </properties> -->
-<!--                     </widget> -->
+                    <!--                     <widget name="propagateDateInput" type="template"> -->
+                    <!--                         <fields><field>#{field_0}</field><field>#{field_1}</field></fields> -->
+                    <!--                         <properties mode="any"> -->
+                    <!--                             <property name="facet">input</property> -->
+                    <!--                             <property
+                    name="template">/widgets/datatable/tablewidget_project_phases_propagate_date.xhtml</property> -->
+                    <!--                             <property name="fieldToPropagate">realEndDate</property> -->
+                    <!--                         </properties> -->
+                    <!--                     </widget> -->
                 </subWidgets>
             </widget>
             <widget name="tableWidget_progress" type="inline_edit_widget">
@@ -971,14 +1164,27 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="colored_percentage">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
-                        <properties mode="any"><property name="facet">output</property></properties>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
                     </widget>
                     <widget name="edit" type="colored_percentage">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
-                        <properties mode="any"><property name="facet">input</property></properties>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">input</property>
+                        </properties>
                     </widget>
                 </subWidgets>
             </widget>
@@ -991,14 +1197,27 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="textarea">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
-                        <properties mode="any"><property name="facet">output</property></properties>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
                     </widget>
                     <widget name="edit" type="textarea">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
-                        <properties mode="any"><property name="facet">input</property></properties>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">input</property>
+                        </properties>
                     </widget>
                 </subWidgets>
             </widget>
@@ -1011,17 +1230,26 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="selectOneDirectory">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">output</property>
                             <property name="directoryName">elora_projectResult</property>
                             <property name="localize">true</property>
-                        </properties> 
+                        </properties>
                     </widget>
                     <widget name="edit" type="selectOneDirectory">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
                         <properties mode="any">
                             <property name="facet">input</property>
                             <property name="directoryName">elora_projectResult</property>
@@ -1041,14 +1269,27 @@
                 </fields>
                 <subWidgets>
                     <widget name="view" type="checkbox">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="edit">view</mode></widgetModes>
-                        <properties mode="any"><property name="facet">output</property></properties> 
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
                     </widget>
                     <widget name="edit" type="checkbox">
-                        <fields><field></field></fields>
-                        <widgetModes><mode value="any">edit</mode></widgetModes>
-                        <properties mode="any"><property name="facet">input</property></properties>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="csv">hidden</mode>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">input</property>
+                        </properties>
                     </widget>
                 </subWidgets>
             </widget>
@@ -1056,13 +1297,252 @@
                 <fields>
                     <field></field>
                 </fields>
+                <widgetModes>
+                    <mode value="edit">edit</mode>
+                    <mode value="any">hidden</mode>
+                </widgetModes>
                 <properties mode="any">
-                    <property name="template">/widgets/datatable/tablewidget_project_phases_sort_rows.xhtml
-                </property>
-            </properties>
+                    <property name="template">
+                        /widgets/datatable/tablewidget_project_phases_sort_rows.xhtml
+                    </property>
+                </properties>
             </widget>
         </layout>
-        
+
+        <layout name="document_versions_dt">
+            <templates>
+                <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="type">
+                    <properties mode="any">
+                        <property name="columnStyle">max-width: 40px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>tableWidget_type</widget>
+                </column>
+
+                <column name="reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="columnStyle">max-width: 90px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>tableWidget_reference</widget>
+                </column>
+
+                <column name="version">
+                    <properties mode="any">
+                        <property name="columnHeading">label.version</property>
+                        <property name="columnStyle">max-width: 60px;</property>
+                        <property name="columnStyleClass">alignLeft</property>
+                    </properties>
+                    <widget>tableWidget_version</widget>
+                </column>
+
+                <column name="sourceVersion">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.sourceVersion</property>
+                        <property name="columnTooltip">
+                            eloraplm.label.nonCorrelativeSourceVersion.tooltip</property>
+                        <property name="columnStyle">max-width: 60px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>tableWidget_sourceVersion</widget>
+                </column>
+
+                <column name="comment">
+                    <properties mode="any">
+                        <property name="columnHeading">label.comment</property>
+                    </properties>
+                    <widget>tableWidget_comment</widget>
+                </column>
+
+                <column name="lifecycleState">
+                    <properties mode="any">
+                        <property name="columnHeading">label.lifecycle</property>
+                        <property name="columnStyle">min-width: 110px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>tableWidget_lifecycleState</widget>
+                </column>
+
+                <column name="lastContributor">
+                    <properties mode="any">
+                        <property name="columnHeading">label.dublincore.lastContributor</property>
+                    </properties>
+                    <widget>tableWidget_lastContributor</widget>
+                </column>
+
+                <column name="actions">
+                    <properties mode="any">
+                        <property name="columnHeading">label.action</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
+                    </properties>
+                    <widget>tableWidget_actions</widget>
+                </column>
+
+            </columns>
+            <properties mode="any">
+                <property name="headerFiltersTemplate"></property>
+                <property name="tableTitle">label.archivedVersions</property>
+                <property name="tableStyleClass">bigFont</property>
+                <property name="tableStyle">table-layout: auto;</property>
+                <property name="sortable">false</property>
+            </properties>
+            <properties mode="edit">
+                <property name="inlineEdit">true</property>
+            </properties>
+
+            <widget name="tableWidget_type" type="listing_icon_type">
+                <fields>
+                    <field>versionDoc</field>
+                    <field>versionDoc.ref</field>
+                    <field>versionDoc.type</field>
+                    <field>versionDoc.folder</field>
+                </fields>
+                <widgetModes>
+                    <mode value="edit">view</mode>
+                </widgetModes>
+            </widget>
+
+            <widget name="tableWidget_reference" type="template">
+                <labels>
+                    <label mode="any">eloraplm.label.reference</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>versionDoc</field>
+                    <field>versionDoc.ref</field>
+                </fields>
+                <widgetModes>
+                    <mode value="edit">view</mode>
+                </widgetModes>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/listing/listing_reference_widget_template.xhtml</property>
+                </properties>
+            </widget>
+
+            <widget name="tableWidget_version" type="template">
+                <labels>
+                    <label mode="any">label.version</label>
+                </labels>
+                <fields>
+                    <field>versionDoc</field>
+                    <field>version</field>
+                </fields>
+                <widgetModes>
+                    <mode value="edit">view</mode>
+                </widgetModes>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/datatable/tablewidget_document_version_versionLabel_template.xhtml</property>
+                </properties>
+            </widget>
+
+            <widget name="tableWidget_sourceVersion" type="template">
+                <labels>
+                    <label mode="any">eloraplm.label.sourceVersion</label>
+                </labels>
+                <fields>
+                    <field>sourceVersion</field>
+                    <field>nonCorrelativeVersion</field>
+                </fields>
+                <widgetModes>
+                    <mode value="edit">view</mode>
+                </widgetModes>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/datatable/tablewidget_document_version_sourceVersion_template.xhtml</property>
+                </properties>
+            </widget>
+
+            <widget name="tableWidget_comment" type="inline_edit_widget">
+                <labels>
+                    <label mode="any">label.comment</label>
+                </labels>
+                <fields>
+                    <field>comment</field>
+                </fields>
+                <subWidgets>
+                    <widget name="view" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="edit">view</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">output</property>
+                        </properties>
+                    </widget>
+                    <widget name="edit" type="text">
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <widgetModes>
+                            <mode value="any">edit</mode>
+                        </widgetModes>
+                        <properties mode="any">
+                            <property name="facet">input</property>
+                            <property name="styleClass">dataInputText</property>
+                            <property name="required">true</property>
+                        </properties>
+                    </widget>
+                </subWidgets>
+            </widget>
+
+            <widget name="tableWidget_lifecycleState" type="template">
+                <labels>
+                    <label mode="any">label.lifecycle</label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>lifecycleState</field>
+                </fields>
+                <widgetModes>
+                    <mode value="edit">view</mode>
+                </widgetModes>
+                <properties mode="any">
+                    <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
+                </properties>
+            </widget>
+
+            <widget name="tableWidget_lastContributor" type="template">
+                <labels>
+                    <label mode="any">label.dublincore.lastContributor</label>
+                </labels>
+                <fields>
+                    <field>versionDoc</field>
+                </fields>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/datatable/tablewidget_document_version_last_contributor_template.xhtml
+                    </property>
+                </properties>
+            </widget>
+
+            <widget name="tableWidget_actions" type="template">
+                <labels>
+                    <label mode="any">label.action</label>
+                </labels>
+                <fields>
+                    <field>versionDoc</field>
+                </fields>
+                <properties mode="any">
+                    <property name="template">
+                        /widgets/datatable/tablewidget_document_version_actions_template.xhtml
+                    </property>
+                </properties>
+            </widget>
+
+        </layout>
+
+
         <!-- end of datatable layouts -->
 
     </extension>
@@ -1084,8 +1564,8 @@
                 </property>
             </properties>
         </widget>
-        
-        <widget name="applyModifier" type="template">
+
+        <widget name="applyModifier" type="boolean_yes_no">
             <labels>
                 <label mode="any">label.widget.elovwr.applyModifier</label>
             </labels>
@@ -1093,9 +1573,6 @@
             <fields>
                 <field>elovwr:applyModifier</field>
             </fields>
-            <properties widgetMode="any">
-                <property name="template">/widgets/boolean_yes_no_widget_template.xhtml</property>
-            </properties>
         </widget>
 
         <widget name="authoringTool" type="selectOneDirectory">
@@ -1145,6 +1622,9 @@
             <labels>
                 <label mode="any">label.widget.cad.cadType</label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>cad:cadType</field>
@@ -1165,6 +1645,9 @@
                 <label mode="any">label.widget.cad.cadClassification
                 </label>
             </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
             <translated>true</translated>
             <fields>
                 <field>cad:cadClassification</field>
@@ -1174,20 +1657,70 @@
                 </mode>
             </widgetModes>
             <properties widgetMode="any">
-                <property name="directoryName">elora_cadClassHierarchical
-                </property>
+                <property name="directoryName">elora_cadClassHierarchical</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="required">false</property>
             </properties>
         </widget>
 
-        <widget name="cadMaterial" type="text">
+        <!-- complex widget because text_list_pills widget is not ready for edit yet, when the
+        edition
+        with select2 is done, this should be a simple text_list_pills widget -->
+        <widget name="cad_materials" type="complex">
             <labels>
-                <label mode="any">label.widget.cad.cadMaterial</label>
+                <label mode="any">eloraplm.label.cad.materials</label>
             </labels>
             <translated>true</translated>
             <fields>
-                <field>cad:cadMaterial</field>
+                <field>cad:materials</field>
+            </fields>
+            <properties mode="any">
+                <property name="hideSubLabels">true</property>
+            </properties>
+            <subWidgets>
+                <widget name="cad_materials_view" type="text_list_pills">
+                    <fields>
+                        <field></field>
+                    </fields>
+                    <labels>
+                        <label mode="any"></label>
+                    </labels>
+                    <widgetModes>
+                        <mode value="edit">hidden</mode>
+                    </widgetModes>
+                </widget>
+                <widget name="cad_materials_edit" type="list">
+                    <fields>
+                        <field></field>
+                    </fields>
+                    <labels>
+                        <label mode="any"></label>
+                    </labels>
+                    <widgetModes>
+                        <mode value="view">hidden</mode>
+                    </widgetModes>
+                    <subWidgets>
+                        <widget name="listItem" type="text">
+                            <fields>
+                                <field>#{value}</field>
+                            </fields>
+                            <labels>
+                                <label mode="any"></label>
+                            </labels>
+                        </widget>
+                    </subWidgets>
+                </widget>
+            </subWidgets>
+        </widget>
+
+        <widget name="cad_material_notes" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.cad.materialNotes</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cad:materialNotes</field>
             </fields>
         </widget>
 
@@ -1214,14 +1747,14 @@
         </widget>
 
         <widget name="surface" type="measure_value_and_unit">
-            <labels> 
+            <labels>
                 <label mode="any">label.widget.cad.surface</label>
             </labels>
-            <translated>true</translated> 
+            <translated>true</translated>
             <fields>
                 <field>cad:surface</field>
                 <field>cad:surfaceUnit</field>
-            </fields> 
+            </fields>
         </widget>
 
 
@@ -1303,11 +1836,10 @@
                 <property name="required">false</property>
             </properties>
         </widget>
-        
+
         <widget name="listing_project_type" type="selectOneDirectory">
             <labels>
-                <label mode="any">label.widget.project.projectType
-                </label>
+                <label mode="any">label.widget.project.projectType</label>
             </labels>
             <translated>true</translated>
             <fields>
@@ -1318,7 +1850,17 @@
                 <property name="required">false</property>
             </properties>
         </widget>
-        
+
+        <widget name="listing_external_link" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.externalLink</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.elo.externalLink</field>
+            </fields>
+        </widget>
+
         <widget name="owner" type="suggestOneDirectory">
             <labels>
                 <label mode="any">eloraplm.label.owner
@@ -1332,6 +1874,7 @@
                 <property name="width">100%</property>
                 <property name="minChars">3</property>
                 <property name="directoryName">elora_erpCustomers</property>
+                <property name="contains">true</property>
             </properties>
         </widget>
 
@@ -1373,7 +1916,7 @@
                 <control name="supportInsideInputWidgetEffects">true</control>
             </controls>
         </widget>
-        
+
         <widget name="listing_current_phase" type="template">
             <labels>
                 <label mode="any">eloraplm.label.prj.currentPhase</label>
@@ -1383,10 +1926,11 @@
                 <field>data</field>
             </fields>
             <properties widgetMode="any">
-                <property name="template">/widgets/listing/listing_current_phase_widget_template.xhtml</property>
+                <property name="template">
+                    /widgets/listing/listing_current_phase_widget_template.xhtml</property>
             </properties>
         </widget>
-        
+
         <widget name="listing_current_phase_manager" type="template">
             <labels>
                 <label mode="any">eloraplm.label.prj.currentPhaseManager</label>
@@ -1396,11 +1940,12 @@
                 <field>data</field>
             </fields>
             <properties widgetMode="any">
-                <property name="template">/widgets/listing/listing_current_phase_manager_widget_template.xhtml</property>
+                <property name="template">
+                    /widgets/listing/listing_current_phase_manager_widget_template.xhtml</property>
             </properties>
         </widget>
-        
-        
+
+
         <widget name="listing_current_phase_planned_end_date" type="template">
             <labels>
                 <label mode="any">eloraplm.label.prj.currentPhasePlannedEndDate</label>
@@ -1410,10 +1955,11 @@
                 <field>data</field>
             </fields>
             <properties widgetMode="any">
-                <property name="template">/widgets/listing/listing_current_phase_planned_end_date_widget_template.xhtml</property>
+                <property name="template">
+                    /widgets/listing/listing_current_phase_planned_end_date_widget_template.xhtml</property>
             </properties>
         </widget>
-        
+
         <widget name="realStartDate" type="datetime">
             <labels>
                 <label mode="any">label.widget.planning.realStartDate</label>
@@ -1426,6 +1972,19 @@
                 <property name="format">#{nxu:basicDateFormatter()}</property>
             </properties>
             <properties mode="view">
+                <property name="pattern">#{nxu:basicDateFormatter()}</property>
+            </properties>
+        </widget>
+
+        <widget name="listing_realStartDate" type="datetime">
+            <labels>
+                <label mode="any">label.widget.planning.realStartDate</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.plan.realStartDate</field>
+            </fields>
+            <properties mode="any">
                 <property name="pattern">#{nxu:basicDateFormatter()}</property>
             </properties>
         </widget>
@@ -1445,7 +2004,7 @@
                 <property name="pattern">#{nxu:basicDateFormatter()}</property>
             </properties>
         </widget>
-        
+
         <widget name="listing_plannedEndDate" type="datetime">
             <labels>
                 <label mode="any">label.widget.planning.plannedEndDate</label>
@@ -1474,7 +2033,20 @@
                 <property name="pattern">#{nxu:basicDateFormatter()}</property>
             </properties>
         </widget>
-        
+
+        <widget name="listing_realEndDate" type="datetime">
+            <labels>
+                <label mode="any">label.widget.planning.realEndDate</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data.plan.realEndDate</field>
+            </fields>
+            <properties mode="any">
+                <property name="pattern">#{nxu:basicDateFormatter()}</property>
+            </properties>
+        </widget>
+
         <widget name="progress" type="colored_percentage">
             <labels>
                 <label mode="any">label.widget.planning.progress</label>
@@ -1483,7 +2055,7 @@
                 <field>plan:progress</field>
             </fields>
         </widget>
-        
+
         <widget name="listing_progress" type="colored_percentage">
             <labels>
                 <label mode="any">label.widget.planning.progress</label>
@@ -1493,13 +2065,19 @@
                 <field>data.plan.progress</field>
             </fields>
         </widget>
-        
-        <widget name="summaryProjectPhases" type="summary_project_phases_list">
-         <labels>
-            <label mode="any">label.widget.project.projectPhaseList</label>
-          </labels>
-          <handlingLabels>true</handlingLabels>
-          <translated>true</translated>
+
+        <widget name="summaryProjectPhases" type="container">
+            <labels>
+                <label mode="any">label.widget.project.projectPhaseList</label>
+            </labels>
+            <translated>true</translated>
+            <handlingLabels>true</handlingLabels>
+            <properties mode="any">
+                <property name="hideSubLabels">true</property>
+            </properties>
+            <subWidgets>
+                <widget name="summaryProjectPhases_content" type="summary_project_phases_list" />
+            </subWidgets>
         </widget>
 
         <widget name="partaker" type="suggestOneDirectory">
@@ -1522,7 +2100,7 @@
                 <label mode="any">label.widget.cust.customer</label>
             </labels>
             <helpLabels>
-                <label mode="edit">label.dublincore.subjects.info</label>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
             </helpLabels>
             <translated>true</translated>
             <fields>
@@ -1530,63 +2108,173 @@
             </fields>
             <properties mode="any">
                 <property name="width">100%</property>
-                <property name="minChars">0</property>
+                <property name="minChars">3</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
                 <property name="directoryName">elora_erpCustomers</property>
             </properties>
         </widget>
 
-        <widget name="manufacturers" type="suggestManyDirectory">
+        <widget name="customers_required" type="suggestManyDirectory">
             <labels>
-                <label mode="any">label.widget.manu.manufacturer</label>
+                <label mode="any">label.widget.cust.customer</label>
             </labels>
             <helpLabels>
-                <label mode="edit">label.dublincore.subjects.info</label>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
             </helpLabels>
             <translated>true</translated>
             <fields>
-                <field>manu:manufacturers</field>
+                <field>cust:customers</field>
             </fields>
             <properties mode="any">
+                <property name="required">true</property>
                 <property name="width">100%</property>
-                <property name="minChars">0</property>
+                <property name="minChars">3</property>
+                <property name="contains">true</property>
                 <property name="hideHelpLabel">true</property>
-                <property name="directoryName">elora_erpManufacturers
-                </property>
+                <property name="directoryName">elora_erpCustomers</property>
             </properties>
         </widget>
-        
+
+        <widget name="suppliers" type="list">
+            <labels>
+                <label mode="any">label.widget.supp.suppliers</label>
+            </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
+            <translated>true</translated>
+            <fields>
+                <field>supp:suppliers</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="display">inline</property>
+                <property name="hideSubLabels">true</property>
+            </properties>
+            <subWidgets>
+                <widget name="supplier" type="suggestOneDirectory">
+                    <labels>
+                        <label mode="any"></label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>supplier</field>
+                    </fields>
+                    <properties mode="any">
+                        <property name="directoryName">elora_erpSuppliers</property>
+                        <property name="minChars">3</property>
+                        <property name="contains">true</property>
+                    </properties>
+                </widget>
+            </subWidgets>
+        </widget>
+
+        <widget name="suppliers_required" type="list">
+            <labels>
+                <label mode="any">label.widget.supp.suppliers</label>
+            </labels>
+            <helpLabels>
+                <label mode="any">eloraplm.label.help.field.used.virtual.navigation</label>
+            </helpLabels>
+            <translated>true</translated>
+            <fields>
+                <field>supp:suppliers</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="display">inline</property>
+                <property name="hideSubLabels">true</property>
+                <property name="required">true</property>
+            </properties>
+            <subWidgets>
+                <widget name="supplier" type="suggestOneDirectory">
+                    <labels>
+                        <label mode="any"></label>
+                    </labels>
+                    <translated>true</translated>
+                    <fields>
+                        <field>supplier</field>
+                    </fields>
+                    <properties mode="any">
+                        <property name="directoryName">elora_erpSuppliers</property>
+                        <property name="minChars">3</property>
+                        <property name="contains">true</property>
+                    </properties>
+                </widget>
+            </subWidgets>
+        </widget>
+        <!--  -->
+
+        <widget name="source_root" type="singleDocumentSuggestion">
+            <labels>
+                <label mode="any">label.dublincore.source.root</label>
+            </labels>
+            <translated>true</translated>
+            <widgetModes>
+                <mode value="edit">view</mode>
+            </widgetModes>
+            <fields>
+                <field>dc:source</field>
+            </fields>
+            <properties widgetMode="any">
+                <property name="pageProviderName">structure_collaboration_library_root_wc_suggestion</property>
+                <property name="documentSchemas">dublincore,common,elora_object,template_info</property>
+            </properties>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+                <property name="minChars">0</property>
+            </properties>
+        </widget>
+
         <!-- datatable widgets -->
-        
-        <widget name="project_phases_dt" type="datatable">
+
+        <!-- Project phases - short for performance -->
+        <widget name="phs_dt" type="datatable">
             <labels>
                 <label mode="any">eloraplm.label.datatable.project.phases</label>
             </labels>
             <widgetModes>
-                <mode value="any">#{
-                         nxd:hasPermission(currentDocument, 'Write')
-                         and (not currentDocument.isLocked()
-                            or currentDocumentLockDetails['document.locker'] eq currentUser)? 'edit' : 'view'}</mode>
+                <mode value="edit">#{eloraWebActions.isEditable() ? 'edit' : 'view' }</mode>
             </widgetModes>
             <properties widgetMode="any">
-                <property name="datatableLayout">project_phases_dt</property>
+                <property name="datatableLayout">phs_dt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
-        
+
+        <widget name="document_versions_dt" type="datatable">
+            <labels>
+                <label mode="any">eloraplm.label.datatable.document.versions</label>
+            </labels>
+            <widgetModes>
+                <mode value="edit">#{
+                    nxd:hasPermission(currentDocument, 'Write')
+                    and (not currentDocument.isLocked()
+                    or currentDocumentLockDetails['document.locker'] eq currentUser)? 'edit' :
+                    'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="any">
+                <property name="datatableLayout">document_versions_dt</property>
+                <property name="exportable">true</property>
+            </properties>
+        </widget>
+
         <!-- end of datatable widgets -->
-        
+
         <widget name="edit_phase_deliverable" type="list">
             <labels>
                 <label mode="any">eloraplm.label.project.phase.deliverables</label>
             </labels>
             <handlingLabels>true</handlingLabels>
             <translated>true</translated>
-            <fields><field></field></fields>
+            <fields>
+                <field></field>
+            </fields>
             <properties widgetMode="any">
                 <property name="display">table</property>
             </properties>
             <properties widgetMode="edit">
-                <property name="listTemplateItem">#{nxd:propertyDefaultValue('project:projectPhaseList/deliverables')}</property>
+                <property name="listTemplateItem">
+                    #{nxd:propertyDefaultValue('project:projectPhaseList/deliverables')}</property>
             </properties>
             <subWidgets>
                 <widget name="isRequired" type="checkbox">
@@ -1613,7 +2301,8 @@
                         <field></field>
                     </fields>
                     <properties widgetMode="any">
-                        <property name="template">/widgets/datatable/tablewidget_project_phase_edit_deliverable_document_template.xhtml</property>
+                        <property name="template">
+                            /widgets/datatable/tablewidget_project_phase_edit_deliverable_document_template.xhtml</property>
                     </properties>
                 </widget>
                 <widget name="link" type="text">
@@ -1626,19 +2315,22 @@
                 </widget>
             </subWidgets>
         </widget>
-        
+
         <widget name="add_phase_deliverable" type="list">
             <labels>
                 <label mode="any">eloraplm.label.project.phase.deliverables</label>
             </labels>
             <handlingLabels>true</handlingLabels>
             <translated>true</translated>
-            <fields><field></field></fields>
+            <fields>
+                <field></field>
+            </fields>
             <properties widgetMode="any">
                 <property name="display">table</property>
             </properties>
             <properties widgetMode="edit">
-                <property name="listTemplateItem">#{nxd:propertyDefaultValue('project:projectPhaseList/deliverables')}</property>
+                <property name="listTemplateItem">
+                    #{nxd:propertyDefaultValue('project:projectPhaseList/deliverables')}</property>
             </properties>
             <subWidgets>
                 <widget name="isRequired" type="checkbox">
@@ -1657,43 +2349,69 @@
                         <field>name</field>
                     </fields>
                 </widget>
-                <!-- <widget name="document" type="singleDocumentSuggestion">
-                    <labels>
-                        <label mode="any">eloraplm.label.project.phase.deliverable.document</label>
-                    </labels>
-                    <fields>
-                        <field>document</field>
-                    </fields>
-                    <properties widgetMode="any">
-                        <property name="pageProviderName">other_document_proxy_in_content_suggestion</property>
-                        <property name="additionalOperationParameters">eloraPassQueryTermsTwice</property>
-                        <property name="documentSchemas">dublincore,common,elora_object,template_info</property>
-                    </properties>
-                </widget>
-                <widget name="link" type="text">
-                    <labels>
-                        <label mode="any">eloraplm.label.project.phase.deliverable.link</label>
-                    </labels>
-                    <fields>
-                        <field>link</field>
-                    </fields>
-                </widget> -->
             </subWidgets>
         </widget>
-        
+
+        <widget name="is_sheet_metal" type="boolean_yes_no">
+            <labels>
+                <label mode="any">eloraplm.label.cad.part.isSheetMetal</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cadprt:isSheetMetal</field>
+            </fields>
+        </widget>
+
+        <widget name="is_weldment_assembly" type="boolean_yes_no">
+            <labels>
+                <label mode="any">eloraplm.label.cad.isWeldmentAssembly</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cad:isWeldment</field>
+            </fields>
+        </widget>
+
+        <widget name="is_weldment_part" type="boolean_yes_no">
+            <labels>
+                <label mode="any">eloraplm.label.cad.isWeldmentPart</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>cad:isWeldment</field>
+            </fields>
+        </widget>
+
+        <widget name="description_required" type="textarea">
+            <labels>
+                <label mode="any">description</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>dc:description</field>
+            </fields>
+            <widgetModes>
+                <mode value="view_summary">#{empty layoutValue.dc.description?'hidden':'view'}</mode>
+            </widgetModes>
+            <properties widgetMode="edit">
+                <property name="required">true</property>
+                <property name="styleClass">dataInputText</property>
+            </properties>
+        </widget>
+
     </extension>
-    
+
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgettypes">
-        
+
         <widgetType name="summary_project_phases_list">
-          <handler-class>
-            org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
-          </handler-class>
-          <property name="template">
-            /widgets/summary/project_phases_list_widget_template.xhtml
-          </property>
+            <handler-class>
+                org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
+            </handler-class>
+            <property name="template">
+                /widgets/summary/project_phases_list_widget_template.xhtml
+            </property>
         </widgetType>
-        
+
     </extension>
 
 </component>  

@@ -31,18 +31,22 @@ public class CadRelationNodeData extends BaseRelationNodeData {
 
     private boolean isSuppressed;
 
+    private boolean isExcludedFromComposition;
+
     private List<DocumentModel> relatedBoms;
 
     public CadRelationNodeData(String id, int level, String docId,
             DocumentModel data, DocumentModel wcDoc, Statement stmt,
             String predicateUri, String quantity, String comment,
             Integer ordering, Integer directorOrdering, Integer viewerOrdering,
-            Integer inverseViewerOrdering, Boolean isManual, boolean isSpecial,
+            Integer inverseViewerOrdering, Boolean isManual, String designators,
+            Boolean isExcludedFromMapping, boolean isSpecial,
             boolean isDirect) {
 
         super(id, level, docId, data, wcDoc, stmt, predicateUri, quantity,
                 comment, ordering, directorOrdering, viewerOrdering,
-                inverseViewerOrdering, isManual, isSpecial, isDirect);
+                inverseViewerOrdering, isManual, designators,
+                isExcludedFromMapping, isSpecial, isDirect);
 
         relatedBoms = new ArrayList<DocumentModel>();
     }
@@ -71,6 +75,15 @@ public class CadRelationNodeData extends BaseRelationNodeData {
         this.isSuppressed = isSuppressed;
     }
 
+    public boolean getIsExcludedFromComposition() {
+        return isExcludedFromComposition;
+    }
+
+    public void setIsExcludedFromComposition(
+            boolean isExcludedFromComposition) {
+        this.isExcludedFromComposition = isExcludedFromComposition;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -79,6 +92,7 @@ public class CadRelationNodeData extends BaseRelationNodeData {
                 + ((relatedBoms == null) ? 0 : relatedBoms.hashCode());
         result = prime * result + (isBasedOn ? 1231 : 1237);
         result = prime * result + (isSuppressed ? 1231 : 1237);
+        result = prime * result + (isExcludedFromComposition ? 1231 : 1237);
         return result;
     }
 
@@ -105,6 +119,9 @@ public class CadRelationNodeData extends BaseRelationNodeData {
             return false;
         }
         if (isSuppressed != other.isSuppressed) {
+            return false;
+        }
+        if (isExcludedFromComposition != other.isExcludedFromComposition) {
             return false;
         }
         return true;

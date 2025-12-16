@@ -2,32 +2,32 @@ package com.aritu.eloraplm.bom.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
-
-import org.jboss.seam.annotations.Factory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.international.StatusMessage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.TreeNode;
 
+import com.aritu.eloraplm.bom.util.BomCompositionAbstractExcelExporter;
+import com.aritu.eloraplm.bom.util.BomCompositionExcelExporter;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
-import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
-import com.aritu.eloraplm.relations.treetable.EditableRelationTreeBean;
+import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.relations.treetable.EditableRelationTree;
 
-@Name("bomCompositionEbomTreeBean")
+@Name(BomCompositionEbomTreeBean.NAME)
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
-        implements Serializable {
+public class BomCompositionEbomTreeBean extends EditableRelationTree {
+
+    public static final String NAME = "bomCompositionEbomTreeBean";
+
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(
@@ -39,7 +39,9 @@ public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
 
     private boolean showDirectDocuments;
 
-    private int maxOrdering;
+    private boolean hasElectronicComponents;
+
+    protected boolean isBomCompositionExportEnabled;
 
     public boolean getShowUniqueVersionsPerDocument() {
         return showUniqueVersionsPerDocument;
@@ -67,13 +69,27 @@ public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
         this.showDirectDocuments = showDirectDocuments;
     }
 
+    public boolean getHasElectronicComponents() {
+        return hasElectronicComponents;
+    }
+
+    public void setHasElectronicComponents(boolean hasElectronicComponents) {
+        this.hasElectronicComponents = hasElectronicComponents;
+    }
+
+    public boolean getIsBomCompositionExportEnabled() {
+        return isBomCompositionExportEnabled;
+    }
+
     public BomCompositionEbomTreeBean() throws EloraException {
         showUniqueVersionsPerDocument = false;
         showObsoleteStateDocuments = true;
         showDirectDocuments = false;
         setIsManual(true);
-        maxOrdering = 0;
+        setMaxOrdering(1);
         setOrdering(1);
+        hasElectronicComponents = false;
+        isBomCompositionExportEnabled = false;
     }
 
     @Override
@@ -90,8 +106,12 @@ public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
             setRoot(nodeService.getRoot(currentDoc));
 
             // Update max ordering
-            maxOrdering = ((BomCompositionNodeService) nodeService).getMaxOrdering();
-            setOrdering(maxOrdering + 1);
+            setMaxOrdering(
+                    ((BomCompositionNodeService) nodeService).getMaxOrdering());
+            setOrdering(getMaxOrdering() + 1);
+
+            // Update hasElectronicComponents
+            hasElectronicComponents = ((BomCompositionNodeService) nodeService).getHasElectronicComponents();
 
             setIsDirty(false);
             setHasUnreadableNodes(false);
@@ -120,25 +140,27 @@ public class BomCompositionEbomTreeBean extends EditableRelationTreeBean
             boolean isInverse) {
         setPredicateUri(EloraRelationConstants.BOM_COMPOSED_OF);
         super.addRelationNode(currentDoc, isAnarchic, isInverse);
-
-        // Update max ordering
-        if (getOrdering() != null && getOrdering() > maxOrdering) {
-            maxOrdering = getOrdering();
-            setOrdering(maxOrdering + 1);
-        }
-    }
-
-    @Override
-    @Factory(value = "bomCompositionEbomRoot", scope = ScopeType.EVENT)
-    public TreeNode getRootFromFactory() {
-        return getRoot();
     }
 
     @Override
     protected void resetCreateFormValues() {
         super.resetCreateFormValues();
         setIsManual(true);
-        setOrdering(maxOrdering + 1);
+    }
+
+    public void exportBomStructure() {
+        String logInitMsg = "[exportBomStructure] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        try {
+            DocumentModel currentDoc = getCurrentDocument();
+            BomCompositionAbstractExcelExporter excelExporter = new BomCompositionExcelExporter(
+                    getRoot(), messages);
+            excelExporter.export(currentDoc, false, false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
+                    "eloraplm.message.error.treetable.exportBomStructure"));
+        }
     }
 
 }

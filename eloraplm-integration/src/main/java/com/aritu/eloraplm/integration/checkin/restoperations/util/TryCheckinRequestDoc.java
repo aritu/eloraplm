@@ -13,14 +13,19 @@
  */
 package com.aritu.eloraplm.integration.checkin.restoperations.util;
 
-import org.nuxeo.ecm.automation.core.util.Properties;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nuxeo.ecm.core.api.DocumentRef;
 
 /**
  * @author aritu
  *
  */
-public class TryCheckinRequestDoc {
+public class TryCheckinRequestDoc implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int localId;
 
@@ -32,7 +37,7 @@ public class TryCheckinRequestDoc {
 
     private String filename;
 
-    private Properties properties;
+    private Map<String, Serializable> properties;
 
     private DocumentRef structureRootRealRef;
 
@@ -49,7 +54,7 @@ public class TryCheckinRequestDoc {
         this.structureRootRealRef = structureRootRealRef;
         this.overwrite = overwrite;
         // Initialize properties
-        properties = new Properties();
+        properties = new HashMap<String, Serializable>();
     }
 
     public int getLocalId() {
@@ -92,11 +97,11 @@ public class TryCheckinRequestDoc {
         this.filename = filename;
     }
 
-    public Properties getProperties() {
+    public Map<String, Serializable> getProperties() {
         return properties;
     }
 
-    public void addProperty(String key, String value) {
+    public void addProperty(String key, Serializable value) {
         properties.put(key, value);
     }
 

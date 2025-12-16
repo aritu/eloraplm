@@ -1,0 +1,4 @@
+id,label,obsolete,ordering
+id_change,Change,0,10
+id_overwrite,Overwrite,0,20
+id_ignore,Ignore,0,30

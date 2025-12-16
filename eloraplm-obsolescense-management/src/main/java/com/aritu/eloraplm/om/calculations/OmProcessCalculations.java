@@ -96,7 +96,14 @@ public class OmProcessCalculations {
 
     private List<Resource> getImpactPredicates() {
         List<String> impactPredicateList = new ArrayList<String>();
-        impactPredicateList.addAll(RelationsConfig.cadRelationsList);
+
+        // All CAD relations except Suppressed
+        List<String> impactedCadRelations = new ArrayList<String>(
+                RelationsConfig.cadRelationsList);
+        impactedCadRelations.removeAll(
+                RelationsConfig.cadSuppressedRelationsList);
+        impactPredicateList.addAll(impactedCadRelations);
+
         impactPredicateList.addAll(RelationsConfig.docRelationsList);
         impactPredicateList.addAll(RelationsConfig.bomRelationsList);
         return EloraRelationHelper.getPredicateResourceList(

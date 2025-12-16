@@ -15,12 +15,12 @@ package com.aritu.eloraplm.lifecycles.factories.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.ui.web.util.SeamComponentCallHelper;
 
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.lifecycles.factories.TransitionExecuter;
+import com.aritu.eloraplm.lifecycles.util.ErrorInfo;
 
 /**
  * @author aritu
@@ -53,9 +53,9 @@ public class ApproveForCadOrItemTransitionExecuter
     }
 
     @Override
-    public List<String> getErrorList() {
+    public List<ErrorInfo> getErrorList() {
         // For now we don't use this method
-        return new ArrayList<String>();
+        return new ArrayList<ErrorInfo>();
     }
 
     @Override
@@ -66,6 +66,11 @@ public class ApproveForCadOrItemTransitionExecuter
 
     @Override
     public boolean hasToFireDefaultEvent() {
+        return false;
+    }
+
+    @Override
+    public boolean hasInnerForm() {
         return false;
     }
 

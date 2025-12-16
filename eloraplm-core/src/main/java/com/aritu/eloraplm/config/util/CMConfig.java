@@ -14,11 +14,13 @@
 package com.aritu.eloraplm.config.util;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.aritu.eloraplm.constants.CMConfigConstants;
+import com.aritu.eloraplm.constants.EloraConfigConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -41,6 +43,21 @@ public class CMConfig {
     public static final EloraConfigTable modifiedActionsConfig = initModifiedActionsConfig();
 
     public static final HashMap<String, String> modifiedActionsLabelMap = initModifiedActionsLabelMap();
+
+    public static final EloraConfigTable itemLifeCycleStateConfig = initItemLifeCycleStateConfig();
+
+    public static final List<String> itemLifeCycleStates = initItemLifeCycleStateList();
+
+    public static final EloraConfigTable cadLifeCycleStateConfig = initCadLifeCycleStateConfig();
+
+    public static final List<String> cadLifeCycleStates = initCadLifeCycleStateList();
+
+    public static final EloraConfigTable basicDocLifeCycleStateConfig = initBasicDocLifeCycleStateConfig();
+
+    public static final List<String> basicDocLifeCycleStates = initBasicDocLifeCycleStateList();
+
+    // public static final EloraConfigTable docLifecycleStatesConfig =
+    // initDocLifeCycleStatesMap();
 
     // --------------------------------------------------
     // Change Management variables initialization methods
@@ -130,6 +147,90 @@ public class CMConfig {
 
         log.trace("********************************* EXIT FROM " + logInitMsg);
         return configMap;
+    }
+
+    private static EloraConfigTable initItemLifeCycleStateConfig() {
+        String logInitMsg = "[initItemLifeCycleStateConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = CMConfigHelper.getItemLifeCycleStateConfig(false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initItemLifeCycleStateList() {
+        String logInitMsg = "[initItemLifeCycleStateList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = itemLifeCycleStateConfig.extractConfigTablePropertyValuesAsList(
+                EloraConfigConstants.PROP_ID);
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
+    }
+
+    private static EloraConfigTable initCadLifeCycleStateConfig() {
+        String logInitMsg = "[initCadLifeCycleStateConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = CMConfigHelper.getCadLifeCycleStateConfig(false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initCadLifeCycleStateList() {
+        String logInitMsg = "[initCadLifeCycleStateList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = cadLifeCycleStateConfig.extractConfigTablePropertyValuesAsList(
+                EloraConfigConstants.PROP_ID);
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
+    }
+
+    private static EloraConfigTable initBasicDocLifeCycleStateConfig() {
+        String logInitMsg = "[initBasicDocLifeCycleStateConfig] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        EloraConfigTable configTable = null;
+        try {
+            configTable = CMConfigHelper.getBasicDocLifeCycleStateConfig(false);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configTable;
+    }
+
+    private static List<String> initBasicDocLifeCycleStateList() {
+        String logInitMsg = "[initBasicDocLifeCycleStateList] ";
+
+        log.trace("********************************* ENTER IN " + logInitMsg);
+
+        List<String> configList = basicDocLifeCycleStateConfig.extractConfigTablePropertyValuesAsList(
+                EloraConfigConstants.PROP_ID);
+
+        log.trace("********************************* EXIT FROM " + logInitMsg);
+        return configList;
     }
 
 }

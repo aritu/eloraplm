@@ -1,12 +1,42 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  >
-
-  <ui:include src="/incl/action/elora_promote_tree.xhtml">
-    <ui:param name="actionBean" value="#{cmBomModifiedItemsTreeBean}" />
-    <ui:param name="promoteDoc" value="#{cmBomModifiedItemsTreeBean.selectedNode.data.destinationItem}" />
-  </ui:include>
-
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    >
+    
+    <nxu:set var="promoteDoc" value="#{cmModifiedsTreeBean.selectedNode.data.destinationItem}">
+        
+        <c:choose>
+            <c:when test="#{promoteDoc == null}">
+                <ui:decorate template="/incl/action/widgets/primefaces_dialog_just_content_template.xhtml">
+                    <ui:define name="dialog_content">
+                        <br/>
+                        <p class="processMessage completeError"><h:outputText value="#{messages['eloraplm.message.error.cm.emptyItemSelection']}" /></p>
+                    </ui:define>
+                </ui:decorate>
+            </c:when>
+            
+            <c:when test="#{promoteDoc.hasFacet('BasicDocument')}">
+                <ui:decorate template="/incl/action/widgets/primefaces_dialog_just_content_template.xhtml">
+                    <ui:define name="dialog_content">
+                        <br/>
+                        <ui:remove><!-- TODO fix this --></ui:remove>
+                        <p class="processMessage completeError"><h:outputText value="#{messages['eloraplm.message.error.cm.cannotPromoteBasicDoc']}" /></p>
+                    </ui:define>
+                </ui:decorate>
+            </c:when>
+            
+            <c:otherwise>
+                <ui:include src="/incl/action/cm_promote.xhtml">
+                    <ui:param name="actionBean" value="#{cmModifiedsTreeBean}" />
+                    <ui:param name="promoteDoc" value="#{promoteDoc}" />
+                </ui:include>
+            </c:otherwise>
+            
+        </c:choose>
+        
+    </nxu:set>
+    
 </ui:composition>

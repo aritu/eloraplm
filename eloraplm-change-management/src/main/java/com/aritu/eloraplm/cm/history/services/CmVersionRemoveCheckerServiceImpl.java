@@ -22,7 +22,6 @@ import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
-import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.cm.util.CMQueryFactory;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -80,7 +79,7 @@ public class CmVersionRemoveCheckerServiceImpl extends
         String logInitMsg = "[isUsedAsModifiedOrigin] ["
                 + session.getPrincipal().getName() + "] ";
         String query = CMQueryFactory.getProcessDocumentModelsByModifiedItemOriginQuery(
-                doc.getId(), CMHelper.getItemType(doc));
+                doc.getId());
         DocumentModelList ecoOriginList = session.query(query);
         if (ecoOriginList.size() > 0) {
             String docListMsg = "";
@@ -108,7 +107,7 @@ public class CmVersionRemoveCheckerServiceImpl extends
         String logInitMsg = "[isUsedAsModifiedDestination] ["
                 + session.getPrincipal().getName() + "] ";
         String query = CMQueryFactory.getProcessDocumentModelsByModifiedItemDestinationQuery(
-                doc.getId(), CMHelper.getItemType(doc));
+                doc.getId());
         DocumentModelList ecoDestinationList = session.query(query);
         if (ecoDestinationList.size() > 0) {
             String docListMsg = "";
@@ -136,7 +135,7 @@ public class CmVersionRemoveCheckerServiceImpl extends
         String logInitMsg = "[isUsedAsImpactedOrigin] ["
                 + session.getPrincipal().getName() + "] ";
         String query = CMQueryFactory.getProcessDocumentModelsByImpactedItemOriginQuery(
-                doc.getId(), CMHelper.getItemType(doc));
+                doc.getId());
         DocumentModelList ecoDestImpactedList = session.query(query);
         if (ecoDestImpactedList.size() > 0) {
             String docListMsg = "";
@@ -164,7 +163,7 @@ public class CmVersionRemoveCheckerServiceImpl extends
         String logInitMsg = "[isUsedAsImpactedDestination] ["
                 + session.getPrincipal().getName() + "] ";
         String query = CMQueryFactory.getProcessDocumentModelsByImpactedItemDestinationQuery(
-                doc.getId(), CMHelper.getItemType(doc));
+                doc.getId());
         DocumentModelList ecoDestImpactedList = session.query(query);
         if (ecoDestImpactedList.size() > 0) {
             String docListMsg = "";

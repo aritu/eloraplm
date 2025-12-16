@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.bom.TypeConfigService.contrib">
+    
+    <extension point="types" target="com.aritu.eloraplm.core.types.api.TypeConfigService">
+        
+        <!-- Items -->
+        <type id="BomPart" color="#779500" />
+        <type id="Software" color="#779500" />
+        <type id="ElectronicComponent" color="#779500" />
+        <type id="BomPackaging" color="#94792b" />
+        <type id="BomProduct" color="#2c89a0" />
+        <type id="BomSpecification" color="#a02c2c" />
+        <type id="BomTool" color="#ff7f2a" />
+        
+        <type id="BomCustomerProduct" color="#2ca05a" />
+        
+    </extension>
+
+
+</component>
+

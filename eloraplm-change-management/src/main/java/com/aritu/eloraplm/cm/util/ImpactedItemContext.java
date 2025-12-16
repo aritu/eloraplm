@@ -13,6 +13,9 @@
  */
 package com.aritu.eloraplm.cm.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
@@ -35,11 +38,19 @@ public class ImpactedItemContext {
 
     private String parentNodeId;
 
+    private String rootNodeId;
+
     private String modifiedItemAction;
 
     private String modifiedItemDestinationWcUid;
 
     private String parentItemAction;
+
+    private String refNodeId;
+
+    private boolean isTopAssembly;
+
+    private List<String> branchDocUids = new ArrayList<String>();
 
     /**
      * @param modifiedItem
@@ -55,8 +66,9 @@ public class ImpactedItemContext {
     public ImpactedItemContext(DocumentModel modifiedItem,
             DocumentModel grandParentItem, DocumentModel parentItem,
             Long rowNumber, String parentNodePath, String parentNodeId,
-            String modifiedItemAction, String modifiedItemDestinationWcUid,
-            String parentItemAction) {
+            String rootNodeId, String modifiedItemAction,
+            String modifiedItemDestinationWcUid, String parentItemAction,
+            String refNodeId, List<String> branchDocUids, boolean isTopAssembly) {
         super();
         this.modifiedItem = modifiedItem;
         this.grandParentItem = grandParentItem;
@@ -64,9 +76,13 @@ public class ImpactedItemContext {
         this.rowNumber = rowNumber;
         this.parentNodePath = parentNodePath;
         this.parentNodeId = parentNodeId;
+        this.rootNodeId = rootNodeId;
         this.modifiedItemAction = modifiedItemAction;
         this.modifiedItemDestinationWcUid = modifiedItemDestinationWcUid;
         this.parentItemAction = parentItemAction;
+        setRefNodeId(refNodeId);
+        this.branchDocUids.addAll(branchDocUids);
+        this.isTopAssembly = isTopAssembly;
     }
 
     public DocumentModel getModifiedItem() {
@@ -97,6 +113,10 @@ public class ImpactedItemContext {
         return parentNodeId;
     }
 
+    public String getRootNodeId() {
+        return rootNodeId;
+    }
+
     public String getModifiedItemAction() {
         return modifiedItemAction;
     }
@@ -105,8 +125,32 @@ public class ImpactedItemContext {
         return modifiedItemDestinationWcUid;
     }
 
+    public String getRefNodeId() {
+        return refNodeId;
+    }
+
+    public void setRefNodeId(String refNodeId) {
+        this.refNodeId = this.refNodeId == null ? refNodeId
+                : this.refNodeId + "|" + refNodeId;
+    }
+
     public String getParentItemAction() {
         return parentItemAction;
     }
 
+    public void setParentItemAction(String parentItemAction) {
+        this.parentItemAction = parentItemAction;
+    }
+
+    public List<String> getBranchDocUids() {
+        return branchDocUids;
+    }
+
+    public boolean getIsTopAssembly() {
+        return isTopAssembly;
+    }
+
+    public void setIsTopAssembly(boolean isTopAssembly) {
+        this.isTopAssembly = isTopAssembly;
+    }
 }

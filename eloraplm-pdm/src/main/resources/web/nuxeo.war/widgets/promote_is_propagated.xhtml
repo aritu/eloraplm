@@ -1,18 +1,37 @@
-<div  xmlns:f="http://java.sun.com/jsf/core"
+<div
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
     xmlns:p="http://primefaces.org/ui"
-    xmlns:h="http://java.sun.com/jsf/html">
-    
-    <h:selectBooleanCheckbox rendered="#{not value.isEnforced}" value="#{field_0}">
-    <p:ajax
-        listener="#{promoteTreeBean.refreshNodePropagation}"
-        process="@this"
-        partialSubmit="true"
-        update="#{treeWidgetId} :#{component.namingContainer.parent.namingContainer.parent.namingContainer.parent.namingContainer.parent.namingContainer.clientId}:demote_promote_buttons"
-        onstart="PF('treeBlocker_#{treeWidgetId}').show();"
-        onsuccess="PF('treeBlocker_#{treeWidgetId}').hide();" />
-    <f:attribute value="#{node}" name="node" />
-  </h:selectBooleanCheckbox>
-  <!-- nxw_documentActionsUpperButtons_promoteAction_fancy_subview:promoteForm -->
-  <h:outputText rendered="#{value.isEnforced}" value="#{field_0 ? messages['label.yes'] : messages['label.no']}" />
-  
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <h:selectBooleanCheckbox
+            rendered="#{not value.isEnforced}"
+            value="#{field_0}"
+        >
+            <p:ajax
+                listener="#{promoteTreeBean.refreshNodePropagation}"
+                process="@this"
+                partialSubmit="true"
+                update="#{treeWidgetId} :glb_pf_dlg_form_buttons"
+                onstart="PF('#{treeBlockerId}').show();"
+                onsuccess="PF('#{treeBlockerId}').hide();"
+            />
+            <f:attribute
+                value="#{node}"
+                name="node"
+            />
+        </h:selectBooleanCheckbox>
+        <!-- nxw_documentActionsUpperButtons_promoteAction_fancy_subview:promoteForm -->
+        <h:outputText
+            rendered="#{value.isEnforced}"
+            value="#{field_0 ? messages['label.yes'] : messages['label.no']}"
+        />
+    </c:if>
+
+    <c:if test="#{widget.mode == 'csv'}">
+        <h:outputText
+            value="#{field_0 ? messages['label.yes'] : messages['label.no']}"
+        />
+    </c:if>
 </div>

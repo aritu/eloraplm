@@ -88,6 +88,12 @@ public class PromoteNodeService implements NodeManager {
 
     // protected EloraConfigTable relationDescendingPropagationConfig;
 
+    protected List<String> docsMarkedToPromote;
+
+    public List<String> getDocsMarkedToPromote() {
+        return docsMarkedToPromote;
+    }
+
     // TODO: Es posible que se pueda mejorar el rendimiento del árbol. Ahora se
     // vuelve a recorrer todo el árbol para ver si el root tiene que ser OK o
     // KO. Al cambiar una versión o clickar en un checkbox se vuelven a calcular
@@ -111,6 +117,7 @@ public class PromoteNodeService implements NodeManager {
         this.promoteTransition = promoteTransition;
         this.promoteCheckerManager = promoteCheckerManager;
         this.promoteExecuterManager = promoteExecuterManager;
+        docsMarkedToPromote = new ArrayList<String>();
     }
 
     public PromoteNodeService() {
@@ -162,6 +169,9 @@ public class PromoteNodeService implements NodeManager {
         DocumentModel wcDoc = session.getWorkingCopy(parentDoc.getRef());
         String wcVersion = wcDoc.getVersionLabel();
 
+        // TODO IBAI Uste dugu hona ezin dela heldu, eta seguruenik obsoletea
+        // PromoteNodeServicekin egiten zeneko zerbait dela. Badaezpada ere ez
+        // dugu kendu.
         if (!firstLoad) {
             promoteCheckerManager.resetValues();
             // loadConfigurations();
@@ -182,6 +192,12 @@ public class PromoteNodeService implements NodeManager {
                 parentDoc);
 
         TreeNode root = processTree(null, null, nodeData, -1, level);
+
+        // Traverse the tree and check missing nodes if current result is OK
+        // This is done at the end so that we have a complete list of the nodes
+        // to propagate, so we can ignore false KOs
+        checkMissingNodes(root);
+
         log.trace(logInitMsg + "--- EXIT --- ");
         return root;
     }
@@ -235,6 +251,7 @@ public class PromoteNodeService implements NodeManager {
                         nodeData.getWcVersion(), false, false, false);
 
                 nodeId++;
+
                 processTreeNode(rootNode, nodeData, nodeIndex, level);
             } else {
                 processTreeNode(parentNode, nodeData, nodeIndex, level);
@@ -275,6 +292,11 @@ public class PromoteNodeService implements NodeManager {
                 node = parentNode.getChildren().get(nodeIndex);
             } else {
                 node = new DefaultTreeNode(nodeData, parentNode);
+            }
+
+            // Add to list of propagated docs
+            if (nodeData.getIsPropagated()) {
+                docsMarkedToPromote.add(nodeData.getDocId());
             }
 
             node.setExpanded(true);
@@ -528,6 +550,9 @@ public class PromoteNodeService implements NodeManager {
                             doc = subjectBv;
                         } else {
                             // get latest related
+                            // TODO IBAI getLatestRelatedVersion(CoreSession
+                            // session, List<DocumentModel> wcDocs) erabili eta
+                            // testeatu
                             List<String> uidList = EloraDocumentHelper.getUidListFromDocList(
                                     docList);
                             Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
@@ -757,11 +782,23 @@ public class PromoteNodeService implements NodeManager {
 
     public void processPartialTreeNodePropagation(TreeNode rootNode,
             TreeNode partialNode) throws EloraException {
+
         PromoteNodeData nodeData = (PromoteNodeData) partialNode.getData();
+
+        // Check if the node has been selected or deselected and update
+        // docsMarkedToReload accordingly
+        if (!nodeData.getIsPropagated()) {
+            docsMarkedToPromote.remove(nodeData.getDocId());
+        } else {
+            docsMarkedToPromote.add(nodeData.getDocId());
+        }
+
         processPropagation(partialNode, nodeData, partialNode,
                 PromoteConstants.FIRST_NODE, nodeData.getIsPropagated());
 
         processAllResults(rootNode);
+
+        checkMissingNodes(rootNode);
     }
 
     private void processPropagation(TreeNode treeNode, PromoteNodeData nodeData,
@@ -778,6 +815,21 @@ public class PromoteNodeService implements NodeManager {
                     nodeData.getStmt().getPredicate().getUri())) {
                 boolean propagate = (long) configRow.getProperty(
                         PromoteConstants.PROPAGATE) == 1;
+
+                // If propagation has changed, update the list of docs
+                // marked to promote (not in the node manually changed, as it
+                // has already been treated)
+                if (!treeNode.equals(previousTreeNode)) {
+
+                    if (nodeData.getIsPropagated() != propagate) {
+                        if (propagate) {
+                            docsMarkedToPromote.add(nodeData.getDocId());
+                        } else {
+                            docsMarkedToPromote.remove(nodeData.getDocId());
+                        }
+                    }
+                }
+
                 // boolean enforce = (long) configRow.getProperty(
                 // PromoteConstants.ENFORCE) == 1;
                 long direction = (long) configRow.getProperty(
@@ -957,5 +1009,31 @@ public class PromoteNodeService implements NodeManager {
             parentState = finalState;
         }
         return parentState;
+    }
+
+    protected void checkMissingNodes(TreeNode node) throws EloraException {
+        if (node.getData() != null) {
+            PromoteNodeData nodeData = (PromoteNodeData) node.getData();
+            if (nodeData.getStmt() != null) {
+                if (nodeData.getResult().equals(PromoteConstants.RESULT_OK)) {
+
+                    // If result is OK, we have to ensure that missing nodes are
+                    // OK too
+                    String msg = "";
+                    msg = PromoteHelper.checkTreeMissingDocSupportedStates(
+                            nodeData.getData(), nodeData.getFinalState(),
+                            nodeData.getStmt(), messages, msg,
+                            docsMarkedToPromote);
+                    if (!msg.isEmpty()) {
+                        nodeData.setResult(PromoteConstants.RESULT_KO);
+                        nodeData.setResultMsg(msg);
+                    }
+                }
+            }
+        }
+
+        for (TreeNode childNode : node.getChildren()) {
+            checkMissingNodes(childNode);
+        }
     }
 }

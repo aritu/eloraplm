@@ -13,6 +13,8 @@
  */
 package com.aritu.eloraplm.core.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
@@ -35,6 +37,12 @@ import com.aritu.eloraplm.exceptions.EloraException;
  *
  */
 public class EloraMessageHelper {
+
+    // TODO LEIRE: Konstante hauek hemen utzi edo beste leku batera eraman???
+    public static final String DEFAULT_LANGUAGE = "en";
+
+    public static final List<String> SUPPORTED_LANGUAGES = Arrays.asList(
+            DEFAULT_LANGUAGE, "eu", "es");
 
     /**
      *
@@ -145,7 +153,7 @@ public class EloraMessageHelper {
     /**
      * Returns the locale based on the logged user profile
      *
-     * @param ctx
+     * @param session
      * @return
      */
     public static Locale getLocale(CoreSession session) {
@@ -165,7 +173,7 @@ public class EloraMessageHelper {
         }
 
         if (lang == null) {
-            lang = "en";
+            lang = DEFAULT_LANGUAGE;
         }
         return LocaleUtils.toLocale(lang);
     }

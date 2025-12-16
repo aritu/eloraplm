@@ -37,7 +37,8 @@
             </c:otherwise>
         </c:choose>
     
-        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} #{wcOrAvStyleClass}">
+        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} #{wcOrAvStyleClass}"
+            style="border-top: 4px solid #{eloraWebActions.getColorForType(currentDocument.type)};">
             <p:panelGrid styleClass="fullWidth">
             
                 <!--  First row -->
@@ -132,7 +133,7 @@
                     </ui:include>
                     
                     <p:column>
-                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup><nxl:widget name="header_right_middle_info" mode="view" value="#{currentDocument}" /></h:panelGroup>
                     </p:column>
                 </p:row>
                 
@@ -182,7 +183,9 @@
                         </c:otherwise>
                     </c:choose>
                        
-                    <p:column></p:column>
+                    <p:column>
+                        <h:panelGroup><nxl:widget name="header_right_bottom_info" mode="view" value="#{currentDocument}" /></h:panelGroup>
+                    </p:column>
                 </p:row>
                 
                 <c:if test="#{!currentDocument.isCheckedOut() and (currentDocument.locked || displayReviewInfo)}">

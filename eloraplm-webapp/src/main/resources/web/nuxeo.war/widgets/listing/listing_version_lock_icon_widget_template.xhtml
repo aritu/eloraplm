@@ -16,7 +16,9 @@
         <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
             <nxu:set var="hasWritePermission" value="#{nxd:hasPermission(field, 'Write')}">
                 
-                <h:graphicImage value="#{not empty wcDoc.lockInfo and wcDoc.lockInfo.owner ne currentUser ? '/icons/locked_by_other_16.gif' : '/icons/locked_by_me_16.gif'}"
+                <h:graphicImage value="#{not empty wcDoc.lockInfo and wcDoc.lockInfo.owner ne currentUser ?
+                    (widget.properties.useSolidIcon ? '/icons/badge_locked_other_solid_16.png' : '/icons/badge_locked_other_16.png')
+                    : (widget.properties.useSolidIcon ? '/icons/badge_locked_solid_16.png' : '/icons/badge_locked_16.png')}"
                     style="vertical-align: middle;"
                      rendered="#{wcDoc != null and wcDoc.locked}">
                     
@@ -33,6 +35,12 @@
                     style="vertical-align: middle;" rendered="#{wcDoc != null and not wcDoc.locked and not hasWritePermission}"
                     styleClass="tipsyShow"
                     title="#{messages['label.readOnly']}"
+                />
+                
+                <h:graphicImage value="/icons/badge_not_visible_16.png"
+                    style="vertical-align: middle;" rendered="#{wcDoc == null}"
+                    styleClass="tipsyShow"
+                    title="#{messages['eloraplm.label.document.not.visible']}"
                 />
                 
             </nxu:set>

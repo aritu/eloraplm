@@ -24,21 +24,19 @@ import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.relations.treetable.BaseRelationNodeData;
 import com.aritu.eloraplm.relations.treetable.RelationNodeData;
 import com.aritu.eloraplm.relations.treetable.RelationNodeService;
-import com.aritu.eloraplm.treetable.NodeManager;
 
 /**
  * @author aritu
  *
  */
-public class BomSpecificationNodeService extends RelationNodeService
-        implements NodeManager {
+public class BomSpecificationNodeService extends RelationNodeService {
 
     public BomSpecificationNodeService(CoreSession session,
             boolean showUniqueVersionsPerDocument,
             boolean showObsoleteStateDocuments) throws EloraException {
 
         super(session);
-        treeDirection = TREE_DIRECTION_COMPOSITION;
+        treeDirection = EloraRelationConstants.DIRECTION_COMPOSITION;
         relationType = RELATION_TYPE_BOM;
         nodeId = 0;
 
@@ -69,11 +67,12 @@ public class BomSpecificationNodeService extends RelationNodeService
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
             Integer viewerOrdering, Integer inverseViewerOrdering,
-            Boolean isManual, boolean isSpecial, boolean isDirect) {
+            Boolean isManual, String designators, Boolean isExcludedFromMapping,
+            boolean isSpecial, boolean isDirect) {
 
         return new BaseRelationNodeData(id, level, docId, data, wcDoc, stmt,
                 predicateUri, quantity, comment, ordering, directorOrdering,
-                viewerOrdering, inverseViewerOrdering, isManual, isSpecial,
-                isDirect);
+                viewerOrdering, inverseViewerOrdering, isManual, designators,
+                isExcludedFromMapping, isSpecial, isDirect);
     }
 }

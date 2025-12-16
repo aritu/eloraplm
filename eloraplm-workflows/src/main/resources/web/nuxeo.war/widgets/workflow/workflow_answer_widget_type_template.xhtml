@@ -1,0 +1,71 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+>
+    <nxu:set
+        var="userLocale"
+        value="#{fn:substring(restHelper.getLocaleString(), 0, 2)}"
+    >
+        <nxu:set
+            var="kind"
+            value="#{empty field_1 ?
+    ( field_2 eq 'action' ? 'action'
+        : ( field_2 eq 'comment' ? 'comment'
+            : ( fn:startsWith(field_2, 'wfa_') ? 'wfa'
+                : 'text'
+            )
+        )
+    )
+    : 'wfq'}"
+        >
+            <ui:remove>
+                <!-- action -->
+            </ui:remove>
+            <ui:fragment rendered="#{kind eq 'action'}">
+                <ui:include
+                    src="/widgets/workflow/workflow_answer_widget_type_action.xhtml"
+                />
+            </ui:fragment>
+
+            <ui:remove>
+                <!-- comment -->
+            </ui:remove>
+            <ui:fragment rendered="#{kind eq 'comment'}">
+                <ui:include
+                    src="/widgets/workflow/workflow_answer_widget_type_comment.xhtml"
+                />
+            </ui:fragment>
+
+            <ui:remove>
+                <!-- wfa_ -->
+            </ui:remove>
+            <ui:fragment rendered="#{kind eq 'wfa'}">
+                <ui:include
+                    src="/widgets/workflow/workflow_answer_widget_type_wfa.xhtml"
+                />
+            </ui:fragment>
+
+            <ui:remove>
+                <!-- Text is the default fallback type for WFA NodeVariable answers) -->
+            </ui:remove>
+
+            <ui:fragment rendered="#{kind eq 'text'}">
+                <ui:include
+                    src="/widgets/workflow/workflow_answer_widget_type_text.xhtml"
+                />
+            </ui:fragment>
+
+            <ui:remove>
+                <!-- Based on form question -->
+            </ui:remove>
+            <ui:fragment rendered="#{kind eq 'wfq'}">
+                <ui:include
+                    src="/widgets/workflow/workflow_answer_widget_type_wfq.xhtml"
+                />
+            </ui:fragment>
+        </nxu:set>
+    </nxu:set>
+</ui:composition>

@@ -19,10 +19,6 @@ BomCustomerProduct_id_change,BomCustomerProduct,id_change,0,0,0
 BomCustomerProduct_id_replace,BomCustomerProduct,id_replace,0,0,0
 BomCustomerProduct_id_remove,BomCustomerProduct,id_remove,0,0,0
 BomCustomerProduct_id_ignore,BomCustomerProduct,id_ignore,0,0,0
-BomManufacturerPart_id_change,BomManufacturerPart,id_change,0,0,0
-BomManufacturerPart_id_replace,BomManufacturerPart,id_replace,0,0,0
-BomManufacturerPart_id_remove,BomManufacturerPart,id_remove,0,0,0
-BomManufacturerPart_id_ignore,BomManufacturerPart,id_ignore,0,0,0
 BomPackaging_id_change,BomPackaging,id_change,1,1,0
 BomPackaging_id_replace,BomPackaging,id_replace,1,1,0
 BomPackaging_id_remove,BomPackaging,id_remove,1,1,0

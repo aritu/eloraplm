@@ -4,7 +4,6 @@
 
   <extension target="org.nuxeo.ecm.directory.ui.DirectoryUIManager" point="directories">
     <directory name="elora_autocopy_parent_types" layout="vocabulary" sortField="label" />
-    <directory name="elora_default_config" layout="elora_default_config" sortField="id" />
     <directory name="elora_general_config" layout="vocabulary" sortField="label" />
     <directory name="elora_relation_propagation" layout="elora_relation_propagation" sortField="id" />
     <directory name="elora_unit_conversion_mapping" layout="elora_unit_conversion_mapping" sortField="id" />
@@ -12,6 +11,10 @@
     <directory name="elora_units_of_measure" layout="vocabulary" sortField="id" />
     <directory name="elora_currency" layout="vocabulary" sortField="id" />
     <directory name="elora_checkout_config" layout="elora_checkout_config" sortField="id" />
+    <directory name="elora_cad_derived_output_type" layout="vocabulary" sortField="ordering" />
+    <directory name="elora_cad_derived_outputs_config" layout="elora_cad_derived_outputs_config" sortField="ordering" />
+    <directory name="elora_document_metadata_mapping" layout="elora_document_metadata_mapping" sortField="id" />
+    
   </extension>
 
 </component>

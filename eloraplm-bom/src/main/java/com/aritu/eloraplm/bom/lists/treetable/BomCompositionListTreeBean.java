@@ -15,64 +15,63 @@ package com.aritu.eloraplm.bom.lists.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.annotations.intercept.BypassInterceptors;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentSecurityException;
 import org.nuxeo.ecm.core.api.IdRef;
-import org.nuxeo.ecm.core.api.VersioningOption;
-import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
+import org.nuxeo.ecm.platform.relations.api.exceptions.RelationAlreadyExistsException;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
+import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
-import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
-import com.aritu.eloraplm.bom.lists.BomListBean;
 import com.aritu.eloraplm.bom.lists.BomListConstants;
 import com.aritu.eloraplm.bom.lists.BomListHelper;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
-import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
-import com.aritu.eloraplm.exceptions.CheckinNotAllowedException;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.relations.treetable.EditableRelationTreeBean;
+import com.aritu.eloraplm.relations.treetable.BomCompositionListBaseTree;
+import com.aritu.eloraplm.treetable.NodeData;
 
 /**
  * @author aritu
  *
  */
 
-@Name("bomCompositionListTreeBean")
+@Name(BomCompositionListTreeBean.NAME)
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class BomCompositionListTreeBean extends EditableRelationTreeBean
-        implements Serializable {
+public class BomCompositionListTreeBean extends BomCompositionListBaseTree {
+
+    public static final String NAME = "bomCompositionListTreeBean";
 
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(
             BomCompositionListTreeBean.class);
 
-    @In(create = true)
-    protected transient BomListBean bomList;
+    public static final String IMPORT_SOURCE_TYPE_CURRENT = "current";
 
     private Map<String, TreeNode> roots;
 
@@ -81,6 +80,8 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
     private String importSourceUid;
 
     private String importList;
+
+    private boolean clearBeforeImport;
 
     public String getImportSourceType() {
         return importSourceType;
@@ -106,6 +107,40 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
         this.importList = importList;
     }
 
+    public boolean getClearBeforeImport() {
+        return clearBeforeImport;
+    }
+
+    public void setClearBeforeImport(boolean clearBeforeImport) {
+        this.clearBeforeImport = clearBeforeImport;
+    }
+
+    public BomCompositionListTreeBean() {
+        setIsManual(true);
+        setMaxOrdering(1);
+        setOrdering(1);
+        importSourceType = IMPORT_SOURCE_TYPE_CURRENT;
+        importList = BomListConstants.BOM_LIST_EBOM;
+        clearBeforeImport = false;
+    }
+
+    private String bomListId;
+
+    private String getBomListId() {
+        if (bomListId == null) {
+            bomListId = webActions.getCurrentSubTabId().replace(
+                    webActions.getCurrentTabId().concat("_"), "");
+        }
+        return bomListId;
+    }
+
+    @Observer(WebActions.CURRENT_TAB_CHANGED_EVENT
+            + "_TAB_BOM_COMPOSITION_sub_tab")
+    @BypassInterceptors
+    public void resetBomListId() {
+        bomListId = null;
+    }
+
     @Override
     public void createRoot() {
         String logInitMsg = "[createRoot] ["
@@ -117,13 +152,15 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
         try {
             log.trace(logInitMsg + "Creating tree...");
 
-            BomListNodeService nodeService = Framework.getService(
-                    BomListNodeService.class);
-            nodeService.init(documentManager, 0,
-                    BomListNodeService.TREE_DIRECTION_COMPOSITION,
-                    bomList.getId());
+            nodeService = new BomCompositionListNodeService(documentManager,
+                    getBomListId());
 
             setRoot(nodeService.getRoot(currentDoc));
+
+            // Update max ordering
+            setMaxOrdering(((BomListNodeService) nodeService).getMaxOrdering());
+            setOrdering(getMaxOrdering() + 1);
+
             setIsDirty(false);
             setHasUnreadableNodes(false);
             setIsInvalid(false);
@@ -148,36 +185,34 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
 
     @Override
     public TreeNode getRoot() {
-        String bomListId = bomList.getId();
-        if (roots.isEmpty() || !roots.containsKey(bomListId)) {
+        if (roots.isEmpty() || !roots.containsKey(getBomListId())) {
             createRoot();
         }
-        return roots.get(bomListId);
+        return roots.get(getBomListId());
     }
 
     @Override
     public void setRoot(TreeNode root) {
-        String bomListId = bomList.getId();
         if (roots != null) {
-            roots.put(bomListId, root);
+            roots.put(getBomListId(), root);
         }
         firstLevelChildrenCount = root.getChildCount();
         childrenCount = countChildren(root, 0);
     }
 
     @Override
-    public void collapseAll() {
-        String bomListId = bomList.getId();
-        if (roots != null && roots.containsKey(bomListId)) {
-            collapseOrExpandAll(roots.get(bomListId), false);
+    public void collapseAll(TreeTable treeTable) {
+        if (roots != null && roots.containsKey(getBomListId())) {
+            collapseOrExpandAll(roots.get(getBomListId()), false);
+            clearFilters(treeTable);
         }
     }
 
     @Override
-    public void expandAll() {
-        String bomListId = bomList.getId();
-        if (roots != null && roots.containsKey(bomListId)) {
-            collapseOrExpandAll(roots.get(bomListId), true);
+    public void expandAll(TreeTable treeTable) {
+        if (roots != null && roots.containsKey(getBomListId())) {
+            collapseOrExpandAll(roots.get(getBomListId()), true);
+            clearFilters(treeTable);
         }
     }
 
@@ -186,36 +221,21 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
         // Empty all the roots, so we don't get a tree of another document in
         // all the subtabs except in the first loaded
         roots = null;
+        emptyImportFormProperties();
         createRoot();
     }
 
-    public void addRelationNode(DocumentModel currentDoc) {
-        setPredicateUri(EloraRelationConstants.BOM_LIST_HAS_ENTRY);
-        super.addRelationNode(currentDoc, false);
+    public void emptyImportFormProperties() {
+        importSourceType = IMPORT_SOURCE_TYPE_CURRENT;
+        importSourceUid = null;
+        importList = BomListConstants.BOM_LIST_EBOM;
+        clearBeforeImport = false;
     }
 
-    public String save(DocumentModel currentDoc, DocumentModel subjectDoc)
-            throws EloraException, CheckinNotAllowedException {
-        String superResponse = super.save(currentDoc, subjectDoc, false);
-
-        // After the normal save, we check in the BOM List
-        if (subjectDoc.isCheckedOut()) {
-            subjectDoc.putContextData(VersioningService.CHECKIN_COMMENT,
-                    "BOM list's relation changes saved.");
-            subjectDoc.putContextData(VersioningService.VERSIONING_OPTION,
-                    VersioningOption.MINOR);
-            documentManager.saveDocument(subjectDoc);
-
-            try {
-                EloraRelationHelper.copyRelationsToLastVersion(subjectDoc,
-                        eloraDocumentRelationManager, documentManager);
-            } catch (EloraException e) {
-                facesMessages.add(StatusMessage.Severity.ERROR,
-                        messages.get("eloraplm.message.error.relations.saved"));
-            }
-            documentManager.save();
-        }
-        return superResponse;
+    @Override
+    public void addRelationNode(DocumentModel currentDoc, boolean isAnarchic, boolean isInverse) {
+        setPredicateUri(EloraRelationConstants.BOM_LIST_HAS_ENTRY);
+        super.addRelationNode(currentDoc, isAnarchic, isInverse);
     }
 
     public void importBomList(DocumentModel currentDoc,
@@ -223,109 +243,129 @@ public class BomCompositionListTreeBean extends EditableRelationTreeBean
 
         String logInitMsg = "[importBomList] ["
                 + documentManager.getPrincipal().getName() + "] ";
-        log.trace(logInitMsg + "--- ENTER --- ");
-
         try {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
 
-            // Get importSourceUid, and its BomList document of the current
-            // bomList.
-            DocumentModel sourceDoc;
+            if (areRelationsEditable()) {
 
-            if (importSourceType.equals("current")) {
-                sourceDoc = currentDoc;
-            } else {
-                sourceDoc = documentManager.getDocument(
-                        new IdRef(importSourceUid));
-            }
+                // Get importSourceUid, and its BomList document of the current
+                // bomList.
+                DocumentModel sourceDoc;
 
-            if (sourceDoc == null) {
-                throw new EloraException("Source document is null.");
-            }
-
-            log.trace(logInitMsg + "Importing BOM List |" + importList
-                    + "| from document |" + sourceDoc.getId() + "| to list |"
-                    + bomList.getLabel() + "| of document |"
-                    + currentDoc.getId() + "|.");
-
-            // Difference between EBOM and BOM Lists
-            DocumentModel sourceBomList = null;
-            Resource predicateResource = null;
-            if (importList.equals(BomListConstants.BOM_LIST_EBOM)) {
-                sourceBomList = sourceDoc;
-                // TODO Predicate bat baino gehixau????'
-                predicateResource = new ResourceImpl(
-                        EloraRelationConstants.BOM_COMPOSED_OF);
-            } else {
-                DocumentModelList sourceBomLists = BomListHelper.getBomListForDocument(
-                        sourceDoc, importList, false, documentManager);
-                if (sourceBomLists == null || sourceBomLists.isEmpty()) {
-                    throw new EloraException(
-                            "Source document has no BOM list.");
-                } else if (sourceBomLists.size() > 1) {
-                    throw new EloraException(
-                            "Source document has more than one BOM list.");
+                if (importSourceType.equals(IMPORT_SOURCE_TYPE_CURRENT)) {
+                    sourceDoc = currentDoc;
+                } else {
+                    sourceDoc = documentManager.getDocument(
+                            new IdRef(importSourceUid));
                 }
-                sourceBomList = sourceBomLists.get(0);
 
-                // Get BomList related documents, and foreach, create a relation
-                // to the current BomList
-                predicateResource = new ResourceImpl(
-                        EloraRelationConstants.BOM_LIST_HAS_ENTRY);
+                if (sourceDoc == null) {
+                    throw new EloraException("Source document is null.");
+                }
+
+                log.trace(logInitMsg + "Importing BOM List |" + importList
+                        + "| from document |" + sourceDoc.getId()
+                        + "| to list |" + getBomListId() + "| of document |"
+                        + currentDoc.getId() + "|.");
+
+                // Difference between EBOM and BOM Lists
+                Resource predicateResource = null;
+                if (importList.equals(BomListConstants.BOM_LIST_EBOM)) {
+                    predicateResource = new ResourceImpl(
+                            EloraRelationConstants.BOM_COMPOSED_OF);
+                } else {
+                    DocumentModelList sourceBomLists = BomListHelper.getBomListForDocument(
+                            sourceDoc, importList, false, documentManager);
+                    if (sourceBomLists == null || sourceBomLists.isEmpty()) {
+                        throw new EloraException(
+                                "Source document has no BOM list.");
+                    } else if (sourceBomLists.size() > 1) {
+                        throw new EloraException(
+                                "Source document has more than one BOM list.");
+                    }
+                    sourceDoc = sourceBomLists.get(0);
+
+                    // Get BomList related documents, and foreach, create a
+                    // relation to the current BomList
+                    predicateResource = new ResourceImpl(
+                            EloraRelationConstants.BOM_LIST_HAS_ENTRY);
+                }
+
+                if (clearBeforeImport) {
+                    // Delete all BomListHasEntry relations
+                    eloraDocumentRelationManager.softDeleteRelation(
+                            documentManager, subjectDoc,
+                            EloraRelationConstants.BOM_LIST_HAS_ENTRY, null);
+                }
+
+                List<Statement> sourceStatements = RelationHelper.getStatements(
+                        EloraRelationConstants.ELORA_GRAPH_NAME, sourceDoc,
+                        predicateResource);
+                for (Statement sourceStmt : sourceStatements) {
+                    EloraStatementInfoImpl stmtInfo = new EloraStatementInfoImpl(
+                            sourceStmt);
+                    try {
+                        eloraDocumentRelationManager.addRelation(
+                                documentManager, subjectDoc,
+                                stmtInfo.getObject(),
+                                EloraRelationConstants.BOM_LIST_HAS_ENTRY,
+                                stmtInfo.getComment(), stmtInfo.getQuantity(),
+                                stmtInfo.getOrdering());
+                    } catch (RelationAlreadyExistsException e) {
+                        // If relation exists, ignore it and continue.
+                    }
+                }
+
+                log.trace(logInitMsg + "BOM list imported.");
+
+                facesMessages.add(StatusMessage.Severity.INFO, messages.get(
+                        "eloraplm.message.success.bom.list.import"));
+
+                createRoot();
+                emptyImportFormProperties();
+            } else {
+                facesMessages.add(StatusMessage.Severity.ERROR,
+                        messages.get("label.relation.documentLockedByOther"));
             }
-
-            List<Statement> sourceStatements = RelationHelper.getStatements(
-                    EloraRelationConstants.ELORA_GRAPH_NAME, sourceBomList,
-                    predicateResource);
-            for (Statement sourceStmt : sourceStatements) {
-                EloraStatementInfoImpl stmtInfo = new EloraStatementInfoImpl(
-                        sourceStmt);
-                eloraDocumentRelationManager.addRelation(documentManager,
-                        subjectDoc, stmtInfo.getObject(),
-                        EloraRelationConstants.BOM_LIST_HAS_ENTRY,
-                        stmtInfo.getComment(), stmtInfo.getQuantity(),
-                        stmtInfo.getOrdering());
-            }
-
-            log.trace(logInitMsg + "BOM list imported.");
-
-            facesMessages.add(StatusMessage.Severity.INFO,
-                    messages.get("eloraplm.message.success.bom.list.import"));
-
-            createRoot();
         } catch (EloraException e) {
             log.error(
                     logInitMsg + "Uncontrolled exception: "
                             + e.getClass().getName() + ". " + e.getMessage(),
                     e);
-            // TODO Aldatu??
             facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(e.getMessage()));
+                    messages.get("eloraplm.message.error.bom.list.import"));
             TransactionHelper.setTransactionRollbackOnly();
-            // navigationContext.invalidateCurrentDocument();
         } catch (Exception e) {
             log.error(
                     logInitMsg + "Uncontrolled exception: "
                             + e.getClass().getName() + ". " + e.getMessage(),
                     e);
-            // TODO Aldatu??
             facesMessages.add(StatusMessage.Severity.ERROR,
-                    messages.get(e.getMessage()));
+                    messages.get("eloraplm.message.error.bom.list.import"));
             TransactionHelper.setTransactionRollbackOnly();
-            // navigationContext.invalidateCurrentDocument();
         } finally {
             TransactionHelper.commitOrRollbackTransaction();
             TransactionHelper.startTransaction();
-            log.trace(logInitMsg + "--- EXIT --- ");
         }
 
     }
 
     @Override
-    @Factory(value = "bomCompositionListRoot", scope = ScopeType.EVENT)
-    public TreeNode getRootFromFactory() {
-        return getRoot();
+    public List<NodeData> getTreeAsList() {
+        List<NodeData> nodeList = new ArrayList<NodeData>();
+        if (!roots.isEmpty() && roots.containsKey(getBomListId())) {
+            nodeList = processNodeAndChildren(nodeList, roots.get(getBomListId()));
+        }
+        return nodeList;
+    }
+
+    private List<NodeData> processNodeAndChildren(List<NodeData> nodeList, TreeNode node) {
+        for (TreeNode child : node.getChildren()) {
+            nodeList.add((NodeData) child.getData());
+            nodeList = processNodeAndChildren(nodeList, child);
+        }
+        return nodeList;
     }
 
 }

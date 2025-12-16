@@ -1,7 +1,7 @@
 package com.aritu.eloraplm.relations.treetable;
 
 import java.util.List;
-import java.util.Map;
+import javax.faces.model.SelectItem;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.platform.relations.api.Statement;
@@ -62,6 +62,18 @@ public interface RelationNodeData extends NodeData {
 
     void setIsManual(Boolean isManual);
 
+    void toggleIsManual();
+
+    String getDesignators();
+
+    void setDesignators(String designators);
+
+    Boolean getIsExcludedFromMapping();
+
+    void setIsExcludedFromMapping(Boolean isExcludedFromMapping);
+
+    void toggleIsExcludedFromMapping();
+
     boolean getIsSpecial();
 
     boolean getIsDirect();
@@ -72,9 +84,9 @@ public interface RelationNodeData extends NodeData {
 
     void setIconOnlyRelations(List<String> iconOnlyRelations);
 
-    Map<String, String> getVersionList();
+    List<SelectItem> getVersionList();
 
-    void setVersionList(Map<String, String> versionList);
+    void setVersionList(List<SelectItem> versionList);
 
     boolean getIsExternalSource();
 

@@ -57,6 +57,12 @@ public class EloraDocumentTypesHelper {
         return docType;
     }
 
+    /**
+     * Returns all inherited types for a certain type
+     *
+     * @param docTypeName
+     * @return
+     */
     public static List<String> getExtendedDocumentTypeNames(
             String docTypeName) {
         SchemaManager schemaManager = Framework.getLocalService(
@@ -66,8 +72,32 @@ public class EloraDocumentTypesHelper {
         }
         Set<String> typeNames = schemaManager.getDocumentTypeNamesExtending(
                 docTypeName);
+        if (typeNames == null) {
+            typeNames = new HashSet<String>();
+        }
         typeNames.add(docTypeName);
         return new ArrayList<>(typeNames);
+    }
+
+    /**
+     * Returns all types that have a certain facet
+     *
+     * @param facet
+     * @return
+     */
+    public static List<String> getTypeNamesForFacet(String facet) {
+        SchemaManager schemaManager = Framework.getLocalService(
+                SchemaManager.class);
+        if (schemaManager == null) {
+            throw new NullPointerException("No registered SchemaManager");
+        }
+        Set<String> typeNames = schemaManager.getDocumentTypeNamesForFacet(
+                facet);
+        if (typeNames == null) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(typeNames);
+        }
     }
 
     public static String test(String superTypeName, String typeName) {

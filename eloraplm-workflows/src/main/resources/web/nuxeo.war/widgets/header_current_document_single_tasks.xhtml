@@ -4,7 +4,7 @@
   xmlns:nxl="http://nuxeo.org/nxforms/layout"
   xmlns:p="http://primefaces.org/ui">
     
-    <ui:fragment rendered="#{not empty currentSingleTasks}">
+    <ui:fragment rendered="#{not empty currentWfSingleTasks}">
         <div class="workflowTasksMessage">
             <span>#{messages['eloraplm.wf.label.tasksToDo']}</span>
             &#160;
@@ -18,7 +18,7 @@
                 immediate="true" />
         </div>
         <div id="header_single_tasks_pane" style="#{facesContext.isValidationFailed() or workflowActions.isTasksPaneExpanded ? '' : 'display: none;'}">
-            <nxl:widget name="summary_current_document_single_tasks" mode="edit" value="#{currentDocument}" />
+            <nxl:widget name="summary_current_document_single_tasks" mode="edit" value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}" />
         </div>
     </ui:fragment>
     

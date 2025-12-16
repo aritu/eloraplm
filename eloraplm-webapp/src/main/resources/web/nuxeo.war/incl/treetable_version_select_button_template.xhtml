@@ -1,0 +1,22 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+>
+    <p:commandLink
+        styleClass="listing-icon-button"
+        actionListener="#{layoutValue.refreshVersionList(nodeData)}"
+        pt:data-tooltip="#{messages['eloraplm.command.treetable.refreshVersionList']}"
+        rendered="#{versionList.size()==1}"
+        process="@this"
+        update="#{widget.id}_pf_select #{widget.id}_post"
+        partialSubmit="true"
+        onstart="onStartLoadingButton(cfg.source)"
+        oncomplete="onCompleteLoadingButton();"
+    >
+        <h:graphicImage value="/icons/row_reload_16.png" />
+    </p:commandLink>
+</ui:composition>

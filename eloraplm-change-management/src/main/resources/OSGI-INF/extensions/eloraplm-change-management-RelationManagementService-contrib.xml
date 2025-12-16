@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.cm.RelationManagementService.contrib">
+    
+    <extension point="allowedRelations" target="com.aritu.eloraplm.core.relations.api.RelationManagementService">
+        
+        <!-- ************ -->
+        <!-- CM relations -->
+        <!-- ************ -->
+        
+        <!-- CmProcessIsManagedIn -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CmProcessIsManagedIn">
+            <source>
+                <type>CmPr</type>
+            </source>
+            <target>
+                <type>CmEcr</type>
+                <type>CmEco</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CmProcessIsManagedIn">
+            <source>
+                <type>CmEcr</type>
+            </source>
+            <target>
+                <type>CmEco</type>
+            </target>
+        </relation>
+        
+    </extension>
+    
+</component>

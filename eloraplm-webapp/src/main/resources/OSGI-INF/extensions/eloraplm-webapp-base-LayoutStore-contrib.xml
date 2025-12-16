@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.webapp.base.LayoutStore.contrib">
+    <require>org.nuxeo.ecm.platform.actions.actionwidgettypes</require>
+    
+    <extension target="org.nuxeo.ecm.platform.forms.layout.LayoutStore"
+        point="widgettypes">
+        
+        <widgetType name="pfdialog">
+            <categories>
+                <category>jsfAction</category>
+            </categories>
+            <handler-class>
+            org.nuxeo.ecm.platform.actions.facelets.ActionWidgetTypeHandler
+            </handler-class>
+            <property name="template">
+            /incl/action/widgets/primefaces_dialog_action_template.xhtml
+            </property>
+            <property name="compat_template">
+            /incl/action/widgets/primefaces_dialog_action_template.xhtml
+            </property>
+            <property name="dev_template">
+            /widgets/actions/dev/action_widget_type_dev_template.xhtml
+            </property>
+        </widgetType>
+        
+    </extension>
+    
+</component>

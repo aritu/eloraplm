@@ -67,3 +67,142 @@
 {
     color: #04d;
 }
+
+.workflow_node_assignees
+{
+    float: left;
+    position: relative;
+    left: 110px;
+    top: 1em;
+    margin-top: calc(-1em - 5px);
+    max-width: 16em;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0.8em;
+    font-weight: bold;
+    border-radius: 5em;
+    border: 1px solid #899;
+    padding: 0 5px;
+    display: inline-block;
+    background-color: #eff;
+    color: #455;
+}
+
+._jsPlumb_overlay.workflow_connection_label
+{
+    background-color: rgba(255,255,255,0.5);
+    opacity: 1;
+    border: none;
+}
+
+.workflow_node.workflow_simple_task,
+.workflow_node.workflow_multiple_task,
+.workflow_node.workflow_end_node,
+.workflow_node.workflow_start_node
+{
+    width: 100px;
+    cursor: pointer;
+}
+
+.workflow_simple_task,
+.workflow_node.workflow_multiple_task
+{
+    padding-top: 0.5em;
+    line-height: 1.5em;
+    font-weight: bold;
+}
+
+.workflow_simple_task
+{
+    border: 2px solid #06a;
+}
+.workflow_node.workflow_multiple_task
+{
+    border: 6px double #06a;
+}
+
+.workflow_node.workflow_node_suspended
+{
+    background-color: #06a;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(100,100,200,0.6);
+}
+
+.workflow_node p.node_title
+{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.workflow_simple_task p.node_title,
+.workflow_node.workflow_multiple_task p.node_title
+{
+    height: 100%;
+    display: inline-block;
+    margin-top: -5px;
+}
+
+.workflow_node.workflow_end_node,
+.workflow_node.workflow_start_node
+{
+    line-height: 1em;
+    height: 3em;
+    padding: 1em 0;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.workflow_node.workflow_start_node
+{
+    background-color: #72b928;
+}
+
+#workflow_dt_container
+{
+    padding: 0 3em;
+}
+
+#workflow_dt_container .ui-datatable .ui-datatable-footer
+{
+    background: repeating-linear-gradient( -45deg, #e6e9ef, #e6e9ef 30px, #e0e3e7 30px, #e0e3e7 60px );
+    text-shadow: none;
+    padding: 1em;
+    border-top: 1px solid #ccc;
+    border-radius: 0 0 6px 6px;
+}
+
+.footer-state
+{
+    text-transform: uppercase;
+    background: #333;
+    padding: 0.4em 0.9em;
+    border-radius: 5em;
+    color: #fff;
+    box-shadow: 2px 2px 5px #000a;
+    font-size: 0.9em;
+    vertical-align: middle;
+    border: 1px solid #111;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.footer-state.rejected
+{
+    background: #c30;
+    border-color: #a10;
+}
+
+.footer-state.validated
+{
+    background: #280;
+    border-color: #160;
+}
+

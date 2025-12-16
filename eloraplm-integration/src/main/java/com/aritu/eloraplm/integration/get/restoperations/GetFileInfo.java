@@ -153,6 +153,8 @@ public class GetFileInfo {
                     docItem, "parentRealUid", false);
             String filename = EloraJsonHelper.getJsonFieldAsString(docItem,
                     "filename", false);
+            String type = EloraJsonHelper.getJsonFieldAsString(docItem, "type",
+                    false);
 
             if (filename == null) {
                 UidRequestDoc requestDoc = new UidRequestDoc(wcRef, realRef,
@@ -170,7 +172,7 @@ public class GetFileInfo {
                     throw new EloraException("Null wcUid and realUid");
                 }
             } else {
-                fillRequestDocsByFilename(filename);
+                fillRequestDocsByFilename(filename, type);
             }
         }
 
@@ -178,8 +180,9 @@ public class GetFileInfo {
         log.trace(logInitMsg + "--- EXIT --- ");
     }
 
-    private void fillRequestDocsByFilename(String filename) {
-        String q = EloraQueryFactory.getWcDocumentsByContentFilename(filename);
+    private void fillRequestDocsByFilename(String filename, String type) {
+        String q = EloraQueryFactory.getWcDocumentsByContentFilename(filename,
+                type);
         DocumentModelList dml = session.query(q);
         if (dml != null && !dml.isEmpty()) {
             for (DocumentModel doc : dml) {

@@ -1,0 +1,78 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxd="http://nuxeo.org/nxweb/document"
+>
+    <ui:remove>
+        <!--  TODO ORAIN EZ DABIL JSFREN BIZI ZIKLOAGATIK, KONPONBIDEA AURKITU -->
+        <!-- <nxu:set var="widgetDefined" value="#{eloraWebActions.existsWidget('jsf', 'dt_'.concat(field_2))}">
+        <ui:fragment rendered="#{widgetDefined}">
+
+            <nxl:widget name="dt_#{field_2}" mode="view" value="#{field_0}" />
+        </ui:fragment>
+        
+        <ui:fragment rendered="#{not widgetDefined}">
+        </ui:fragment>
+    </nxu:set> -->
+    </ui:remove>
+
+    <ui:remove>
+        <!-- Date -->
+    </ui:remove>
+    <ui:fragment rendered="#{field_3 eq 'date'}">
+        <ui:include
+            src="/widgets/workflow/workflow_answer_widget_type_wfa_date.xhtml"
+        />
+    </ui:fragment>
+
+    <ui:remove>
+        <!-- DateTime -->
+    </ui:remove>
+    <ui:fragment rendered="#{field_3 eq 'datetime'}">
+        <ui:include
+            src="/widgets/workflow/workflow_answer_widget_type_wfa_datetime.xhtml"
+        />
+    </ui:fragment>
+
+    <ui:remove>
+        <!-- Boolean -->
+    </ui:remove>
+    <ui:fragment rendered="#{field_3 eq 'boolean'}">
+        <ui:include
+            src="/widgets/workflow/workflow_answer_widget_type_wfa_boolean.xhtml"
+        />
+    </ui:fragment>
+
+    <ui:remove>
+        <!-- Document -->
+    </ui:remove>
+    <ui:fragment rendered="#{field_3 eq 'document'}">
+        <ui:include
+            src="/widgets/workflow/workflow_answer_widget_type_wfa_document.xhtml"
+        />
+    </ui:fragment>
+
+    <ui:remove>
+        <!-- Document List -->
+    </ui:remove>
+    <ui:fragment rendered="#{field_3 eq 'documentlist'}">
+        <ui:include
+            src="/widgets/workflow/workflow_answer_widget_type_wfa_document_list.xhtml"
+        />
+    </ui:fragment>
+
+    <ui:remove>
+        <!-- Text -->
+    </ui:remove>
+    <ui:fragment rendered="#{field_3 eq 'text'}">
+        <ui:include
+            src="/widgets/workflow/workflow_answer_widget_type_wfa_text.xhtml"
+        />
+    </ui:fragment>
+</ui:composition>

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:c="http://java.sun.com/jstl/core">
+  
+  <!-- <ui:fragment rendered="#{field_1}"> -->
+  <ui:fragment>
+    <h:selectOneMenu value="#{field_0}" id="#{widget.id}">
+      <f:selectItem itemLabel="#{messages['eloraplm.label.cm.overwrite.option.level1']}" itemValue="level1"/>
+      <f:selectItem itemLabel="#{messages['eloraplm.label.cm.overwrite.option.lastLevel']}" itemValue="topAssemblies"/>
+    </h:selectOneMenu>  
+  </ui:fragment>
+  
+  <p><strong><h:outputText value="#{messages['eloraplm.label.cm.overwrite.option.level1']}: " /></strong> <h:outputText value="#{messages['eloraplm.label.cm.help.overwriteOptionLevel1']}" /></p>
+  <p><strong><h:outputText value="#{messages['eloraplm.label.cm.overwrite.option.lastLevel']}: " /></strong> <h:outputText value="#{messages['eloraplm.label.cm.help.overwriteOptionLastLevel']}" /></p>
+  
+</ui:composition>

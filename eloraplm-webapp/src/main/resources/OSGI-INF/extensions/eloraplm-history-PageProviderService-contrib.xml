@@ -5,7 +5,7 @@
     <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService" point="providers">
         
         <genericPageProvider class="com.aritu.eloraplm.history.pageprovider.ESFullDocumentHistoryPageProvider" name="FULL_DOCUMENT_HISTORY_PROVIDER">
-          <whereClause docType="BasicAuditSearch">
+          <whereClause docType="EloraBasicAuditSearch">
             <fixedPart>
                 {
                     "filtered" : {
@@ -22,18 +22,21 @@
             </fixedPart>
             
             <predicate operator="BETWEEN" parameter="eventDate">
-              <field name="startDate" schema="basicauditsearch"/>
-              <field name="endDate" schema="basicauditsearch"/>
+              <field name="startDate" schema="elora_basic_audit_search"/>
+              <field name="endDate" schema="elora_basic_audit_search"/>
             </predicate>
             <predicate operator="IN" parameter="category">
-              <field name="eventCategories" schema="basicauditsearch"/>
+              <field name="eventCategories" schema="elora_basic_audit_search"/>
             </predicate>
             <predicate operator="IN" parameter="eventId">
-              <field name="eventIds" schema="basicauditsearch"/>
+              <field name="eventIds" schema="elora_basic_audit_search"/>
             </predicate>
             <predicate operator="IN" parameter="principalName">
-              <field name="principalNames" schema="basicauditsearch"/>
-            </predicate>                
+              <field name="principalNames" schema="elora_basic_audit_search"/>
+            </predicate>
+            <predicate operator="IN" parameter="docLifeCycle">
+              <field name="docLifeCycles" schema="elora_basic_audit_search"/>
+            </predicate>
           </whereClause>
           <sort ascending="false" column="eventDate"/>
             <pageSize>10</pageSize>

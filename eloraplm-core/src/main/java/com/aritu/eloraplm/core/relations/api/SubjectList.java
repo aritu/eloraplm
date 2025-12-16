@@ -17,15 +17,16 @@ import java.util.List;
 
 import org.nuxeo.ecm.platform.relations.api.Node;
 import org.nuxeo.ecm.platform.relations.api.NodeType;
+import org.nuxeo.ecm.platform.relations.api.Subject;
 import org.nuxeo.ecm.platform.relations.api.impl.AbstractNode;
 
 /**
- * Fake Node type used to pass down multiple nodes into whereBuilder.
+ * Fake Subject type used to pass down multiple Subjects into whereBuilder.
  *
  * @author aritu
  *
  */
-public class SubjectList extends AbstractNode implements ListNode {
+public class SubjectList extends AbstractNode implements Subject {
 
     private static final long serialVersionUID = 1L;
 

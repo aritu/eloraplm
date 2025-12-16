@@ -1,0 +1,31 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:p="http://primefaces.org/ui">
+    
+    <p:autoComplete id="ac_user_#{widget.id}" value="#{field_0}" style="width: #{widget.properties.width}px"
+        completeMethod="#{widgetProperty_completeBean[widget.properties.completeMethod]}"
+        var="user" itemLabel="#{not empty user ? user.firstName.concat(' ').concat(user.lastName) : ''}" itemValue="#{user}"
+        multiple="#{empty widget.properties.multiple ? false : widget.properties.multiple}" appendTo="@this"
+        converter="#{widgetProperty_converter}" unique="true" minQueryLength="#{not empty widget.properties.minQueryLength ? widget.properties.minQueryLength : 3}"
+        scrollHeight="250">
+        
+        <p:column style="width: 20px;">
+            <h:graphicImage value="/icons/user.png" alt="user" width="16" height="16" />
+        </p:column>
+        <p:column>
+            #{user.firstName} #{user.lastName} <br/><small>#{user.userName}</small>
+        </p:column>
+        
+        <c:if test="#{widget.properties.required}">
+            <f:validateRequired />
+        </c:if>
+        
+    </p:autoComplete>
+    
+    <h:message for="ac_user_#{widget.id}" styleClass="errorMessage" />
+    
+</ui:composition>

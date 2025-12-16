@@ -8,10 +8,10 @@
     <schema name="cm_pr" prefix="cmpr" src="schemas/cm_pr.xsd"/>
     <schema name="cm_ecr" prefix="cmecr" src="schemas/cm_ecr.xsd"/>
     <schema name="cm_eco" prefix="cmeco" src="schemas/cm_eco.xsd"/>
-    <schema name="cm_doc_modified_items" prefix="docmod" src="schemas/cm_doc_modified_item_list.xsd"/>
-    <schema name="cm_bom_modified_items" prefix="bommod" src="schemas/cm_bom_modified_item_list.xsd"/>
-    <schema name="cm_doc_impacted_items" prefix="docimp" src="schemas/cm_doc_impacted_item_list.xsd"/>
-    <schema name="cm_bom_impacted_items" prefix="bomimp" src="schemas/cm_bom_impacted_item_list.xsd"/>
+    <schema name="cm_modified_items" prefix="mod" src="schemas/cm_modified_item_list.xsd"/>
+    <schema name="cm_impacted_items" prefix="imp" src="schemas/cm_impacted_item_list.xsd"/>
+    <schema name="cm_manual_impacted_items" prefix="manimp" src="schemas/cm_manual_impacted_item_list.xsd"/>
+    <schema name="cm_impact_matrix_options" prefix="impopt" src="schemas/cm_impact_matrix_options.xsd"/>
     <schema name="eloraCmDoctypeActionsImpact" src="schemas/elora_cm_doctype_actions_impact.xsd"/>
   </extension>
 
@@ -42,10 +42,10 @@
         <schema name="elora_object"/>
         <schema name="planning"/>
         <schema name="cm_ecr"/>
-        <schema name="cm_doc_modified_items"/>
-        <schema name="cm_bom_modified_items"/>
-        <schema name="cm_doc_impacted_items"/>
-        <schema name="cm_bom_impacted_items"/>
+        <schema name="cm_modified_items"/>
+        <schema name="cm_impacted_items"/>
+        <schema name="cm_manual_impacted_items"/>
+        <schema name="cm_impact_matrix_options"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
         <facet name="Archivable" />
@@ -60,10 +60,10 @@
         <schema name="elora_object"/>
         <schema name="planning"/>
         <schema name="cm_eco"/>
-        <schema name="cm_doc_modified_items"/>
-        <schema name="cm_bom_modified_items"/>
-        <schema name="cm_doc_impacted_items"/>
-        <schema name="cm_bom_impacted_items"/>
+        <schema name="cm_modified_items"/>
+        <schema name="cm_impacted_items"/>
+        <schema name="cm_manual_impacted_items"/>
+        <schema name="cm_impact_matrix_options"/>
         <facet name="Commentable"/>
         <facet name="EloraWorkspace"/>
         <facet name="Archivable" />
@@ -108,7 +108,7 @@
             <layout>dublincore</layout>
         </layouts>
         <contentViews category="content">
-            <contentView>document_content</contentView>
+            <contentView>document_content_ordered_date</contentView>
         </contentViews>
         <contentViews category="trash_content">
             <contentView showInExportView="false">

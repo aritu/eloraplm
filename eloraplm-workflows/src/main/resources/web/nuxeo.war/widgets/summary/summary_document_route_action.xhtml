@@ -1,0 +1,29 @@
+<div xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxdir="http://nuxeo.org/nxdirectory"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+
+  <h3 class="summaryTitle">
+    <h:outputText value="#{messages['label.document.routing.associated.workflow']}" />
+  </h3>
+  <c:choose>
+    <c:when test="#{workflowActions.hasRelatedWorkflow()}">
+      <c:forEach var="relatedWorkflow" items="#{workflowActions.getRelatedWorkflows()}">
+        <div>
+          <h:outputText value="#{messages['label.route.info']} " />
+          <h:outputText value="#{messages[relatedWorkflow.title]} " />
+          <h:outputText value="#{messages['label.route.started']} " />
+          <h:outputText value="#{nxu:userFullName(relatedWorkflow.document.docri.initiator)}" />
+        </div>
+      </c:forEach>
+    </c:when>
+    <c:otherwise>
+      <nxl:layout value="#{workflowActions}" mode="edit" name="document_related_route" />
+      <h:commandButton styleClass="button smallButton"
+        value="#{messages['action.start.related.document.route']}"
+        action="#{workflowActions.startWorkflowRelatedToCurrentDocument()}"
+        id="start_route" />
+    </c:otherwise>
+  </c:choose>
+</div>

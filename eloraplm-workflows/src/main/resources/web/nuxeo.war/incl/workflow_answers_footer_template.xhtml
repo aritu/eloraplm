@@ -1,0 +1,27 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+    <nxu:set var="wfDoc" value="#{value.selectedInstance}">
+    <nxu:set var="endNodeLabel" value="#{value.getEndNodeLabel()}">
+        <div style="text-align: center">
+            <!-- Abandoned -->
+            <h:outputText value="#{messages['eloraplm.label.workflows.forms.answers.footer.abandoned']}"
+                    escape="false" rendered="#{wfDoc.currentLifeCycleState eq 'canceled'}" />
+            
+            <!-- Without end node label -->
+            <h:outputText value="#{messages['eloraplm.label.workflows.forms.answers.footer.done']}"
+                    escape="false" rendered="#{empty endNodeLabel and wfDoc.currentLifeCycleState eq 'done'}" />
+            
+            <!-- With end node label -->
+            <h:panelGroup rendered="#{not empty endNodeLabel and wfDoc.currentLifeCycleState eq 'done'}">
+                <h:outputText value="#{messages['eloraplm.label.workflows.forms.answers.footer.wfinfo']}" />
+                <h:outputText styleClass="footer-state" value="#{messages[endNodeLabel]}" />
+            </h:panelGroup>
+        </div>
+    </nxu:set>
+    </nxu:set>
+    
+</ui:composition>

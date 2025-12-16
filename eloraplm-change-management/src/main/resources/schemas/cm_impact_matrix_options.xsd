@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<xs:schema
+    targetNamespace="http://eloraplm.aritu.com/schemas/cm_impact_matrix_options"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+
+    <xs:element name="calculationMethod" type="xs:string" default="automatic"/>
+    <xs:element name="createItemIM" type="xs:boolean" default="true"/>
+    <xs:element name="createDocIM" type="xs:boolean" default="true"/>
+    <xs:element name="lockImpacted" type="xs:boolean" default="true"/>
+    <xs:element name="overwriteImpacted" type="xs:boolean" default="false"/>
+    <xs:element name="overwriteOption" type="xs:string"/>    
+
+</xs:schema>

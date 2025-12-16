@@ -1,0 +1,29 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:nxs="https://eloraplm.aritu.com/schemas/workflow_info"
+    targetNamespace="https://eloraplm.aritu.com/schemas/workflow_info">
+    
+    <xs:element name="instances" type="nxs:workflow_instances"/>
+    
+    <xs:complexType name="workflow_instances">
+        <xs:sequence>
+            <xs:element name="info" type="nxs:workflow_instance_info" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="workflow_instance_info">
+        <xs:sequence>
+            
+            <xs:element name="workflowId" type="xs:string" />
+            
+            <xs:element name="workflowInstanceId" type="xs:string" />
+            
+            <xs:element name="endNode" type="xs:string" />
+            
+            <xs:element name="endNodeLabel" type="xs:string" />
+            
+            <xs:element name="endDate" type="xs:date" />
+            
+        </xs:sequence>
+    </xs:complexType>
+    
+</xs:schema>

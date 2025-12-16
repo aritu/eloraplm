@@ -32,6 +32,9 @@ public class ModifierDescriptor {
         }
     }
 
+    @XNode(value = "@applyOnlyOnFirstPage")
+    public boolean applyOnlyOnFirstPage = false;
+
     @XNodeList(value = "line", type = ModifierLineDescriptor[].class, componentType = ModifierLineDescriptor.class)
     public ModifierLineDescriptor[] lines;
 

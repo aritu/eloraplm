@@ -21,10 +21,6 @@
             <schema name="planning"/>
             <schema name="product_classification"/>
             <schema name="qm_process"/>
-            <schema name="related_partaker"/>
-            <schema name="related_customer"/>
-            <schema name="related_manufacturer"/>
-            <schema name="responsible"/>
             <facet name="Commentable"/>
             <facet name="EloraWorkspace"/>
             <facet name="Archivable" />
@@ -38,10 +34,6 @@
             <schema name="planning"/>
             <schema name="product_classification"/>
             <schema name="qm_process"/>
-            <schema name="related_partaker"/>
-            <schema name="related_customer"/>
-            <schema name="related_manufacturer"/>
-            <schema name="responsible"/>
             <facet name="Commentable"/>
             <facet name="EloraWorkspace"/>
             <facet name="Archivable" />
@@ -55,10 +47,6 @@
             <schema name="planning"/>
             <schema name="product_classification"/>
             <schema name="qm_process"/>
-            <schema name="related_partaker"/>
-            <schema name="related_customer"/>
-            <schema name="related_manufacturer"/>
-            <schema name="responsible"/>
             <facet name="Commentable"/>
             <facet name="EloraWorkspace"/>
             <facet name="Archivable" />
@@ -72,10 +60,6 @@
             <schema name="planning"/>
             <schema name="part_classification"/>
             <schema name="qm_process"/>
-            <schema name="related_partaker"/>
-            <schema name="related_customer"/>
-            <schema name="related_manufacturer"/>
-            <schema name="responsible"/>
             <facet name="Commentable"/>
             <facet name="EloraWorkspace"/>
             <facet name="Archivable" />
@@ -110,7 +94,7 @@
                 <layout>dublincore</layout>
             </layouts>
             <contentViews category="content">
-                <contentView>document_content</contentView>
+                <contentView>document_content_ordered_date</contentView>
             </contentViews>
             <contentViews category="trash_content">
                 <contentView showInExportView="false">
@@ -149,6 +133,7 @@
 <!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
+                <layout>external_link</layout>
             </layouts>
             <contentViews category="content">
                 <contentView>document_content</contentView>
@@ -170,7 +155,6 @@
                 <type>CadDrawing</type>
                 <type>CadDesignTable</type>
                 <type>BomPart</type>
-                <type>BomManufacturerPart</type>
                 <type>BomTool</type>
                 <type>BomPackaging</type>
                 <type>BomSpecification</type>
@@ -205,6 +189,7 @@
 <!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
+                <layout>external_link</layout>
             </layouts>
             <contentViews category="content">
                 <contentView>document_content</contentView>
@@ -226,7 +211,6 @@
                 <type>CadDrawing</type>
                 <type>CadDesignTable</type>
                 <type>BomPart</type>
-                <type>BomManufacturerPart</type>
                 <type>BomTool</type>
                 <type>BomPackaging</type>
                 <type>BomSpecification</type>
@@ -261,6 +245,7 @@
 <!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
+                <layout>external_link</layout>
             </layouts>
             <contentViews category="content">
                 <contentView>document_content</contentView>
@@ -282,7 +267,6 @@
                 <type>CadDrawing</type>
                 <type>CadDesignTable</type>
                 <type>BomPart</type>
-                <type>BomManufacturerPart</type>
                 <type>BomTool</type>
                 <type>BomPackaging</type>
                 <type>BomSpecification</type>
@@ -317,6 +301,7 @@
 <!--                 <layout>subjects</layout> -->
                 <layout>rights</layout>
                 <layout>expired</layout>
+                <layout>external_link</layout>
             </layouts>
             <contentViews category="content">
                 <contentView>document_content</contentView>
@@ -338,7 +323,6 @@
                 <type>CadDrawing</type>
                 <type>CadDesignTable</type>
                 <type>BomPart</type>
-                <type>BomManufacturerPart</type>
                 <type>BomTool</type>
                 <type>BomPackaging</type>
                 <type>BomSpecification</type>

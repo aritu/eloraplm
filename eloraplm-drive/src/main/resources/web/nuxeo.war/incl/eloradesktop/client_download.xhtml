@@ -1,0 +1,99 @@
+<div xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+    
+    <p>
+        <h:outputText value="#{messages['eloraplm.label.eloradesktop.intro']}" />
+    </p>
+    <nxu:set var="defaultBinary" value="#{eloraDesktopDefaultBinary}">
+        <table class="dataOutput defaultBinary">
+            <thead>
+                <tr>
+                    <th>
+                        <h:outputText value="#{messages['eloraplm.label.eloradesktop.platform']}" />
+                    </th>
+                    <th>
+                        <h:outputText value="#{messages['eloraplm.label.eloradesktop.package']}" />
+                    </th>
+                    <th>
+                        <h:outputText value="#{messages['eloraplm.label.eloradesktop.version']}" />
+                    </th>
+                    <th style="text-align: center; max-width: 7em;">
+                        <h:outputText value="#{messages['eloraplm.label.eloradesktop.manual']}" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <h:outputText value="#{defaultBinary.platform}" class="label label-info" />
+                    </td>
+                    <td>
+                        <h:outputLink value="#{defaultBinary.url}" target="_blank" class="button mainAction tipsyShow" title="#{messages[defaultBinary.description]}">
+                            <h:outputText value="#{defaultBinary.binaryPackage}" />
+                        </h:outputLink>
+                        <h:outputText value="#{messages[defaultBinary.info]}" />
+                    </td>
+                    <td>
+                        <h:outputText value="#{defaultBinary.version}" />
+                    </td>
+                    <td style="text-align: center;">
+                        <h:outputLink value="#{defaultBinary.manualUrl}" target="_blank">
+                            <img src="icons/file_16.png" />
+                        </h:outputLink>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </nxu:set>
+    
+    <div class="foldableBox">
+        <h3 class="folded">
+            <a class="foldableHeaderLink" onclick="return toggleBox(this)" href="#">#{messages['eloraplm.label.eloradesktop.alternative']}</a>
+        </h3>
+        <div class="boxBody" style="display: none;">
+            <table class="dataOutput defaultBinary">
+                <thead>
+                    <tr>
+                        <th>
+                            <h:outputText value="#{messages['eloraplm.label.eloradesktop.platform']}" />
+                        </th>
+                        <th>
+                            <h:outputText value="#{messages['eloraplm.label.eloradesktop.package']}" />
+                        </th>
+                        <th>
+                            <h:outputText value="#{messages['eloraplm.label.eloradesktop.version']}" />
+                        </th>
+                        <th style="text-align: center; max-width: 7em;">
+                            <h:outputText value="#{messages['eloraplm.label.eloradesktop.manual']}" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="altBinary" items="#{eloraDesktopAltBinaries}">
+                    <tr>
+                        <td>
+                            <h:outputText value="#{altBinary.platform}" class="label label-info" />
+                        </td>
+                        <td>
+                            <h:outputLink value="#{altBinary.url}" target="_blank" class="button mainAction tipsyShow" title="#{messages[altBinary.description]}">
+                                <h:outputText value="#{altBinary.binaryPackage}" />
+                            </h:outputLink>
+                            <h:outputText value="#{messages[altBinary.info]}" />
+                        </td>
+                        <td>
+                            <h:outputText value="#{altBinary.version}" />
+                        </td>
+                        <td style="text-align: center;">
+                            <h:outputLink value="#{altBinary.manualUrl}" target="_blank">
+                                <img src="icons/file_16.png" />
+                            </h:outputLink>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+</div>

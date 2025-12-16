@@ -1,23 +1,36 @@
-jQuery(document).ready(function() {
-    
+PFJQ(document).ready(function () {
     if (typeof PrimeFaces == "undefined") {
         // PrimeFaces script is not loaded
         location.reload(true);
     }
 });
 
-
 var typingTimer;
+
+//Wait 0.3sec for long texts
 var doneTypingInterval = 300;
 
 //on keyup, start the countdown
-jQuery('table.treetable').on('keyup', 'input.blurAfterInput', function () {
+PFJQ("table.treetable").on("keyup", "input.blurAfterInput", function () {
     clearTimeout(typingTimer);
     typingTimer = setTimeout(doneTyping, doneTypingInterval, this);
 });
 
-//on keydown, clear the countdown 
-jQuery('table.treetable').on('keydown', 'input.blurAfterInput', function () {
+//on keydown, clear the countdown
+PFJQ("table.treetable").on("keydown", "input.blurAfterInput", function () {
+    clearTimeout(typingTimer);
+});
+
+// Wait 1sec for long texts
+var doneTyping1sInterval = 1000;
+//on keyup, start the countdown
+PFJQ("table.treetable").on("keyup", "input.blurAfter1sInput", function () {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(doneTyping, doneTyping1sInterval, this);
+});
+
+//on keydown, clear the countdown
+PFJQ("table.treetable").on("keydown", "input.blurAfter1sInput", function () {
     clearTimeout(typingTimer);
 });
 
@@ -26,79 +39,81 @@ function doneTyping(input) {
     input.blur();
 }
 
-
 var row = null;
 var treeWidgetId = null;
 
 function preparePartialAjaxUpdate(caller) {
-    row = jQuery('[id="' + caller.id + '"]').closest("tr");
-    treeWidgetId = jQuery(row).attr('id').split(':')[0];
-    
-    PF('treeBlocker_'+treeWidgetId).show();
+    row = PFJQ('[id="' + caller.id + '"]').closest("tr");
+    if (row === undefined || row.length == 0) {
+        // We try without id
+        row = PFJQ('[id="' + caller + '"]').closest("tr");
+    }
+    treeWidgetId = PFJQ(row).attr("id").split(":")[0];
+
+    PF("tblock_" + treeWidgetId).show();
 }
 
 function markTreeNodeAsRemoved() {
-    if(row != null) {
-        
-        if(jQuery(row).hasClass("rowIsNew")) {
-            jQuery(row).remove();
+    if (row != null) {
+        if (PFJQ(row).hasClass("rowIsNew")) {
+            PFJQ(row).remove();
+            var parentid = PFJQ(row).attr("id");
+            // Remove children
+            PFJQ('tr[id^="' + parentid + '_"]').remove();
         } else {
-            
-            jQuery(row).removeClass("rowIsNormal");
-            
-            if(jQuery(row).hasClass("rowIsModified")) {
-                jQuery(row)
+            PFJQ(row).removeClass("rowIsNormal");
+
+            if (PFJQ(row).hasClass("rowIsModified")) {
+                PFJQ(row)
                     .removeClass("rowIsModified")
                     .addClass("rowBeforeModified");
             }
-            
-            jQuery(row).addClass("rowIsRemoved");
-            
+
+            PFJQ(row).addClass("rowIsRemoved");
+
             collapseTreeNode();
         }
     }
-    
-    PF('treeBlocker_'+treeWidgetId).hide();
+
+    PF("tblock_" + treeWidgetId).hide();
 }
 
 function unmarkTreeNodeAsRemoved() {
-    if(row != null) {
-        jQuery(row).removeClass("rowIsRemoved");
-        
-        if(jQuery(row).hasClass("rowBeforeModified")) {
-            jQuery(row)
+    if (row != null) {
+        PFJQ(row).removeClass("rowIsRemoved");
+
+        if (PFJQ(row).hasClass("rowBeforeModified")) {
+            PFJQ(row)
                 .removeClass("rowBeforeModified")
                 .addClass("rowIsModified");
         } else {
-            jQuery(row).addClass("rowIsNormal");
+            PFJQ(row).addClass("rowIsNormal");
         }
     }
-    
-    PF('treeBlocker_'+treeWidgetId).hide();
-}
 
+    PF("tblock_" + treeWidgetId).hide();
+}
 
 function markTreeNodeAsModified(updateChildren) {
-    if(row != null) {
-        jQuery(row)
+    if (row != null) {
+        PFJQ(row)
             .removeClass("rowIsNormal rowIsNew rowIsRemoved")
             .addClass("rowIsModified");
     }
-    
-    if(updateChildren) {
-        var rowId = jQuery(row).attr('id');
-        jQuery('tr[id^="' + rowId + '_"]')
+
+    if (updateChildren) {
+        var rowId = PFJQ(row).attr("id");
+        PFJQ('tr[id^="' + rowId + '_"]')
             .removeClass("rowIsNormal rowIsNew rowIsRemoved")
             .addClass("rowIsModified");
     }
-    
-    PF('treeBlocker_'+treeWidgetId).hide();
+
+    PF("tblock_" + treeWidgetId).hide();
 }
 
-
 function collapseTreeNode() {
-    var toggler = jQuery(row).find('.ui-treetable-toggler');
-    if(toggler.hasClass('ui-icon-triangle-1-s')) {
-        jQuery(toggler).trigger('click.treeTable-toggle');
+    var toggler = PFJQ(row).find(".ui-treetable-toggler");
+    if (toggler.hasClass("ui-icon-triangle-1-s")) {
+        PFJQ(toggler).trigger("click.treeTable-toggle");
     }
 }

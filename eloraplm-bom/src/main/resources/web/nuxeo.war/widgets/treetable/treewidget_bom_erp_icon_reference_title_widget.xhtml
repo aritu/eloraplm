@@ -1,13 +1,17 @@
-<f:subview id="#{widget.id}"
+<ui:composition id="#{widget.id}"
   xmlns="http://www.w3.org/1999/xhtml"  
-  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
   xmlns:h="http://java.sun.com/jsf/html"
   >
 
-        <h:graphicImage value="/icons/external_material_16.png" styleClass="proxyBadge" />
+    <span class="cell">
+    
+        <h:graphicImage value="/icons/external_material_16.png" />
                                 
-        &#160;<h:outputText rendered="#{not empty field_1}" styleClass="eloraReference" value="#{field_1}" />&#160;
+        &#160;<h:outputText rendered="#{not empty field_0}" styleClass="eloraReference" value="#{field_0}" />&#160;
         
-        <h:outputText rendered="#{not empty field_2}" styleClass="documentTitleLink" value="#{field_2}" />
+        <h:outputText rendered="#{not empty field_1}" styleClass="documentTitleLink" value="#{field_1}" />
         
-</f:subview>
+    </span>
+        
+</ui:composition>

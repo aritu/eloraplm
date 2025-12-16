@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.platform.query.nxql.NXQLQueryBuilder;
 import org.nuxeo.ecm.platform.relations.CoreGraph;
+import org.nuxeo.ecm.platform.relations.api.Literal;
 import org.nuxeo.ecm.platform.relations.api.Node;
 import org.nuxeo.ecm.platform.relations.api.QNameResource;
 import org.nuxeo.ecm.platform.relations.api.Resource;
@@ -38,6 +40,7 @@ import org.nuxeo.ecm.platform.relations.api.Subject;
 import org.nuxeo.ecm.platform.relations.api.impl.NodeFactory;
 import org.nuxeo.ecm.platform.relations.api.impl.StatementImpl;
 
+import com.aritu.eloraplm.constants.CommonRelationConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.api.ObjectList;
@@ -51,19 +54,44 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
  * @author aritu
  *
  */
-public class EloraCoreGraph extends CoreGraph {
+public class EloraCoreGraph extends CoreGraph implements RelationGraph {
 
     /**
      *
      */
     private static final long serialVersionUID = 1L;
 
+    protected static Map<String, Resource> metadataResourceMap;
+
     /**
      * @param session
      */
     public EloraCoreGraph(CoreSession session) {
         super(session);
-        // TODO Auto-generated constructor stub
+
+        metadataResourceMap = new HashMap<String, Resource>();
+        metadataResourceMap.put(EloraMetadataConstants.ELORA_RELEXT_QUANTITY,
+                EloraRelationConstants.QUANTITY);
+        metadataResourceMap.put(EloraMetadataConstants.ELORA_RELEXT_ORDERING,
+                EloraRelationConstants.ORDERING);
+        metadataResourceMap.put(
+                EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING,
+                EloraRelationConstants.DIRECTOR_ORDERING);
+        metadataResourceMap.put(
+                EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
+                EloraRelationConstants.VIEWER_ORDERING);
+        metadataResourceMap.put(
+                EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
+                EloraRelationConstants.INVERSE_VIEWER_ORDERING);
+        metadataResourceMap.put(EloraMetadataConstants.ELORA_RELEXT_ISMANUAL,
+                EloraRelationConstants.IS_MANUAL);
+        metadataResourceMap.put(EloraMetadataConstants.ELORA_RELEXT_DESIGNATORS,
+                EloraRelationConstants.DESIGNATORS);
+        metadataResourceMap.put(EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE,
+                EloraRelationConstants.IS_TEMPLATE);
+        metadataResourceMap.put(
+                CommonRelationConstants.COMMREL_IS_EXCLUDED_FROM_MAPPING,
+                CommonRelationConstants.RES_COMMREL_IS_EXCLUDED_FROM_MAPPING);
     }
 
     @Override
@@ -167,24 +195,27 @@ public class EloraCoreGraph extends CoreGraph {
                 quantity = "1";
             }
 
-            // TODO: Estos tipos se pasan como string porque nuxeo utiliza la
-            // clase Literal para gestionarlos. Mirar si se puede hacer algo
-            // para que sean integer, boolean, etc. ya que los tenemos que
-            // convertir al guardar en la bbdd
+            Integer ordering = getOrdering(statement);
 
-            String ordering = getOrdering(statement);
+            Integer directorOrdering = getDirectorOrdering(statement);
 
-            String directorOrdering = getDirectorOrdering(statement);
+            Integer viewerOrdering = getViewerOrdering(statement);
 
-            String viewerOrdering = getViewerOrdering(statement);
+            Integer inverseViewerOrdering = getInverseViewerOrdering(statement);
 
-            String inverseViewerOrdering = getInverseViewerOrdering(statement);
+            Boolean isManual = getIsManual(statement);
 
-            String isManual = getIsManual(statement);
+            String designators = getDesignators(statement);
 
-            String isTemplate = getIsTemplate(statement);
+            Boolean isTemplate = getIsTemplate(statement);
 
             // end of custom metadata
+
+            // Common relation metadata
+
+            Boolean isExcludedFromMapping = getIsExcludedFromMapping(statement);
+
+            // End of common relation metadata
 
             String comment = getComment(statement);
 
@@ -239,38 +270,51 @@ public class EloraCoreGraph extends CoreGraph {
 
             if (ordering != null) {
                 rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_ORDERING,
-                        Integer.parseInt(ordering));
+                        EloraMetadataConstants.ELORA_RELEXT_ORDERING, ordering);
             }
 
             if (directorOrdering != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING,
-                        Integer.parseInt(directorOrdering));
+                        directorOrdering);
             }
 
             if (viewerOrdering != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
-                        Integer.parseInt(viewerOrdering));
+                        viewerOrdering);
             }
             if (inverseViewerOrdering != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
-                        Integer.parseInt(inverseViewerOrdering));
+                        inverseViewerOrdering);
             }
             if (isManual != null) {
                 rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_ISMANUAL,
-                        Boolean.parseBoolean(isManual));
+                        EloraMetadataConstants.ELORA_RELEXT_ISMANUAL, isManual);
+            }
+            if (designators != null) {
+                rel.setPropertyValue(
+                        EloraMetadataConstants.ELORA_RELEXT_DESIGNATORS,
+                        designators);
             }
             if (isTemplate != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE,
-                        Boolean.parseBoolean(isTemplate));
+                        isTemplate);
             }
 
             // end of custom metadata
+
+            // Common relation metadata
+
+            if (isExcludedFromMapping != null) {
+                rel.setPropertyValue(
+                        CommonRelationConstants.COMMREL_IS_EXCLUDED_FROM_MAPPING,
+                        isExcludedFromMapping);
+            }
+
+            // End of common relation metadata
 
             return rel;
         }
@@ -285,6 +329,7 @@ public class EloraCoreGraph extends CoreGraph {
      *
      * @param statement
      */
+    @Override
     public void softDelete(Statement statement) {
         StatementSoftDeleter statementSoftDeleter = session == null
                 ? new StatementSoftDeleter(statement)
@@ -349,10 +394,12 @@ public class EloraCoreGraph extends CoreGraph {
 
     }
 
+    @Override
     public void update(Statement oldStmt, Statement newStmt) {
         update(Collections.singletonMap(oldStmt, newStmt));
     }
 
+    @Override
     public void update(Map<Statement, Statement> statements) {
         StatementUpdater statementUpdater = session == null
                 ? new StatementUpdater(statements)
@@ -456,19 +503,27 @@ public class EloraCoreGraph extends CoreGraph {
             // para que sean integer, boolean, etc. ya que los tenemos que
             // convertir al guardar en la bbdd
 
-            String ordering = getOrdering(statement);
+            Integer ordering = getOrdering(statement);
 
-            String directorOrdering = getDirectorOrdering(statement);
+            Integer directorOrdering = getDirectorOrdering(statement);
 
-            String viewerOrdering = getViewerOrdering(statement);
+            Integer viewerOrdering = getViewerOrdering(statement);
 
-            String inverseViewerOrdering = getInverseViewerOrdering(statement);
+            Integer inverseViewerOrdering = getInverseViewerOrdering(statement);
 
-            String isManual = getIsManual(statement);
+            Boolean isManual = getIsManual(statement);
 
-            String isTemplate = getIsTemplate(statement);
+            String designators = getDesignators(statement);
+
+            Boolean isTemplate = getIsTemplate(statement);
 
             // end of custom metadata
+
+            // Common relation metadata
+
+            Boolean isExcludedFromMapping = getIsExcludedFromMapping(statement);
+
+            // End of common relation metadata
 
             String comment = getComment(statement);
 
@@ -516,62 +571,47 @@ public class EloraCoreGraph extends CoreGraph {
             }
 
             // Custom metadata for relation document model
-            if (quantity != null) {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_QUANTITY, quantity);
-            }
+            rel.setPropertyValue(EloraMetadataConstants.ELORA_RELEXT_QUANTITY,
+                    quantity);
 
-            if (ordering != null) {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_ORDERING,
-                        Integer.parseInt(ordering));
-            } else {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_ORDERING, null);
-            }
+            rel.setPropertyValue(EloraMetadataConstants.ELORA_RELEXT_ORDERING,
+                    ordering);
 
-            if (directorOrdering != null) {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING,
-                        Integer.parseInt(directorOrdering));
-            } else {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING,
-                        null);
-            }
+            rel.setPropertyValue(
+                    EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING,
+                    directorOrdering);
 
-            if (viewerOrdering != null) {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
-                        Integer.parseInt(viewerOrdering));
-            } else {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
-                        null);
-            }
+            rel.setPropertyValue(
+                    EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING,
+                    viewerOrdering);
 
-            if (inverseViewerOrdering != null) {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
-                        Integer.parseInt(inverseViewerOrdering));
-            } else {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
-                        null);
-            }
+            rel.setPropertyValue(
+                    EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING,
+                    inverseViewerOrdering);
 
-            if (isManual != null) {
-                rel.setPropertyValue(
-                        EloraMetadataConstants.ELORA_RELEXT_ISMANUAL,
-                        Boolean.parseBoolean(isManual));
-            }
+            rel.setPropertyValue(EloraMetadataConstants.ELORA_RELEXT_ISMANUAL,
+                    isManual);
 
+            rel.setPropertyValue(
+                    EloraMetadataConstants.ELORA_RELEXT_DESIGNATORS,
+                    designators);
+
+            // TODO ZERGATIK KONTROL HAU? EZ DELAKO UPDATEAN KONTUAN HARTZEN?
+            // ORAINGOZ HORRELA UTZI DA BADAEZPADA ERE
             if (isTemplate != null) {
                 rel.setPropertyValue(
                         EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE,
-                        Boolean.parseBoolean(isTemplate));
+                        isTemplate);
             }
             // end of custom metadata
+
+            // Common relation metadata
+
+            rel.setPropertyValue(
+                    CommonRelationConstants.COMMREL_IS_EXCLUDED_FROM_MAPPING,
+                    isExcludedFromMapping);
+
+            // End of common relation metadata
 
             return rel;
         }
@@ -607,8 +647,10 @@ public class EloraCoreGraph extends CoreGraph {
                     + ", "
                     + EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING
                     + ", " + EloraMetadataConstants.ELORA_RELEXT_ISMANUAL + ", "
-                    + EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE + " FROM "
-                    + docType;
+                    + EloraMetadataConstants.ELORA_RELEXT_DESIGNATORS + ", "
+                    + EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE + ", "
+                    + CommonRelationConstants.COMMREL_IS_EXCLUDED_FROM_MAPPING
+                    + " FROM " + docType;
             query = whereBuilder(query, statement, session);
 
             if (query == null) {
@@ -637,21 +679,30 @@ public class EloraCoreGraph extends CoreGraph {
                     Calendar modified = (Calendar) map.get(DC_MODIFIED);
                     String comment = (String) map.get(DC_DESCRIPTION);
                     // Custom metadata
-                    String quantity = String.valueOf(map.get(
-                            EloraMetadataConstants.ELORA_RELEXT_QUANTITY));
-                    String ordering = String.valueOf(map.get(
-                            EloraMetadataConstants.ELORA_RELEXT_ORDERING));
-                    String directorOrdering = String.valueOf(map.get(
-                            EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING));
-                    String viewerOrdering = String.valueOf(map.get(
-                            EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING));
-                    String inverseViewerOrdering = String.valueOf(map.get(
-                            EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING));
-                    Boolean isManual = Boolean.parseBoolean(String.valueOf(
-                            map.get(EloraMetadataConstants.ELORA_RELEXT_ISMANUAL)));
-                    Boolean isTemplate = Boolean.parseBoolean(String.valueOf(
-                            map.get(EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE)));
+                    String quantity = (String) map.get(
+                            EloraMetadataConstants.ELORA_RELEXT_QUANTITY);
+                    Integer ordering = getIntegerFromMap(map,
+                            EloraMetadataConstants.ELORA_RELEXT_ORDERING);
+                    Integer directorOrdering = getIntegerFromMap(map,
+                            EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING);
+                    Integer viewerOrdering = getIntegerFromMap(map,
+                            EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING);
+                    Integer inverseViewerOrdering = getIntegerFromMap(map,
+                            EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING);
+                    Boolean isManual = (Boolean) map.get(
+                            EloraMetadataConstants.ELORA_RELEXT_ISMANUAL);
+                    String designators = (String) map.get(
+                            EloraMetadataConstants.ELORA_RELEXT_DESIGNATORS);
+                    Boolean isTemplate = (Boolean) map.get(
+                            EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE);
                     // end of custom metadata
+
+                    // Common relation metadata
+
+                    Boolean isExcludedFromMapping = (Boolean) map.get(
+                            CommonRelationConstants.COMMREL_IS_EXCLUDED_FROM_MAPPING);
+
+                    // End of common relation metadata
 
                     Resource predicate = NodeFactory.createResource(pred);
                     Node subject;
@@ -681,8 +732,13 @@ public class EloraCoreGraph extends CoreGraph {
                     setViewerOrdering(statement, viewerOrdering);
                     setInverseViewerOrdering(statement, inverseViewerOrdering);
                     setIsManual(statement, isManual);
+                    setDesignators(statement, designators);
                     setIsTemplate(statement, isTemplate);
                     // end of custom metadata
+
+                    // Common relation metadata
+                    setIsExcludedFromMapping(statement, isExcludedFromMapping);
+                    // End of common relation metadata
 
                     statements.add(statement);
 
@@ -724,73 +780,118 @@ public class EloraCoreGraph extends CoreGraph {
     }
 
     protected static String getQuantity(Statement statement) {
-        return getStringProperty(statement, EloraRelationConstants.QUANTITY);
+        return getStringProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_QUANTITY));
     }
 
-    protected static String getOrdering(Statement statement) {
-        return getStringProperty(statement, EloraRelationConstants.ORDERING);
+    protected static Integer getOrdering(Statement statement) {
+        return getIntegerProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_ORDERING));
     }
 
-    protected static String getDirectorOrdering(Statement statement) {
-        return getStringProperty(statement,
-                EloraRelationConstants.DIRECTOR_ORDERING);
+    protected static Integer getDirectorOrdering(Statement statement) {
+        return getIntegerProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING));
     }
 
-    protected static String getViewerOrdering(Statement statement) {
-        return getStringProperty(statement,
-                EloraRelationConstants.VIEWER_ORDERING);
+    protected static Integer getViewerOrdering(Statement statement) {
+        return getIntegerProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING));
     }
 
-    protected static String getInverseViewerOrdering(Statement statement) {
-        return getStringProperty(statement,
-                EloraRelationConstants.INVERSE_VIEWER_ORDERING);
+    protected static Integer getInverseViewerOrdering(Statement statement) {
+        return getIntegerProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING));
     }
 
-    protected static String getIsManual(Statement statement) {
-        return getStringProperty(statement, EloraRelationConstants.IS_MANUAL);
+    protected static Boolean getIsManual(Statement statement) {
+        return getBooleanProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_ISMANUAL));
     }
 
-    protected static String getIsTemplate(Statement statement) {
-        return getStringProperty(statement, EloraRelationConstants.IS_TEMPLATE);
+    protected static String getDesignators(Statement statement) {
+        return getStringProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_DESIGNATORS));
+    }
+
+    protected static Boolean getIsTemplate(Statement statement) {
+        return getBooleanProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE));
     }
 
     protected static void setQuantity(Statement statement, String quantity) {
-        setStringProperty(statement, EloraRelationConstants.QUANTITY, quantity);
+        setStringProperty(statement,
+                metadataResourceMap.get(
+                        EloraMetadataConstants.ELORA_RELEXT_QUANTITY),
+                quantity);
     }
 
-    protected static void setOrdering(Statement statement, String ordering) {
-        setStringProperty(statement, EloraRelationConstants.ORDERING, ordering);
+    protected static void setOrdering(Statement statement, Integer ordering) {
+        setIntegerProperty(statement,
+                metadataResourceMap.get(
+                        EloraMetadataConstants.ELORA_RELEXT_ORDERING),
+                ordering);
     }
 
     protected static void setDirectorOrdering(Statement statement,
-            String directorOrdering) {
-        setStringProperty(statement, EloraRelationConstants.DIRECTOR_ORDERING,
+            Integer directorOrdering) {
+        setIntegerProperty(statement,
+                metadataResourceMap.get(
+                        EloraMetadataConstants.ELORA_RELEXT_DIRECTORORDERING),
                 directorOrdering);
     }
 
     protected static void setViewerOrdering(Statement statement,
-            String viewerOrdering) {
-        setStringProperty(statement, EloraRelationConstants.VIEWER_ORDERING,
+            Integer viewerOrdering) {
+        setIntegerProperty(statement,
+                metadataResourceMap.get(
+                        EloraMetadataConstants.ELORA_RELEXT_VIEWERORDERING),
                 viewerOrdering);
     }
 
     protected static void setInverseViewerOrdering(Statement statement,
-            String inverseViewerOrdering) {
-        setStringProperty(statement,
-                EloraRelationConstants.INVERSE_VIEWER_ORDERING,
+            Integer inverseViewerOrdering) {
+        setIntegerProperty(statement, metadataResourceMap.get(
+                EloraMetadataConstants.ELORA_RELEXT_INVERSEVIEWERORDERING),
                 inverseViewerOrdering);
     }
 
     protected static void setIsManual(Statement statement, Boolean isManual) {
-        setStringProperty(statement, EloraRelationConstants.IS_MANUAL,
-                isManual.toString());
+        setBooleanProperty(statement,
+                metadataResourceMap.get(
+                        EloraMetadataConstants.ELORA_RELEXT_ISMANUAL),
+                isManual);
+    }
+
+    protected static void setDesignators(Statement statement,
+            String designators) {
+        setStringProperty(statement,
+                metadataResourceMap.get(
+                        EloraMetadataConstants.ELORA_RELEXT_DESIGNATORS),
+                designators);
     }
 
     protected static void setIsTemplate(Statement statement,
             Boolean isTemplate) {
-        setStringProperty(statement, EloraRelationConstants.IS_TEMPLATE,
-                isTemplate.toString());
+        setBooleanProperty(statement,
+                metadataResourceMap.get(
+                        EloraMetadataConstants.ELORA_RELEXT_ISTEMPLATE),
+                isTemplate);
     }
+
+    // Common relation getters/setters
+    protected static Boolean getIsExcludedFromMapping(Statement statement) {
+        return getBooleanProperty(statement, metadataResourceMap.get(
+                CommonRelationConstants.COMMREL_IS_EXCLUDED_FROM_MAPPING));
+    }
+
+    protected static void setIsExcludedFromMapping(Statement statement,
+            Boolean isExcludedFromMapping) {
+        setBooleanProperty(statement, metadataResourceMap.get(
+                CommonRelationConstants.COMMREL_IS_EXCLUDED_FROM_MAPPING),
+                isExcludedFromMapping);
+    }
+    // End of common relation getters/setters
 
     protected String whereBuilder(String query, Statement statement,
             CoreSession session) {
@@ -954,5 +1055,62 @@ public class EloraCoreGraph extends CoreGraph {
                     true, null);
         }
         return query;
+    }
+
+    protected static Integer getIntegerProperty(Statement statement,
+            Resource prop) {
+        Node node = statement.getProperty(prop);
+        if (node == null || !node.isLiteral()) {
+            return null;
+        }
+        String litValue = ((Literal) node).getValue();
+        return Integer.valueOf(litValue);
+    }
+
+    protected static void setIntegerProperty(Statement statement, Resource prop,
+            Integer integer) {
+        if (integer == null) {
+            return;
+        }
+        statement.setProperty(prop,
+                NodeFactory.createLiteral(String.valueOf(integer)));
+    }
+
+    protected static Boolean getBooleanProperty(Statement statement,
+            Resource prop) {
+        Node node = statement.getProperty(prop);
+        if (node == null || !node.isLiteral()) {
+            return null;
+        }
+        String litValue = ((Literal) node).getValue();
+        return Boolean.valueOf(litValue);
+    }
+
+    protected static void setBooleanProperty(Statement statement, Resource prop,
+            Boolean bool) {
+        if (bool == null) {
+            return;
+        }
+        statement.setProperty(prop,
+                NodeFactory.createLiteral(String.valueOf(bool)));
+    }
+
+    // Query returns always long values that we must convert to Integer
+    // considering null values
+    protected static Integer getIntegerFromMap(Map<String, Serializable> map,
+            String field) {
+        Long longValue = (Long) map.get(field);
+        Integer intValue = longValue != null ? longValue.intValue() : null;
+        return intValue;
+    }
+
+    @Override
+    public String getDocType() {
+        return docType;
+    }
+
+    @Override
+    public Map<String, Resource> getMetadataResourceMap() {
+        return metadataResourceMap;
     }
 }

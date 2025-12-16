@@ -17,6 +17,10 @@ package com.aritu.eloraplm.core.util;
 import javax.servlet.http.HttpServletRequest;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.platform.ui.web.util.BaseURL;
+import org.nuxeo.ecm.platform.url.DocumentViewImpl;
+import org.nuxeo.ecm.platform.url.api.DocumentViewCodecManager;
+import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
@@ -176,8 +180,8 @@ public class EloraUrlHelper {
      * @throws EloraException
      */
     public static String getDocumentCadAttachmentFileUrl(
-            HttpServletRequest request, DocumentModel doc, int i, String filename)
-            throws EloraException {
+            HttpServletRequest request, DocumentModel doc, int i,
+            String filename) throws EloraException {
 
         String serverUrl = getServerUrl(request);
         String cadAttachmentUrl = String.join("/",
@@ -186,6 +190,23 @@ public class EloraUrlHelper {
                         EloraMetadataConstants.ELORA_CADATTS_ATTACHMENTS,
                         String.valueOf(i), "file", filename });
         return cadAttachmentUrl;
+    }
+
+    public static String getImageFileUrl(HttpServletRequest request,
+            String imageFilename) throws EloraException {
+
+        String serverUrl = getServerUrl(request);
+        String imageUrl = String.join("/",
+                new String[] { serverUrl, "img", imageFilename });
+        return imageUrl;
+    }
+
+    public static String getDocumentUrl(DocumentModel doc) {
+        DocumentViewCodecManager documentViewCodecManager = Framework.getService(
+                DocumentViewCodecManager.class);
+
+        return documentViewCodecManager.getUrlFromDocumentView(
+                new DocumentViewImpl(doc), true, BaseURL.getBaseURL());
     }
 
     /**
@@ -215,4 +236,5 @@ public class EloraUrlHelper {
 
         return serverUrl;
     }
+
 }

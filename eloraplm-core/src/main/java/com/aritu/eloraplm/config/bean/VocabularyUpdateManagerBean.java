@@ -31,9 +31,13 @@ import org.nuxeo.ecm.webapp.helpers.EventNames;
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.config.api.EloraConfigManager;
+import com.aritu.eloraplm.config.util.BomConfig;
+import com.aritu.eloraplm.config.util.DocumentMetadataMappingConfig;
 import com.aritu.eloraplm.config.util.EloraConfig;
 import com.aritu.eloraplm.config.util.MetadataConfig;
+import com.aritu.eloraplm.constants.BomConfigConstants;
 import com.aritu.eloraplm.constants.EloraConfigConstants;
+import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -100,6 +104,40 @@ public class VocabularyUpdateManagerBean implements Serializable {
             MetadataConfig.reload();
             break;
 
+        // DocumentMetadataMappingConfig
+        case EloraConfigConstants.VOC_DOCUMENT_METADATA_MAPPING:
+            DocumentMetadataMappingConfig.reloadConfig();
+            break;
+
+        // Bom Part Classification
+        case BomConfigConstants.VOC_BOM_PART_CLASS_HIERARCH:
+            BomConfig.reloadBomClassificationConfig(
+                    EloraDoctypeConstants.BOM_PART);
+            break;
+
+        // Bom Product Classification
+        case BomConfigConstants.VOC_BOM_PRODUCT_CLASS_HIERARCH:
+            BomConfig.reloadBomClassificationConfig(
+                    EloraDoctypeConstants.BOM_PRODUCT);
+            break;
+
+        // Bom Tool Classification
+        case BomConfigConstants.VOC_BOM_TOOL_CLASS_HIERARCH:
+            BomConfig.reloadBomClassificationConfig(
+                    EloraDoctypeConstants.BOM_TOOL);
+            break;
+
+        // Bom Packaging Classification
+        case BomConfigConstants.VOC_BOM_PACKAGING_CLASS_HIERARCH:
+            BomConfig.reloadBomClassificationConfig(
+                    EloraDoctypeConstants.BOM_PACKAGING);
+            break;
+
+        // Bom Specification Classification
+        case BomConfigConstants.VOC_BOM_SPECIFICATION_CLASS_HIERARCH:
+            BomConfig.reloadBomClassificationConfig(
+                    EloraDoctypeConstants.BOM_SPECIFICATION);
+            break;
         }
     }
 }

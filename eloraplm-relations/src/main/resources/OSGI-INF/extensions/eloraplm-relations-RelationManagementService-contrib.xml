@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.relations.RelationManagementService.contrib">
+    
+    <extension point="allowedRelations" target="com.aritu.eloraplm.core.relations.api.RelationManagementService">
+        
+        <!-- ************* -->
+        <!-- CAD relations -->
+        <!-- ************* -->
+        
+        <!-- CadComposedOf -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CadComposedOf">
+            <source>
+                <type excludeInherited="true">CadAssembly</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadAssembly</type>
+                <type excludeInherited="true">CadPart</type>
+            </target>
+        </relation>
+        
+        <!-- CadBasedOn -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CadBasedOn">
+            <source>
+                <type excludeInherited="true">CadPart</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadPart</type>
+            </target>
+        </relation>
+        
+        <!-- CadHasSuppressed -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CadHasSuppressed">
+            <source>
+                <type excludeInherited="true">CadAssembly</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadAssembly</type>
+                <type excludeInherited="true">CadPart</type>
+            </target>
+        </relation>
+        
+        <!-- CadHasExcludedFromComposition -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CadHasExcludedFromComposition">
+            <source>
+                <type excludeInherited="true">CadAssembly</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadAssembly</type>
+                <type excludeInherited="true">CadPart</type>
+            </target>
+        </relation>
+        
+        <!-- CadDrawingOf -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CadDrawingOf">
+            <source>
+                <type excludeInherited="true">CadDrawing</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadAssembly</type>
+                <type excludeInherited="true">CadPart</type>
+            </target>
+        </relation>
+        
+        <!-- CadInContextWith -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CadInContextWith">
+            <source>
+                <type excludeInherited="true">CadAssembly</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadAssembly</type>
+                <type excludeInherited="true">CadPart</type>
+            </target>
+        </relation>
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CadInContextWith">
+            <source>
+                <type excludeInherited="true">CadAssembly</type>
+                <type excludeInherited="true">CadPart</type>
+            </source>
+            <target>
+                <type excludeInherited="true">CadDesignTable</type>
+            </target>
+        </relation>
+        
+        
+        <!-- ******************************* -->
+        <!-- CAD to Basic document relations -->
+        <!-- ******************************* -->
+        
+        <!-- CadHasDocument -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/CadHasDocument">
+            <source>
+                <facet>CadDocument</facet>
+            </source>
+            <target>
+                <facet>BasicDocument</facet>
+            </target>
+        </relation>
+        
+        
+        <!-- ******************* -->
+        <!-- Container relations -->
+        <!-- ******************* -->
+        
+        <!-- ContainerHasContainer -->
+        
+        <relation predicateUri="http://eloraplm.aritu.com/relations/ContainerHasContainer">
+            <source>
+                <facet>EloraWorkspace</facet>
+            </source>
+            <target>
+                <facet>EloraWorkspace</facet>
+            </target>
+        </relation>
+        
+        
+    </extension>
+    
+</component>

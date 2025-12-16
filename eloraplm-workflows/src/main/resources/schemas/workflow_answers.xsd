@@ -26,6 +26,8 @@ targetNamespace="https://eloraplm.aritu.com/schemas/workflow_answers">
             
             <xs:element name="workflowId" type="xs:string" />
             
+            <xs:element name="workflowInstanceId" type="xs:string" />
+            
             <xs:element name="nodeId" type="xs:string" />
             
             <xs:element name="questionId" type="xs:string" />

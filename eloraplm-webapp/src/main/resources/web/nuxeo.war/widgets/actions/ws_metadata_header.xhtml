@@ -12,14 +12,15 @@
 
 <c:if test="#{currentDocument.hasSchema('dublincore')}">
 
-        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} workingCopy">
+        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} workingCopy"
+            style="border-top: 4px solid #{eloraWebActions.getColorForType(currentDocument.type)};">
         
             <p:panelGrid styleClass="fullWidth">
             
             
                 <p:row>
-                  <!-- State -->
-                    <p:column styleClass="textAlignC">
+                    <!-- LifeCycle State -->
+                    <p:column colspan="3" styleClass="textAlignC">
                         <h:outputText value="#{messages[currentDocument.currentLifeCycleState]}"
                             styleClass="lifeCycleStateLabel filled" style="background-color: #{lifecycleActions.getLifeCycleStateColor(currentDocument.currentLifeCycleState)}"/>
                     </p:column>
@@ -55,21 +56,37 @@
                      <!-- Separator -->
                     <p:column rowspan="3" styleClass="headerSeparator"></p:column>
                     
-                    <p:column></p:column>
-                    
-                    <!-- last column -->
-                    <p:column rowspan="3" styleClass="headerThumbnail">  </p:column>
+                    <!-- Comments -->
+                    <p:column style="width: 40px;" styleClass="textAlignC">
+                        <h:panelGroup>
+                            <c:if test="#{fieldOrValue.hasFacet('Commentable')}">
+                                <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
+                                    <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
+                                      <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
+                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
+                                            <h:graphicImage value="/icons/comments.png" />
+                                            <h:outputText value="#{commentsCount}" />
+                                          </div>
+                                      </nxu:set>
+                                    </nxu:set>
+                                </nxu:set>
+                            </c:if>
+                        </h:panelGroup>
+                    </p:column>
                 </p:row>
 
 
                 <p:row>
-                    <!-- Priority -->
+                    <!-- Responsible -->
                     <p:column>
-                        
+                        <h:outputLabel value="#{messages['label.widget.responsible.responsible']}" for="headerResponsible" />
                     </p:column>
-                    <p:column>
-                        
+                    <p:column colspan="2">
+                        <nxl:widget id="headerResponsible" name="responsible" value="#{currentDocument}" mode="view" />
                     </p:column>
+                    
+                    <p:column></p:column>
+                   
                     
                     <!-- Last Contribution info -->
                     <p:column>
@@ -90,35 +107,18 @@
                             <f:convertDateTime pattern="#{nxu:dateAndTimeFormatter('shortWithCentury')}" timeZone="#{timeZone}" />
                         </h:outputText>
                     </p:column>
+                    
+                    <p:column></p:column>
                    
-                    <!-- Comments -->
-                    <p:column style="width: 40px;" styleClass="textAlignC">
-                        <h:panelGroup>
-                            <c:if test="#{fieldOrValue.hasFacet('Commentable')}">
-                                <nxu:set var="commentsCount" value="#{commentManagerActions.getCommentsAsThreadOnDoc(fieldOrValue).size}" cache="true" >
-                                    <nxu:set var="baseLabel" value="#{nxu:test(commentsCount > 1, 'label.comments.moreComments', 'label.comments.oneComment')}" >
-                                      <nxu:set var="tooltip" value="#{nxu:translate(baseLabel, commentsCount)}" >
-                                        <div title="#{tooltip}"  class="tipsyShow tipsyGravityS" style="white-space: nowrap;">
-                                            <h:graphicImage value="/icons/comments.png" />
-                                            <h:outputText value="#{commentsCount}" />
-                                          </div>
-                                      </nxu:set>
-                                    </nxu:set>
-                                </nxu:set>
-                            </c:if>
-                        </h:panelGroup>
-                    </p:column>
+                    
                 </p:row>
                 
                 
                 <p:row>
-                    <!-- Responsible -->
-                    <p:column>
-                        
-                    </p:column>
-                    <p:column>
-                        
-                    </p:column>
+                    
+                    <p:column></p:column>
+                    <p:column colspan="2"></p:column>
+                    <p:column></p:column>
                     
                     <!-- Lock info -->
                     <c:if test="#{currentDocument.locked}">
@@ -152,7 +152,16 @@
                         <p:column colspan="4"></p:column>
                     </c:if>
 
-                    <p:column></p:column>
+                    <!-- External link -->
+                    <p:column>
+                        <h:outputLink value="#{currentDocument.elo.externalLink}"
+                            target="_blank"
+                            title="#{messages['eloraplm.label.externalLink']}" styleClass="tipsyShow tipsyGravityE"
+                            rendered="#{not empty currentDocument.elo.externalLink}">
+                            <h:graphicImage value="/icons/external_link_16.png" style="vertical-align: middle; margin-left: .3em;" />
+                        </h:outputLink>
+                    </p:column>
+                    
                 </p:row>
                 
             </p:panelGrid>

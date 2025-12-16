@@ -13,7 +13,6 @@
  */
 package com.aritu.eloraplm.integration.cm.util;
 
-import com.aritu.eloraplm.cm.util.CMHelper;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMMetadataConstants;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -41,17 +40,17 @@ public class IntegrationCmQueryFactory {
     public static String getCmEcoRootItemsQuery(String cmProcessUid,
             String itemType) throws EloraException {
 
-        // String pfx = CMMetadataConstants.DOC_MODIFIED_ITEM_LIST;
-        String pfx = CMHelper.getModifiedItemListMetadaName(itemType);
+        String pfx = CMMetadataConstants.MODIFIED_ITEM_LIST;
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
                 + "/*1/originItem, " + pfx + "/*1/originItemWc, " + pfx
                 + "/*1/action, " + pfx + "/*1/destinationItem, " + pfx
                 + "/*1/destinationItemWc, " + pfx + "/*1/isManaged, " + pfx
-                + "/*1/comment " + "FROM CmEco, CmEcr WHERE ecm:uuid = '"
-                + cmProcessUid + "' AND " + pfx
-                + "/*1/originItem IS NOT NULL AND " + pfx + "/*1/action <> '"
+                + "/*1/comment, " + pfx + "/*1/derivedFrom "
+                + "FROM CmEco, CmEcr WHERE ecm:uuid = '" + cmProcessUid
+                + "' AND " + pfx + "/*1/originItem IS NOT NULL AND " + pfx
+                + "/*1/type = '" + itemType + "' AND " + pfx + "/*1/action <> '"
                 + CMConstants.ACTION_IGNORE + "' ORDER BY " + pfx
                 + "/*1/rowNumber";
 
@@ -59,11 +58,10 @@ public class IntegrationCmQueryFactory {
     }
 
     public static String getCmEcoSubitemsByRootItemOriginUidQuery(
-            String cmProcessUid, String rootItemOriginUid, String itemType)
+            String cmProcessUid, String rootItemOriginUid, String type)
             throws EloraException {
 
-        // String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
-        String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
+        String pfx = CMMetadataConstants.IMPACTED_ITEM_LIST;
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
@@ -73,18 +71,18 @@ public class IntegrationCmQueryFactory {
                 + "/*1/destinationItemWc, " + pfx + "/*1/isManaged, " + pfx
                 + "/*1/comment " + "FROM CmEco, CmEcr WHERE ecm:uuid = '"
                 + cmProcessUid + "' AND " + pfx + "/*1/modifiedItem = '"
-                + rootItemOriginUid + "' AND " + pfx
-                + "/*1/originItem IS NOT NULL ORDER BY " + pfx
-                + "/*1/rowNumber";
+                + rootItemOriginUid + "' AND " + pfx + "/*1/type = '" + type
+                + "' AND " + pfx + "/*1/originItem IS NOT NULL AND " + pfx
+                + "/*1/refNodeId IS NULL ORDER BY " + pfx + "/*1/isDerived, "
+                + pfx + "/*1/parentNodeId, " + pfx + "/*1/rowNumber";
 
         return query;
     }
 
-    public static String getCmEcoSubitemsQuery(String cmProcessUid,
-            String itemType) throws EloraException {
+    public static String getCmEcoSubitemsQuery(String cmProcessUid)
+            throws EloraException {
 
-        // String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
-        String pfx = CMHelper.getImpactedItemListMetadaName(itemType);
+        String pfx = CMMetadataConstants.IMPACTED_ITEM_LIST;
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
@@ -102,9 +100,9 @@ public class IntegrationCmQueryFactory {
     }
 
     public static String getCmEcoSubitemsByParentNodeIdQuery(
-            String cmProcessUid, String parentNodeId) {
+            String cmProcessUid, String parentNodeId, String type) {
 
-        String pfx = CMMetadataConstants.DOC_IMPACTED_ITEM_LIST;
+        String pfx = CMMetadataConstants.IMPACTED_ITEM_LIST;
 
         String query = "SELECT " + pfx + "/*1/rowNumber, " + pfx
                 + "/*1/nodeId, " + pfx + "/*1/parentNodeId, " + pfx
@@ -114,8 +112,8 @@ public class IntegrationCmQueryFactory {
                 + "/*1/destinationItemWc, " + pfx + "/*1/isManaged, " + pfx
                 + "/*1/comment " + "FROM CmEco, CmEcr WHERE ecm:uuid = '"
                 + cmProcessUid + "' AND " + pfx + "/*1/parentNodeId = '"
-                + parentNodeId + "' AND " + pfx
-                + "/*1/originItem IS NOT NULL ORDER BY " + pfx
+                + parentNodeId + "' AND " + pfx + "/*1/type = '" + type
+                + "' AND " + pfx + "/*1/originItem IS NOT NULL ORDER BY " + pfx
                 + "/*1/rowNumber";
 
         return query;

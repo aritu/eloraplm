@@ -15,6 +15,7 @@ import org.nuxeo.ecm.platform.preview.adapter.PlainTextPreviewer;
 import org.nuxeo.ecm.platform.preview.api.PreviewException;
 import org.nuxeo.runtime.api.Framework;
 
+import com.aritu.eloraplm.constants.EloraMimeTypeConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 
 /**
@@ -43,7 +44,7 @@ public class PdfPreviewer extends PlainTextPreviewer {
         String sourceMimeType = blob.getMimeType();
 
         String converterName = getConversionService().getConverterName(
-                sourceMimeType, "text/html");
+                sourceMimeType, EloraMimeTypeConstants.TEXT_HTML);
         if (converterName == null) {
             converterName = "any2html";
         }
@@ -87,8 +88,9 @@ public class PdfPreviewer extends PlainTextPreviewer {
         htmlPage.append(htmlContent(pdfPath, content));
         htmlPage.append("</body></html>");
 
-        Blob mainBlob = Blobs.createBlob(htmlPage.toString(), "text/html",
-                "UTF-8", "index.html");
+        Blob mainBlob = Blobs.createBlob(htmlPage.toString(),
+                EloraMimeTypeConstants.TEXT_HTML, "UTF-8",
+                "index.html");
 
         blobResults.add(mainBlob);
         blobResults.addAll(additionalBlobs);

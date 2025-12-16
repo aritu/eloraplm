@@ -1,11 +1,23 @@
-<f:subview id="#{widget.id}"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout">
+<f:subview
+    id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <h:outputScript
+            library="js"
+            name="treetable_scripts.js"
+            target="#{pageJsTarget}"
+        />
+    </c:if>
 
-    <h:outputScript library="js" name="treetable_scripts.js" target="#{pageJsTarget}" />
-
-    <nxl:layout name="#{widget.properties.treetableLayout}" mode="#{widget.mode}" value="#{value}" reloadRerender="#{widget.properties.reloadRerender}" />
-
+    <nxl:layout
+        name="#{widget.properties.treetableLayout}"
+        mode="#{widget.mode}"
+        value="#{value}"
+        reloadRerender="#{widget.properties.reloadRerender}"
+    />
 </f:subview>

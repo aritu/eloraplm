@@ -14,11 +14,11 @@
 package com.aritu.eloraplm.lifecycles.factories;
 
 import java.util.List;
-
 import org.nuxeo.ecm.core.api.DocumentModel;
 
+import com.aritu.eloraplm.lifecycles.util.ErrorInfo;
+
 /**
- * // TODO: write class general comment
  *
  * @author aritu
  *
@@ -31,10 +31,12 @@ public interface TransitionExecuter {
 
     boolean canBeExecuted();
 
-    List<String> getErrorList();
+    List<ErrorInfo> getErrorList();
 
     void execute(DocumentModel doc) throws Exception;
 
     boolean hasToFireDefaultEvent();
+
+    boolean hasInnerForm();
 
 }

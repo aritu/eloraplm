@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.pdm.checkout.OperationServiceComponent.contrib">
+
+	<!--   Operations -->
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
+
+        <operation class="com.aritu.eloraplm.pdm.restoperations.UndoCheckoutDocuments" replace="true" />
+
+    </extension>
+    
+</component>
+

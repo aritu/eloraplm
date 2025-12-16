@@ -1,0 +1,66 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <p:outputPanel id="glb_pf_dlg_panel">
+        
+        <nxu:set var="pfDialogId" value="glb_pf_dlg" cache="true">
+        <nxu:set var="pfDialogFormId" value="#{pfDialogId}_form" cache="true">
+        <nxu:set var="pfDialogBlockerId" value="#{pfDialogId}_blocker" cache="true">
+        <nxu:set var="pfDialogContentId" value="#{pfDialogId}_content" cache="true">
+        <nxu:set var="pfDialogButtonsId" value="#{pfDialogId}_buttons" cache="true">
+            
+            <h:outputScript>
+                PFJQ("body").on("click",'.ui-dialog-mask',function () {
+                    if(PF('#{pfDialogId}') !== undefined) {
+                        PF('#{pfDialogId}').hide();
+                    }
+                });
+            </h:outputScript>
+            
+            <c:if test="#{not empty pfDialogActions and not empty pfDialogActions.include}">
+                <p:dialog
+                    id="#{pfDialogId}"
+                    widgetVar="#{pfDialogId}"
+                    header="#{messages[pfDialogActions.title]}"
+                    modal="#{pfDialogActions.modal}"
+                    resizable="#{pfDialogActions.resizable}"
+                    draggable="#{pfDialogActions.draggable}"
+                    onShow="onPfDialogShow(#{pfDialogId})"
+                    onHide="onPfDialogHide(#{pfDialogId}, #{pfDialogActions.modal})"
+                    fitViewport="true"
+                    closeOnEscape="true"
+                    width="#{pfDialogActions.width}"
+                    height="#{pfDialogActions.height}"
+                    minWidth="#{pfDialogActions.minWidth}"
+                    minHeight="#{pfDialogActions.minHeight}">
+                    
+                    <div id="#{pfDialogId}_error_msg" class="processMessage completeError">#{messages['eloraplm.label.error']}</div>
+                    <p:outputPanel id="#{pfDialogId}_inner_panel">
+                        <ui:include src="#{pfDialogActions.include}">
+                            <ui:param name="actionValue" value="#{pfDialogActions.actionValue}" />
+                            <ui:param name="contextDoc" value="#{pfDialogActions.contextDoc}" />
+                        </ui:include>
+                    </p:outputPanel>
+                    
+                </p:dialog>
+            </c:if>
+            
+        </nxu:set>
+        </nxu:set>
+        </nxu:set>
+        </nxu:set>
+        </nxu:set>
+        
+    </p:outputPanel>
+    
+    <p:remoteCommand name="emptyPfDialogActions"
+        action="#{pfDialogActions.emptyDialog()}"
+        update="glb_pf_dlg_panel" />
+    
+</ui:composition>

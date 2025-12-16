@@ -16,13 +16,11 @@ package com.aritu.eloraplm.bom.lists;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
@@ -31,23 +29,26 @@ import org.jboss.seam.annotations.intercept.BypassInterceptors;
 import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 
 import com.aritu.eloraplm.constants.EloraEventNames;
-import com.aritu.eloraplm.datatable.DocBasedTableBean;
+import com.aritu.eloraplm.datatable.DocBasedTable;
 import com.aritu.eloraplm.datatable.RowData;
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 
 /**
  *
  * @author aritu
  *
  */
-@Name("bomListComparisonTableBean")
+@Name(BomListComparisonTableBean.NAME)
 @Scope(CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class BomListComparisonTableBean extends DocBasedTableBean
-        implements Serializable {
+public class BomListComparisonTableBean extends DocBasedTable {
+
+    public static final String NAME = "bomListComparisonTableBean";
 
     private static final long serialVersionUID = 1L;
 
@@ -108,13 +109,26 @@ public class BomListComparisonTableBean extends DocBasedTableBean
         tableService = new BomListComparisonTableServiceImpl();
     }
 
-    @Observer(value = { EloraEventNames.ELORA_BOM_LIST_SUBTAB_CHANGED_EVENT })
+    @Observer(WebActions.CURRENT_TAB_CHANGED_EVENT
+            + "_TAB_BOM_COMPOSITION_sub_tab")
     @BypassInterceptors
-    public void updateComparisonFields(String subtabId, String docId) {
-        setBomListTypeFirstDoc(BomListConstants.BOM_LIST_EBOM);
-        setBomListTypeSecondDoc(subtabId);
-        setComparisonFirstDocUid(docId);
-        setComparisonSecondDocUid(docId);
+    public void updateComparisonFieldsForEbom(String category,
+            String subtabId) {
+        if (subtabId != null && subtabId.equals("TAB_BOM_COMPOSITION_EBOM")) {
+            setBomListTypeFirstDoc(BomListConstants.BOM_LIST_EBOM);
+            setBomListTypeSecondDoc(BomListConstants.BOM_LIST_EBOM);
+            forceReset();
+        }
+    }
+
+    @Observer(EloraEventNames.ELORA_BOM_LIST_SUBTAB_CHANGED_EVENT)
+    @BypassInterceptors
+    public void updateComparisonFieldsForBomLists(String subtabId) {
+        if (subtabId != null) {
+            setBomListTypeFirstDoc(subtabId);
+            setBomListTypeSecondDoc(BomListConstants.BOM_LIST_EBOM);
+            forceReset();
+        }
     }
 
     @Override
@@ -147,8 +161,19 @@ public class BomListComparisonTableBean extends DocBasedTableBean
             } else {
                 setData(rowDataList);
             }
+        } catch (DocumentUnreadableException e) {
+            log.error(logInitMsg + e.getMessage());
+            // empty data attribute and set hasUnreadableRows attribute to true
+            setData(new ArrayList<RowData>());
+            setHasUnreadableRows(true);
+            setIsInvalid(false);
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty data attribute and set isInvalid attribute to true
+            setData(new ArrayList<RowData>());
+            setIsInvalid(true);
+            setHasUnreadableRows(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.datatable.createData"));
         }
@@ -156,20 +181,15 @@ public class BomListComparisonTableBean extends DocBasedTableBean
 
     @Override
     protected void resetBeanCache(DocumentModel newCurrentDocumentModel) {
-        comparisonFirstDocUid = null;
-        comparisonSecondDocUid = null;
-        bomListTypeFirstDoc = null;
-        bomListTypeSecondDoc = null;
+        if (newCurrentDocumentModel != null) {
+            comparisonFirstDocUid = newCurrentDocumentModel.getId();
+            comparisonSecondDocUid = newCurrentDocumentModel.getId();
+        } else {
+            comparisonFirstDocUid = null;
+            comparisonSecondDocUid = null;
+        }
         differentStructure = false;
-        createData();
-
-        // super.resetBeanCache(newCurrentDocumentModel);
-    }
-
-    @Override
-    @Factory(value = "bomListComparisonDataFactory", scope = ScopeType.EVENT)
-    public List<RowData> getDataFromFactory() {
-        return getData();
+        setData(new ArrayList<RowData>());
     }
 
 }

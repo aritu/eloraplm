@@ -33,5 +33,9 @@ public class CodeCreationActionsBean implements Serializable {
     public String getModeForType(String type) {
         return CodeCreationHelper.getModeForType(type);
     }
+    
+    public boolean getEditableForType(String type) {
+        return CodeCreationHelper.getEditableForType(type);
+    }
 
 }

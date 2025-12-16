@@ -1,0 +1,13 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+>
+    <p:menuitem
+        value="#{messages['eloraplm.label.export.xls.extended']}"
+        icon="pi pi-file-excel"
+        action="#{bomWhereUsedEbomTreeBean.exportBomWhereUsed}"
+        ajax="false"
+    />
+</ui:composition>

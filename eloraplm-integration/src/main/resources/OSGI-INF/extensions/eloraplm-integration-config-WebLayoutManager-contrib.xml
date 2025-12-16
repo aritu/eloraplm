@@ -238,7 +238,7 @@
           </properties>
         </widget>
         
-        <widget name="elora_cad_metadata_mapping_obsolete" type="template">
+        <widget name="elora_cad_metadata_mapping_obsolete" type="integer_yes_no">
           <labels>
             <label mode="any">eloraplm.label.cadMetadataMapping.obsolete</label>
           </labels>
@@ -246,11 +246,6 @@
           <fields>
             <field>eloraCadMetadataMapping:obsolete</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
     
         <widget name="elora_cad_metadata_mapping_ordering" type="int">
@@ -321,7 +316,7 @@
           </fields>
         </widget>
         
-        <widget name="elora_cad_metadata_type_obsolete" type="template">
+        <widget name="elora_cad_metadata_type_obsolete" type="integer_yes_no">
           <labels>
             <label mode="any">eloraplm.label.cadMetadataType.obsolete</label>
           </labels>
@@ -329,11 +324,6 @@
           <fields>
             <field>eloraCadMetadataType:obsolete</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
         
         <widget name="elora_cad_metadata_type_ordering" type="int">
@@ -403,7 +393,7 @@
           </properties>
         </widget>
         
-        <widget name="elora_doctype_mapping_obsolete" type="template">
+        <widget name="elora_doctype_mapping_obsolete" type="integer_yes_no">
           <labels>
             <label mode="any">eloraplm.label.doctypeMapping.obsolete</label>
           </labels>
@@ -411,11 +401,6 @@
           <fields>
             <field>eloraDoctypeMapping:obsolete</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
     
         <widget name="elora_doctype_mapping_ordering" type="int">
@@ -542,7 +527,7 @@
           </properties>
         </widget>
         
-        <widget name="elora_metadata_mapping_obsolete" type="template">
+        <widget name="elora_metadata_mapping_obsolete" type="integer_yes_no">
           <labels>
             <label mode="any">eloraplm.label.metadataMapping.obsolete</label>
           </labels>
@@ -550,11 +535,6 @@
           <fields>
             <field>eloraMetadataMapping:obsolete</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
     
         <widget name="elora_metadata_mapping_ordering" type="int">
@@ -598,7 +578,7 @@
           </properties>
         </widget>
         
-        <widget name="elora_integration_version_control_obsolete" type="template">
+        <widget name="elora_integration_version_control_obsolete" type="integer_yes_no">
           <labels>
             <label mode="any">eloraplm.label.integrationVersionControl.obsolete</label>
           </labels>
@@ -606,11 +586,6 @@
           <fields>
             <field>eloraIntegrationVersionControl:obsolete</field>
           </fields>
-          <properties mode="any">
-            <property name="template">
-              /widgets/integer_yes_no_widget_template.xhtml
-            </property>
-          </properties>
         </widget>
     
         <widget name="elora_integration_version_control_ordering" type="int">

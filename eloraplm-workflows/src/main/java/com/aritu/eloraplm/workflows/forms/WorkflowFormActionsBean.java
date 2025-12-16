@@ -19,8 +19,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -39,9 +37,6 @@ import com.aritu.eloraplm.workflows.forms.api.WorkflowFormsService;
 public class WorkflowFormActionsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private static final Log log = LogFactory.getLog(
-            WorkflowFormActionsBean.class);
 
     @In(create = true, required = false)
     protected transient CoreSession documentManager;

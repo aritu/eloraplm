@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.aritu.eloraplm.core.util.CadAttachmentInfo;
+import com.aritu.eloraplm.core.util.CadDerivedOutputInfo;
 import com.aritu.eloraplm.core.util.EloraFileInfo;
 
 /**
@@ -31,8 +32,11 @@ public class CadFileInfoRequestDoc {
 
     private List<CadAttachmentInfo> cadAttachments;
 
+    private List<CadDerivedOutputInfo> cadDerivedOutputs;
+
     public CadFileInfoRequestDoc() {
         cadAttachments = new ArrayList<CadAttachmentInfo>();
+        cadDerivedOutputs = new ArrayList<CadDerivedOutputInfo>();
     }
 
     public EloraFileInfo getContentFile() {
@@ -61,5 +65,15 @@ public class CadFileInfoRequestDoc {
             String hash, String type) {
         cadAttachments.add(
                 new CadAttachmentInfo(fileId, fileName, batch, hash, type));
+    }
+
+    public List<CadDerivedOutputInfo> getCadDerivedOutputs() {
+        return cadDerivedOutputs;
+    }
+
+    public void addCadDerivedOutput(int fileId, String fileName, String batch,
+            String hash, String type) {
+        cadDerivedOutputs.add(
+                new CadDerivedOutputInfo(fileId, fileName, batch, hash, type));
     }
 }

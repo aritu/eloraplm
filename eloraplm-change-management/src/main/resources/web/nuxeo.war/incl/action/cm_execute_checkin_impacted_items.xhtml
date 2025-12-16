@@ -1,0 +1,44 @@
+<ui:decorate
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"  
+  xmlns:p="http://primefaces.org/ui"
+  template="/incl/action/widgets/primefaces_dialog_base_template.xhtml">
+
+    
+        <ui:define name="dialog_content">
+            
+            <p:outputPanel rendered="#{cmBomImpactedItemsTreeBean.updatePendingCharacterizedItems}" >
+                <h:outputText styleClass="warning" value="#{messages['eloraplm.message.warning.cm.batch.checkin.characterized.items']}" /> 
+                <br/><br/>               
+                <h:outputText styleClass="warning" value="#{messages['eloraplm.message.warning.cm.batch.execute.checkin.characterized.items']}" />                
+            </p:outputPanel>
+            <br/>
+            <p:outputPanel>
+                <p:outputLabel styleClass="info" for="chkKeepLock" value="#{messages['eloraplm.command.cm.batch.lockAll']}" />
+                <p:selectBooleanCheckbox id="chkKeepLock" value="#{cmItemsBatchProcessing.keepLock}"/>
+                <span style="padding:0 0.8rem 0 0.3rem"><h:graphicImage value="/icons/badge_locked_16.png" /></span>
+                <h:outputText styleClass="processMessage completeInfo" value="#{messages['eloraplm.message.info.cm.batch.keep.locks']}" />
+            </p:outputPanel>
+            
+        </ui:define>
+     
+        <ui:define name="dialog_buttons">
+            <p:commandButton
+                value="#{messages['command.execute']}"
+                styleClass="button mainAction"                
+                action="#{cmItemsBatchProcessing.checkin}"
+                onstart="handlePfDialogStart(#{pfDialogId});"
+                oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+                process="@form"
+                update="@form"
+            />
+
+            <p:commandButton type="button" value="#{messages['command.cancel']}"
+                immediate="true" process="@none"
+                styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+            />
+          
+        </ui:define>    
+
+</ui:decorate>

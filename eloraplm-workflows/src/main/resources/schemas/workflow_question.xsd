@@ -17,6 +17,9 @@ targetNamespace="https://eloraplm.aritu.com/schemas/workflow_question">
     
     <xs:element name="questionId" type="xs:string" />
     
+    <!-- Only for non-model questions -->
+    <xs:element name="workflowInstanceId" type="xs:string" />
+    
     <!-- General metadata -->
     <!-- ********************** -->
     

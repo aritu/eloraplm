@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
-import org.nuxeo.ecm.core.api.SystemPrincipal;
 import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventContext;
@@ -45,11 +44,6 @@ public class BomListsRemovalListener implements EventListener {
             if (isEventHandled(event)) {
                 DocumentEventContext docEventContext = (DocumentEventContext) eventContext;
                 DocumentModel doc = docEventContext.getSourceDocument();
-
-                // TODO: Hau hobeto ulertu.
-                if (docEventContext.getPrincipal() instanceof SystemPrincipal) {
-                    return;
-                }
 
                 // Execute only if the document is a BomDocument
                 if (!doc.hasFacet(EloraFacetConstants.FACET_BOM_DOCUMENT)) {

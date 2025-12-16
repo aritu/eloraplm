@@ -11,40 +11,16 @@
     
     <extension point="schema" target="org.nuxeo.ecm.core.schema.TypeService">
         <schema name="version_label" prefix="vlbl" src="schemas/version_label.xsd"/>
+        <schema name="version_info" prefix="vinf" src="schemas/version_info.xsd"/>
     </extension>
     
     <!-- Override -->
     <extension point="doctype" target="org.nuxeo.ecm.core.schema.TypeService">
-        
-        <!-- Basic documents -->
-        <doctype append="true" name="File">
+    
+        <facet name="Versionable" append="true">
             <schema name="version_label"/>
-        </doctype>
-        <doctype append="true" name="Note">
-            <schema name="version_label"/>
-        </doctype>
-        <doctype append="true" name="Video">
-            <schema name="version_label"/>
-        </doctype>
-        <doctype append="true" name="Picture">
-            <schema name="version_label"/>
-        </doctype>
-        <doctype append="true" name="Audio">
-            <schema name="version_label"/>
-        </doctype>
-        
-        <!-- CAD & Item -->
-        <doctype append="true" name="CadDocument">
-            <schema name="version_label"/>
-        </doctype>
-        <doctype append="true" name="BomDocument">
-            <schema name="version_label"/>
-        </doctype>
-        
-        <!-- Other doctypes -->
-        <doctype append="true" name="BomList">
-            <schema name="version_label"/>
-        </doctype>
+            <schema name="version_info"/>
+        </facet>
     
     </extension>
     

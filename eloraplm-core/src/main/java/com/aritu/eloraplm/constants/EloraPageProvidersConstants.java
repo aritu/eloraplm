@@ -29,8 +29,6 @@ public class EloraPageProvidersConstants {
 
     public static final String BOM_PART_WC_DOC_SUGG = "bom_part_wc_suggestion";
 
-    public static final String BOM_MANUFACTURER_PART_WC_DOC_SUGG = "bom_manufacturer_part_wc_suggestion";
-
     public static final String BOM_TOOL_WC_DOC_SUGG = "bom_tool_wc_suggestion";
 
     public static final String BOM_PACKAGING_WC_DOC_SUGG = "bom_packaging_wc_suggestion";

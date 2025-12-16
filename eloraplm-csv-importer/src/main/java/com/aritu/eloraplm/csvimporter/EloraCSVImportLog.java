@@ -19,10 +19,6 @@ import java.util.Locale;
 
 import org.nuxeo.common.utils.i18n.I18NUtils;
 
-/**
- * @author <a href="mailto:troger@nuxeo.com">Thomas Roger</a>
- * @since 5.7
- */
 public class EloraCSVImportLog implements Serializable {
 
     private static final long serialVersionUID = 1L;

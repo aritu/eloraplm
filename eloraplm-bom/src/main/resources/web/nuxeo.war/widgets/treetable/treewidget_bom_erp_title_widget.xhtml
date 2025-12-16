@@ -1,0 +1,22 @@
+<ui:composition
+    id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <h:outputText
+            rendered="#{not empty field_0}"
+            styleClass="documentTitleLink"
+            value="#{field_0}"
+        />
+    </c:if>
+
+    <c:if test="#{widget.mode == 'csv'}">
+        <h:outputText
+            rendered="#{not empty field_0}"
+            value="#{field_0}"
+        />
+    </c:if>
+</ui:composition>

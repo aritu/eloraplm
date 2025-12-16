@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.core.pdm.checkout.CheckoutService.contrib">
+
+  <require>com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager</require>
+
+  <implementation class="com.aritu.eloraplm.core.pdm.checkout.api.CheckoutServiceImpl"/>
+  <service>
+    <provide interface="com.aritu.eloraplm.core.pdm.checkout.api.CheckoutService"/>
+  </service>
+
+</component>

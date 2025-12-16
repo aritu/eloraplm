@@ -13,12 +13,6 @@
  */
 package com.aritu.eloraplm.csvimporter;
 
-/**
- *
- *
- * @author aritu
- *
- */
 public class EloraCSVImportQueryFactory {
 
     public static String getImportResultsFolderQuery() {

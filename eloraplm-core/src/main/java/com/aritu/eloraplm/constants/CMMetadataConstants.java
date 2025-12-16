@@ -22,18 +22,24 @@ package com.aritu.eloraplm.constants;
  */
 public class CMMetadataConstants {
 
-    // TODO::: hau ezabatu
-    // public static final String AFF_AFFECTED_ITEM_LIST =
-    // "aff:affectedItemList";
-
-    // TODO::: honi izena aldatu ?????
     public static final String CM_ECO_ECO_TYPE = "cmeco:ecoType";
 
-    public static final String BOM_MODIFIED_ITEM_LIST = "bommod:bomModifiedItemList";
+    public static final String MODIFIED_ITEM_LIST = "mod:modifiedItemList";
 
-    public static final String DOC_MODIFIED_ITEM_LIST = "docmod:docModifiedItemList";
+    public static final String IMPACTED_ITEM_LIST = "imp:impactedItemList";
 
-    public static final String BOM_IMPACTED_ITEM_LIST = "bomimp:bomImpactedItemList";
+    public static final String MANUAL_IMPACTED_ITEM_LIST = "manimp:manualImpactedItemList";
 
-    public static final String DOC_IMPACTED_ITEM_LIST = "docimp:docImpactedItemList";
+    public static final String IM_CALCULATION_METHOD = "impopt:calculationMethod";
+
+    public static final String IM_CREATE_ITEM_IMPACT = "impopt:createItemIM";
+
+    public static final String IM_CREATE_DOC_IMPACT = "impopt:createDocIM";
+
+    public static final String IM_LOCK_IMPACTED = "impopt:lockImpacted";
+
+    public static final String IM_OVERWRITE_IMPACTED = "impopt:overwriteImpacted";
+
+    public static final String IM_OVERWRITE_OPTION = "impopt:overwriteOption";
+
 }

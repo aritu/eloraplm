@@ -1,0 +1,73 @@
+<ui:composition
+    id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+>
+    <span class="#{doc.isCheckedOut() ? 'checkedOutLabel' : ''}"
+        >#{doc.versionLabel}</span
+    >
+
+    <c:if
+        test="#{frameworkPropertyActions.getProperty('com.aritu.eloraplm.versionlabel.showexternal')}"
+    >
+        <h:panelGroup
+            rendered="#{doc.hasSchema('bom_item') and not empty doc.bomitem.externalVersion}"
+        >
+            <span
+                class="externalVersion tipsyShow"
+                title="#{messages['label.widget.bomitem.externalVersion']}: #{doc.bomitem.externalVersion}"
+            >
+                #{doc.bomitem.externalVersion}
+            </span>
+        </h:panelGroup>
+    </c:if>
+
+    <h:panelGroup
+        styleClass="visualizedType"
+        rendered="#{doc.isVersionable()}"
+    >
+        <h:outputText
+            value="AV"
+            title="#{messages['label.title.archivedVersion']}"
+            styleClass="tipsyShow"
+            style="cursor: default"
+            rendered="#{doc.isVersion()}"
+        />
+        <h:outputText
+            value="WC"
+            title="#{messages['label.title.workingCopy']}"
+            styleClass="tipsyShow"
+            style="cursor: default"
+            rendered="#{not doc.isVersion()}"
+        />
+
+        <nxu:set
+            var="wc"
+            value="#{not empty wcDoc ? wcDoc : documentManager.getWorkingCopy(doc.ref)}"
+        >
+            <nxu:set
+                var="versionStatus"
+                value="#{eloraDocument.getVersionStatus(doc, wc)}"
+            >
+                <nxu:set
+                    var="versionStatusMessage"
+                    value="eloraplm.message.versionStatus.#{versionStatus}"
+                >
+                    <h:graphicImage
+                        url="/icons/#{versionStatus}.png"
+                        title="#{messages[versionStatusMessage]}"
+                        style="margin-left: 2px"
+                        styleClass="tipsyShow"
+                        rendered="#{doc.isVersion() and versionStatus ne 'Normal'}"
+                    />
+                </nxu:set>
+            </nxu:set>
+        </nxu:set>
+    </h:panelGroup>
+    <c:if test="#{not empty widget.properties.templateForAdditionalInfo}">
+        <ui:include src="#{widget.properties.templateForAdditionalInfo}" />
+    </c:if>
+</ui:composition>

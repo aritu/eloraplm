@@ -16,14 +16,12 @@ package com.aritu.eloraplm.om.actionbeans;
 import static org.jboss.seam.ScopeType.CONVERSATION;
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
@@ -41,7 +39,7 @@ import com.aritu.eloraplm.constants.OmEventNames;
 import com.aritu.eloraplm.constants.OmMetadataConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
-import com.aritu.eloraplm.datatable.DocBasedTableBean;
+import com.aritu.eloraplm.datatable.DocBasedTable;
 import com.aritu.eloraplm.datatable.RowData;
 import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
@@ -55,12 +53,13 @@ import com.aritu.eloraplm.om.util.OmHelper;
  *
  */
 
-@Name("omImpactedTableBean")
+@Name(OmImpactedTableBean.NAME)
 @Scope(CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class OmImpactedTableBean extends DocBasedTableBean
-        implements Serializable {
+public class OmImpactedTableBean extends DocBasedTable {
+
+    public static final String NAME = "omImpactedTableBean";
 
     private static final long serialVersionUID = 1L;
 
@@ -87,6 +86,11 @@ public class OmImpactedTableBean extends DocBasedTableBean
 
         } catch (Exception e) {
             log.error(logInitMsg + e.getMessage(), e);
+            // empty data attribute and set isInvalid attribute to true
+            setData(new ArrayList<RowData>());
+            setIsInvalid(true);
+            setHasUnreadableRows(false);
+
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
                     "eloraplm.message.error.datatable.createData"));
         }
@@ -95,12 +99,6 @@ public class OmImpactedTableBean extends DocBasedTableBean
     @Override
     public List<RowData> getData() {
         return super.getData();
-    }
-
-    @Override
-    @Factory(value = "omImpactedRows", scope = ScopeType.EVENT)
-    public List<RowData> getDataFromFactory() {
-        return getData();
     }
 
     @Observer(value = { OmEventNames.OM_IMPACT_LIST_UPDATED })

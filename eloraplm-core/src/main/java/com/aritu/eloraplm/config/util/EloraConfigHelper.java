@@ -54,15 +54,13 @@ public class EloraConfigHelper {
                 EloraConfigConstants.VOC_CHECKOUT_CONFIG, filter, null);
     }
 
-    public static String getManufacturerConfig(String key)
-            throws EloraException {
-
-        return configService.getConfig(
-                EloraConfigConstants.VOC_ERP_MANUFACTURER, key, true);
-    }
-
     public static String getCustomerConfig(String key) throws EloraException {
         return configService.getConfig(EloraConfigConstants.VOC_ERP_CUSTOMER,
+                key, true);
+    }
+
+    public static String getSupplierConfig(String key) throws EloraException {
+        return configService.getConfig(EloraConfigConstants.VOC_ERP_SUPPLIER,
                 key, true);
     }
 

@@ -1,0 +1,23 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <h:panelGroup
+            layout="block"
+            style="white-space: nowrap"
+            rendered="#{field_1}"
+        >
+            <h:outputText value="#{field_0}" />
+        </h:panelGroup>
+    </c:if>
+
+    <c:if test="#{widget.mode == 'csv'}">
+        <h:outputText
+            value="#{field_0}"
+            rendered="#{field_1}"
+        />
+    </c:if>
+</ui:composition>

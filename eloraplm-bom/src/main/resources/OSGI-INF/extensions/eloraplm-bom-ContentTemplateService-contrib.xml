@@ -8,7 +8,6 @@
     <factoryBinding name="StructBomFactory" factoryName="SimpleTemplateFactory" targetType="StructEbom">
       <template>
         <templateItem typeName="FolderBomPart" id="bomParts" title="Parts" description="BOM parts."/>
-        <templateItem typeName="FolderBomManufacturerPart" id="bomManufacturerParts" title="Manufacturer Parts" description="Manufacturer parts."/>
         <templateItem typeName="FolderBomTool" id="bomTools" title="Tools" description="Tools."/>
         <templateItem typeName="FolderBomPackaging" id="bomPackagings" title="Packagings" description="Packagings."/>
         <templateItem typeName="FolderBomSpecification" id="bomSpecifications" title="Specifications" description="Specifications."/>

@@ -4,45 +4,66 @@
 
     <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
     <require>org.nuxeo.ecm.platform.routing.dashboard.actions</require>
+    <require>org.nuxeo.ecm.platform.routing.actions</require>
     <require>studio.extensions.nuxeo-routing-default</require>
-    
+
     <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
-        
+
         <filter id="WorkflowsEnabled">
             <rule grant="false">
-                <condition>#{frameworkPropertyActions.getProperty('not com.aritu.eloraplm.workflows.enabled')}</condition>
+                <condition>#{frameworkPropertyActions.getProperty('not
+                    com.aritu.eloraplm.workflows.enabled')}</condition>
             </rule>
         </filter>
-        
+
+        <filter id="hasRelatedWorkflowStarted">
+            <rule grant="true">
+                <condition>#{workflowActions.hasRelatedWorkflow()}</condition>
+            </rule>
+        </filter>
+
+        <filter id="canAbandonWorkflow">
+            <rule grant="true">
+                <condition>#{currentUser.isAdministrator()}</condition>
+                <condition>#{currentUser.isMemberOf("powerusers")}</condition>
+                <condition>#{currentUser.isMemberOf("workflowManagers")}</condition>
+                <condition>
+                    #{workflowActions.getCurrentWorkflowInitiator().equals(currentUser.getName())}
+                </condition>
+            </rule>
+        </filter>
+
         <!--  Disable Nuxeo default Workflows. 
               As it is not posible to use enable="false" attribute in the workflow definition, 
               we are modifying the workflows' filters in order to prevent launching the workflows. 
         -->
         <filter id="filter@wf@ParallelDocumentReview">
-          <rule grant="true">
-            <condition>false</condition>
-          </rule>
+            <rule grant="true">
+                <condition>false</condition>
+            </rule>
         </filter>
         <filter id="filter@SerialDocumentReview">
-           <rule grant="true">
-            <condition>false</condition>
-          </rule>
+            <rule grant="true">
+                <condition>false</condition>
+            </rule>
         </filter>
-        
+
     </extension>
-    
+
     <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
-        
-        <action id="TAB_HISTORY_WORKFLOWS" label="eloraplm.wf.tab.history.workflows" link="/incl/tabs/closed_workflows.xhtml" order="60" type="rest_document_link"> -->
-             <category>TAB_CONTENT_HISTORY_sub_tab</category>
+
+        <action id="TAB_HISTORY_WORKFLOWS" label="eloraplm.wf.tab.history.workflows"
+            link="/incl/tabs/closed_workflows.xhtml" order="60" type="rest_document_link"> --> <category>
+            TAB_CONTENT_HISTORY_sub_tab</category>
              <filter-id>WorkflowsEnabled</filter-id>
-             <filter id="filter@TAB_HISTORY_WORKFLOWS">
-                 <rule grant="true">
+             <filter
+                id="filter@TAB_HISTORY_WORKFLOWS">
+                <rule grant="true">
                     <condition>#{workflowActions.hasClosedRelatedRoutes()}</condition>
-                 </rule>
-             </filter>
-         </action>
-        
+                </rule>
+            </filter>
+        </action>
+
         <!-- Move tasks block to top -->
         <action id="summary_current_document_single_tasks" enabled="false" />
         <action id="header_current_document_single_tasks" order="600" type="template">
@@ -52,17 +73,34 @@
                 <property name="template">/widgets/header_current_document_single_tasks.xhtml</property>
             </properties>
         </action>
-        
-        
-        <!-- Only show USER CENTER workflows tab to Administrators -->
-        <action id="WorkflowHome">
-            <filter id="WorkflowHomeOnlyAdminOrPowerUser">
-                <rule grant="false">
-                    <condition>#{not currentUser.isAdministrator() and not currentUser.isMemberOf('powerusers')}</condition>
-                </rule>
-            </filter>
+
+
+        <!-- Workflow BUTTONS -->
+        <action id="workflow_show_graph" type="pfdialog" order="10"
+            label="label.document.routing.show.graph">
+            <category>WORKFLOW_BUTTON</category>
+            <properties>
+                <property name="include">/incl/action/show_workflow_graph.xhtml</property>
+                <property name="dialogTitle"></property>
+                <property name="dialogResizable">false</property>
+                <property name="styleClass">smallButton button</property>
+            </properties>
         </action>
-        
+
+        <action id="workflow_abandon" type="widget" order="20">
+            <category>WORKFLOW_BUTTON</category>
+            <properties>
+                <property name="widgetName">current_route_abandon</property>
+            </properties>
+            <filter-id>canAbandonWorkflow</filter-id>
+        </action>
+
+        <action id="go_back_to_tasks_view" link="#{eloraRoutingTaskActions.navigateToTasksView()}"
+            order="10" label="command.back">
+            <category>TASK_ADDITIONAL_ACTIONS</category>
+        </action>
+
+
     </extension>
-    
+
 </component>

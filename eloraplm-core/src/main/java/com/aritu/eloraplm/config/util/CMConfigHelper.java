@@ -45,26 +45,26 @@ public class CMConfigHelper {
     // TODO:: don't used????
     /*public static EloraConfigRow getDoctypeActionsImpactConfigRow(String id)
             throws EloraException {
-    
+
         EloraConfigRow doctypeActionsImpactConfig = EloraConfigHelper.configService.getConfigProperties(
                 CMConfigConstants.VOC_CM_DOCTYPE_ACTIONS_IMPACT, id, null,
                 false);
-    
+
         return doctypeActionsImpactConfig;
     }*/
 
     // TODO:: don't used????
     /*public static EloraConfigTable getImpactedActionsConfig(
             boolean includeObsoletes) throws EloraException {
-    
+
         Map<String, Serializable> filter = new HashMap<>();
         if (!includeObsoletes) {
             filter.put(EloraConfigConstants.PROP_OBSOLETE, "0");
         }
-    
+
         EloraConfigTable impactedActionsConfig = EloraConfigHelper.configService.getConfigTable(
                 CMConfigConstants.VOC_CM_ACTION_IMPACTED, filter, null, false);
-    
+
         return impactedActionsConfig;
     }*/
 
@@ -87,6 +87,51 @@ public class CMConfigHelper {
                 CMConfigConstants.VOC_CM_ACTION_MODIFIED, filter, null, false);
 
         return modifiedActionsConfig;
+    }
+
+    public static EloraConfigTable getItemLifeCycleStateConfig(
+            boolean includeObsoletes) throws EloraException {
+
+        Map<String, Serializable> filter = new HashMap<>();
+        if (!includeObsoletes) {
+            filter.put(EloraConfigConstants.PROP_OBSOLETE, "0");
+        }
+
+        EloraConfigTable itemLifeCycleStateConfigTable = EloraConfigHelper.configService.getConfigTable(
+                EloraConfigConstants.VOC_ELORAS_BOMS_LIFECYCLE, filter, null,
+                true);
+
+        return itemLifeCycleStateConfigTable;
+    }
+
+    public static EloraConfigTable getCadLifeCycleStateConfig(
+            boolean includeObsoletes) throws EloraException {
+
+        Map<String, Serializable> filter = new HashMap<>();
+        if (!includeObsoletes) {
+            filter.put(EloraConfigConstants.PROP_OBSOLETE, "0");
+        }
+
+        EloraConfigTable cadLifeCycleStateConfigTable = EloraConfigHelper.configService.getConfigTable(
+                EloraConfigConstants.VOC_ELORAS_CAD_DOCUMENTS_LIFECYCLE, filter,
+                null, true);
+
+        return cadLifeCycleStateConfigTable;
+    }
+
+    public static EloraConfigTable getBasicDocLifeCycleStateConfig(
+            boolean includeObsoletes) throws EloraException {
+
+        Map<String, Serializable> filter = new HashMap<>();
+        if (!includeObsoletes) {
+            filter.put(EloraConfigConstants.PROP_OBSOLETE, "0");
+        }
+
+        EloraConfigTable basicDocLifeCycleStateConfigTable = EloraConfigHelper.configService.getConfigTable(
+                EloraConfigConstants.VOC_ELORAS_BASIC_DOCUMENTS_LIFECYCLE,
+                filter, null, true);
+
+        return basicDocLifeCycleStateConfigTable;
     }
 
     // TODO:: don't used????

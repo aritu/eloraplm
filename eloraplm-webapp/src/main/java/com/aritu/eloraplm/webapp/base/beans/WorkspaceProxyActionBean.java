@@ -13,9 +13,8 @@
  */
 package com.aritu.eloraplm.webapp.base.beans;
 
-import static org.jboss.seam.ScopeType.EVENT;
+import static org.jboss.seam.ScopeType.CONVERSATION;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,8 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
+import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
+import org.nuxeo.ecm.platform.ui.web.invalidations.DocumentContextBoundActionBean;
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
@@ -43,8 +44,9 @@ import com.aritu.eloraplm.versioning.VersionLabelService;
  */
 
 @Name("wsProxyActions")
-@Scope(EVENT)
-public class WorkspaceProxyActionBean implements Serializable {
+@Scope(CONVERSATION)
+@AutomaticDocumentBasedInvalidation
+public class WorkspaceProxyActionBean extends DocumentContextBoundActionBean {
 
     private static final long serialVersionUID = 1L;
 
@@ -87,6 +89,8 @@ public class WorkspaceProxyActionBean implements Serializable {
 
     protected String targetWorkspaceUid;
 
+    protected String targetFolderUid;
+
     protected String sourceVersionUid;
 
     public List<DocumentVersionInformation> getDocumentVersions() {
@@ -113,6 +117,14 @@ public class WorkspaceProxyActionBean implements Serializable {
 
     public void setTargetWorkspaceUid(String targetWorkspaceUid) {
         this.targetWorkspaceUid = targetWorkspaceUid;
+    }
+
+    public String getTargetFolderUid() {
+        return targetFolderUid;
+    }
+
+    public void setTargetFolderUid(String targetFolderUid) {
+        this.targetFolderUid = targetFolderUid;
     }
 
     public String getSourceVersionUid() {
@@ -183,7 +195,12 @@ public class WorkspaceProxyActionBean implements Serializable {
 
     public void createWorkspaceProxy() {
 
-        DocumentRef targetDocRef = new IdRef(targetWorkspaceUid);
+        DocumentRef targetDocRef;
+        if (targetFolderUid != null) {
+            targetDocRef = new IdRef(targetFolderUid);
+        } else {
+            targetDocRef = new IdRef(targetWorkspaceUid);
+        }
 
         if (!documentManager.exists(targetDocRef)) {
             facesMessages.add(StatusMessage.Severity.ERROR, messages.get(
@@ -200,8 +217,21 @@ public class WorkspaceProxyActionBean implements Serializable {
 
         DocumentRef sourceVersionRef = new IdRef(sourceVersionUid);
         documentManager.createProxy(sourceVersionRef, targetDocRef);
+        clearForm();
 
         facesMessages.add(StatusMessage.Severity.INFO,
                 messages.get("eloraplm.message.success.wsProxy.create"));
+    }
+
+    private void clearForm() {
+        this.sourceVersionUid = null;
+        this.documentVersions = null;
+        this.targetWorkspaceUid = null;
+        this.targetFolderUid = null;
+    }
+
+    @Override
+    protected void resetBeanCache(DocumentModel newCurrentDocumentModel) {
+        clearForm();
     }
 }

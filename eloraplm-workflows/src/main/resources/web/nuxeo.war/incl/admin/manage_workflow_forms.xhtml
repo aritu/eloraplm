@@ -5,11 +5,13 @@
     xmlns:nxu="http://nuxeo.org/nxweb/util"
     class="mainNoTabs">
     
+    <ui:include src="/incl/message_banner.xhtml"/>
+    
     <script type="text/javascript">
         function updateQuestionId(event) {
              var value = createCleanId(event.target.value);
              var prefix = event.target.id.replace(event.target.id.split(":").pop(), "");
-             jQuery("input[name^='"+prefix+"nxw_questionId']").val(value);
+             PFJQ("input[name^='"+prefix+"nxw_questionId']").val(value);
         }
     </script>
     

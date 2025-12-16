@@ -7,10 +7,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-code-creation-TypeServic
- e-contrib.xml,OSGI-INF/extensions/eloraplm-code-creation-DirectoryUIM
- anager-contrib.xml,OSGI-INF/extensions/eloraplm-code-creation-WebLayo
- utManager-contrib.xml,OSGI-INF/extensions/CodeCreationService.xml,OSG
- I-INF/extensions/eloraplm-code-creation-EventServiceComponent-contrib
- .xml
-
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-code-creation-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-code-creation-DirectoryUIManager-contrib.xml,
+ OSGI-INF/extensions/eloraplm-code-creation-WebLayoutManager-contrib.xml,
+ OSGI-INF/extensions/CodeCreationService.xml,
+ OSGI-INF/extensions/eloraplm-code-creation-EventServiceComponent-contrib.xml

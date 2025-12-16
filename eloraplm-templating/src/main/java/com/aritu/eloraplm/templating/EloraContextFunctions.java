@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
@@ -19,27 +20,36 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
+import org.nuxeo.ecm.directory.Session;
+import org.nuxeo.ecm.directory.api.DirectoryService;
 import org.nuxeo.ecm.platform.relations.api.Resource;
 import org.nuxeo.ecm.platform.relations.api.Statement;
 import org.nuxeo.ecm.platform.relations.api.impl.ResourceImpl;
 import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
+import org.nuxeo.ecm.platform.ui.web.directory.DirectoryHelper;
 import org.nuxeo.ecm.platform.ui.web.tag.fn.UserNameResolverHelper;
 import org.nuxeo.ecm.platform.usermanager.NuxeoPrincipalImpl;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.template.api.context.DocumentWrapper;
 
+import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsQueryFactory;
+import com.aritu.eloraplm.bom.linked.characteristics.LinkedCharacteristicInfo;
+import com.aritu.eloraplm.bom.linked.characteristics.util.LinkedCharacteristicsHelper;
 import com.aritu.eloraplm.bom.util.BomHelper;
 import com.aritu.eloraplm.config.util.RelationsConfig;
+import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
 import com.aritu.eloraplm.constants.BomCharacteristicsMetadataConstants;
+import com.aritu.eloraplm.constants.EloraConfigConstants;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfo;
 import com.aritu.eloraplm.core.relations.web.EloraStatementInfoImpl;
+import com.aritu.eloraplm.core.util.EloraDecimalHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.queries.EloraQueryFactory;
 import com.aritu.eloraplm.templating.util.CharacteristicInfo;
 import com.aritu.eloraplm.templating.util.HistoryVersionInfo;
 import com.aritu.eloraplm.templating.util.RelationInfo;
@@ -79,7 +89,7 @@ public class EloraContextFunctions {
 
     protected UserNameResolverHelper unr;
 
-    protected List<Statement> eBomrelatedStmts;
+    protected List<Statement> eBomRelatedStmts;
 
     public EloraContextFunctions(DocumentModel doc,
             DocumentWrapper nuxeoWrapper) {
@@ -90,7 +100,7 @@ public class EloraContextFunctions {
         unr = new UserNameResolverHelper();
 
         // It will be initialized first time is used
-        eBomrelatedStmts = null;
+        eBomRelatedStmts = null;
     }
 
     private DocumentModel createCurrentDocBaseVersion() {
@@ -153,7 +163,7 @@ public class EloraContextFunctions {
         Serializable propValue = doc.getPropertyValue(metadata);
         if (propValue != null) {
             GregorianCalendar cal = (GregorianCalendar) propValue;
-            return formatInternationalDateTime(cal);
+            return formatDate(cal);
         }
 
         return "";
@@ -299,11 +309,45 @@ public class EloraContextFunctions {
                 NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR).toString()));
         GregorianCalendar modifiedCalendar = (GregorianCalendar) ver.getPropertyValue(
                 NuxeoMetadataConstants.NX_DC_MODIFIED);
-        versionInfo.setModified(formatInternationalDateTime(modifiedCalendar));
+        versionInfo.setModified(formatDate(modifiedCalendar));
 
         return versionInfo;
     }
 
+    /**
+     * Default format configuration for dates that can be overwritten in each
+     * implantation
+     *
+     * @param calendar
+     * @return
+     */
+    public String formatDate(GregorianCalendar calendar) {
+        // By default, we use UTC Date+Time format
+        return formatInternationalDateTime(calendar);
+    }
+
+    /**
+     * UTC with only date, no time
+     *
+     * @param calendar
+     * @return
+     */
+    public String formatInternationalDate(GregorianCalendar calendar) {
+        // We have to clone the calendar, so we do not alter its format
+        GregorianCalendar calendarForFormatting = (GregorianCalendar) calendar.clone();
+
+        calendarForFormatting.setTimeZone(TimeZone.getTimeZone("UTC"));
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        fmt.setCalendar(calendarForFormatting);
+        return fmt.format(calendarForFormatting.getTime());
+    }
+
+    /**
+     * UTC with date + time
+     *
+     * @param calendar
+     * @return
+     */
     public String formatInternationalDateTime(GregorianCalendar calendar) {
         // We have to clone the calendar, so we do not alter its format
         GregorianCalendar calendarForFormatting = (GregorianCalendar) calendar.clone();
@@ -317,18 +361,28 @@ public class EloraContextFunctions {
     public boolean hasEbom() {
         boolean hasEbom = false;
         // If it is not initialized yet, initialize it
-        if (eBomrelatedStmts == null) {
-            initEBomRelatedStatements();
+        if (eBomRelatedStmts == null) {
+            initEbomRelatedStatements();
         }
-        if (!eBomrelatedStmts.isEmpty()) {
+        if (!eBomRelatedStmts.isEmpty()) {
             hasEbom = true;
         }
         return hasEbom;
     }
 
-    protected void initEBomRelatedStatements() {
+    protected void initEbomRelatedStatements() {
+        /*
+         * When getting relations, we have two cases:
+         * A) Doc is checked in, so the actual versions of the related docs are stored
+         * only in the base doc (WC -> WC)
+         * B) Doc is checked out (e.g. about to overwrite) so the actual versions of the
+         * related docs are stored only in the WC
+         */
+        DocumentModel sourceDoc = currentDoc.isCheckedOut() ? currentDoc
+                : currentDocBaseVersion;
+
         List<Resource> predicatesList = getEbomPredicates();
-        eBomrelatedStmts = EloraRelationHelper.getStatements(currentDoc,
+        eBomRelatedStmts = EloraRelationHelper.getStatements(sourceDoc,
                 predicatesList);
     }
 
@@ -362,8 +416,8 @@ public class EloraContextFunctions {
      * If given classification is not null, returns the eBOM related documents
      * having the given classification value.
      *
-     * @param classification if not null, related eBom documents will be
-     *            filtered by the given classification value
+     * @param classification       if not null, related eBom documents will be
+     *                             filtered by the given classification value
      * @param showExternalVersions
      * @return
      */
@@ -374,11 +428,11 @@ public class EloraContextFunctions {
         List<RelationInfo> relations = new ArrayList<RelationInfo>();
 
         // If it is not initialized yet, initialize it
-        if (eBomrelatedStmts == null) {
-            initEBomRelatedStatements();
+        if (eBomRelatedStmts == null) {
+            initEbomRelatedStatements();
         }
-        if (!eBomrelatedStmts.isEmpty()) {
-            for (Statement stmt : eBomrelatedStmts) {
+        if (!eBomRelatedStmts.isEmpty()) {
+            for (Statement stmt : eBomRelatedStmts) {
                 DocumentModel relatedDoc = null;
 
                 relatedDoc = RelationHelper.getDocumentModel(stmt.getObject(),
@@ -489,22 +543,35 @@ public class EloraContextFunctions {
     }
 
     public boolean hasCharacteristics() {
-
-        long count = EloraQueryFactory.countCharacteristicsShownInReport(
+        // direct characteristics
+        long count = BomCharacteristicsQueryFactory.countCharacteristicsShownInReport(
                 currentDoc.getCoreSession(), currentDoc.getType(),
                 currentDoc.getId());
         if (count > 0L) {
             return true;
+        } else {
+            // linked characteristics
+            count = BomCharacteristicsQueryFactory.countLinkedCharacteristicsShownInReport(
+                    currentDoc.getCoreSession(), currentDoc.getType(),
+                    currentDoc.getId());
+            if (count > 0L) {
+                return true;
+            }
         }
         return false;
     }
 
     @SuppressWarnings("unchecked")
     public List<CharacteristicInfo> getCharacteristics() {
+        CoreSession session = currentDoc.getCoreSession();
+        String logInitMsg = "[getCharacteristics] ["
+                + session.getPrincipal().getName() + "] ";
 
         List<CharacteristicInfo> characteristics = new ArrayList<CharacteristicInfo>();
 
         ArrayList<HashMap<String, Object>> characteristicsContent = new ArrayList<HashMap<String, Object>>();
+
+        // direct characteristics
         if (currentDoc.getPropertyValue(
                 BomCharacteristicsMetadataConstants.BOM_CHARAC_LIST) != null) {
             characteristicsContent = (ArrayList<HashMap<String, Object>>) currentDoc.getPropertyValue(
@@ -531,6 +598,7 @@ public class EloraContextFunctions {
                                     ? characteristicContent.get(
                                             "unit").toString()
                                     : "";
+                    unit = getUnitLabel(unit);
 
                     CharacteristicInfo characteristic = new CharacteristicInfo(
                             title, value, unit);
@@ -546,6 +614,71 @@ public class EloraContextFunctions {
                     }
 
                     characteristics.add(characteristic);
+                }
+            }
+
+            // Linked characteristics
+            if (currentDoc.getPropertyValue(
+                    BomCharacteristicsMetadataConstants.LINKED_CHARAC_LIST) != null) {
+
+                ArrayList<HashMap<String, Object>> linkedCharacteristicsContent = new ArrayList<HashMap<String, Object>>();
+                linkedCharacteristicsContent = (ArrayList<HashMap<String, Object>>) currentDoc.getPropertyValue(
+                        BomCharacteristicsMetadataConstants.LINKED_CHARAC_LIST);
+
+                for (HashMap<String, Object> linkedCharacteristicContent : linkedCharacteristicsContent) {
+
+                    try {
+                        boolean showInReport = false;
+                        if (linkedCharacteristicContent.containsKey(
+                                BomCharacteristicsConstants.SHOW_IN_REPORT)) {
+                            showInReport = Boolean.parseBoolean(
+                                    linkedCharacteristicContent.get(
+                                            BomCharacteristicsConstants.SHOW_IN_REPORT).toString());
+                        }
+
+                        if (showInReport) {
+                            String linkedDocumentUid = (String) linkedCharacteristicContent.get(
+                                    BomCharacteristicsConstants.LINKED_DOCUMENT);
+                            String linkedDocumentCharacteristicId = (String) linkedCharacteristicContent.get(
+                                    BomCharacteristicsConstants.LINKED_DOCUMENT_CHARAC_ID);
+                            LinkedCharacteristicInfo linkedCharacteristicInfo = LinkedCharacteristicsHelper
+                                    .retrieveLinkedCharacteristicInfo(
+                                            session, linkedDocumentUid,
+                                            linkedDocumentCharacteristicId);
+
+                            String title = linkedCharacteristicInfo.getTitle() != null
+                                    ? linkedCharacteristicInfo.getTitle()
+                                    : "";
+
+                            String value = getLinkedCharacteristicValue(
+                                    linkedCharacteristicInfo);
+
+                            String unit = linkedCharacteristicInfo.getUnit() != null
+                                    ? linkedCharacteristicInfo.getUnit()
+                                    : "";
+                            unit = getUnitLabel(unit);
+
+                            CharacteristicInfo linkedCharacteristic = new CharacteristicInfo(
+                                    title, value, unit);
+
+                            Object orderObj = linkedCharacteristicContent.get(
+                                    BomCharacteristicsConstants.ORDER_IN_REPORT);
+                            if (orderObj != null) {
+                                Integer order = (int) (long) orderObj;
+                                linkedCharacteristic.setOrder(order);
+                            } else {
+                                // We put 1000 as order so we ensure it is the
+                                // last
+                                linkedCharacteristic.setOrder(1000);
+                            }
+
+                            characteristics.add(linkedCharacteristic);
+                        }
+                    } catch (EloraException e) {
+                        log.error(logInitMsg
+                                + "Error getting linked characteristics. Message: "
+                                + e.getMessage());
+                    }
                 }
             }
 
@@ -565,32 +698,76 @@ public class EloraContextFunctions {
                 && characteristic.get("type") != null) {
 
             switch (characteristic.get("type").toString()) {
-            case "number":
-                value = returnStringValueIfNotNull(
-                        characteristic.get("numberValue"));
-                break;
-            case "string":
-                value = returnStringValueIfNotNull(
-                        characteristic.get("stringValue"));
-                break;
-            case "date":
-                if (characteristic.get("dateValue") != null) {
-                    GregorianCalendar dateValue = (GregorianCalendar) characteristic.get(
-                            "dateValue");
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    value = df.format(dateValue.getTime());
-                }
-                break;
-            case "boolean":
-                value = returnStringValueIfNotNull(
-                        characteristic.get("booleanValue")).equals("true")
-                                ? "Yes"
-                                : "No";
-                break;
-            case "list":
-                value = returnStringValueIfNotNull(
-                        characteristic.get("listValue"));
-                break;
+                case "number":
+                    value = returnStringValueIfNotNull(
+                            characteristic.get("numberValue"));
+                    value = getLocalizedNumberValue(value);
+                    break;
+                case "string":
+                    value = returnStringValueIfNotNull(
+                            characteristic.get("stringValue"));
+                    break;
+                case "date":
+                    if (characteristic.get("dateValue") != null) {
+                        GregorianCalendar dateValue = (GregorianCalendar) characteristic.get(
+                                "dateValue");
+                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                        value = df.format(dateValue.getTime());
+                    }
+                    break;
+                case "boolean":
+                    value = returnStringValueIfNotNull(
+                            characteristic.get("booleanValue"));
+                    if (value.length() > 0) {
+                        value = returnStringValueIfNotNull(
+                                characteristic.get("booleanValue")).equals("true")
+                                        ? "Yes"
+                                        : "No";
+                    }
+                    break;
+                case "list":
+                    value = returnStringValueIfNotNull(
+                            characteristic.get("listValue"));
+                    break;
+            }
+        }
+
+        return value;
+    }
+
+    private String getLinkedCharacteristicValue(
+            LinkedCharacteristicInfo linkedCharacteristicInfo) {
+
+        String value = "";
+
+        if (linkedCharacteristicInfo.getType() != null) {
+
+            switch (linkedCharacteristicInfo.getType()) {
+                case "number":
+                    value = returnStringValueIfNotNull(
+                            linkedCharacteristicInfo.getNumberValue());
+                    value = getLocalizedNumberValue(value);
+                    break;
+                case "string":
+                    value = returnStringValueIfNotNull(
+                            linkedCharacteristicInfo.getStringValue());
+                    break;
+                case "date":
+                    if (linkedCharacteristicInfo.getDateValue() != null) {
+                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                        value = df.format(linkedCharacteristicInfo.getDateValue());
+                    }
+                    break;
+                case "boolean":
+                    if (linkedCharacteristicInfo.getBooleanValue() != null) {
+                        value = (linkedCharacteristicInfo.getBooleanValue() ? "Yes"
+                                : "No");
+                        break;
+                    }
+                case "list":
+                    value = returnStringValueIfNotNull(
+                            linkedCharacteristicInfo.getListValue());
+                    break;
             }
         }
 
@@ -603,6 +780,45 @@ public class EloraContextFunctions {
         } else {
             return "";
         }
+    }
+
+    private String getUnitLabel(String unitValue) {
+        String logInitMsg = "[getUnitLabel] ["
+                + currentDoc.getCoreSession().getPrincipal().getName() + "] ";
+
+        String unitLabel = "";
+
+        if (unitValue != null && unitValue.length() > 0) {
+            DirectoryService dirService = Framework.getService(
+                    DirectoryService.class);
+            try {
+
+                Session session = dirService.open(
+                        EloraConfigConstants.VOC_ELORA_UNITS_OF_MEASURE);
+                DocumentModel entry = session.getEntry(unitValue);
+                unitLabel = (String) entry.getPropertyValue("label");
+            } catch (Exception e) {
+                log.error(logInitMsg + "Error getting label for unit = |"
+                        + unitValue + "|." + e.getMessage(), e);
+            }
+        }
+        return unitLabel;
+    }
+
+    private String getLocalizedNumberValue(String numberValue) {
+
+        String localizedValue = "";
+
+        if (numberValue != null && numberValue.length() > 0) {
+
+            Locale locale = EloraMessageHelper.getLocale(
+                    currentDoc.getCoreSession());
+            localizedValue = EloraDecimalHelper.fromStandardToLocalized(locale,
+                    numberValue);
+        }
+
+        return localizedValue;
+
     }
 
     public String getLocalizedMessage(String key) {
@@ -624,6 +840,25 @@ public class EloraContextFunctions {
     public String getLocalizedEnMessage(String key) {
 
         return EloraMessageHelper.getTranslatedEnMessage(key);
+    }
+
+    public String getVocabularyValue(String vocabulary, String id) {
+
+        String label = "";
+
+        // Treat hierarchical IDs
+        if (id.contains("/")) {
+            String[] splitId = id.split("/");
+            id = splitId[splitId.length - 1];
+        }
+
+        DocumentModel entry = DirectoryHelper.getEntry(vocabulary, id);
+        if (entry != null) {
+            label = (String) entry.getPropertyValue("label");
+        }
+
+        return label;
+
     }
 
 }

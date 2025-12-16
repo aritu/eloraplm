@@ -44,13 +44,9 @@ public class CmArchiverConditions {
 
         long count = 0;
         count += getCountNotManaged(session, workspace.getId(),
-                CMConstants.ITEM_TYPE_BOM, CMConstants.ITEM_CLASS_MODIFIED);
+                CMConstants.ITEM_CLASS_MODIFIED);
         count += getCountNotManaged(session, workspace.getId(),
-                CMConstants.ITEM_TYPE_DOC, CMConstants.ITEM_CLASS_MODIFIED);
-        count += getCountNotManaged(session, workspace.getId(),
-                CMConstants.ITEM_TYPE_BOM, CMConstants.ITEM_CLASS_IMPACTED);
-        count += getCountNotManaged(session, workspace.getId(),
-                CMConstants.ITEM_TYPE_DOC, CMConstants.ITEM_CLASS_IMPACTED);
+                CMConstants.ITEM_CLASS_IMPACTED);
 
         log.trace(logInitMsg + "Count of nodes not managed in ECO |"
                 + workspace.getId() + "| : " + count);
@@ -64,11 +60,10 @@ public class CmArchiverConditions {
     }
 
     private static long getCountNotManaged(CoreSession session,
-            String workspaceId, String itemType, String itemClass)
-            throws EloraException {
+            String workspaceId, String itemClass) throws EloraException {
 
         String query = CMQueryFactory.getCountItemsByItemClassTypeAndManagedQuery(
-                workspaceId, itemType, itemClass, 0);
+                workspaceId, itemClass, 0);
         return EloraQueryHelper.executeCountQuery(query, NXQL.ECM_UUID,
                 session);
     }

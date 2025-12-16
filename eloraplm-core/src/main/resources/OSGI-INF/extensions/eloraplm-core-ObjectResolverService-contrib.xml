@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.core.ObjectResolverService.contrib">
+    
+    <documentation>
+        Resolver for document properties containing Directory entries id that have been encoded using Base64.
+        It is a copy of the DirectoryEntryResolver that returns a decoded validation error message.
+    </documentation>
+    
+    <extension target="org.nuxeo.ecm.core.schema.ObjectResolverService" point="resolvers">
+        <resolver type="encodedDirectoryResolver" class="com.aritu.eloraplm.core.resolver.EncodedDirectoryEntryResolver" />
+    </extension>
+    
+</component>

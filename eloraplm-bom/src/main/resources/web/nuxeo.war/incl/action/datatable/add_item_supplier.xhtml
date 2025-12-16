@@ -1,0 +1,85 @@
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    template="/incl/action/widgets/primefaces_dialog_base_template.xhtml">
+        
+    <ui:define name="dialog_content">
+        
+        <h:panelGroup styleClass="content" layout="block">
+            <h:panelGrid columns="2" styleClass="dataInput" columnClasses="labelColumn, fieldColumn">
+
+                <h:outputLabel for="supplier"
+                        value="#{messages['eloraplm.label.supplier']}"
+                        class="required" />
+                <h:panelGroup>
+                    <a4j:outputPanel>
+                        <h:inputHidden id="supplier"
+                            value="#{itemSuppliersTableBean.supplier}" required="true" />
+                        
+                        <nxl:widgetType
+                            name="suggestOneDirectory"
+                            mode="edit"
+                            ajaxReRender="@form"
+                            value="#{itemSuppliersTableBean}"
+                            field="supplier"
+                            directoryName="elora_erpSuppliers"
+                            hideHelpLabel="true"
+                            minChars="0" />
+                        
+                    </a4j:outputPanel>
+                    <h:message for="supplier" class="errorMessage" />
+
+                </h:panelGroup>
+
+                <h:outputLabel for="preference"
+                        value="#{messages['eloraplm.label.supplier.preference']}" />
+                <h:panelGroup>
+                    <h:inputText id="preference" value="#{itemSuppliersTableBean.preference}" />
+                </h:panelGroup>
+
+                <h:outputLabel for="partNumber"
+                        value="#{messages['eloraplm.label.supplier.partNumber']}" />
+                <h:panelGroup>
+                    <h:inputText id="partNumber" value="#{itemSuppliersTableBean.partNumber}" >
+                        <p:ajax event="change" process="@this" update="@form"/>
+                    </h:inputText>
+                    
+                    <h:message for="partNumber" class="errorMessage" />
+
+                    <ui:fragment rendered="#{itemSuppliersTableBean.validationMsg != null}">
+                      <h:outputText value="#{itemSuppliersTableBean.validationMsg}" class="errorMessage"/>
+                    </ui:fragment>
+                </h:panelGroup>
+                
+            </h:panelGrid>
+        </h:panelGroup>
+        
+    </ui:define>
+
+    <ui:define name="dialog_buttons">
+        <p:commandButton value="#{messages['command.add']}"
+            styleClass="button mainAction"
+            actionListener="#{itemSuppliersTableBean.addRow}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccess(xhr, status, args, #{pfDialogId});"
+            process="@form"
+            update="@form
+                    :nxw_item_suppliers_dt:dtForm"
+            disabled="#{not itemSuppliersTableBean.isValid}">
+        </p:commandButton>
+        
+        <p:commandButton type="button" value="#{messages['command.cancel']}"
+            immediate="true" process="@none"
+            styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+        />
+    </ui:define>
+    
+
+</ui:decorate>

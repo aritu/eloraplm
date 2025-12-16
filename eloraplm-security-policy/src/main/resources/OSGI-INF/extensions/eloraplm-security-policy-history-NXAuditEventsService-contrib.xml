@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.securitypolicy.history.NXAuditEventsService.contrib">
+    
+    <require>com.aritu.eloraplm.history.NXAuditEventsService.contrib</require>
+    
+    
+    <extension point="event"
+        target="org.nuxeo.ecm.platform.audit.service.NXAuditEventsService">
+        
+        <event name="SecurityInfoUpdatedEvent" />
+        
+    </extension>
+
+</component>

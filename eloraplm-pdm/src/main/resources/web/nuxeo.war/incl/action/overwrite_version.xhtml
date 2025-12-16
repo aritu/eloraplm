@@ -1,45 +1,50 @@
-<div xmlns="http://www.w3.org/1999/xhtml"
+<ui:decorate
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core">
-
-    <h3>
-        <h:outputText
-            value="#{messages['eloraplm.title.overwriteVersion']}" />
-    </h3>
-
-    <h:form id="#{fancyboxFormId}">
-        
-        <h:panelGroup styleClass="content" layout="block">
-            <h:panelGroup layout="block" style="text-align: center;">
-                <h:outputText
-                    value="#{messages['eloraplm.message.alert.overwriteVersion']}"
-                    styleClass="processMessage completeWarning" />
-            </h:panelGroup>
-            <br />
-            <h:panelGroup>
-                <h:outputLabel styleClass="labelColumn" for="justification"
-                    value="#{messages['eloraplm.label.overwrite.justification']}:" />
-            </h:panelGroup>
-            <h:panelGroup>
-                <h:inputTextarea id="justification"
-                    styleClass="dataInputText"
-                    value="#{overwriteVersionAction.justification}"
-                    rows="9" cols="40" />
-                <h:message for="justification" styleClass="errorMessage" />
-            </h:panelGroup>
+    xmlns:p="http://primefaces.org/ui"
+    template="/incl/action/widgets/primefaces_dialog_base_template.xhtml">
+    
+    <ui:define name="dialog_content">
+    
+        <h:panelGroup layout="block" style="text-align: center;">
+            <h:outputText
+                value="#{messages['eloraplm.message.alert.overwriteVersion']}"
+                styleClass="processMessage completeWarning" />
         </h:panelGroup>
-
-        <div class="buttonsGadget">
-            <h:commandButton
-                value="#{messages['eloraplm.command.overwrite.version']}"
-                styleClass="button"
-                action="#{overwriteVersionAction.overwriteVersion}" />
-            <h:commandButton value="#{messages['command.cancel']}"
-                styleClass="button">
-                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
-            </h:commandButton>
-        </div>
-
-    </h:form>
-
-</div>
+        <br />
+        <h:panelGroup>
+            <h:outputLabel styleClass="labelColumn" for="justification"
+                value="#{messages['eloraplm.label.overwrite.justification']}:" />
+        </h:panelGroup>
+        <h:panelGroup>
+            <h:inputTextarea id="justification"
+                styleClass="dataInputText"
+                value="#{overwriteVersionAction.justification}"
+                rows="9" cols="40" />
+            <h:message for="justification" styleClass="errorMessage" />
+        </h:panelGroup>
+        
+    </ui:define>
+     
+     
+    <ui:define name="dialog_buttons">
+        
+        <p:commandButton
+            value="#{messages['eloraplm.command.overwrite.version']}"
+            onstart="handlePfDialogStart(#{pfDialogId});"
+            oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+            styleClass="button mainAction"
+            action="#{overwriteVersionAction.overwriteVersion}"
+            process="@form"
+            update="@form"
+        />
+            
+        <p:commandButton type="button" value="#{messages['command.cancel']}"
+            immediate="true" process="@none"
+            styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+        />
+        
+    </ui:define>
+    
+</ui:decorate>

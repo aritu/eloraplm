@@ -25,8 +25,6 @@ public class OrderingPriorityConstants {
 
     public static final int BOM_CUSTOMER_PRODUCT = 1600;
 
-    public static final int BOM_MANUFACTURER_PART = 1700;
-
     // CAD DOCUMENTS (2000)
     public static final int CAD_DRAWING = 2100;
 
@@ -47,12 +45,20 @@ public class OrderingPriorityConstants {
 
     public static final int AUDIO = 3500;
 
-    // ELORA WORKSPACES (4000)
+    // WORKSPACES (4000)
     public static final int CM_ECO = 4100;
 
     public static final int CM_ECR = 4200;
 
     public static final int CM_PR = 4300;
+
+    public static final int QM_VAL = 4400;
+
+    public static final int QM_VER = 4410;
+
+    public static final int QM_PPV = 4420;
+
+    public static final int QM_PAP = 4430;
 
     public static final int PROJECT = 4700;
 

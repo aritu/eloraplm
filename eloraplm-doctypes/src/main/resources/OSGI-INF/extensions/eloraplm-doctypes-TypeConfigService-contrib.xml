@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.doctypes.TypeConfigService.contrib">
+    
+    <extension point="types" target="com.aritu.eloraplm.core.types.api.TypeConfigService">
+        
+        <!-- CAD -->
+        <type id="CadDrawing" color="#339999" />
+        <type id="CadAssembly" color="#AA3300" />
+        <type id="CadPart" color="#339900" />
+        <type id="CadDesignTable" color="#666666" />
+        
+        <!-- Other docs -->
+        <!-- <type id="" color="#" /> -->
+
+        
+        <!-- Workspaces -->
+        <type id="Project" color="#784421" />
+        
+    </extension>
+
+
+</component>
+

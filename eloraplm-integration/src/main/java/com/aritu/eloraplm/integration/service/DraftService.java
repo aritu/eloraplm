@@ -30,7 +30,9 @@ import org.nuxeo.ecm.platform.relations.api.util.RelationHelper;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
+import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.constants.EloraRelationConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.NuxeoSchemaConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
@@ -49,7 +51,7 @@ public class DraftService implements DraftManager {
 
     private Map<DocumentRef, String> tempFolderPaths;
 
-    private Map<String, List<String>> excludedPropertiesFromCopy;
+    protected Map<String, List<String>> excludedPropertiesFromCopy;
 
     public DraftService() {
         tempFolderPaths = new HashMap<DocumentRef, String>();
@@ -62,6 +64,10 @@ public class DraftService implements DraftManager {
         dcList.add(NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR);
         dcList.add(NuxeoMetadataConstants.NX_DC_CONTRIBUTORS);
         excludedPropertiesFromCopy.put(NuxeoSchemaConstants.DUBLINCORE, dcList);
+        List<String> eloList = new ArrayList<String>();
+        eloList.add(EloraMetadataConstants.ELORA_ELO_ORDERING_PRIORITY);
+        excludedPropertiesFromCopy.put(EloraSchemaConstants.ELORA_OBJECT,
+                eloList);
     }
 
     @Override

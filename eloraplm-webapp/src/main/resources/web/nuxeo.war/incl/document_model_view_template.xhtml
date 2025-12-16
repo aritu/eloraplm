@@ -1,0 +1,34 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <span class="eloraReference"> #{field.elo.reference} </span>
+
+        <h:outputText value="#{field.title}" />
+
+        <nxu:set
+            var="stateColor"
+            value="#{lifecycleActions.getLifeCycleStateColor(field.currentLifeCycleState)}"
+        >
+            <span
+                class="lifeCycleStateLabel hollow"
+                style="color: #{stateColor}; border-color: #{stateColor}"
+            >
+                #{messages[field.currentLifeCycleState.concat(".abbr")]}
+            </span>
+        </nxu:set>
+    </c:if>
+
+    <c:if test="#{widget.mode == 'csv'}">
+        <h:outputText value="#{field.elo.reference} " />
+        <h:outputText value="#{field.title} " />
+        <h:outputText
+            value="[#{messages[field.currentLifeCycleState.concat('.abbr')]}]"
+        />
+    </c:if>
+</ui:composition>

@@ -1,0 +1,13 @@
+<div xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxd="http://nuxeo.org/nxweb/document"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
+    <h:panelGroup styleClass="widgetLabel summaryTitle">#{messages['eloraplm.title.workflows.active']}</h:panelGroup>
+    
+    <nxl:layout name="workflows_without_forms_layout" mode="view"
+        value="#{workflowActions.relatedWorkflow}"
+        currentDocumentForRoute="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}" />
+    
+</div>

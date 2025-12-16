@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.om.WebLayoutManager.contrib">
-    
+
     <extension point="layouts" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
-        
+
         <!-- datatable layouts -->
-        
+
         <layout name="om_imp_dt">
             <templates>
                 <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_type">
@@ -68,10 +69,9 @@
                 <property name="headerFiltersTemplate"></property>
                 <property name="tableTitle">eloraplm.title.om.impactList</property>
                 <property name="tableStyle">table-layout: auto;</property>
-                <property name="factory">#{omImpactedRows}</property>
                 <property name="rowGroup">#{rowData.classification}</property>
                 <property name="rowGroupHeader">#{rowData.classification}</property>
-                <property name="expandableRowGroups">true</property>
+                <property name="expandable">true</property>
             </properties>
             <properties mode="edit">
                 <property name="selectionMode">multiple</property>
@@ -80,10 +80,11 @@
                 <property name="removeRows">false</property>
             </properties>
         </layout>
-        
+
         <layout name="om_proc_dt">
             <templates>
                 <template mode="any">/layouts/layout_datatable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_datatable_template.xhtml</template>
             </templates>
             <columns>
                 <column name="icon_type">
@@ -130,17 +131,16 @@
                 <property name="tableTitle">eloraplm.title.om.processedList</property>
                 <property name="tableStyle">table-layout: auto;</property>
                 <property name="removeRows">false</property>
-                <property name="factory">#{omProcessedRows}</property>
                 <property name="rowGroup">#{rowData.classification}</property>
                 <property name="rowGroupHeader">#{rowData.classification}</property>
-                <property name="expandableRowGroups">true</property>
+                <property name="expandable">true</property>
             </properties>
         </layout>
-        
+
     </extension>
-    
+
     <extension point="widgets" target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager">
-        
+
         <widget name="listing_colored_origin_state" type="template">
             <labels>
                 <label mode="any">eloraplm.label.om.originState</label>
@@ -156,7 +156,7 @@
                 <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
             </properties>
         </widget>
-        
+
         <widget name="listing_colored_destination_state" type="template">
             <labels>
                 <label mode="any">eloraplm.label.om.destinationState</label>
@@ -172,7 +172,7 @@
                 <property name="template">/widgets/colored_lifecycle_state_widget_template.xhtml</property>
             </properties>
         </widget>
-        
+
         <widget name="listing_is_ok" type="template">
             <labels>
                 <label mode="any"></label>
@@ -190,7 +190,7 @@
                 <property name="template">/widgets/listing/listing_is_ok_widget_template.xhtml</property>
             </properties>
         </widget>
-        
+
         <widget name="listing_anarchic_top_docs" type="template">
             <labels>
                 <label mode="any"></label>
@@ -204,21 +204,23 @@
                 <mode value="edit">view</mode>
             </widgetModes>
             <properties mode="any">
-                <property name="template">/widgets/listing/listing_anarchic_top_docs_widget_template.xhtml</property>
+                <property name="template">
+                    /widgets/listing/listing_anarchic_top_docs_widget_template.xhtml</property>
             </properties>
         </widget>
-        
+
         <!-- datatable widgets -->
-        
+
         <widget name="om_imp_dt" type="datatable">
             <labels>
                 <label mode="any">eloraplm.title.om.impactList</label>
             </labels>
             <properties widgetMode="any">
                 <property name="datatableLayout">om_imp_dt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
-        
+
         <widget name="om_proc_dt" type="datatable">
             <labels>
                 <label mode="any">eloraplm.title.om.processedList</label>
@@ -228,9 +230,10 @@
             </widgetModes>
             <properties widgetMode="any">
                 <property name="datatableLayout">om_proc_dt</property>
+                <property name="exportable">true</property>
             </properties>
         </widget>
-        
+
     </extension>
-    
+
 </component>

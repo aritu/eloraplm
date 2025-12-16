@@ -11,7 +11,10 @@ import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.core.api.NuxeoPrincipal;
 import org.nuxeo.ecm.platform.ui.web.tag.fn.UserNameResolverHelper;
+import org.nuxeo.ecm.platform.usermanager.UserManager;
+import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.constants.ViewerConstants;
 import com.aritu.eloraplm.core.util.EloraMessageHelper;
@@ -35,14 +38,20 @@ public class PostProcessingHelper {
             switch (id) {
             case ViewerConstants.POST_PROCESSOR_RESOLVE_USERNAME:
                 return resolveUsername(value);
+            case ViewerConstants.POST_PROCESSOR_RESOLVE_USERNAME_AND_FORMAT_FIRST_FIRSTNAME_FIRSTLETTERDOT:
+                return resolveUsernameAndFormatFirstNameFirstLetterDot(value);
             case ViewerConstants.POST_PROCESSOR_TO_UPPER_CASE:
                 return toUpperCase(value);
             case ViewerConstants.POST_PROCESSOR_TRANSFORM_DATE_FROM_UTC_TO_MAD:
                 return transformDateFromUtcToMad(value);
             case ViewerConstants.POST_PROCESSOR_TRANSFORM_DATE_FROM_UTC_TO_MAD_HYPHEN:
                 return transformDateFromUtcToMadHyphen(value);
+            case ViewerConstants.POST_PROCESSOR_TRANSFORM_DATETIME_FROM_UTC_TO_MAD_INTL:
+                return transformDateTimeFromUtcToMadInternational(value);
             case ViewerConstants.POST_PROCESSOR_TRANSLATE_TO_ES_UPPER_CASE:
                 return translateToEsUpperCase(value);
+            case ViewerConstants.POST_PROCESSOR_TRANSLATE_TO_EN:
+                return translateToEn(value);
             case ViewerConstants.POST_PROCESSOR_DISPLAY_MAJOR:
                 return displayMajor(value);
             }
@@ -53,6 +62,23 @@ public class PostProcessingHelper {
     private static String resolveUsername(String value) {
         UserNameResolverHelper unr = new UserNameResolverHelper();
         return unr.getUserFullName(value);
+    }
+
+    private static String resolveUsernameAndFormatFirstNameFirstLetterDot(
+            String value) {
+        String userNameFormatted = value;
+        UserManager userManager = Framework.getLocalService(UserManager.class);
+        NuxeoPrincipal principal = userManager.getPrincipal(value);
+        if (principal != null) {
+            String firstName = principal.getFirstName();
+            String lastName = principal.getLastName();
+
+            if (firstName != null && firstName.length() > 0 && lastName != null
+                    && lastName.length() > 0) {
+                userNameFormatted = firstName.charAt(0) + "." + lastName;
+            }
+        }
+        return userNameFormatted;
     }
 
     private static String toUpperCase(String value) {
@@ -73,7 +99,8 @@ public class PostProcessingHelper {
      */
     private static String transformDateFromUtcToMad(String utcDateStr) {
 
-        return transformDateFromUtcToMad(utcDateStr, "/");
+        return transformUtcDateToTimeZoneAndFormat(utcDateStr, "Europe/Madrid",
+                "dd/MM/yyyy");
     }
 
     /**
@@ -87,32 +114,48 @@ public class PostProcessingHelper {
      */
     private static String transformDateFromUtcToMadHyphen(String utcDateStr) {
 
-        return transformDateFromUtcToMad(utcDateStr, "-");
+        return transformUtcDateToTimeZoneAndFormat(utcDateStr, "Europe/Madrid",
+                "dd-MM-yyyy");
     }
 
-    private static String transformDateFromUtcToMad(String utcDateStr,
-            String separator) {
+    /**
+     * Transform a date received in UTC time zone into Europe/Madrid time zone,
+     * in international format.
+     *
+     * @param utcDateStr this parameter is a string representation of a date as
+     *            specified in ValueObtainerHelper.stringifyObject(Object o)
+     *            method, which is: 'yyyy-MM-dd HH:mm UTC'
+     * @return date transformed to Europe/Madrid time zone: yyyy-MM-dd
+     */
+    private static String transformDateTimeFromUtcToMadInternational(
+            String utcDateStr) {
 
-        String logInitMsg = "[transformDateFromUtcToMad] ";
+        return transformUtcDateToTimeZoneAndFormat(utcDateStr, "Europe/Madrid",
+                "yyyy-MM-dd HH:mm");
+    }
+
+    private static String transformUtcDateToTimeZoneAndFormat(String utcDateStr,
+            String timezone, String format) {
+
+        String logInitMsg = "[transformUtcDateToTimeZoneAndFormat] ";
         log.trace(logInitMsg + "--- ENTER --- with utcDateStr = |" + utcDateStr
-                + "|, separator = |" + separator + "|");
+                + "|, timezone = |" + timezone + "|, format = |" + format
+                + "|");
 
-        String madDateStr = utcDateStr;
+        String dateStr = utcDateStr;
 
-        SimpleDateFormat sdfmad = new SimpleDateFormat(
-                "dd" + separator + "MM" + separator + "yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
 
-        sdfmad.setTimeZone(TimeZone.getTimeZone("Europe/Madrid"));
+        sdf.setTimeZone(TimeZone.getTimeZone(timezone));
 
         Date utcDate = getUtcDateFromUtcDateString(utcDateStr);
 
         if (utcDate != null) {
-            madDateStr = sdfmad.format(utcDate);
+            dateStr = sdf.format(utcDate);
         }
 
-        log.trace(logInitMsg + "--- EXIT --- with madDateStr = |" + madDateStr
-                + "|");
-        return madDateStr;
+        log.trace(logInitMsg + "--- EXIT --- with dateStr = |" + dateStr + "|");
+        return dateStr;
     }
 
     private static Date getUtcDateFromUtcDateString(String utcDateStr) {
@@ -143,6 +186,11 @@ public class PostProcessingHelper {
     private static String translateToEsUpperCase(String value) {
         String resultValue = EloraMessageHelper.getTranslatedEsMessage(value);
         resultValue = resultValue.toUpperCase(Locale.ROOT);
+        return resultValue;
+    }
+
+    private static String translateToEn(String value) {
+        String resultValue = EloraMessageHelper.getTranslatedEnMessage(value);
         return resultValue;
     }
 

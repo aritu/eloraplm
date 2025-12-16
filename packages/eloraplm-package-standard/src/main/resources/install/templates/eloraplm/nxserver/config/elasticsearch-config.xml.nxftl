@@ -236,6 +236,19 @@
           }
         }
       },
+      "elo:externalLink" : {
+        "type" : "multi_field",
+        "fields" : {
+          "elo:externalLink" : {
+            "type" : "string",
+            "include_in_all" : true
+          },
+          "lowercase": {
+            "type": "string",
+            "analyzer": "lowercase_analyzer"
+          }
+        }
+      },
       "note:note" : {
          "type" : "multi_field",
          "fields" : {
@@ -250,10 +263,10 @@
           }
         }
       },
-      "cad:cadMaterial" : {
+      "cad:materials" : {
         "type" : "multi_field",
         "fields" : {
-          "cad:cadMaterial" : {
+          "cad:materials" : {
             "type" : "string",
             "include_in_all" : true
           },
@@ -303,6 +316,182 @@
          "type": "string",
          "index" : "no",
          "include_in_all" : false
+      },
+      "oem:oems": {
+        "properties": {
+          "partNumber": {
+            "type" : "multi_field",
+            "fields" : {
+              "partNumber" : {
+                "type" : "string",
+                "include_in_all" : true
+              },
+              "lowercase": {
+                "type": "string",
+                "analyzer": "lowercase_analyzer"
+              }
+            }
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "preference": {
+            "type": "integer"
+          }
+        }
+      },
+      "supp:suppliers": {
+        "properties": {
+          "partNumber": {
+            "type" : "multi_field",
+            "fields" : {
+              "partNumber" : {
+                "type" : "string",
+                "include_in_all" : true
+              },
+              "lowercase": {
+                "type": "string",
+                "analyzer": "lowercase_analyzer"
+              }
+            }
+          },
+          "supplier": {
+            "type": "string"
+          },
+          "preference": {
+            "type": "integer"
+          }
+        }
+      },
+      "caddrw:sheetFormat" : {
+        "type" : "multi_field",
+        "fields" : {
+          "caddrw:sheetFormat" : {
+            "type" : "string",
+            "include_in_all" : true
+          },
+          "lowercase": {
+            "type": "string",
+            "analyzer": "lowercase_analyzer"
+          }
+        }
+      },
+      "caddrw:scale" : {
+        "type" : "multi_field",
+        "fields" : {
+          "caddrw:scale" : {
+            "type" : "string",
+            "include_in_all" : true
+          },
+          "lowercase": {
+            "type": "string",
+            "analyzer": "lowercase_analyzer"
+          }
+        }
+      },
+      "caddrw:templateName" : {
+        "type" : "multi_field",
+        "fields" : {
+          "caddrw:templateName" : {
+            "type" : "string",
+            "include_in_all" : true
+          },
+          "lowercase": {
+            "type": "string",
+            "analyzer": "lowercase_analyzer"
+          }
+        }
+      },
+      "cad:activeConfiguration" : {
+        "type" : "multi_field",
+        "fields" : {
+          "cad:activeConfiguration" : {
+            "type" : "string",
+            "include_in_all" : true
+          },
+          "lowercase": {
+            "type": "string",
+            "analyzer": "lowercase_analyzer"
+          }
+        }
+      },
+      "bomitem:externalVersion" : {
+        "type" : "multi_field",
+        "fields" : {
+          "bomitem:externalVersion" : {
+            "type" : "string",
+            "include_in_all" : true
+          },
+          "lowercase": {
+            "boost": 100,
+            "type": "string",
+            "analyzer": "lowercase_analyzer"
+          },
+          "fulltext" : {
+            "boost": 100,
+            "type": "string",
+            "analyzer" : "fulltext"
+          }
+        }
+      },
+      "soft:checksum" : {
+        "type" : "multi_field",
+        "fields" : {
+          "soft:checksum" : {
+            "type" : "string",
+            "include_in_all" : true
+          },
+          "lowercase": {
+            "boost": 100,
+            "type": "string",
+            "analyzer": "lowercase_analyzer"
+          },
+          "fulltext" : {
+            "boost": 100,
+            "type": "string",
+            "analyzer" : "fulltext"
+          }
+        }
+      },
+      "bompart:material" : {
+        "type" : "multi_field",
+        "fields" : {
+          "bompart:material" : {
+            "type" : "string",
+            "include_in_all" : true
+          },
+          "lowercase": {
+            "type": "string",
+            "analyzer": "lowercase_analyzer"
+          }
+        }
+      },
+      "bomprod:mass": {
+         "type": "float"
+      },
+      "bomprod:volume": {
+         "type": "float"
+      },
+      "bompart:mass": {
+         "type": "float"
+      },
+      "bompart:volume": {
+         "type": "float"
+      },
+      "cad:mass": {
+         "type": "float"
+      },
+      "cad:volume": {
+         "type": "float"
+      },
+      "cad:surface": {
+         "type": "float"
+      },
+      "caddrw:numberOfSheets": {
+         "type": "float"
+      },
+      "bomitem:estimatedCost": {
+         "type": "float"
       }
    }
 }

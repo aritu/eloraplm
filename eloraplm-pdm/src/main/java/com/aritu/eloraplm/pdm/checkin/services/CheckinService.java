@@ -14,29 +14,23 @@
 package com.aritu.eloraplm.pdm.checkin.services;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.VersioningOption;
-import org.nuxeo.ecm.core.schema.DocumentType;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.runtime.api.Framework;
 
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
+import com.aritu.eloraplm.bom.linked.characteristics.util.LinkedCharacteristicsHelper;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
-import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
-import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.constants.EloraSchemaConstants;
 import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.lifecycles.util.LifecyclesConfig;
@@ -44,7 +38,6 @@ import com.aritu.eloraplm.core.relations.api.EloraDocumentRelationManager;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.CheckInInfoHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
-import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 import com.aritu.eloraplm.core.util.ReviewInfoHelper;
 import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
@@ -134,6 +127,9 @@ public class CheckinService implements CheckinManager {
                 BomCharacteristicsConstants.IS_DOC_WITH_CHARAC_FILTER_ID)) {
             BomCharacteristicsHelper.verifyBomCharacteristicsRequiredConstraint(
                     doc);
+            LinkedCharacteristicsHelper.updateLinkedCharacteristicsIfRequired(session,
+                    doc,
+                    BomCharacteristicsConstants.LINKED_CHARACS_UPDATED_BY_CHECKIN);
         }
 
         // VersionLabelListener should update the Elora Version Label
@@ -148,6 +144,8 @@ public class CheckinService implements CheckinManager {
             doc.getProperty(
                     EloraMetadataConstants.ELORA_OVERWRITE_OVERWRITTEN).remove();
         }
+
+        fireAboutToCheckedInEvent(doc, clientName, processReference);
 
         setupCheckIn(doc, checkinComment);
 
@@ -178,8 +176,6 @@ public class CheckinService implements CheckinManager {
         doc = session.saveDocument(doc);
         log.trace(logInitMsg + "Document |" + doc.getId() + "| saved");
 
-        // TODO LEIRE: Begiratu nola egin inportazioan erlazioak ez
-        // konprobatzeko.
         EloraRelationHelper.copyRelationsToLastVersion(doc,
                 eloraDocumentRelationManager, session);
         EloraRelationHelper.copyIncomingAnarchicRelationsToLastVersion(doc,
@@ -198,6 +194,13 @@ public class CheckinService implements CheckinManager {
 
         log.trace(logInitMsg + "--- EXIT --- ");
         return doc;
+    }
+
+    private void fireAboutToCheckedInEvent(DocumentModel doc, String clientName,
+            String processReference) {
+
+        EloraEventHelper.fireEvent(PdmEventNames.PDM_ABOUT_TO_CHECK_IN_EVENT,
+                doc);
     }
 
     private void fireCheckedInEvent(DocumentModel doc, String checkinComment,
@@ -304,343 +307,6 @@ public class CheckinService implements CheckinManager {
             }
         }
         return nextIncrement;
-    }
-
-    @Override
-    public void checkThatRelationIsAllowed(DocumentModel subjectDoc,
-            String predicateUri, DocumentModel objectDoc, String quantity)
-            throws EloraException {
-        CoreSession session = subjectDoc.getCoreSession();
-        String logInitMsg = "[checkThatRelationIsAllowed] ["
-                + session.getPrincipal().getName() + "] ";
-
-        log.trace(logInitMsg + "--- ENTER ---  with subjectDocType = |"
-                + subjectDoc.getType() + "|, predicateUri = |" + predicateUri
-                + "|, objectDocType = |" + objectDoc.getType()
-                + "|, quantity = |" + quantity + "|");
-
-        if (predicateUri == null || predicateUri.length() == 0) {
-            String errorMsg = "Predicate cannot be null";
-            log.error(logInitMsg + errorMsg);
-            throw new EloraException(errorMsg);
-        }
-
-        if (quantity.equals("0") || quantity == null) {
-            String errorMsg = "Relation quantity cannot be null or 0";
-            log.error(logInitMsg + errorMsg);
-            throw new EloraException(errorMsg);
-        }
-
-        // Check first if predicate is BOM_COMPOSE_OF or BOM_HAS_BOM. Since in
-        // those cases, a manual check is required.
-        String subjectDocTypeName = subjectDoc.getType();
-        String objectDocTypeName = objectDoc.getType();
-
-        //
-        DocumentType subjectDocType = subjectDoc.getDocumentType();
-        DocumentType objectDocType = objectDoc.getDocumentType();
-
-        if (predicateUri.equals(EloraRelationConstants.BOM_COMPOSED_OF)) {
-            if ((EloraDocumentTypesHelper.getDocumentType(
-                    EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
-                            subjectDocType)
-                    && !EloraDocumentTypesHelper.getDocumentType(
-                            EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
-                                    objectDocType))
-                    || (subjectDocTypeName.equals(
-                            EloraDoctypeConstants.BOM_PRODUCT)
-                            && !EloraDocumentTypesHelper.getDocumentType(
-                                    EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
-                                            objectDocType)
-                            && !objectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_PRODUCT))
-                    || (subjectDocTypeName.equals(
-                            EloraDoctypeConstants.BOM_TOOL)
-                            && !objectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_TOOL))
-                    || (subjectDocTypeName.equals(
-                            EloraDoctypeConstants.BOM_PACKAGING)
-                            && !objectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_PACKAGING))
-                    || (!EloraDocumentTypesHelper.getDocumentType(
-                            EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
-                                    subjectDocType)
-                            && !subjectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_PRODUCT)
-                            && !subjectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_TOOL)
-                            && !subjectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_PACKAGING))) {
-                String errorMsg = "Incorrect relation sent. subject id = |"
-                        + subjectDoc.getId() + "|, subject type = |"
-                        + subjectDocTypeName + "|, object id = |"
-                        + objectDoc.getId() + "|, object type = |"
-                        + objectDocTypeName + "|, predicate |" + predicateUri
-                        + "|";
-                log.error(logInitMsg + errorMsg);
-                throw new EloraException(errorMsg);
-            }
-        } else if (predicateUri.equals(EloraRelationConstants.BOM_HAS_BOM)) {
-            if ((subjectDocTypeName.equals(EloraDoctypeConstants.BOM_TOOL)
-                    && !EloraDocumentTypesHelper.getDocumentType(
-                            EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
-                                    objectDocType)
-                    && !objectDocTypeName.equals(
-                            EloraDoctypeConstants.BOM_PRODUCT))
-                    || (subjectDocTypeName.equals(
-                            EloraDoctypeConstants.BOM_PACKAGING)
-                            && !EloraDocumentTypesHelper.getDocumentType(
-                                    EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
-                                            objectDocType)
-                            && !objectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_PRODUCT))
-                    || (subjectDocTypeName.equals(
-                            EloraDoctypeConstants.BOM_SPECIFICATION)
-                            && !EloraDocumentTypesHelper.getDocumentType(
-                                    EloraDoctypeConstants.BOM_PART).isSuperTypeOf(
-                                            objectDocType)
-                            && !objectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_PRODUCT)
-                            && !objectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_TOOL)
-                            && !objectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_PACKAGING))
-                    || (!subjectDocTypeName.equals(
-                            EloraDoctypeConstants.BOM_TOOL)
-                            && !subjectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_PACKAGING)
-                            && !subjectDocTypeName.equals(
-                                    EloraDoctypeConstants.BOM_SPECIFICATION))) {
-                String errorMsg = "Incorrect relation sent. subject id = |"
-                        + subjectDoc.getId() + "|, subject type = |"
-                        + subjectDocTypeName + "|, object id = |"
-                        + objectDoc.getId() + "|, object type = |"
-                        + objectDocTypeName + "|, predicate |" + predicateUri
-                        + "|";
-                log.error(logInitMsg + errorMsg);
-                throw new EloraException(errorMsg);
-            }
-        } else {
-            Map<String, List<String>> allowedSubjectTypes = getAllowedSubjectTypes();
-            Map<String, List<String>> allowedObjectTypes = getAllowedObjectTypes();
-            Map<String, String> allowedSubjectFacet = getAllowedSubjectFacet();
-            Map<String, String> allowedObjectFacet = getAllowedObjectFacet();
-
-            if (!allowedSubjectTypes.containsKey(predicateUri)
-                    || !allowedSubjectTypes.get(predicateUri).contains(
-                            subjectDoc.getType())) {
-                Set<String> subjectDocFacets = subjectDoc.getFacets();
-                if (!allowedSubjectFacet.containsKey(predicateUri)
-                        || !subjectDocFacets.contains(
-                                allowedSubjectFacet.get(predicateUri))) {
-                    String errorMsg = "Incorrect relation sent. Subject not supported in relation: subject |"
-                            + subjectDoc.getId() + "|, object |"
-                            + objectDoc.getId() + "|, predicate |"
-                            + predicateUri + "|";
-                    log.error(logInitMsg + errorMsg);
-                    throw new EloraException(errorMsg);
-                }
-            }
-
-            if (!allowedObjectTypes.containsKey(predicateUri)
-                    || !allowedObjectTypes.get(predicateUri).contains(
-                            objectDoc.getType())) {
-                Set<String> objectDocFacets = objectDoc.getFacets();
-                if (!allowedObjectFacet.containsKey(predicateUri)
-                        || !objectDocFacets.contains(
-                                allowedObjectFacet.get(predicateUri))) {
-                    String errorMsg = "Incorrect relation sent. Object not supported in relation: subject |"
-                            + subjectDoc.getId() + "|, object |"
-                            + objectDoc.getId() + "|, predicate |"
-                            + predicateUri + "|";
-                    log.error(logInitMsg + errorMsg);
-                    throw new EloraException(errorMsg);
-                }
-            }
-        }
-
-        log.trace(logInitMsg + "--- EXIT --- ");
-    }
-
-    private Map<String, List<String>> getAllowedSubjectTypes() {
-
-        Map<String, List<String>> allowedSubjectTypes = new HashMap<String, List<String>>();
-
-        // CADs - Hierarchical relations
-        List<String> cadComposedOfSubjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_ASSEMBLY);
-        allowedSubjectTypes.put(EloraRelationConstants.CAD_COMPOSED_OF,
-                cadComposedOfSubjectTypes);
-
-        List<String> cadBasedOnSubjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_PART);
-        allowedSubjectTypes.put(EloraRelationConstants.CAD_BASED_ON,
-                cadBasedOnSubjectTypes);
-
-        List<String> cadHasSuppressedSubjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_ASSEMBLY);
-        allowedSubjectTypes.put(EloraRelationConstants.CAD_HAS_SUPPRESSED,
-                cadHasSuppressedSubjectTypes);
-
-        // CADs - Direct relations
-        List<String> cadDrawingOfSubjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_DRAWING);
-        allowedSubjectTypes.put(EloraRelationConstants.CAD_DRAWING_OF,
-                cadDrawingOfSubjectTypes);
-
-        List<String> cadInContextWithSubjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_ASSEMBLY);
-        allowedSubjectTypes.put(EloraRelationConstants.CAD_IN_CONTEXT_WITH,
-                cadInContextWithSubjectTypes);
-
-        List<String> cadHasDesignTableSubjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_ASSEMBLY,
-                EloraDoctypeConstants.CAD_PART);
-        allowedSubjectTypes.put(EloraRelationConstants.CAD_HAS_DESIGN_TABLE,
-                cadHasDesignTableSubjectTypes);
-
-        // ITEMs - Hierarchical relations
-        List<String> bomComposedOfSubjectTypes = new ArrayList<>(
-                EloraDocumentTypesHelper.getExtendedDocumentTypeNames(
-                        EloraDoctypeConstants.BOM_PART));
-        allowedSubjectTypes.put(EloraRelationConstants.BOM_COMPOSED_OF,
-                bomComposedOfSubjectTypes);
-
-        // ITEMs - Direct relations
-        List<String> bomHasSpecificationSubjectTypes = new ArrayList<String>(
-                Arrays.asList(EloraDoctypeConstants.BOM_PRODUCT,
-                        EloraDoctypeConstants.BOM_TOOL,
-                        EloraDoctypeConstants.BOM_PACKAGING));
-        bomHasSpecificationSubjectTypes.addAll(
-                EloraDocumentTypesHelper.getExtendedDocumentTypeNames(
-                        EloraDoctypeConstants.BOM_PART));
-        allowedSubjectTypes.put(EloraRelationConstants.BOM_HAS_SPECIFICATION,
-                bomHasSpecificationSubjectTypes);
-
-        List<String> bomCustomerHasProductSubjectTypes = Arrays.asList(
-                EloraDoctypeConstants.BOM_CUSTOMER_PRODUCT);
-        allowedSubjectTypes.put(EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT,
-                bomCustomerHasProductSubjectTypes);
-
-        List<String> bomManufacturerHasPartSubjectTypes = Arrays.asList(
-                EloraDoctypeConstants.BOM_MANUFACTURER_PART);
-        allowedSubjectTypes.put(
-                EloraRelationConstants.BOM_MANUFACTURER_HAS_PART,
-                bomManufacturerHasPartSubjectTypes);
-
-        return allowedSubjectTypes;
-    }
-
-    private Map<String, List<String>> getAllowedObjectTypes() {
-
-        Map<String, List<String>> allowedObjectTypes = new HashMap<String, List<String>>();
-
-        // CADs - Hierarchical relations
-        List<String> cadComposedOfObjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_ASSEMBLY,
-                EloraDoctypeConstants.CAD_PART);
-        allowedObjectTypes.put(EloraRelationConstants.CAD_COMPOSED_OF,
-                cadComposedOfObjectTypes);
-
-        List<String> cadBasedOnObjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_PART);
-        allowedObjectTypes.put(EloraRelationConstants.CAD_BASED_ON,
-                cadBasedOnObjectTypes);
-
-        List<String> cadHasSuppressedObjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_ASSEMBLY,
-                EloraDoctypeConstants.CAD_PART);
-        allowedObjectTypes.put(EloraRelationConstants.CAD_HAS_SUPPRESSED,
-                cadHasSuppressedObjectTypes);
-
-        // CADs - Direct relations
-        List<String> cadDrawingOfObjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_ASSEMBLY,
-                EloraDoctypeConstants.CAD_PART);
-        allowedObjectTypes.put(EloraRelationConstants.CAD_DRAWING_OF,
-                cadDrawingOfObjectTypes);
-
-        List<String> cadInContextWithObjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_ASSEMBLY,
-                EloraDoctypeConstants.CAD_PART);
-        allowedObjectTypes.put(EloraRelationConstants.CAD_IN_CONTEXT_WITH,
-                cadInContextWithObjectTypes);
-
-        List<String> cadHasDesignTableObjectTypes = Arrays.asList(
-                EloraDoctypeConstants.CAD_DESIGN_TABLE);
-        allowedObjectTypes.put(EloraRelationConstants.CAD_HAS_DESIGN_TABLE,
-                cadHasDesignTableObjectTypes);
-
-        // ITEMs - Direct relations
-        List<String> bomHasSpecificationObjectTypes = Arrays.asList(
-                EloraDoctypeConstants.BOM_SPECIFICATION);
-        allowedObjectTypes.put(EloraRelationConstants.BOM_HAS_SPECIFICATION,
-                bomHasSpecificationObjectTypes);
-
-        List<String> bomCustomerHasProductObjectTypes = Arrays.asList(
-                EloraDoctypeConstants.BOM_PRODUCT);
-        allowedObjectTypes.put(EloraRelationConstants.BOM_CUSTOMER_HAS_PRODUCT,
-                bomCustomerHasProductObjectTypes);
-
-        List<String> bomManufacturerHasPartObjectTypes = new ArrayList<>(
-                EloraDocumentTypesHelper.getExtendedDocumentTypeNames(
-                        EloraDoctypeConstants.BOM_PART));
-        allowedObjectTypes.put(EloraRelationConstants.BOM_MANUFACTURER_HAS_PART,
-                bomManufacturerHasPartObjectTypes);
-
-        return allowedObjectTypes;
-    }
-
-    private Map<String, String> getAllowedSubjectFacet() {
-
-        Map<String, String> allowedSubjectFacet = new HashMap<String, String>();
-
-        // CADs
-        String cadHasDocumentSubjectFacet = EloraFacetConstants.FACET_CAD_DOCUMENT;
-        allowedSubjectFacet.put(EloraRelationConstants.CAD_HAS_DOCUMENT,
-                cadHasDocumentSubjectFacet);
-
-        // ITEMs
-        String bomHasCadDocumentSubjectFacet = EloraFacetConstants.FACET_BOM_DOCUMENT;
-        allowedSubjectFacet.put(EloraRelationConstants.BOM_HAS_CAD_DOCUMENT,
-                bomHasCadDocumentSubjectFacet);
-
-        String bomHasDocumentSubjectFacet = EloraFacetConstants.FACET_BOM_DOCUMENT;
-        allowedSubjectFacet.put(EloraRelationConstants.BOM_HAS_DOCUMENT,
-                bomHasDocumentSubjectFacet);
-
-        // WORKSPACEs
-        String containerHasContainerSubjectFacet = EloraFacetConstants.FACET_ELORA_WORKSPACE;
-        allowedSubjectFacet.put(EloraRelationConstants.CONTAINER_HAS_CONTAINER,
-                containerHasContainerSubjectFacet);
-
-        return allowedSubjectFacet;
-    }
-
-    private Map<String, String> getAllowedObjectFacet() {
-
-        Map<String, String> allowedObjectFacet = new HashMap<String, String>();
-
-        // CADs
-        String cadHasDocumentObjectFacet = EloraFacetConstants.FACET_BASIC_DOCUMENT;
-        allowedObjectFacet.put(EloraRelationConstants.CAD_HAS_DOCUMENT,
-                cadHasDocumentObjectFacet);
-
-        // ITEMs
-        String bomHasCadDocumentObjectFacet = EloraFacetConstants.FACET_CAD_DOCUMENT;
-        allowedObjectFacet.put(EloraRelationConstants.BOM_HAS_CAD_DOCUMENT,
-                bomHasCadDocumentObjectFacet);
-
-        String bomHasDocumentObjectFacet = EloraFacetConstants.FACET_BASIC_DOCUMENT;
-        allowedObjectFacet.put(EloraRelationConstants.BOM_HAS_DOCUMENT,
-                bomHasDocumentObjectFacet);
-
-        // WORKSPACEs
-        String containerHasContainerObjectFacet = EloraFacetConstants.FACET_ELORA_WORKSPACE;
-        allowedObjectFacet.put(EloraRelationConstants.CONTAINER_HAS_CONTAINER,
-                containerHasContainerObjectFacet);
-
-        return allowedObjectFacet;
     }
 
 }

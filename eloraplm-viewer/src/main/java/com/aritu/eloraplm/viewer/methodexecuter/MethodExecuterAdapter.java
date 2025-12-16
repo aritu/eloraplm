@@ -33,9 +33,7 @@ public class MethodExecuterAdapter implements MethodExecuter {
 
     @Override
     public String getCurrentLifeCycleState() {
-
         return doc.getCurrentLifeCycleState();
-
     }
 
     @Override
@@ -46,6 +44,11 @@ public class MethodExecuterAdapter implements MethodExecuter {
     @Override
     public Serializable getContextData(String key) {
         return doc.getContextData(key);
+    }
+
+    @Override
+    public String getType() {
+        return doc.getType();
     }
 
 }

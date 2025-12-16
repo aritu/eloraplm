@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="com.aritu.eloraplm.workflows.forms.ActionService.contrib">
+    <require>org.nuxeo.ecm.platform.routing.actions</require>
+    <require>com.aritu.eloraplm.workflows.ActionService.contrib</require>
 
     <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
     
@@ -10,12 +12,18 @@
             </rule>
         </filter>
         
-        <filter id="showWorkflowAnswersTab">
+        <filter id="hasWorkflowForms">
             <rule grant="true">
                 <facet>HasWorkflowForms</facet>
             </rule>
         </filter>
-    
+        
+        <filter id="notWorkflowForms">
+            <rule grant="false">
+                <facet>HasWorkflowForms</facet>
+            </rule>
+        </filter>
+        
     </extension>
     
     <extension point="actions" target="org.nuxeo.ecm.platform.actions.ActionService">
@@ -27,17 +35,32 @@
             label="eloraplm.tab.admin.workflows.forms"
             type="admin_rest_document_link" order="130">
             <filter-id>WorkflowsEnabled</filter-id>
+            <filter-id>adminCenterAccess</filter-id>
             <category>NUXEO_ADMIN</category>
         </action>
         
         <!-- ///////////////// -->
         
-        <!-- Workflow answers tab -->
+        <!-- Workflow tab (without forms) -->
         
-        <action id="TAB_WORKFLOW_ANSWERS" link="/incl/tabs/workflow_answers.xhtml"
-            order="100" label="eloraplm.label.workflows.forms.answers" type="rest_document_link">
+        <action id="TAB_ROUTE_WORKFLOW" enabled="false" />
+        
+        <action id="TAB_WORKFLOWS_WITHOUT_FORMS" link="/incl/tabs/workflows_without_forms.xhtml"
+            order="100" label="eloraplm.label.workflows"
+            type="rest_document_link">
             <filter-id>WorkflowsEnabled</filter-id>
-            <filter-id>showWorkflowAnswersTab</filter-id>
+            <filter-id>notWorkflowForms</filter-id>
+            <filter-id>hasRelatedWorkflowStarted</filter-id>
+            <category>VIEW_ACTION_LIST</category>
+        </action>
+        
+        
+        <!-- Workflow tab (with forms) -->
+        
+        <action id="TAB_WORKFLOWS" link="/incl/tabs/workflows.xhtml"
+            order="100" label="eloraplm.label.workflows" type="rest_document_link">
+            <filter-id>WorkflowsEnabled</filter-id>
+            <filter-id>hasWorkflowForms</filter-id>
             <category>VIEW_ACTION_LIST</category>
         </action>
     
@@ -45,13 +68,14 @@
         
         <!-- Datatable buttons -->
         
-        <action id="btnAddWorkflowQuestion" order="20" label="eloraplm.command.workflows.forms.question.add" type="fancybox" icon="">
+        <action id="btnAddWorkflowQuestion" order="20" label="eloraplm.command.workflows.forms.question.add" type="pfdialog" icon="">
             <category>DATATABLE_BUTTON</category>
             <filter-id>workflowQuestionsTableButtons</filter-id>
             <properties>
                 <property name="include">/incl/action/add_workflow_question.xhtml</property>
                 <property name="ajaxSupport">true</property>
                 <property name="styleClass">button</property>
+                <property name="dialogTitle">eloraplm.title.workflows.forms.question.add</property>
             </properties>
         </action>
         

@@ -20,11 +20,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-import com.aritu.eloraplm.integration.get.restoperations.util.DoGetOrCheckoutResponseDoc;
-import com.aritu.eloraplm.integration.util.FolderInfo;
 import com.aritu.eloraplm.core.util.json.EloraJsonHelper;
 import com.aritu.eloraplm.core.util.restoperations.EloraGeneralResponse;
 import com.aritu.eloraplm.exceptions.EloraException;
+import com.aritu.eloraplm.integration.util.FolderInfo;
 
 /**
  * @author aritu

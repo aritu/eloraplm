@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.drive.DirectoryUIManager.contrib">
+    
+    <extension point="directories" target="org.nuxeo.ecm.directory.ui.DirectoryUIManager">
+        
+        <directory name="elora_desktop_binaries" layout="elora_desktop_binaries" sortField="ordering" />
+        
+    </extension>
+    
+</component>

@@ -43,6 +43,11 @@ xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/">
           <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
         </xs:simpleType>
       </xs:element>
+      <xs:element name="destinationItemSourceVersion">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
       <xs:element name="isManaged" type="xs:boolean" default="false"/>
       <xs:element name="isManual" type="xs:boolean" default="false"/>
       <xs:element name="type" type="xs:string"/>

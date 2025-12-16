@@ -3,6 +3,7 @@
 <component name="com.aritu.eloraplm.workflows.WebResources.contrib">
 
     <require>org.nuxeo.theme.nuxeo.webapp</require>
+    <require>org.nuxeo.document.routing.web.themes</require>
 
     <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
         <bundle name="nuxeo_includes">
@@ -15,6 +16,12 @@
     <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
         <resource name="elora.workflows.css" type="css">
             <uri>/css/elora-workflows.css</uri>
+        </resource>
+        
+        <resource name="documentRoutingGraph.js">
+            <path>scripts/elora.documentRoutingGraph.js</path>
+            <require>jquery.jsPlumb-1.5.1-min.js</require>
+            <require>automation.js</require>
         </resource>
     </extension>
 

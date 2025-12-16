@@ -27,4 +27,6 @@ public class RelationEventNames {
 
     public static final String CHECKED_OUT_AND_RELATION_REPLACED_EVENT = "CheckedOutAndRelationReplacedEvent";
 
+    public static final String ABOUT_TO_ADD_RELATION_NODE = "AboutToAddRelationNode";
+
 }

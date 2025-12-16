@@ -1,0 +1,37 @@
+<f:subview xmlns:f="http://java.sun.com/jsf/core"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxu="http://nuxeo.org/nxweb/util"
+  xmlns:c="http://java.sun.com/jstl/core"
+  xmlns:nxp="http://nuxeo.org/nxweb/pdf"
+  id="#{widget.id}">
+
+    <c:if test="#{nxl:isLikePlainMode(widget.mode)}">
+        <nxu:inputList value="#{field}" model="contributorsModel">
+        <h:outputText value="#{nxu:userFullName(contributorsModel.rowData)}" />
+        <h:outputText value=", " 
+            rendered="#{contributorsModel.rowIndex != contributorsModel.rowCount -1}" />
+        </nxu:inputList>
+    </c:if>
+
+    <c:if test="#{widget.mode == 'pdf'}">
+        <nxp:html>
+            <nxu:inputList value="#{field}" model="contributorsModel">
+                <h:outputText value="#{nxu:userFullName(contributorsModel.rowData)}" />
+                <h:outputText value=", " 
+                    rendered="#{contributorsModel.rowIndex != contributorsModel.rowCount -1}" />
+            </nxu:inputList>
+        </nxp:html>
+    </c:if>
+
+    <c:if test="#{nxl:isLikeViewMode(widget.mode) || widget.mode == 'edit'}">
+        <div>
+            <nxu:inputList value="#{field}" model="contributorsModel">
+                <h:outputText value="#{nxu:userFullName(contributorsModel.rowData)}" />
+                <h:outputText value=", " 
+                    rendered="#{contributorsModel.rowIndex != contributorsModel.rowCount -1}" />
+            </nxu:inputList>
+        </div>
+    </c:if>
+    
+</f:subview>

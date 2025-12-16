@@ -28,29 +28,6 @@
       </resultLayouts>
     </contentView>
     
-    <!-- <contentView name="user_locked_documents">
-      <title>title.dashboard.userLockedDocuments</title>
-      <translateTitle>true</translateTitle>
-      <pageProvider name="dashboard_user_locked_documents">
-        <property name="coreSession">#{documentManager}</property>
-        <parameter>#{currentUser.name}</parameter>
-        <parameter>#{jsfDashboardActions.selectedDomainPath}</parameter>
-      </pageProvider>
-      <showPageSizeSelector>false</showPageSizeSelector>
-      <showRefreshCommand>true</showRefreshCommand>
-      <useGlobalPageSize>false</useGlobalPageSize>
-      <refresh>
-        <event>documentChanged</event>
-        <event>documentChildrenChanged</event>
-      </refresh>
-      <cacheKey>#{jsfDashboardActions.selectedDomainPath}</cacheKey>
-      <cacheSize>10</cacheSize>
-      <resultLayouts>
-        <layout name="dashboard_document_listing" showCSVExport="false"
-          showPDFExport="false" showSyndicationLinks="false" />
-      </resultLayouts>
-    </contentView>  -->
-    
  </extension>
  
  <extension target="org.nuxeo.ecm.platform.query.api.PageProviderService" point="providers">
@@ -58,8 +35,9 @@
     <coreQueryPageProvider name="dashboard_user_last_contrib_documents">
       <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
       <pattern>
-        SELECT * FROM Document WHERE dc:lastContributor = ? AND ecm:mixinType !=
-        'Folderish' AND ecm:mixinType != 'HiddenInNavigation' AND
+        SELECT * FROM Document WHERE dc:lastContributor = ?
+        AND (ecm:mixinType != 'Folderish' OR ecm:mixinType = 'DocumentWithContent')
+        AND ecm:mixinType != 'HiddenInNavigation' AND
         ecm:mixinType != 'SystemDocument' AND
         ecm:isVersion = 0 AND ecm:isProxy = 0 AND ecm:primaryType != 'ReservedCode' AND
         ecm:currentLifeCycleState != 'deleted' AND ecm:path STARTSWITH ?
@@ -68,17 +46,6 @@
       <pageSize>10</pageSize>
     </coreQueryPageProvider>
     
-    <!-- <coreQueryPageProvider name="dashboard_user_locked_documents">
-      <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
-      <pattern>
-        SELECT * FROM Document WHERE ecm:lockOwner = ? AND ecm:mixinType != 'HiddenInNavigation' AND
-        ecm:mixinType != 'SystemDocument' AND ecm:isProxy = 0 AND ecm:primaryType != 'ReservedCode'  AND
-        ecm:isVersion = 0 AND ecm:currentLifeCycleState != 'deleted' AND ecm:path STARTSWITH ?
-      </pattern>
-      <sort column="dc:modified" ascending="false" />
-      <pageSize>10</pageSize>
-    </coreQueryPageProvider> -->
-    
     <coreQueryPageProvider name="user_favorites">
       <property name="maxResults">DEFAULT_NAVIGATION_RESULTS</property>
       <pattern>
@@ -86,7 +53,7 @@
         ecm:isVersion = 0 AND ecm:isProxy = 0 AND ecm:currentLifeCycleState !=
         'deleted' AND collectionMember:collectionIds/* = ?
       </pattern>
-      <sort column="dc:title" ascending="true" />
+      <sort column="dc:modified" ascending="false" />
       <pageSize>10</pageSize>
     </coreQueryPageProvider>
     

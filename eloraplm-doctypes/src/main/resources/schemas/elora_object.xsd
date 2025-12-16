@@ -1,11 +1,13 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/elora_object" 
-targetNamespace="http://www.nuxeo.org/ecm/project/schemas/elora_object">
-
-  <xs:element name="reference" type="xs:string" />
-  
-  <xs:element name="orderingPriority" type="xs:integer" default="9999"/>
-  
-  <!-- <xs:element name="isTemplate" type="xs:boolean" default="false"/>  -->
-
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/elora_object" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/elora_object">
+    
+    <xs:element name="reference" type="xs:string" />
+    
+    <xs:element name="orderingPriority" type="xs:integer" default="9999"/>
+    
+    <xs:element name="externalLink" type="xs:string"/>
+    
+    <xs:element name="vaultFolder" type="xs:string"/>
+    
 </xs:schema>

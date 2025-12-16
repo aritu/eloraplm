@@ -11,7 +11,7 @@
         <documentation>
             Used to configure code creation for each doctype.
             <code>
-                <type id="..." mode="manual|manualRequired|auto|autoIfEmpty" />
+                <type id="..." mode="manual|manualRequired|auto|autoIfEmpty" editable="true|false" />
             </code>
             On creation, manual and autoIfEmpty modes display a non-required input. Auto displays a text
             indicating that code is automatically generated, and manualRequired displays a required input.

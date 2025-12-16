@@ -5,6 +5,7 @@ package com.aritu.eloraplm.viewer.dataevaluator.util;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
 
+import com.aritu.eloraplm.constants.ViewerConstants;
 import com.aritu.eloraplm.core.util.ExpressionEvaluator;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.viewer.dataevaluator.api.ConditionDescriptor;
@@ -19,11 +20,12 @@ public class ConditionEvaluatorHelper {
     public static boolean fulfillsConditions(DocumentModel doc, String action,
             ConditionDescriptor[] conditions, boolean allRequired)
             throws EloraException {
-        return fulfillsConditions(doc, null, action, conditions, allRequired);
+        return fulfillsConditions(doc, null, action, -1, conditions,
+                allRequired);
     }
 
     public static boolean fulfillsConditions(DocumentModel doc,
-            DocumentModel relatedDoc, String action,
+            DocumentModel relatedDoc, String action, int pageNumber,
             ConditionDescriptor[] conditions, boolean allRequired)
             throws EloraException {
 
@@ -35,8 +37,15 @@ public class ConditionEvaluatorHelper {
         for (ConditionDescriptor condition : conditions) {
             DataObtainerAdapter doa = new DataObtainerAdapter(condition);
 
-            String left = ValueObtainerHelper.getValue(doc, relatedDoc, action,
-                    doa);
+            String left = "";
+            if (doa.getType().equals(
+                    ViewerConstants.CONDITION_TYPE_PAGE_NUMBER)) {
+                left = Integer.toString(pageNumber);
+            } else {
+                left = ValueObtainerHelper.getValue(doc, relatedDoc, action,
+                        doa);
+            }
+
             String right = condition.value;
 
             boolean ok = ExpressionEvaluator.evaluateExpression(left, right,

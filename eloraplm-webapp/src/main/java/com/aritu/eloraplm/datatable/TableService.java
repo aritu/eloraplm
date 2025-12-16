@@ -15,6 +15,7 @@ package com.aritu.eloraplm.datatable;
 
 import java.util.List;
 
+import com.aritu.eloraplm.exceptions.DocumentUnreadableException;
 import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
@@ -28,15 +29,17 @@ public interface TableService {
      *
      * @param parentObject
      * @return
+     * @throws EloraException
+     * @throws DocumentUnreadableException
      */
-    List<RowData> getData(Object parentObject) throws EloraException;
+    List<RowData> getData(Object parentObject)
+            throws EloraException, DocumentUnreadableException;
 
     /**
      * Creates row data
      *
      * @param rowId
      * @return
-     * @throws EloraException
      */
     RowData createRowData(String rowId);
 

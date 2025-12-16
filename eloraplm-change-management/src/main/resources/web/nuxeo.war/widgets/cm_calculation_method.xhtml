@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html">
+  
+    <ui:fragment rendered="#{field != null}">
+        <h:outputText value="#{field eq 'automatic' ? messages['label.cm.matrix.calculationMethodAutomatic'] : (field eq 'manual' ? messages['label.cm.matrix.calculationMethodManual'] : '')}" style="font-weight: bold; text-transform: uppercase;" />
+    </ui:fragment>
+    
+</ui:composition>
+

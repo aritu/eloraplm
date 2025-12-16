@@ -1,0 +1,30 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+>
+    <c:if test="#{widget.mode != 'csv'}">
+        <ui:fragment rendered="#{field}">
+            <h:graphicImage
+                value="/icons/badge_has_characteristics_16.png"
+                style="vertical-align: middle"
+            >
+                <f:attribute
+                    name="title"
+                    value="#{messages['eloraplm.label.cm.hasCharacteristics']}"
+                />
+                <f:attribute
+                    name="styleClass"
+                    value="tipsyShow"
+                />
+            </h:graphicImage>
+        </ui:fragment>
+    </c:if>
+    <c:if test="#{widget.mode == 'csv'}">
+        <h:outputText
+            value="#{field ? messages['label.yes'] : messages['label.no']}"
+        />
+    </c:if>
+</ui:composition>

@@ -1,27 +1,27 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:c="http://java.sun.com/jstl/core"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:a4j="http://richfaces.org/a4j"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxu="http://nuxeo.org/nxweb/util"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout">
-  
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout">
+    
     <c:choose>
-      <c:when test="#{promoteDoc == null}">
-        <br/><br/>
-        <p class="errorMessage"><h:outputText value="#{messages['eloraplm.message.error.cm.emptyItemSelection']}" /></p>
-      </c:when>
-      <c:otherwise>
+        <c:when test="#{promoteDoc == null}">
+            <br/><br/>
+            <p class="processMessage completeError"><h:outputText value="#{messages['eloraplm.message.error.cm.emptyItemSelection']}" /></p>
+        </c:when>
+        <c:otherwise>
             <h:panelGroup id="tree">
-              <nxl:widget name="prom_tt" mode="view" value="#{promoteTreeBean}" reloadRerender="nxw_promote_after_view_fancy_subview:demote_promote_buttons:executeButton" />
+              <nxl:widget name="prom_tt" mode="view" value="#{promoteTreeBean}" reloadRerender=":glb_pf_dlg_form_buttons:executeButton" />
             </h:panelGroup>
-      
-		    <!-- The treetable conflicts with h:commandButton, so we have to separate the form in two, but this does not cause any error
-		    as there are two separate actions in this window -->
-		    
-      </c:otherwise>
+            
+            <!-- The treetable conflicts with h:commandButton, so we have to separate the form in two, but this does not cause any error
+            as there are two separate actions in this window -->
+            
+        </c:otherwise>
     </c:choose>
     
 </ui:composition>

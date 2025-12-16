@@ -1,14 +1,21 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout">
-  
-    <ui:include src="document_not_editable_warning.xhtml"/>
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+>
+    <ui:include src="document_not_editable_warning.xhtml" />
 
-    <nxl:widget name="bom_cad_tt" mode="view" value="#{bomCadDocumentsTreeBean}" />
+    <nxl:widget
+        name="bom_cad_tt"
+        mode="edit"
+        value="#{bomCadDocumentsTreeBean}"
+    />
 
     <br />
- 
-    <nxl:widget name="bom_doc_tt" mode="view" value="#{bomDocumentsTreeBean}" />
-    
+
+    <nxl:widget
+        name="bom_doc_tt"
+        mode="edit"
+        value="#{bomDocumentsTreeBean}"
+    />
 </ui:composition>

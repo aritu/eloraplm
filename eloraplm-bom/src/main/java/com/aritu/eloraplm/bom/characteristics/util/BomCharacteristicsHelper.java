@@ -35,14 +35,14 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.NuxeoException;
-import org.nuxeo.ecm.platform.ui.web.directory.ChainSelect;
-
 import com.aritu.eloraplm.bom.characteristics.BomCharacteristic;
 import com.aritu.eloraplm.bom.util.BomHelper;
-import com.aritu.eloraplm.config.util.BomConfig;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
 import com.aritu.eloraplm.constants.BomCharacteristicsMetadataConstants;
+import com.aritu.eloraplm.constants.EloraSchemaConstants;
+import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDecimalHelper;
+import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.BomCharacteristicsValidatorException;
 import com.aritu.eloraplm.exceptions.EloraException;
 import com.ibm.icu.text.DateFormat;
@@ -69,20 +69,6 @@ public class BomCharacteristicsHelper {
         String logInitMsg = "[saveBomCharacteristicsChangesInDocument] ["
                 + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
-
-        // TODO:: TO BE REMOVED
-        /*
-         * // Check specified input parameters if (document == null) {
-         * log.error(logInitMsg + " Specified document is null."); throw new
-         * EloraException("Specified document is null."); }
-         *
-         * if (bomCharacteristics == null) { log.error(logInitMsg +
-         * " Specified bomCharacteristics is null."); throw new
-         * EloraException("Specified bomCharacteristics is null."); }
-         *
-         * log.trace(logInitMsg + " Saving |" + bomCharacteristics.size() +
-         * "| Bom Characteristics.");
-         */
 
         try {
             if ((bomCharacteristicIdsToBeRemoved != null
@@ -184,20 +170,6 @@ public class BomCharacteristicsHelper {
         String logInitMsg = "[saveBomCharacteriticsListInDocument] ["
                 + session.getPrincipal().getName() + "] ";
         log.trace(logInitMsg + "--- ENTER --- ");
-
-        // TODO:: TO BE REMOVED
-        /*
-         * // Check specified input parameters if (document == null) {
-         * log.error(logInitMsg + " Specified document is null."); throw new
-         * EloraException("Specified document is null."); }
-         *
-         * if (bomCharacteristicsList == null) { log.error(logInitMsg +
-         * " Specified bomCharacteristicsList is null."); throw new
-         * EloraException("Specified bomCharacteristicsList is null."); }
-         *
-         * log.trace(logInitMsg + " Saving |" + bomCharacteristicsList.size() +
-         * "| Bom Characteristics.");
-         */
 
         try {
 
@@ -494,8 +466,7 @@ public class BomCharacteristicsHelper {
                  * which could make the comparison fail just // after a document
                  * creation (see NXP-8783) //
                  * -------------------------------------------------
-                 * bomCharacteristicMasterLastModifiedGc.set(
-                 * Calendar.MILLISECOND, 0);
+                 * dateDefaultValueGc.set(Calendar.MILLISECOND, 0);
                  */
                 dateDefaultValue = dateDefaultValueGc.getTime();
             }
@@ -511,8 +482,7 @@ public class BomCharacteristicsHelper {
                  * which could make the comparison fail just // after a document
                  * creation (see NXP-8783) //
                  * -------------------------------------------------
-                 * bomCharacteristicMasterLastModifiedGc.set(
-                 * Calendar.MILLISECOND, 0);
+                 * dateValueeGc.set(Calendar.MILLISECOND, 0);
                  */
                 dateValue = dateValueeGc.getTime();
             }
@@ -576,39 +546,6 @@ public class BomCharacteristicsHelper {
                 required, includeInTitle, unmodifiable, messageType, message);
 
         return bomCharacteristic;
-    }
-
-    public static String getBomClassificationLabel(String bomType,
-            String classification) {
-        String classificationLabel = "";
-
-        HashMap<String, String> bomClassificationLabelMap = BomConfig.bomClassificationLabelMap.get(
-                bomType);
-
-        if (classification != null && !classification.isEmpty()) {
-
-            // First split the classification, since it can be hierarchical
-            String[] classificationLevels = classification.split(
-                    ChainSelect.DEFAULT_KEY_SEPARATOR);
-            for (int i = 0; i < classificationLevels.length; i++) {
-
-                String classificationItem = classificationLevels[i];
-
-                if (bomClassificationLabelMap.containsKey(classificationItem)) {
-                    String classificationItemLabel = bomClassificationLabelMap.get(
-                            classificationItem);
-                    if (classificationLabel != null
-                            && !classificationLabel.isEmpty()) {
-                        classificationLabel += ChainSelect.DEFAULT_KEY_SEPARATOR
-                                + classificationItemLabel;
-                    } else {
-                        classificationLabel += classificationItemLabel;
-                    }
-                }
-            }
-        }
-
-        return classificationLabel;
     }
 
     /*
@@ -728,26 +665,10 @@ public class BomCharacteristicsHelper {
 
     // -----------------------------------------------------------
 
-    public static void loadCharacteristicMasters(DocumentModel currentDoc)
-            throws EloraException {
-
-        String classification = BomHelper.getBomClassificationValue(currentDoc);
-
-        loadCharacteristicMasters(currentDoc, classification, false);
-    }
-
-    // This is a special case.
-    public static void loadCharacteristicMastersFromListener(
-            DocumentModel currentDoc, String newClassification)
-            throws EloraException {
-
-        loadCharacteristicMasters(currentDoc, newClassification, true);
-    }
-
-    private static void loadCharacteristicMasters(DocumentModel currentDoc,
-            String classification, boolean fromListener) throws EloraException {
+    public static void loadCharacteristicMasters(DocumentModel currentDoc,
+            String classification, boolean saveDocument) throws EloraException {
         String logInitMsg = "[loadCharacteristicMasters] classification = |"
-                + classification + "|, fromListener = |" + fromListener + "|";
+                + classification + "|, saveDocument = |" + saveDocument + "|";
         log.trace(logInitMsg + "--- ENTER --- ");
 
         try {
@@ -790,14 +711,14 @@ public class BomCharacteristicsHelper {
             // ------------ STEP 3:
             // Set and save new structure
             // ###########################################################################
-            if (fromListener) {
-                // Set BOM characteristics without saving the document
-                setBomCharacteristicsListToDocument(currentDoc,
-                        newBomCharacteristics);
-            } else {
+            if (saveDocument) {
                 // Set BOM characteristics and save the document
                 CoreSession session = currentDoc.getCoreSession();
                 saveBomCharacteriticsListInDocument(session, currentDoc,
+                        newBomCharacteristics);
+            } else {
+                // Set BOM characteristics without saving the document
+                setBomCharacteristicsListToDocument(currentDoc,
                         newBomCharacteristics);
             }
 
@@ -1297,5 +1218,32 @@ public class BomCharacteristicsHelper {
         }
 
         return displayOrderRequiredConstraintOk;
+    }
+
+    public static boolean isCharacterizedItem(DocumentModel doc) {
+
+        if (!doc.hasSchema(EloraSchemaConstants.BOM_ITEM)) {
+            return false;
+        }
+
+        if (EloraDocumentHelper.hasMainFile(doc)
+                || EloraRelationHelper.hasBasicDocsWithViewerOrdering(doc)
+                || hasCharacteristicsShownInReport(doc, doc.getCoreSession())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean hasCharacteristicsShownInReport(DocumentModel doc,
+            CoreSession session) {
+
+        long count = BomCharacteristicsQueryFactory.countCharacteristicsShownInReport(
+                session, doc.getType(), doc.getId());
+
+        if (count > 0L) {
+            return true;
+        }
+        return false;
     }
 }

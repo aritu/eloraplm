@@ -12,7 +12,8 @@
 
 <c:if test="#{currentDocument.hasSchema('dublincore')}">
 
-        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} workingCopy">
+        <h:panelGroup id="eloraMetadataHeading" prependId="false" layout="block" styleClass="#{currentDocument.type} workingCopy"
+            style="border-top: 4px solid #{eloraWebActions.getColorForType(currentDocument.type)};">
         
             <p:panelGrid styleClass="fullWidth">
             
@@ -124,9 +125,8 @@
                 
                 
                 <p:row>
-                    
                     <p:column></p:column>
-                    <p:column colspan="2"></p:column>
+                    <p:column colspan="2"></p:column>                   
                     <p:column></p:column>
                     
                     <!-- Lock info -->

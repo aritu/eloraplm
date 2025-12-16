@@ -11,20 +11,22 @@
     <script type="text/javascript">
 
         jQuery(document).ready(function() {
-            resizeLifecycleTransitionsWindow();
+            resizeStructureCreationWindow();
         });
-        
-        function initLifecycleTransitionScreen(data) {
-            if(data.status == "success") {
-                resizeLifecycleTransitionsWindow();
-            }
-        }
 
-        function resizeLifecycleTransitionsWindow() {
+        function initStructureCreationWindow(data) {
+             if(data.status == "success") {
+                 resizeStructureCreationWindow();
+             }
+         }
+        
+
+        function resizeStructureCreationWindow() {
             jQuery('#fancybox-wrap').css('width', 'auto');
             jQuery('#fancybox-content').css('width', 'auto');
-            jQuery('#fancybox-content .content').css('height', 'auto');
-            jQuery('#fancybox-content .content').css('max-height', jQuery(window).height() - 200 + 'px');
+            //jQuery('#fancybox-content .content').css('height', 'auto');
+            jQuery('#fancybox-content .content').css('height', jQuery(window).height() - 100 + 'px');
+            jQuery('#fancybox-content .content').css('max-height', jQuery(window).height() + 'px');
             jQuery.fancybox.resize();
             jQuery.fancybox.center();
         }
@@ -35,34 +37,43 @@
         <h:outputText value="#{messages['eloraplm.title.createBomStructure']}" />
     </h3>
     
+
+    <div class="content">
+
+    <h4>
+        <h:outputText value="#{messages['eloraplm.title.createBomStructure.option1']}" />
+   </h4>
+
+  <div style="border: 1px solid #e6e9ef;padding: 10px;">
     <h:form id="#{fancyboxFormId}">
     
-        <div class="content">
+        <div>
             <h:panelGroup>
                 <a4j:outputPanel>
                     <div style="display:flex; flex-direction:column; width:900px">
+                        
                         <div>
                             <h:outputText styleClass="avert" value="#{messages['eloraplm.message.createStructure.info']}" />
                         </div>
                         <div style="text-align:center; margin-top:10px">
                             <h:commandButton value="#{messages['eloraplm.command.bom.calculateStructure']}" styleClass="button" action="#{bomStructureAction.calculateStructure}">
-                                <f:ajax render="@form itemStructurePanel" onevent="initLifecycleTransitionScreen" />
+                                <f:ajax render="@form itemStructurePanel" onevent="initStructureCreationWindow" />
                             </h:commandButton>
                         </div>
                         <ui:fragment rendered="#{bomStructureAction.itemStructureData != null and (!bomStructureAction.hasDirector or bomStructureAction.hasWrongTypes or bomStructureAction.hasMissingItems)}">
-                            <div class="processMessage completeWarning">                                
+                            <div class="processMessage completeWarning">
                                 <ui:fragment rendered="#{bomStructureAction.itemStructureData != null and !bomStructureAction.hasDirector}">
-                                    <div>                                    
+                                    <div>
                                         <h:outputText value="#{messages['eloraplm.message.createStructure.warning.missingDirector']}" />
                                     </div>
                                 </ui:fragment>
                                 <ui:fragment rendered="#{bomStructureAction.itemStructureData != null and bomStructureAction.hasWrongTypes}">
-                                    <div>                                    
+                                    <div>
                                         <h:outputText styleClass="warning" value="#{messages['eloraplm.message.createStructure.warning.wrongTypes']}" /><br/>
                                         <ui:repeat value="#{bomStructureAction.wrongTypeItems}" var="wrongItem">
                                             <li style="display:inline">
                                                 <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{wrongItem}"/>
-                                                <p:spacer width="20" />
+                                                &#160;&#160;&#160;&#160;&#160;
                                             </li>
                                         </ui:repeat>
                                     </div>
@@ -73,7 +84,7 @@
                                         <ui:repeat value="#{bomStructureAction.missingItems}" var="missingItem">
                                             <li style="display:inline">
                                                 <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{missingItem}"/>
-                                                <p:spacer width="20" />
+                                                &#160;&#160;&#160;&#160;&#160;
                                             </li>
                                         </ui:repeat>
                                     </div>
@@ -84,14 +95,14 @@
                             <ui:fragment rendered="#{bomStructureAction.itemStructureData != null and bomStructureAction.hasDirector and bomStructureAction.hasMultipleItems}">
                                 <h:outputText styleClass="avert" value="#{messages['eloraplm.message.createStructure.multipleItems.info']}" />
                             
-                                <p:dataTable var="docItemRelation" value="#{bomStructureAction.docItemRelationList}" sortBy="#{docItemRelation.doc.id}" expandableRowGroups="true"
+                                <p:dataTable var="docItemRelation" value="#{bomStructureAction.docItemRelationList}" sortBy="#{docItemRelation.doc.id}" expandable="true"
                                             selection="#{bomStructureAction.selectedDocItemRelations}" rowKey="#{docItemRelation.item.id}"
                                             style="width: 700px;margin-bottom:0" tableStyleClass="datatable">
                                     
-                                    <p:headerRow>
+                                    <p:headerRow groupBy="#{docItemRelation.doc.id}" expandable="true">
                                         <p:column colspan="2">
                                             <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{docItemRelation.doc}"/>
-                                            <p:spacer width="10" />
+                                            &#160;&#160;&#160;
                                             <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{docItemRelation.doc}"/>
                                         </p:column>
                                     </p:headerRow>
@@ -100,10 +111,10 @@
                                     
                                     <p:column headerText="Item">
                                         <nxl:widget name="itemIconReferenceTitle" mode="view" value="#{docItemRelation.item}"/>
-                                        <p:spacer width="10" />
+                                        &#160;&#160;&#160;
                                         <nxl:widgetType name="listing_version_and_visualized_type" mode="view" field="#{docItemRelation.item}"/>
-                                    </p:column>                                            
-                                </p:dataTable>                                        
+                                    </p:column>
+                                </p:dataTable>
                             </ui:fragment>
                         </div>
                         <ui:fragment rendered="#{bomStructureAction.itemStructureData != null and bomStructureAction.hasDirector and !bomStructureAction.hasMultipleItems}">
@@ -111,23 +122,39 @@
                                 <h:outputLabel value="#{messages['eloraplm.message.createStructure.success.calculated']}" />
                             </div>
                         </ui:fragment>
-                    </div>                    
+                    </div>
                 </a4j:outputPanel>
             </h:panelGroup>
         </div>
     
-        <div class="buttonsGadget">
-            <h:panelGroup id="buttonsPanel">
-                <h:commandButton value="#{messages['eloraplm.command.bom.updateStructure']}" styleClass="button" disabled="#{bomStructureAction.itemStructureData == null or !bomStructureAction.hasDirector}"
-                        action="#{bomStructureAction.updateStructure}">
-                </h:commandButton>
-                <h:commandButton value="#{messages['command.cancel']}" styleClass="button">
-                    <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
-                </h:commandButton>
-            </h:panelGroup>
-        </div>
+        
+        <h:panelGroup layout="block" id="buttonsPanel" styleClass="buttonsGadget">
+            
+            <h:commandButton value="#{messages['eloraplm.command.bom.updateStructure']}" styleClass="button mainAction" disabled="#{bomStructureAction.itemStructureData == null or !bomStructureAction.hasDirector}"
+                    action="#{bomStructureAction.updateStructure}">
+            </h:commandButton>
+            
+            <h:commandButton value="#{messages['command.cancel']}" styleClass="button">
+                <f:ajax execute="@this" onevent="jQuery.fancybox.close" />
+            </h:commandButton>
+            
+        </h:panelGroup>
         
     </h:form>
+  </div>
 
+
+
+  <ui:fragment rendered="#{bomStructureAction.isCsvImportCompositionEnabled}">
+    <h4 style="padding-top:40px;">
+        <h:outputText value="#{messages['eloraplm.title.createBomStructure.option2']}" />
+    </h4>
+
+    <div style="border: 1px solid #e6e9ef;padding: 10px;">
+        <ui:include src="bom_csv_composition_import.xhtml" />
+    </div>
+  </ui:fragment>
+    
+</div>
 
 </ui:composition>

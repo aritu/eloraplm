@@ -1,0 +1,7 @@
+
+.compactLayout .eloraTinyLabel {
+  color: #777;
+  display: inline-block;
+  text-align: right;
+  padding: .4em .4em 0 0;
+}

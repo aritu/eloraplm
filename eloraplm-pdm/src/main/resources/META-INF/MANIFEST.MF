@@ -7,11 +7,12 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Nuxeo
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-pdm-overwrite-TypeServic
- e-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-overwrite-ActionServic
- e-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-promote-WebLayoutManag
- er-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-webapp-ActionService-
- contrib.xml,OSGI-INF/extensions/eloraplm-pdm-makeobsolete-MakeObsolet
- eService-contrib.xml,OSGI-INF/extensions/eloraplm-pdm-makeobsolete-We
- bLayoutManager-contrib.xml,OSGI-INF/extensions/CheckinManager.xml
-
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-pdm-overwrite-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-pdm-overwrite-ActionService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-pdm-promote-WebLayoutManager-contrib.xml,
+ OSGI-INF/extensions/eloraplm-pdm-webapp-ActionService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-pdm-makeobsolete-MakeObsoleteService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-pdm-makeobsolete-WebLayoutManager-contrib.xml,
+ OSGI-INF/extensions/CheckinManager.xml,
+ OSGI-INF/extensions/eloraplm-pdm-checkout-OperationServiceComponent-contrib.xml,
+ OSGI-INF/extensions/eloraplm-pdm-webapp-WebLayoutManager-contrib.xml

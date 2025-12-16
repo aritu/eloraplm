@@ -1,19 +1,27 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
-xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/related_supplier" 
-targetNamespace="http://www.nuxeo.org/ecm/project/schemas/related_supplier"
-xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
-
-
-  <xs:simpleType name="supplierList" >
-    <xs:list>
-      <xs:simpleType>
-        <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_erpSuppliers" />
-      </xs:simpleType>
-    </xs:list>
-  </xs:simpleType>  
-
-  <xs:element name="suppliers" type="nxs:supplierList"/>
-
-
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" 
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/related_supplier" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/related_supplier"
+    xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/">
+    
+    <xs:complexType name="relatedSupplier">
+        <xs:sequence>
+            <xs:element name="supplier">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="elora_erpSuppliers" />
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="preference" type="xs:integer" />
+            <xs:element name="partNumber" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="supplierList">
+        <xs:sequence>
+            <xs:element name="item" type="nxs:relatedSupplier" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="suppliers" type="nxs:supplierList"/>
+    
 </xs:schema>

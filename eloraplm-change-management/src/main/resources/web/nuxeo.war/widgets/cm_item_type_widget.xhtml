@@ -1,25 +1,36 @@
 <ui:composition
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:nxl="http://nuxeo.org/nxforms/layout"
-  xmlns:f="http://java.sun.com/jsf/core"
-  xmlns:c="http://java.sun.com/jstl/core">
-  
-  <ui:fragment rendered="#{field != null and !empty field}">
-  
-    <ui:fragment rendered="#{field.hasFacet('CadDocument')}">
-    
-      <nxl:widgetType name="selectOneDirectory" mode="view" 
-        value="#{field.cad.cadType}" 
-        directoryName="elora_cadType" 
-        localize="true" 
-        displayIdAndLabel="false" 
-        style="min-width: 10em;"
-        notDisplayDefaultOption="true"/>
-        
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxdir="http://nuxeo.org/nxdirectory"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+>
+    <ui:fragment rendered="#{field != null and !empty field}">
+        <ui:fragment rendered="#{field.hasFacet('CadDocument')}">
+            <c:if test="#{widget.mode != 'csv'}">
+                <nxl:widgetType
+                    name="selectOneDirectory"
+                    mode="view"
+                    value="#{field.cad.cadType}"
+                    directoryName="elora_cadType"
+                    localize="true"
+                    displayIdAndLabel="false"
+                    style="min-width: 10em"
+                    notDisplayDefaultOption="true"
+                />
+            </c:if>
+
+            <c:if test="#{widget.mode == 'csv'}">
+                <nxu:set
+                    var="cadTypeDoc"
+                    value="#{nxdir:directoryEntry('elora_cadType', field.cad.cadType)}"
+                >
+                    <h:outputText value="#{cadTypeDoc.vocabulary.label}" />
+                </nxu:set>
+            </c:if>
+        </ui:fragment>
     </ui:fragment>
-  
-  </ui:fragment>
-  
 </ui:composition>

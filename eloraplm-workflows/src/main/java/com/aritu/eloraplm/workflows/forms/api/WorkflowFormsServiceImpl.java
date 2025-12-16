@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -58,6 +57,7 @@ import org.nuxeo.runtime.model.DefaultComponent;
 
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
+import com.aritu.eloraplm.constants.NuxeoFacetConstants;
 import com.aritu.eloraplm.constants.NuxeoMetadataConstants;
 import com.aritu.eloraplm.constants.WorkflowConstants;
 import com.aritu.eloraplm.constants.WorkflowDoctypeConstants;
@@ -213,13 +213,14 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
 
     @Override
     public DocumentModelList getNodeQuestionsForDoc(CoreSession session,
-            String wfId, String nodeId, String docId) throws EloraException {
+            String wfId, String wfInstanceId, String nodeId, String docId)
+            throws EloraException {
 
         DocumentModelList questions = new DocumentModelListImpl();
 
         if (wfId != null && nodeId != null && docId != null) {
             String q = WorkflowFormsQueryFactory.getNodeQuestionsForDoc(wfId,
-                    nodeId, docId);
+                    wfInstanceId, nodeId, docId);
             questions = session.query(q);
         }
 
@@ -328,6 +329,8 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
                         root.setPropertyValue(
                                 NuxeoMetadataConstants.NX_DC_TITLE,
                                 "Workflow Form Questions");
+                        root.addFacet(
+                                NuxeoFacetConstants.FACET_HIDDEN_IN_NAVIGATION);
                         root = session.createDocument(root);
 
                         // Set ACP (Permissions)
@@ -458,13 +461,20 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
 
         String wfId = route.getModelName();
 
+        String wfInstanceId = route.getDocument().getId();
+
+        // WE DO NOT REMOVE OLD QUESTIONS AND ANSWERS, SINCE NOW ALL INSTANCES
+        // ARE HOLD
+
+        /*
         // Remove old questions and answers
         removeWorkflowAnswers(session, doc, wfId);
 
         removeWorkflowQuestionsForDocument(session, wfId, doc.getId());
+         */
 
         // Copy all model questions for workflow
-        copyQuestionsForDocument(session, wfId, doc);
+        copyQuestionsForDocument(session, wfId, wfInstanceId, doc);
 
         session.save();
 
@@ -472,49 +482,53 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
                 WorkflowEventNames.WF_FORMS_ANSWERS_UPDATED);
     }
 
+    /*
     private void removeWorkflowAnswers(CoreSession session, DocumentModel doc,
             String wfId) {
-
+    
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> answers = (List<Map<String, Object>>) doc.getPropertyValue(
                 WorkflowMetadataConstants.WFANS_ANSWERS);
-
+    
         Iterator<Map<String, Object>> it = answers.iterator();
         while (it.hasNext()) {
-
+    
             Map<String, Object> answer = it.next();
-
+    
             if (answer.get(
                     WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID).equals(
                             wfId)) {
                 it.remove();
             }
         }
-
+    
         doc.setPropertyValue(WorkflowMetadataConstants.WFANS_ANSWERS,
                 (Serializable) answers);
-
+    
         session.saveDocument(doc);
     }
+    */
 
+    /*
     private void removeWorkflowQuestionsForDocument(CoreSession session,
             String wfId, String docId) throws EloraException {
-
+    
         DocumentModelList questions = getWorkflowQuestionsForDoc(session, wfId,
                 docId);
-
+    
         for (DocumentModel question : questions) {
             session.removeDocument(question.getRef());
         }
-
+    
         session.save();
-
+    
     }
+    */
 
     @Override
     public Map<String, DocumentModelList> copyQuestionsForDocument(
-            CoreSession session, String wfId, DocumentModel doc)
-            throws EloraException {
+            CoreSession session, String wfId, String wfInstanceId,
+            DocumentModel doc) throws EloraException {
 
         Map<String, DocumentModelList> questionsByNode = new HashMap<String, DocumentModelList>();
 
@@ -548,6 +562,11 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
                                     WorkflowMetadataConstants.WFQ_PARENT_DOC,
                                     doc.getId());
 
+                            // Set workflow instance id
+                            docQuestion.setPropertyValue(
+                                    WorkflowMetadataConstants.WFQ_WORKFLOW_INSTANCE_ID,
+                                    wfInstanceId);
+
                             docQuestion = session.saveDocument(docQuestion);
 
                             String nodeId = docQuestion.getPropertyValue(
@@ -578,7 +597,7 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
 
     @Override
     public void initializeNodeTaskAnswersForDocument(CoreSession session,
-            GraphRoute route, Task task) {
+            String wfInstanceId, GraphRoute route, Task task) {
 
         new UnrestrictedSessionRunner("default") {
 
@@ -607,12 +626,11 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
                                 "Target doc has no HasWorkflowForms facet.");
                     }
 
-                    @SuppressWarnings("unchecked")
                     List<Map<String, Object>> taskAnswers = new ArrayList<Map<String, Object>>();
 
                     // Get the questions
                     String q = WorkflowFormsQueryFactory.getNodeQuestionsForDoc(
-                            wfId, nodeId, targetDocId);
+                            wfId, wfInstanceId, nodeId, targetDocId);
                     DocumentModelList questions = session.query(q);
                     for (DocumentModel question : questions) {
 
@@ -620,6 +638,9 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
                         answer.put(
                                 WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID,
                                 wfId);
+                        answer.put(
+                                WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_INSTANCE_ID,
+                                wfInstanceId);
                         answer.put(
                                 WorkflowMetadataConstants.WFANS_ANSWERS_NODE_ID,
                                 nodeId);
@@ -671,7 +692,7 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
 
     @Override
     public void writeNodeTaskAnswersForDocument(CoreSession session,
-            GraphRoute route, GraphNode node, Task task,
+            String wfInstanceId, GraphRoute route, GraphNode node, Task task,
             DocumentModel targetDoc, String action) {
 
         new UnrestrictedSessionRunner("default") {
@@ -710,17 +731,18 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
 
                     // Add node vars answers
                     List<Map<String, Object>> nodeVarAnswers = createNodeVarAnswers(
-                            route, node, task, taskExecuted);
+                            wfInstanceId, route, node, task, taskExecuted);
                     docAnswers.addAll(nodeVarAnswers);
 
                     // Add comment answer
                     Map<String, Object> commentAnswer = createCommentAnswer(
-                            route, node, task, taskExecuted);
+                            wfInstanceId, route, node, task, taskExecuted);
                     docAnswers.add(commentAnswer);
 
                     // Add selected action
                     Map<String, Object> actionAnswer = createActionAnswer(
-                            action, route, node, task, taskExecuted);
+                            action, wfInstanceId, route, node, task,
+                            taskExecuted);
                     docAnswers.add(actionAnswer);
 
                     // We save workflow variables to add executed datetimes
@@ -748,8 +770,8 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
             }
 
             private List<Map<String, Object>> createNodeVarAnswers(
-                    GraphRoute route, GraphNode node, Task task,
-                    GregorianCalendar taskExecuted) {
+                    String wfInstanceId, GraphRoute route, GraphNode node,
+                    Task task, GregorianCalendar taskExecuted) {
 
                 List<Map<String, Object>> nodeVarAnswers = new ArrayList<Map<String, Object>>();
                 Map<String, Serializable> nodeVars = node.getVariables();
@@ -772,6 +794,9 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
                     nodeVarAnswer.put(
                             WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID,
                             route.getModelName());
+                    nodeVarAnswer.put(
+                            WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_INSTANCE_ID,
+                            wfInstanceId);
                     nodeVarAnswer.put(
                             WorkflowMetadataConstants.WFANS_ANSWERS_NODE_ID,
                             node.getId());
@@ -818,8 +843,9 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
                 return strValue;
             }
 
-            private Map<String, Object> createCommentAnswer(GraphRoute route,
-                    GraphNode node, Task task, GregorianCalendar taskExecuted) {
+            private Map<String, Object> createCommentAnswer(String wfInstanceId,
+                    GraphRoute route, GraphNode node, Task task,
+                    GregorianCalendar taskExecuted) {
 
                 String comment = getComment(node, task);
 
@@ -827,6 +853,9 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
                 commentAnswer.put(
                         WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID,
                         route.getModelName());
+                commentAnswer.put(
+                        WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_INSTANCE_ID,
+                        wfInstanceId);
                 commentAnswer.put(
                         WorkflowMetadataConstants.WFANS_ANSWERS_NODE_ID,
                         node.getId());
@@ -888,13 +917,16 @@ public class WorkflowFormsServiceImpl extends DefaultComponent
             }
 
             private Map<String, Object> createActionAnswer(String action,
-                    GraphRoute route, GraphNode node, Task task,
-                    GregorianCalendar taskExecuted) {
+                    String wfInstanceId, GraphRoute route, GraphNode node,
+                    Task task, GregorianCalendar taskExecuted) {
 
                 Map<String, Object> actionAnswer = new HashMap<String, Object>();
                 actionAnswer.put(
                         WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_ID,
                         route.getModelName());
+                actionAnswer.put(
+                        WorkflowMetadataConstants.WFANS_ANSWERS_WORKFLOW_INSTANCE_ID,
+                        wfInstanceId);
                 actionAnswer.put(
                         WorkflowMetadataConstants.WFANS_ANSWERS_NODE_ID,
                         node.getId());

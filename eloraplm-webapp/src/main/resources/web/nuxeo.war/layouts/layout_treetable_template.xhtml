@@ -9,245 +9,576 @@
     xmlns:nxu="http://nuxeo.org/nxweb/util"
     xmlns:nxr="http://nuxeo.org/nxweb/resources"
     xmlns:p="http://primefaces.org/ui"
-    id="#{layout.id}">
-    
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    id="#{layout.id}"
+>
     <script type="text/javascript">
-    PrimeFaces.settings.locale = 'en_US';
+        if(PrimeFaces) {
+            // Use only last row to select TreeTables + send selection events with shift
+            if (PrimeFaces.widget.TreeTable) {
+                PrimeFaces.widget.TreeTable.prototype.bindSelectionEvents=function(){var c=this,a="> tr.ui-treetable-selectable-node > td:last-child";this.tbody.off("mouseenter.treeTable mouseleave.treeTable click.treeTable",a).on("mouseenter.treeTable",a,null,function(d){PFJQ(this).parent().addClass("ui-state-hover")}).on("mouseleave.treeTable",a,null,function(d){PFJQ(this).parent().removeClass("ui-state-hover")}).on("click.treeTable",a,null,function(d){c.onRowClick(d,PFJQ(this).parent())});if(this.isCheckboxSelection()){var b=this.cfg.nativeElements?"> tr.ui-treetable-selectable-node > td:first-child :checkbox":"> tr.ui-treetable-selectable-node > td:first-child div.ui-chkbox-box";this.tbody.off("click.treeTable-checkbox mouseenter.treeTable-checkbox mouseleave.treeTable-checkbox",b).on("mouseenter.treeTable-checkbox",b,null,function(d){PFJQ(this).addClass("ui-state-hover")}).on("mouseleave.treeTable-checkbox",b,null,function(d){PFJQ(this).removeClass("ui-state-hover")}).on("click.treeTable-checkbox",b,null,function(f){var d=PFJQ(this).closest("tr.ui-treetable-selectable-node");c.toggleCheckboxNode(d)});if(this.cfg.nativeElements){this.indeterminateNodes(this.tbody.children("tr.ui-treetable-partialselected"))}}}
+                PrimeFaces.widget.TreeTable.prototype.onRowClick=function(d,c){if(PFJQ(d.target.parentNode).is("td,span:not(.ui-c)")){var b=c.hasClass("ui-state-highlight"),e=d.metaKey||d.ctrlKey,a=d.shiftKey;if(this.isCheckboxSelection()){this.toggleCheckboxNode(c)}else{if(b&amp;&amp;e){this.unselectNode(c)}else{if(this.isSingleSelection()||(this.isMultipleSelection()&amp;&amp;!e)){this.unselectAllNodes()}if(this.isMultipleSelection()&amp;&amp;a){this.selectNodesInRange(c)}else{this.selectNode(c);this.cursorNode=c}}}if(this.cfg.disabledTextSelection){PrimeFaces.clearSelection()}}}
+                PrimeFaces.widget.TreeTable.prototype.selectNodesInRange=function(d){if(this.cursorNode){this.unselectAllNodes();var g=d.index(),c=this.cursorNode.index(),f=(g&gt;c)?c:g,e=(g&gt;c)?(g+1):(c+1),a=this.tbody.children();for(var b=f;b&lt;e;b++){if(b==e-1){this.selectNode(a.eq(b))}else{this.selectNode(a.eq(b),true)}}}else{this.selectNode(d)}}
+            }
+        }
+        function toggleTreeTableFilters() {
+            PFJQ('.ui-column-filter').first().is(':visible') ? PFJQ('.ui-column-filter').hide() : PFJQ('.ui-column-filter').css('display', 'block');
+            PFJQ('.ui-column-customfilter').first().is(':visible') ? PFJQ('.ui-column-customfilter').hide() : PFJQ('.ui-column-customfilter').css('display', 'block');
+        }
     </script>
 
-    <nxu:set var="treeWidgetId" value="#{widget.id}">
-        <nxu:set var="treeLayoutId" value="#{layout.id}">
-            
-            <h:panelGroup id="treetablePanel" layout="block">
-            
+    <nxu:set
+        var="treeWidgetId"
+        value="#{widget.id}"
+    >
+        <nxu:set
+            var="treeBlockerId"
+            value="tblock_#{treeWidgetId}"
+        >
+            <h:panelGroup
+                id="treetablePanel"
+                layout="block"
+            >
                 <h:form id="ttForm">
-                
-                    <nxu:set var="rowStyleClass" value="#{layout.mode eq 'edit' ?
-                        (nodeData.isNew ? 'rowIsNew' : (nodeData.isRemoved ? 'rowIsRemoved' : (nodeData.isModified ? 'rowIsModified' : 'rowIsNormal')))
-                        : eloraWebActions.evaluateString(layout.properties.rowStyleClass)}" >
-                        
-                        <nxu:set var="widgetVar" value="treetbl_#{layout.id}">
-                            
-                            <nxu:set var="rootFactory" value="#{eloraWebActions.evaluateObject(layout.properties.factory)}">
-                                
-                                <div style="display: flex; justify-content: flex-end;">
-                                    <div id="treeActionErrorMsg" class="processMessage completeError" style="display: none; margin-right: 0;">#{messages['eloraplm.message.error.treetable.action']}</div>
-                                </div>
-                                
-                                <p:treeTable id="#{treeWidgetId}" widgetVar="#{widgetVar}" value="#{rootFactory}"
-                                    var="nodeData" nodeVar="node"
-                                    resizableColumns="true" liveResize="true"
-                                    tableStyleClass="treetable #{layout.properties.tableStyleClass}"
-                                    tableStyle="#{layout.properties.tableStyle}"
-                                    rowStyleClass="#{rowStyleClass}"
-                                    emptyMessage="#{value.isInvalid ? messages['eloraplm.message.info.treetable.isInvalid'] : (value.hasUnreadableNodes ? messages['eloraplm.message.info.treetable.hasUnreadableNodes'] : messages['eloraplm.message.info.treetable.noRecordsFound'])}"
-                                    skipChildren="true"
-                                    selectionMode="#{layout.properties.selectionMode}"
-                                    paginator="#{not empty layout.properties.paginate ? layout.properties.paginate : 'false'}"
-                                    rows="1">
-                                    
-                                    <c:if test="#{not empty layout.properties.selectionMode}">
-                                        <f:attribute name="selection" value="#{value[layout.properties.selectionMode eq 'multiple' ? 'selectedNodes' : 'selectedNode']}" />
-                                    </c:if>
-                                    
-                                    <c:if test="#{layout.properties.isSortable}">
-                                        <f:attribute name="sortBy" value="#{eloraWebActions.evaluateString(layout.properties.sortBy)}" />
-                                        <f:attribute name="sortOrder" value="#{layout.properties.sortOrder}" />
-                                    </c:if>
-                                    
-                                    <f:facet name="header" style="overflow: hidden;">
-                                        
-                                        <span class="treeHeaderTitle">
-                                            #{messages[eloraWebActions.evaluateString(layout.properties.tableTitle)]}
-                                            <br /><span class="treeInfo">
-                                                <strong>#{value.firstLevelChildrenCount}</strong> #{messages['eloraplm.label.treetable.info.children.firstlevel']},
-                                                <strong>#{value.childrenCount}</strong> #{messages['eloraplm.label.treetable.info.children.total']}
-                                            </span>
-                                        </span>
-                                        <span class="treeHeaderButtons">
-                                            <h:panelGroup styleClass="headerFilters" rendered="#{not empty layout.properties.headerFiltersTemplate}">
-                                                <ui:include src="#{layout.properties.headerFiltersTemplate}" />
-                                            </h:panelGroup>
-                                            
-                                            <h:commandButton
-                                                image="/icons/fold.png"
-                                                title="#{messages['eloraplm.command.treetable.collapseAll']}"
-                                                styleClass="button"
-                                                style="width: 48px; height: 24px;">
-                                                
-                                                <p:ajax
-                                                    immediate="true"
-                                                    listener="#{value.collapseAll}"
-                                                    process="@this"
-                                                    partialSubmit="true"
-                                                    update="#{treeWidgetId}"
-                                                    onstart="PF('treeBlocker_#{treeWidgetId}').show();"
-                                                    oncomplete="PF('treeBlocker_#{treeWidgetId}').hide();"
-                                                    onerror="jQuery('#treeActionErrorMsg').show();"
-                                                />
-                                                
-                                            </h:commandButton>
-                                            
-                                            <h:commandButton
-                                                image="/icons/unfold.png"
-                                                title="#{messages['eloraplm.command.treetable.expandAll']}"
-                                                styleClass="button"
-                                                style="width: 48px; height: 24px;">
-                                                
-                                                <p:ajax
-                                                    immediate="true"
-                                                    listener="#{value.expandAll}"
-                                                    process="@this"
-                                                    partialSubmit="true"
-                                                    update="#{treeWidgetId}"
-                                                    onstart="PF('treeBlocker_#{treeWidgetId}').show();"
-                                                    oncomplete="PF('treeBlocker_#{treeWidgetId}').hide();"
-                                                    onerror="jQuery('#treeActionErrorMsg').show();"
-                                                />
-                                                
-                                            </h:commandButton>
-                                            
-                                            <h:commandButton
-                                                image="/icons/refresh.png"
-                                                title="#{messages['eloraplm.command.treetable.reload']}"
-                                                styleClass="button"
-                                                style="width: 48px; height: 24px; padding: 4px 16px;">
-                                                
-                                                <p:ajax
-                                                    immediate="true"
-                                                    listener="#{value.reloadTree}"
-                                                    process="@this"
-                                                    partialSubmit="true"
-                                                    update="#{treeWidgetId} #{layout.properties.reloadRerender}"
-                                                    onstart="PF('treeBlocker_#{treeWidgetId}').show();"
-                                                    oncomplete="PF('treeBlocker_#{treeWidgetId}').hide();"
-                                                    onerror="jQuery('#treeActionErrorMsg').show();"
-                                                />
-                                                
-                                            </h:commandButton>
-                                            
-                                        </span>
-                                        
-                                    </f:facet>
-                                    
-                                    <nxl:layoutColumn>
-                                        <p:column style="#{layoutColumn.properties.columnStyle}" styleClass="treetableColumn #{layoutColumn.properties.columnStyleClass}">
-                                            
-                                            <f:facet name="header">
-                                                <span title="#{messages[layoutColumn.properties.columnTooltip]}">#{messages[eloraWebActions.evaluateString(layoutColumn.properties.columnHeading)]}</span>
-                                            </f:facet>
-                                            
-                                            <h:panelGroup id="#{layoutColumn.widgets[0].name}">
-                                                <nxl:layoutColumnWidget>
-                                                    <nxl:widget widget="#{widget}" mode="#{layout.mode}" value="#{nodeData}" />
-                                                </nxl:layoutColumnWidget>
-                                            </h:panelGroup>
-                                        </p:column>
-                                    </nxl:layoutColumn>
-                                    
-                                    <c:if test="#{not empty layout.properties.selectionMode}">
-                                        <p:column style="width: 35px" styleClass="selection-checkbox">
-                                            <h:panelGroup id="row-selection">
-                                                &#x25a2;
-                                            </h:panelGroup>
-                                        </p:column>
-                                        <c:if test="#{layout.properties.selectionMode eq 'single'}">
-                                            <p:ajax event="select" />
-                                            <p:ajax event="unselect" />
-                                        </c:if>
-                                    </c:if>
-                                    
-                                </p:treeTable>
-                                <p:outputPanel>
-                                    <p:blockUI block="#{component.namingContainer.parent.namingContainer.clientId}:treetablePanel"
-                                        trigger="#{treeWidgetId}"
-                                        widgetVar="treeBlocker_#{treeWidgetId}" />
-                                </p:outputPanel>
-                                
-                                <p:remoteCommand name="updateTreetableForm_#{treeWidgetId}"
-                                    process="@form"
-                                    onsuccess="executeActionsAfterSelectionUpdate();"
+                    <nxu:set
+                        var="rowStyleClass"
+                        value="#{layout.mode eq 'edit' ?
+                    (nodeData.isNew ? 'rowIsNew' : (nodeData.isRemoved ? 'rowIsRemoved' : (nodeData.isModified ? 'rowIsModified' : 'rowIsNormal')))
+                    : ''} #{eloraWebActions.evaluateString(layout.properties.rowStyleClass)}"
+                    >
+                        <div style="display: flex; justify-content: flex-end">
+                            <div
+                                id="treeActionErrorMsg"
+                                class="processMessage completeError"
+                                style="display: none; margin-right: 0"
+                            >
+                                #{messages['eloraplm.message.error.treetable.action']}
+                            </div>
+                        </div>
+
+                        <p:treeTable
+                            id="tt"
+                            widgetVar="#{treeWidgetId}"
+                            value="#{value.root}"
+                            var="nodeData"
+                            nodeVar="node"
+                            resizableColumns="true"
+                            liveResize="true"
+                            tableStyleClass="treetable
+                                #{layout.properties.tableStyleClass}
+                                #{layout.properties.useFilters and not layout.properties.showFiltersByDefault ? 'hiddenFilters' : ''}"
+                            tableStyle="#{layout.properties.tableStyle}"
+                            rowStyleClass="#{rowStyleClass}"
+                            emptyMessage="#{value.isInvalid ? messages['eloraplm.message.info.treetable.isInvalid'] :
+                                (value.hasUnreadableNodes ? messages['eloraplm.message.info.treetable.hasUnreadableNodes'] :
+                                (layout.properties.useFilters and value.getIsFiltered(component.namingContainer) ? messages['eloraplm.message.info.treetable.noRecordsFoundFiltered']
+                                : messages['eloraplm.message.info.treetable.noRecordsFound']))}"
+                            skipChildren="true"
+                            selectionMode="#{layout.properties.selectionMode}"
+                            paginator="#{not empty layout.properties.paginate ? layout.properties.paginate : 'false'}"
+                            rows="1"
+                        >
+                            <c:if
+                                test="#{not empty layout.properties.selectionMode}"
+                            >
+                                <f:attribute
+                                    name="selection"
+                                    value="#{value[layout.properties.selectionMode eq 'multiple' ? 'selectedNodes' : 'selectedNode']}"
                                 />
-                                
-                            </nxu:set>
-                            
-                        </nxu:set>
-                        
-                    </nxu:set>
-                    
-                </h:form>
-                
-                <nxu:set var="permanentButtonsCount" value="#{fn:length(webActions.getDocumentActions(currentDocument, 'TREETABLE_PERMANENT_BUTTON', false, false))}">
-                    
-                    <h:panelGroup id="ttButtonsPanel" styleClass="ttButtonsPanel" layout="block"
-                        rendered="#{not value.isInvalid and not value.hasUnreadableNodes and (layout.mode eq 'edit' or permanentButtonsCount gt 0)}">
-                        
-                        <c:if test="#{not layout.properties.isFancybox}" >
-                            <nxu:set var="nonProxyDocument" value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}">
-                                
-                                <h:panelGroup id="ttButtonsRightPanel" styleClass="ttButtonsRightPanel">
-                                    
-                                    <c:if test="#{layout.mode eq 'edit'}">
-                                        
-                                        <h:panelGroup id="ttButtons" styleClass="ttButtons"
-                                            layout="block"
-                                            rendered="#{not layout.properties.isInverse}">
-                                            
-                                            <nxl:widget name="#{not empty layout.properties.alternativeButtonsWidget ?
-                                                layout.properties.alternativeButtonsWidget
-                                                : 'ttButtons'}"
-                                                mode="view" value="#{nonProxyDocument}" />
-                                            
-                                        </h:panelGroup>
-                                        
-                                        <h:panelGroup id="ttInverseButtons" styleClass="ttInverseButtons"
-                                            layout="block"
-                                            rendered="#{layout.properties.isInverse}">
-                                            
-                                            <nxl:widget name="#{not empty layout.properties.alternativeButtonsWidget ?
-                                                layout.properties.alternativeInverseButtonsWidget
-                                                : 'ttInverseButtons'}"
-                                                mode="view" value="#{nonProxyDocument}" />
-                                            
-                                        </h:panelGroup>
-                                        
-                                    </c:if>
-                                    
-                                    <h:panelGroup id="ttPermanentButtons" styleClass="ttButtons"
-                                        layout="block">
-                                        
-                                        <nxl:widget name="ttPermanentButtons" mode="view" value="#{nonProxyDocument}" />
-                                        
+                            </c:if>
+
+                            <c:if test="#{layout.properties.sortable}">
+                                <f:attribute
+                                    name="sortMode"
+                                    value="#{not empty layout.properties.sortMode ? layout.properties.sortMode : 'multiple'}"
+                                />
+
+                                <c:if
+                                    test="#{layout.properties.useDefaultSort}"
+                                >
+                                    <f:attribute
+                                        name="sortBy"
+                                        value="#{value.sortBy}"
+                                    />
+                                </c:if>
+                            </c:if>
+
+                            <c:if test="#{layout.properties.useFilters}">
+                                <f:attribute
+                                    name="filteredValue"
+                                    value="#{value.filteredValue}"
+                                />
+                            </c:if>
+
+                            <f:facet
+                                name="header"
+                                style="overflow: hidden"
+                            >
+                                <span class="treeHeaderTitle">
+                                    #{messages[eloraWebActions.evaluateString(layout.properties.tableTitle)]}
+                                    <br />
+
+                                    <h:panelGroup
+                                        id="treeInfo"
+                                        styleClass="treeInfo"
+                                    >
+                                        <strong
+                                            >#{value.firstLevelChildrenCount}</strong
+                                        >
+                                        #{messages['eloraplm.label.treetable.info.children.firstlevel']},
+                                        <strong>#{value.childrenCount}</strong>
+                                        #{messages['eloraplm.label.treetable.info.children.total']}
                                     </h:panelGroup>
-                                    
-                                </h:panelGroup>
-                                
-                                <h:panelGroup id="ttButtonsLeftPanel" styleClass="ttButtonsLeftPanel">
-                                    <c:if test="#{layout.mode eq 'edit' and not empty layout.properties.selectionMode}">
-                                        <h:panelGroup id="ttSelectionButtons" styleClass="ttSelectionButtons" layout="block">
-                                            
-                                            <h:graphicImage class="selectionActionsIndicator" value="/icons/selected_rows_actions_24.png" 
-                                                title="#{messages['treetable.selectedRowsActions']}" />
-                                            
-                                            <nxl:widget name="#{not empty layout.properties.alternativeSelectButtonsWidget ?
-                                                layout.properties.alternativeSelectButtonsWidget
-                                                : 'ttSelectionButtons'}"
-                                                mode="view" value="#{nonProxyDocument}" styleClass="ttSelectionButtonsPanel" />
-                                            
+                                </span>
+
+                                <h:panelGroup id="headerInfo">
+                                    <c:if
+                                        test="#{layout.properties.useFilters}"
+                                    >
+                                        <h:panelGroup
+                                            id="filterInfo"
+                                            styleClass="filterInfo"
+                                        >
+                                            <p:commandButton
+                                                type="button"
+                                                icon="pi pi-filter"
+                                                styleClass="rounded-button ui-button-flat ui-button-secondary toggle-filters-button"
+                                                pt:data-tooltip="#{messages['eloraplm.command.treetable.toggleFilters']}"
+                                                onclick="toggleTreeTableFilters()"
+                                                rendered="#{not value.getIsFiltered(component.namingContainer)}"
+                                            />
+                                            <p:button
+                                                onclick="return false"
+                                                icon="pi pi-filter"
+                                                styleClass="rounded-button ui-button-info ui-button-outlined"
+                                                rendered="#{value.getIsFiltered(component.namingContainer)}"
+                                            />
+                                            <h:panelGroup
+                                                rendered="#{value.getIsFiltered(component.namingContainer)}"
+                                                styleClass="filteredInfo"
+                                            >
+                                                <strong
+                                                    >#{value.filteredValue.children.size}</strong
+                                                >
+                                                #{messages['eloraplm.label.treetable.info.filtered.size']}
+                                                <p:commandLink
+                                                    rendered="false"
+                                                    action="#{value.clearFilters(component.namingContainer)}"
+                                                    process="@this"
+                                                    partialSubmit="true"
+                                                    update="tt"
+                                                    style="
+                                                        font-weight: bold;
+                                                        margin-left: 0.25em;
+                                                        color: #0288d1;
+                                                        font-size: 0.8em;
+                                                    "
+                                                    pt:data-tooltip="Garbitu iragazkiak"
+                                                >
+                                                    <i class="pi pi-times"></i>
+                                                </p:commandLink>
+                                            </h:panelGroup>
                                         </h:panelGroup>
                                     </c:if>
+
+                                    <span class="treeHeaderButtons">
+                                        <h:panelGroup
+                                            styleClass="headerFilters"
+                                            rendered="#{not empty layout.properties.headerFiltersTemplate}"
+                                        >
+                                            <ui:include
+                                                src="#{layout.properties.headerFiltersTemplate}"
+                                            />
+                                        </h:panelGroup>
+
+                                        <c:if
+                                            test="#{widget.properties.exportable}"
+                                        >
+                                            <p:commandButton
+                                                type="button"
+                                                id="exportbtn"
+                                                styleClass="rounded-button ui-button-flat ui-button-secondary"
+                                                icon="pi pi-file-export"
+                                                pt:data-tooltip="#{messages['eloraplm.command.treetable.export']}"
+                                            />
+                                        </c:if>
+
+                                        <p:commandButton
+                                            type="button"
+                                            icon="pi pi-minus"
+                                            styleClass="rounded-button ui-button-flat ui-button-secondary"
+                                            pt:data-tooltip="#{messages['eloraplm.command.treetable.collapseAll']}"
+                                        >
+                                            <p:ajax
+                                                immediate="true"
+                                                listener="#{value.collapseAll(component.namingContainer)}"
+                                                process="@this"
+                                                partialSubmit="true"
+                                                update="#{layout.properties.useFilters ? '@none' : '@form'}"
+                                                onstart="PF('#{treeBlockerId}').show();"
+                                                onerror="PFJQ('#treeActionErrorMsg').show();"
+                                                oncomplete="#{layout.properties.useFilters ? '' : 'PF('.concat('\'').concat(treeBlockerId).concat('\'').concat(').hide();')}"
+                                            />
+                                        </p:commandButton>
+
+                                        <p:commandButton
+                                            type="button"
+                                            icon="pi pi-plus"
+                                            styleClass="rounded-button ui-button-flat ui-button-secondary"
+                                            pt:data-tooltip="#{messages['eloraplm.command.treetable.expandAll']}"
+                                        >
+                                            <p:ajax
+                                                immediate="true"
+                                                listener="#{value.expandAll(component.namingContainer)}"
+                                                process="@this"
+                                                partialSubmit="true"
+                                                update="#{layout.properties.useFilters ? '@none' : '@form'}"
+                                                onstart="PF('#{treeBlockerId}').show();"
+                                                onerror="PFJQ('#treeActionErrorMsg').show();"
+                                                oncomplete="#{layout.properties.useFilters ? '' : 'PF('.concat('\'').concat(treeBlockerId).concat('\'').concat(').hide();')}"
+                                            />
+                                        </p:commandButton>
+
+                                        <p:commandButton
+                                            type="button"
+                                            icon="pi pi-refresh"
+                                            styleClass="rounded-button ui-button-flat ui-button-secondary"
+                                            pt:data-tooltip="#{messages['eloraplm.command.treetable.reload']}"
+                                        >
+                                            <p:ajax
+                                                immediate="true"
+                                                listener="#{value.reloadTree(component.namingContainer)}"
+                                                process="@this"
+                                                partialSubmit="true"
+                                                update="@form #{layout.properties.reloadRerender}"
+                                                onstart="PF('#{treeBlockerId}').show();"
+                                                oncomplete="PF('#{treeBlockerId}').hide();"
+                                                onerror="PFJQ('#treeActionErrorMsg').show();"
+                                            />
+                                        </p:commandButton>
+                                    </span>
                                 </h:panelGroup>
-                                
-                            </nxu:set>
+                            </f:facet>
+
+                            <!-- COLUMN -->
+                            <nxl:layoutColumn>
+                                <c:if
+                                    test="#{not eloraWebActions.evaluateBoolean(layoutColumn.properties.hidden)}"
+                                >
+                                    <p:column
+                                        style="#{layoutColumn.properties.columnStyle}"
+                                        styleClass="treetableColumn #{layoutColumn.properties.columnStyleClass}"
+                                        visible="#{not empty layoutColumn.properties.visible and not layoutColumn.properties.visible ? 'false' : 'true'}"
+                                    >
+                                        <c:if
+                                            test="#{layout.properties.sortable and layoutColumn.properties.sortable}"
+                                        >
+                                            <c:if
+                                                test="#{not empty layoutColumn.properties.sortBy}"
+                                            >
+                                                <f:attribute
+                                                    name="sortBy"
+                                                    value="#{eloraWebActions.evaluateObject(layoutColumn.properties.sortBy)}"
+                                                />
+                                            </c:if>
+                                            <c:if
+                                                test="#{not empty layoutColumn.properties.sortOrder}"
+                                            >
+                                                <f:attribute
+                                                    name="sortOrder"
+                                                    value="#{layoutColumn.properties.sortOrder}"
+                                                />
+                                            </c:if>
+                                            <c:if
+                                                test="#{not empty layoutColumn.properties.sortPriority}"
+                                            >
+                                                <f:attribute
+                                                    name="sortPriority"
+                                                    value="#{eloraWebActions.evaluateInteger(layoutColumn.properties.sortPriority)}"
+                                                />
+                                            </c:if>
+                                        </c:if>
+
+                                        <c:if
+                                            test="#{not empty layoutColumn.properties.field}"
+                                        >
+                                            <f:attribute
+                                                name="field"
+                                                value="#{layoutColumn.properties.field}"
+                                            />
+                                        </c:if>
+
+                                        <c:if
+                                            test="#{layout.properties.useFilters and not empty layoutColumn.properties.filterBy}"
+                                        >
+                                            <f:attribute
+                                                name="filterBy"
+                                                value="#{eloraWebActions.evaluateObject(layoutColumn.properties.filterBy)}"
+                                            />
+                                        </c:if>
+
+                                        <c:if
+                                            test="#{layout.properties.useFilters and not empty layoutColumn.properties.filterMatchMode}"
+                                        >
+                                            <f:attribute
+                                                name="filterMatchMode"
+                                                value="#{layoutColumn.properties.filterMatchMode}"
+                                            />
+                                        </c:if>
+
+                                        <c:if
+                                            test="#{layout.properties.useFilters and not empty layoutColumn.properties.filterValue}"
+                                        >
+                                            <f:attribute
+                                                name="filterValue"
+                                                value="#{eloraWebActions.evaluateObject(layoutColumn.properties.filterValue)}"
+                                            />
+                                        </c:if>
+
+                                        <c:if
+                                            test="#{layout.properties.useFilters and not empty layoutColumn.properties.filterTemplate}"
+                                        >
+                                            <f:facet name="filter">
+                                                <ui:include
+                                                    src="#{layoutColumn.properties.filterTemplate}"
+                                                />
+                                            </f:facet>
+                                        </c:if>
+
+                                        <f:facet name="header">
+                                            <c:if
+                                                test="#{empty layoutColumn.properties.columnIcon}"
+                                            >
+                                                <span
+                                                    title="#{messages[layoutColumn.properties.columnTooltip]}"
+                                                >
+                                                    <h:outputText
+                                                        value="#{messages[eloraWebActions.evaluateString(layoutColumn.properties.columnHeading)]}"
+                                                        style="
+                                                            white-space: pre-line;
+                                                        "
+                                                    />
+                                                </span>
+                                            </c:if>
+                                            <c:if
+                                                test="#{not empty layoutColumn.properties.columnIcon}"
+                                            >
+                                                <h:graphicImage
+                                                    class="titleIcon"
+                                                    value="#{layoutColumn.properties.columnIcon}"
+                                                    title="#{messages[layoutColumn.properties.columnTooltip]}"
+                                                />
+                                            </c:if>
+                                        </f:facet>
+
+                                        <h:panelGroup
+                                            id="#{layoutColumn.widgets[0].name}"
+                                        >
+                                            <nxl:layoutColumnWidget>
+                                                <nxl:widget
+                                                    widget="#{widget}"
+                                                    mode="#{layout.mode}"
+                                                    value="#{nodeData}"
+                                                />
+                                            </nxl:layoutColumnWidget>
+                                        </h:panelGroup>
+                                    </p:column>
+                                </c:if>
+                            </nxl:layoutColumn>
+
+                            <c:if
+                                test="#{not empty layout.properties.selectionMode}"
+                            >
+                                <p:column
+                                    style="width: 35px"
+                                    styleClass="selection-checkbox"
+                                >
+                                    <h:panelGroup id="row-selection">
+                                        &#x25a2;
+                                    </h:panelGroup>
+                                </p:column>
+                                <c:if test="#{empty layout.properties.menubar}">
+                                    <p:ajax event="select" />
+                                    <p:ajax event="unselect" />
+                                </c:if>
+                                <c:if
+                                    test="#{not empty layout.properties.menubar}"
+                                >
+                                    <p:ajax
+                                        event="select"
+                                        update="#{component.namingContainer.parent.clientId}:ttMenuBar"
+                                    />
+                                    <p:ajax
+                                        event="unselect"
+                                        update="#{component.namingContainer.parent.clientId}:ttMenuBar"
+                                    />
+                                </c:if>
+                            </c:if>
+
+                            <c:if test="#{layout.properties.useFilters}">
+                                <p:ajax
+                                    event="filter"
+                                    onstart="PF('#{treeBlockerId}').show()"
+                                    oncomplete="updateHeaderInfo(); PF('#{treeBlockerId}').hide()"
+                                />
+                            </c:if>
+                        </p:treeTable>
+
+                        <!-- EXPORT MENU -->
+                        <c:if test="#{widget.properties.exportable}">
+                            <p:menu
+                                trigger="tt:exportbtn"
+                                overlay="true"
+                                my="left top"
+                                at="left bottom"
+                            >
+                                <p:menuitem
+                                    value="CSV"
+                                    icon="pi pi-file-excel"
+                                    url="#{eloraWebActions.getRestDocumentLink(currentDocument, 'export_tt', eloraWebActions.getTreeExportParams(widget.name, value.getTreeBeanName(), 'csv'), false)}"
+                                />
+                                <p:menuitem
+                                    value="XLS"
+                                    icon="pi pi-file-excel"
+                                    url="#{eloraWebActions.getRestDocumentLink(currentDocument, 'export_tt', eloraWebActions.getTreeExportParams(widget.name, value.getTreeBeanName(), 'jxl'), false)}"
+                                />
+                                <c:if
+                                    test="#{not empty widget.properties.exportOptionsTemplate}"
+                                >
+                                    <ui:include
+                                        src="#{widget.properties.exportOptionsTemplate}"
+                                    />
+                                </c:if>
+                            </p:menu>
                         </c:if>
-                        
-                    </h:panelGroup>
-                    
-                </nxu:set>
-                
+
+                        <!-- BLOCKER -->
+                        <p:blockUI
+                            block="#{component.namingContainer.parent.namingContainer.clientId}:treetablePanel"
+                            widgetVar="#{treeBlockerId}"
+                            styleClass="translucidBlockUI topSpinner"
+                        >
+                            <i class="pi pi-spin pi-spinner"></i>
+                        </p:blockUI>
+
+                        <!-- REMOTE COMMANDS -->
+                        <c:if test="#{layout.properties.useFilters}">
+                            <p:remoteCommand
+                                name="updateHeaderInfo"
+                                onstart="PFJQ('.filteredInfo').text('...')"
+                                update="tt:headerInfo"
+                            />
+                        </c:if>
+
+                        <!-- MENUBAR -->
+                        <c:if test="#{not empty layout.properties.menubar}">
+                            <ui:include
+                                src="#{eloraWebActions.evaluateString(layout.properties.menubar)}"
+                            />
+                        </c:if>
+                    </nxu:set>
+                </h:form>
+
+                <c:if test="#{empty layout.properties.menubar}">
+                    <nxu:set
+                        var="permanentButtonsCount"
+                        value="#{fn:length(webActions.getDocumentActions(currentDocument, 'TREETABLE_PERMANENT_BUTTON', true, false))}"
+                    >
+                        <h:panelGroup
+                            id="ttButtonsPanel"
+                            styleClass="ttButtonsPanel"
+                            layout="block"
+                            rendered="#{not value.isInvalid and not value.hasUnreadableNodes and (layout.mode eq 'edit' or permanentButtonsCount gt 0)}"
+                        >
+                            <c:if test="#{not layout.properties.fancybox}">
+                                <nxu:set
+                                    var="nonProxyDocument"
+                                    value="#{currentDocument.isProxy() ? documentManager.getSourceDocument(currentDocument.ref) : currentDocument}"
+                                >
+                                    <h:panelGroup
+                                        id="ttButtonsRightPanel"
+                                        styleClass="ttButtonsRightPanel"
+                                    >
+                                        <c:if test="#{layout.mode eq 'edit'}">
+                                            <h:panelGroup
+                                                id="ttButtons"
+                                                styleClass="ttButtons"
+                                                layout="block"
+                                                rendered="#{not layout.properties.inverse}"
+                                            >
+                                                <nxl:widget
+                                                    name="#{not empty layout.properties.alternativeButtonsWidget ?
+                                            layout.properties.alternativeButtonsWidget
+                                            : 'ttButtons'}"
+                                                    mode="view"
+                                                    value="#{nonProxyDocument}"
+                                                />
+                                            </h:panelGroup>
+
+                                            <h:panelGroup
+                                                id="ttInverseButtons"
+                                                styleClass="ttInverseButtons"
+                                                layout="block"
+                                                rendered="#{layout.properties.inverse}"
+                                            >
+                                                <nxl:widget
+                                                    name="#{not empty layout.properties.alternativeButtonsWidget ?
+                                            layout.properties.alternativeInverseButtonsWidget
+                                            : 'ttInverseButtons'}"
+                                                    mode="view"
+                                                    value="#{nonProxyDocument}"
+                                                />
+                                            </h:panelGroup>
+                                        </c:if>
+
+                                        <h:panelGroup
+                                            id="ttPermanentButtons"
+                                            styleClass="ttButtons"
+                                            layout="block"
+                                        >
+                                            <nxl:widget
+                                                name="ttPermanentButtons"
+                                                mode="view"
+                                                value="#{nonProxyDocument}"
+                                            />
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup
+                                        id="ttButtonsLeftPanel"
+                                        styleClass="ttButtonsLeftPanel"
+                                    >
+                                        <c:if
+                                            test="#{layout.mode eq 'edit' and not empty layout.properties.selectionMode}"
+                                        >
+                                            <h:panelGroup
+                                                id="ttSelectionButtons"
+                                                styleClass="ttSelectionButtons"
+                                                layout="block"
+                                            >
+                                                <h:graphicImage
+                                                    class="selectionActionsIndicator"
+                                                    value="/icons/selected_rows_actions_24.png"
+                                                    title="#{messages['treetable.selectedRowsActions']}"
+                                                />
+
+                                                <nxl:widget
+                                                    name="#{not empty layout.properties.alternativeSelectButtonsWidget ?
+                                            layout.properties.alternativeSelectButtonsWidget
+                                            : 'ttSelectionButtons'}"
+                                                    mode="view"
+                                                    value="#{nonProxyDocument}"
+                                                    styleClass="ttSelectionButtonsPanel"
+                                                />
+                                            </h:panelGroup>
+                                        </c:if>
+                                    </h:panelGroup>
+                                </nxu:set>
+                            </c:if>
+                        </h:panelGroup>
+                    </nxu:set>
+                </c:if>
             </h:panelGroup>
-            
         </nxu:set>
     </nxu:set>
-    
 </ui:composition>

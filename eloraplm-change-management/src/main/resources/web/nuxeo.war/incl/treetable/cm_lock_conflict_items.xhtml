@@ -1,0 +1,49 @@
+<ui:decorate
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  template="/incl/action/widgets/primefaces_dialog_base_template.xhtml">
+  
+  
+    <ui:define name="dialog_content">  
+        <h:panelGroup>
+       
+            <p:dataTable var="doc" value="#{actionValue.lockConflicts}">
+                <p:column headerText="#{messages['eloraplm.label.header.lockedBy']}" groupRow="true">
+                    <h:panelGroup styleClass="user locker">
+                        <h:outputLink id="locker" value="#{baseURL}user/#{doc.lockInfo.owner}">
+                            #{nxu:userFullName(doc.lockInfo.owner)}
+                        </h:outputLink>
+                    </h:panelGroup>                                  
+                </p:column>
+                <p:column headerText="#{messages['label.name']}">
+                    <nxl:widget name="icon_reference_title" mode="view" value="#{doc}" />
+                </p:column>
+            </p:dataTable>
+       
+        </h:panelGroup>
+        
+   </ui:define>
+   
+   <ui:define name="dialog_buttons">        
+        <p:commandButton
+            rendered="#{actionValue.lockConflicts.size > 0}"                
+            value="#{messages['eloraplm.label.cm.sendNotificationEmail']}"
+            styleClass="button mainAction"
+            action="#{actionValue.sendLockConflictNotificationEmail()}"
+            process="@this"
+            partialSubmit="true"
+            update="@none"
+            onstart="PF('#{pfDialogBlockerId}').show();"
+            oncomplete="PF('#{pfDialogBlockerId}').hide();PF('#{pfDialogId}').hide();"            
+        />
+
+        <p:commandButton type="button" value="#{messages['command.cancel']}"
+            immediate="true" process="@none"
+            styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+        />
+    </ui:define>
+   
+</ui:decorate>

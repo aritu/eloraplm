@@ -1,0 +1,48 @@
+<ui:fragment
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+    <c:set var="canHaveEloraViewerFile" value="#{currentDocument.hasSchema('elora_viewer')}" />
+    <c:set var="displayEloraViewerFile" value="#{!currentDocument.isCheckedOut() and canHaveEloraViewerFile and !empty currentDocument.getPropertyValue('elovwr:file')}" />
+
+    <!-- Elora viewer file -->
+    <c:if test="#{displayEloraViewerFile}">
+        <div class="#{fileZoneClass}" context="eloraViewerFile" id="eloraViewerFileZone">
+            <table class="smallTable">
+                <tbody>
+                    <tr>
+                        <td class="labelColumn">
+                            <h:outputText value=" #{messages['label.widget.elovwr.file']}" />
+                        </td>
+                        <td class="fieldColumn">
+                            <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
+                                field="elovwr:file" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
+    <c:if test="#{!displayEloraViewerFile and canHaveEloraViewerFile}">
+        <div class="#{fileZoneClass}" context="eloraViewerFile" id="eloraViewerFileZone">
+            <table class="smallTable">
+                <tbody>
+                    <tr>
+                        <td class="labelColumn">
+                            <h:outputText value=" #{messages['label.widget.elovwr.file']}" />
+                        </td>
+                        <td class="fieldColumn">
+                            <c:if test="#{currentDocument.isCheckedOut()}">
+                                <h:outputText value=" #{messages['eloraplm.label.viewerFile.hidden.checkout']}" />
+                            </c:if>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
+
+</ui:fragment>

@@ -26,10 +26,10 @@
                     <ui:include src="#{widgetProperty_templateForListener}" />
                 </c:if>
                 
-                <c:if test="#{not empty widget.properties.maxIntegerPlaces}">
+                <c:if test="#{not empty widgetProperty_maxIntegerPlaces}">
                     <f:attribute name="maxIntegerPlaces" value="#{eloraWebActions.evaluateInteger(widgetProperty_maxIntegerPlaces)}" />
                 </c:if>
-                <c:if test="#{not empty widget.properties.maxDecimalPlaces}">
+                <c:if test="#{not empty widgetProperty_maxDecimalPlaces}">
                     <f:attribute name="maxDecimalPlaces" value="#{eloraWebActions.evaluateInteger(widgetProperty_maxDecimalPlaces)}" />
                 </c:if>
                 

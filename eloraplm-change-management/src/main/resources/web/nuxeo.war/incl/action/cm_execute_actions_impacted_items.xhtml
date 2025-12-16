@@ -1,0 +1,40 @@
+<ui:decorate
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"  
+  xmlns:p="http://primefaces.org/ui"
+  template="/incl/action/widgets/primefaces_dialog_base_template.xhtml">
+
+    
+        <ui:define name="dialog_content">
+            <p:outputPanel rendered="#{cmBomImpactedItemsTreeBean.existsCharacterizedItems}" >
+                <h:outputText styleClass="warning" value="#{messages['eloraplm.message.warning.cm.batch.actions.characterized.items']}" />
+                <br/><br/>
+                <h:outputText styleClass="warning" value="#{messages['eloraplm.message.warning.cm.batch.execute.actions.characterized.items']}" />
+            </p:outputPanel>
+            <br/>
+            <p:outputPanel>
+                <h:outputText styleClass="processMessage completeInfo" value="#{messages['eloraplm.message.info.cm.batch.execute.actions']}" />
+            </p:outputPanel>
+            
+        </ui:define>
+     
+        <ui:define name="dialog_buttons">
+            <p:commandButton
+                value="#{messages['command.execute']}"
+                styleClass="button mainAction"
+                action="#{cmItemsBatchProcessing.executeActions}"
+                onstart="handlePfDialogStart(#{pfDialogId});"
+                oncomplete="handlePfDialogSuccessAndReloadAll(xhr, status, args, #{pfDialogId});"
+                process="@form"
+                update="@form"
+            />
+
+            <p:commandButton type="button" value="#{messages['command.cancel']}"
+                immediate="true" process="@none"
+                styleClass="button" onclick="PF('#{pfDialogId}').hide();"
+            />
+          
+        </ui:define>    
+
+</ui:decorate>

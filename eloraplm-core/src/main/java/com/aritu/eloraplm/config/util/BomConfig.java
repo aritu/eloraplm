@@ -34,22 +34,22 @@ public class BomConfig {
     // ---------------------------
     // BOM variables
     // ---------------------------
-    public static final EloraConfigTable bomPartClassificationConfig = initBomClassificationConfig(
+    public static EloraConfigTable bomPartClassificationConfig = initBomClassificationConfig(
             EloraDoctypeConstants.BOM_PART);
 
-    public static final EloraConfigTable bomProductClassificationConfig = initBomClassificationConfig(
+    public static EloraConfigTable bomProductClassificationConfig = initBomClassificationConfig(
             EloraDoctypeConstants.BOM_PRODUCT);
 
-    public static final EloraConfigTable bomToolClassificationConfig = initBomClassificationConfig(
+    public static EloraConfigTable bomToolClassificationConfig = initBomClassificationConfig(
             EloraDoctypeConstants.BOM_TOOL);
 
-    public static final EloraConfigTable bomPackagingClassificationConfig = initBomClassificationConfig(
+    public static EloraConfigTable bomPackagingClassificationConfig = initBomClassificationConfig(
             EloraDoctypeConstants.BOM_PACKAGING);
 
-    public static final EloraConfigTable bomSpecificationClassificationConfig = initBomClassificationConfig(
+    public static EloraConfigTable bomSpecificationClassificationConfig = initBomClassificationConfig(
             EloraDoctypeConstants.BOM_SPECIFICATION);
 
-    public static final HashMap<String, HashMap<String, String>> bomClassificationLabelMap = initBomClassificationLabelMap();
+    public static HashMap<String, HashMap<String, String>> bomClassificationLabelMap = initBomClassificationLabelMap();
 
     // --------------------------------------------------
     // BOM variables initialization methods
@@ -97,6 +97,15 @@ public class BomConfig {
 
         log.trace("********************************* EXIT FROM " + logInitMsg);
         return configMap;
+    }
+
+    public static void reloadBomClassificationConfig(String bomType) {
+        EloraConfigTable bomClassificationConfig = initBomClassificationConfig(
+                bomType);
+
+        bomClassificationLabelMap.put(bomType,
+                bomClassificationConfig.extractConfigTablePropertyValuesAsMap(
+                        "id", "label"));
     }
 
 }

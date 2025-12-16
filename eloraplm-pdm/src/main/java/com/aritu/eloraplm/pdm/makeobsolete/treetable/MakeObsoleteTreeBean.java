@@ -15,15 +15,14 @@ package com.aritu.eloraplm.pdm.makeobsolete.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -39,7 +38,7 @@ import com.aritu.eloraplm.exceptions.EloraException;
 import com.aritu.eloraplm.pdm.makeobsolete.api.MakeObsoleteService;
 import com.aritu.eloraplm.pdm.makeobsolete.util.CanMakeObsoleteResult;
 import com.aritu.eloraplm.pdm.makeobsolete.util.MakeObsoleteHelper;
-import com.aritu.eloraplm.treetable.CoreTreeBean;
+import com.aritu.eloraplm.treetable.CoreTree;
 
 /**
  * Make Obsolete Tree.
@@ -47,11 +46,13 @@ import com.aritu.eloraplm.treetable.CoreTreeBean;
  * @author aritu
  *
  */
-@Name("makeObsoleteTreeBean")
+@Name(MakeObsoleteTreeBean.NAME)
 @Scope(ScopeType.EVENT)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class MakeObsoleteTreeBean extends CoreTreeBean implements Serializable {
+public class MakeObsoleteTreeBean extends CoreTree {
+
+    public static final String NAME = "makeObsoleteTreeBean";
 
     private static final long serialVersionUID = 1L;
 
@@ -70,7 +71,9 @@ public class MakeObsoleteTreeBean extends CoreTreeBean implements Serializable {
         super();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.aritu.eloraplm.treetable.CoreTreeBean#createRoot()
      */
     @Override
@@ -181,16 +184,6 @@ public class MakeObsoleteTreeBean extends CoreTreeBean implements Serializable {
         }
 
         log.trace(logInitMsg + "--- EXIT ---");
-    }
-
-    /* (non-Javadoc)
-     * @see com.aritu.eloraplm.treetable.CoreTreeBean#getRootFromFactory()
-     */
-
-    @Override
-    @Factory(value = "makeObsoleteRoot", scope = ScopeType.EVENT)
-    public TreeNode getRootFromFactory() {
-        return getRoot();
     }
 
 }

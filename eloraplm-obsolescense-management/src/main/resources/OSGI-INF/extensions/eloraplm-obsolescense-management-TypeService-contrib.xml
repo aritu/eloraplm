@@ -80,7 +80,6 @@
                 <type>CadDrawing</type>
                 <type>CadDesignTable</type>
                 <type>BomPart</type>
-                <type>BomManufacturerPart</type>
                 <type>BomTool</type>
                 <type>BomPackaging</type>
                 <type>BomSpecification</type>

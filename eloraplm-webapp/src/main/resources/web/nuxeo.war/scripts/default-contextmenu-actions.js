@@ -146,6 +146,9 @@ function doSendEmail(docid){
   Seam.Component.getInstance("popupHelper").sendEmail(docid, navigationCB);
 }
 
+function doDuplicate(docid) {
+  Seam.Component.getInstance("eloraPopupHelper").prepareChangeableDocumentAsDuplicate(docid, navigationCB);
+}
 
 function onEditKeyPress(event)
 {

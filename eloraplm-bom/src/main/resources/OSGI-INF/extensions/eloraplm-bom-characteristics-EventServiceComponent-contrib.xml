@@ -9,6 +9,13 @@
                   class="com.aritu.eloraplm.bom.characteristics.listener.LoadBomCharacteristicsListener" priority="150">
             <event>documentCreated</event>
             <event>beforeDocumentModification</event>
+            <event>PdmCheckedOutEvent</event>
+        </listener>
+        
+        <!-- updateLinkedCharacteristicsOnOverwriteListener -->
+        <listener name="updateLinkedCharacteristicsOnOverwriteListener" async="true" postCommit="true"
+                class="com.aritu.eloraplm.bom.linked.characteristics.listener.UpdateLinkedCharacteristicsOnOverwriteListener" priority="250" enabled="${com.aritu.eloraplm.viewer.enabled}">
+            <event>PdmOverwrittenEvent</event>
         </listener>
 
     </extension>

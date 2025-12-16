@@ -10,478 +10,804 @@
     <require>org.nuxeo.ecm.platform.publisher.web.actions</require>
     <require>org.nuxeo.ecm.platform.userworkspace.actions</require>
     <require>org.nuxeo.ecm.favorites.actions</require>
+    <require>org.nuxeo.ecm.platform.picture.actions</require>
+    <require>org.nuxeo.connect.client.actions</require>
 
-<extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
-    
-    <filter id="isBomDocument">
-      <rule grant="true">
-        <facet>BomDocument</facet>
-      </rule>
-    </filter>
-    
-    <filter id="isNotBomDocument">
-      <rule grant="false">
-        <facet>BomDocument</facet>
-      </rule>
-    </filter>
-    
-    <filter id="isCadOrBomDocument">
-      <rule grant="true">
-        <facet>CadDocument</facet>
-        <facet>BomDocument</facet>
-      </rule>
-    </filter>
-    
-    <filter id="isCadOrBasicDocument">
-      <rule grant="true">
-        <facet>CadDocument</facet>
-        <facet>BasicDocument</facet>
-      </rule>
-    </filter>
-    
-    <filter id="isBomOrBasicDocument">
-      <rule grant="true">
-        <facet>BomDocument</facet>
-        <facet>BasicDocument</facet>
-      </rule>
-    </filter>
-    
-    <filter id="isCadBomOrBasicDocument">
-      <rule grant="true">
-        <facet>CadDocument</facet>
-        <facet>BomDocument</facet>
-        <facet>BasicDocument</facet>
-      </rule>
-    </filter>
-    
-    <filter id="isEditable">
-        <rule grant="true">
-            <condition>#{eloraWebActions.isEditable()}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="hasBaseVersion">
-        <rule grant="true">
-            <condition>#{eloraWebActions.hasBaseVersion()}</condition>
-        </rule>
-    </filter>
-    
-    <filter id="hasDefaultHeader">
-        <rule grant="true">
-            <facet>BasicDocument</facet>
-            <facet>CadDocument</facet>
-        </rule>
-    </filter>
-    
-    <filter id="hasWorkspaceHeader">
-        <rule grant="true">
-            <facet>EloraWorkspace</facet>
-        </rule>
-        <rule grant="false">
-            <type>Project</type>
-        </rule>
-    </filter>
-    
-    <filter id="hasProjectHeader">
-        <rule grant="true">
-            <type>Project</type>
-        </rule>
-    </filter>
-    
-    <filter id="showHeaderMessages">
-        <rule grant="true" />
-    </filter>
-    
-    <!--  Enable CVS Import on TemplateRoot. importFile will only be available for Administrator or Power Users. -->
-    <filter id="importFile" append="true">
-        <rule grant="true">
-            <permission>AddChildren</permission>
-            <type>TemplateRoot</type>
-            <type>DocumentTemplates</type>
-            <type>OfficeTemplates</type>
-        </rule>
-        <rule grant="false">
-            <condition>#{!(currentUser.administrator || currentUser.isMemberOf('powerusers'))}</condition>
-            <condition>#{(currentDocument.type ne 'TemplateRoot' and currentDocument.type ne 'DocumentTemplates' and currentDocument.type ne 'OfficeTemplates')}</condition>
-        </rule>
-    </filter>
-    
-  </extension>
+    <extension point="filters"
+        target="org.nuxeo.ecm.platform.actions.ActionService">
 
-  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
-    
-    <!-- Admin tab to show properties defined in EloraPLM -->
-    <action id="EloraPlmInfo" link="/incl/sysinfo/eloraplm_info.xhtml" label="tab.sysinfo.eloraplm"
-      type="admin_rest_document_link"
-      order="25">
-      <category>SystemInfo_sub_tab</category>
-      <filter-id>only_for_manager</filter-id>
-    </action>
-    
-    <!-- New default widget in summary panel left for displaying document type, CAD part type and description -->
-    <action id="summary_current_document_types_and_description" order="10" type="widget" enabled="true">
-      <category>SUMMARY_PANEL_LEFT</category>
-      <properties>
-        <property name="widgetName">summary_current_document_types_and_description</property>
-      </properties>
-      <filter-id>isNotBomDocument</filter-id>
-    </action>
-    
-    <action id="summary_current_document_view_for_file" type="widget" order="300">
-      <category>SUMMARY_PANEL_LEFT</category>
-      <properties>
-        <property name="widgetName">summary_current_document_view</property>
-      </properties>
-      <filter id="filter@summary_current_document_view_for_file">
-        <rule grant="true">
-            <type>File</type>
-        </rule>
-      </filter>
-    </action>
-    
-    
-    <!-- default widgets on top panel -->
-    
-<!--     <action id="summary_current_document_heading" type="widget" order="100"> -->
-<!--       <category>SUMMARY_PANEL_TOP</category> -->
-<!--       <properties> -->
-<!--         <property name="widgetName">summary_current_document_heading</property> -->
-<!--       </properties> -->
-<!--       <filter-id>hasDublincore</filter-id> -->
-<!--     </action> -->
-    
-    <!-- end of default widgets on top panel -->
-    
-    <!-- disable document description from right panel -->
-    <action id="summary_current_document_description" enabled="false"/>
-    
-    <!-- disable document indicators from right panel -->
-    <action id="summary_current_document_indicators" enabled="false"/>
-    
-    <!-- disable document state from right panel -->
-    <action id="summary_current_document_states" enabled="false"/>
-    
-    <!-- disable document relations from right panel. We choose what relations to show -->
-    <action id="summary_current_document_relations" enabled="false"/>
-    
-    <!-- disable personal workspace menu -->
-    <action id="SHOW_PERSONAL_WORKSPACE" enabled="false" />
-    
-    
-    <!-- Action to create WS proxy -->
-    <action id="createWorkspaceProxyFromButton" order="40" label="eloraplm.command.wsProxy.create" type="fancybox" icon="/icons/action_create_ws_proxy_16.png">
-      <category>DOCUMENT_UPPER_ACTION</category>
-      <filter id="filter@createWorkspaceProxyButton">
-        <rule grant="false">
-          <facet>Folderish</facet>
-          <condition>#{not currentDocument.isVersion() and not currentDocument.isProxy()}</condition>
-        </rule>
-      </filter>
-      <properties>
-        <property name="include">/incl/action/create_ws_proxy.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="visibleByDefault">true</property>
-      </properties>
-    </action>
-    
-    <!-- Action to move current document -->
-    <action id="moveCurrentDocument" order="50" label="eloraplm.command.move" type="fancybox" icon="/icons/action_move_16.png">
-      <category>DOCUMENT_UPPER_ACTION</category>
-      <filter id="filter@moveCurrentDocument">
-        <rule grant="true">
-          <condition>#{moveActions.getCanMoveCurrentDoc()}</condition>
-        </rule>
-      </filter>
-      <properties>
-        <property name="include">/incl/action/move_document.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="visibleByDefault">false</property>
-      </properties>
-    </action>
-    
-    <!-- Action to switch current document Elora Root Folder -->
-    <action id="switchCurrentDocumentEloraRootFolder" order="55" label="eloraplm.command.switchEloraRootFolder" type="fancybox" icon="/icons/action_switch_16.png">
-      <category>DOCUMENT_UPPER_ACTION</category>
-      <filter id="filter@switchCurrentDocumentEloraRootFolder">
-        <rule grant="true">
-          <condition>#{switchActions.getCanSwitchCurrentDocEloraRootFolder()}</condition>
-        </rule>
-      </filter>
-      <properties>
-        <property name="include">/incl/action/switch_document_elora_root_folder.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="visibleByDefault">false</property>
-        <property name="width">1000</property>
-        <property name="height">800</property>
-        <property name="autoDimensions">false</property>
-      </properties>
-      
-    </action>
-    
-    <!-- Action to switch current document to Library Root Folder -->
-    <action id="switchCurrentDocumentLibraryRootFolder" order="55" label="eloraplm.command.switchLibraryRootFolder" type="fancybox" icon="/icons/action_switch_16.png">
-      <category>DOCUMENT_UPPER_ACTION</category>
-      <filter id="filter@switchCurrentDocumentLibraryRootFolder">
-        <rule grant="true">
-          <condition>#{switchActions.getCanSwitchCurrentDocLibraryRootFolder()}</condition>
-        </rule>
-      </filter>
-      <properties>
-        <property name="include">/incl/action/switch_document_elora_root_folder.xhtml</property>
-        <property name="ajaxSupport">true</property>
-        <property name="visibleByDefault">false</property>
-        <property name="width">1000</property>
-        <property name="height">800</property>
-        <property name="autoDimensions">false</property>
-      </properties>
-      
-    </action>
-    
-    
-    <!-- Show action by default -->
-    <action id="addCurrentDocumentToWorklist" icon="/icons/action_add_to_worklist_16.png">
-      <properties>
-        <property name="visibleByDefault">true</property>
-      </properties>
-    </action>
-
-    <!-- Disable Create WS action -->
-    <action id="newWorkspace" enabled="false" />
-    
-    <!-- Disable publish tab -->
-    <action id="TAB_PUBLISH" enabled="false" />
-    
-    <!-- Disable Restore button in History tab -->
-    <action id="RESTORE_VERSION" enabled="false" />
-    
-    
-    <!-- Changes to preview button -->
-   <action id="showFancyBoxPreview" enabled="false" />
-   
-   <action icon="/icons/contextual_menu/preview.png" id="headerShowPreview" label="label.document.preview" order="0" type="fancybox">
-      <category>HEADER_THUMBNAIL_BUTTON</category>
-      <filter-id>view_preview</filter-id>
-      <filter-id>not_folder</filter-id>
-      <filter-id>not_anonymous</filter-id>
-      
-      <properties>
-        <property name="iframe">
-          #{previewActions.getCurrentDocumentPreviewPopupURL()}
-        </property>
-        <property name="ajaxSupport">true</property>
-      </properties>
-    </action>
-    
-    <!-- POPUP actions -->
-    
-    <!-- Disable POPUP_RENAME action -->
-    <action id="POPUP_RENAME" enabled="false" />
-    
-    <!-- Disable POPUP_WORKFLOW action -->
-    <action id="POPUP_WORKFLOW" enabled="false" />
-    
-    <!-- Disable POPUP_DOWNLOAD action -->
-    <action id="POPUP_DOWNLOAD" enabled="false" />
-    
-    <!-- Disable POPUP_VIEW action -->
-    <action id="POPUP_VIEW" enabled="false" />
-    
-    <!-- Updated icon and order -->
-    <action id="POPUP_RIGHTS" icon="/icons/popup_rights_16.png" order="100" />
-    
-    <!-- Updated order -->
-    <action id="POPUP_EDIT" order="5" />
-    <action id="POPUP_COPY" order="10" />
-    <action id="POPUP_DEL" order="1000" />
-    
-    <!-- Open in new tab -->
-    <action id="POPUP_OPEN_IN_NEW_TAB" link="javascript:doOpenInNewTab" label="eloraplm.command.openInNewTab" icon="/icons/external.gif" order="0">
-        <category>POPUP</category>
-    </action>
-    
-    <!-- Remove from favorites --> 
-    <action id="POPUP_REMOVE_FROM_FAVORITES" link="javascript:removeFromFavorites" label="label.removeFromFavorites" icon="/icons/popup_favorite_16.png" order="200">
-        <category>POPUP</category>
-        <filter id="popup_can_remove_from_favorites_doc">
+        <filter id="isBomDocument">
             <rule grant="true">
-              <condition>#{eloraFavoritesActions.canDocumentBeRemovedFromFavorites(document)}</condition>
+                <facet>BomDocument</facet>
             </rule>
-      </filter>
-    </action>
-     
-    
-    <!-- Add some general tabs and reorder default tabs -->
-    
-    <action id="TAB_FILES_EDIT" link="/incl/tabs/document_files_edit.xhtml"
-      order="60" label="action.view.files" accessKey="f" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>edit</filter-id>
-      <filter-id>mutable_document</filter-id>
-      <filter-id>hasAttachedFiles</filter-id>
-      <filter-id>denyFilesTab</filter-id>
-      <properties>
-        <property name="ajaxSupport">true</property>
-      </properties>
-    </action>
-    
-    <action id="TAB_LINKS" link="/incl/tabs/links.xhtml"
-      order="100" label="eloraplm.label.links" type="rest_document_link">
-      <filter-id>isCadBomOrBasicDocument</filter-id>
-      <category>VIEW_ACTION_LIST</category>
-    </action>
-    
-    <action id="TAB_CONTENT_HISTORY" link="/incl/tabs/document_history.xhtml"
-       order="110" enabled="true" label="action.view.history" icon="/icons/file.gif"
-      type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>TAB_CONTENT_HISTORY_has_subtabs</filter-id>
-    </action>
-    
-    <action id="view_comments" link="/incl/tabs/document_comments.xhtml"
-      order="120" enabled="true" label="action.view.comments" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter-id>commentable</filter-id>
-      <filter-id>mutable_document</filter-id>
-      <filter-id>not_anonymous</filter-id>
-    </action>
-    
-    <action id="TAB_PERMISSIONS" link="/permissions/document_permissions.xhtml"
-      order="130" label="action.view.permissions" icon="/icons/file.gif">
-      <category>VIEW_ACTION_LIST</category>
-      <properties>
-        <!-- NXP-18320: disable ajax support on Polymer tabs -->
-        <property name="ajaxSupport">false</property>
-      </properties>
-    </action>
-    
-    
-    <action accessKey="v" icon="/icons/file.gif" id="TAB_PROJECT_VIEW" label="action.view.summary" link="/incl/tabs/document_view.xhtml" order="15" type="rest_document_link">
-      <category>VIEW_ACTION_LIST</category>
-      <filter id="filter@TAB_PROJECT_VIEW">
-        <rule grant="true">
-            <type>Project</type>
-        </rule>
-      </filter>
-      <properties>
-        <property name="ajaxSupport">true</property>
-      </properties>
-    </action>
-    
-    <!-- End of add some general tabs and reorder default tabs -->
-    
-    <!-- Change actions visibility by default -->
-    <action id="addToFavoritesAction">
-      <properties>
-        <property name="visibleByDefault">#{currentDocument.isFolder() ? true : false}</property>
-      </properties>
-    </action>
-    <action id="removeFromFavoritesAction">
-      <properties>
-        <property name="visibleByDefault">#{currentDocument.isFolder() ? true : false}</property>
-      </properties>
-    </action>
-    
-    <action id="subscribesAllDocNotifications">
-      <properties>
-        <property name="visibleByDefault">#{currentDocument.isFolder() ? true : false}</property>
-      </properties>
-    </action>
-    <action id="unsubscribesAllDocNotifications">
-      <properties>
-        <property name="visibleByDefault">#{currentDocument.isFolder() ? true : false}</property>
-      </properties>
-    </action>
-    
-    <action id="eloraDownload" type="template" order="150">
-      <category>BLOB_ACTIONS</category>
-      <filter-id>isMainBlob</filter-id>
-      <filter-id>isCadDocument</filter-id>
-      <filter-id>isNotZeroVersion</filter-id>
-      <properties>
-        <property name="template">/incl/action/download_and_open_link_template.xhtml</property>
-      </properties>
-    </action>
-    
-    <action id="default_document_header" order="1" type="template">
-        <category>DOCUMENT_HEADER</category>
-        <filter-id>hasDefaultHeader</filter-id>
-        <properties>
-            <property name="template">/widgets/actions/default_metadata_header.xhtml</property>
-        </properties>
-    </action>
-    
-    <action id="ws_document_header" order="1" type="template">
-        <category>DOCUMENT_HEADER</category>
-        <filter-id>hasWorkspaceHeader</filter-id>
-        <properties>
-            <property name="template">/widgets/actions/ws_metadata_header.xhtml</property>
-        </properties>
-    </action>
-    
-    <action id="project_document_header" order="1" type="template">
-        <category>DOCUMENT_HEADER</category>
-        <filter-id>hasProjectHeader</filter-id>
-        <properties>
-            <property name="template">/widgets/actions/project_metadata_header.xhtml</property>
-        </properties>
-    </action>
-    
-    <action id="header_messages" order="5" type="template">
-        <category>DOCUMENT_HEADER</category>
-        <filter-id>showHeaderMessages</filter-id>
-        <properties>
-            <property name="template">/widgets/actions/header_messages.xhtml</property>
-        </properties>
-    </action>
-    
-    <action id="summary_project_progress" order="10" type="widget">
-        <category>SUMMARY_PANEL_RIGHT</category>
-        <filter id="filter@summary_project_progress">
+        </filter>
+
+        <filter id="isNotBomDocument">
+            <rule grant="false">
+                <facet>BomDocument</facet>
+            </rule>
+        </filter>
+
+        <filter id="isCadOrBomDocument">
+            <rule grant="true">
+                <facet>CadDocument</facet>
+                <facet>BomDocument</facet>
+            </rule>
+        </filter>
+
+        <filter id="isCadOrBasicDocument">
+            <rule grant="true">
+                <facet>CadDocument</facet>
+                <facet>BasicDocument</facet>
+            </rule>
+        </filter>
+
+        <filter id="isBomOrBasicDocument">
+            <rule grant="true">
+                <facet>BomDocument</facet>
+                <facet>BasicDocument</facet>
+            </rule>
+        </filter>
+
+        <filter id="isCadBomOrBasicDocument">
+            <rule grant="true">
+                <facet>CadDocument</facet>
+                <facet>BomDocument</facet>
+                <facet>BasicDocument</facet>
+            </rule>
+        </filter>
+
+        <filter id="isEditable">
+            <rule grant="true">
+                <condition>#{eloraWebActions.isEditable()}</condition>
+            </rule>
+        </filter>
+
+        <filter id="hasBaseVersion">
+            <rule grant="true">
+                <condition>#{eloraWebActions.hasBaseVersion()}
+                </condition>
+            </rule>
+        </filter>
+
+        <filter id="hasDefaultHeader">
+            <rule grant="true">
+                <facet>BasicDocument</facet>
+                <facet>CadDocument</facet>
+            </rule>
+            <rule grant="false">
+                <facet>DocumentWithContent</facet>
+            </rule>
+        </filter>
+
+        <filter id="hasWorkspaceHeader">
+            <rule grant="true">
+                <facet>EloraWorkspace</facet>
+            </rule>
+            <rule grant="false">
+                <type>Project</type>
+            </rule>
+        </filter>
+
+        <filter id="hasProjectHeader">
             <rule grant="true">
                 <type>Project</type>
             </rule>
         </filter>
-        <properties>
-            <property name="widgetName">summary_project_progress</property>
-        </properties>
-    </action>
-    
-    <!--  create documents from template ### BEGIN ### -->
-    <action id="CREATE_DOC_FROM_TEMPLATE" link="#{eloraDocumentTemplatesActions.createDocumentFromTemplate}"
-      order="0" label="command.create">
-      <category>CREATE_DOCUMENT_FORM</category>
-      <filter id="filter@CREATE_DOC_FROM_TEMPLATE">
-        <rule grant="false">
-            <condition>#{changeableDocument.type == 'TemplateSource'}</condition>
-        </rule>
-      </filter>
-    </action>
-    
-    <!-- disable CREATE_WORKSPACE and CREATE_DOCUMENT actions, since everything will be managed from CREATE_DOC_FROM_TEMPLATE -->
-    <action id="CREATE_WORKSPACE" enabled="false"/>
-    <action id="CREATE_DOCUMENT" enabled="false"/>
-    <!--  create documents from template ### END ### -->
-    
-    <!-- User center MCAD Integration tab -->
-    <action id="userCenterMcadIntegration" label="eloraplm.label.userCenter.mcadIntegration" link="/incl/user_center_mcad_integration.xhtml" order="110">
-      <category>USER_CENTER</category>
-      <filter-id>not_anonymous</filter-id>
-      <filter-id>not_readonly</filter-id>
-    </action>
-    
-    
-    <action id="sourceTemplate" type="widget" order="400">
-        <category>SUMMARY_PANEL_RIGHT</category>
-        <properties>
-            <property name="widgetName">source_template</property>
-        </properties>
-        <filter id="filter@sourceTemplate">
+
+        <filter id="hasDocWithContentHeader">
             <rule grant="true">
-                <condition>#{currentDocument.hasFacet('Templatable') and not empty currentDocument.templ.sourceDocUid}</condition>
+                <facet>DocumentWithContent</facet>
             </rule>
         </filter>
-    </action>
-    
-  </extension>
-  
+
+        <filter id="showHeaderMessages">
+            <rule grant="true" />
+        </filter>
+
+        <!-- Enable CVS Import on TemplateRoot. importFile will only be available 
+            for Administrator or Power Users. -->
+        <filter id="importFile" append="true">
+            <rule grant="true">
+                <permission>AddChildren</permission>
+                <type>TemplateRoot</type>
+                <type>DocumentTemplates</type>
+                <type>OfficeTemplates</type>
+            </rule>
+            <rule grant="false">
+                <condition>#{!(currentUser.administrator ||
+                    currentUser.isMemberOf('powerusers'))}</condition>
+                <condition>#{(currentDocument.type ne 'TemplateRoot' and
+                    currentDocument.type ne 'DocumentTemplates' and
+                    currentDocument.type ne 'OfficeTemplates')}
+                </condition>
+            </rule>
+        </filter>
+
+        <!-- This was created because image > PDF conversion was no available. 
+            Now it is not needed. <filter id="hasImagePreview"> <rule grant="true"> // 
+            It does not work for attached files <condition>#{eloraPreviewActions.isImage(blob) 
+            and (blobXPath eq 'file:content' or blobXPath eq 'elovwr:file')}</condition> 
+            </rule> </filter> -->
+
+    </extension>
+
+    <extension point="actions"
+        target="org.nuxeo.ecm.platform.actions.ActionService">
+
+        <!-- Admin tab to show properties defined in EloraPLM -->
+        <action id="EloraPlmInfo"
+            link="/incl/sysinfo/eloraplm_info.xhtml"
+            label="tab.sysinfo.eloraplm" type="admin_rest_document_link"
+            order="25">
+            <category>SystemInfo_sub_tab</category>
+            <filter-id>only_for_manager</filter-id>
+        </action>
+
+        <!-- Hide Update Center (unusable without Nuxeo subscription) -->
+        <action id="ConnectApps" enabled="false" />
+
+        <action id="ConnectAppsUpdates" enabled="false" />
+
+        <action id="ConnectAppsStudio" enabled="false" />
+
+        <action id="ConnectAppsPrivate" enabled="false" />
+
+        <action id="ConnectAppsRemote" enabled="false" />
+
+        <!-- Move Local Packages to SystemInfo tab -->
+        <action id="ConnectAppsLocal"
+            link="/incl/appcenter/connectLocal.xhtml"
+            type="admin_rest_document_link" label="tab.appstore.local"
+            order="45">
+            <category>SystemInfo_sub_tab</category>
+            <filter-id>only_for_manager</filter-id>
+        </action>
+        
+        <!-- Localize Background Work subtab -->
+        <action id="WorkManagerStatus" link="/incl/usersActivity/workmanager.xhtml"
+            type="admin_rest_document_link"
+            label="tab.useractivity.backgroundWork" order="30">
+            <category>UsersActivity_sub_tab</category>
+            <filter-id>only_for_manager</filter-id>
+        </action>
+
+        <!-- New default widget in summary panel left for displaying document 
+            type, CAD part type and description -->
+        <action
+            id="summary_current_document_types_and_description"
+            order="10" type="widget" enabled="true">
+            <category>SUMMARY_PANEL_LEFT</category>
+            <properties>
+                <property name="widgetName">summary_current_document_types_and_description
+                </property>
+            </properties>
+            <filter-id>isNotBomDocument</filter-id>
+        </action>
+
+        <action id="summary_current_document_view_for_file"
+            type="widget" order="300">
+            <category>SUMMARY_PANEL_LEFT</category>
+            <properties>
+                <property name="widgetName">summary_current_document_view
+                </property>
+            </properties>
+            <filter
+                id="filter@summary_current_document_view_for_file">
+                <rule grant="true">
+                    <type>File</type>
+                </rule>
+            </filter>
+        </action>
+        
+        <!-- Override summary files action to add filter -->
+        <action id="summary_current_document_files" type="widget" order="200">
+            <category>SUMMARY_PANEL_LEFT</category>
+            <properties>
+                <property name="widgetName">summary_current_document_files</property>
+            </properties>
+            <filter id="filter@summary_current_document_files">
+                <rule grant="true">
+                    <condition>#{not currentDocument.isFolder() or currentDocument.hasFacet('DocumentWithContent')}</condition>
+                </rule>
+            </filter>
+        </action>
+
+        <!-- Give style to default buttons -->
+        <action id="EDIT_CURRENT_DOCUMENT"
+            link="#{documentActions.updateCurrentDocument}" order="0"
+            label="command.save">
+            <category>EDIT_DOCUMENT_FORM</category>
+            <properties>
+                <property name="ajaxSupport">true</property>
+                <property name="styleClass">mainAction</property>
+            </properties>
+        </action>
+
+        <!-- default widgets on top panel -->
+
+        <!-- <action id="summary_current_document_heading" type="widget" 
+            order="100"> -->
+        <!-- <category>SUMMARY_PANEL_TOP</category> -->
+        <!-- <properties> -->
+        <!-- <property name="widgetName">summary_current_document_heading</property> -->
+        <!-- </properties> -->
+        <!-- <filter-id>hasDublincore</filter-id> -->
+        <!-- </action> -->
+
+        <!-- end of default widgets on top panel -->
+
+        <!-- disable document description from right panel -->
+        <action id="summary_current_document_description"
+            enabled="false" />
+
+        <!-- disable document indicators from right panel -->
+        <action id="summary_current_document_indicators"
+            enabled="false" />
+
+        <!-- disable document state from right panel -->
+        <action id="summary_current_document_states"
+            enabled="false" />
+
+        <!-- disable document relations from right panel. We choose what 
+            relations to show -->
+        <action id="summary_current_document_relations"
+            enabled="false" />
+
+        <!-- disable personal workspace menu -->
+        <action id="SHOW_PERSONAL_WORKSPACE" enabled="false" />
+
+
+        <!-- Action to create WS proxy -->
+        <action id="createWorkspaceProxyFromButton" order="40"
+            label="eloraplm.command.wsProxy.create" type="pfdialog"
+            icon="/icons/action_create_ws_proxy_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter id="filter@createWorkspaceProxyButton">
+                <rule grant="false">
+                    <condition>#{currentDocument.isFolder() and not
+                        currentDocument.hasFacet('DocumentWithContent')}
+                    </condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="include">/incl/action/create_ws_proxy.xhtml
+                </property>
+                <property name="ajaxSupport">true</property>
+                <property name="visibleByDefault">true</property>
+
+                <property name="dialogTitle">eloraplm.title.wsProxy.create
+                </property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+
+        <!-- Action to move current document -->
+        <action id="moveCurrentDocument" order="50"
+            label="eloraplm.command.move" type="fancybox"
+            icon="/icons/action_move_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter id="filter@moveCurrentDocument">
+                <rule grant="true">
+                    <condition>#{moveActions.getCanMoveCurrentDoc()}
+                    </condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="include">/incl/action/move_document.xhtml
+                </property>
+                <property name="ajaxSupport">true</property>
+                <property name="visibleByDefault">false</property>
+            </properties>
+        </action>
+
+        <!-- Action to switch current document Elora Root Folder -->
+        <action id="switchCurrentDocumentEloraRootFolder"
+            order="55" label="eloraplm.command.switchEloraRootFolder"
+            type="fancybox" icon="/icons/action_switch_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter
+                id="filter@switchCurrentDocumentEloraRootFolder">
+                <rule grant="true">
+                    <condition>#{switchActions.getCanSwitchCurrentDocEloraRootFolder()}
+                    </condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="include">/incl/action/switch_document_elora_root_folder.xhtml
+                </property>
+                <property name="ajaxSupport">true</property>
+                <property name="visibleByDefault">false</property>
+                <property name="width">1000</property>
+                <property name="height">800</property>
+                <property name="autoDimensions">false</property>
+            </properties>
+
+        </action>
+
+        <!-- Action to switch current document to Library Root Folder -->
+        <action id="switchCurrentDocumentLibraryRootFolder"
+            order="55" label="eloraplm.command.switchLibraryRootFolder"
+            type="fancybox" icon="/icons/action_switch_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter
+                id="filter@switchCurrentDocumentLibraryRootFolder">
+                <rule grant="true">
+                    <condition>#{switchActions.getCanSwitchCurrentDocLibraryRootFolder()}
+                    </condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="include">/incl/action/switch_document_elora_root_folder.xhtml
+                </property>
+                <property name="ajaxSupport">true</property>
+                <property name="visibleByDefault">false</property>
+                <property name="width">1000</property>
+                <property name="height">800</property>
+                <property name="autoDimensions">false</property>
+            </properties>
+
+        </action>
+
+        <!-- Action to duplicate document -->
+        <action id="duplicateDocument" order="15"
+            label="eloraplm.command.duplicate"
+            link="#{duplicatingActions.prepareChangeableDocumentAsDuplicateAndRedirect(currentDocument)}"
+            icon="/icons/action_duplicate_16.png">
+            <category>DOCUMENT_UPPER_ACTION</category>
+            <filter id="filter@duplicateDocument">
+                <rule grant="true">
+                    <condition>#{duplicatingActions.canDocumentBeDuplicated(currentDocument)}
+                    </condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="visibleByDefault">false</property>
+            </properties>
+        </action>
+
+        <!-- Show action by default -->
+        <action id="addCurrentDocumentToWorklist"
+            icon="/icons/action_add_to_worklist_16.png">
+            <properties>
+                <property name="visibleByDefault">true</property>
+            </properties>
+        </action>
+
+        <!-- Disable Create WS action -->
+        <action id="newWorkspace" enabled="false" />
+
+        <!-- Disable publish tab -->
+        <action id="TAB_PUBLISH" enabled="false" />
+
+        <!-- Changes to preview button -->
+        <action id="showFancyBoxPreview" enabled="false" />
+
+        <action icon="/icons/contextual_menu/preview.png"
+            id="headerShowPreview" label="label.document.preview"
+            order="0" type="fancybox">
+            <category>HEADER_THUMBNAIL_BUTTON</category>
+            <filter-id>view_preview</filter-id>
+            <filter-id>not_folder</filter-id>
+            <filter-id>not_anonymous</filter-id>
+
+            <properties>
+                <property name="iframe">
+                    #{previewActions.getCurrentDocumentPreviewPopupURL()}
+                </property>
+                <property name="ajaxSupport">true</property>
+            </properties>
+        </action>
+
+        <!-- POPUP actions -->
+
+        <!-- Disable POPUP_RENAME action -->
+        <action id="POPUP_RENAME" enabled="false" />
+
+        <!-- Disable POPUP_WORKFLOW action -->
+        <action id="POPUP_WORKFLOW" enabled="false" />
+
+        <!-- Disable POPUP_DOWNLOAD action -->
+        <action id="POPUP_DOWNLOAD" enabled="false" />
+
+        <!-- Disable POPUP_VIEW action -->
+        <action id="POPUP_VIEW" enabled="false" />
+
+        <!-- Updated icon and order -->
+        <action id="POPUP_RIGHTS"
+            icon="/icons/popup_rights_16.png" order="100" />
+
+        <!-- Updated order -->
+        <action id="POPUP_EDIT" order="5" />
+        <action id="POPUP_COPY" order="10" />
+        <action id="POPUP_DEL" order="1000" />
+
+        <!-- Open in new tab -->
+        <action id="POPUP_OPEN_IN_NEW_TAB"
+            link="javascript:doOpenInNewTab"
+            label="eloraplm.command.openInNewTab"
+            icon="/icons/external.gif" order="0">
+            <category>POPUP</category>
+        </action>
+
+        <!-- Duplicate -->
+        <action id="POPUP_DUPLICATE"
+            link="javascript:doDuplicate"
+            label="eloraplm.command.duplicate"
+            icon="/icons/popup_duplicate_16.png" order="20">
+            <category>POPUP</category>
+            <filter id="popup_can_duplicate">
+                <rule grant="true">
+                    <condition>#{duplicatingActions.canDocumentBeDuplicated(document)}
+                    </condition>
+                </rule>
+            </filter>
+        </action>
+
+        <!-- Remove from favorites -->
+        <action id="POPUP_REMOVE_FROM_FAVORITES"
+            link="javascript:removeFromFavorites"
+            label="label.removeFromFavorites"
+            icon="/icons/popup_favorite_16.png" order="200">
+            <category>POPUP</category>
+            <filter id="popup_can_remove_from_favorites_doc">
+                <rule grant="true">
+                    <condition>#{eloraFavoritesActions.canDocumentBeRemovedFromFavorites(document)}
+                    </condition>
+                </rule>
+            </filter>
+        </action>
+
+
+        <!-- Add some general tabs and reorder default tabs -->
+
+        <action id="TAB_FILES_EDIT"
+            link="/incl/tabs/document_files_edit.xhtml" order="60"
+            label="action.view.files" accessKey="f"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>edit</filter-id>
+            <filter-id>mutable_document</filter-id>
+            <filter-id>hasAttachedFiles</filter-id>
+            <filter-id>denyFilesTab</filter-id>
+            <properties>
+                <property name="ajaxSupport">true</property>
+            </properties>
+        </action>
+
+        <action id="TAB_LINKS" link="/incl/tabs/links.xhtml"
+            order="100" label="eloraplm.label.links"
+            type="rest_document_link">
+            <filter-id>isCadBomOrBasicDocument</filter-id>
+            <category>VIEW_ACTION_LIST</category>
+        </action>
+
+        <action id="TAB_CONTENT_HISTORY"
+            link="/incl/tabs/document_history.xhtml" order="110"
+            enabled="true" label="action.view.history"
+            icon="/icons/file.gif" type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>TAB_CONTENT_HISTORY_has_subtabs</filter-id>
+        </action>
+
+        <action id="view_comments"
+            link="/incl/tabs/document_comments.xhtml" order="120"
+            enabled="true" label="action.view.comments"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter-id>commentable</filter-id>
+            <filter-id>mutable_document</filter-id>
+            <filter-id>not_anonymous</filter-id>
+        </action>
+
+        <action id="TAB_PERMISSIONS"
+            link="/permissions/document_permissions.xhtml" order="130"
+            label="action.view.permissions" icon="/icons/file.gif">
+            <category>VIEW_ACTION_LIST</category>
+            <properties>
+                <!-- NXP-18320: disable ajax support on Polymer tabs -->
+                <property name="ajaxSupport">false</property>
+            </properties>
+        </action>
+
+
+        <action accessKey="v" icon="/icons/file.gif"
+            id="TAB_PROJECT_VIEW" label="action.view.summary"
+            link="/incl/tabs/document_view.xhtml" order="15"
+            type="rest_document_link">
+            <category>VIEW_ACTION_LIST</category>
+            <filter id="filter@TAB_PROJECT_VIEW">
+                <rule grant="true">
+                    <type>Project</type>
+                </rule>
+            </filter>
+            <properties>
+                <property name="ajaxSupport">true</property>
+            </properties>
+        </action>
+
+        <!-- End of add some general tabs and reorder default tabs -->
+
+        <!-- Change actions visibility by default -->
+        <action id="addToFavoritesAction">
+            <properties>
+                <property name="visibleByDefault">#{currentDocument.isFolder() ?
+                    true : false}</property>
+            </properties>
+        </action>
+        <action id="removeFromFavoritesAction">
+            <properties>
+                <property name="visibleByDefault">#{currentDocument.isFolder() ?
+                    true : false}</property>
+            </properties>
+        </action>
+
+        <action id="subscribesAllDocNotifications">
+            <properties>
+                <property name="visibleByDefault">#{currentDocument.isFolder() ?
+                    true : false}</property>
+            </properties>
+        </action>
+        <action id="unsubscribesAllDocNotifications">
+            <properties>
+                <property name="visibleByDefault">#{currentDocument.isFolder() ?
+                    true : false}</property>
+            </properties>
+        </action>
+
+        <action id="eloraDownload" type="template" order="150">
+            <category>BLOB_ACTIONS</category>
+            <filter-id>isMainBlob</filter-id>
+            <filter-id>isCadDocument</filter-id>
+            <filter-id>isNotZeroVersion</filter-id>
+            <properties>
+                <property name="template">/incl/action/download_and_open_link_template.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <!-- Content widgets -->
+        <action id="contentWidgetMainFile" type="template"
+            order="10">
+            <category>CONTENT_WIDGET</category>
+            <filter id="filter@contentWidgetMainFile">
+                <rule grant="true">
+                    <condition>#{!empty currentDocumentAsBlobHolder}
+                    </condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="template">/widgets/summary/content_widget_main_file_template.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="contentWidgetViewerFile" type="template"
+            order="20">
+            <category>CONTENT_WIDGET</category>
+            <filter id="filter@contentWidgetViewerFile">
+                <rule grant="true">
+                    <condition>#{currentDocument.hasSchema('elora_viewer')}
+                    </condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="template">/widgets/summary/content_widget_viewer_file_template.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="contentWidgetCadAttachments" type="template"
+            order="30">
+            <category>CONTENT_WIDGET</category>
+            <filter id="filter@contentWidgetCadAttachments">
+                <rule grant="true">
+                    <facet>CadDocument</facet>
+                </rule>
+            </filter>
+            <properties>
+                <property name="template">/widgets/summary/content_widget_cad_attachments_template.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="contentWidgetCadDerivedOutputs"
+            type="template" order="40">
+            <category>CONTENT_WIDGET</category>
+            <filter id="filter@contentWidgetCadDerivedOutputs">
+                <rule grant="true">
+                    <facet>CadDocument</facet>
+                </rule>
+            </filter>
+            <properties>
+                <property name="template">/widgets/summary/content_widget_cad_derived_outputs_template.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="contentWidgetAttachedFiles" type="template"
+            order="50">
+            <category>CONTENT_WIDGET</category>
+            <filter id="filter@contentWidgetAttachedFiles">
+                <rule grant="true">
+                    <condition>#{currentDocument.hasSchema('files')}
+                    </condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="template">/widgets/summary/content_widget_attached_files_template.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <!-- End of Content widgets -->
+
+        <action id="default_document_header" order="1"
+            type="template">
+            <category>DOCUMENT_HEADER</category>
+            <filter-id>hasDefaultHeader</filter-id>
+            <properties>
+                <property name="template">/widgets/actions/default_metadata_header.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="ws_document_header" order="1" type="template">
+            <category>DOCUMENT_HEADER</category>
+            <filter-id>hasWorkspaceHeader</filter-id>
+            <properties>
+                <property name="template">/widgets/actions/ws_metadata_header.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="project_document_header" order="1"
+            type="template">
+            <category>DOCUMENT_HEADER</category>
+            <filter-id>hasProjectHeader</filter-id>
+            <properties>
+                <property name="template">/widgets/actions/project_metadata_header.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="doc_with_content_document_header" order="1"
+            type="template">
+            <category>DOCUMENT_HEADER</category>
+            <filter-id>hasDocWithContentHeader</filter-id>
+            <properties>
+                <property name="template">/widgets/actions/document_with_content_metadata_header.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="header_messages" order="5" type="template">
+            <category>DOCUMENT_HEADER</category>
+            <filter-id>showHeaderMessages</filter-id>
+            <properties>
+                <property name="template">/widgets/actions/header_messages.xhtml
+                </property>
+            </properties>
+        </action>
+
+        <action id="summary_project_progress" order="10"
+            type="widget">
+            <category>SUMMARY_PANEL_RIGHT</category>
+            <filter id="filter@summary_project_progress">
+                <rule grant="true">
+                    <type>Project</type>
+                </rule>
+            </filter>
+            <properties>
+                <property name="widgetName">summary_project_progress
+                </property>
+            </properties>
+        </action>
+
+        <!-- create documents from template ### BEGIN ### -->
+        <action id="CREATE_DOC_FROM_TEMPLATE"
+            link="#{eloraDocumentTemplatesActions.createDocumentFromTemplate}"
+            order="0" label="command.create">
+            <category>CREATE_DOCUMENT_FORM</category>
+            <filter id="filter@CREATE_DOC_FROM_TEMPLATE">
+                <rule grant="false">
+                    <condition>#{changeableDocument.type ==
+                        'TemplateSource'}</condition>
+                </rule>
+            </filter>
+            <properties>
+                <property name="styleClass">mainAction</property>
+            </properties>
+        </action>
+
+        <!-- disable CREATE_WORKSPACE and CREATE_DOCUMENT actions, since 
+            everything will be managed from CREATE_DOC_FROM_TEMPLATE -->
+        <action id="CREATE_WORKSPACE" enabled="false" />
+        <action id="CREATE_DOCUMENT" enabled="false" />
+        <!-- create documents from template ### END ### -->
+
+
+        <!-- Duplicate document actions -->
+        <action id="duplicateDocumentFormButton"
+            link="#{duplicatingActions.createDuplicatedDocument}"
+            order="0" label="command.create">
+            <category>DUPLICATE_DOCUMENT_FORM</category>
+            <properties>
+                <property name="styleClass">mainAction</property>
+            </properties>
+        </action>
+        <action id="cancelDocumentDuplication"
+            link="#{navigationContext.goBack()}" order="50"
+            label="command.cancel" immediate="true">
+            <category>DUPLICATE_DOCUMENT_FORM</category>
+            <properties>
+                <property name="ajaxSupport">true</property>
+            </properties>
+        </action>
+
+        <!-- User center MCAD Integration tab -->
+        <action id="userCenterMcadIntegration"
+            label="eloraplm.label.userCenter.mcadIntegration"
+            link="/incl/user_center_mcad_integration.xhtml" order="110">
+            <category>USER_CENTER</category>
+            <filter-id>not_anonymous</filter-id>
+            <filter-id>not_readonly</filter-id>
+        </action>
+
+
+        <action id="sourceTemplate" type="widget" order="400">
+            <category>SUMMARY_PANEL_RIGHT</category>
+            <properties>
+                <property name="widgetName">source_template</property>
+            </properties>
+            <filter id="filter@sourceTemplate">
+                <rule grant="true">
+                    <condition>#{currentDocument.hasFacet('Templatable')
+                        and not empty
+                        currentDocument.templ.sourceDocUid}</condition>
+                </rule>
+            </filter>
+        </action>
+
+        <!-- This was created because image > PDF conversion was no available. 
+            Now it is not needed. <action id="imagePreview" link="#{eloraPreviewActions.getPreviewUrl(document, 
+            blobXPath, blob)}" type="bare_link" label="label.document.preview" icon="/icons/contextual_menu/preview.png" 
+            order="150"> <category>BLOB_ACTIONS</category> <filter-id>hasImagePreview</filter-id> 
+            <properties> <property name="target">_blank</property> </properties> </action> -->
+
+        <!-- Disable Picture rotate actions if doc is not checked out by 
+            me -->
+        <action id="pictureRotate90left" order="100" type="link"
+            link="#{pictureManager.rotate90left}"
+            icon="/icons/page_rotateleft.gif"
+            label="action.picture.rotateLeft">
+            <category>IMAGE_PROCESSING</category>
+            <filter-id>hasPictureFacet</filter-id>
+            <filter-id>isEditable</filter-id>
+        </action>
+
+        <action id="pictureRotate90right" order="200" type="link"
+            link="#{pictureManager.rotate90right}"
+            icon="/icons/page_rotateright.gif"
+            label="action.picture.rotateRight">
+            <category>IMAGE_PROCESSING</category>
+            <filter-id>hasPictureFacet</filter-id>
+            <filter-id>isEditable</filter-id>
+        </action>
+        
+        
+        <action id="newDocument" label="action.new.document" icon="/icons/action_add.gif" type="pfdialog">
+            <category>SUBVIEW_UPPER_LIST</category>
+            <filter-id>create</filter-id>
+            <properties>
+                <property name="include">/select_document_type.xhtml</property>
+                <property name="ajaxSupport">true</property>
+                <property name="dialogTitle">title.availableDocumentTypes</property>
+                <property name="dialogResizable">false</property>
+            </properties>
+        </action>
+
+    </extension>
+
 </component> 

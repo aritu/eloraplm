@@ -1,0 +1,80 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:p="http://primefaces.org/ui">
+            
+    <div id="sidebar_tasks_container">
+        <h:form id="tasks_dv_form">
+            
+            <p:blockUI widgetVar="usr_tsks_dv_blocker"
+                block="usr_tsks_dv"
+                trigger="usr_tsks_dv"
+                styleClass="translucidBlockUI topSpinner">
+                <i class="pi pi-spin pi-spinner"></i>
+            </p:blockUI>
+            
+            <p:dataView var="task" value="#{userTasksDataView.tasks}"
+                id="usr_tsks_dv"
+                widgetVar="usr_tsks_dv"
+                lazy="true"
+                paginator="true"
+                paginatorPosition="bottom"
+                rows="5"
+                rowIndexVar="ri"
+                layout="list"
+                listIcon="pi pi-bars">
+                
+                <f:facet name="header">
+                    <h2>#{messages['eloraplm.sidebar.title.tasks']}</h2>
+                </f:facet>
+                
+                <f:facet name="emptyMessage">
+                    <span class="processMessage completeInfo">#{messages['eloraplm.message.info.wf.tasks.empty']}</span>                            
+                </f:facet>
+                
+                <p:dataViewListItem>
+                    <p:remoteCommand name="updateTaskCount" autoRun="true"
+                        partialSubmit="true" process="@none" update="task-ct-bdg"
+                        rendered="#{ri eq 1}" />
+                    <div class="sidebar_task_card">
+                        <div class="sidebar_task_header">
+                            <!-- Process name should be obtained from task.processName, but Nuxeo does not store it, so we have to
+                                 use this workaround -->
+                            <p class="sidebar_task_title"><span class="task_wf_title">#{messages[eloraWebActions.getDocumentFromId(task.processId).title]}</span> - <span class="task_title">#{messages[task.name]}</span></p>
+                            <h:outputText value="#{messages['eloraplm.wf.label.task.delegated']}"
+                                styleClass="label" rendered="#{not empty task.delegatedActors
+                                    and eloraWebActions.userIsInUserGroupList(currentUser, task.actors)}" />
+                            <h:outputText value="#{messages['eloraplm.wf.label.task.delegatedToYou']}"
+                                styleClass="label" rendered="#{not empty task.delegatedActors
+                                    and eloraWebActions.userIsInUserGroupList(currentUser, task.delegatedActors)}" />
+                        </div>
+                        <p class="prewrap">#{messages[task.directive]}</p>
+                        <p class="sidebar_task_dates">
+                            <strong class="label label-light">#{messages['label.workflow.task.startdate']}</strong>
+                            <h:outputText value=" " />
+                            <h:outputText value="#{task.created}">
+                                <f:convertDateTime pattern="#{nxu:basicDateFormatter()}" />
+                            </h:outputText>
+                            <nxu:set var="isDelayed" value="#{task.dueDate lt currentDate ? true : false}">
+                                <strong class="label #{isDelayed ? 'label-error' : 'label-light'}">#{messages['label.workflow.task.duedate']}</strong>
+                                <h:outputText value=" " />
+                                <h:outputText value="#{task.dueDate}" styleClass="#{isDelayed ? 'delayedDate' : ''}">
+                                    <f:convertDateTime pattern="#{nxu:basicDateFormatter()}" />
+                                </h:outputText>
+                            </nxu:set>
+                        </p>
+                        <p class="sidebar_task_link">
+                            <nxl:widget name="icon_reference_title" mode="view" value="#{eloraWebActions.getDocumentFromId(task.targetDocumentId)}" />
+                        </p>
+                    </div>
+                </p:dataViewListItem>
+            </p:dataView>
+        </h:form>
+    </div>
+
+</ui:composition>
+ 

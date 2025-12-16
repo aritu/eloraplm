@@ -1,0 +1,14 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/"
+    xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/version_info" 
+    targetNamespace="http://www.nuxeo.org/ecm/project/schemas/version_info">
+
+    <xs:element name="sourceVersion">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" ref:resolver="documentResolver" ref:store="id" />
+        </xs:simpleType>
+      </xs:element>
+      
+    <xs:element name="nonCorrelativeVersion" type="xs:boolean" default="false" />
+
+</xs:schema>

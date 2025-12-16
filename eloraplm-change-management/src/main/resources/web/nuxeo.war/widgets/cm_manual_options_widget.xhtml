@@ -1,0 +1,43 @@
+<ui:composition
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:nxl="http://nuxeo.org/nxforms/layout"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:c="http://java.sun.com/jstl/core">
+  
+  <h:panelGroup layout="block" id="#{widget.id}" rendered="#{widget.mode eq 'edit' and nodeData.level == 1}">
+      
+      <h:commandButton
+        image="/icons/row_delete_16.png"
+        title="#{messages['eloraplm.command.remove']}"
+        rendered="#{not nodeData.isRemoved}"
+        styleClass="listing-icon-button">
+        
+          <p:ajax
+            listener="#{cmManualImpactedItemsTreeBean.markManualNodeAsRemoved(component.namingContainer, node)}"
+            process="@this"
+            partialSubmit="true" 
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="markTreeNodeAsRemoved()" />
+                     
+      </h:commandButton>
+      
+      <h:commandButton
+        image="/icons/row_undo_delete_16.png"
+        title="#{messages['eloraplm.command.undoRemove']}"
+        rendered="#{nodeData.isRemoved}"
+        styleClass="listing-icon-button">
+        
+          <p:ajax
+            listener="#{cmManualImpactedItemsTreeBean.unmarkManualNodeAsRemoved(component.namingContainer, node)}"
+            process="@this"
+            partialSubmit="true" 
+            onstart="preparePartialAjaxUpdate(cfg.source)"
+            onsuccess="unmarkTreeNodeAsRemoved()" />
+        
+      </h:commandButton>
+    
+  </h:panelGroup>
+  
+</ui:composition>

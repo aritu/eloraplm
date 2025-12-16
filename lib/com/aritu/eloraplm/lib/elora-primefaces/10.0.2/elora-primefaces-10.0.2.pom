@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.aritu.eloraplm.lib</groupId>
+    <artifactId>elora-primefaces</artifactId>
+    <version>10.0.2</version>
+    <description>PrimeFaces 10.0.0 library with changes to make it work with EloraPLM + PrimeIcons 7.0.0 + locale fix</description>
+</project>

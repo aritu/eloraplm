@@ -63,4 +63,13 @@ public class CodeCreationServiceImpl extends DefaultComponent
         }
     }
 
+    @Override
+    public boolean getEditableForType(String type) {
+        if (types.containsKey(type)) {
+            return types.get(type).editable;
+        } else {
+            return CODE_CREATION_TYPE_EDITABLE_FALSE;
+        }
+    }
+
 }

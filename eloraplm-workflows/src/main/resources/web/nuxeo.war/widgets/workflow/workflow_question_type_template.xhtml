@@ -5,34 +5,51 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:nxu="http://nuxeo.org/nxweb/util"
-    xmlns:p="http://primefaces.org/ui">
-    
-    <h:selectOneMenu id="type" value="#{field_0}" required="#{widget.properties.required}">
+    xmlns:p="http://primefaces.org/ui"
+>
+    <h:selectOneMenu
+        id="type"
+        value="#{field_0}"
+        required="#{widget.properties.required}"
+    >
         <c:if test="#{layout.mode eq 'create'}">
-            <f:selectItem itemValue="#{null}" itemLabel=" " />
+            <f:selectItem
+                itemValue="#{null}"
+                itemLabel=" "
+            />
         </c:if>
-        <nxu:selectItems value="#{workflowFormActions.getFieldTypes()}" var="type" itemValue="#{type.key}" itemLabel="#{messages[type.value]}" />
+        <nxu:selectItems
+            value="#{workflowFormActions.getFieldTypes()}"
+            var="type"
+            itemValue="#{type.key}"
+            itemLabel="#{messages[type.value]}"
+        />
         <c:if test="#{layout.mode eq 'create'}">
             <p:ajax
                 event="change"
-                process="@form"
+                process="@this"
                 partialSubmit="true"
                 immediate="true"
                 update="typeOptions"
-                listener="#{workflowQuestionsTableBean.onTypeChanged()}" />
+                oncomplete="onQuestionTypeChanged(xhr, status, args, #{pfDialogId})"
+                listener="#{workflowQuestionsTableBean.onTypeChanged()}"
+            />
         </c:if>
         <c:if test="#{layout.mode ne 'create'}">
             <p:ajax
                 event="change"
-                process="@form"
+                process="@this"
                 partialSubmit="true"
                 immediate="true"
                 update="typeOptions"
-                listener="#{workflowQuestionsTableBean.onTypeChangedEditing(layoutValue)}" />
+                oncomplete="onEditQuestionTypeChanged()"
+                listener="#{workflowQuestionsTableBean.onTypeChangedEditing(layoutValue)}"
+            />
         </c:if>
     </h:selectOneMenu>
-    
-    <h:message for="type" styleClass="errorMessage" />
-    
-</ui:composition>
 
+    <h:message
+        for="type"
+        styleClass="errorMessage"
+    />
+</ui:composition>

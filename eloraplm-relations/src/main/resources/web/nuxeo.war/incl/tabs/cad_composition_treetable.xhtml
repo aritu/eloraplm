@@ -1,10 +1,13 @@
 <ui:composition
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:nxl="http://nuxeo.org/nxforms/layout">
-    
-    <ui:include src="document_not_editable_warning.xhtml"/>
-    
-    <nxl:widget name="cad_comp_tt" mode="view" value="#{cadCompositionTreeBean}" />
-    
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+>
+    <ui:include src="document_not_editable_warning.xhtml" />
+
+    <nxl:widget
+        name="cad_comp_tt"
+        mode="edit"
+        value="#{cadCompositionTreeBean}"
+    />
 </ui:composition>

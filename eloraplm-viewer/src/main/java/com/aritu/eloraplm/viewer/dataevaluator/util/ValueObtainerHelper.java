@@ -49,54 +49,55 @@ public class ValueObtainerHelper {
     private static DocumentModel getTargetConsideringExceptions(
             DocumentModel currentDoc, DocumentModel relatedDoc, String action,
             DataObtainerAdapter doa) throws EloraException {
-        boolean needsBase = false;
-        if (action.equals(ViewerConstants.ACTION_OVERWRITE_AV)) {
-            needsBase = false;
-        } else if (doa.getMethod() != null
-                && doa.getMethod().equals("getVersionLabel")) {
-            needsBase = true;
-        } else if (action.equals(ViewerConstants.ACTION_OVERWRITE)) {
-            if (doa.getMethod() != null
-                    && doa.getMethod().equals("getCurrentLifeCycleState")) {
-                needsBase = true;
-            } else if (doa.getXpath() != null && (doa.getXpath().equals(
-                    NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR)
-                    || doa.getXpath().equals(
-                            NuxeoMetadataConstants.NX_DC_MODIFIED)
-                    || doa.getXpath().equals(
-                            EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWED)
-                    || doa.getXpath().equals(
-                            EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWER))) {
-                needsBase = true;
-            }
-        }
 
         DocumentModel doc = currentDoc;
+
+        // Check if the source is a related document or not.
         String source = doa.getSource();
         if (source != null
                 && source.equals(ViewerConstants.SOURCE_RELATED_DOC)) {
             doc = relatedDoc;
         }
 
-        if (needsBase) {
-            DocumentModel baseVersion = loadBaseVersion(doc);
-            if (baseVersion != null) {
-                return baseVersion;
+        // Check if the document is a WC or is a AV.
+        if (doc.isImmutable()) {
+            // If it is an AV, return the document itself.
+            return doc;
+        } else {
+            // Otherwise, check if it needs to retrieve the base version or not.
+            boolean needsBase = false;
+            if (action.equals(ViewerConstants.ACTION_OVERWRITE_AV)) {
+                needsBase = false;
+            } else if (doa.getMethod() != null
+                    && doa.getMethod().equals("getVersionLabel")) {
+                needsBase = true;
+            } else if (action.equals(ViewerConstants.ACTION_OVERWRITE)) {
+                if (doa.getMethod() != null
+                        && doa.getMethod().equals("getCurrentLifeCycleState")) {
+                    needsBase = true;
+                } else if (doa.getXpath() != null && (doa.getXpath().equals(
+                        NuxeoMetadataConstants.NX_DC_LAST_CONTRIBUTOR)
+                        || doa.getXpath().equals(
+                                NuxeoMetadataConstants.NX_DC_MODIFIED)
+                        || doa.getXpath().equals(
+                                EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWED)
+                        || doa.getXpath().equals(
+                                EloraMetadataConstants.ELORA_REVIEW_LAST_REVIEWER))) {
+                    needsBase = true;
+                }
+            }
+            if (needsBase) {
+                DocumentModel baseVersion = EloraDocumentHelper.getBaseVersion(
+                        doc);
+                if (baseVersion != null) {
+                    return baseVersion;
+                }
+            } else {
+                return doc;
             }
         }
 
         return doc;
-    }
-
-    private static DocumentModel loadBaseVersion(DocumentModel doc)
-            throws EloraException {
-        DocumentModel wcDoc = null;
-        if (doc.isImmutable()) {
-            wcDoc = doc.getCoreSession().getWorkingCopy(doc.getRef());
-        } else {
-            wcDoc = doc;
-        }
-        return EloraDocumentHelper.getBaseVersion(wcDoc);
     }
 
     private static Object getValueConsideringExceptions(String action,
@@ -106,14 +107,14 @@ public class ValueObtainerHelper {
         String logInitMsg = "[getValueConsideringExceptions] ";
 
         switch (doa.getType()) {
-        case "xpath":
+        case ViewerConstants.TYPE_XPATH:
             Serializable pty = target.getPropertyValue(doa.getXpath());
             if (pty != null) {
                 return pty;
             } else {
                 return "";
             }
-        case "method":
+        case ViewerConstants.TYPE_METHOD:
             try {
                 Method method;
                 MethodExecuter methodExec = target.getAdapter(

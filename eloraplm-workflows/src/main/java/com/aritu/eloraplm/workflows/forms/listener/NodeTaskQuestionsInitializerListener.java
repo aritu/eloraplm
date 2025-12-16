@@ -88,7 +88,7 @@ public class NodeTaskQuestionsInitializerListener implements EventListener {
                                     WorkflowFormsService.class);
 
                             wfs.initializeNodeTaskAnswersForDocument(session,
-                                    route, task);
+                                    wfInstance.getId(), route, task);
 
                             log.trace(logInitMsg
                                     + "Questions initialized for WF instance |"

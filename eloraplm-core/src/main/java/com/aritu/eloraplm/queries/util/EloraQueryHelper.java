@@ -102,6 +102,28 @@ public class EloraQueryHelper {
         return count;
     }
 
+    public static String executeAndGetStringResult(String query,
+            String columnName, CoreSession session) throws EloraException {
+
+        String result = null;
+
+        IterableQueryResult iqr = session.queryAndFetch(query, NXQL.NXQL);
+        if (iqr.size() > 1) {
+            throw new EloraException(
+                    "Query returned more that one result, when only one result was expected.");
+        }
+        try {
+            if (iqr.iterator().hasNext()) {
+                Map<String, Serializable> map = iqr.iterator().next();
+                result = (String) map.get(columnName);
+            }
+        } finally {
+            iqr.close();
+        }
+
+        return result;
+    }
+
     /**
      * This method executes the specified query and returns the resulting UID
      * set.
@@ -167,7 +189,7 @@ public class EloraQueryHelper {
                 NXQL.NXQL);
 
         try {
-            if (queryResult.iterator().hasNext()) {
+            while (queryResult.iterator().hasNext()) {
                 Map<String, Serializable> map = queryResult.iterator().next();
                 String value = (String) map.get(column);
                 results.add(value);

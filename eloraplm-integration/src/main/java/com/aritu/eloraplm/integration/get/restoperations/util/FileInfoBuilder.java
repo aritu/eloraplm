@@ -37,10 +37,6 @@ import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.core.util.EloraLockInfo;
 import com.aritu.eloraplm.core.util.EloraUrlHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.integration.get.restoperations.util.GetFileInfoResponse;
-import com.aritu.eloraplm.integration.get.restoperations.util.GetFileInfoResponseDoc;
-import com.aritu.eloraplm.integration.get.restoperations.util.UidRequestDoc;
-import com.aritu.eloraplm.integration.get.restoperations.util.VersionInfo;
 import com.aritu.eloraplm.integration.util.EloraIntegrationHelper;
 import com.aritu.eloraplm.integration.util.ItemInfo;
 

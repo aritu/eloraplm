@@ -28,6 +28,7 @@ import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import com.aritu.eloraplm.bom.characteristics.util.BomCharacteristicsHelper;
 import com.aritu.eloraplm.bom.util.BomHelper;
 import com.aritu.eloraplm.constants.BomCharacteristicsConstants;
+import com.aritu.eloraplm.constants.PdmEventNames;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
 
@@ -66,13 +67,19 @@ public class LoadBomCharacteristicsListener implements EventListener {
         // log.trace(logInitMsg + "eventId = |" + eventId + "|");
 
         if (!eventId.equals(DOCUMENT_CREATED)
-                && !eventId.equals(BEFORE_DOC_UPDATE)) {
+                && !eventId.equals(BEFORE_DOC_UPDATE)
+                && !eventId.equals(PdmEventNames.PDM_CHECKED_OUT_EVENT)) {
             // log.trace(logInitMsg + "--- return [invalid event name]---");
             return;
         }
 
         // get the document model from the event context
         DocumentModel doc = docCtx.getSourceDocument();
+
+        // Check that the document is not a proxy
+        if (doc.isProxy()) {
+            return;
+        }
 
         // check that we are handling a document with characteristics
         if (!EloraDocumentHelper.checkFilter(doc,
@@ -91,8 +98,10 @@ public class LoadBomCharacteristicsListener implements EventListener {
         if (needToLoadCharacteristic(doc, eventId, classificationMetadata,
                 classification)) {
             try {
-                BomCharacteristicsHelper.loadCharacteristicMastersFromListener(
-                        doc, classification);
+
+                // load characteristics
+                loadCharacteristics(doc, eventId, classification);
+
             } catch (EloraException e) {
                 log.error(logInitMsg + e.getMessage(), e);
                 event.markRollBack();
@@ -110,8 +119,8 @@ public class LoadBomCharacteristicsListener implements EventListener {
 
         boolean result = false;
 
-        if (eventId.equals(DOCUMENT_CREATED) && classification != null
-                && !classification.isEmpty()) {
+        if (eventId.equals(DOCUMENT_CREATED)
+                || eventId.equals(PdmEventNames.PDM_CHECKED_OUT_EVENT)) {
             result = true;
         } else if (eventId.equals(BEFORE_DOC_UPDATE)
                 && doc.getProperty(classificationMetadata).isDirty()) {
@@ -123,4 +132,19 @@ public class LoadBomCharacteristicsListener implements EventListener {
         return result;
     }
 
+    private void loadCharacteristics(DocumentModel doc, String eventId,
+            String classification) throws EloraException {
+
+        if (eventId.equals(DOCUMENT_CREATED)
+                || eventId.equals(BEFORE_DOC_UPDATE)) {
+
+            BomCharacteristicsHelper.loadCharacteristicMasters(doc,
+                    classification, false);
+
+        } else if (eventId.equals(PdmEventNames.PDM_CHECKED_OUT_EVENT)) {
+
+            BomCharacteristicsHelper.loadCharacteristicMasters(doc,
+                    classification, true);
+        }
+    }
 }

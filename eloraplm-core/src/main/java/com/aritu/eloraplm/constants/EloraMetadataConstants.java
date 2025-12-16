@@ -6,6 +6,8 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_ELO_ORDERING_PRIORITY = "elo:orderingPriority";
 
+    public static final String ELORA_ELO_VAULT_FOLDER = "elo:vaultFolder";
+
     public static final String ELORA_ELOVWR_FILE = "elovwr:file";
 
     public static final String ELORA_ELOVWR_FILENAME = "elovwr:filename";
@@ -20,6 +22,10 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_VLBL_MINOR = "vlbl:minor";
 
+    public static final String ELORA_VINF_SOURCE_VERSION = "vinf:sourceVersion";
+
+    public static final String ELORA_VINF_NON_CORRELATIVE_VERSION = "vinf:nonCorrelativeVersion";
+
     public static final String ELORA_RELEXT_QUANTITY = "relext:quantity";
 
     public static final String ELORA_RELEXT_ORDERING = "relext:ordering";
@@ -32,6 +38,8 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_RELEXT_ISMANUAL = "relext:isManual";
 
+    public static final String ELORA_RELEXT_DESIGNATORS = "relext:designators";
+
     public static final String ELORA_RELEXT_ISTEMPLATE = "relext:isTemplate";
 
     public static final String ELORA_CAD_AUTHORING_TOOL = "cad:authoringTool";
@@ -42,7 +50,9 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_CAD_CAD_TYPE = "cad:cadType";
 
-    public static final String ELORA_CAD_CAD_MATERIAL = "cad:cadMaterial";
+    public static final String ELORA_CAD_MATERIALS = "cad:materials";
+
+    public static final String ELORA_CAD_MATERIAL_NOTES = "cad:materialNotes";
 
     public static final String ELORA_CAD_MASS = "cad:mass";
 
@@ -56,9 +66,21 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_CAD_SURFACE_UNIT = "cad:surfaceUnit";
 
+    public static final String ELORA_CAD_DERIVED_OUTPUTS = "cad:derivedOutputs";
+
     public static final String ELORA_OVERWRITE_OVERWRITTEN = "ovw:overwritten";
 
     public static final String ELORA_CUST_CUSTOMERS = "cust:customers";
+
+    public static final String ELORA_SUPP_SUPPLIERS = "supp:suppliers";
+
+    public static final String ELORA_SUPP_SUPPLIERS_SUPPLIER = "supplier";
+
+    public static final String ELORA_SUPP_SUPPLIERS_PREFERENCE = "preference";
+
+    public static final String ELORA_SUPP_SUPPLIERS_PARTNUMBER = "partNumber";
+
+    public static final String ELORA_OEM_OEMS = "oem:oems";
 
     public static final String ELORA_PLANNING_REAL_END_DATE = "plan:realEndDate";
 
@@ -86,13 +108,13 @@ public class EloraMetadataConstants {
 
     // BOM metadata
 
-    public static final String ELORA_BOMMANPART_MANUFACTURER = "bommanpart:manufacturer";
-
     public static final String ELORA_BOMCUSTPROD_CUSTOMER = "bomcustprod:customer";
 
     public static final String ELORA_BOMITEM_BOMITEMTYPE = "bomitem:bomItemType";
 
     public static final String ELORA_BOMITEM_EXTERNAL_VERSION = "bomitem:externalVersion";
+
+    public static final String ELORA_BOMITEM_ESTIMATED_COST = "bomitem:estimatedCost";
 
     public static final String ELORA_BOMPART_UNIT = "bompart:unit";
 
@@ -122,9 +144,15 @@ public class EloraMetadataConstants {
 
     public static final String ELORA_BOMTOOL_TOOLCLASSIFICATION = "bomtool:toolClassification";
 
+    public static final String ELORA_BOMLIST_BOMLIST = "bomlst:bomList";
+
     public static final String ELORA_PARTCLASS_PARTCLASSIFICATION = "partclass:partClassification";
 
     public static final String ELORA_PRODCLASS_PRODUCTCLASSIFICATION = "prodclass:productClassification";
+
+    public static final String ELORA_SOFTWARE_CRC = "soft:checksum";
+
+    public static final String ELORA_BOMLST_BOMLIST = "bomlst:bomList";
 
     // QM metada
 

@@ -7,13 +7,11 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-quality-management-TypeS
- ervice-contrib.xml,OSGI-INF/extensions/eloraplm-quality-management-Ac
- tionService-contrib.xml,OSGI-INF/extensions/eloraplm-quality-manageme
- nt-LifeCycleService-contrib.xml,OSGI-INF/extensions/eloraplm-quality-
- management-WebLayoutManager-contrib.xml,OSGI-INF/extensions/eloraplm-
- quality-management-ContentViewService-contrib.xml,OSGI-INF/extensions
- /eloraplm-quality-management-ContentTemplateService-contrib.xml,OSGI-
- INF/extensions/eloraplm-quality-management-WorkspaceArchiverService-c
- ontrib.xml
-
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-quality-management-TypeService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-quality-management-ActionService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-quality-management-LifeCycleService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-quality-management-WebLayoutManager-contrib.xml,
+ OSGI-INF/extensions/eloraplm-quality-management-ContentViewService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-quality-management-ContentTemplateService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-quality-management-WorkspaceArchiverService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-quality-management-TypeConfigService-contrib.xml

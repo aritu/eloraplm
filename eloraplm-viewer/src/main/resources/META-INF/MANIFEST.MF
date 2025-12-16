@@ -7,9 +7,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-viewer-EventServiceCompone
- nt-contrib.xml,OSGI-INF/extensions/ViewerFileService.xml,OSGI-INF/exten
- sions/eloraplm-viewer-ActionService-contrib.xml,OSGI-INF/extensions/Fil
- enameService.xml,OSGI-INF/extensions/eloraplm-viewer-DocumentAdapterSer
- vice-contrib.xml
-
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-viewer-EventServiceComponent-contrib.xml,
+ OSGI-INF/extensions/ViewerFileService.xml,
+ OSGI-INF/extensions/eloraplm-viewer-ActionService-contrib.xml,
+ OSGI-INF/extensions/FilenameService.xml,
+ OSGI-INF/extensions/eloraplm-viewer-DocumentAdapterService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-viewer-OperationServiceComponent-contrib.xml

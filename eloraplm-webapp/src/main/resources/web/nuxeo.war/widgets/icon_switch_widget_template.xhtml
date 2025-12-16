@@ -1,0 +1,51 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+>
+    <h:panelGroup
+        rendered="#{empty widget.properties.visible or eloraWebActions.evaluateBoolean(widget.properties.visible)}"
+    >
+        <ui:remove>
+            <!-- EDIT MODE -->
+        </ui:remove>
+        <c:if test="#{widget.mode == 'edit'}">
+            <h:commandButton
+                image="#{widget.properties.icon}"
+                title="#{field_0 ? messages[widget.properties.onTitle.concat('.hover')] : messages[widget.properties.offTitle.concat('.hover')]}"
+                alt=""
+                styleClass="listing-icon-button icon-switch #{field_0 ? 'on' : 'off'}"
+            >
+                <c:if test="#{not empty widget.properties.templateForListener}">
+                    <ui:include
+                        src="#{widget.properties.templateForListener}"
+                    />
+                </c:if>
+            </h:commandButton>
+        </c:if>
+
+        <ui:remove>
+            <!-- VIEW MODE -->
+        </ui:remove>
+        <c:if test="#{widget.mode == 'view'}">
+            <h:graphicImage
+                value="#{widget.properties.icon}"
+                title="#{field_0 ? messages[widget.properties.onTitle] : messages[widget.properties.offTitle]}"
+                styleClass="listing-icon-button icon-switch #{field_0 ? 'on' : 'off'} disabled"
+            />
+        </c:if>
+
+        <ui:remove>
+            <!-- CSV MODE -->
+        </ui:remove>
+        <c:if test="#{widget.mode == 'csv'}">
+            <h:outputText
+                value="#{field_0 ? messages[widget.properties.onTitle] : messages[widget.properties.offTitle]}"
+            />
+        </c:if>
+    </h:panelGroup>
+</ui:composition>

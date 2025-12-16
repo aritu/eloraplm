@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<xs:schema
+    targetNamespace="http://eloraplm.aritu.com/schemas/common_relation/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    >
+    
+    <xs:element name="isExcludedFromMapping" type="xs:boolean" default="false"/>
+    
+    <!-- TODO Etorkizunerako migrazioa?
+    <xs:element name="isManual" type="xs:boolean" default="false"/>
+    <xs:element name="isTemplate" type="xs:boolean" default="false"/>
+     -->
+    
+</xs:schema>

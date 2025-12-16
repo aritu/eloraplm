@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="com.aritu.eloraplm.securitypolicy.DraftServicePublisher.contrib">
+
+  <require>com.aritu.eloraplm.integration.DraftServicePublisher.contrib</require>
+
+  <implementation class="com.aritu.eloraplm.securitypolicy.integration.service.SecurityDraftServiceImpl"/>
+  <service>
+    <provide interface="com.aritu.eloraplm.integration.api.DraftManager"/>
+  </service>
+
+</component>

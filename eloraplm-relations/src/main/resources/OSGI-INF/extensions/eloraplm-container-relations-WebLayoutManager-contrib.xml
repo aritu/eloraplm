@@ -2,170 +2,210 @@
 
 <component name="com.aritu.eloraplm.container.relations.WebLayoutManager.contrib">
 
-  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
 
-    <!-- treetable layouts -->
-    
-    <layout name="cont_tt">
-      <templates>
-        <template mode="any">/layouts/layout_treetable_template.xhtml
-        </template>
-      </templates>
-      <columns>
-        <column name="icon_reference_title">
-          <properties mode="any">
-            <property name="columnHeading">label.content.header.title</property>
-          </properties>
-          <widget>treewidget_workspace_icon_reference_title</widget>
-        </column>
-        <column name="lock">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>treewidget_lock_icon</widget>
-        </column>
-        <column name="lifecycle_state">
+        <!-- treetable layouts -->
+
+        <layout name="cont_tt">
+            <templates>
+                <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="icon_reference_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
+                    </properties>
+                    <widget>treewidget_workspace_icon_reference_title</widget>
+                </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
+                </column>
+                <column name="lock">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 40px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>treewidget_lock_icon</widget>
+                </column>
+                <column name="lifecycle_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 9em;</property>
+                        <property name="columnHeading">label.lifecycle</property>
+                    </properties>
+                    <widget>listing_colored_lifecycle_state</widget>
+                </column>
+                <column name="remove">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 40px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>container_remove_relation</widget>
+                </column>
+            </columns>
             <properties mode="any">
-                <property name="columnStyle">width: 9em;</property>
-                <property name="columnHeading">label.lifecycle</property>
+                <property name="tableTitle">title.treetable.container.outgoingRelations</property>
             </properties>
-            <widget>listing_colored_lifecycle_state</widget>
-        </column>
-        <column name="remove">
+        </layout>
+
+        <layout name="cont_inv_tt">
+            <templates>
+                <template mode="any">/layouts/layout_treetable_template.xhtml</template>
+                <template mode="csv">/layouts/layout_csv_treetable_template.xhtml</template>
+            </templates>
+            <columns>
+                <column name="icon_reference_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">true</property>
+                    </properties>
+                    <widget>treewidget_inverse_workspace_icon_reference_title</widget>
+                </column>
+                <column name="export_reference">
+                    <properties mode="any">
+                        <property name="columnHeading">eloraplm.label.reference</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_reference</widget>
+                </column>
+                <column name="export_title">
+                    <properties mode="any">
+                        <property name="columnHeading">label.content.header.title</property>
+                        <property name="hidden">true</property>
+                    </properties>
+                    <properties mode="csv">
+                        <property name="hidden">false</property>
+                    </properties>
+                    <widget>listing_title</widget>
+                </column>
+                <column name="lock">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 40px;</property>
+                        <property name="columnStyleClass">alignCenter</property>
+                    </properties>
+                    <widget>treewidget_lock_icon</widget>
+                </column>
+                <column name="lifecycle_state">
+                    <properties mode="any">
+                        <property name="columnStyle">width: 9em;</property>
+                        <property name="columnHeading">label.lifecycle</property>
+                    </properties>
+                    <widget>listing_colored_lifecycle_state</widget>
+                </column>
+            </columns>
             <properties mode="any">
-                <property name="columnStyle">width: 40px;</property>
-                <property name="columnStyleClass">alignCenter</property>
+                <property name="tableTitle">title.treetable.container.incomingRelations</property>
+                <property name="inverse">true</property>
             </properties>
-            <widget>container_remove_relation</widget>
-        </column>
-      </columns>
-      <properties mode="any">
-        <property name="tableTitle">title.treetable.container.outgoingRelations</property>
-        <property name="factory">#{containerRoot}</property>
-      </properties>
-    </layout>
-    
-    <layout name="cont_inv_tt">
-      <templates>
-        <template mode="any">/layouts/layout_treetable_template.xhtml
-        </template>
-      </templates>
-      <columns>
-        <column name="icon_reference_title">
-          <properties mode="any">
-            <property name="columnHeading">label.content.header.title</property>
-          </properties>
-          <widget>treewidget_inverse_workspace_icon_reference_title</widget>
-        </column>
-        <column name="lock">
-                <properties mode="any">
-                    <property name="columnStyle">width: 40px;</property>
-                    <property name="columnStyleClass">alignCenter</property>
-                </properties>
-                <widget>treewidget_lock_icon</widget>
-        </column>
-        <column name="lifecycle_state">
+        </layout>
+
+    </extension>
+
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+
+        <widget name="cont_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.container.relations</label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cont_tt</property>
+                <property name="exportable">true</property>
+            </properties>
+        </widget>
+
+        <widget name="cont_inv_tt" type="treetable">
+            <labels>
+                <label mode="any">label.treetable.container.relations</label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="treetableLayout">cont_inv_tt</property>
+                <property name="exportable">true</property>
+            </properties>
+        </widget>
+
+        <widget name="container_remove_relation" type="template">
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>level</field>
+            </fields>
+            <widgetModes>
+                <mode value="edit">view</mode>
+                <mode value="any">hidden</mode>
+            </widgetModes>
             <properties mode="any">
-                <property name="columnStyle">width: 9em;</property>
-                <property name="columnHeading">label.lifecycle</property>
+                <property name="template">
+                    /widgets/container_remove_relation_widget.xhtml
+                </property>
             </properties>
-            <widget>listing_colored_lifecycle_state</widget>
-        </column>
-      </columns>
-      <properties mode="any">
-        <property name="tableTitle">title.treetable.container.incomingRelations</property>
-        <property name="isInverse">true</property>
-        <property name="factory">#{containerInverseRoot}</property>
-      </properties>
-    </layout>
-    
-  </extension>
-  
-  <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
-  
-    <widget name="cont_tt" type="treetable">
-        <labels>
-            <label mode="any">label.treetable.container.relations</label>
-        </labels>
-        <fields>
-            <field>data</field>
-        </fields>
-        <properties widgetMode="any">
-            <property name="treetableLayout">cont_tt</property>
-        </properties>
-    </widget>
-    
-    <widget name="cont_inv_tt" type="treetable">
-        <labels>
-            <label mode="any">label.treetable.container.relations</label>
-        </labels>
-        <fields>
-            <field>data</field>
-        </fields>
-        <properties widgetMode="any">
-            <property name="treetableLayout">cont_inv_tt</property>
-        </properties>
-    </widget>
-    
-    <widget name="container_remove_relation" type="template">
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>level</field>
-      </fields>
-      <widgetModes>
-          <mode value="edit">view</mode>
-          <mode value="any">hidden</mode>
-      </widgetModes>
-      <properties mode="any">
-        <property name="template">
-              /widgets/container_remove_relation_widget.xhtml
-        </property>
-      </properties>
-    </widget>
-    
-    <widget name="treewidget_workspace_icon_reference_title" type="treewidget_icon_reference_title">
-      <labels>
-        <label mode="any">label.content.header.title</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>data</field>
-        <field>data.ref</field>
-        <field>predicateUri</field>
-        <field>comment</field>
-        <field>data.elo.reference</field>
-        <field>wcDoc</field>
-      </fields>
-      <properties mode="any">
-        <property name="showPredicateTooltip">true</property>
-        <property name="predicateVocabulary">elora_container_predicates</property>
-      </properties>
-    </widget>
-    
-    <widget name="treewidget_inverse_workspace_icon_reference_title" type="treewidget_icon_reference_title">
-      <labels>
-        <label mode="any">label.content.header.title</label>
-      </labels>
-      <translated>true</translated>
-      <fields>
-        <field>data</field>
-        <field>data.ref</field>
-        <field>predicateUri</field>
-        <field>comment</field>
-        <field>data.elo.reference</field>
-        <field>wcDoc</field>
-      </fields>
-      <properties mode="any">
-        <property name="showPredicateTooltip">true</property>
-        <property name="predicateVocabulary">elora_container_inverse_predicates</property>
-      </properties>
-    </widget>
-  
-  </extension>
-  
-    
+        </widget>
+
+        <widget name="treewidget_workspace_icon_reference_title"
+            type="treewidget_icon_reference_title">
+            <labels>
+                <label mode="any">label.content.header.title</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data</field>
+                <field>data.ref</field>
+                <field>predicateUri</field>
+                <field>data.elo.reference</field>
+                <field>wcDoc</field>
+            </fields>
+            <properties mode="any">
+                <property name="showPredicateTooltip">true</property>
+                <property name="predicateVocabulary">elora_container_predicates</property>
+            </properties>
+        </widget>
+
+        <widget name="treewidget_inverse_workspace_icon_reference_title"
+            type="treewidget_icon_reference_title">
+            <labels>
+                <label mode="any">label.content.header.title</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>data</field>
+                <field>data.ref</field>
+                <field>predicateUri</field>
+                <field>data.elo.reference</field>
+                <field>wcDoc</field>
+            </fields>
+            <properties mode="any">
+                <property name="showPredicateTooltip">true</property>
+                <property name="predicateVocabulary">elora_container_inverse_predicates</property>
+            </properties>
+        </widget>
+
+    </extension>
+
+
 </component>  

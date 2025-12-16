@@ -78,4 +78,39 @@ public class BomCharacteristicsConstants {
     // BOM Characteristic Filters
     public static final String IS_DOC_WITH_CHARAC_FILTER_ID = "isBomDocumentWithCharacteristics";
 
+    // Fields constants
+    public static final String BOM_CHARACTERISTIC_ID = "bomCharacteristicId";
+
+    public static final String TITLE = "title";
+
+    public static final String TYPE = "type";
+
+    public static final String NUMBER_VALUE = "numberValue";
+
+    public static final String STRING_VALUE = "stringValue";
+
+    public static final String DATE_VALUE = "dateValue";
+
+    public static final String BOOLEAN_VALUE = "booleanValue";
+
+    public static final String LIST_VALUE = "listValue";
+
+    public static final String UNIT = "unit";
+
+    // Linked Characteristic Fields constants
+    public static final String LINKED_DOCUMENT = "linkedDocument";
+
+    public static final String LINKED_DOCUMENT_CHARAC_ID = "linkedDocumentCharacteristicId";
+
+    public static final String SHOW_IN_REPORT = "showInReport";
+
+    public static final String ORDER_IN_REPORT = "orderInReport";
+
+    // Action constants
+    public static final String LINKED_CHARACS_UPDATED_BY_CHECKIN = "Checkin";
+
+    public static final String LINKED_CHARACS_UPDATED_BY_OVERWRITE = "Overwrite";
+
+    public static final String LINKED_CHARACS_UPDATED_BY_UPDATE_BUTTON = "Updated from Linked Characteristics table.";
+
 }

@@ -7,10 +7,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ManifestVersion: 2
 Bundle-Vendor: Aritu S Coop
-Nuxeo-Component: OSGI-INF/extensions/eloraplm-lifecycles-LifeCycleServ
- ice-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ActionService
- -contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-ResourcePublishe
- r-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-LifecycleConfig
- Service-contrib.xml,OSGI-INF/extensions/eloraplm-lifecycles-WebResour
- ces-contrib.xml
-
+Nuxeo-Component: OSGI-INF/extensions/eloraplm-lifecycles-LifeCycleService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-lifecycles-ActionService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-lifecycles-ResourcePublisher-contrib.xml,
+ OSGI-INF/extensions/eloraplm-lifecycles-LifecycleConfigService-contrib.xml,
+ OSGI-INF/extensions/eloraplm-lifecycles-WebResources-contrib.xml

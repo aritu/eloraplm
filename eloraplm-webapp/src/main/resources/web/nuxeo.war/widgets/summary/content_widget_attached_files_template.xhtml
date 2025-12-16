@@ -1,0 +1,31 @@
+<ui:fragment
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:nxu="http://nuxeo.org/nxweb/util">
+
+    <c:set var="hasOtherBlobs" value="#{currentDocument.hasSchema('files') and !empty currentDocument.files.files}" />
+    
+    <!-- Attachments -->
+    <c:if test="#{hasOtherBlobs}">
+        <div class="#{fileZoneClass}" context="otherBlobs" id="otherBlobsDropZone">
+            <table class="smallTable">
+                <tbody>
+                <c:forEach items="#{currentDocument.files.files}" varStatus="loop">
+                    <tr>
+                        <td class="labelColumn">
+                            <h:outputText value=" #{messages['label.summary.download.attachments']}" rendered="#{loop.index == 0}" />
+                        </td>
+                        <td class="fieldColumn">
+                            <nxl:widgetType name="extendedFile" mode="view" value="#{currentDocument}"
+                                field="files:files/#{loop.index}/file" />
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
+
+</ui:fragment>

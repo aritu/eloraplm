@@ -5,13 +5,20 @@
     xmlns:p="http://primefaces.org/ui"
     xmlns:nxl="http://nuxeo.org/nxforms/layout"
     xmlns:c="http://java.sun.com/jstl/core"
-    >
+>
+    <h:outputText
+        value="#{messages['eloraplm.label.dt.rowNotSaved']}"
+        rendered="#{rowData.isNew}"
+    />
 
-    <h:outputText value="#{messages['eloraplm.label.dt.rowNotSaved']}" rendered="#{rowData.isNew}" />
-    
-    <nxl:widget name="icon_reference_title" mode="view"
-        value="#{field_0}" rendered="#{not rowData.isNew and not empty field_0}" />
-    
+    <h:panelGroup rendered="#{not rowData.isNew and not empty field_0}">
+        <nxl:widget
+            name="icon_reference_title"
+            mode="#{widget.mode}"
+            value="#{field_0}"
+        />
+    </h:panelGroup>
+
     <c:if test="#{widget.mode == 'edit'}">
         <!-- For now it will be disabled, until customer products are well defined -->
         <h:commandButton
@@ -19,17 +26,16 @@
             title="#{messages['eloraplm.command.product.createCustomerProduct']}"
             value="#{messages['eloraplm.command.product.createCustomerProduct']}"
             rendered="#{not rowData.isNew and empty field_0}"
-            disabled="true">
-            
+            disabled="true"
+        >
             <p:ajax
-                listener="#{itemCustomersTableBean.createAndRelateCustomerProduct(field_1, component.namingContainer, rowData, rowIndex)}"
+                listener="#{itemCustomersTableBean.createAndRelateCustomerProduct(field_1, component.namingContainer, rowData)}"
                 process="@this"
                 partialSubmit="true"
+                update="@form:dt:@row(#{rowIndex})"
                 onstart="prepareTablePartialAjaxUpdate(cfg.source)"
                 onsuccess="endRowUpdate()"
-                />
-                
+            />
         </h:commandButton>
     </c:if>
-    
 </ui:composition>

@@ -1,0 +1,44 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+>
+    <c:if
+        test="#{webActions.currentTabId eq 'TAB_CM_MODIFIED_ITEMS_TREETABLE'}"
+    >
+        <p:commandLink
+            styleClass="listing-icon-button"
+            actionListener="#{cmModifiedsTreeBean.refreshNode(node, 'loadDestinationSourceVersions')}"
+            pt:data-tooltip="#{messages['eloraplm.command.cm.loadDestinationSourceVersionList']}"
+            rendered="#{versionList.size()==1}"
+            process="@this"
+            update="#{widget.id}_pf_select #{widget.id}_post"
+            partialSubmit="true"
+            onstart="onStartLoadingButton(cfg.source)"
+            oncomplete="onCompleteLoadingButton();"
+        >
+            <h:graphicImage value="/icons/reload_16.png" />
+        </p:commandLink>
+    </c:if>
+
+    <c:if
+        test="#{webActions.currentTabId eq 'TAB_CM_BOM_IMPACTED_ITEMS_TREETABLE'}"
+    >
+        <p:commandLink
+            styleClass="listing-icon-button"
+            actionListener="#{cmBomImpactedItemsTreeBean.refreshNode(node, 'loadDestinationSourceVersions')}"
+            pt:data-tooltip="#{messages['eloraplm.command.cm.loadDestinationSourceVersionList']}"
+            rendered="#{versionList.size()==1}"
+            process="@this"
+            update="#{widget.id}_pf_select #{widget.id}_post"
+            partialSubmit="true"
+            onstart="onStartLoadingButton(cfg.source)"
+            oncomplete="onCompleteLoadingButton();"
+        >
+            <h:graphicImage value="/icons/reload_16.png" />
+        </p:commandLink>
+    </c:if>
+</ui:composition>

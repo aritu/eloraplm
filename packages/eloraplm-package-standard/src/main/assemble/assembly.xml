@@ -34,7 +34,7 @@
             </artifact:set>
         </copy>
         
-        <!-- Third party libraries -->
+        <!-- Third party libraries (<sdk>/nxserver/lib) -->
         <copy todir="${outdir}/marketplace/install/lib" overwrite="true">
             <artifact:set>
                 <includes>

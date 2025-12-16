@@ -1,0 +1,33 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+>
+    <nxu:set
+        var="taskDoc"
+        value="#{eloraWebActions.getDocumentFromId(field_0)}"
+    >
+        <nxl:widgetType
+            name="multipleUsersSuggestion"
+            mode="#{widget.mode}"
+            value="#{taskDoc.task}"
+            field="actors"
+            prefixed="true"
+        />
+
+        <ui:fragment rendered="#{not empty taskDoc.task.delegatedActors}">
+            <h:outputText value="&#160;&#8594;&#160;" />
+
+            <nxl:widgetType
+                name="multipleUsersSuggestion"
+                mode="#{widget.mode}"
+                value="#{taskDoc.task}"
+                field="delegatedActors"
+                prefixed="true"
+            />
+        </ui:fragment>
+    </nxu:set>
+</ui:composition>

@@ -8,6 +8,7 @@
   
        <schema name="bom_characteristic_master" prefix="bomcharcmas" src="schemas/bom_characteristic_master.xsd"/>
        <schema name="bom_characteristics" prefix="bomchar" src="schemas/bom_characteristic_list.xsd"/>
+       <schema name="linked_characteristics" prefix="linkchar" src="schemas/linked_characteristic_list.xsd"/>
        
   </extension>
 
@@ -55,26 +56,32 @@
     <doctype extends="BomCharacteristicMasterGenType" name="BomSpecificationCharacteristicMaster" />
     
     
-     <!-- Append BomCharacteristics related fields to general BomPart, BomTool, BomPackaging
+     <!-- Append BomCharacteristics and LinkedCharacteristics related fields to 
+     BomPart, BomTool, BomPackaging
      BomSpecification, BomProduct doc types -->
     <doctype append="true" name="BomPart">
       <schema name="bom_characteristics"/>
+      <schema name="linked_characteristics" />
     </doctype>
     
     <doctype append="true" name="BomTool">
       <schema name="bom_characteristics"/>
+      <schema name="linked_characteristics" />
     </doctype>
     
     <doctype append="true" name="BomPackaging">
       <schema name="bom_characteristics"/>
+      <schema name="linked_characteristics" />
     </doctype>
     
     <doctype append="true" name="BomSpecification">
       <schema name="bom_characteristics"/>
+      <schema name="linked_characteristics" />
     </doctype>
     
     <doctype append="true" name="BomProduct">
       <schema name="bom_characteristics"/>
+      <schema name="linked_characteristics" />
     </doctype>
 
   </extension>

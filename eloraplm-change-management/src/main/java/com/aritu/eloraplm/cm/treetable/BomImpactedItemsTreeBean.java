@@ -2,12 +2,13 @@ package com.aritu.eloraplm.cm.treetable;
 
 import static org.jboss.seam.annotations.Install.APPLICATION;
 
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Install;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
@@ -17,16 +18,20 @@ import org.jboss.seam.international.StatusMessage;
 import org.nuxeo.ecm.platform.ui.web.invalidations.AutomaticDocumentBasedInvalidation;
 import org.primefaces.model.TreeNode;
 
+import com.aritu.eloraplm.config.util.CMConfig;
 import com.aritu.eloraplm.constants.CMConstants;
 import com.aritu.eloraplm.constants.CMEventNames;
+import com.aritu.eloraplm.constants.EloraLifeCycleConstants;
 import com.aritu.eloraplm.core.util.EloraEventHelper;
 
-@Name("cmBomImpactedItemsTreeBean")
+@Name(BomImpactedItemsTreeBean.NAME)
 @Scope(ScopeType.CONVERSATION)
 @Install(precedence = APPLICATION)
 @AutomaticDocumentBasedInvalidation
-public class BomImpactedItemsTreeBean extends ImpactedItemsTreeBean
-        implements Serializable {
+public class BomImpactedItemsTreeBean extends AbstractImpactedItemsTree {
+
+    public static final String NAME = "cmBomImpactedItemsTreeBean";
+
     private static final long serialVersionUID = 1L;
 
     private static final Log log = LogFactory.getLog(
@@ -34,8 +39,15 @@ public class BomImpactedItemsTreeBean extends ImpactedItemsTreeBean
 
     private boolean reloadBomImpactedItems = false;
 
+    private Boolean isManagedDefaultFilter = null;
+
+    private List<String> itemLifeCycleStates = CMConfig.itemLifeCycleStates;
+
+    private Map<String, String> itemLifeCycleStatesFilterMap;
+
     public BomImpactedItemsTreeBean() {
         super(CMConstants.ITEM_TYPE_BOM);
+        fillItemFilterValues();
     }
 
     @Override
@@ -63,6 +75,17 @@ public class BomImpactedItemsTreeBean extends ImpactedItemsTreeBean
         log.trace(logInitMsg + "--- EXIT ---");
     }
 
+    private void fillItemFilterValues() {
+        fillFilterValues();
+
+        itemLifeCycleStatesFilterMap = new HashMap<String, String>();
+        for (String state : itemLifeCycleStates) {
+            if (!state.equals(EloraLifeCycleConstants.OBSOLETE)) {
+                itemLifeCycleStatesFilterMap.put(state.concat(".abbr"), state);
+            }
+        }
+    }
+
     @Override
     public TreeNode getRoot() {
         if (reloadBomImpactedItems) {
@@ -72,19 +95,24 @@ public class BomImpactedItemsTreeBean extends ImpactedItemsTreeBean
         return super.getRoot();
     }
 
-    @Observer(value = { CMEventNames.CM_BOM_MODIFIED_ITEMS_SAVED,
-            CMEventNames.CM_DOC_MODIFIED_ITEMS_SAVED,
-            CMEventNames.CM_BOM_IMPACT_MATRIX_CALCULATED,
+    @Observer(value = { CMEventNames.CM_MODIFIED_ITEMS_SAVED,
+            CMEventNames.CM_IMPACT_MATRIX_CALCULATED,
             CMEventNames.CM_REFRESH_ITEMS_IMPACT_MATRIX })
     @BypassInterceptors
     public void markTreeToBeReloaded() {
         reloadBomImpactedItems = true;
     }
 
-    @Override
-    @Factory(value = "bomImpactedItemsRoot", scope = ScopeType.EVENT)
-    public TreeNode getRootFromFactory() {
-        return getRoot();
+    public Boolean getIsManagedDefaultFilter() {
+        return isManagedDefaultFilter;
+    }
+
+    public void setIsManagedDefaultFilter(Boolean isManagedDefaultFilter) {
+        this.isManagedDefaultFilter = isManagedDefaultFilter;
+    }
+
+    public Map<String, String> getItemLifeCycleStatesFilterMap() {
+        return itemLifeCycleStatesFilterMap;
     }
 
 }

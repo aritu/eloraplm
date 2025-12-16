@@ -31,31 +31,40 @@ import com.aritu.eloraplm.constants.EloraRelationConstants;
 import com.aritu.eloraplm.core.relations.util.EloraRelationHelper;
 import com.aritu.eloraplm.core.util.EloraDocumentHelper;
 import com.aritu.eloraplm.exceptions.EloraException;
-import com.aritu.eloraplm.treetable.NodeManager;
 
 /**
  * @author aritu
  *
  */
-public class CadCompositionNodeService extends RelationNodeService
-        implements NodeManager {
+public class CadCompositionNodeService extends RelationNodeService {
+
+    protected int maxOrdering;
 
     private boolean showDrawings;
 
     private boolean showSuppressed;
 
+    private boolean showExcludedFromComposition;
+
+    public int getMaxOrdering() {
+        return maxOrdering;
+    }
+
     public CadCompositionNodeService(CoreSession session, boolean showDrawings,
-            boolean showSuppressed, boolean showObsoleteStateDocuments,
+            boolean showSuppressed, boolean showExcludedFromComposition,
+            boolean showObsoleteStateDocuments,
             boolean showUniqueVersionsPerDocument) throws EloraException {
 
         super(session);
 
         nodeId = 0;
-        treeDirection = TREE_DIRECTION_COMPOSITION;
+        treeDirection = EloraRelationConstants.DIRECTION_COMPOSITION;
         relationType = RELATION_TYPE_CAD;
+        maxOrdering = 0;
 
         this.showDrawings = showDrawings;
         this.showSuppressed = showSuppressed;
+        this.showExcludedFromComposition = showExcludedFromComposition;
         this.showObsoleteStateDocuments = showObsoleteStateDocuments;
         this.showUniqueVersionsPerDocument = showUniqueVersionsPerDocument;
 
@@ -82,27 +91,42 @@ public class CadCompositionNodeService extends RelationNodeService
             Statement stmt, String predicateUri, String quantity,
             String comment, Integer ordering, Integer directorOrdering,
             Integer viewerOrdering, Integer inverseViewerOrdering,
-            Boolean isManual, boolean isSpecial, boolean isDirect) {
+            Boolean isManual, String designators, Boolean isExcludedFromMapping,
+            boolean isSpecial, boolean isDirect) {
+
+        if (level == 1 && ordering != null && ordering > maxOrdering) {
+            maxOrdering = ordering;
+        }
 
         CadRelationNodeData nodeData = new CadRelationNodeData(id, level, docId,
                 data, wcDoc, stmt, predicateUri, quantity, comment, ordering,
                 directorOrdering, viewerOrdering, inverseViewerOrdering,
-                isManual, isSpecial, isDirect);
+                isManual, designators, isExcludedFromMapping, isSpecial,
+                isDirect);
 
         nodeData = loadRelatedItems(nodeData);
 
         boolean isBasedOn = (predicateUri != null
                 && predicateUri.equals(EloraRelationConstants.CAD_BASED_ON))
-                        ? true : false;
+                        ? true
+                        : false;
         nodeData.setIsBasedOn(isBasedOn);
 
         boolean isSuppressed = false;
-        if (showSuppressed && !isSpecial && !isDirect
+        if (predicateUri != null && showSuppressed && !isSpecial && !isDirect
                 && RelationsConfig.cadSuppressedRelationsList.contains(
                         predicateUri)) {
             isSuppressed = true;
         }
         nodeData.setIsSuppressed(isSuppressed);
+
+        boolean isExcludedFromComposition = false;
+        if (predicateUri != null && showExcludedFromComposition && !isSpecial
+                && !isDirect && predicateUri.equals(
+                        EloraRelationConstants.CAD_HAS_EXCLUDED_FROM_COMPOSITION)) {
+            isExcludedFromComposition = true;
+        }
+        nodeData.setIsExcludedFromComposition(isExcludedFromComposition);
 
         return nodeData;
     }
@@ -131,14 +155,17 @@ public class CadCompositionNodeService extends RelationNodeService
 
                 relatedItemList.removeAll(relatedItemList);
 
-                if (docListByVersionSerieId.size() == 1) {
-                    DocumentModel doc = null;
-                    // There are different versions of the same bom item
-                    // related. Take the latest version.
+                if (docListByVersionSerieId.size() >= 1) {
                     for (Map.Entry<String, List<DocumentModel>> entry : docListByVersionSerieId.entrySet()) {
+                        // If there are different versions of the same bom item
+                        // related, take the latest version.
+                        DocumentModel doc = null;
                         String versionSeriesId = entry.getKey();
                         List<DocumentModel> docList = docListByVersionSerieId.get(
                                 versionSeriesId);
+                        // TODO IBAI getLatestRelatedVersion(CoreSession
+                        // session, List<DocumentModel> wcDocs) erabili eta
+                        // testeatu
                         List<String> uidList = EloraDocumentHelper.getUidListFromDocList(
                                 docList);
                         Long majorVersion = EloraDocumentHelper.getLatestMajorFromDocList(
@@ -147,10 +174,9 @@ public class CadCompositionNodeService extends RelationNodeService
 
                         doc = EloraRelationHelper.getLatestRelatedVersion(
                                 session, majorVersion, uidList, type);
+                        relatedItemList.add(doc);
                     }
-                    // convertir a lista doc y meter abajo
-                    // relatedItemList.removeAll(relatedItemList);
-                    relatedItemList.add(doc);
+
                 }
             }
             nodeData.setRelatedBoms(relatedItemList);
@@ -213,7 +239,14 @@ public class CadCompositionNodeService extends RelationNodeService
     private void loadPredicates() {
         List<String> predicatesList = new ArrayList<String>();
 
-        predicatesList.addAll(RelationsConfig.cadHierarchicalRelationsList);
+        List<String> hierarchicalPredicates = new ArrayList<String>(
+                RelationsConfig.cadHierarchicalRelationsList);
+        // Show excluded from composition?
+        if (!showExcludedFromComposition) {
+            hierarchicalPredicates.remove(
+                    EloraRelationConstants.CAD_HAS_EXCLUDED_FROM_COMPOSITION);
+        }
+        predicatesList.addAll(hierarchicalPredicates);
         if (showSuppressed) {
             predicatesList.addAll(RelationsConfig.cadSuppressedRelationsList);
         }

@@ -31,20 +31,11 @@
         
         <!-- Version actions -->
         <action id="ELORA_DELETE_VERSION" link="#{eloraVersionedActions.removeVersion}"
-            label="command.removeSelectedArchivedVersions" confirm="if(!confirmRemoveVersion()) return false;" order="10">
+            label="command.removeSelectedArchivedVersions" confirm="if(!confirmRemoveVersion()) return false;" order="10" icon="/icons/row_delete_16.png" >
             <category>BASE_VERSION_LIST_ITEM</category>
             <filter-id>isEditable</filter-id>
         </action>
-        
-        <action id="change_checkin_comments" type="fancybox" label="eloraplm.command.history.changeCheckinComments" order="15">
-            <filter-id>isEditable</filter-id>
-            <filter-id>isAtLeastOneVersionSelected</filter-id>
-            <properties>
-                <property name="include">/incl/action/change_checkin_comments.xhtml</property>
-                <property name="styleClass">button</property>
-            </properties>
-        </action>
-        
+       
     </extension>
     
     <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">

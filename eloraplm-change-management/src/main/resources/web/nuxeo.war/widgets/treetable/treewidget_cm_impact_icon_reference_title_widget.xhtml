@@ -1,0 +1,36 @@
+<f:subview
+    id="#{widget.id}"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+>
+    <ui:fragment rendered="#{field_0.originItem != null}">
+        <nxl:widget
+            name="cm_imp_origin_item"
+            mode="#{widget.mode}"
+            value="#{field_0}"
+        />
+    </ui:fragment>
+
+    <ui:fragment
+        rendered="#{field_0.originItem == null and field_0.isFromMbom}"
+    >
+        <nxl:widget
+            name="treewidget_bom_erp_icon_reference_title"
+            mode="#{widget.mode}"
+            value="#{field_0}"
+        />
+    </ui:fragment>
+
+    <ui:fragment
+        rendered="#{field_0.originItem == null and not field_0.isFromMbom}"
+    >
+        <nxl:widget
+            name="treewidget_deriveds_group_title"
+            mode="#{widget.mode}"
+            value="#{field_0}"
+        />
+    </ui:fragment>
+</f:subview>

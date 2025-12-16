@@ -1,0 +1,8 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+targetNamespace="https://eloraplm.aritu.com/schemas/async_subworkflow">
+    
+    <xs:element name="parentWfInstanceId" type="xs:string" />
+    
+    <xs:element name="instanceTitle" type="xs:string" />
+    
+</xs:schema>

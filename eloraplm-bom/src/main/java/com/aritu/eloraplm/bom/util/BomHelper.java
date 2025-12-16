@@ -13,14 +13,25 @@
  */
 package com.aritu.eloraplm.bom.util;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.IterableQueryResult;
+import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.ecm.core.query.sql.NXQL;
 import org.nuxeo.ecm.core.schema.DocumentType;
+import org.nuxeo.ecm.platform.ui.web.directory.ChainSelect;
 
+import com.aritu.eloraplm.config.util.BomConfig;
 import com.aritu.eloraplm.constants.EloraDoctypeConstants;
 import com.aritu.eloraplm.constants.EloraMetadataConstants;
 import com.aritu.eloraplm.core.util.EloraDocumentTypesHelper;
+import com.aritu.eloraplm.exceptions.EloraException;
 
 /**
  * Helper class for Elora Boms.
@@ -63,13 +74,9 @@ public class BomHelper {
     }
 
     public static String getBomClassificationValue(DocumentModel doc) {
-        String logInitMsg = "[getClassificationValue]";
-        log.trace(logInitMsg + "--- ENTER --- ");
-
-        String classificationMetadata = BomHelper.getBomClassificationMetadataForBomType(
-                doc.getType());
-
-        return getBomClassificationValue(doc, classificationMetadata);
+        return getBomClassificationValue(doc,
+                BomHelper.getBomClassificationMetadataForBomType(
+                        doc.getType()));
     }
 
     public static String getBomClassificationValue(DocumentModel doc,
@@ -86,8 +93,163 @@ public class BomHelper {
 
         log.trace(logInitMsg + "--- EXIT with classification = |"
                 + classification + "|---");
-
         return classification;
+    }
+
+    public static String getBomClassificationLabel(DocumentModel doc) {
+        return getBomClassificationLabel(doc.getType(),
+                getBomClassificationValue(doc));
+    }
+
+    public static String getBomClassificationLabel(String bomTypeName,
+            String classification) {
+        String logInitMsg = "[getBomClassificationLabel]";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        String classificationLabel = "";
+
+        DocumentType bomType = EloraDocumentTypesHelper.getDocumentType(
+                bomTypeName);
+        if (EloraDocumentTypesHelper.getDocumentType(
+                EloraDoctypeConstants.BOM_PART).isSuperTypeOf(bomType)) {
+            bomTypeName = EloraDoctypeConstants.BOM_PART;
+        }
+        HashMap<String, String> bomClassificationLabelMap = BomConfig.bomClassificationLabelMap.get(
+                bomTypeName);
+
+        if (bomClassificationLabelMap != null
+                && bomClassificationLabelMap.size() > 0
+                && classification != null && !classification.isEmpty()) {
+
+            // First split the classification, since it can be hierarchical
+            String[] classificationLevels = classification.split(
+                    ChainSelect.DEFAULT_KEY_SEPARATOR);
+            for (int i = 0; i < classificationLevels.length; i++) {
+
+                String classificationItem = classificationLevels[i];
+
+                if (bomClassificationLabelMap.containsKey(classificationItem)) {
+                    String classificationItemLabel = bomClassificationLabelMap.get(
+                            classificationItem);
+                    if (classificationLabel != null
+                            && !classificationLabel.isEmpty()) {
+                        classificationLabel += ChainSelect.DEFAULT_KEY_SEPARATOR
+                                + classificationItemLabel;
+                    } else {
+                        classificationLabel += classificationItemLabel;
+                    }
+                }
+            }
+        }
+
+        log.trace(logInitMsg + "--- EXIT with classificationLabel = |"
+                + classificationLabel + "|---");
+        return classificationLabel;
+    }
+
+    public static boolean existManufacturerAndPartNumberInOemList(
+            DocumentModel doc, String manufacturer, String partNumber)
+            throws EloraException {
+
+        // Check specified input parameters
+        if (doc == null) {
+            throw new EloraException("Specified doc is null.");
+        }
+
+        CoreSession session = doc.getCoreSession();
+
+        String logInitMsg = "[existManufacturerAndPartNumberInOemList] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        boolean existManufacturerAndPartNumberInOemList = false;
+
+        IterableQueryResult queryResult = null;
+        try {
+            String query = BomQueryFactory.getCountOemByManufacturerAndPartNumberQuery(
+                    doc, manufacturer, partNumber);
+
+            queryResult = session.queryAndFetch(query, NXQL.NXQL);
+
+            if (queryResult.iterator().hasNext()) {
+                Map<String, Serializable> map = queryResult.iterator().next();
+                String resultCountStr = map.get(
+                        "COUNT(" + NXQL.ECM_UUID + ")").toString();
+                int resultCount = Integer.valueOf(resultCountStr);
+
+                log.trace(logInitMsg + "DB query resultCount = |" + resultCount
+                        + "|");
+
+                if (resultCount > 0) {
+                    existManufacturerAndPartNumberInOemList = true;
+                }
+            }
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        } finally {
+            if (queryResult != null) {
+                queryResult.close();
+            }
+        }
+
+        log.trace(logInitMsg
+                + "--- EXIT --- with existManufacturerAndPartNumberInOemList = |"
+                + existManufacturerAndPartNumberInOemList + "|");
+
+        return existManufacturerAndPartNumberInOemList;
+    }
+
+    public static long getMaxPreferenceInOemsList(DocumentModel doc)
+            throws EloraException {
+
+        // Check specified input parameters
+        if (doc == null) {
+            throw new EloraException("Specified doc is null.");
+        }
+
+        CoreSession session = doc.getCoreSession();
+
+        String logInitMsg = "[getMaxPreferenceInOemsList] ["
+                + session.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        long maxPreference = 0;
+
+        IterableQueryResult queryResult = null;
+        try {
+            String query = BomQueryFactory.getMaxPreferenceInOemsListQuery(doc);
+
+            queryResult = session.queryAndFetch(query, NXQL.NXQL);
+
+            if (queryResult.iterator().hasNext()) {
+                Map<String, Serializable> map = queryResult.iterator().next();
+                if (map.get("MAX(" + EloraMetadataConstants.ELORA_OEM_OEMS
+                        + "/*/preference" + ")") != null) {
+                    String maxPreferenceStr = map.get(
+                            "MAX(" + EloraMetadataConstants.ELORA_OEM_OEMS
+                                    + "/*/preference" + ")").toString();
+                    maxPreference = Long.valueOf(maxPreferenceStr);
+
+                    log.trace(logInitMsg + "DB query maxPreference = |"
+                            + maxPreference + "|");
+                }
+            }
+        } catch (NuxeoException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+            throw new EloraException(
+                    "Nuxeo exception thrown: |" + e.getMessage() + "|");
+        } finally {
+            if (queryResult != null) {
+                queryResult.close();
+            }
+        }
+
+        log.trace(logInitMsg + "--- EXIT --- with maxPreference = |"
+                + maxPreference + "|");
+
+        return maxPreference;
     }
 
 }

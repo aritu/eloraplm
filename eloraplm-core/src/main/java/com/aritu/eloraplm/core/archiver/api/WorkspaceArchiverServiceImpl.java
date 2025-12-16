@@ -16,6 +16,7 @@ import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
 
 import com.aritu.eloraplm.constants.EloraFacetConstants;
+import com.aritu.eloraplm.constants.EloraGeneralConstants;
 import com.aritu.eloraplm.core.archiver.util.UnrestrictedArchiver;
 import com.aritu.eloraplm.core.archiver.util.UnrestrictedUnarchiver;
 import com.aritu.eloraplm.exceptions.ArchivingConditionsNotMetException;
@@ -106,8 +107,16 @@ public class WorkspaceArchiverServiceImpl extends DefaultComponent
 
         ArchiverDescriptor archiver = archivers.get(archiverName);
 
+        boolean skipArchiverCondition = false;
+        if (workspace.getContextData().containsKey("default/"
+                + EloraGeneralConstants.CONTEXT_SKIP_ARCHIVER_CONDITION)) {
+            skipArchiverCondition = (boolean) workspace.getContextData(
+                    EloraGeneralConstants.CONTEXT_SKIP_ARCHIVER_CONDITION);
+        }
+
         boolean meetsConditions = true;
-        if (archiver.conditions.length > 0) {
+
+        if (!skipArchiverCondition && archiver.conditions.length > 0) {
             for (ArchiverConditionDescriptor condition : archiver.conditions) {
                 String conditionClass = condition.conditionClass;
                 String method = condition.method;

@@ -21,13 +21,13 @@
             </c:if>
             
             <c:if test="#{nxl:isLikeViewMode(widget.mode)}">
-                <h:outputFormat value="#{messages['eloraplm.label.percentage']}" styleClass="percentageLabel #{style}">
+                <h:outputFormat value="#{messages['eloraplm.label.percentage']}" styleClass="percentageLabel #{style} #{widget.properties.styleClass}">
                     <f:param value="#{percentage}" />
                 </h:outputFormat>
             </c:if>
             
             <c:if test="#{widget.mode == 'edit'}">
-                <h:selectOneListbox size="1" id="percentage" value="#{field}" styleClass="percentageSelect #{style}">
+                <h:selectOneListbox size="1" id="percentage" value="#{field}" styleClass="percentageSelect #{style} #{widget.properties.styleClass}">
                     <c:forEach begin="0" step="10" end="100" var="i">
                         <f:selectItem itemValue="#{i}" itemLabel="#{nxu:translate('eloraplm.label.percentage', i)}" />
                     </c:forEach>

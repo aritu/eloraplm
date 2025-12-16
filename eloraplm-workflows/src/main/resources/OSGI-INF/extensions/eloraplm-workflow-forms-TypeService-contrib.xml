@@ -6,6 +6,8 @@
         
         <schema name="workflow_question" prefix="wfq" src="schemas/workflow_question.xsd" />
         <schema name="workflow_answers" prefix="wfans" src="schemas/workflow_answers.xsd" />
+        <schema name="workflow_info" prefix="wfinfo" src="schemas/workflow_info.xsd" />
+        <schema name="async_subworkflow" prefix="subwf" src="schemas/async_subworkflow.xsd" />
         
     </extension>
     
@@ -14,8 +16,10 @@
         <!-- Facets -->
         <facet name="HasWorkflowForms">
             <schema name="workflow_answers" />
+            <schema name="workflow_info" />
         </facet>
         <facet name="DefinedByWorkflowForms" />
+        <facet name="AsynchronousSubworkflow" />
         
         <!-- Doctypes -->
         <doctype name="WorkflowQuestion"
@@ -29,6 +33,12 @@
     <extension point="types" target="org.nuxeo.ecm.platform.types.TypeService">
         
         <type id="Folder">
+            <subtypes>
+                <type>WorkflowQuestion</type>
+            </subtypes>
+        </type>
+        
+        <type id="OrderedFolder">
             <subtypes>
                 <type>WorkflowQuestion</type>
             </subtypes>

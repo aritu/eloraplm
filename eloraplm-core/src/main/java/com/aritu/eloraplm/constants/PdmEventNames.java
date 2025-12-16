@@ -25,6 +25,8 @@ public class PdmEventNames {
 
     public static final String PDM_CHECKOUT_UNDONE_EVENT = "PdmCheckoutUndoneEvent";
 
+    public static final String PDM_ABOUT_TO_CHECK_IN_EVENT = "PdmAboutToCheckInEvent";
+
     public static final String PDM_CHECKED_IN_EVENT = "PdmCheckedInEvent";
 
     public static final String PDM_ABOUT_TO_OVERWRITE_EVENT = "PdmAboutToOverwriteEvent";

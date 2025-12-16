@@ -67,14 +67,36 @@ public class BomCharacteristicsHelperBean implements Serializable {
         return countBomCharacteristicsMasters;
     }
 
+    public int countBomCharacteristicMastersWithClassification() {
+        String logInitMsg = "[countBomCharacteristicMastersWithClassification] ["
+                + documentManager.getPrincipal().getName() + "] ";
+        log.trace(logInitMsg + "--- ENTER --- ");
+
+        int countBomCharacteristicsMasters = 0;
+
+        try {
+            countBomCharacteristicsMasters = BomCharacteristicMastersHelper.countBomCharacteristicMastersWithClassification(
+                    documentManager);
+        } catch (EloraException e) {
+            log.error(logInitMsg + e.getMessage(), e);
+        }
+
+        log.trace(logInitMsg + "--- EXIT ---");
+        return countBomCharacteristicsMasters;
+    }
+
     public List<SortInfo> getSortInfos() {
 
         List<SortInfo> sortInfos = new ArrayList<SortInfo>();
 
         if (countBomCharacteristicMasters() > 0) {
-            sortInfos.add(new SortInfo(
-                    BomCharacteristicsMetadataConstants.BOM_CHARAC_MASTER_CLASSIFICATION,
-                    true));
+
+            if (countBomCharacteristicMastersWithClassification() > 0) {
+                sortInfos.add(new SortInfo(
+                        BomCharacteristicsMetadataConstants.BOM_CHARAC_MASTER_CLASSIFICATION,
+                        true));
+            }
+
             sortInfos.add(new SortInfo(
                     BomCharacteristicsMetadataConstants.BOM_CHARAC_MASTER_ORDER,
                     true));

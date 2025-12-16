@@ -6,10 +6,14 @@
     <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
         
         <types>
-            <type name="ProductValidation">eloraWsLifeCycle</type>
-            <type name="ProductVerification">eloraWsLifeCycle</type>
-            <type name="ProductionProcessValidation">eloraWsLifeCycle</type>
-            <type name="ProductionPartApprovalProcess">eloraWsLifeCycle</type>
+            <type name="ProductValidation"
+                noRecursionForTransitions="complete, reject, backToWorking">eloraWsLifeCycle</type>
+            <type name="ProductVerification"
+                noRecursionForTransitions="complete, reject, backToWorking">eloraWsLifeCycle</type>
+            <type name="ProductionProcessValidation"
+                noRecursionForTransitions="complete, reject, backToWorking">eloraWsLifeCycle</type>
+            <type name="ProductionPartApprovalProcess"
+                noRecursionForTransitions="complete, reject, backToWorking">eloraWsLifeCycle</type>
             
             <type name="FolderArchivedQualityManagement">default</type>
         </types>

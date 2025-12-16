@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+
+<component name="com.aritu.eloraplm.webapp.base.DirectoryUI.contrib">
+    <require>org.nuxeo.ecm.webapp.directory.directoryUI</require>
+    
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+
+        <!--  Override Nuxeo l10nvocabulary layout  -->
+        <layout name="l10nvocabulary">
+            <templates>
+                <template mode="any">
+                /directory/directory_layout_template.xhtml
+                </template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>l10nvocabulary_id</widget>
+                </row>
+                <row>
+                    <widget>l10nvocabulary_label_es</widget>
+                </row>
+                <row>
+                    <widget>l10nvocabulary_label_en</widget>
+                </row>
+                <row>
+                    <widget>l10nvocabulary_label_eu</widget>
+                </row>
+                <row>
+                    <widget>l10nvocabulary_obsolete</widget>
+                </row>
+                <row>
+                    <widget>l10nvocabulary_order</widget>
+                </row>
+            </rows>
+        </layout>
+    </extension>
+
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgets">
+
+        <widget name="l10nvocabulary_label_es" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.l10nvocabulary.labelEs</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>l10nvocabulary:label_es</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="size">50</property>
+            </properties>
+        </widget>
+        
+        <widget name="l10nvocabulary_label_eu" type="text">
+            <labels>
+                <label mode="any">eloraplm.label.l10nvocabulary.labelEu</label>
+            </labels>
+            <translated>true</translated>
+            <fields>
+                <field>l10nvocabulary:label_eu</field>
+            </fields>
+            <properties widgetMode="edit">
+                <property name="size">50</property>
+            </properties>
+        </widget>
+
+    </extension>
+
+</component>

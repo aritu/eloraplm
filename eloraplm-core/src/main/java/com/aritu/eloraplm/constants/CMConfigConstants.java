@@ -21,8 +21,6 @@ public class CMConfigConstants {
      */
     public static final String VOC_CM_DOCTYPE_ACTIONS_IMPACT = "elora_cm_doctype_actions_impact";
 
-    public static final String VOC_CM_ACTION_IMPACTED = "elora_cmActionImpacted";
-
     public static final String VOC_CM_ACTION_MODIFIED = "elora_cmActionModified";
 
     /*

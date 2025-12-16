@@ -4,7 +4,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:nxl="http://nuxeo.org/nxforms/layout">
     
-    <h:panelGroup id="typeOptions">
+    <h:panelGroup id="typeOptions" layout="block">
     
         <nxl:layout name="#{not empty field_0 ? 'question_type_options_'.concat(field_0) : ''}"
             mode="#{layout.mode}"

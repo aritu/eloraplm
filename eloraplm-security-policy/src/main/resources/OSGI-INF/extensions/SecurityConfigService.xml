@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="com.aritu.eloraplm.securitypolicy.api.securityConfigService">
+    <documentation>
+        Service to configure lifecycles beyond Nuxeo's configuration options.
+    </documentation>
+    
+    <implementation class="com.aritu.eloraplm.securitypolicy.api.SecurityConfigServiceImpl"/>
+
+    <service>
+        <provide interface="com.aritu.eloraplm.securitypolicy.api.SecurityConfigService"/>
+    </service>
+    
+    <extension-point name="levels">
+        <documentation>
+            Used to configure security levels.
+            <code>
+                <level id="1" label="..." modifier="..." color="#000000">
+                </level>
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.securitypolicy.api.LevelDescriptor" />
+    </extension-point>
+    
+    <extension-point name="types">
+        <documentation>
+            Used to configure default security levels for document types.
+            <code>
+                <type id="..." level="" />
+            </code>
+        </documentation>
+        <object class="com.aritu.eloraplm.securitypolicy.api.TypeDescriptor" />
+    </extension-point>
+    
+</component>

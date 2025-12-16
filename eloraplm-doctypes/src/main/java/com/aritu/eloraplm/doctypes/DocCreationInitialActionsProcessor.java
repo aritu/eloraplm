@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.SystemPrincipal;
 import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventContext;
@@ -30,6 +29,7 @@ import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 
 import com.aritu.eloraplm.constants.EloraFacetConstants;
 import com.aritu.eloraplm.constants.EloraGeneralConstants;
+import com.aritu.eloraplm.constants.NuxeoDoctypeConstants;
 
 /**
  * @author aritu
@@ -47,9 +47,18 @@ public class DocCreationInitialActionsProcessor implements EventListener {
             if (isEventHandled(event)) {
                 DocumentEventContext docEventContext = (DocumentEventContext) eventContext;
                 DocumentModel doc = docEventContext.getSourceDocument();
+                CoreSession session = docEventContext.getCoreSession();
 
-                if (docEventContext.getPrincipal() instanceof SystemPrincipal) {
-                    return;
+                // The first time a user enters in Nuxeo, automatically a new
+                // workspace is created under UserWorkspacesRoot.
+                // Do not execute initial actions in this new workspace.
+                if (doc.getParentRef() != null) {
+                    DocumentModel parentDoc = session.getDocument(
+                            doc.getParentRef());
+                    if (parentDoc != null && parentDoc.getType().equals(
+                            NuxeoDoctypeConstants.USER_WORKSPACE_ROOT)) {
+                        return;
+                    }
                 }
 
                 if (doc.isVersion() || doc.isProxy() || !(doc.hasFacet(
@@ -65,20 +74,17 @@ public class DocCreationInitialActionsProcessor implements EventListener {
                 String logInitMsg = "[handleEvent] ["
                         + event.getContext().getPrincipal().getName() + "] ";
 
-                CoreSession session = docEventContext.getCoreSession();
-
                 executeInitialActions(docEventContext, session, doc);
 
                 session.save();
 
                 log.trace(logInitMsg + "Initial actions executed for doc |"
                         + doc.getId() + "|");
-
             }
         }
     }
 
-    private void executeInitialActions(DocumentEventContext docEventCtx,
+    protected void executeInitialActions(DocumentEventContext docEventCtx,
             CoreSession session, DocumentModel doc) {
 
         boolean skipLock = false;

@@ -22,4 +22,16 @@ public class WorkflowConstants {
     /* Pathnames */
 
     public static final String WORKFLOW_QUESTIONS_ROOT_PATH = "/workflow-questions";
+
+    public static final String WORKFLOW_ANSWER_TYPE_TEXT = "text";
+
+    public static final String WORKFLOW_ANSWER_TYPE_BOOLEAN = "boolean";
+
+    public static final String WORKFLOW_ANSWER_TYPE_DATE = "date";
+
+    public static final String WORKFLOW_ANSWER_TYPE_DATETIME = "datetime";
+
+    public static final String WORKFLOW_ANSWER_TYPE_DOCUMENT = "document";
+
+    public static final String WORKFLOW_ANSWER_TYPE_DOCUMENT_LIST = "documentlist";
 }

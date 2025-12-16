@@ -92,4 +92,24 @@ public class BomCharacteristicMastersQueryFactory {
         return query;
     }
 
+    public static String getCountBomCharacteristicMastersWithClassificationQuery() {
+
+        String query = "SELECT COUNT(" + NXQL.ECM_UUID + ") FROM DOCUMENT "
+                + " WHERE " + NXQL.ECM_PRIMARYTYPE + " IN ('"
+                + BomCharacteristicsDoctypeConstants.BOM_PART_CHARAC_MASTER_DOCUMENT_TYPE
+                + "', '"
+                + BomCharacteristicsDoctypeConstants.BOM_PRODUCT_CHARAC_MASTER_DOCUMENT_TYPE
+                + "', '"
+                + BomCharacteristicsDoctypeConstants.BOM_TOOL_CHARAC_MASTER_DOCUMENT_TYPE
+                + "', '"
+                + BomCharacteristicsDoctypeConstants.BOM_PACKAGING_CHARAC_MASTER_DOCUMENT_TYPE
+                + "', '"
+                + BomCharacteristicsDoctypeConstants.BOM_SPECIFICATION_CHARAC_MASTER_DOCUMENT_TYPE
+                + "') AND "
+                + BomCharacteristicsMetadataConstants.BOM_CHARAC_MASTER_CLASSIFICATION
+                + " IS NOT NULL";
+
+        return query;
+    }
+
 }

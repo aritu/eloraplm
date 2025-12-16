@@ -27,8 +27,8 @@ public class TransitionExecuterFactoryImpl
         implements TransitionExecuterFactory {
 
     @Override
-    public TransitionExecuter getTransitionExecuter(String transition,
-            String lifecycle) {
+    public TransitionExecuter getTransitionExecuter(String lifecycle,
+            String transition) {
         switch (transition) {
         case EloraLifeCycleConstants.TRANS_APPROVE:
             switch (lifecycle) {
@@ -36,7 +36,8 @@ public class TransitionExecuterFactoryImpl
             case EloraLifeCycleConstants.BOM_LIFE_CYCLE:
                 return new ApproveForCadOrItemTransitionExecuter();
             case EloraLifeCycleConstants.DEFAULT_LIFE_CYCLE:
-                return new DefaultForVersionableTransitionExecuter(transition);
+                return new DefaultForVersionableTransitionExecuter(lifecycle,
+                        transition);
             default:
                 return new DefaultTransitionExecuter(transition);
             }
@@ -54,8 +55,10 @@ public class TransitionExecuterFactoryImpl
             switch (lifecycle) {
             case EloraLifeCycleConstants.CAD_LIFE_CYCLE:
             case EloraLifeCycleConstants.BOM_LIFE_CYCLE:
+                return new BackToPreliminaryForCadOrItemTransitionExecuter();
             case EloraLifeCycleConstants.DEFAULT_LIFE_CYCLE:
-                return new DefaultForVersionableTransitionExecuter(transition);
+                return new DefaultForVersionableTransitionExecuter(lifecycle,
+                        transition);
             default:
                 return new DefaultTransitionExecuter(transition);
             }

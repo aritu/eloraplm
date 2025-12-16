@@ -1,0 +1,56 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:nxl="http://nuxeo.org/nxforms/layout"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:nxu="http://nuxeo.org/nxweb/util"
+    >
+    
+    <p:dataTable id="linkedDocumentCharacteristics" var="characteristic" value="#{linkedCharacteristicsTableBean.linkedDocumentCharacteristics}" 
+         selection="#{linkedCharacteristicsTableBean.selectedLinkedDocumentCharacteristics}" rowKey="#{characteristic.linkedCharacteristicInfo.linkedCharacteristicId}" 
+         style="margin-bottom:0" tableStyleClass="datatable" rowSelectMode="checkbox" >
+
+        <p:column headerText="#{messages['eloraplm.label.linkcharac.linkedCharacteristic.title']}">
+            <h:outputText value="#{characteristic.linkedCharacteristicInfo.title}" />
+        </p:column>
+        
+        <p:column headerText="#{messages['eloraplm.label.linkcharac.linkedCharacteristic.value']}">
+            <ui:fragment rendered="#{not empty characteristic.linkedCharacteristicInfo.numberValue}">
+                <nxl:widget name="bom_charac_number_value" mode="view" value="#{characteristic.linkedCharacteristicInfo.numberValue}" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty characteristic.linkedCharacteristicInfo.stringValue}">
+                <h:outputText value="#{characteristic.linkedCharacteristicInfo.stringValue}" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty characteristic.linkedCharacteristicInfo.dateValue}">
+                 <nxl:widgetType name="datetime"
+                        value="#{characteristic.linkedCharacteristicInfo.dateValue}" 
+                        mode="view" pattern="#{nxu:basicDateFormatter()}" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty characteristic.linkedCharacteristicInfo.booleanValue}">
+                <h:outputText rendered="#{characteristic.linkedCharacteristicInfo.booleanValue}" value="#{messages['label.true']}" />
+                <h:outputText rendered="#{!characteristic.linkedCharacteristicInfo.booleanValue}" value="#{messages['label.false']}" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty characteristic.linkedCharacteristicInfo.listValue}">
+                <h:outputText value="#{characteristic.linkedCharacteristicInfo.listValue}" />
+            </ui:fragment>
+        </p:column>
+        
+        <p:column headerText="#{messages['eloraplm.label.linkcharac.linkedCharacteristic.showInReport']}">
+            <nxl:widgetType mode="edit" name="checkbox" value="#{characteristic.showInReport}" />
+        </p:column>
+
+        <p:column headerText="#{messages['eloraplm.label.linkcharac.linkedCharacteristic.orderInReport']}">
+            <nxl:widgetType mode="edit" name="int" value="#{characteristic.orderInReport}" />
+        </p:column>
+
+        <p:column selectionMode="multiple" style="width:40px;text-align:center"/>
+
+    </p:dataTable>
+    
+</ui:composition>
